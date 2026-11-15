@@ -171,8 +171,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
           }
           model->shade = 0;
           Transform_ApplyPitch(-0xbb8);
-          SceneTransform_ApplyPosition3(px(center[0] / 2 - 64), px(40), 0);
-          SceneTransform_ApplyUniformScale(scale >> 1);
+          Transform_ApplyTranslation(px(center[0] / 2 - 64), px(40), 0);
+          Transform_ApplyUniformScale(scale >> 1);
           Transform_ApplyYaw(frame << 9);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);

@@ -265,9 +265,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(centerX - 64),
-                                      px(gTrident_RingHeights[i]), 0);
-        SceneTransform_ApplyScale3(scale, scale * 2, scale);
+        Transform_ApplyTranslation(px(centerX - 64),
+                                   px(gTrident_RingHeights[i]), 0);
+        Transform_ApplyAxisScale(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
@@ -312,13 +312,13 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           }
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(centerX - 64), px(32), 0);
+          Transform_ApplyTranslation(px(centerX - 64), px(32), 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           spinner->z += spinner->velocityZ;
-          SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE * 2, 0x12710, Q16_ONE);
           Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -408,13 +408,13 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
            */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, c, 1);
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, c, 1);
         }
-        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
             gBattleEffect_GlintPictureHeights[k]);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
     BattleCamera_Shake(16, 16);
@@ -645,15 +645,15 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         model->shade = shade;
         if (frame <= 45) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(pos.x - 60), px(pos.y - 80), 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(pos.x - 60), px(pos.y - 80), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(-0x3388);
           } else {
             Transform_ApplyYaw(TRIG_TURN / 2);
             Transform_ApplyRoll(-0x3388);
           }
-          SceneTransform_ApplyUniformScale(0x286a0);
+          Transform_ApplyUniformScale(0x286a0);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -681,9 +681,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               model->shade = shade;
               Transform_Reset();
               model->scrollV = (frame * 8 + i * 16) & 63;
-              SceneTransform_ApplyPosition3(
-                  px(pos.x - 60), px(gLeapingStrike_WaveHeights[i]), 0);
-              SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
+              Transform_ApplyTranslation(px(pos.x - 60),
+                                         px(gLeapingStrike_WaveHeights[i]), 0);
+              Transform_ApplyAxisScale(scale >> 1, scale << 2, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
                 Transform_ApplyYaw((i * 4 + frame) << 11);
@@ -728,9 +728,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               scroll &= frame + i * 5;
               model->scrollU = scroll << 4;
               Transform_Reset();
-              SceneTransform_ApplyPosition3(
-                  px(base->x - 60), px(gLeapingStrike_RingHeights[i]), 0);
-              SceneTransform_ApplyScale3(scale, scale * 2, scale);
+              Transform_ApplyTranslation(px(base->x - 60),
+                                         px(gLeapingStrike_RingHeights[i]), 0);
+              Transform_ApplyAxisScale(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
               Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
                                        32);

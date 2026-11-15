@@ -94,9 +94,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
@@ -293,24 +293,23 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             for (i = 0; i != count; i++) {
               Transform_Reset();
               if (mode == BREATH_BLAST) {
-                SceneTransform_ApplyPosition3(px(mouthX - 64), px(mouthY - 64),
-                                              0);
-                SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+                Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
+                Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (args->side == EFFECT_SIDE_ENEMIES)
-                  SceneTransform_ApplyPosition3(px(mouthX - 72),
-                                                px(mouthY - 64), 0);
+                  Transform_ApplyTranslation(px(mouthX - 72), px(mouthY - 64),
+                                             0);
                 else
-                  SceneTransform_ApplyPosition3(px(mouthX - 56),
-                                                px(mouthY - 64), 0);
+                  Transform_ApplyTranslation(px(mouthX - 56), px(mouthY - 64),
+                                             0);
                 Transform_ApplyYaw(0x32c8);
                 Transform_ApplyPitch(TRIG_TURN / 4);
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
-              SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
+              Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        vertices, 4);
               Render_DrawModelList(model);
@@ -340,24 +339,24 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
                   if (args->side == EFFECT_SIDE_ENEMIES)
-                    SceneTransform_ApplyPosition3(
+                    Transform_ApplyTranslation(
                         px(mouthX + gBreaths_RingX[mode * 4 + i] - 48),
                         px(mouthY - 64), 0);
                   else
-                    SceneTransform_ApplyPosition3(
+                    Transform_ApplyTranslation(
                         px(mouthX - gBreaths_RingX[mode * 4 + i] - 80),
                         px(mouthY - 64), 0);
                 } else {
                   if (args->side == EFFECT_SIDE_ENEMIES)
-                    SceneTransform_ApplyPosition3(
+                    Transform_ApplyTranslation(
                         px(mouthX + gBreaths_RingX[mode * 4 + i] - 64),
                         px(mouthY - 64), 0);
                   else
-                    SceneTransform_ApplyPosition3(
+                    Transform_ApplyTranslation(
                         px(mouthX - gBreaths_RingX[mode * 4 + i] - 64),
                         px(mouthY - 64), 0);
                 }
-                SceneTransform_ApplyScale3(scale, scale, scale);
+                Transform_ApplyAxisScale(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
                 Transform_ApplyPitch(TRIG_TURN / 4);
                 Transform_ApplyYaw(frame << 10);
@@ -384,14 +383,14 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(mouthX - 64), px(mouthY - 64), 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (args->side == EFFECT_SIDE_PARTY)
             angle = -angle;
           Transform_ApplyRoll(angle);
-          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -602,25 +601,27 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  half = size / 2;
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x - half, y - size,
-                                            half, size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x, y - size, half,
-                                            size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x - half, y, half,
-                                            size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCode2)(canvas, source, x, y, half, size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  half = size / 2;
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half,
+                                                 y - size, half, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y - size,
+                                                 half, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y,
+                                                 half, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y, half,
+                                                 size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 #undef BLITTER
 #undef JAW_TEXTURE

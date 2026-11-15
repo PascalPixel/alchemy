@@ -145,16 +145,16 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           }
           texture.pixels = work->sheet + i * 0x1000;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(source.x / 2 - 64),
-                                        px(source.y - 88), 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(source.x / 2 - 64), px(source.y - 88),
+                                     0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(TRIG_TURN / 2 - step->variant);
           } else {
             Transform_ApplyRoll(step->variant + TRIG_TURN / 2);
           }
-          SceneTransform_ApplyPosition3(0, 0xfff00000, 0);
-          SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
+          Transform_ApplyTranslation(0, 0xfff00000, 0);
+          Transform_ApplyAxisScale(size << 15, size * 13192, size << 13);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
@@ -185,9 +185,9 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(work->particles[0].x - px(64),
-                                      work->particles[0].y - px(64), 0);
-        SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE / 2);
+        Transform_ApplyTranslation(work->particles[0].x - px(64),
+                                   work->particles[0].y - px(64), 0);
+        Transform_ApplyAxisScale(scale >> 1, scale, Q16_ONE / 2);
         Transform_ApplyRoll(work->particles[0].z);
         if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyYaw(TRIG_TURN / 2);
@@ -335,7 +335,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
             mode);
         // At its address: through the slots' base it would share the base
         // above.
-        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCode2;
+        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
 
         for (i = 0; i != args->variant * 3 + 4; i++) {
           s32 age = frame - gCool_ColumnStarts[i];
@@ -387,7 +387,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
                                            x - 9, 108 - height, 17, height);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
 
       // Spark i rises from frame 8 + 2i through seven pictures, three frames
@@ -620,8 +620,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
         last->variant = level - 24;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(last->x - px(64), last->y - px(64), 0);
-      SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
+      Transform_ApplyTranslation(last->x - px(64), last->y - px(64), 0);
+      Transform_ApplyAxisScale(scale * 2, scale, scale * 2);
       Transform_ApplyPitch(-TRIG_TURN / 8);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
@@ -642,8 +642,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       model->shade = zero;
       texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
       Transform_Reset();
-      SceneTransform_ApplyPosition3(drop->x - px(64), drop->y - px(48), 0);
-      SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
+      Transform_ApplyTranslation(drop->x - px(64), drop->y - px(48), 0);
+      Transform_ApplyAxisScale(splash >> 1, splash, splash >> 1);
       Transform_ApplyPitch(-TRIG_TURN / 4);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
@@ -836,11 +836,10 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
             brightness = (16 - square->variant) * 8;
           model->shade = brightness;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(square->x - 64), px(square->y - 64),
-                                        0);
+          Transform_ApplyTranslation(px(square->x - 64), px(square->y - 64), 0);
           Transform_ApplyRoll(square->velocityZ);
           Transform_ApplyPitch(square->velocityY);
-          SceneTransform_ApplyUniformScale(roll);
+          Transform_ApplyUniformScale(roll);
           Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
           Render_DrawModelList(model);
         }

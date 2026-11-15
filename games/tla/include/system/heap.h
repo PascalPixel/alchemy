@@ -97,7 +97,7 @@ struct HeapSlots {
   void *unkb8;
   /// A second routine as ramCode, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair.
-  void *ramCode2;
+  void *ramCodePaired;
   void *unkc0;
   void *unkc4;
   /// The message decoder routine (Text_DecodeSymbol), copied here to run for
@@ -165,7 +165,7 @@ enum HeapSlot {
   HEAP_SLOT_TITLE_INTRO = offsetof(struct HeapSlots, titleIntro),
   HEAP_SLOT_BATTLE_BACKGROUND = offsetof(struct HeapSlots, battleBackground),
   HEAP_SLOT_CANVAS_MAP = offsetof(struct HeapSlots, canvasMap),
-  HEAP_SLOT_RAM_CODE_2 = offsetof(struct HeapSlots, ramCode2),
+  HEAP_SLOT_RAM_CODE_PAIRED = offsetof(struct HeapSlots, ramCodePaired),
   HEAP_SLOT_MESSAGE_DECODER = offsetof(struct HeapSlots, messageDecoder),
   HEAP_SLOT_SAVE = offsetof(struct HeapSlots, saveWork),
   HEAP_SLOT_SETTINGS_MENU = offsetof(struct HeapSlots, settingsMenu),

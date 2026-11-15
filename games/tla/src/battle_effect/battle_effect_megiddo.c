@@ -386,11 +386,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
         Transform_Reset();
-        SceneTransform_ApplyScale3(half, Q16_ONE, half);
+        Transform_ApplyAxisScale(half, Q16_ONE, half);
       }
-      SceneTransform_ApplyPosition3(x - px(126), z - px(76), 0);
-      SceneTransform_ApplyUniformScale(46536);
-      SceneTransform_ApplyUniformScale(scale);
+      Transform_ApplyTranslation(x - px(126), z - px(76), 0);
+      Transform_ApplyUniformScale(46536);
+      Transform_ApplyUniformScale(scale);
       Render_TransformVertices(ring, transformed, 66);
       Render_DrawModelList(model);
 
@@ -423,9 +423,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-px(2), -px(32), 0);
-          SceneTransform_ApplyScale3(82000, 0x35208, Q16_ONE);
-          SceneTransform_ApplyUniformScale(scale);
+          Transform_ApplyTranslation(-px(2), -px(32), 0);
+          Transform_ApplyAxisScale(82000, 0x35208, Q16_ONE);
+          Transform_ApplyUniformScale(scale);
           Transform_ApplyRoll(TRIG_TURN / 2);
           scroll += 20;
           Transform_ApplyPitch(tilt - TRIG_TURN * 3 / 16);
@@ -518,12 +518,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           model->shade = shade;
           Transform_Reset();
           if (i <= 1) {
-            SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48),
-                                          0);
+            Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
           } else {
-            SceneTransform_ApplyPosition3(0, px(16), 0);
+            Transform_ApplyTranslation(0, px(16), 0);
           }
-          SceneTransform_ApplyScale3(s, s * 2, s);
+          Transform_ApplyAxisScale(s, s * 2, s);
           Transform_ApplyPitch(gMegiddo_FlashPitches[i]);
           Transform_ApplyYaw(gMegiddo_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -556,13 +555,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         model->shade = shade;
         Transform_Reset();
         if (!args->side) {
-          SceneTransform_ApplyPosition3(px(pos.x / 2 + gMegiddo_RayX[i] - 64),
-                                        px(gMegiddo_RayY[i] + pos.y - 54), 0);
+          Transform_ApplyTranslation(px(pos.x / 2 + gMegiddo_RayX[i] - 64),
+                                     px(gMegiddo_RayY[i] + pos.y - 54), 0);
         } else {
-          SceneTransform_ApplyPosition3(px(pos.x / 2 - gMegiddo_RayX[i] - 62),
-                                        px(gMegiddo_RayY[i] + pos.y - 54), 0);
+          Transform_ApplyTranslation(px(pos.x / 2 - gMegiddo_RayX[i] - 62),
+                                     px(gMegiddo_RayY[i] + pos.y - 54), 0);
         }
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (!args->side) {
           Transform_ApplyRoll(gMegiddo_RayRolls[i]);
         } else {
@@ -570,7 +569,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
         Transform_ApplyPitch(gMegiddo_RayPitches[i]);
         Transform_ApplyYaw(gMegiddo_RayYaws[i]);
-        SceneTransform_ApplyScale3(s / 4, s * 4, s / 2);
+        Transform_ApplyAxisScale(s / 4, s * 4, s / 2);
         Render_TransformVertices(gBattleEffect_StandingSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }

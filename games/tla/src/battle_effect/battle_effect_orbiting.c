@@ -46,7 +46,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     camera = Ram_HeapSlots->cameraWork;
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
-    SceneTransform_ApplyPosition(record);
+    Transform_ApplyPosition(record);
     star = STARS;
     for (i = 0; i != 64; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
@@ -127,8 +127,9 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   rectangleA = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  rectangleB = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+                      BLITTER_MAX);
+  rectangleB = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   for (i = 0; i != 64; i++) {
     s32 angle;
@@ -166,7 +167,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
       record[0] = memberObject->x;
       record[1] = 160 << 13;
       record[2] = memberObject->z;
-      SceneTransform_ApplyPosition(record);
+      Transform_ApplyPosition(record);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *p;
 

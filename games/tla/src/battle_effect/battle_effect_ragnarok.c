@@ -304,9 +304,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   if (mode != 2)
     Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
@@ -639,14 +639,14 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   } while (0);
 }
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
-  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, sheet, x, y, w, h);         \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
+  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, x, y, w, h);    \
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
 /// The same draw, the routine read through a pointer to its slot.
 #define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
+  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,

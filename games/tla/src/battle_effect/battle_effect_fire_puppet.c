@@ -175,15 +175,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
       Transform_Reset();
-      SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y) + 0xffd60000,
-                                    0);
-      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y) + 0xffd60000, 0);
+      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (args->side == EFFECT_SIDE_PARTY) {
         Transform_ApplyYaw(TRIG_TURN / 2);
       }
       Transform_ApplyRoll(TRIG_TURN / 4);
       if (frame > 73) {
-        SceneTransform_ApplyUniformScale((212 << 10) - (frame << 11));
+        Transform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
       /* FAKEMATCH(temporary): the buffers named, not cells and projected. */
       Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
@@ -198,9 +197,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollV = 0;
       texture.pixels = work->sheet + 0x4000;
       model->shade = 0;
-      SceneTransform_ApplyPosition3(px(endX), px(endY), 0);
+      Transform_ApplyTranslation(px(endX), px(endY), 0);
       Transform_ApplyRoll(22384 - (length << 5));
-      SceneTransform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
+      Transform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);

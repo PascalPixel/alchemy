@@ -28,7 +28,7 @@ extern const u16 gHaures_FeatherPoints[][2];
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
 static __inline__ void PLACE(s32 x, s32 y) {
-  SceneTransform_ApplyPosition3(px(x), px(y), 0);
+  Transform_ApplyTranslation(px(x), px(y), 0);
 }
 /// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
 /// a violet glow and a rune flashes; the demon rears in a burning cave, then
@@ -353,14 +353,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0, px(36), 0);
+          Transform_ApplyTranslation(0, px(36), 0);
           Transform_ApplyPitch(4000);
           Transform_ApplyYaw(-t << 8);
           s = t << 10;
           if (s > 60000) {
             s = 60000;
           }
-          SceneTransform_ApplyUniformScale(s);
+          Transform_ApplyUniformScale(s);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
           texture.logWidth = 5;
@@ -372,12 +372,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->vertices = verts;
           model->shade = sh;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0, px(36), 0);
+          Transform_ApplyTranslation(0, px(36), 0);
           s = (t * 3 << 8) + 1024;
           if (s > 38768) {
             s = 38768;
           }
-          SceneTransform_ApplyUniformScale(s);
+          Transform_ApplyUniformScale(s);
           if (frame > 73) {
             s32 a;
             s32 b;
@@ -454,8 +454,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                               (s32 *)&req, 0);
           }
           if ((u32)(frame - 150) <= 116) {
-            BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 6, 6, 3, 1);
-            draw[1] = Ram_HeapSlots->ramCode2;
+            BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 6, 6, 3, 1);
+            draw[1] = Ram_HeapSlots->ramCodePaired;
             {
               for (i = 0; i != 8; i++) {
                 struct Particle *p = &work->particles[i + 4];
@@ -473,7 +473,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                 }
               }
             }
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           }
           req.x = frame * 1128 - 103664;
           if (req.x > px(4)) {
@@ -533,12 +533,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(0, -px(4), 0);
+        Transform_ApplyTranslation(0, -px(4), 0);
         s = 0x1d8f0;
         if (frame > 268) {
           s = (frame << 12) - 0xef710;
         }
-        SceneTransform_ApplyScale3(s >> 1, s, s >> 1);
+        Transform_ApplyAxisScale(s >> 1, s, s >> 1);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
         if ((u32)cut <= 5) {
@@ -558,8 +558,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             burstTexture.pixels = buffer;
             model->mesh = gHaures_BurstMesh;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(0, -px(4), 0);
-            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
+            Transform_ApplyTranslation(0, -px(4), 0);
+            Transform_ApplyAxisScale(0x1b1e0, 0x29c40, Q16_ONE * 2);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -689,8 +689,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
                 (p->y >> 16) >= -16 && (p->y >> 16) <= 136) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3(p->x - px(64), p->y - px(64), 0);
-              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyTranslation(p->x - px(64), p->y - px(64), 0);
+              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               switch (i & 3) {
               case 0:
                 Transform_ApplyPitch(p->z);
@@ -934,13 +934,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           x = m * 20 - 16;
           Transform_Reset();
           if (i == 0) {
-            SceneTransform_ApplyPosition3(px(x), px(y), 0);
+            Transform_ApplyTranslation(px(x), px(y), 0);
             Transform_ApplyRoll(-TRIG_TURN / 8);
           } else {
-            SceneTransform_ApplyPosition3(px(x - 16), px(y), 0);
+            Transform_ApplyTranslation(px(x - 16), px(y), 0);
             Transform_ApplyRoll(0x27d0);
           }
-          SceneTransform_ApplyScale3(Q16_ONE * 3, amp, Q16_ONE * 2);
+          Transform_ApplyAxisScale(Q16_ONE * 3, amp, Q16_ONE * 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }

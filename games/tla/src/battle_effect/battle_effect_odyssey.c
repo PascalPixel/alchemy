@@ -206,14 +206,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
       else
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
     // Until frame 89: the sparks of the claws' hits, shrinking.
@@ -289,18 +289,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         }
         if (i == 1) {
           if (args->side == EFFECT_SIDE_ENEMIES)
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                 BLITTER_MAX);
           else
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 BLITTER_MAX);
-          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         }
         draw[i](canvas, work->sheet, x - 20, y, 40, 80);
         if (i == 1)
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
 
@@ -332,8 +332,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
-          SceneTransform_ApplyScale3(scale, scale * 2, scale);
+          Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
+          Transform_ApplyAxisScale(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
@@ -358,8 +358,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         model->look.shade = 0;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
-        SceneTransform_ApplyScale3(scale, scale * 2, scale);
+        Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
+        Transform_ApplyAxisScale(scale, scale * 2, scale);
         Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
         Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
         Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
@@ -379,8 +379,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(to.x / 2 - 64), 0, 0);
-          SceneTransform_ApplyScale3(scale, scale * 2, scale);
+          Transform_ApplyTranslation(px(to.x / 2 - 64), 0, 0);
+          Transform_ApplyAxisScale(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
@@ -412,9 +412,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         x = step->x;
         y = step->y;
         center = -px(64);
-        SceneTransform_ApplyPosition3(x + center, y + center, 0);
-        SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
-                                   step->variant);
+        Transform_ApplyTranslation(x + center, y + center, 0);
+        Transform_ApplyAxisScale(step->variant * 3, step->variant * 6,
+                                 step->variant);
         Transform_ApplyPitch(step->z);
         Transform_ApplyYaw(step->z);
         Render_TransformVertices(gBattleEffect_TriangleCorners, projected, 3);

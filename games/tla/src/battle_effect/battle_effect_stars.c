@@ -105,7 +105,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           size = 10;
         Transform_Reset();
         Transform_SetLookAt(camera, camera + 3);
-        SceneTransform_ApplyPosition(bolt);
+        Transform_ApplyPosition(bolt);
         nearest = 0;
         for (j = 0; j != RING_POINTS; j++) {
           s32 depth;
@@ -118,7 +118,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
             scale[0] = Q16_ONE;
           scale[1] = scale[0];
           scale[2] = scale[0];
-          SceneTransform_ApplyScale(scale);
+          Transform_ApplyScale(scale);
           Transform_ApplyRoll(j * 0x199a);
           depth = EffectPosition_ProjectPoint(&gStar_Points[(j & 1) * 3], &pos);
           if (nearest < depth)

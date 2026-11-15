@@ -338,10 +338,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         gProjection.centerX = 60;
-        SceneTransform_ApplyPosition(focus);
-        SceneTransform_ApplyPosition3(0, px(16), 0);
+        Transform_ApplyPosition(focus);
+        Transform_ApplyTranslation(0, px(16), 0);
         if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyRoll(20576);
         } else {
@@ -351,7 +351,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         if (frame > 31) {
           scale = (frame << 10) + Q16_ONE / 8;
         }
-        SceneTransform_ApplyUniformScale(scale);
+        Transform_ApplyUniformScale(scale);
         if (frame > 3) {
           s32 shade = frame * 4 - 80;
 

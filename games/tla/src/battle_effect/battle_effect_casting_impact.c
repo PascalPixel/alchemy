@@ -89,7 +89,7 @@ struct IwramPointers {
 #define ALT_BLITTER (IWRAM->altBlitter)
 /* FAKEMATCH(dead): the second release in a once-only block. */
 #define RELEASE_BLITTERS()                                                     \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);                                      \
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                                 \
   do {                                                                         \
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);                                      \
   } while (0)
@@ -1276,7 +1276,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 56, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -1299,7 +1299,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -1334,12 +1334,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             top = 0;
           while (scroll > 104)
             scroll -= 104;
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x - 8, top + scroll - 104, 17, 104);
           ALT_BLITTER(screen, buffer, x - 8, top + scroll, 17, 104 - scroll);
           ALT_BLITTER(screen, buffer + 0x6e8, x - 17, top + 47, 34, 65);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           if (frame == 8)
             work->shakeFrames = 8;
           if (frame > 1) {
@@ -1369,15 +1369,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           s32 h;
           x = target[0] / 2;
           h = 48;
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x - 24, h, 24, h);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x, h, 24, h);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
@@ -1539,7 +1539,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             m = gCastingImpact_BitePictures[frame / 2];
           else
             m = 3;
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           /* FAKEMATCH(dead): a once-only block. */
           do {
             /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
@@ -2014,7 +2014,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -2045,11 +2045,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 p->variant = (life + 1) & 3;
               }
               Transform_Reset();
-              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
-                                            px(target[1] - 64), 0);
+              Transform_ApplyTranslation(px(target[0] / 2 - 64),
+                                         px(target[1] - 64), 0);
               Transform_ApplyRoll(p->z);
               p->z += p->velocityZ;
-              SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
+              Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE, Q16_ONE);
               Render_TransformVertices(gBattleEffect_TaperedBeamCorners, matrix,
                                        4);
               Render_DrawModelList(model);
@@ -2080,9 +2080,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         model->vertices = matrix;
         model->shade = fade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
-                                      px(target[1] - 64), 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(px(target[0] / 2 - 64), px(target[1] - 64),
+                                   0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
           Sound_PlayFar(SE_104);
         if (fade >= -63) {
@@ -2095,13 +2095,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 11);
           }
-          SceneTransform_ApplyUniformScale(fade);
+          Transform_ApplyUniformScale(fade);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                    4);
           Render_DrawModelList(model);
           if (kind != CASTING_IMPACT_IMPACT_REVERSE_STAR) {
             Transform_ApplyYaw(-frame << 12);
-            SceneTransform_ApplyUniformScale(Q16_ONE / 2);
+            Transform_ApplyUniformScale(Q16_ONE / 2);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                      4);
             Render_DrawModelList(model);
@@ -2119,9 +2119,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             fade = 0x38000 - (frame << 12);
           if (two > 1 && fade > 0) {
             BattleEffect_DrawShadedCircles(work->frames, m * 4, fade);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             Canvas_BlitAtFoot(work->frames, target[0] / 2, target[1], m * 4);
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 BLITTER_ADDITIVE);
           }
@@ -2154,12 +2154,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
-                                              px(target[1] - 64), 0);
-                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyTranslation(px(target[0] / 2 - 64),
+                                           px(target[1] - 64), 0);
+                Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
-                SceneTransform_ApplyUniformScale(angle >> 1);
+                Transform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                          matrix, 4);
                 Render_DrawModelList(model);
@@ -2178,11 +2178,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             model->shade = fade;
             if (fade >= -63) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
-                                            px(target[1] - 64), 0);
-              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyTranslation(px(target[0] / 2 - 64),
+                                         px(target[1] - 64), 0);
+              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyPitch(TRIG_TURN / 4);
-              SceneTransform_ApplyUniformScale(angle);
+              Transform_ApplyUniformScale(angle);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        matrix, 4);
               Render_DrawModelList(model);
@@ -2199,12 +2199,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
-                                              px(target[1] - 64), 0);
-                SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                Transform_ApplyTranslation(px(target[0] / 2 - 64),
+                                           px(target[1] - 64), 0);
+                Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
-                SceneTransform_ApplyUniformScale(t * 3 << 12);
+                Transform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                          matrix, 4);
                 Render_DrawModelList(model);
@@ -2271,10 +2271,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           model->shade = fade;
           if (fade >= -63) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(target[0] / 2 - 64), px(40), 0);
-            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+            Transform_ApplyTranslation(px(target[0] / 2 - 64), px(40), 0);
+            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyPitch(1000);
-            SceneTransform_ApplyUniformScale(angle);
+            Transform_ApplyUniformScale(angle);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                      4);
             Render_DrawModelList(model);
@@ -2297,10 +2297,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                   0x4180;
               model->shade = fade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3(
+              Transform_ApplyTranslation(
                   px(target[0] / 2 - 60),
                   px(gCastingImpact_StunJipBandHeights[i]), 0);
-              SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
+              Transform_ApplyAxisScale(scale * 2, scale * 4, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
                 Transform_ApplyYaw((i * 2 + frame) << 12);
@@ -2345,9 +2345,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                       Q16_ONE / 4;
               model->shade = fade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3(px(target[0] / 2 - 60), 0x280000,
-                                            0);
-              SceneTransform_ApplyScale3(
+              Transform_ApplyTranslation(px(target[0] / 2 - 60), 0x280000, 0);
+              Transform_ApplyAxisScale(
                   scale, gCastingImpact_ArmorCrushWaveStretch[i] * scale * 2,
                   scale / 4);
               Transform_ApplyPitch(1000);

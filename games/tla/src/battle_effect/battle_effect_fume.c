@@ -197,13 +197,13 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(caster.x / 2 - 64),
-                                        px(caster.y) + 0xffc00000, 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(caster.x / 2 - 64),
+                                     px(caster.y) + 0xffc00000, 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
-          SceneTransform_ApplyUniformScale(Q16_ONE * 4);
+          Transform_ApplyUniformScale(Q16_ONE * 4);
           Render_TransformVertices(corners, buffer, 66);
           Render_DrawModelList(model);
 
@@ -214,9 +214,9 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
             texture.logHeight = 6;
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
-            SceneTransform_ApplyPosition3(px(endX), px(endY), 0);
+            Transform_ApplyTranslation(px(endX), px(endY), 0);
             Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
-            SceneTransform_ApplyUniformScale(width * 28 / 32);
+            Transform_ApplyUniformScale(width * 28 / 32);
             Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);
             Render_DrawModelList(model);
           }

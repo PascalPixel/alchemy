@@ -88,7 +88,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
       point[0] = target->x;
       point[1] = px(20);
       point[2] = target->z;
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
@@ -158,9 +158,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-                      BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 

@@ -1,39 +1,39 @@
-	.global Field_TestScenes5
-Field_TestScenes5:
+	.global Field_Test4
+Field_Test4:
 	map_header 0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_TestScenes5, .LField_TestScenes5_CELL_PICTURES
-	map_block Field_TestScenes5, .LField_TestScenes5_SHAPES
-	map_block Field_TestScenes5, .LField_TestScenes5_GRID
-	map_block Field_TestScenes5, .LField_TestScenes5_SHAPE_GRID
-	map_block Field_TestScenes5
-	map_block Field_TestScenes5
-	map_block Field_TestScenes5, .LField_TestScenes5_SCENE
-.LField_TestScenes5_CELL_PICTURES:
+	map_block Field_Test4, .LField_Test4_CELL_PICTURES
+	map_block Field_Test4, .LField_Test4_SHAPES
+	map_block Field_Test4, .LField_Test4_GRID
+	map_block Field_Test4, .LField_Test4_SHAPE_GRID
+	map_block Field_Test4
+	map_block Field_Test4
+	map_block Field_Test4, .LField_Test4_SCENE
+.LField_Test4_CELL_PICTURES:
 	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
 	.balign 4, 0
-.LField_TestScenes5_SHAPES:
+.LField_Test4_SHAPES:
 	.incbin "games/tla/src/map/kibombo_mountains_waft/shapes.table.lz"
 	.balign 4, 0
-.LField_TestScenes5_GRID:
-	.incbin "games/tla/src/map/test_scenes_5/map.grid.lz"
+.LField_Test4_GRID:
+	.incbin "games/tla/src/map/test_4/map.grid.lz"
 	.balign 4, 0
-.LField_TestScenes5_SHAPE_GRID:
+.LField_Test4_SHAPE_GRID:
 	.incbin "games/tla/src/map/kibombo_mountains_waft/shape_grid.plane.lz"
 	.balign 4, 0
-.LField_TestScenes5_SCENE:
+.LField_Test4_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data632
 Resource_Data632:
 	.incbin "games/tla/src/graphics/tileset/blank/palette.gbapal.lz"
-	.byte 0x00	@ PACKER: left in the buffer by Field_TestScenes5+0xb
+	.byte 0x00	@ PACKER: left in the buffer by Field_Test4+0xb
 	.global Resource_Data633
 Resource_Data633:
 	.incbin "games/tla/src/graphics/tileset/blank/tiles_a.4bpp.mtf"
-	.byte 0x70, 0x84	@ PACKER: left in the buffer by Field_TestScenes5+0x14e
+	.byte 0x70, 0x84	@ PACKER: left in the buffer by Field_Test4+0x14e
 	.global Resource_Data634
 Resource_Data634:
 	.incbin "games/tla/src/graphics/tileset/blank/tiles_b.4bpp.mtf"

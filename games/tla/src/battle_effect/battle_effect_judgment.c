@@ -310,8 +310,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-px(4), px(24), 0);
-      SceneTransform_ApplyUniformScale(s);
+      Transform_ApplyTranslation(-px(4), px(24), 0);
+      Transform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
@@ -521,7 +521,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       } else {
         sheet = work->sheet + 0x4240;
       }
-      slot = (DrawRectangle *)&Ram_HeapSlots->ramCode2;
+      slot = (DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
       DRAW_ALT_THROUGH(slot, 19, sheet, 36, top - 24, 24, 24);
       DRAW_ALT_THROUGH(slot, 23, sheet, 59, top - 24, 24, 24);
       DRAW_ALT_THROUGH(slot, 27, sheet, 36, top - 1, 24, 24);
@@ -582,8 +582,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-px(4), px(8), 0);
-      SceneTransform_ApplyUniformScale(s);
+      Transform_ApplyTranslation(-px(4), px(8), 0);
+      Transform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
@@ -697,9 +697,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
     if (frame > 85) {
       draw[1](canvas, work->sheet, 0, 0, 120, 120);
     }
@@ -771,7 +771,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         }
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 63) {
       /* FAKEMATCH(temporary): the scroll value through a local. */
       s32 y = Random16() % 4 + 30;

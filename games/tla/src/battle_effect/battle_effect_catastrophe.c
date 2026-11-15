@@ -546,10 +546,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         model->shade = shade;
         texture.pixels = work->sheet + c * 0x600;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(gCatastrophe_BurstX[i] - 48),
-                                      px(gCatastrophe_BurstY[i] - 44), 0);
+        Transform_ApplyTranslation(px(gCatastrophe_BurstX[i] - 48),
+                                   px(gCatastrophe_BurstY[i] - 44), 0);
         Transform_ApplyRoll(0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -702,12 +702,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 t = p->x / 8;
             s32 b = span - drift;
 
-            SceneTransform_ApplyPosition3(px(t - 64) + b / 2,
-                                          px(p->y / 8 - 64) + camZ + sway, 0);
+            Transform_ApplyTranslation(px(t - 64) + b / 2,
+                                       px(p->y / 8 - 64) + camZ + sway, 0);
           }
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(p->z);
-          SceneTransform_ApplyScale3(Q16_ONE * 4, 85536, Q16_ONE / 2);
+          Transform_ApplyAxisScale(Q16_ONE * 4, 85536, Q16_ONE / 2);
           Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
           Render_DrawModelList(model);
           p->y += p->velocityY * 2;
@@ -732,11 +732,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       texture.pixels = work->sheet + p->z;
       Transform_Reset();
-      SceneTransform_ApplyPosition3((span - drift) / 2 + px(4), camZ + 0xcc0000,
-                                    0);
-      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+      Transform_ApplyTranslation((span - drift) / 2 + px(4), camZ + 0xcc0000,
+                                 0);
+      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
       Transform_ApplyRoll(p->y);
-      SceneTransform_ApplyScale3(Q16_ONE * 4, 85536, Q16_ONE / 2);
+      Transform_ApplyAxisScale(Q16_ONE * 4, 85536, Q16_ONE / 2);
       Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
       Render_DrawModelList(model);
     }
@@ -768,10 +768,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                      ((base + i) % 3 << 12) + 0x2000);
         texture.pixels = work->sheet + p4->z;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(1), p4->y, 0);
-        SceneTransform_ApplyScale3(sx, Q16_ONE, Q16_ONE / 2);
-        SceneTransform_ApplyPosition3(p4->x, 0, 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE * 2, Q16_ONE);
+        Transform_ApplyTranslation(px(1), p4->y, 0);
+        Transform_ApplyAxisScale(sx, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(p4->x, 0, 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE * 2, Q16_ONE);
         Transform_ApplyRoll(TRIG_TURN / 2);
         Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
         Render_DrawModelList(model);
@@ -813,16 +813,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.pixels = work->sheet + 0x1000;
         Transform_Reset();
         b = span - drift;
-        SceneTransform_ApplyPosition3(b / 2 + px(5), camZ + px(230), 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(b / 2 + px(5), camZ + px(230), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyPitch(18768);
         a = -frame;
         a <<= 10;
         Transform_ApplyRoll(a);
-        SceneTransform_ApplyUniformScale(s);
-        SceneTransform_ApplyPosition3(0, -px(15), 0);
+        Transform_ApplyUniformScale(s);
+        Transform_ApplyTranslation(0, -px(15), 0);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-        SceneTransform_ApplyPosition3(0, px(15), 0);
+        Transform_ApplyTranslation(0, px(15), 0);
         Render_DrawModelList(model);
         texture.pixels = work->sheet;
         for (i = 0; i != 3; i++) {
@@ -832,7 +832,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 phase = i * 21845 + 10922;
             model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);
           }
-          SceneTransform_ApplyPosition3(0, -px(16), 0);
+          Transform_ApplyTranslation(0, -px(16), 0);
           if (frame > 579) {
             s32 v = (frame - 580) * 1096;
 
@@ -864,13 +864,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               if (v < -0xcd140) {
                 v = -0xcd140;
               }
-              SceneTransform_ApplyPosition3(0, v, 0);
+              Transform_ApplyTranslation(0, v, 0);
             }
-            SceneTransform_ApplyPosition3(
+            Transform_ApplyTranslation(
                 ((b + (s32)((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
-            SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
+            Transform_ApplyAxisScale(Q16_ONE, 32000, Q16_ONE);
             Transform_ApplyRoll(frame << 11);
-            SceneTransform_ApplyUniformScale(s);
+            Transform_ApplyUniformScale(s);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -892,10 +892,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.logWidth = 7;
         texture.logHeight = 7;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(1), -px(16), 0);
-        SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
+        Transform_ApplyTranslation(px(1), -px(16), 0);
+        Transform_ApplyAxisScale(Q16_ONE, 32000, Q16_ONE);
         Transform_ApplyRoll(frame << 10);
-        SceneTransform_ApplyUniformScale(s);
+        Transform_ApplyUniformScale(s);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -1072,7 +1072,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               {
                 s32 c = gCatastrophe_GlintFlips[Random16() & 3] | 3;
 
-                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, c, 0);
+                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, c,
+                                          0);
               }
               {
                 s32 at = gBattleEffect_GlintPictures[n];
@@ -1081,12 +1082,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                  * picture's offset and the draw. */
                 do {
                 } while (0);
-                ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+                ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                     canvas, work->sheet + 0x800 + at, x, y,
                     gBattleEffect_GlintPictureWidths[n],
                     gBattleEffect_GlintPictureHeights[n]);
               }
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
           }
         }
@@ -1115,15 +1116,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialModel->vertices = verts2;
           aerialTexture.pixels = Data_02011000;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-px(2), rise, 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(-px(2), rise, 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyPitch(18768);
           a = frame << 9;
           Transform_ApplyRoll(a);
-          SceneTransform_ApplyUniformScale(s);
-          SceneTransform_ApplyPosition3(0, -px(15), 0);
+          Transform_ApplyUniformScale(s);
+          Transform_ApplyTranslation(0, -px(15), 0);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts2, 4);
-          SceneTransform_ApplyPosition3(0, px(15), 0);
+          Transform_ApplyTranslation(0, px(15), 0);
           Render_DrawModelList(aerialModel);
           aerialTexture.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
@@ -1134,7 +1135,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Transform_Push();
             Transform_ApplyRoll(i * 21845 + 10922);
             aerialModel->shade = tone;
-            SceneTransform_ApplyPosition3(0, -px(16), 0);
+            Transform_ApplyTranslation(0, -px(16), 0);
             v = 19712;
             if (frame > 63) {
               v = v - (frame << 10) + 0x10000;
@@ -1181,10 +1182,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 aerialTexture.logWidth = 7;
                 aerialTexture.logHeight = 7;
                 Transform_Reset();
-                SceneTransform_ApplyPosition3(0, px(16), 0);
-                SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
+                Transform_ApplyTranslation(0, px(16), 0);
+                Transform_ApplyAxisScale(Q16_ONE, 32000, Q16_ONE);
                 Transform_ApplyRoll(frame << 10);
-                SceneTransform_ApplyUniformScale(s);
+                Transform_ApplyUniformScale(s);
                 Render_TransformVertices(gBattleEffect_SquareCorners, verts2,
                                          4);
                 Render_DrawModelList(aerialModel);
@@ -1227,7 +1228,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyRoll(p->z);
             p->z += p->velocityZ;
-            SceneTransform_ApplyScale3(s << 2, s, Q16_ONE);
+            Transform_ApplyAxisScale(s << 2, s, Q16_ONE);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts2,
                                      4);
             Render_DrawModelList(aerialModel);
@@ -1468,15 +1469,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepModel->mesh = strip;
         sweepModel->scrollU = (frame << 3) & 127;
         Transform_Reset();
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         a = frame * 3 * 127 * 16;
         b = frame << 13;
         c = Trig_Sin(a);
-        SceneTransform_ApplyPosition3(slide, (c << 5) + Trig_Cos(b) * 24, 0);
-        SceneTransform_ApplyUniformScale(55536);
+        Transform_ApplyTranslation(slide, (c << 5) + Trig_Cos(b) * 24, 0);
+        Transform_ApplyUniformScale(55536);
         Transform_Push();
         Transform_ApplyRoll(TRIG_TURN / 4);
-        SceneTransform_ApplyUniformScale(0x42ee0);
+        Transform_ApplyUniformScale(0x42ee0);
         Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(sweepModel);
         Transform_Pop();
@@ -1485,8 +1486,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepTexture.logHeight = 6;
         sweepModel->scrollU = 0;
         sweepTexture.pixels = work->sheet + 0x800;
-        SceneTransform_ApplyPosition3(
-            -0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
+        Transform_ApplyTranslation(-0x20000,
+                                   (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
         Transform_ApplyRoll(-TRIG_TURN / 32);
         {
           s32 s0 = Trig_Sin(a);
@@ -1500,7 +1501,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           y1 = (s1 << 5) + Trig_Cos(b) * 24;
           Transform_ApplyRoll((y0 - y1) / 512 + -0x400);
         }
-        SceneTransform_ApplyScale3(0x21170, 105536, Q16_ONE);
+        Transform_ApplyAxisScale(0x21170, 105536, Q16_ONE);
         Render_TransformVertices(gBattleEffect_SquareCorners, quads, 4);
         Render_DrawModelList(sweepModel);
         Heap_Release(sweepModel);

@@ -74,16 +74,16 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   // mirror for the other side.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, COMPOSITE_CLIP_Y,
                         BLITTER_ADDITIVE);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         BLITTER_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   }
   draw[0] = Ram_HeapSlots->ramCode;
-  draw[1] = Ram_HeapSlots->ramCode2;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
@@ -262,7 +262,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // Drops draw at their maximum; droplets add their light.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
   draw[0] = heapCache[26];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y, BLITTER_ADDITIVE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, COMPOSITE_CLIP_Y,
+                      BLITTER_ADDITIVE);
   draw[1] = heapCache[47];
 
   for (i = 0; i != 512; i++)

@@ -1222,8 +1222,8 @@ void LuckyWheels_Run(void) {
 
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 1);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 0);
-    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 8, 7, 3, 0);
+    draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
     Dma_Set((void *)BG_PLTT, bgShade, 0x84000080, REG_DMA3);
@@ -1375,7 +1375,7 @@ void LuckyWheels_Run(void) {
                               0x100);
       wait(1);
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(LuckyWheels_TransferCanvas);
     Task_Remove(LuckyWheels_Update);

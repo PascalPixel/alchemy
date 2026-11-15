@@ -37,8 +37,9 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+                      BLITTER_MAX);
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body: a random heading and

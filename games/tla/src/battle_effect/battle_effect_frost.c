@@ -62,7 +62,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     point[1] = 0;
     point[2] = px(512);
     Transform_Reset();
-    SceneTransform_ApplyPosition(point);
+    Transform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
     if (frame == 85)

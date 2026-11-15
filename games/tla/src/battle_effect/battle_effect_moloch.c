@@ -257,8 +257,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(16), px(gMoloch_RingHeights[i]), 0);
-          SceneTransform_ApplyScale3(scale, scale, scale);
+          Transform_ApplyTranslation(px(16), px(gMoloch_RingHeights[i]), 0);
+          Transform_ApplyAxisScale(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
@@ -397,7 +397,7 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   // The drop: one 20x40 or 12x24 cell of its strip in the sheet.
   if (small == 0)
@@ -460,7 +460,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
 
   Transform_Reset();
   SET_POSITION(&position, px(x) - px(63), px(63 - height), 0);
-  SceneTransform_ApplyPosition(&position);
+  Transform_ApplyPosition(&position);
 
   model->kind = 4;
   model->texture = &texture;
@@ -623,7 +623,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 
   sprites = Ram_HeapSlots->battleSheet;
   draw = Ram_HeapSlots->ramCode;
-  drawAlt = Ram_HeapSlots->ramCode2;
+  drawAlt = Ram_HeapSlots->ramCodePaired;
   if (t < *(gIris_SplashRadii + small) * 2) {
     r = *(gIris_SplashRadii + small) * 2 - t;
     cel = r / 6;
@@ -881,10 +881,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           place[0] = work->particles[i].x - px(64);
           place[1] = work->particles[i].y - px(64);
           place[2] = 0;
-          SceneTransform_ApplyPosition(place);
+          Transform_ApplyPosition(place);
           place[1] = place[0] = work->particles[i].velocityZ;
           place[2] = 0;
-          SceneTransform_ApplyScale(place);
+          Transform_ApplyScale(place);
           work->particles[i].velocityZ += px(1) / 8;
           model->kind = 4;
           model->texture = &texture;
@@ -982,10 +982,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   }
   tileBuffer = Data_02010578;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
-  draw[1] = Ram_HeapSlots->ramCode2;
+  draw[1] = Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tileBuffer, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -994,7 +994,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   BattleEffect_DrawShadedCircles(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Transform_Reset();
 
   for (;;) {
@@ -1073,9 +1073,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame <= 175) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[1] = Ram_HeapSlots->ramCode2;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       for (i = 0; i != 15; i++) {
         if (!(frame & 1)) {
           for (j = 9; j != 0; j--) {
@@ -1150,7 +1150,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       {
         s32 size = scene->radiusPixels * 2;
 
@@ -1423,7 +1423,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     if ((u32)(frame - 240) <= 127 && !(frame & 15)) {
       s32 v = (240 - frame) / 16;
@@ -1457,7 +1457,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 279) <= 132 || frame > 446)
       UpdateSparks();
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // The pillars of light.
     if (frame == 370) {
@@ -1936,14 +1936,14 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       place[0] = px(32);
       place[1] = -px(24);
       place[2] = 0;
-      SceneTransform_ApplyPosition(place);
+      Transform_ApplyPosition(place);
       Transform_ApplyRoll(0x9800);
       grow[0] = 0x10000;
       grow[1] = (frame - 758) << 10;
       if (grow[1] > 0x10000)
         grow[1] = 0x10000;
       grow[2] = 0;
-      SceneTransform_ApplyScale(grow);
+      Transform_ApplyScale(grow);
       model->kind = 4;
       model->mesh = gIris_ConeMesh;
       model->texture = &texture2;

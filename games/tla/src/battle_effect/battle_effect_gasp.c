@@ -25,8 +25,8 @@ struct StripQuad;
 #define PLACE_PARTICLE(p)                                                      \
   do {                                                                         \
     Transform_Reset();                                                         \
-    SceneTransform_ApplyPosition3((p)->x - px(64), (p)->y - px(64), 0);        \
-    SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);                 \
+    Transform_ApplyTranslation((p)->x - px(64), (p)->y - px(64), 0);           \
+    Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);                   \
     Transform_ApplyRoll((p)->z);                                               \
   } while (0)
 /// DEAD: each test reads the count twice and drops the first read; both loads
@@ -537,9 +537,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           Transform_Reset();
           p->y += p->velocityY;
           p->x += p->velocityX;
-          SceneTransform_ApplyPosition3(
+          Transform_ApplyTranslation(
               (Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16), p->y, 0);
-          SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
+          Transform_ApplyAxisScale(size >> 1, size, size >> 1);
           Transform_ApplyPitch(-TRIG_TURN / 4);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -571,15 +571,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->shade = shade;
           half = scale >> 1;
           Transform_Reset();
-          SceneTransform_ApplyScale3(half, scale, scale);
+          Transform_ApplyAxisScale(half, scale, scale);
           Transform_ApplyRoll((frame << 8) + TRIG_TURN * 3 / 4);
           Transform_ApplyPitch((frame << 6) - 0x4770);
           for (i = 0; i != 12; i++) {
             texture.pixels = work->sheet + (i % 3 << 10);
             Transform_Push();
             Transform_ApplyRoll(frame * 356 + i * 5461);
-            SceneTransform_ApplyPosition3(0, px(116), 0);
-            SceneTransform_ApplyScale3(half, half, half);
+            Transform_ApplyTranslation(0, px(116), 0);
+            Transform_ApplyAxisScale(half, half, half);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Transform_Pop();
@@ -599,11 +599,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
         Transform_ApplyPitch(TRIG_TURN / 4);
         Transform_ApplyYaw((frame << 9) - TRIG_TURN / 16);
-        SceneTransform_ApplyScale3(frame * 2596 >> 1, frame * 2596 >> 1,
-                                   frame * 2596 >> 1);
+        Transform_ApplyAxisScale(frame * 2596 >> 1, frame * 2596 >> 1,
+                                 frame * 2596 >> 1);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -640,13 +640,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->scrollV = (twist + i * 7) & 31;
           if ((u32)p->variant <= 31) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(ball->x) - px(64),
-                                          px(ball->y) - px(64), 0);
-            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+            Transform_ApplyTranslation(px(ball->x) - px(64),
+                                       px(ball->y) - px(64), 0);
+            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
             Transform_ApplyRoll(p->x);
-            SceneTransform_ApplyScale3(Trig_Sin(p->variant * 682) * 3 +
-                                           TRIG_TURN * 3 / 4,
-                                       0x20000, 0x10000);
+            Transform_ApplyAxisScale(Trig_Sin(p->variant * 682) * 3 +
+                                         TRIG_TURN * 3 / 4,
+                                     0x20000, 0x10000);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -676,12 +676,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 64),
-                                            0);
-              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 64), 0);
+              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
-              SceneTransform_ApplyUniformScale(scale);
+              Transform_ApplyUniformScale(scale);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                        4);
               Render_DrawModelList(model);
@@ -714,10 +713,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               shade = 0;
             model->shade = shade;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48),
-                                          0);
+            Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
-            SceneTransform_ApplyScale3(scale, scale, scale);
+            Transform_ApplyAxisScale(scale, scale, scale);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -828,9 +826,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->kind = 7;
           texture.pixels = work->sheet + 0x3080;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(ball->x / 2 - 64), px(ball->y - 48),
-                                        0);
-          SceneTransform_ApplyScale3(scale / 4, scale, scale / 2);
+          Transform_ApplyTranslation(px(ball->x / 2 - 64), px(ball->y - 48), 0);
+          Transform_ApplyAxisScale(scale / 4, scale, scale / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -888,7 +885,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          SceneTransform_ApplyUniformScale(Q16_ONE / 2);
+          Transform_ApplyUniformScale(Q16_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -937,7 +934,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          SceneTransform_ApplyUniformScale(Q16_ONE / 2);
+          Transform_ApplyUniformScale(Q16_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -1012,11 +1009,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = verts;
       Transform_Reset();
-      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        SceneTransform_ApplyPosition3(px(pos.x - 136), px(pos.y - 48), 0);
+        Transform_ApplyTranslation(px(pos.x - 136), px(pos.y - 48), 0);
       else
-        SceneTransform_ApplyPosition3(px(pos.x - 108), px(pos.y - 56), 0);
+        Transform_ApplyTranslation(px(pos.x - 108), px(pos.y - 56), 0);
       for (i = 0; i != 4; i++) {
         s32 scale;
 
@@ -1033,9 +1030,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (d > 80)
             d = 80;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            SceneTransform_ApplyPosition3(d * 3 << 13, d * 7 << 11, 0);
+            Transform_ApplyTranslation(d * 3 << 13, d * 7 << 11, 0);
           else
-            SceneTransform_ApplyPosition3(-(d * 3 << 13), d * 7 << 11, 0);
+            Transform_ApplyTranslation(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + TRIG_TURN * 3 / 8;
           if (args->side == EFFECT_SIDE_ENEMIES)
             angle = -angle;
@@ -1055,7 +1052,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         else
           scale = Q16_ONE;
         if (scale > 0) {
-          SceneTransform_ApplyScale3(scale * 6, scale * 2, Q16_ONE);
+          Transform_ApplyAxisScale(scale * 6, scale * 2, Q16_ONE);
           Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -1080,9 +1077,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (scale > 0) {
             model->shade = 0;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(pos.x / 2 + i * 16 - 72),
-                                          px(pos.y - 64), 0);
-            SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
+            Transform_ApplyTranslation(px(pos.x / 2 + i * 16 - 72),
+                                       px(pos.y - 64), 0);
+            Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
             Transform_ApplyRoll(TRIG_TURN / 8);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
@@ -1129,12 +1126,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         if (scale > Q16_ONE / 2) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(pos.x / 2 - 60), px(8), 0);
-          SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE);
+          Transform_ApplyTranslation(px(pos.x / 2 - 60), px(8), 0);
+          Transform_ApplyAxisScale(scale >> 1, scale, Q16_ONE);
           Transform_ApplyPitch((i << 13) + 4000);
           Transform_ApplyYaw(frame << 9);
           Transform_ApplyRoll((frame + i * 16) << 9);
-          SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE / 2, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE, Q16_ONE / 2, Q16_ONE);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
@@ -1150,22 +1147,22 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(args->user, &pos);
       Transform_Reset();
-      SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
       if (frame <= 15) {
         s32 scale = Q16_ONE * 3 - (frame * 3 << 12);
 
         model->shade = 0;
-        SceneTransform_ApplyScale3(scale >> 1, scale, scale >> 1);
+        Transform_ApplyAxisScale(scale >> 1, scale, scale >> 1);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 3;
 
         texture.pixels = work->sheet;
-        SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
+        Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
         Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
@@ -1228,7 +1225,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         s32 t = frame - i * 8;
 
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
         if ((u32)t <= 15) {
           s32 scale = Q16_ONE * 4 - (t << 14);
           s32 shade = 0;
@@ -1236,7 +1233,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (t <= 7)
             shade = t * 8 - 64;
           model->shade = shade;
-          SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
+          Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -1244,12 +1241,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 2;
 
         texture.pixels = work->sheet;
-        SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
+        Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
         Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
@@ -1295,9 +1292,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         else
           EffectPosition_ProjectScaledBattler(args->user, &pos);
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
         Transform_ApplyPitch(TRIG_TURN / 4);
-        SceneTransform_ApplyScale3(scale / 3, scale, scale);
+        Transform_ApplyAxisScale(scale / 3, scale, scale);
         if (mode == GASP_MODE_REFLUX)
           Transform_ApplyYaw(-frame << 10);
         else

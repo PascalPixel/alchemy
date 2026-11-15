@@ -262,12 +262,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     // The arcs and waves, mirrored on odd strikes.
     if (args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -332,7 +332,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     Transform_SetLookAt(camera, camera + 3);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+                        BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     draw[1] = ((struct {
                 u8 before[188];
@@ -377,15 +378,15 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     gFlurry_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     BLITTER_ADDITIVE);
-          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],
               gBattleEffect_GlintPictureHeights[cel]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
       // The smoke: sixteen puffs rise from the target's feet, six cels of

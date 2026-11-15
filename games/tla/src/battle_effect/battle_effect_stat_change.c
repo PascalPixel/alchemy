@@ -303,10 +303,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
-      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags ^ flipX2,
+      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags ^ flipX2,
                                 additive);
       // Read through the slot's address, which folds to one constant.
-      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCode2;
+      draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -329,7 +329,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       point[0] = object->x;
       point[1] = height;
       point[2] = object->z;
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (start != 0) {
         if (frame == member * 8 + 53)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
@@ -344,10 +344,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags,
                                     additive);
           {
-            void **slot = &Ram_HeapSlots->ramCode2;
+            void **slot = &Ram_HeapSlots->ramCodePaired;
 
             /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
              * the heap slot's address. */
@@ -451,10 +451,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                                     BLITTER_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, lowerFlags,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
-          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+          draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
           draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
           EFFECT_RELEASE_BLITTERS();
@@ -625,7 +625,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         point[2] = object->z;
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->focus);
-        SceneTransform_ApplyPosition(point);
+        Transform_ApplyPosition(point);
         origin[0] = 0;
         origin[1] = 0;
         origin[2] = 0;

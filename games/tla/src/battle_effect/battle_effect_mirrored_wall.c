@@ -40,7 +40,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
     out[0] = slots[26];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     out[1] = slots[47];
   } else {
@@ -53,7 +53,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE, flags);
     out[0] = slots[26];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
     out[1] = slots[47];
@@ -174,9 +174,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCode2;
+    draw[1] = (DrawRectangle)heap->ramCodePaired;
 
     // A mote every eight frames drifts down a pixel a frame, swaying 16
     // pixels, until it is 8 pixels from the ground.
@@ -190,7 +190,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame > start) {
         for (i = 0; i != MOTES; i++) {
           struct Particle *mote = &PARTICLES[k * 64 + i];

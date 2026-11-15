@@ -197,8 +197,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
           across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
-          SceneTransform_ApplyPosition3(across, quad->y, deep);
-          SceneTransform_ApplyScale3(scale, scale, scale);
+          Transform_ApplyTranslation(across, quad->y, deep);
+          Transform_ApplyAxisScale(scale, scale, scale);
           Transform_ApplyPitch(quad->velocityX);
           Transform_ApplyRoll(quad->velocityZ);
           quad->velocityX += px(1) / 64;
@@ -572,8 +572,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-px(16), px(gZagan_RingHeights[k]), 0);
-        SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
+        Transform_ApplyTranslation(-px(16), px(gZagan_RingHeights[k]), 0);
+        Transform_ApplyAxisScale(scale, scale * 4 / 3, scale);
         Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);

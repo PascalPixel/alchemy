@@ -400,7 +400,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       point[0] = object->x;
       point[1] = px(40);
       point[2] = object->z;
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame == start + 20)
         Sound_PlayFar(SE_RECOVERY);
       if (mode == HEALING_MODE_SPRING) {

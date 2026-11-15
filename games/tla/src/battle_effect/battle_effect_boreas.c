@@ -69,9 +69,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  drawAlt = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  drawAlt = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);

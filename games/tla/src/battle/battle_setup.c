@@ -10,7 +10,7 @@
 #include "system/transform.h"
 #include "macros.h"
 
-void SceneTransform_SetPosition(s32 *position);
+void Transform_SetPosition(s32 *position);
 
 /// Runs each frame of a battle: pauses a link battle whose connection is lost,
 /// turns the camera a sixteenth of the way toward its target yaw, places it,
@@ -51,10 +51,10 @@ void BattleCamera_Update(void) {
     focus = camera->followPosition;
   }
 
-  SceneTransform_RewindStack();
+  Transform_RewindStack();
   Transform_SetYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);
-  SceneTransform_SetPosition(focus);
+  Transform_SetPosition(focus);
 
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);

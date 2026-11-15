@@ -221,16 +221,16 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through h, the same for the height
            * table. */
           __asm__("" : "=r"(h) : "0"(h));
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         gTargetMotes_GlintFlips[Random16() & 3],
                                     BLITTER_MAX);
-          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   TORNADO_GLINT_SHEET,
               x, y + 16, w[frame & 3], h[frame & 3]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
 
@@ -238,15 +238,15 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
 
       // From its turn on, the target's motes turn around it.
       if (frame > member * 8) {
@@ -365,9 +365,9 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   drawA = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-                      BLITTER_TRANSPARENT);
-  drawB = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_TRANSPARENT);
+  drawB = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != 32; i++) {
@@ -411,7 +411,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       record[0] = object->x;
       record[1] = 160 << 14;
       record[2] = object->z;
-      SceneTransform_ApplyPosition(record);
+      Transform_ApplyPosition(record);
       if (frame == member * 16 + 64)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
                                  POSE_DAMAGE, TINT_KEEP, 0);
@@ -605,7 +605,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       position[1] += delta[1];
       position[2] += delta[2];
     }
-    SceneTransform_ApplyPosition(position);
+    Transform_ApplyPosition(position);
 
     // The caster flashes for the first 24 frames.
     if (frame == 0)
@@ -713,7 +713,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       position[0] = object->x;
       position[1] = 160 << 14;
       position[2] = object->z;
-      SceneTransform_ApplyPosition(position);
+      Transform_ApplyPosition(position);
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)

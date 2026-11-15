@@ -296,12 +296,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             {
               s32 x = ((i & 3) << 17) + 0x20000;
               s32 o = -0x400000;
-              SceneTransform_ApplyPosition3(cx + x + o,
-                                            cy - px((i & 3) + 2) + o, 0);
+              Transform_ApplyTranslation(cx + x + o, cy - px((i & 3) + 2) + o,
+                                         0);
             }
-            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
             Transform_ApplyRoll(work->particles[i].x);
-            SceneTransform_ApplyScale3(
+            Transform_ApplyAxisScale(
                 Trig_Sin(work->particles[i].variant * 682) + TRIG_TURN / 4,
                 0x20000, 0x10000);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
@@ -325,8 +325,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(cx - px(62), cy - px(66), 0);
-          SceneTransform_ApplyScale3(s >> 1, s, s);
+          Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
+          Transform_ApplyAxisScale(s >> 1, s, s);
           Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyRoll(0x2800);
           Transform_ApplyYaw(-frame << 10);
@@ -335,14 +335,14 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
         if (frame >= 172 && frame <= 220) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(cx - px(62), cy - px(66), 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(0x2800);
           if (frame > 203) {
-            SceneTransform_ApplyScale3(0x80000 - ((frame - 204) << 15),
-                                       Q16_ONE * 2, 0x10000);
+            Transform_ApplyAxisScale(0x80000 - ((frame - 204) << 15),
+                                     Q16_ONE * 2, 0x10000);
           } else {
-            SceneTransform_ApplyScale3(0x80000, Q16_ONE * 2, Q16_ONE);
+            Transform_ApplyAxisScale(0x80000, Q16_ONE * 2, Q16_ONE);
           }
           Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
           Render_DrawModelList(model);
@@ -373,16 +373,16 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                 r / 2 - 8;
             y = a + (cy >> 16) - (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     gEclipse_GlintFlips[Random16() & 3] | 3, 1);
-          ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
               y, gBattleEffect_GlintPictureWidths[t],
               gBattleEffect_GlintPictureHeights[t]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_PRESENT_CANVAS(work);
     }
   }
@@ -486,10 +486,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Canvas_BlitAtFoot(cells, q->x >> 16, q->y >> 16, 96);
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3(q->x - px(63), q->y - px(64), 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
-        SceneTransform_ApplyScale3(0xdc500, 0x29c40, Q16_ONE / 2);
+        Transform_ApplyAxisScale(0xdc500, 0x29c40, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -616,10 +616,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->kind = 6;
         model->texture = &texture3;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-px(2), px(16), 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(-px(2), px(16), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
-        SceneTransform_ApplyScale3(s, Q16_ONE * 2, Q16_ONE / 2);
+        Transform_ApplyAxisScale(s, Q16_ONE * 2, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, gMapGridCellBuffer,
                                  4);
         Render_DrawModelList(model);
@@ -664,10 +664,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           s = 0x10000;
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-px(2), px(12), 0);
+        Transform_ApplyTranslation(-px(2), px(12), 0);
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 10);
-        SceneTransform_ApplyUniformScale(s);
+        Transform_ApplyUniformScale(s);
         Render_TransformVertices(Data_02010800, vertices, 128);
         Render_DrawModelList(model);
       }
@@ -697,12 +697,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             }
             model->shade = shade;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(-px(2), px(32), 0);
-            SceneTransform_ApplyScale3(s / 4, s / 4, s / 4);
+            Transform_ApplyTranslation(-px(2), px(32), 0);
+            Transform_ApplyAxisScale(s / 4, s / 4, s / 4);
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
-            SceneTransform_ApplyScale3(Q16_ONE, 0x60000, Q16_ONE);
-            SceneTransform_ApplyPosition3(0, px(gEclipse_RingHeights[i]), 0);
+            Transform_ApplyAxisScale(Q16_ONE, 0x60000, Q16_ONE);
+            Transform_ApplyTranslation(0, px(gEclipse_RingHeights[i]), 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
           }
@@ -955,13 +955,13 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           {
             s32 column = i & 3;
 
-            SceneTransform_ApplyPosition3(cx + px(column * 2 + 2) - px(64),
-                                          cy - px(column + 2) - px(64), 0);
+            Transform_ApplyTranslation(cx + px(column * 2 + 2) - px(64),
+                                       cy - px(column + 2) - px(64), 0);
           }
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);
-          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
-                                     0x20000, 0x10000);
+          Transform_ApplyAxisScale(Trig_Sin(ring->variant * 682) + TRIG_TURN,
+                                   0x20000, 0x10000);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
                                    4);
           Render_DrawModelList(model);
@@ -990,8 +990,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
             model->depthBias = bias;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(center.x / 2 - 60), px(32), 0);
-            SceneTransform_ApplyScale3(
+            Transform_ApplyTranslation(px(center.x / 2 - 60), px(32), 0);
+            Transform_ApplyAxisScale(
                 growth * 2, gFormChange_WaveStretch[i] * growth + 0x40000,
                 growth / 4);
             Transform_ApplyPitch(1000);

@@ -496,13 +496,13 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       model->scrollU = 127 & ~u;
     }
     Transform_Reset();
-    SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+    Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
-    SceneTransform_ApplyPosition3(px(source.x - 128), px(height), 0);
+    Transform_ApplyTranslation(px(source.x - 128), px(height), 0);
     if (args->side == EFFECT_SIDE_PARTY) {
       Transform_ApplyYaw(TRIG_TURN / 2);
     }
-    SceneTransform_ApplyUniformScale(0x21770);
+    Transform_ApplyUniformScale(0x21770);
     Render_TransformVertices(cells, vertices, 66);
     Render_DrawModelList(model);
     Transform_Pop();
@@ -513,9 +513,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SquareMesh;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
-      SceneTransform_ApplyPosition3(px(target.x - 124), px(height - 144), 0);
+      Transform_ApplyTranslation(px(target.x - 124), px(height - 144), 0);
       Transform_ApplyRoll(TRIG_TURN / 4);
-      SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
+      Transform_ApplyAxisScale(0x19c40, 0x14e20, Q16_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
     }

@@ -530,12 +530,12 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(gFlora_BloomX[i]),
-                                        px(gFlora_BloomY[i]), 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(gFlora_BloomX[i]), px(gFlora_BloomY[i]),
+                                     0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(gFlora_BloomRolls[i]);
           Transform_ApplyPitch(gFlora_BloomPitches[i]);
-          SceneTransform_ApplyUniformScale(scale);
+          Transform_ApplyUniformScale(scale);
           Transform_ApplyYaw(frame << 11);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -574,9 +574,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
       spin += 16;
       angle += spin;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      draw[1] = Ram_HeapSlots->ramCode2;
+      draw[1] = Ram_HeapSlots->ramCodePaired;
       for (i = 0; i != 32; i++) {
         s32 a = (i / 4) << 13;
         s32 m = i % 4;
@@ -610,7 +610,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 x - size / 2, y - size, size, size * 2);
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     if ((u32)(frame - 186) <= 79) {
       s32 v = frame - 186;
@@ -966,8 +966,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
         dagger->velocityZ = 0;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(dagger->x - px(64), dagger->y - px(64), 0);
-      SceneTransform_ApplyUniformScale(Q16_ONE / 2);
+      Transform_ApplyTranslation(dagger->x - px(64), dagger->y - px(64), 0);
+      Transform_ApplyUniformScale(Q16_ONE / 2);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);

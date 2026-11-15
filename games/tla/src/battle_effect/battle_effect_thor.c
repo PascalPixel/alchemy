@@ -7,7 +7,7 @@
 
 /// Heap slots 104 and 188 (byte offsets from 0x03000000) hold the blitters.
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
-#define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
+#define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 #define STORM_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0xc58))
 #define STORM_MOTE_CELLS 0x6000
@@ -158,7 +158,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (size > 8) {
         size = 8;
       }
-      SceneTransform_ApplyPosition(position);
+      Transform_ApplyPosition(position);
       Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(TRIG_TURN / 2);
       Transform_ApplyPitch(TRIG_TURN / 2);
@@ -170,10 +170,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       } else {
         SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
-      SceneTransform_ApplyScale(scale);
+      Transform_ApplyScale(scale);
     } else {
       SET_VECTOR(position, 0, 0, px(256));
-      SceneTransform_ApplyPosition(position);
+      Transform_ApplyPosition(position);
       Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);
       Transform_ApplyPitch(frame << 8);
@@ -220,11 +220,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         level = 7;
       }
       if (frame <= 139) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
         drawAlt = BLITTER_ALTERNATE;
       } else {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_MAX);
         drawAlt = BLITTER_ALTERNATE;
       }
@@ -247,7 +247,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
     // The beam: rows of the ramp narrowing at its top, and the light fan
@@ -273,20 +273,20 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       for (i = 0; i != beamHeight; i++) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
                         96);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       /* FAKEMATCH(dead): a never-true test of never and neverToo. */
       if (never || neverToo) {
         beamHeight = 0;
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32,
                         96);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -395,11 +395,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
               BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
                                 boltY, 72, 72);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             if (frame == i * 2 + 80) {
               spawned = 0;
@@ -462,7 +462,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       {
         DrawRectangle draw = BLITTER_ALTERNATE;
@@ -484,7 +484,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       // The formation is pushed back from frame 32.
       if (frame > 15) {
@@ -522,13 +522,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (never || neverToo) {
             y = 0;
           }
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     3 | gThor_CrackleFlips[Random16() & 3], 1);
           BLITTER_ALTERNATE(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintPictures[cell], x,
               y + 56, gBattleEffect_GlintPictureWidths[cell],
               gBattleEffect_GlintPictureHeights[cell]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
       if (frame <= 31) {

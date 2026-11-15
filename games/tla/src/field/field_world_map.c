@@ -105,7 +105,7 @@ void WorldMap_InitializePerspective(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition(cameraPosition);
+  Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(perspective->yaw);
   Transform_ApplyPitch(perspective->pitch);
   SET_POSITION(&eyeOffset, 0, 0, farPlane);
@@ -129,7 +129,7 @@ void WorldMap_InitializePerspective(void) {
   perspective->pitch = 0xe000;
   perspective->yaw = 0;
   Render_ResetTransformState__f02b998();
-  SceneTransform_ApplyPosition(cameraPosition);
+  Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(perspective->yaw);
   Transform_ApplyPitch(perspective->pitch);
   if (perspective->fixedEye == 0) {
@@ -526,7 +526,7 @@ void WorldMap_UpdateView(void) {
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition(cameraPosition);
+  Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(perspective->yaw);
   Transform_ApplyPitch(perspective->pitch);
   if (perspective->fixedEye == 0) {

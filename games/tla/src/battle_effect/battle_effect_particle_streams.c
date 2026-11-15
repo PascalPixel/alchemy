@@ -386,9 +386,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   maxBlend = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  additive = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  additive = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E,
@@ -981,7 +981,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       point.y = 0;
       point.depth = 0x2000000;
       Transform_Reset();
-      SceneTransform_ApplyPosition(&point.x);
+      Transform_ApplyPosition(&point.x);
       Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {

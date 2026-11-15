@@ -1571,49 +1571,49 @@ Resource_DirectoryTable:
 	resource , Tileset_ShopTestTilesB
 	resource , Tileset_ShopTestTilesC
 	resource , Tileset_ShopTestTilesD
-	resource , Field_TestScenes1
+	resource , Field_Test0
 	resource , Resource_Data61A
 	resource , Resource_Data61B
 	resource , Resource_Data61C
 	resource , Resource_Data61D
 	resource , Resource_Data61E
-	resource , Field_TestScenes2
+	resource , Field_Test1
 	resource , Resource_Data620
 	resource , Resource_Data621
 	resource , Resource_Data622
 	resource , Resource_Data623
 	resource , Resource_Data624
-	resource , Field_TestScenes3
+	resource , Field_Test2
 	resource , Resource_Data626
 	resource , Resource_Data627
 	resource , Resource_Data628
 	resource , Resource_Data629
 	resource , Resource_Data62A
-	resource , Field_TestScenes4
+	resource , Field_Test3
 	resource , Resource_Data62C
 	resource , Resource_Data62D
 	resource , Resource_Data62E
 	resource , Resource_Data62F
 	resource , Resource_Data630
-	resource , Field_TestScenes5
+	resource , Field_Test4
 	resource , Resource_Data632
 	resource , Resource_Data633
 	resource , Resource_Data634
 	resource , Resource_Data635
 	resource , Resource_Data636
-	resource , Field_TestScenes6
+	resource , Field_Test5
 	resource , Resource_Data638
 	resource , Resource_Data639
 	resource , Resource_Data63A
 	resource , Resource_Data63B
 	resource , Resource_Data63C
-	resource , Field_TestScenes7
+	resource , Field_Test6
 	resource , Resource_Data63E
 	resource , Resource_Data63F
 	resource , Resource_Data640
 	resource , Resource_Data641
 	resource , Resource_Data642
-	resource , Field_TestScenes8
+	resource , Field_Test7
 	resource , Resource_Data644
 	resource , Resource_Data645
 	resource , Resource_Data646

@@ -308,30 +308,30 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
 
-      pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+      pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
     }
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
     pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
     REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == BURST_SHOWER_MODE_FACES ||
              mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     pair[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 
-    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+    pair[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   } else {
     BattleEffect_FetchRectangleBlitters(args->side, pair);
   }
@@ -843,10 +843,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                   gProjectileVolleyB_GlintFlips[Random16() & 3] |
                       EFFECT_CLIP_BOUNDS,
                   BLITTER_ADDITIVE);
-              ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   widths[cel], heights[cel]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
               BattleEffect_FetchRectangleBlitters(args->side, pair);
             }
           }

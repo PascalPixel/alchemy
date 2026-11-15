@@ -15,7 +15,7 @@ extern s32 gTransformStackDepth;
 /// HEAP_SLOT_TRANSFORM_STACK, or just past it while a matrix is saved.
 extern u8 *gTransformStackTop;
 
-void SceneTransform_RewindStack(void);
+void Transform_RewindStack(void);
 void Transform_Push(void);
 void Transform_Store(void *destination);
 void Transform_Load(const void *source);

@@ -328,7 +328,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           shake[0] = 0;
           shake[1] = 0;
           Transform_Reset();
-          SceneTransform_ApplyPosition(shake);
+          Transform_ApplyPosition(shake);
 
           // Until frame 330 the scattered sparks gather on the centre, each
           // a part of its distance a frame; those that have arrived make one

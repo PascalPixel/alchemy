@@ -286,7 +286,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           d = 1024;
         }
         scale += d;
-        SceneTransform_ApplyScale3(scale, scale, scale);
+        Transform_ApplyAxisScale(scale, scale, scale);
       }
       i = 0;
       angle = -TRIG_TURN / 4;
@@ -294,9 +294,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-px(2), -px(64), 0);
-        SceneTransform_ApplyScale3(42000, 0x24650, Q16_ONE);
-        SceneTransform_ApplyScale3(scale, scale, scale);
+        Transform_ApplyTranslation(-px(2), -px(64), 0);
+        Transform_ApplyAxisScale(42000, 0x24650, Q16_ONE);
+        Transform_ApplyAxisScale(scale, scale, scale);
         Transform_ApplyRoll(TRIG_TURN / 2);
         Transform_ApplyYaw(angle);
         Render_TransformVertices(meshA, projected, 32);
@@ -322,7 +322,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       position[1] = 64;
       position[2] = 0;
       Transform_Reset();
-      SceneTransform_ApplyPosition(position);
+      Transform_ApplyPosition(position);
       Transform_ApplyPitch((u16)pitch);
       Transform_ApplyYaw((u16)yaw);
       if (frame <= 112) {
@@ -534,8 +534,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(x0), px(40), 0);
-          SceneTransform_ApplyScale3(s, s * gMeteorBlow_WaveStretch[i], s / 4);
+          Transform_ApplyTranslation(px(x0), px(40), 0);
+          Transform_ApplyAxisScale(s, s * gMeteorBlow_WaveStretch[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
             Transform_ApplyYaw(angle);
@@ -567,9 +567,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(half),
-                                        px(gMeteorBlow_RingHeights[i]), 0);
-          SceneTransform_ApplyScale3(s, s * 2, s);
+          Transform_ApplyTranslation(px(half), px(gMeteorBlow_RingHeights[i]),
+                                     0);
+          Transform_ApplyAxisScale(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);

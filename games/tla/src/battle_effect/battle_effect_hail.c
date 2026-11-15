@@ -229,16 +229,16 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         if (frame > 16)
           y = y - frame * 2 + 32;
         if (args->side == EFFECT_SIDE_PARTY)
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
         else
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_ADDITIVE);
         if (frame <= 3)
-          ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, work->sheet + 0x65c0,
-                                                   x, y, 20, 40);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+              canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
       }
 
@@ -290,10 +290,10 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
                  * are set. */
                 __asm__("");
-                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags,
-                                          mode);
+                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
+                                          flags, mode);
               }
-              draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+              draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
               if (chip->velocityY & COMPOSITE_FLIP_X)
                 chipX = x - gHail_PortalWidths[chip->velocityX] -
                         gHail_PortalX[chip->velocityX] + 24;
@@ -308,7 +308,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                       work->sheet + gHail_PortalPictures[chip->velocityX],
                       chipX, chipY, gHail_PortalWidths[chip->velocityX],
                       gHail_PortalHeights[chip->velocityX]);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             rock->x += rock->velocityX;
             rock->y += rock->velocityY;

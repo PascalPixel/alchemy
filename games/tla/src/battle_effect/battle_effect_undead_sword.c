@@ -301,7 +301,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -625,7 +625,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (shift < -64) {
         shift = -64;
       }
-      SceneTransform_ApplyPosition3(px(shift), 0, 0);
+      Transform_ApplyTranslation(px(shift), 0, 0);
     }
     model->kind = 7;
     model->texture = &texture;
@@ -701,13 +701,12 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           continue;
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(target.x / 2 - 64), px(target.y - 64),
-                                      0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(px(target.x / 2 - 64), px(target.y - 64), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
         Transform_ApplyPitch(TRIG_TURN / 16);
         Transform_ApplyYaw(angle);
-        SceneTransform_ApplyUniformScale(t * 0x3000);
+        Transform_ApplyUniformScale(t * 0x3000);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);
@@ -950,26 +949,26 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       if (mode == WIND_FUNNEL_WAFT) {
         s32 scale;
 
-        SceneTransform_ApplyPosition3(px(screen.x / 2 - 64), px(40), 0);
+        Transform_ApplyTranslation(px(screen.x / 2 - 64), px(40), 0);
         Transform_ApplyPitch(k << 11);
         Transform_ApplyYaw(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        SceneTransform_ApplyScale3(scale * 3 / 2, Q16_ONE, scale * 3 / 2);
+        Transform_ApplyAxisScale(scale * 3 / 2, Q16_ONE, scale * 3 / 2);
       } else {
         s32 scale;
 
-        SceneTransform_ApplyPosition3(px(screen.x / 2 - 64),
-                                      (k << 20) + 0x100000, 0);
+        Transform_ApplyTranslation(px(screen.x / 2 - 64), (k << 20) + 0x100000,
+                                   0);
         Transform_ApplyPitch((k << 12) - TRIG_TURN / 32);
         Transform_ApplyYaw(k * 21000 + yaw);
         scale = TRIG_TURN - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        SceneTransform_ApplyScale3(scale * 2, Q16_ONE, scale * 2);
+        Transform_ApplyAxisScale(scale * 2, Q16_ONE, scale * 2);
       }
       Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
@@ -1202,9 +1201,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(centerX - 64),
-                                      px(gDiamondBerg_RingHeights[k]), 0);
-        SceneTransform_ApplyScale3(scale, scale, scale);
+        Transform_ApplyTranslation(px(centerX - 64),
+                                   px(gDiamondBerg_RingHeights[k]), 0);
+        Transform_ApplyAxisScale(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
@@ -1236,13 +1235,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           continue;
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(target.x / 2 - 64), px(target.y - 80),
-                                      0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(px(target.x / 2 - 64), px(target.y - 80), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyYaw((args->side << 15) + TRIG_TURN / 2);
         Transform_ApplyRoll(gDiamondBerg_ShardRolls[k]);
         Transform_ApplyPitch(gDiamondBerg_ShardPitches[k]);
-        SceneTransform_ApplyUniformScale(scale);
+        Transform_ApplyUniformScale(scale);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);

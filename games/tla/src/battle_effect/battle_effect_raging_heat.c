@@ -44,9 +44,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 10);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   for (i = 0; i != args->targetCount; i++) {
     EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
   }
@@ -178,13 +178,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         s32 scale;
 
         Transform_Reset();
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (i == 0) {
-          SceneTransform_ApplyPosition3(px(centerX) - px(128),
-                                        px(baseY) - px(64), 0);
+          Transform_ApplyTranslation(px(centerX) - px(128), px(baseY) - px(64),
+                                     0);
         } else {
-          SceneTransform_ApplyPosition3(px(centerX) - px(128),
-                                        px(baseY + 8) - px(64), 0);
+          Transform_ApplyTranslation(px(centerX) - px(128),
+                                     px(baseY + 8) - px(64), 0);
         }
         Transform_ApplyPitch(2000);
         if (frame <= 47) {
@@ -211,7 +211,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           texture.pixels = TEXTURE_PIXELS;
         }
         if (scale > 0 && shade > -64) {
-          SceneTransform_ApplyUniformScale(scale);
+          Transform_ApplyUniformScale(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);
@@ -343,7 +343,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       s32 y;
 
       Transform_Reset();
-      SceneTransform_ApplyPosition3(ring->x - px(128), ring->y - px(64), 0);
+      Transform_ApplyTranslation(ring->x - px(128), ring->y - px(64), 0);
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)

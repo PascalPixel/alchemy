@@ -184,9 +184,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCode2;
+    draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -213,7 +213,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              SceneTransform_ApplyScale(scale);
+              Transform_ApplyScale(scale);
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
@@ -315,9 +315,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-    draw[1] = (DrawRectangle)heap->ramCode2;
+    draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -344,7 +344,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              SceneTransform_ApplyScale(scale);
+              Transform_ApplyScale(scale);
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }

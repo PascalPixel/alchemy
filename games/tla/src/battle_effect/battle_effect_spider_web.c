@@ -616,10 +616,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           if (draw) {
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Transform_Reset();
-            SceneTransform_ApplyPosition3(mx, my, 0);
+            Transform_ApplyTranslation(mx, my, 0);
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Transform_ApplyYaw(step->z);
-            SceneTransform_ApplyUniformScale(s);
+            Transform_ApplyUniformScale(s);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -708,7 +708,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 sc;
 
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(8), 0, 0);
+          Transform_ApplyTranslation(px(8), 0, 0);
           Transform_ApplyPitch(TRIG_TURN / 4);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
@@ -718,12 +718,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                 sc = 0xc000;
               }
             }
-            SceneTransform_ApplyUniformScale(sc);
+            Transform_ApplyUniformScale(sc);
             Transform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
               sc = 0x1c000 - (t << 11);
-              SceneTransform_ApplyUniformScale(sc);
+              Transform_ApplyUniformScale(sc);
             } else {
               Transform_ApplyPitch(0x3ff0 - t * 682);
               Transform_ApplyRoll(t * 169 + 0xf028);

@@ -161,7 +161,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
           else
             Transform_ApplyYaw((frame << 9) - TRIG_TURN / 4);
         }
-        SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
+        Transform_ApplyAxisScale(scale >> 1, scale >> 1, scale >> 1);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);
@@ -181,12 +181,12 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
           s32 size;
 
           Transform_Reset();
-          SceneTransform_ApplyPosition3(star->x, star->y, 0);
+          Transform_ApplyTranslation(star->x, star->y, 0);
           size = swell >> 8;
           Transform_ApplyPitch(TRIG_TURN / 4);
           Transform_ApplyYaw(frame << 9);
           size /= 2;
-          SceneTransform_ApplyScale3(size, size, size);
+          Transform_ApplyAxisScale(size, size, size);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);

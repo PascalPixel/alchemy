@@ -99,15 +99,16 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+                        BLITTER_MAX);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   actor = BattleObject_GetFar(args->user)->object;
   target = BattleObject_GetFar(args->targets[0])->object;
 
@@ -202,7 +203,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
       center[1] += step[1];
       center[2] += step[2];
     }
-    SceneTransform_ApplyPosition(center);
+    Transform_ApplyPosition(center);
     if (frame == 0)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -487,12 +488,12 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// The second blitter, loaded again for each draw that needs its own.
-#define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
+#define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 /// Frees the second blitter after a draw.
 #define RELEASE_DRAW_BLITTER()                                                 \
   do {                                                                         \
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);                                    \
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                               \
   } while (0)
 
 #define CUE_FIRE 136
@@ -823,11 +824,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
         if (args->side == EFFECT_SIDE_PARTY)
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
         else
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               BLITTER_ADDITIVE);
         draw[1] = DRAW_ALTERNATE;
         if (frame <= 3)
@@ -991,22 +992,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
             if (args->side == EFFECT_SIDE_PARTY)
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   BLITTER_MAX);
             else
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
                            pos->y - gProjectileVolley_CometHeights[kind], 32,
                            gProjectileVolley_CometHeights[kind]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             if (args->side == EFFECT_SIDE_PARTY)
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);
             else
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                   BLITTER_MAX);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
@@ -1070,7 +1071,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 step = flash->z / 2;
 
             if (!(i & 1)) {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
@@ -1082,8 +1083,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                */
               do {
               } while (0);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(
@@ -1095,7 +1096,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   gProjectileVolley_FlashHeights[step]);
               RELEASE_DRAW_BLITTER();
             } else {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
               {
                 s32 offset = gProjectileVolley_FlashPictures[step];
@@ -1118,8 +1119,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               }
               do {
               } while (0);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(canvas,
@@ -1215,7 +1216,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintPictures[glint],
                 glintX, glintY, gBattleEffect_GlintPictureWidths[glint],
                 gBattleEffect_GlintPictureHeights[glint]);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             p->variant++;
           }
         }

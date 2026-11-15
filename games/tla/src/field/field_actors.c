@@ -1002,7 +1002,7 @@ void ActorSystem_ProjectSprites(void) {
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
-    SceneTransform_RewindStack();
+    Transform_RewindStack();
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
   actor = Ram_HeapSlots->actors;

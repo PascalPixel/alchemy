@@ -229,8 +229,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();
-      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
-      SceneTransform_ApplyPosition3(px(overflow), px(card.y) - px(64), 0);
+      Transform_ApplyAxisScale(Q16_ONE, Q16_ONE, Q16_ONE);
+      Transform_ApplyTranslation(px(overflow), px(card.y) - px(64), 0);
       if (frame <= 47) {
         if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll((frame << 10) - 0xd000);
@@ -245,8 +245,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         Transform_ApplyPitch(TRIG_TURN / 16);
       }
       Transform_ApplyYaw(0x1770);
-      SceneTransform_ApplyUniformScale(scale);
-      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+      Transform_ApplyUniformScale(scale);
+      Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
       Heap_Release(model);

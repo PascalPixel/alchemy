@@ -203,12 +203,12 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
-        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flags, 1);
-        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags, 1);
+        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, work->sheet + 0x800 + gBattleEffect_GlintPictures[cell],
             flashX, flashY, gBattleEffect_GlintPictureWidths[cell],
             gBattleEffect_GlintPictureHeights[cell]);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
       BattleEffectKernels_IntegrateVector2(ball, 64, 0);
     }
@@ -268,16 +268,15 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         texture.pixels = work->sheet + 0x1456 + (bolt->variant << 12);
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(ball->x / 2 - px(64), ball->y - px(64),
-                                      0);
+        Transform_ApplyTranslation(ball->x / 2 - px(64), ball->y - px(64), 0);
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == BOLT_TRAIL_THUNDER_MINE) {
-          SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);
         } else {
-          SceneTransform_ApplyScale3(radius << 11, radius * 312, Q16_ONE);
+          Transform_ApplyAxisScale(radius << 11, radius * 312, Q16_ONE);
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         }
         Render_DrawModelList(model);
@@ -534,7 +533,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 
     // Two bolts of lightning.
     if (frame <= 63) {
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       for (i = 0; i != 2; i++) {
         s32 start = i * 16;
         s32 column = i * 32 + 24;
@@ -596,22 +595,22 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               /* FAKEMATCH(dead): an empty once-only loop. */
               do {
               } while (0);
-              BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+              BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                         3 | gMegaera_GlintFlips[Random16() & 3],
                                         gMegaera_GlintModes[args->variant]);
-              ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
               j++;
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
           }
         }
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
-      rects[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+      rects[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       if (frame <= 69) {
         for (i = 0, p = SPARKS; i != 512; i++, p++) {
           s32 size;
@@ -730,9 +729,9 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     flip = 0;
   }
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flip | 3, 1);
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7, flip | 11, 1);
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flip | 11, 1);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);

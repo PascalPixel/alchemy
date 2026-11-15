@@ -412,13 +412,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           s32 y = 64 - ((Trig_Sin(frame * 630) << 6) >> 16);
 
           Transform_Push();
-          SceneTransform_ApplyPosition3(0, px(y - i * 8) + px(48), 0);
+          Transform_ApplyTranslation(0, px(y - i * 8) + px(48), 0);
           if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyRoll((i << 10) + 256);
           Transform_ApplyPitch((i << 13) - (frame << 11));
-          SceneTransform_ApplyScale3(0x21770, Q16_ONE, Q16_ONE);
+          Transform_ApplyAxisScale(0x21770, Q16_ONE, Q16_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -444,13 +444,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3(px(apos.x / 2 - 64),
-                                            px(apos.y - 64), 0);
-              SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+              Transform_ApplyTranslation(px(apos.x / 2 - 64), px(apos.y - 64),
+                                         0);
+              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
               Transform_ApplyYaw(frame << 12);
-              SceneTransform_ApplyUniformScale(s);
+              Transform_ApplyUniformScale(s);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        vertices, 4);
               Render_DrawModelList(model);
@@ -486,14 +486,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           scroll &= 127;
           model->scrollU = scroll;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(spos.x / 2 - 64),
-                                        px(spos.y) - px(52), 0);
+          Transform_ApplyTranslation(px(spos.x / 2 - 64), px(spos.y) - px(52),
+                                     0);
           if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Transform_ApplyPitch(i << 15);
           Transform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
-          SceneTransform_ApplyScale3(0x14e20, Q16_ONE / 2, Q16_ONE);
+          Transform_ApplyAxisScale(0x14e20, Q16_ONE / 2, Q16_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
         }
@@ -508,7 +508,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         }
         if (shade > -64) {
           model->shade = shade;
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           gProjection.centerX = 60;
           if (mode == WATER_COLUMN_WHORL) {
             model->scrollU = (frame << 3) & 127;
@@ -516,8 +516,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             model->scrollU = ~(frame << 3) & 127;
           }
           model->scrollV = 0;
-          SceneTransform_ApplyPosition(pos);
-          SceneTransform_ApplyPosition3(0, px(16), 0);
+          Transform_ApplyPosition(pos);
+          Transform_ApplyTranslation(0, px(16), 0);
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (args->side == EFFECT_SIDE_PARTY) {
@@ -529,7 +529,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             } else {
               Transform_ApplyPitch((i << 13) - (frame << 11));
             }
-            SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
+            Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE, Q16_ONE);
             Render_ProjectVertices(gMapGridCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();

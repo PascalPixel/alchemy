@@ -164,7 +164,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       index >>= 1;
       x = pos->x / 2;
       y = pos->y;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       index <<= 1;
       index += (s32)circles;
@@ -173,25 +173,25 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       entry = (s16 *)index;
       left = x - half;
       index = y - size;
-      ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, cel, left, index, half,
-                                               size);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, cel, left, index,
+                                                    half, size);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (void *)(*entry + cells),
-                                               x, index, half, size);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          canvas, (void *)(*entry + cells), x, index, half, size);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       if (i > 15) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, (void *)(*entry + cells), x - half, y, half, size);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        ((DrawRectangle)Ram_HeapSlots->ramCode2)(
+        ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, (void *)(*entry + cells), x, y, half, size);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
 
@@ -298,8 +298,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(x, z, 0);
-        SceneTransform_ApplyScale3(scale, scale * 2, scale);
+        Transform_ApplyTranslation(x, z, 0);
+        Transform_ApplyAxisScale(scale, scale * 2, scale);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }

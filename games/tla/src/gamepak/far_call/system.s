@@ -51,8 +51,8 @@ FarCall_RuntimeTable:
 	export Transform_ApplyPitchFar, Transform_ApplyPitch
 	export Transform_ApplyYawFar, Transform_ApplyYaw
 	export Transform_ApplyRollFar, Transform_ApplyRoll
-	export SceneTransform_ApplyPositionFar, SceneTransform_ApplyPosition
-	export SceneTransform_ApplyScaleFar, SceneTransform_ApplyScale
+	export Transform_ApplyPositionFar, Transform_ApplyPosition
+	export Transform_ApplyScaleFar, Transform_ApplyScale
 	export Transform_ApplyRotationTranslationFar, Transform_ApplyRotationTranslation
 	export Transform_ApplyScaledRotationFar, Transform_ApplyScaledRotation
 	export Transform_SetLookAtFar, Transform_SetLookAt

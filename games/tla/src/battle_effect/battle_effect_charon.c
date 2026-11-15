@@ -734,8 +734,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->texture = texture;
         if (frame <= 282) {
           Transform_Reset();
-          SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
-          SceneTransform_ApplyPosition3(-px(16), -px(8), 0);
+          Transform_ApplyAxisScale(scale * 2, scale * 2, scale * 2);
+          Transform_ApplyTranslation(-px(16), -px(8), 0);
           Transform_ApplyPitch(0xe000);
           Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
@@ -762,8 +762,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           model->kind = 7;
           model->texture = texture;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-px(8), -px(8), 0);
-          SceneTransform_ApplyScale3(scale, scale, scale);
+          Transform_ApplyTranslation(-px(8), -px(8), 0);
+          Transform_ApplyAxisScale(scale, scale, scale);
           Transform_ApplyPitch(TRIG_TURN * 3 / 4);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
@@ -913,8 +913,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               }
               model->depth = stripShade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3(-px(8), -px(8), 0);
-              SceneTransform_ApplyScale3(size / 2, size, size / 2);
+              Transform_ApplyTranslation(-px(8), -px(8), 0);
+              Transform_ApplyAxisScale(size / 2, size, size / 2);
               if (k == 0) {
                 Transform_ApplyRoll(0xf000);
               } else if (k == 1) {
@@ -986,9 +986,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         } else {
           t = 104;
         }
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         Canvas_BlitAtFoot(work->buffer + 0x1000, height, 58, t);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
         blit[1] = SYSTEM_WORK->blitBc;
       }
@@ -1186,8 +1186,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (depth > -48) {
         model->depth = depth;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(4), 0, 0);
-        SceneTransform_ApplyScale3(scale112, scale112, scale112);
+        Transform_ApplyTranslation(px(4), 0, 0);
+        Transform_ApplyAxisScale(scale112, scale112, scale112);
         Transform_ApplyPitch(TRIG_TURN / 8);
         if (frame > 55) {
           Transform_ApplyYaw(frame << 10);
@@ -1203,8 +1203,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (depth > -48) {
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(4), -px(16), 0);
-        SceneTransform_ApplyUniformScale(-0xa710);
+        Transform_ApplyTranslation(px(4), -px(16), 0);
+        Transform_ApplyUniformScale(-0xa710);
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
@@ -1219,8 +1219,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         model->depth = last;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(2), -px(32), 0);
-        SceneTransform_ApplyUniformScale(0x58f0);
+        Transform_ApplyTranslation(px(2), -px(32), 0);
+        Transform_ApplyUniformScale(0x58f0);
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(frame << 10);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
@@ -1232,8 +1232,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         if (frame > -48) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(2), -px(48), 0);
-          SceneTransform_ApplyUniformScale(-0x31e0);
+          Transform_ApplyTranslation(px(2), -px(48), 0);
+          Transform_ApplyUniformScale(-0x31e0);
           Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
@@ -1683,9 +1683,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             member->timer = timer + 1;
             model->depth = depth;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(px(member->x / 2 - 56),
-                                          px(member->y - 56), 0);
-            SceneTransform_ApplyScale3(size / 3, size, size);
+            Transform_ApplyTranslation(px(member->x / 2 - 56),
+                                       px(member->y - 56), 0);
+            Transform_ApplyAxisScale(size / 3, size, size);
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
                                      4);
@@ -1704,7 +1704,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   } while (frame != 180);
   for (i = 0; i != arg->targetCount; i++) {
   }
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

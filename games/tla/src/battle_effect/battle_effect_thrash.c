@@ -163,13 +163,13 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (args->side == EFFECT_SIDE_PARTY)
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
   else
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         BLITTER_ADDITIVE);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
@@ -223,7 +223,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.

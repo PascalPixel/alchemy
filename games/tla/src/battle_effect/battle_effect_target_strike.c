@@ -165,7 +165,7 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 #undef RECORD
 
 #define gBlitter ((DrawRectangle)Ram_HeapSlots->ramCode)
-#define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCode2)
+#define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 #define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
 
@@ -551,7 +551,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             (gBattleEffect_GlintPictureWidths[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
-        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                   gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                       CLIP,
                                   BLITTER_ADDITIVE);
@@ -562,7 +562,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                           work->sheet + gBattleEffect_GlintPictures[image], x,
                           y, gBattleEffect_GlintPictureWidths[image],
                           gBattleEffect_GlintPictureHeights[image]);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
 
@@ -570,7 +570,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     Transform_SetLookAt(camera->eye, camera->focus);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = gBlitter;
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
@@ -690,11 +690,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(targetPosition.x / 2 - 64),
-                                      px(targetPosition.y - 64), 0);
+        Transform_ApplyTranslation(px(targetPosition.x / 2 - 64),
+                                   px(targetPosition.y - 64), 0);
         Transform_ApplyPitch(TRIG_TURN / 4);
         Transform_ApplyYaw(TRIG_TURN / 8);
-        SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
+        Transform_ApplyAxisScale(scale, scale / 2, scale / 2);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, corners, 4);
         Render_DrawModelList(model);
       }
@@ -734,10 +734,10 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+  draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
                              1, 1);
@@ -923,27 +923,27 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       s32 n;
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
        * once-only block. */
       do {
-        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+        draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
         n = frame / 4 % 3; // a glow picture every 4 frames
       } while (0);
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
+      draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,
               43);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -1044,7 +1044,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+                      BLITTER_MAX);
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.

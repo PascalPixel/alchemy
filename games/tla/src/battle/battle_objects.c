@@ -629,7 +629,7 @@ void BattleCamera_SetDefaultView(void) {
   state->followEye = 0;
 
   Transform_Reset();
-  SceneTransform_ApplyPosition(&state->focus[0]);
+  Transform_ApplyPosition(&state->focus[0]);
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 

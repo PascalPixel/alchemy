@@ -344,7 +344,8 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 
 /// Frees the two blitters, the second first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
-  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_2), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
+  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED),                                \
+   HeapSlot_Release(HEAP_SLOT_RAM_CODE))
 
 /// The usual end of a canvas effect: the transfer, the blitters, then the
 /// canvas layer.
@@ -772,11 +773,11 @@ void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
 void ReleaseBattleObjectRecordsFar(s32 actor);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-void SceneTransform_ApplyPosition(const s32 *pos);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyScale(s32 *scale);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
-void SceneTransform_ApplyUniformScale(s32 scale);
+void Transform_ApplyPosition(const s32 *pos);
+void Transform_ApplyTranslation(s32 x, s32 y, s32 z);
+void Transform_ApplyScale(s32 *scale);
+void Transform_ApplyAxisScale(s32 x, s32 y, s32 z);
+void Transform_ApplyUniformScale(s32 scale);
 void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 void Sprite_RemoveAnimationFar(void *record, s32 entry);

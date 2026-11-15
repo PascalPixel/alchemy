@@ -113,8 +113,8 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
         quad->unk14 = gMirroredWall_BurstShades[mode];
         quad->vertices = vertices;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(0, px(target.y - 58), 0);
-        SceneTransform_ApplyUniformScale(gMirroredWall_BurstScales[mode] << 1);
+        Transform_ApplyTranslation(0, px(target.y - 58), 0);
+        Transform_ApplyUniformScale(gMirroredWall_BurstScales[mode] << 1);
         Render_TransformVertices(gBattleEffect_StandingSquareCorners, vertices,
                                  4);
         Render_DrawModelList(quad);
@@ -956,10 +956,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         if (z >= -63) {
           beam[5] = z;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(camera + px(2), px(8), 0);
+          Transform_ApplyTranslation(camera + px(2), px(8), 0);
           Transform_ApplyRoll(0x4300);
           Transform_ApplyPitch(-TRIG_TURN / 32);
-          SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
+          Transform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, buffer,
                                    4);
           Render_DrawModelList(beam);
@@ -1576,12 +1576,12 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 
           Transform_Reset();
           k = i & 3;
-          SceneTransform_ApplyPosition3((k << 17) + ringX + ringOffset,
-                                        discY - px(k + 2) + ringOffset, 0);
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Transform_ApplyTranslation((k << 17) + ringX + ringOffset,
+                                     discY - px(k + 2) + ringOffset, 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);
-          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
-                                     0x20000, 0x10000);
+          Transform_ApplyAxisScale(Trig_Sin(ring->variant * 682) + TRIG_TURN,
+                                   0x20000, 0x10000);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);
           Render_DrawModelList(model);

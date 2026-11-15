@@ -15,7 +15,7 @@
 // slot.
 
 /// The second blitter, loaded again for each glint.
-#define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCode2)
+#define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
 /// where it lands while glints flicker there.
@@ -120,14 +120,14 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
+          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     gBolt_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     gBolt_GlintModes[args->variant]);
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintPictures[kind], x,
                      y, gBattleEffect_GlintPictureWidths[kind],
                      gBattleEffect_GlintPictureHeights[kind]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
     }

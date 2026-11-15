@@ -85,11 +85,11 @@ void ScreenFade_Wait(void);
 
 void Transform_SetYaw(s32 ang);
 void Transform_ApplyPitch(s32 ang);
-void SceneTransform_ApplyPosition(const s32 *pos);
+void Transform_ApplyPosition(const s32 *pos);
 void Projection_Set(u32 value0, u32 value1, u32 value2);
-void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z); // translate
-void SceneTransform_ApplyUniformScale(s32 scale);
-void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
+void Transform_ApplyTranslation(s32 x, s32 y, s32 z); // translate
+void Transform_ApplyUniformScale(s32 scale);
+void Transform_ApplyAxisScale(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 ang);
 void Transform_Pop(void);
 

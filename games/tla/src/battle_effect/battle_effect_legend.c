@@ -187,16 +187,16 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           scale = Q16_ONE * 2;
         model->shade = alpha;
         Transform_Reset();
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        SceneTransform_ApplyPosition3(px(start.x - 128), px(height), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(px(start.x - 128), px(height), 0);
         Transform_ApplyPitch(0x5900);
         if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyYaw(0x1900);
         else
           Transform_ApplyYaw(-0x1900);
         Transform_ApplyRoll(frame << 9);
-        SceneTransform_ApplyUniformScale(scale);
-        SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
+        Transform_ApplyUniformScale(scale);
+        Transform_ApplyAxisScale(Q16_ONE, Q16_ONE, Q16_ONE);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -214,15 +214,15 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             scale = age * 12384 + Q16_ONE / 2;
             model->shade = alpha;
             Transform_Reset();
-            SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            SceneTransform_ApplyPosition3(px(start.x - 128), -px(48), 0);
+            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+            Transform_ApplyTranslation(px(start.x - 128), -px(48), 0);
             Transform_ApplyPitch(0x5900);
             if (args->side == EFFECT_SIDE_ENEMIES)
               Transform_ApplyYaw(0x1900);
             else
               Transform_ApplyYaw(-0x1900);
             Transform_ApplyRoll(frame << 9);
-            SceneTransform_ApplyUniformScale(scale);
+            Transform_ApplyUniformScale(scale);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
@@ -238,8 +238,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         for (i = 0; i != 8; i++) {
           model->shade = 0;
           Transform_Reset();
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(px(start.x - 128), -px(80), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(start.x - 128), -px(80), 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - Q16_ONE / 4;
@@ -247,7 +247,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             scale = Q16_ONE;
           if (frame > 31)
             scale = Q16_ONE * 3 - (frame << 12);
-          SceneTransform_ApplyScale3(
+          Transform_ApplyAxisScale(
               0x8000, 0x10000,
               (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(gLegend_WingCorners, vertices, 4);
@@ -545,24 +545,23 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
-      SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3(px(card.x) - px(128), px(card.y) - px(64),
-                                    0);
+      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+      Transform_ApplyTranslation(px(card.x) - px(128), px(card.y) - px(64), 0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
         if (args->side == EFFECT_SIDE_ENEMIES)
-          SceneTransform_ApplyPosition3(-Trig_Sin(frame * 682) << 7, 0, 0);
+          Transform_ApplyTranslation(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
-          SceneTransform_ApplyPosition3(Trig_Sin(frame * 682) << 7, 0, 0);
+          Transform_ApplyTranslation(Trig_Sin(frame * 682) << 7, 0, 0);
       }
       Transform_ApplyYaw(0x1770);
       Transform_ApplyRoll(frame << 10);
-      SceneTransform_ApplyUniformScale(scale);
-      SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+      Transform_ApplyUniformScale(scale);
+      Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
-        SceneTransform_ApplyUniformScale(Q16_ONE / 4);
+        Transform_ApplyUniformScale(Q16_ONE / 4);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       }
     }
@@ -623,8 +622,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet + step->z;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(step->x - 60), px(step->y - 64), 0);
-        SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Transform_ApplyTranslation(px(step->x - 60), px(step->y - 64), 0);
+        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (args->side == EFFECT_SIDE_PARTY)
           Transform_ApplyYaw(TRIG_TURN / 2);
         Transform_ApplyRoll(step->velocityZ);
@@ -635,9 +634,9 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             length = 0x20000;
           if (frame > 95)
             length = length - (frame << 13) + 0xc0000;
-          SceneTransform_ApplyScale3(Q16_ONE * 4, length, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE * 4, length, Q16_ONE);
         } else {
-          SceneTransform_ApplyScale3(Q16_ONE * 2, Q16_ONE * 2, Q16_ONE);
+          Transform_ApplyAxisScale(Q16_ONE * 2, Q16_ONE * 2, Q16_ONE);
         }
         Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         Render_DrawModelList(model);

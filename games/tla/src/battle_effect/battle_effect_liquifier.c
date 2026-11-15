@@ -205,13 +205,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           model->shade = 0;
           age = frame - start;
           Transform_Reset();
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 74), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(from.x - 128), px(from.y - 74), 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
-          SceneTransform_ApplyScale3(0x5555,
-                                     Trig_Sin(age << 11) *
-                                         gLiquifier_SplashHeights[i] / 64 * 2,
-                                     TRIG_TURN / 2);
+          Transform_ApplyAxisScale(0x5555,
+                                   Trig_Sin(age << 11) *
+                                       gLiquifier_SplashHeights[i] / 64 * 2,
+                                   TRIG_TURN / 2);
           Render_TransformVertices(gLiquifier_SplashCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -234,10 +234,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           scale = Q16_ONE * 2 - ((frame - start) << 13);
           model->shade = zero;
           Transform_Reset();
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyRoll(step->z);
-          SceneTransform_ApplyScale3(scale, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyAxisScale(scale, Q16_ONE, Q16_ONE / 2);
           Render_TransformVertices(gBattleEffect_BeamCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -264,10 +264,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           }
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyPitch(0x3c00);
-          SceneTransform_ApplyScale3(scale, scale, scale);
+          Transform_ApplyAxisScale(scale, scale, scale);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -284,9 +284,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
             shade = 0;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 80), 0);
-          SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
+          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Transform_ApplyTranslation(px(from.x - 128), px(from.y - 80), 0);
+          Transform_ApplyAxisScale(scale * 2, scale * 2, scale);
           Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, projected,
@@ -357,26 +357,28 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
 /// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
-                                           x - (size >> 1), y - size, size >> 1,
-                                           size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
-                                           x, y - size, size >> 1, size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
-                                           x - (size >> 1), y, size >> 1, size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, (u8 *)(discs[index] + cells),
-                                           x, y, size >> 1, size);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      canvas, (u8 *)(discs[index] + cells), x - (size >> 1), y - size,
+      size >> 1, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      canvas, (u8 *)(discs[index] + cells), x, y - size, size >> 1, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      canvas, (u8 *)(discs[index] + cells), x - (size >> 1), y, size >> 1,
+      size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+      canvas, (u8 *)(discs[index] + cells), x, y, size >> 1, size);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 
 /// The canvas burst family (its wrappers are above). A glowing ball (or

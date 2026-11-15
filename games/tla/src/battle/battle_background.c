@@ -269,7 +269,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition(pos);
+  Transform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   renderBounds[0] = 0;
@@ -318,7 +318,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Transform_Reset();
-  SceneTransform_ApplyPosition(pos);
+  Transform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
   {
@@ -769,7 +769,7 @@ void ElementGlow_UpdateStarField(void) {
            y - (size >> 1), size, size);
     }
   }
-  draw = (DrawFunc)Ram_HeapSlots->ramCode2;
+  draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
   for (ring = work->rings, j = 2; j >= 0; j--, ring++) {
     ring->x += ring->velX;
     ring->y += ring->velY;
@@ -908,7 +908,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
-  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_2, 0x13);
+  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
   Task_Add(ElementGlow_UpdateStarField, 0x480);
   return Task_Add(ElementGlow_UploadStarField, 0x480);
 }
@@ -919,7 +919,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

@@ -66,13 +66,13 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
         struct ScreenPoint out;
 
         Transform_Push();
-        SceneTransform_ApplyPosition3(orb->x, orb->y, orb->z);
+        Transform_ApplyTranslation(orb->x, orb->y, orb->z);
         if (i <= 11)
           Transform_ApplyPitch(frame << 9);
         else
           Transform_ApplyPitch((frame << 9) + TRIG_TURN / 4);
         Transform_ApplyRoll(i * 5461 + (frame << 10));
-        SceneTransform_ApplyPosition3(0, Trig_Sin(frame * 409) << 6, 0);
+        Transform_ApplyTranslation(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
         point[1] = 0;
         point[2] = 0;
@@ -824,10 +824,10 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             model->shade = color;
             BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 64);
             Transform_Push();
-            SceneTransform_ApplyPosition3(p->x, p->y, p->z);
+            Transform_ApplyTranslation(p->x, p->y, p->z);
             Transform_ApplyPitch(angle);
             Transform_ApplyRoll(angle);
-            SceneTransform_ApplyUniformScale(Q16_ONE);
+            Transform_ApplyUniformScale(Q16_ONE);
             Render_ProjectVertices(gBattleEffect_TriangleCorners, vertices, 3);
             Render_DrawModelList(model);
             Transform_Pop();
@@ -862,8 +862,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             scale = 60000;
           }
           model->shade = (const void *)spireShade;
-          SceneTransform_ApplyPosition3(target->x, -px(4), target->z);
-          SceneTransform_ApplyScale3(scale, scale, scale);
+          Transform_ApplyTranslation(target->x, -px(4), target->z);
+          Transform_ApplyAxisScale(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapGridCellBuffer, vertices, 64);
           Render_DrawModelList(model);
           spireShade = -32;
@@ -904,9 +904,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             }
             Transform_Push();
             model->shade = (const void *)shade;
-            SceneTransform_ApplyPosition3(target->x, px(gSerac_RingHeights[i]),
-                                          target->z);
-            SceneTransform_ApplyScale3(size, size, size);
+            Transform_ApplyTranslation(target->x, px(gSerac_RingHeights[i]),
+                                       target->z);
+            Transform_ApplyAxisScale(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);
             Render_DrawModelList(model);

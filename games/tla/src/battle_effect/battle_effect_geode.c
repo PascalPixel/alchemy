@@ -325,9 +325,9 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         }
         rings->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(px(target.x / 2 - 64),
-                                      px(gGeode_WaveHeights[i]), 0);
-        SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
+        Transform_ApplyTranslation(px(target.x / 2 - 64),
+                                   px(gGeode_WaveHeights[i]), 0);
+        Transform_ApplyAxisScale(scale >> 1, scale << 2, scale >> 1);
         Transform_ApplyPitch(1000);
         if (i & 1) {
           Transform_ApplyYaw((i * 4 + frame) << 11);

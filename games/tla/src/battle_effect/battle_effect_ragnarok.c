@@ -52,7 +52,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
   // Open the canvas, pose the user and place the columns.
   user = BattleObject_GetFar(args->user)->object;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, 2);
@@ -301,7 +301,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   cells = Ram_HeapSlots->battleSheet;
 
   // Open the canvas on BG1 over the target and build the blitters.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EffectPosition_ProjectBattler(args->targets[0], &target);
   centerX = target.x / 2;

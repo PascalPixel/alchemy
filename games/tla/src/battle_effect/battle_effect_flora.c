@@ -258,8 +258,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dx = 0;
     place[1] = px(255);
     if (frame <= 119) {
-      posX = Trig_Sin(0xcd00) * 24 + 0x980000;
-      posY = Trig_Cos(0xcd00) * 20 + 0x2c0000;
+      posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + 0x980000;
+      posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + 0x2c0000;
     } else if (frame <= 179) {
       s32 a = frame * 3 * 256 + -0x9800;
 
@@ -533,8 +533,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
     Transform_Reset();
-    Transform_ApplyPitch(0x9400);
-    Transform_ApplyYaw(0x6800);
+    Transform_ApplyPitch(TRIG_TURN * 37 / 64);
+    Transform_ApplyYaw(TRIG_TURN * 13 / 32);
     if (frame == 156) {
       spin = 512;
       angle = 0;

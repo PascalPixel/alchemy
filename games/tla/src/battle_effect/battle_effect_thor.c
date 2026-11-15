@@ -314,7 +314,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(9, 0x282, 1);
+  BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,

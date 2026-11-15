@@ -271,7 +271,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       mode == BURST_SHOWER_MODE_DJINNFEST ||
       mode == BURST_SHOWER_MODE_HEAT_KISS ||
       mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
 

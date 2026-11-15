@@ -264,7 +264,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       z += px(4);
     }
     if (frame == 143) {
-      s32 *target;
+      struct MotionObject *target;
 
       Palette_BrightenBattleBg(-12, -2, -2);
       camera[27] = savedYaw;
@@ -275,8 +275,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       BattleActor_SpawnObjectsForListFar(targetList, 0);
       gProjection.centerY = 556;
       target = BattleObject_GetFar(args->targets[0])->object;
-      target[2] = zero;
-      target[4] = zero;
+      target->x = zero;
+      target->z = zero;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,

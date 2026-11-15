@@ -39,7 +39,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet, 1,
@@ -267,7 +267,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct CornerRow *cells;
   DrawRectangle blit[2];
   u8 *sprites;
-  s32 *victim;
+  struct MotionObject *victim;
   struct BattleCamera *camera;
   s16 savedYaw;
   s32 height;
@@ -296,7 +296,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -305,9 +305,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   height = 0;
-  savedMode = victim[18];
-  savedX = victim[2];
-  savedZ = victim[4];
+  savedMode = victim->verticalMotionStrength;
+  savedX = victim->x;
+  savedZ = victim->z;
   EffectPosition_ProjectBattler(args->targets[0], &source);
   EffectPosition_ProjectBattler(args->targets[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
@@ -366,10 +366,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 166) {
       camera->yaw = savedYaw;
-      victim[18] = savedMode;
-      victim[2] = savedX;
-      victim[3] = 200 << 15;
-      victim[4] = savedZ;
+      victim->verticalMotionStrength = savedMode;
+      victim->x = savedX;
+      victim->y = 200 << 15;
+      victim->z = savedZ;
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -458,13 +458,13 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     if (height <= 55) {
       height = 56;
     }
-    victim[18] = 0;
+    victim->verticalMotionStrength = 0;
     if ((u32)(frame - 4) <= 55) {
-      victim[3] = (frame * 9 << 16) - px(18);
+      victim->y = (frame * 9 << 16) - px(18);
     } else if (frame > 59) {
-      victim[2] = 0;
-      victim[3] = px(294 - height);
-      victim[4] = -(Trig_Sin(frame << 10) << 3);
+      victim->x = 0;
+      victim->y = px(294 - height);
+      victim->z = -(Trig_Sin(frame << 10) << 3);
       if (frame == 60) {
         EffectPosition_ProjectBattler(args->targets[0], &source);
       }

@@ -51,7 +51,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
   // Set up: the rune palette, the dot sheet, the caster's casting pose, one
   // max blitter and the transfer.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
                        SHEET_PALETTE_BYTES);
@@ -231,7 +231,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
                        SHEET_PALETTE_BYTES);

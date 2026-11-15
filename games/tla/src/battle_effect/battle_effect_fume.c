@@ -58,7 +58,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   blit.draw = (DrawRectangle)Ram_HeapSlots->ramCode;

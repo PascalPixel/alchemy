@@ -387,7 +387,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,

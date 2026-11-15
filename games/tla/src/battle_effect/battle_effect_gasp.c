@@ -447,20 +447,21 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         ball->velocityZ = other[2];
       }
       if (frame <= 47) {
-        s32 *user = BattleObject_GetFar(args->user)->object;
+        struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-        ball->velocityX += (user[2] - other[0]) / 40;
+        ball->velocityX += (user->x - other[0]) / 40;
         ball->velocityY += (0x3c0000 - other[1]) / 40;
-        ball->velocityZ += (user[4] - other[2]) / 40;
+        ball->velocityZ += (user->z - other[2]) / 40;
       } else {
-        s32 *target = BattleObject_GetFar(args->targets[0])->object;
+        struct MotionObject *target =
+            BattleObject_GetFar(args->targets[0])->object;
         struct Particle *fall = &work->particles[62];
 
         if (frame == 48) {
           SET_POSITION(fall, 0, 0, 0);
-          fall->velocityX = (target[2] - ball->velocityX) / 32;
+          fall->velocityX = (target->x - ball->velocityX) / 32;
           fall->velocityY = -ball->velocityY / 32;
-          fall->velocityZ = (target[4] - ball->velocityZ) / 32;
+          fall->velocityZ = (target->z - ball->velocityZ) / 32;
         }
         ball->velocityX += fall->x;
         ball->velocityY += fall->y;

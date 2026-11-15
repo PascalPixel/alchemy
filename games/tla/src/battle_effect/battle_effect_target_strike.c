@@ -219,7 +219,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;

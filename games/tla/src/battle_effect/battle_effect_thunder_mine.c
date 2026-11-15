@@ -47,7 +47,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
@@ -701,7 +701,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,

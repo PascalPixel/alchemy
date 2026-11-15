@@ -288,7 +288,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
       kind == CASTING_IMPACT_IMPACT_UNUSED_TILED_CANVAS ||
       kind == CASTING_IMPACT_IMPACT_APOCALYPSE)
-    BattleEffect_StartTiledCanvas(0x2000);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   else
     BattleEffect_StartCanvasLayer(0);
 

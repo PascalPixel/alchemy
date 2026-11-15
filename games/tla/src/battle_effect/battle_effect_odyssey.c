@@ -482,7 +482,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->battleBackground;
-  BattleEffect_StartCanvasLayer(3);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;

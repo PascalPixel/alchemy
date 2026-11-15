@@ -58,7 +58,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
@@ -344,7 +344,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;
   parts = Ram_MapCellBuffer;
-  BattleEffect_StartTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

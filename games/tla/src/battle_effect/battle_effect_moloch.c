@@ -937,7 +937,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       z272, z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
 
   work->args = args;
-  BattleEffect_StartCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
@@ -1822,8 +1822,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     // The healing: rings turning about the centre, then the great glow.
     if ((u32)(frame - 639) <= 110) {
-      s32 sinT = Trig_Sin(0x7800);
-      s32 cosT = Trig_Cos(0x7800);
+      s32 sinT = Trig_Sin(TRIG_TURN * 15 / 32);
+      s32 cosT = Trig_Cos(TRIG_TURN * 15 / 32);
 
       for (j = 0; j != 80; j += 8) {
         if (638 + j < frame && frame < 670 + j) {
@@ -1882,8 +1882,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 759) <= 30) {
-      s32 sinT = Trig_Sin(0x5800);
-      s32 cosT = Trig_Cos(0x5800);
+      s32 sinT = Trig_Sin(TRIG_TURN * 11 / 32);
+      s32 cosT = Trig_Cos(TRIG_TURN * 11 / 32);
       s32 t = frame - 758;
       s32 tile = gBattleEffect_MotePictures[5] + t / 4 * MOTE_SET_BYTES;
 
@@ -1901,8 +1901,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 783) <= 46) {
-      s32 sinT = Trig_Sin(0xe800);
-      s32 cosT = Trig_Cos(0xe000);
+      s32 sinT = Trig_Sin(TRIG_TURN * 29 / 32);
+      s32 cosT = Trig_Cos(TRIG_TURN * 7 / 8);
       s32 t = frame - 782;
       s32 tile = gBattleEffect_MotePictures[5] + t / 6 * MOTE_SET_BYTES;
 
@@ -1934,7 +1934,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       place[1] = -px(24);
       place[2] = 0;
       Transform_ApplyPosition(place);
-      Transform_ApplyRoll(0x9800);
+      Transform_ApplyRoll(TRIG_TURN * 19 / 32);
       grow[0] = 0x10000;
       grow[1] = (frame - 758) << 10;
       if (grow[1] > 0x10000)
@@ -1967,9 +1967,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           work->particles[n].y = px(Random16() & 7) + px(36);
           work->particles[n].z = frame;
           work->particles[n].velocityX =
-              Iwram_MulQ16((spin + 2) << 15, Trig_Sin(0x9800));
+              Iwram_MulQ16((spin + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
           work->particles[n].velocityY =
-              -Iwram_MulQ16((spin + 2) << 15, Trig_Cos(0x9800));
+              -Iwram_MulQ16((spin + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
           work->particles[n].variant = (Random16() & 3) | 16;
         }
         n = FindFreeParticle();

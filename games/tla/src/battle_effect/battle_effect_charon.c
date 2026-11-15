@@ -640,7 +640,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           Transform_Reset();
           Transform_ApplyAxisScale(scale * 2, scale * 2, scale * 2);
           Transform_ApplyTranslation(-px(16), -px(8), 0);
-          Transform_ApplyPitch(0xe000);
+          Transform_ApplyPitch(TRIG_TURN * 7 / 8);
           Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
@@ -821,11 +821,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               Transform_ApplyTranslation(-px(8), -px(8), 0);
               Transform_ApplyAxisScale(size / 2, size, size / 2);
               if (k == 0) {
-                Transform_ApplyRoll(0xf000);
+                Transform_ApplyRoll(TRIG_TURN * 15 / 16);
               } else if (k == 1) {
                 Transform_ApplyRoll(TRIG_TURN / 8);
               } else {
-                Transform_ApplyRoll(0xe000);
+                Transform_ApplyRoll(TRIG_TURN * 7 / 8);
               }
               Transform_ApplyPitch(TRIG_TURN / 32);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,

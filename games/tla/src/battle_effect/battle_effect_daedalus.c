@@ -965,7 +965,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           beam[5] = z;
           Transform_Reset();
           Transform_ApplyTranslation(camera + px(2), px(8), 0);
-          Transform_ApplyRoll(0x4300);
+          Transform_ApplyRoll(TRIG_TURN * 67 / 256);
           Transform_ApplyPitch(-TRIG_TURN / 32);
           Transform_ApplyUniformScale((v << 14) + 0x4180);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, buffer,

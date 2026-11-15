@@ -50,7 +50,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                       gDjinniCharge_EntranceFlags[mode]),
       (s32 *)&screen, focus);
   {
-    s32 *target;
+    struct MotionObject *target;
     s16 savedYaw;
     void *caster;
     s32 frames;
@@ -111,14 +111,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         work->particles[63].x = 0;
         work->particles[63].y = 0;
         work->particles[63].z = 0;
-        work->particles[63].velocityX = target[2] - focus[0];
+        work->particles[63].velocityX = target->x - focus[0];
         // DEAD: both arms alike; the ROM keeps the test.
         if (mode == DJINNI_CHARGE_CORE) {
-          work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+          work->particles[63].velocityY = target->y - focus[1] + 0x1e0000;
         } else {
-          work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+          work->particles[63].velocityY = target->y - focus[1] + 0x1e0000;
         }
-        work->particles[63].velocityZ = target[4] - focus[2];
+        work->particles[63].velocityZ = target->z - focus[2];
         for (i = 0; i != 62; i++) {
           work->particles[i].variant = -1;
         }
@@ -190,7 +190,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             if (p->variant != -1) {
               continue;
             }
-            SET_POSITION(p, target[2], target[3] + px(5), target[4]);
+            SET_POSITION(p, target->x, target->y + px(5), target->z);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (args->side == EFFECT_SIDE_PARTY) {
               p->velocityX = -p->velocityX;
@@ -221,7 +221,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             s32 speed;
 
             p = &work->particles[i];
-            SET_POSITION(p, target[2], target[3] + px(10), target[4]);
+            SET_POSITION(p, target->x, target->y + px(10), target->z);
             angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {

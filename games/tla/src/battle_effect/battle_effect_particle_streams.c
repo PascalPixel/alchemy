@@ -426,9 +426,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * 0x5555) * 32) >> 6;
+        (Trig_Sin(i * (TRIG_TURN / 3)) * 32) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * 0x5555) * 32) >> 5);
+        -((Trig_Cos(i * (TRIG_TURN / 3)) * 32) >> 5);
   }
 
   for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {

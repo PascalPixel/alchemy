@@ -334,7 +334,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
           Transform_ApplyAxisScale(s >> 1, s, s);
           Transform_ApplyPitch(TRIG_TURN / 8);
-          Transform_ApplyRoll(0x2800);
+          Transform_ApplyRoll(TRIG_TURN * 5 / 32);
           Transform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -343,7 +343,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Transform_Reset();
           Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-          Transform_ApplyRoll(0x2800);
+          Transform_ApplyRoll(TRIG_TURN * 5 / 32);
           if (frame > 203) {
             Transform_ApplyAxisScale(Q16_ONE * 8 - ((frame - 204) << 15),
                                      Q16_ONE * 2, 0x10000);
@@ -498,7 +498,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll(0x9800);
+        Transform_ApplyRoll(TRIG_TURN * 19 / 32);
         Transform_ApplyAxisScale(0xdc500, 0x29c40, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
@@ -629,7 +629,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyTranslation(-px(2), px(16), 0);
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll(0x9800);
+        Transform_ApplyRoll(TRIG_TURN * 19 / 32);
         Transform_ApplyAxisScale(s, Q16_ONE * 2, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, gMapGridCellBuffer,
                                  4);

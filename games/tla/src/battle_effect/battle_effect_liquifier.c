@@ -266,7 +266,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Transform_Reset();
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
-          Transform_ApplyPitch(0x3c00);
+          Transform_ApplyPitch(TRIG_TURN * 15 / 64);
           Transform_ApplyAxisScale(scale, scale, scale);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
@@ -419,7 +419,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   if (mode <= 1)
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

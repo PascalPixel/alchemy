@@ -43,7 +43,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, then let the caster lunge.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);

@@ -343,9 +343,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   if (args->side == EFFECT_SIDE_ENEMIES) {
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   } else {
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   }
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 6);
@@ -636,7 +636,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   s32 scale;
   s32 brightness;
 
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == GEYSER_PURGATORY)
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   else

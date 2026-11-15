@@ -45,7 +45,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // Set up: half-and-half blending, the image with its palette, the crescent
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
-  BattleEffect_StartTiledCanvas(0x2000);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
   REG_BLDALPHA = EFFECT_BLEND_ADD;

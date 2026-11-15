@@ -244,7 +244,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   sparkCels = heap->battleSheet;
 
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;

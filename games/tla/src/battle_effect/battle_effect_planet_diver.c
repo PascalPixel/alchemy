@@ -305,7 +305,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
   // Set up: the mote picture, the mode's palette, and the max and additive
   // blitters for the caster's side.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||

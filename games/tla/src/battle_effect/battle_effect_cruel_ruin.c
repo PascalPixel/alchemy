@@ -759,7 +759,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   s32 savedScroll;
   s32 scrollX;
   s32 phase;
-  s32 *actor;
+  struct MotionObject *actor;
   s32 i;
   s32 j;
   s32 k;
@@ -788,7 +788,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   scrollX = 0;
   phase = 0;
   actor = BattleObject_GetFar(args->user)->object;
-  actor[18] = phase;
+  actor->verticalMotionStrength = phase;
   Graphics_LoadGreyRamp();
   Sound_PlayFar(SE_SPIN);
   for (frame = 0; frame != 36; frame++) {
@@ -805,12 +805,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
     Canvas_BlitAtFoot(work->sheet, pos.x / 2, pos.y - 16, size);
     if (frame > 15) {
-      actor[3] += 0x100000;
+      actor->y += 0x100000;
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  actor[18] = 0xab85;
-  actor[3] = 0;
+  actor->verticalMotionStrength = 0xab85;
+  actor->y = 0;
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -1145,7 +1145,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
             Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            Transform_ApplyRoll(0xa000);
+            Transform_ApplyRoll(TRIG_TURN * 5 / 8);
             Transform_ApplyAxisScale(r * 9400, Q16_ONE * 2, Q16_ONE / 2);
             Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
             Render_DrawModelList(model);
@@ -1701,7 +1701,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Transform_Reset();
           Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyRoll(0xa000);
+          Transform_ApplyRoll(TRIG_TURN * 5 / 8);
           Transform_ApplyAxisScale(r * 9400, Q16_ONE * 2, Q16_ONE / 2);
           Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
           Render_DrawModelList(model);

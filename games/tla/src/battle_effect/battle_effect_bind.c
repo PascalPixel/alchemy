@@ -147,7 +147,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   // Set up: the rune picture with its palette, the dots, the flares, the
   // Djinn with its palette, and a transfer that fades the canvas by 4 each
   // frame.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
         args,
@@ -227,7 +227,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
               Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
               Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             EffectPosition_ProjectPoint(gBind_Vertex,
                                         (struct ScreenPoint *)vector);
             point->velocityX = vector[0] + screen.x;
@@ -363,7 +363,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
               Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
               Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
                                         (struct ScreenPoint *)vector);
             point->velocityX = vector[0] + screen.x;

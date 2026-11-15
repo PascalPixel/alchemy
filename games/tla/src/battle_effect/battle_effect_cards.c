@@ -47,11 +47,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
-  BattleEffect_StartTiledCanvas(0x2001);
+  BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES)
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   else
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
     if (args->side == EFFECT_SIDE_ENEMIES)

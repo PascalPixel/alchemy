@@ -39,7 +39,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -219,7 +219,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
   // The burst's origin on the canvas.
   if (kind == SPARK_GROUPS_NOVA) {
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
     originX = 60;
     originY = 48;
   } else if (kind == SPARK_GROUPS_DYNAMITE) {

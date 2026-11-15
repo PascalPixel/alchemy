@@ -29,7 +29,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   u8 *sprites;
   s32 frames;
   u8 *unit;
-  s32 *target;
+  struct MotionObject *target;
   struct RenderModel *model;
   struct ModelTexture texture;
   s32 columns;
@@ -64,7 +64,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                  BGCNT_SCREEN_BASE(7);
   } else if (mode == WATER_COLUMN_LETHE_ALBION ||
              mode == WATER_COLUMN_RAGING_FLOOD) {
-    s32 *caster = BattleObject_GetFar(args->user)->object;
+    struct MotionObject *caster = BattleObject_GetFar(args->user)->object;
 
     if (mode == WATER_COLUMN_LETHE_ALBION) {
       s32 row;
@@ -87,9 +87,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
-    pos[0] = caster[2];
-    pos[1] = caster[3];
-    pos[2] = caster[4];
+    pos[0] = caster->x;
+    pos[1] = caster->y;
+    pos[2] = caster->z;
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                Ram_MapCellBuffer + 0x5000, 1, 0);
     frames = 52;
@@ -108,11 +108,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  work->particles[63].x = target[2];
-  work->particles[63].y = target[3];
-  work->particles[63].z = target[4];
-  work->particles[63].velocityX = target[6];
-  work->particles[63].velocityY = target[7];
+  work->particles[63].x = target->x;
+  work->particles[63].y = target->y;
+  work->particles[63].z = target->z;
+  work->particles[63].velocityX = target->scaleX;
+  work->particles[63].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D2, work->sheet, 0, 0);
   } else {
@@ -146,11 +146,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
-        target[2] = work->particles[63].x;
-        target[3] = work->particles[63].y;
-        target[4] = work->particles[63].z;
-        target[6] = work->particles[63].velocityX;
-        target[7] = work->particles[63].velocityY;
+        target->x = work->particles[63].x;
+        target->y = work->particles[63].y;
+        target->z = work->particles[63].z;
+        target->scaleX = work->particles[63].velocityX;
+        target->scaleY = work->particles[63].velocityY;
         if (mode == WATER_COLUMN_WHORL) {
           for (i = 0; i != 63; i++) {
             struct Particle *q = &work->particles[i];
@@ -214,43 +214,43 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (mode == WATER_COLUMN_WHORL) {
           if (frame == 32) {
             if (args->variant == EFFECT_VARIANT_STRONGER) {
-              target[3] = 0x7c0000;
+              target->y = 0x7c0000;
             } else {
               work->shakeFrames = 8;
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-              target[6] = work->particles[63].velocityX;
-              target[7] = work->particles[63].velocityY;
+              target->scaleX = work->particles[63].velocityX;
+              target->scaleY = work->particles[63].velocityY;
               BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8),
                                             px(4), 150);
             }
           } else if (frame <= 19) {
-            target[18] = mode;
-            target[2] += (pos[0] - work->particles[63].x) / 128;
-            target[3] += (pos[1] - work->particles[63].y) / 128;
-            target[4] += (pos[2] - work->particles[63].z) / 128;
+            target->verticalMotionStrength = mode;
+            target->x += (pos[0] - work->particles[63].x) / 128;
+            target->y += (pos[1] - work->particles[63].y) / 128;
+            target->z += (pos[2] - work->particles[63].z) / 128;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
-            target[2] += (pos[0] - work->particles[63].x) / 16;
-            target[3] += (pos[1] - work->particles[63].y) / 16;
-            target[4] += (pos[2] - work->particles[63].z) / 16;
-            target[6] += (0x4000 - work->particles[63].velocityX) / 16;
-            target[7] += (0x4000 - work->particles[63].velocityY) / 16;
+            target->x += (pos[0] - work->particles[63].x) / 16;
+            target->y += (pos[1] - work->particles[63].y) / 16;
+            target->z += (pos[2] - work->particles[63].z) / 16;
+            target->scaleX += (0x4000 - work->particles[63].velocityX) / 16;
+            target->scaleY += (0x4000 - work->particles[63].velocityY) / 16;
           }
         } else if (mode == WATER_COLUMN_GALE) {
-          target[18] = 0;
+          target->verticalMotionStrength = 0;
           if (frame > 55) {
-            target[3] = 0x900000;
+            target->y = 0x900000;
           } else if (frame <= 31) {
-            if (target[2] > 0) {
-              target[2] += 0x8000;
+            if (target->x > 0) {
+              target->x += 0x8000;
             } else {
-              target[2] -= 0x8000;
+              target->x -= 0x8000;
             }
           } else {
-            if (target[2] > 0) {
-              target[2] += 0x100000;
+            if (target->x > 0) {
+              target->x += 0x100000;
             } else {
-              target[2] -= 0x100000;
+              target->x -= 0x100000;
             }
           }
         }
@@ -561,11 +561,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
   if (unit[0x129] && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
-    target[2] = work->particles[63].x;
-    target[3] = work->particles[63].y;
-    target[4] = work->particles[63].z;
-    target[6] = work->particles[63].velocityX;
-    target[7] = work->particles[63].velocityY;
+    target->x = work->particles[63].x;
+    target->y = work->particles[63].y;
+    target->z = work->particles[63].z;
+    target->scaleX = work->particles[63].velocityX;
+    target->scaleY = work->particles[63].velocityY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

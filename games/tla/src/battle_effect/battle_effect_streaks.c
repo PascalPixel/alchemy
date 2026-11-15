@@ -86,7 +86,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;
   camera = heap->cameraWork;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
@@ -315,7 +315,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
-    BattleEffect_StartCanvasLayer(1);
+    BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.

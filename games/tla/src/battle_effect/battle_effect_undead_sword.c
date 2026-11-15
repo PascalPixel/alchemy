@@ -399,7 +399,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   mesh = Ram_MapCellBuffer + 0x4000;
   if (mode == WATER_SHEET_DREAMTIDE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);

@@ -27,7 +27,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   s32 i;
 
   // Set up the canvas and load the swirl and the spark sheets.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);

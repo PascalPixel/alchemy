@@ -51,7 +51,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
-  BattleEffect_StartCanvasLayer(2);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side,

@@ -25,7 +25,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
@@ -306,7 +306,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 12);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
@@ -544,9 +544,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   if (args->side == EFFECT_SIDE_ENEMIES) {
-    BattleEffect_StartTiledCanvasFilled(0x2000);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP);
   } else {
-    BattleEffect_StartTiledCanvas(0x2000);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   }
   BattleEffect_RunDjinniEntrance(
       args,

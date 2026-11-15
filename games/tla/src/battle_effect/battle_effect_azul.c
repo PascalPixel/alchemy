@@ -71,7 +71,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(3);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
@@ -280,10 +280,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         ((struct Sprite *)work->sprites[i])->rotation = TRIG_TURN / 4;
       }
       for (i = 0; i != args->targetCount; i++) {
-        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
+        struct MotionObject *actor =
+            BattleObject_GetFar(args->targets[i])->object;
 
         BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(4), 100);
-        actor[18] = 0;
+        actor->verticalMotionStrength = 0;
       }
     }
     if (frame == 186) {
@@ -432,7 +433,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame == 10 || frame == 186) {
       for (i = 0; i != args->targetCount; i++) {
         struct BattleObject *slot = BattleObject_GetFar(args->targets[i]);
-        s32 *actor = slot->object;
+        struct MotionObject *actor = slot->object;
         void *record;
 
         if (frame == 186) {
@@ -448,7 +449,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0,
                                         (Random16() << 1) + 0x10000, 100);
           // record is 0 here; the store reuses its register.
-          actor[18] = (s32)record;
+          actor->verticalMotionStrength = (s32)record;
         }
       }
       if (frame == 186) {
@@ -458,9 +459,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if (frame > 9) {
       for (i = 0; i != args->targetCount; i++) {
-        s32 *actor = BattleObject_GetFar(args->targets[i])->object;
+        struct MotionObject *actor =
+            BattleObject_GetFar(args->targets[i])->object;
 
-        actor[10] = actor[10] * 60 / DAMPING_SCALE;
+        actor->velocityY = actor->velocityY * 60 / DAMPING_SCALE;
       }
     }
     if (t <= 43) {

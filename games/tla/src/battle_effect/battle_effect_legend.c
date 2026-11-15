@@ -45,7 +45,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   // Set up the canvas and a clipped MAX blitter, mirrored to face the
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the flash.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -192,11 +192,11 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyTranslation(px(start.x - 128), px(height), 0);
-        Transform_ApplyPitch(0x5900);
+        Transform_ApplyPitch(TRIG_TURN * 89 / 256);
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Transform_ApplyYaw(0x1900);
+          Transform_ApplyYaw(TRIG_TURN * 25 / 256);
         else
-          Transform_ApplyYaw(-0x1900);
+          Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
         Transform_ApplyRoll(frame << 9);
         Transform_ApplyUniformScale(scale);
         Transform_ApplyAxisScale(Q16_ONE, Q16_ONE, Q16_ONE);
@@ -219,11 +219,11 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyTranslation(px(start.x - 128), -px(48), 0);
-            Transform_ApplyPitch(0x5900);
+            Transform_ApplyPitch(TRIG_TURN * 89 / 256);
             if (args->side == EFFECT_SIDE_ENEMIES)
-              Transform_ApplyYaw(0x1900);
+              Transform_ApplyYaw(TRIG_TURN * 25 / 256);
             else
-              Transform_ApplyYaw(-0x1900);
+              Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
             Transform_ApplyRoll(frame << 9);
             Transform_ApplyUniformScale(scale);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -317,7 +317,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
   // Set up the canvas, a clipped additive blitter, the sparks, and the
   // card's picture and its extras.
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

@@ -545,7 +545,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   sheet = Ram_HeapSlots->battleSheet;
   seWait = 0;
   kind = args->variant;
-  BattleEffect_StartCanvasLayer(1);
+  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->prelude == 1)
     BattleEffect_RunDjinniEntrance(
         args,

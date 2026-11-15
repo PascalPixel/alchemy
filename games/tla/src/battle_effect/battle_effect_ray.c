@@ -37,9 +37,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   xOffset = 0;
   if (args->side == EFFECT_SIDE_ENEMIES)
-    BattleEffect_StartTiledCanvasFilled(0x2001);
+    BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   else
-    BattleEffect_StartTiledCanvas(0x2001);
+    BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   if (args->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5); // twice as wide
   else

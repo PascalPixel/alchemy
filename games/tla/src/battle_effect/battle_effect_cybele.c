@@ -20,7 +20,7 @@ struct MenuFlagWork {
 
 /// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
-  BattleEffect_StartTiledCanvas(1);
+  BattleEffect_StartTiledCanvas(BGCNT_PRIORITY(1));
   BattleEffect_EndCanvasLayer();
 }
 

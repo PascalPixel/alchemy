@@ -122,7 +122,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     *(s16 *)buffer = backdropColor;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
     {
-      u8 *anim = Data_0202d000;
+      u8 *anim = MAPGRID_ANIMATION_SCRIPT;
       PaletteFade_LoadPaletteFar(buffer);
       Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
@@ -134,29 +134,34 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
     break;
   case 10:
-    Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048),
-            REG_DMA3);
+    Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2),
+            DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 9:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                        WORLD_MAP_TILE_SET(1));
     break;
   case 8:
-    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), DMA_COPY_WORDS(2048),
-            REG_DMA3);
+    Dma_Set(WORLD_MAP_TILE_SET(1),
+            (void *)(BG_CHAR_BLOCK(2) + WORLD_MAP_TILE_SET_BYTES),
+            DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 7:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
+                        WORLD_MAP_TILE_SET(2));
     break;
   case 6:
-    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
-            REG_DMA3);
+    Dma_Set(WORLD_MAP_TILE_SET(2), (void *)BG_CHAR_BLOCK(3),
+            DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 5:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
+                        WORLD_MAP_TILE_SET(3));
     break;
   case 4:
-    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), DMA_COPY_WORDS(2048),
-            REG_DMA3);
+    Dma_Set(WORLD_MAP_TILE_SET(3),
+            (void *)(BG_CHAR_BLOCK(3) + WORLD_MAP_TILE_SET_BYTES),
+            DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 3:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
@@ -203,7 +208,8 @@ void WorldMap_StartStillPicture(void) {
   resources = perspective->resources;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   if (perspective->tileBufferUsed != 0)
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                        WORLD_MAP_TILE_SET(1));
   perspective->tileBufferUsed = 0;
   Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
@@ -245,9 +251,12 @@ s32 WorldMap_LoadAreaGraphics(void) {
   *(s16 *)buffer = value;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+                      WORLD_MAP_TILE_SET(1));
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
+                      WORLD_MAP_TILE_SET(2));
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
+                      WORLD_MAP_TILE_SET(3));
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;

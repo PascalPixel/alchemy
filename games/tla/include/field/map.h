@@ -79,11 +79,13 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
 void Func_0200189c(void);
 
-extern u8 Data_0202d000[];
 extern u8 gBgTileBuffer[];
-extern u8 gData_0203a000[];
-extern u8 gData_0203c000[];
-extern u8 gData_0203e000[];
+/// The world map area's four tile sets, decoded one after another into
+/// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
+/// The Broken Seal's.
+#define WORLD_MAP_TILE_SET_BYTES 0x2000
+#define WORLD_MAP_TILE_SET(n)                                                  \
+  (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
 extern u8 gMapGridShapes[];
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);

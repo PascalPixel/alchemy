@@ -320,31 +320,10 @@ struct FallingObject {
   void *update;
 };
 
-struct Effect05Sprite {
-  u32 unused[2]; ///< no code names it
-  u8 unk08;
-  u32 unk09_0 : 2;
-  u32 mode : 2;
-  u32 unk09_4 : 4;
-};
-
 struct FxPosition {
   s32 x;
   s32 y;
   s32 z;
-};
-
-// A flag entry as the world map reads it: its world position.
-struct WorldMapPlace {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unusedAfterZ[4];            ///< no code names it
-  s16 name;                      ///< the place name's message
-  s16 nameEntrance;              ///< the name's message for the entrance
-  u8 unusedAfterNameEntrance[4]; ///< no code names it
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's

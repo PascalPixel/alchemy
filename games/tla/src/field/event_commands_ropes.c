@@ -19,9 +19,15 @@
 
 // The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
 // between two posts, coiled at the first post until tied. A tied rope can be
-// walked (render mode 3) and swings when stepped on. XXX: the swing and the
-// prompts 0xfc85 and 0xfc86 are read from the code; a render of a lashed rope
-// being crossed would confirm them.
+// walked (render mode 3) and swings when stepped on. Pushing at a rope's
+// post for ROPE_PUSH_STEPS steps raises FIELD_RAISED_TRIGGER_ROPE_ON, whose
+// scene event puts the leader on the rope; on it, it raises
+// FIELD_RAISED_TRIGGER_ROPE_OFF. XXX: how the swing looks; a render of a lashed
+// rope being crossed would show it.
+
+/// The steps the leader pushes against a rope's or tightrope's post before it
+/// steps on.
+#define ROPE_PUSH_STEPS 12
 
 /// Allocates the ropes' work, loads their node picture and starts Rope_Draw
 /// and Rope_Update. A scene with ropes to lash calls it first.
@@ -123,17 +129,18 @@ void Rope_Draw(void) {
   }
 }
 
-/// The ropes' per-frame task: unless flag 260 is set, prompts to step onto a
-/// tied rope when the leader stands at one of its ends (0xfc85), or while on
-/// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
-/// decaying by 0.95 a frame until it settles.
+/// The ropes' per-frame task: unless the field is handling a request, raises
+/// FIELD_RAISED_TRIGGER_ROPE_ON when the leader has pushed at one end of a tied
+/// rope, or FIELD_RAISED_TRIGGER_ROPE_OFF while on one; then swings each
+/// swinging rope, its amplitude decaying by 0.95 a frame until it settles.
 void Rope_Update(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct RopeWork *work = ROPE_WORK;
   struct RopeSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
+  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) &&
+      event->blockedSteps > ROPE_PUSH_STEPS) {
     if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
 
@@ -143,10 +150,10 @@ void Rope_Update(void) {
             break;
         if (i < 8 &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
-          event->raisedTrigger = 0xfc85;
+          event->raisedTrigger = FIELD_RAISED_TRIGGER_ROPE_ON;
       }
     } else if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE) {
-      event->raisedTrigger = 0xfc86;
+      event->raisedTrigger = FIELD_RAISED_TRIGGER_ROPE_OFF;
     }
   }
   slot = work->slots;
@@ -413,8 +420,8 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     s32 xx, yy, length, segments, count;
     s32 (*mul)(s32, s32);
 
-    if (((u8 *)to)[99] == 99)
-      (*(TargetHook *)((u8 *)to + 104))(to, &toX, &toZ);
+    if (to->riseEnabled == 99)
+      ((TargetHook)to->watchedActor)(to, &toX, &toZ);
     x = (toX - from->x.fixed) >> 8;
     y = (toY - from->y.fixed) >> 8;
     z = (toZ - from->z.fixed) >> 8;
@@ -829,19 +836,20 @@ void Tightrope_Draw(void) {
 }
 
 /// The tightropes' per-frame task (Tightrope_Initialize adds it).
-/// Unless flag 260 is set, once the event work's counter passes 12 it picks
-/// the event work's cue: with render mode 0 the slot linking the leader's
-/// nearby talk target sets 0xfc83 when Rope_IsLeaderAtEnd accepts its two ends,
-/// and render mode 4 sets 0xfc84. Then every active slot wobbles: the amplitude
-/// decays by 0.95 a frame until it drops to 0x1998, and Tightrope_WobbleBetween
-/// redraws the slot with the sine of its angle times it.
+/// Unless the field is handling a request, once the leader has pushed at one
+/// end of a tightrope it raises FIELD_RAISED_TRIGGER_TIGHTROPE_ON, and on one
+/// FIELD_RAISED_TRIGGER_TIGHTROPE_OFF. Then every active slot wobbles: the
+/// amplitude decays by 0.95 a frame until it drops to a tenth of a pixel, and
+/// Tightrope_WobbleBetween redraws the slot with the sine of its angle times
+/// it.
 void Tightrope_Update(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct TightropeWork *work = TIGHTROPE_WORK;
   struct TightropeSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
+  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) &&
+      event->blockedSteps > ROPE_PUSH_STEPS) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->movementMode == LEADER_MOVEMENT_WALK) {
@@ -854,10 +862,10 @@ void Tightrope_Update(void) {
         }
         if (i < 8 &&
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
-          event->raisedTrigger = 0xfc83;
+          event->raisedTrigger = FIELD_RAISED_TRIGGER_TIGHTROPE_ON;
       }
     } else if (party->movementMode == LEADER_MOVEMENT_TIGHTROPE) {
-      event->raisedTrigger = 0xfc84;
+      event->raisedTrigger = FIELD_RAISED_TRIGGER_TIGHTROPE_OFF;
     }
   }
 

@@ -39,9 +39,19 @@ STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 0x62c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
 STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 
+/// The game flag that marks a World Map place visited, from its FlagEntry.flag.
+#define FLAG_PLACE_VISITED(place) ((place) + 0x180)
+/// FlagEntry.value's markers, besides the marker pictures 1 to 14.
+enum WorldMapMarkerKind {
+  WORLD_MAP_MARKER_NONE = 0, ///< the place is not drawn
+  /// The ship's marker, drawn at the ship once it sails and the party is
+  /// ashore.
+  WORLD_MAP_MARKER_SHIP = 15
+};
+
 /// A world map destination, keyed by its flag (WorldMap_MarkPlaceVisited sets
-/// game flag 0x180 + flag); FlagEntries_GetTable returns them, ended by a zero
-/// flag.
+/// FLAG_PLACE_VISITED(flag)); FlagEntries_GetTable returns them, ended by a
+/// zero flag.
 struct FlagEntry {
   u8 flag;
   u8 value; ///< its markers: low nibble, high nibble on the World Picture
@@ -55,13 +65,16 @@ struct FlagEntry {
   u16 facing;
   s16 shownFlag;
   ///@}
-  s16 id;
-  s16 variant;  ///< -1 matches any
+  /// The scene and entrance whose arrival marks it visited
+  /// (WorldMap_MarkPlaceVisited), and whose area name the World Picture shows
+  /// for it; an entrance of -1 matches any.
+  s16 visitScene;
+  s16 visitEntrance;
   s16 scene;    ///< where choosing it leads
   s16 entrance; ///< that scene's entrance
 };
 
-STATIC_ASSERT(offsetof(struct FlagEntry, id) == 0x0c);
+STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 0x0c);
 STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 0x10);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
@@ -75,5 +88,6 @@ struct WorldMapChoice {
 extern struct WorldMapWork gWorldMapWork;
 extern struct WorldMapChoice Data_02000500;
 const struct FlagEntry *FlagEntries_GetTable(void);
+u32 WorldMapPlace_GetMarker(const struct FlagEntry *place);
 
 #endif

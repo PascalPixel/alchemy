@@ -231,7 +231,7 @@ void FieldPsynergy_Douse(void) {
       if (mote != 0) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
         mote->motionFlags = 0;
-        ((struct Effect05Sprite *)mote->sprite)->mode = 2;
+        ((struct Sprite *)mote->sprite)->image.priority = 2;
         Actor_SelectAnimationFar(mote, 8);
         Actor_SetSpriteColorModeFar((struct Actor *)mote, SPRITE_COLOR_WHITE);
       }

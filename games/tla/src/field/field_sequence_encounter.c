@@ -10,19 +10,19 @@
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 
-/// Marks the world map place the party has just entered as visited: sets game
-/// flag 0x180 + flag of the first place whose scene is `id` and whose entrance
-/// is `variant` (or any, for -1). The main routine calls it at every scene
-/// entry; WorldPicture_Show offers the marked places.
+/// Marks the world map place the party has just entered as visited: sets
+/// FLAG_PLACE_VISITED of the first place whose visitScene is `id` and whose
+/// visitEntrance is `variant` (or any, for -1). The main routine calls it at
+/// every scene entry; WorldPicture_Show offers the marked places.
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
   for (; entry->flag != 0; entry++) {
-    if (entry->id != id)
+    if (entry->visitScene != id)
       continue;
-    if (entry->variant != -1 && variant != entry->variant)
+    if (entry->visitEntrance != -1 && variant != entry->visitEntrance)
       continue;
-    GameFlag_Set(entry->flag + 0x180);
+    GameFlag_Set(FLAG_PLACE_VISITED(entry->flag));
     break;
   }
 }

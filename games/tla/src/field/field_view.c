@@ -100,7 +100,7 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *tiles = gDecodeBuffer;
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
-  routine(lines, pixels, gData_0203c000, tiles + 0x1000);
+  routine(lines, pixels, WORLD_MAP_TILE_SET(2), tiles + 0x1000);
   Heap_Release(routine);
 }
 

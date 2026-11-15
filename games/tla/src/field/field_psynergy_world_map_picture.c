@@ -35,9 +35,9 @@
 /// next or the previous marked place round from the one nearest it, and its
 /// point on the picture is written to screenX and screenY.
 void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
-  struct WorldMapPlace *places;
-  struct WorldMapPlace *place;
-  struct WorldMapPlace *next;
+  const struct FlagEntry *places;
+  const struct FlagEntry *place;
+  const struct FlagEntry *next;
   s32 best;
   s32 bestDistance;
   s32 cursorX;
@@ -63,10 +63,11 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
     place = &places[count];
     if (place->flag == 0)
       break;
-    flag = place->flag + 0x180;
+    flag = FLAG_PLACE_VISITED(place->flag);
     state = WorldMapPlace_GetMarker(place);
 
-    if (state != 0 && state != 15 && GameFlag_Get(flag)) {
+    if (state != WORLD_MAP_MARKER_NONE && state != WORLD_MAP_MARKER_SHIP &&
+        GameFlag_Get(flag)) {
       s32 sx = PLACE_SCREEN_X(place);
       s32 sy = PLACE_SCREEN_Y(place);
       s32 dx = sx - cursorX;
@@ -97,10 +98,11 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
           best = 0;
           wraps++;
         } else {
-          flag = next->flag + 0x180;
+          flag = FLAG_PLACE_VISITED(next->flag);
           state = WorldMapPlace_GetMarker(next);
 
-          if (state != 0 && state != 15 && GameFlag_Get(flag)) {
+          if (state != WORLD_MAP_MARKER_NONE &&
+              state != WORLD_MAP_MARKER_SHIP && GameFlag_Get(flag)) {
             place = next;
             break;
           }
@@ -168,10 +170,10 @@ void WorldPicture_UpdateMarkers(void) {
   s32 nearestName;
   s32 nearestEntrance;
   s32 entrance;
-  struct WorldMapPlace *places;
+  const struct FlagEntry *places;
   s32 scrollX;
   s32 scrollY;
-  struct WorldMapPlace *place;
+  const struct FlagEntry *place;
   s32 width;
   s32 height;
   s32 placeX;
@@ -269,13 +271,13 @@ void WorldPicture_UpdateMarkers(void) {
       always = 0;
       WorldPicture_GetLeaderPoint(&placeX, &placeY);
     } else {
-      name = place->name;
-      entrance = place->nameEntrance;
-      flag = place->flag + 0x180;
+      name = place->visitScene;
+      entrance = place->visitEntrance;
+      flag = FLAG_PLACE_VISITED(place->flag);
       tile = WorldMapPlace_GetMarker(place);
-      if (tile == 0)
+      if (tile == WORLD_MAP_MARKER_NONE)
         continue;
-      if (tile == 15) {
+      if (tile == WORLD_MAP_MARKER_SHIP) {
         if (!GameFlag_Get(FLAG_SHIP_SAILABLE))
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
@@ -449,9 +451,10 @@ void WorldPicture_UpdateMarkers(void) {
     NAME_BOX_Y = cursorY;
   }
 
-  IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f00, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x04000052, ((16 - blend) << 8) | blend, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x04000054, 0, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
+                      IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
 #undef WORLD_MAP_NAME_LEFT
 #undef WORK
@@ -942,7 +945,7 @@ done:
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
-    IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_HALFWORD);
     layer = map->anim;
     for (i = 0; i < 16; i++) {
       layer->paused = savedFlags[i];

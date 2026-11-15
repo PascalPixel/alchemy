@@ -1067,7 +1067,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
-    Actor_SetMoveTarget(object, 312 << 16, 0, z);
+    Actor_SetMoveTarget(object, px(312), 0, z);
     Event_Wait(30);
     Actor_SelectAnimation(object, 8);
     Actor_WaitForMove(object);
@@ -1342,8 +1342,8 @@ void TrialRoad_ChallengeMoapa(void) {
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
-// When the object stands in column 8, sets flag 0x9fc, stops its motion and
-// lifts it one pixel.
+/// When the object stands in column 8, sets flag 0x9fc, stops its motion and
+/// lifts it one pixel.
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
@@ -1486,9 +1486,9 @@ void TrialRoad_SetUpCrumblingStage(void) {
   MagmaRockInside_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
 }
 
-// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
-// their collision flags; then runs TrialRoad_BlockLogs, and
-// TrialRoad_AddPillarTop and TrialRoad_BlockCellUnder for object 15.
+/// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
+/// their collision flags; then runs TrialRoad_BlockLogs, and
+/// TrialRoad_AddPillarTop and TrialRoad_BlockCellUnder for object 15.
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
@@ -1508,7 +1508,7 @@ void TrialRoad_SetUpLogStage(void) {
   TrialRoad_BlockCellUnder(15);
 }
 
-// One of the fountain stage's fountains and the spout drawn over it.
+/// One of the fountain stage's fountains and the spout drawn over it.
 struct TrialRoadFountain {
   s16 id;     ///< its actor; 0 for an empty slot
   s16 phase;  ///< frames into its period
@@ -1525,7 +1525,7 @@ struct TrialRoadFountain {
   struct Actor *spout; ///< drawn over it
 };
 
-// The fountain stage's work, kept in the inventory snapshot's spare room.
+/// The fountain stage's work, kept in the inventory snapshot's spare room.
 struct TrialRoadFountains {
   s16 vramEntry;
   s16 shape; ///< the first of the shape grid's values for the fountains
@@ -1536,11 +1536,11 @@ struct TrialRoadFountains {
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high);
 
-// Sets up the Trial Road room with five movers: objects 16 to 20 in slots 0
-// to 4, the first three over a range of 64 and the last two over 32, each
-// with 240, 120 and 150; objects 16 to 18 are put away
-// (TrialRoad_OpenSpoutCell) once flags 0x363 to 0x365 are set and placed
-// otherwise; then object 15.
+/// Sets up the Trial Road room with five movers: objects 16 to 20 in slots 0
+/// to 4, the first three over a range of 64 and the last two over 32, each
+/// with 240, 120 and 150; objects 16 to 18 are put away
+/// (TrialRoad_OpenSpoutCell) once flags 0x363 to 0x365 are set and placed
+/// otherwise; then object 15.
 void TrialRoad_SetUpFountainStage(void) {
   struct TrialRoadFountain *fountain;
 
@@ -1625,7 +1625,7 @@ void TrialRoad_GaspFlees(void) {
   partner->velocityY = px(10);
   Actor_SetScript(8, gTrialRoad_GaspHopScript);
   y = partner->y.fixed;
-  Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
+  Actor_SetMoveTarget(partner, px(344), y, px(264));
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
@@ -1638,9 +1638,9 @@ extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
     "gTrialRoad_PaletteCycleRunning");
 #define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
 
-// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
-// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
-// TrialRoad_GaspFlees.
+/// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
+/// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
+/// TrialRoad_GaspFlees.
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(123)) {
     struct Actor *object = Actor_GetById(8);
@@ -1731,8 +1731,8 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
 
 void TrialRoad_LeaveMoapaWaiting(void);
 
-// The mountain's peak: after the battle, the victory or the defeat; on
-// arrival, Moapa and his knights wait.
+/// The mountain's peak: after the battle, the victory or the defeat; on
+/// arrival, Moapa and his knights wait.
 void TrialRoad_SetUpPeak(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
@@ -1916,8 +1916,8 @@ extern s8 gTrialRoad_SceneryStages[];
 void *Unit_Get(s32 owner);
 void TrialRoad_StartRival(s32 a);
 
-// Places `layer` `column` cells into the map: its offset (column << 20), its
-// cells and terrain from that column on, and its position from the view.
+/// Places `layer` `column` cells into the map: its offset (column << 20), its
+/// cells and terrain from that column on, and its position from the view.
 #define SET_LAYER(column, x)                                                   \
   words = (s32 *)layer;                                                        \
   words[2] = (column) << 20;                                                   \
@@ -2149,10 +2149,10 @@ s32 Scene_PrepareMap(void) {
 
 extern s8 gTrialRoad_KeyStages[];
 
-// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
-// eight slots at the start of the stage state, again until both the even and
-// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
-// the random state is restored after.
+/// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
+/// eight slots at the start of the stage state, again until both the even and
+/// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
+/// the random state is restored after.
 void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomSeed;
@@ -2194,14 +2194,14 @@ s32 TrialRoad_GetStage(s32 side) {
 
 s32 TrialRoad_IsMirrored(void) { return gTrialRoadState->mirrored; }
 
-// A pixel x on the mirrored road, the right path's, when the leader took it.
+/// A pixel x on the mirrored road, the right path's, when the leader took it.
 s32 TrialRoad_MirrorX(s32 x) {
   if (TrialRoad_IsMirrored())
     return 512 - x;
   return x;
 }
 
-// A cell x, in pixels, on the mirrored road when the leader took it.
+/// A cell x, in pixels, on the mirrored road when the leader took it.
 s32 TrialRoad_MirrorCellX(s32 x) {
   if (TrialRoad_IsMirrored())
     return (64 - x) << 3;
@@ -2220,8 +2220,8 @@ s32 TrialRoad_MirrorAngle(s32 angle) {
   return angle & 0xffff;
 }
 
-// Places an actor at a pixel position and facing, mirrored when the leader
-// took the right path.
+/// Places an actor at a pixel position and facing, mirrored when the leader
+/// took the right path.
 void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetPositionAndFacing(id, TrialRoad_MirrorX(x) << 16, z << 16,
                              (u16)TrialRoad_MirrorAngle(angle));
@@ -2289,7 +2289,7 @@ void TrialRoad_ReachPeakFirst(void) {
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   FieldActor_SetMoveTargetFixed(object, TrialRoad_MirrorCellX(41) << 16,
-                                object->y.fixed, 264 << 16);
+                                object->y.fixed, px(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Event_PlaySound(SE_JUMP);
@@ -2297,7 +2297,7 @@ void TrialRoad_ReachPeakFirst(void) {
   object->speedLimit = px(3);
   object->acceleration = px(2);
   Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y.fixed,
-                      264 << 16);
+                      px(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
@@ -2672,7 +2672,7 @@ void TrialRoad_ShowTraps(void) {
   Motion_SetModeAndWaitAnimation(14, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
   Event_ShowMessageAndWait(8, 0);
-  FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(px(408), -1, px(120), 1);
   FieldCamera_WaitForArrival();
   // "If Trial Road proves too much for you, press this button."
   Event_ShowMessageAndWait(8, 0);
@@ -2690,12 +2690,12 @@ void TrialRoad_ShowTraps(void) {
 // height and cell attribute byte follow its actor and offset, and its marker
 // actor is placed over it, bobbing on a sine while the offset is not 0.
 
-// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
-// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
-// or -8 a frame until it reaches its high or low offset; its phase counts
-// round its period unless flag 260 is set. Each mover's shape, collision
-// height and cell attribute byte follow its actor and offset, and its marker
-// actor is placed over it, bobbing on a sine while the offset is not 0.
+/// Updates the sixteen movers at gInventorySnapshot + 0x188 each frame: at its
+/// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
+/// or -8 a frame until it reaches its high or low offset; its phase counts
+/// round its period unless flag 260 is set. Each mover's shape, collision
+/// height and cell attribute byte follow its actor and offset, and its marker
+/// actor is placed over it, bobbing on a sine while the offset is not 0.
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work =
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
@@ -2784,7 +2784,7 @@ void TrialRoad_UpdateFountains(void) {
 // placing of actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 
-// Queues the Trial Road movers' sprites.
+/// Queues the Trial Road movers' sprites.
 void TrialRoad_DrawFountains(void) {
   struct TrialRoadFountains *base =
       (struct TrialRoadFountains *)(gInventorySnapshot + 0x188);
@@ -3093,8 +3093,8 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
-// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
-// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
+/// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
+/// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
 void TrialRoad_DriftRubble(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
@@ -3238,7 +3238,7 @@ void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
 
 extern u32 gTrialRoad_HexDigits[];
 
-// Writes value as eight hexadecimal digits and a terminating null.
+/// Writes value as eight hexadecimal digits and a terminating null.
 UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
   const u8 *digits = gTrialRoad_HexDigits;
@@ -3277,10 +3277,10 @@ void TrialRoad_WaitForBalanceState(void) {
 
 // The Trial Road rival's per-frame update.
 
-// Updates the Trial Road rival by the scene state's mode: 4 follows the
-// leader's position mirrored across the course; 3 places the rival and its
-// partner from the linked player's record; 1 replays the recorded path; 2
-// records the actor's position.
+/// Updates the Trial Road rival by the scene state's mode: 4 follows the
+/// leader's position mirrored across the course; 3 places the rival and its
+/// partner from the linked player's record; 1 replays the recorded path; 2
+/// records the actor's position.
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
@@ -3457,7 +3457,7 @@ struct TrialRoadLinkWork__s51a0 {
 
 extern const u8 gTrialRoad_ProgressPicture[];
 
-// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
+/// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(576);
 }
@@ -3495,15 +3495,15 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     Oam_AddSpriteAtDepth(entry++, 255);                                        \
   } while (0)
 
-// The Trial Road link display's scheduled callback, which
-// TrialRoad_ShowProgress starts. Its fade state falls during events or while
-// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
-// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
-// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
-// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
-// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
-// the two watched actors, projected at 1/16 scale from their positions and the
-// course side.
+/// The Trial Road link display's scheduled callback, which
+/// TrialRoad_ShowProgress starts. Its fade state falls during events or while
+/// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
+/// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
+/// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
+/// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
+/// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
+/// the two watched actors, projected at 1/16 scale from their positions and the
+/// course side.
 void TrialRoad_DrawProgress(void) {
   struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;

@@ -521,16 +521,14 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
-                                           194 << 16);
+    Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(194));
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(MUS_TREASURE_FOUND);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
-                                             196 << 16);
+      Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(196));
       GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
     } else {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);

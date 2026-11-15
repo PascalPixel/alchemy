@@ -17,12 +17,12 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 
-// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's water
-// dried by Parch.
+/// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's
+/// water dried by Parch.
 #define FLAG_OSENIA_CAVERN_SCOOPED 0x9af
 #define FLAG_ATTEKA_CAVERN_PARCHED 0x917
-// Angara Cavern: one block carried onto the other, and the cells about the
-// block's path raised while it moves.
+/// Angara Cavern: one block carried onto the other, and the cells about the
+/// block's path raised while it moves.
 #define FLAG_ANGARA_BLOCKS_STACKED FLAG_SCENE_TEMP_12
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
 
@@ -62,7 +62,7 @@ void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Caverns_InitializeIndra(void);
 void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
-// Jumps the leader across to the position given when nothing is in the way.
+/// Jumps the leader across to the position given when nothing is in the way.
 s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "flags.h"
 #include "battle/battle.h"
@@ -172,8 +172,8 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
 
 #include "text/msg_ids.h"
 
-// Sets the grey blocks of Angara Cavern on their cells: each cell rises two
-// steps under its block and is marked occupied.
+/// Sets the grey blocks of Angara Cavern on their cells: each cell rises two
+/// steps under its block and is marked occupied.
 void Caverns_PlaceAngaraBlocks(const s16 *data) {
   const u16 *ids = (const u16 *)data;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -227,8 +227,8 @@ static __inline__ s32 Half(u8 *base, s32 offset) {
   height = (GetHeight(x, z) >> 19) + offset;                                   \
   SetHeight(x, z, height)
 
-// Raises (offset 1) or lowers (-1) by a step the cells about the moving block's
-// path, by where the block stands.
+/// Raises (offset 1) or lowers (-1) by a step the cells about the moving
+/// block's path, by where the block stands.
 void Caverns_ShiftAngaraCellHeights(s32 offset) {
   u8 *work = (u8 *)gFieldWork->movedBlock;
   s32 height;
@@ -256,8 +256,8 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
   }
 }
 
-// Before a push, Move or Carry: finds the block ahead of the leader (or the one
-// Psynergy holds) and frees its cell.
+/// Before a push, Move or Carry: finds the block ahead of the leader (or the
+/// one Psynergy holds) and frees its cell.
 void Caverns_StartMovingAngaraBlock(void) {
   s32 position[3];
   u8 *work = Ram_HeapSlots->fieldWork;
@@ -307,7 +307,7 @@ void Caverns_StartMovingAngaraBlock(void) {
                         object->riseBaseY);
 }
 
-// A dust puff's step: drifts, slows, grows and turns.
+/// A dust puff's step: drifts, slows, grows and turns.
 void Caverns_DriftDust(struct Actor *object) {
   object->x.fixed += object->bounce;
   object->y.fixed += object->gravity;
@@ -319,8 +319,8 @@ void Caverns_DriftDust(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->rotation += object->timer;
 }
 
-// The stacked block's update: draws the leader in front of it while he is
-// south of it.
+/// The stacked block's update: draws the leader in front of it while he is
+/// south of it.
 void Caverns_LayerLeaderByStack(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 leaderZ = leader->z.fixed;
@@ -349,9 +349,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 void Actor_Release(struct Actor *object);
 
-// After the block has moved: a block left over a drop falls with a thump and a
-// ring of dust, and one landing on the other block stacks on it; then its new
-// cell rises under it.
+/// After the block has moved: a block left over a drop falls with a thump and a
+/// ring of dust, and one landing on the other block stacks on it; then its new
+/// cell rises under it.
 void Caverns_FinishMovingAngaraBlock(void) {
   s32 velocity[3];
   struct EffectOptions options;
@@ -488,7 +488,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-// Indra Cavern: the rope Lash reaches and the pillar Move pushes.
+/// Indra Cavern: the rope Lash reaches and the pillar Move pushes.
 void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
@@ -575,8 +575,8 @@ void Caverns_OpenOseniaPassage(void) {
   return;
 }
 
-// Osenia Cavern: the leader steps down into a passage and leaves for its other
-// end, by the trigger stepped on.
+/// Osenia Cavern: the leader steps down into a passage and leaves for its other
+/// end, by the trigger stepped on.
 void Caverns_WalkIntoPassage(void) {
   s32 value = HALF_AT(Ram_HeapSlots->fieldWork, 340);
 
@@ -668,7 +668,7 @@ void Caverns_InitializeAngara(void) {
   Actor_GetById(11)->collisionFlags |= 8;
 }
 
-// Walking into Angara Cavern's door opens it and leaves by exit 8.
+/// Walking into Angara Cavern's door opens it and leaves by exit 8.
 void Caverns_OpenAngaraDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

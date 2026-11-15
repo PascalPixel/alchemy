@@ -47,13 +47,13 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 
-// Story flags of the mast puzzle and its events.
-#define FLAG_FIRST_BLOCK_SUNK 0x8a0  // actor 10
-#define FLAG_SECOND_BLOCK_SUNK 0x8a1 // actor 11
+/// Story flags of the mast puzzle and its events.
+#define FLAG_FIRST_BLOCK_SUNK 0x8a0  ///< actor 10
+#define FLAG_SECOND_BLOCK_SUNK 0x8a1 ///< actor 11
 #define FLAG_CONE_POUNDED 0x8a2
 #define FLAG_ROPE_LASHED 0x8a3
-#define FLAG_LAST_CRATE_SUNK 0x8a4  // actor 16
-#define FLAG_FIRST_CRATE_SUNK 0x8a5 // actor 17
+#define FLAG_LAST_CRATE_SUNK 0x8a4  ///< actor 16
+#define FLAG_FIRST_CRATE_SUNK 0x8a5 ///< actor 17
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
 #define FLAG_OVERHEARD_WORKERS 0x8a9

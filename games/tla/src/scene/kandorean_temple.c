@@ -741,7 +741,7 @@ void KandoreanTemple_PrepareLiftBase(s32 id) {
 }
 
 void KandoreanTemple_CastLash(void) {
-  BattleEffect_LoadActionEffectResources(133, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_LASH, 1);
   FieldPsynergy_SetupActorPair(ACTOR_POI, ACTOR_NORTH_ROPE_EAST_POLE);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
@@ -1006,7 +1006,7 @@ count:
   gKandoreanTemple_LeftTimer++;
 }
 
-// Bob the statue on a sine.
+/// Bob the statue on a sine.
 #define BOB(statue, phase)                                                     \
   do {                                                                         \
     (statue)->y.fixed += Trig_Sin(*(phase)) >> 1;                              \
@@ -2294,7 +2294,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   Import_EventSetExitRequest(5);
 }
 
-// The leader and actor 13 rise into view while actor 15 scales.
+/// The leader and actor 13 rise into view while actor 15 scales.
 #define DEFINE_KANDOREAN_TEMPLE_RISE(name, n1, n2, n3, n4, n5, n6, n7, data1)  \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);      \
@@ -2351,7 +2351,7 @@ DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnWestLift, 13, 15, 440, 200,
 DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, 14, 16, 600, 232,
                              236, 37, 14, gKandoreanTemple_RightTimer)
 
-// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
+/// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void KandoreanTemple_RideWestLiftUp(void) {
   struct Actor *object = Actor_GetById(ACTOR_WEST_LIFT);
 
@@ -2370,7 +2370,7 @@ rise:
   Import_EventSetExitRequest(6);
 }
 
-// As KandoreanTemple_RideWestLiftUp, for actors 14 and 16.
+/// As KandoreanTemple_RideWestLiftUp, for actors 14 and 16.
 void KandoreanTemple_RideEastLiftUp(void) {
   struct Actor *object = Actor_GetById(ACTOR_EAST_LIFT);
 

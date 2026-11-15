@@ -232,9 +232,9 @@ void AnkohlRuins_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
-// Copies the cells under the object with the given id in the rooms that have
-// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
-// rows that flag 0x205 opens (always, in Japanese).
+/// Copies the cells under the object with the given id in the rooms that have
+/// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
+/// rows that flag 0x205 opens (always, in Japanese).
 void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1) {
     if (id == 8) {
@@ -273,9 +273,9 @@ void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
   }
 }
 
-// Copies the cells the object with the given id has pushed open in rooms 1,
-// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
-// track.
+/// Copies the cells the object with the given id has pushed open in rooms 1,
+/// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
+/// track.
 void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -359,9 +359,10 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   }
 }
 
-// Runs the cue, if any, and sets the object's motion flags to 3 while it
-// moves, for at most 60 frames until its vertical speed is 0, then clears
-// them ten frames later; GaiaRock_DropPillar of Gaia Rock is the same function.
+/// Runs the cue, if any, and sets the object's motion flags to 3 while it
+/// moves, for at most 60 frames until its vertical speed is 0, then clears
+/// them ten frames later; GaiaRock_DropPillar of Gaia Rock is the same
+/// function.
 void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first. */
@@ -391,8 +392,8 @@ void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   *held = 0;
 }
 
-// Places count effects in a row, rows times, each row two pixels further down,
-// waiting between rows.
+/// Places count effects in a row, rows times, each row two pixels further down,
+/// waiting between rows.
 void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
                           s32 count) {
   struct EffectOptions params;
@@ -427,11 +428,11 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
   }
 }
 
-// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
-// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
-// copies the cells of rows 2 to 6 and 13 in two columns and has
-// AnkohlRuins_PourSand place five objects between them, as
-// AnkohlRuins_PlaceFacePiece does for object 8.
+/// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
+/// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
+/// copies the cells of rows 2 to 6 and 13 in two columns and has
+/// AnkohlRuins_PourSand place five objects between them, as
+/// AnkohlRuins_PlaceFacePiece does for object 8.
 void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 column = object->x.fixed >> 20;
@@ -486,9 +487,9 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   Event_End();
 }
 
-// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
-// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
-// AnkohlRuins_PourSand place four objects between them.
+/// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
+/// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
+/// AnkohlRuins_PourSand place four objects between them.
 void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
   s32 column = pillar->x.fixed >> 20;
@@ -633,10 +634,10 @@ void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
     Event_SetFlag(id + 0x996);
 }
 
-// Draws eight sprites while flag 0x205 is clear and the level is below
-// 0x200000: each moves by the level as its kind says, is placed relative to
-// the view and is drawn when it is on screen. Then sets a word in map layer 1
-// to the level plus a base.
+/// Draws eight sprites while flag 0x205 is clear and the level is below
+/// 0x200000: each moves by the level as its kind says, is placed relative to
+/// the view and is drawn when it is on screen. Then sets a word in map layer 1
+/// to the level plus a base.
 void AnkohlRuins_DrawSand(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -1040,11 +1041,11 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor, 0x9e3, 2, 83, 1,
                               23)
 
-// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
-// and the event work's unk1cc object with it while the leader stands on it;
-// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
-// removes itself, stops the shaking, copies the landing cells and sets flag
-// 0x201.
+/// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
+/// and the event work's unk1cc object with it while the leader stands on it;
+/// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
+/// removes itself, stops the shaking, copies the landing cells and sets flag
+/// 0x201.
 void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(9);

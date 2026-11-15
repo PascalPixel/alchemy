@@ -29,7 +29,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 
-// Talks each person gives once, the first time spoken to.
+/// Talks each person gives once, the first time spoken to.
 #define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
 #define FLAG_HOST_TOLD_OF_REPAIRS 0x8b8
 

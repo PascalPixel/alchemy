@@ -100,25 +100,25 @@ enum GarohWerewolfActorId {
   ACTOR_ETHER
 };
 
-// Story flags of the werewolves' secret, in the order the party meets them.
+/// Story flags of the werewolves' secret, in the order the party meets them.
 #define FLAG_GAROH_REACHED_VILLAGE 0x919
 #define FLAG_GAROH_SAW_WEREWOLF_PROWL 0x91c
 #define FLAG_GAROH_FOLLOWED_WEREWOLF 0x91d
 #define FLAG_GAROH_MET_WEREWOLVES 0x91e
 #define FLAG_GAROH_HEARD_MAHA 0x91f
-// For this visit to the area: the old werewolf has peered from the crevice, the
-// little werewolf has thanked the party, and the party is deep in room 3's
-// cave.
+/// For this visit to the area: the old werewolf has peered from the crevice,
+/// the little werewolf has thanked the party, and the party is deep in room 3's
+/// cave.
 #define FLAG_WEREWOLF_PEERED_OUT FLAG_AREA_TEMP_20
 #define FLAG_LITTLE_WEREWOLF_THANKED FLAG_AREA_TEMP_01
 #define FLAG_IN_DARK_CAVE FLAG_AREA_TEMP_18
-// Room 3: the blocks raised on their cells, and the rope Lashed.
+/// Room 3: the blocks raised on their cells, and the rope Lashed.
 #define FLAG_FIRST_BLOCK_RAISED FLAG_SCENE_TEMP_01
 #define FLAG_SECOND_BLOCK_RAISED FLAG_SCENE_TEMP_02
 #define FLAG_ROPE_LASHED FLAG_SCENE_TEMP_03
 #define FLAG_FOURTH_BLOCK_RAISED FLAG_SCENE_TEMP_04
 
-// By day room 2's second layer scrolls with the first.
+/// By day room 2's second layer scrolls with the first.
 void Garoh_MatchLayerScroll(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *to = &map->layers[1];
@@ -130,8 +130,8 @@ void Garoh_MatchLayerScroll(void) {
   to->unk2a = from->unk2a;
 }
 
-// By night room 2's second layer ripples: each line is offset by two sines of
-// the frame count, handed to an HBlank DMA.
+/// By night room 2's second layer ripples: each line is offset by two sines of
+/// the frame count, handed to an HBlank DMA.
 void Garoh_WaveRoom2Layer(void) {
   s32 x;
   // Trig_Sin is an 8-byte far-call veneer: its target address is the word
@@ -183,7 +183,7 @@ void Garoh_WaveRoom2Layer(void) {
 extern u16 gGaroh_Room2DayColors[];
 extern u16 gGaroh_Room2NightColors[];
 
-// Build BG palette 1 colors 8-15 from the table.
+/// Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
   void name(void) {                                                            \
     struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
@@ -297,7 +297,7 @@ loop:
   Event_End();
 }
 
-// "So, uh...you say you saw a werewolf?"
+/// "So, uh...you say you saw a werewolf?"
 void Garoh_AskIfSawWerewolf(s32 actor) {
   s32 msg = (s32)MsgGaroh02;
 
@@ -314,7 +314,7 @@ void Garoh_AskIfSawWerewolf(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-// "Don't you love the sight of the full moon?"
+/// "Don't you love the sight of the full moon?"
 void Garoh_AskAboutFullMoon(s32 actor) {
   s32 msg = (s32)MsgGaroh06;
 
@@ -331,8 +331,8 @@ void Garoh_AskAboutFullMoon(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-// By day: "Maha said that you were the only outsiders we could share our secret
-// with..."
+/// By day: "Maha said that you were the only outsiders we could share our
+/// secret with..."
 void Garoh_AskAboutSecret(s32 actor) {
   s32 msg = (s32)MsgGaroh18;
 
@@ -349,7 +349,7 @@ void Garoh_AskAboutSecret(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-// By day: "Awoooooh!" and no need to hide it any more.
+/// By day: "Awoooooh!" and no need to hide it any more.
 void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -361,7 +361,7 @@ void Garoh_HowlOutLoud(s32 actor) {
   Event_End();
 }
 
-// "Gaaaroooooo!" ... "I was just calling my dog."
+/// "Gaaaroooooo!" ... "I was just calling my dog."
 void Garoh_HowlForDog(s32 actor) {
   s32 flag;
   s32 msg;
@@ -383,8 +383,8 @@ void Garoh_HowlForDog(s32 actor) {
   Event_End();
 }
 
-// By day: "Hey, it's you guys! Thanks for last night!" from the little werewolf
-// of the cave.
+/// By day: "Hey, it's you guys! Thanks for last night!" from the little
+/// werewolf of the cave.
 void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -427,14 +427,14 @@ void Garoh_LittleWerewolfThanks(void) {
   Event_End();
 }
 
-// By the sanctuary, the first night: the old werewolf opens the crevice by
-// Reveal, sees the party ("What!? Outsiders, here?") and hides again.
+/// By the sanctuary, the first night: the old werewolf opens the crevice by
+/// Reveal, sees the party ("What!? Outsiders, here?") and hides again.
 void Garoh_WerewolfPeersFromCrevice(void) {
   s32 flag;
   s32 facing;
 
   void Garoh_OpenCrevice(s32 id) {
-    BattleEffect_LoadActionEffectResources(144, 1);
+    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(1);
     BattleEffect_StopMainActor();
@@ -442,7 +442,7 @@ void Garoh_WerewolfPeersFromCrevice(void) {
   }
 
   void Garoh_CloseCrevice(s32 id) {
-    BattleEffect_LoadActionEffectResources(144, 1);
+    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(3);
     BattleEffect_StopMainActor();
@@ -502,7 +502,7 @@ extern struct Trigger gGaroh_Room5Triggers[];
 
 extern s32 gGaroh_HowlCounter;
 
-// Stepping into the opened crevice leaves for the cave below.
+/// Stepping into the opened crevice leaves for the cave below.
 void Garoh_EnterCrevice(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -513,8 +513,8 @@ void Garoh_EnterCrevice(void) {
   FieldEvent_SetExitRequest(event->stepTrigger);
 }
 
-// In the cave: the werewolves gather the first night, and Maha tells the legend
-// once the secret is shared.
+/// In the cave: the werewolves gather the first night, and Maha tells the
+/// legend once the secret is shared.
 void Garoh_MeetInTheCave(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     if (!Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES))
@@ -545,7 +545,7 @@ const void *Scene_GetTriggers(void) {
   return gGaroh_Triggers;
 }
 
-// A howl every 1,024 frames while it is night.
+/// A howl every 1,024 frames while it is night.
 void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlCounter++;
@@ -600,7 +600,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// The village: night colours, or by day the cells of the opened crevice.
+/// The village: night colours, or by day the cells of the opened crevice.
 void Garoh_InitializeRoom1(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, 0x480);
   gFieldWork->transition = 0;
@@ -669,8 +669,8 @@ void Garoh_InitializeRoom2(void) {
 
 extern s16 gGaroh_Room3Blocks[];
 
-// The cave west of the village: the blocks Move, Lash and push place, darker
-// the deeper the party goes.
+/// The cave west of the village: the blocks Move, Lash and push place, darker
+/// the deeper the party goes.
 void Garoh_InitializeRoom3(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, 1152);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
@@ -690,7 +690,7 @@ void Garoh_LiftRoom3BlockByLash(void) {
   Actor_LiftTargetBlock(gGaroh_Room3Blocks);
 }
 
-// A block left on its cell rises with a whoosh and a ring of dust.
+/// A block left on its cell rises with a whoosh and a ring of dust.
 void Garoh_RaiseBlock(s32 id, struct Actor *object) {
   s32 i;
   s32 saved;
@@ -814,8 +814,8 @@ void Garoh_HideCavePassage(void) {
   MapGrid_CopyCellAttributes(39, 5, 3, 3, 19, 5);
 }
 
-// Crossing room 3's first threshold darkens or lightens the cave by the way the
-// party came in.
+/// Crossing room 3's first threshold darkens or lightens the cave by the way
+/// the party came in.
 void Garoh_CrossRoom3West(void) {
   struct FieldWork *work;
 
@@ -911,7 +911,7 @@ s32 Garoh_MetWerewolves(void) {
     return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
 }
 
-// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
+/// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
 void Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;
@@ -943,7 +943,7 @@ void Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 extern void Garoh_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 value,
                                    s32 timer) __asm__("Garoh_SpawnPuff");
 
-// Two puffs rise from an actor's head.
+/// Two puffs rise from an actor's head.
 void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -959,7 +959,7 @@ void Garoh_PuffFrom(s32 id) {
 
 #define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
-    BattleEffect_LoadActionEffectResources(144, 1);                            \
+    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);                 \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
     FieldPsynergy_RunHandler(n1);                                              \
     MapGrid_CopyCellsLayered(n2, 5, 3, 3, 19, 5);                              \
@@ -994,8 +994,8 @@ static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
 }
 
-// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
-// back into the village.
+/// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
+/// back into the village.
 void Garoh_WerewolfProwls(void) {
   struct Actor *bird;
   s32 i;
@@ -1360,8 +1360,8 @@ loop2:
   Event_End();
 }
 
-// Through the crevice: "Look! It's that werewolf!", the little werewolf, which
-// runs deeper in.
+/// Through the crevice: "Look! It's that werewolf!", the little werewolf, which
+/// runs deeper in.
 void Garoh_FollowWerewolfIntoCave(void) {
   s32 v5;
   struct Actor *object;
@@ -1483,8 +1483,8 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Event_End();
 }
 
-// "Where could that werewolf have gone?" The werewolves surround the party and
-// Maha speaks with it.
+/// "Where could that werewolf have gone?" The werewolves surround the party and
+/// Maha speaks with it.
 void Garoh_WerewolvesRevealThemselves(void) {
   s32 v5;
   s32 t3;
@@ -2189,8 +2189,8 @@ void Garoh_WerewolvesRevealThemselves(void) {
 
 s32 __divsi3();
 
-// By day: "Ah, you came... I've been waiting for you." Maha tells of the
-// werewolves' legend and Mt. Aleph.
+/// By day: "Ah, you came... I've been waiting for you." Maha tells of the
+/// werewolves' legend and Mt. Aleph.
 void Garoh_MahaTellsTheLegend(void) {
   s32 v5;
   s32 v6;

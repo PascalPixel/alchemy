@@ -183,7 +183,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// The Japanese catalog does not name these yet.
+/// The Japanese catalog does not name these yet.
 extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 

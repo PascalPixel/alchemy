@@ -941,7 +941,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/actors_set_cells_open.h"
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 

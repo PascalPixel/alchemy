@@ -321,10 +321,10 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   LightSprites_Add(id, v);
 }
 
-// Sets the event route to 0x204. In the first room, gives objects 9 to 14
-// their values and priority bits, and under flag 0x200 runs
-// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
-// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
+/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+/// their values and priority bits, and under flag 0x200 runs
+/// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
+/// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
 s32 Scene_Initialize(void) {
   s32 *route = &gFieldWork->transition;
   s32 value = 0x204;

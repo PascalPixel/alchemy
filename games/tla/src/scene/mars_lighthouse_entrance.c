@@ -2312,7 +2312,7 @@ void Teleport_ArriveWhirling(void) {
 
 #include "shared/actors_set_cells_open.h"
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 

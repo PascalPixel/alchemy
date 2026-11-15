@@ -314,7 +314,7 @@ extern s16 gNaribwe_DoorOpening[];
 
 void Naribwe_HideStone(void);
 
-// The village's placements, the same before and after the return with Piers.
+/// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
   struct ActorPlacement name[] = {                                             \
       ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, \
@@ -366,7 +366,7 @@ s16 gNaribwe_UnusedList[] = {
     26, 512, -1, 0,
 };
 
-// The braziers burn, the fire's flames rising above them.
+/// The braziers burn, the fire's flames rising above them.
 u32 gNaribwe_BrazierBurns[] = {
     SC_ARG(2),
     SC_END,
@@ -384,7 +384,7 @@ u32 gNaribwe_IvyAnimation[] = {
     SC_END,
 };
 
-// The cell animation of the village's doors.
+/// The cell animation of the village's doors.
 s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };

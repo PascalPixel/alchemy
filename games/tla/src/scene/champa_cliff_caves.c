@@ -10,7 +10,7 @@
 #include "item_ids.h"
 #include "flags.h"
 
-// Set once Avimander is beaten and Briggs gives in.
+/// Set once Avimander is beaten and Briggs gives in.
 #define FLAG_CHAMPA_AVIMANDER_BEATEN 0x97e
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -366,7 +366,7 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, 6);
   Event_Wait(7);
   Actor_ShowItemIconById(10, actor);
-  Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
+  Actor_SetHorizontalPositionWithTerrain(10, px(648), px(196));
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, -16, -8);
   Event_Wait(1);
@@ -808,7 +808,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     // "Back for more?"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
-    FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
+    FieldCamera_MoveWithinMapBounds(px(664), -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
@@ -824,7 +824,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-    FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
+    FieldCamera_MoveWithinMapBounds(px(664), -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Actor_Jump(11, 6, 15);
@@ -999,7 +999,7 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
-                                         568 << 16, 248 << 16);
+                                         px(568), px(248));
   Actor_SetPosition(8, 584, 224);
   Actor_SetPosition(13, 600, 240);
   Actor_SetPosition(11, 584, 264);
@@ -1046,7 +1046,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   owner = (s32 *)&gMainRoutineWork;
   owner = (s32 *)((u8 *)owner + 532);
   Actor_SetHorizontalPositionWithTerrain(*owner, px(568), px(256));
-  Actor_SetPositionFixed(13, px(592), px(240));
+  Actor_SetPosition(13, 592, 240);
   Actor_SetModeById(13, 3);
   Actor_FaceDirectionById(*owner, FACING_EAST, 0);
   FieldCamera_MoveToFixed(px(656), -1, px(248), 0);
@@ -1262,7 +1262,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_SetSpritePriority(14, 2);
   Actor_GetById(14)->facing = FACING_SOUTH_SOUTHEAST;
   Actor_GetById(14)->motionFlags = 0;
-  Actor_SetPositionFixed(14, px(520), px(200));
+  Actor_SetPosition(14, 520, 200);
   Actor_SetSpeedFixed(14, 0x10000, 0x8000);
   Actor_WalkByAndWaitById(14, 0, 16);
   Actor_FaceDirectionById(14, FACING_SOUTH_SOUTHEAST, 0);

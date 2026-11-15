@@ -143,10 +143,10 @@ struct LightOam {
   u16 unk0a;
 };
 
-// Draws eight sprites while flag 0x205 is clear and the level is below
-// 0x200000: each moves by the level as its kind says, is placed relative to
-// the view and is drawn when it is on screen. Then sets a word in map layer
-// 1 to the level plus a base.
+/// Draws eight sprites while flag 0x205 is clear and the level is below
+/// 0x200000: each moves by the level as its kind says, is placed relative to
+/// the view and is drawn when it is on screen. Then sets a word in map layer
+/// 1 to the level plus a base.
 struct AnkohlRuinsSprite {
   s32 x;
   s32 z;
@@ -948,8 +948,8 @@ struct LinkedDetail {
   u8 field16;
 };
 
-// The layout Func_02001904 reads: state and timer sit where
-// struct Actor has its callback and action.
+/// The layout Func_02001904 reads: state and timer sit where
+/// struct Actor has its callback and action.
 struct YallamActor {
   u8 unk00[8];
   s32 x;

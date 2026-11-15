@@ -54,9 +54,9 @@
 /// What the files of Jupiter Lighthouse's left-tower room share: its flag and
 /// its actors.
 
-// Set once Move has dropped the pillar into the gap in the floor; cleared as
-// the party comes back unless the party comes back from a battle
-// (FLAG_KEEP_PARTY_POSITION).
+/// Set once Move has dropped the pillar into the gap in the floor; cleared as
+/// the party comes back unless the party comes back from a battle
+/// (FLAG_KEEP_PARTY_POSITION).
 #define FLAG_PILLAR_DROPPED 0xa18
 
 /// The room's statue, pillar and logs, numbering the rows of gActorPlacements.
@@ -611,8 +611,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 

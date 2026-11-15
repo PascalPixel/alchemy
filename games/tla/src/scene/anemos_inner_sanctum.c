@@ -813,11 +813,11 @@ void AnemosInnerSanctum_StartMovingBlock(void) {
   }
 }
 
-// An event handler from the sanctum's event table (in s2f48.c),
-// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
-// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
-// running the event at x 67, z 45 of room 3 and moving object 13 to object 12
-// at x 91, z 59 until flag 0xa84 is set.
+/// An event handler from the sanctum's event table (in s2f48.c),
+/// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
+/// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
+/// running the event at x 67, z 45 of room 3 and moving object 13 to object 12
+/// at x 91, z 59 until flag 0xa84 is set.
 void AnemosInnerSanctum_FinishMovingBlock(void) {
   struct Actor *leader = gFieldWork->movedBlock;
   s32 x;
@@ -882,11 +882,11 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
 
 extern s32 gAnemosInnerSanctum_TileGlowScript[];
 
-// An event handler from the sanctum's event table (in s2f48.c):
-// changes the cells at the leader's place, spawns an effect of type 0x15d
-// there and sets the flag the event work's exit selects; once flags 0x200 to
-// 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
-// sets flag 0x207.
+/// An event handler from the sanctum's event table (in s2f48.c):
+/// changes the cells at the leader's place, spawns an effect of type 0x15d
+/// there and sets the flag the event work's exit selects; once flags 0x200 to
+/// 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
+/// sets flag 0x207.
 void AnemosInnerSanctum_StepOnTile(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -937,9 +937,9 @@ void AnemosInnerSanctum_StepOnTile(void) {
   }
 }
 
-// Centres the party leader on its cell and raises actor 8 (in
-// AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
-// more, before the screen transition finishes.
+/// Centres the party leader on its cell and raises actor 8 (in
+/// AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
+/// more, before the screen transition finishes.
 void AnemosInnerSanctum_RaisePlatform(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object;
@@ -1055,11 +1055,11 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit12, 0xc)
 
 extern s32 gAnemosInnerSanctum_DustScript[];
 
-// The update of an object that moves with the leader: once the leader is past
-// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
-// leader's step, raising an effect of type 0x2a0 on each step, and stops where
-// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
-// or 200. unk4c and acceleration hold the leader's last x and z.
+/// The update of an object that moves with the leader: once the leader is past
+/// z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
+/// leader's step, raising an effect of type 0x2a0 on each step, and stops where
+/// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
+/// or 200. unk4c and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 next[2];
@@ -1194,8 +1194,8 @@ void AnemosInnerSanctum_RaiseDust(void) {
   Event_End();
 }
 
-// By the entrance taken, sets that entrance's flag, moves its actor to the
-// middle of its cell and copies a cell picture column twice beside it.
+/// By the entrance taken, sets that entrance's flag, moves its actor to the
+/// middle of its cell and copies a cell picture column twice beside it.
 void AnemosInnerSanctum_MarkEntrance(void) {
   struct Actor *object;
   s32 column;
@@ -1298,8 +1298,8 @@ static __inline__ void AnemosInnerSanctum_PlayMapEdit(const void *data, s32 a,
   MapGrid_PlayMapEdit(data, a, b);
 }
 
-// The scene opening: clears the actors' motion flags, plays the entrance's
-// map edit and steps the leader in.
+/// The scene opening: clears the actors' motion flags, plays the entrance's
+/// map edit and steps the leader in.
 void AnemosInnerSanctum_EnterTheRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
@@ -1344,7 +1344,7 @@ void AnemosInnerSanctum_RaiseFirstStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y.fixed = -px(64);
-  Actor_SetPositionFixed(9, px(728), px(120));
+  Actor_SetPosition(9, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -px(48);
   Event_StartScreenTransition();

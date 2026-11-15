@@ -190,7 +190,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gApojiiIslands_Placements;
 }
 
-// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back up).
+/// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back
+/// up).
 void ApojiiIslands_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
@@ -243,7 +244,7 @@ extern u16 gApojiiIslands_SeaCycled[];
 extern u16 gApojiiIslands_ShoreColors[];
 extern u16 gApojiiIslands_ShoreCycled[];
 
-// The sea's and shore's colours cycle every eighth frame.
+/// The sea's and shore's colours cycle every eighth frame.
 void ApojiiIslands_CycleSeaColors(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 busy, phase, k, j;
@@ -292,7 +293,7 @@ extern u16 gApojiiIslands_StoneCycled[16];
 
 s32 __modsi3(s32 a, s32 b);
 
-// The woken Aqua Stone's colours cycle.
+/// The woken Aqua Stone's colours cycle.
 void ApojiiIslands_CycleAquaStoneColors(void) {
   s32 base;
   s32 i;
@@ -329,13 +330,13 @@ static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
 }
 
-// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
-// as its update, cues 78 and 21 play, a sparkle setup
-// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
-// follow; then the screen blends in over six steps while the palette cycle
-// gives way to ApojiiIslands_CycleAquaStoneColors and the cell markers are
-// rebuilt (ApojiiIslands_AddCellMarkers). Flags 0x95f and 0x95e are set and the
-// camera pans through three points before cue 77.
+/// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
+/// as its update, cues 78 and 21 play, a sparkle setup
+/// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
+/// follow; then the screen blends in over six steps while the palette cycle
+/// gives way to ApojiiIslands_CycleAquaStoneColors and the cell markers are
+/// rebuilt (ApojiiIslands_AddCellMarkers). Flags 0x95f and 0x95e are set and
+/// the camera pans through three points before cue 77.
 void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
@@ -392,7 +393,7 @@ blend:
   Import_EventSetExitRequest(77);
 }
 
-// "What... What just happened? That rock couldn't have heard my wishes..."
+/// "What... What just happened? That rock couldn't have heard my wishes..."
 void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -462,8 +463,8 @@ void ApojiiIslands_ClearRoom3Bushes(void) {
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearRoom3SmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
-// Stepping onto a door: the leader walks through it and the scene leaves by
-// the exit of its number.
+/// Stepping onto a door: the leader walks through it and the scene leaves by
+/// the exit of its number.
 void ApojiiIslands_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -610,8 +611,8 @@ void Layer_TrackScroll(void) {
 
 #include "shared/scroll_start_hblank.h"
 
-// The overlay's entry: sets the map mode and screen effect 0x202, then starts
-// each room's own setup.
+/// The overlay's entry: sets the map mode and screen effect 0x202, then starts
+/// each room's own setup.
 s32 Scene_Initialize(void) {
   s32 *effect;
   s16 scene;
@@ -682,7 +683,7 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
 
 #include "shared/actor_emit_water_drop.h"
 
-// In a stream the current carries the leader downstream, splashing.
+/// In a stream the current carries the leader downstream, splashing.
 void ApojiiIslands_FlowWithStream(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.leaderActorId;
@@ -820,8 +821,8 @@ void ApojiiIslands_DrawCellMarkers(void) {
   }
 }
 
-// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
-// block and no source, then schedules ApojiiIslands_DrawCellMarkers.
+/// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
+/// block and no source, then schedules ApojiiIslands_DrawCellMarkers.
 void ApojiiIslands_StartCellMarkers(void) {
   Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers, 0x1004);
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
@@ -888,9 +889,9 @@ extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_draw.h"
 
-// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
-// move them; the overlay's copy of FieldEffect_InitializeSparkles.
+/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
   struct DustWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));

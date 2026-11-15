@@ -65,16 +65,16 @@
 
 struct Actor;
 
-// One grid cell: the step that stands on it (0 for none, 99 for the border)
-// and the column and row of the next step.
+/// One grid cell: the step that stands on it (0 for none, 99 for the border)
+/// and the column and row of the next step.
 typedef struct {
   s8 unk_0;
   s8 unk_1;
   s8 unk_2;
 } Unk_Cell;
 
-// One step of the path: its number, then the step found below, to the left,
-// to the right and above it.
+/// One step of the path: its number, then the step found below, to the left,
+/// to the right and above it.
 typedef struct {
   u8 unk_0;
   u8 unk_1;
@@ -86,7 +86,7 @@ typedef struct {
   u8 unk_7;
 } Unk_Step;
 
-// At gInventorySnapshot + 0x288.
+/// At gInventorySnapshot + 0x288.
 typedef struct {
   s32 unk_0;
   Unk_Step steps[15];
@@ -384,7 +384,7 @@ s32 GaiaRockInside_SerpentLowers(void) {
   return 0;
 }
 
-// Randomly vary the scale.
+/// Randomly vary the scale.
 void GaiaRockInside_FlickerSpray(struct Actor *object) {
   u32 random = Random16();
   s32 scale = object->scaleX;
@@ -573,7 +573,7 @@ extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
 extern s32 gGaiaRockInside_PlatformFrame;
 extern s32 gGaiaRockInside_PlatformDownScript[];
 
-// Return the table for the current room.
+/// Return the table for the current room.
 const void *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
     return gGaiaRockInside_Room2Placements;
@@ -635,9 +635,9 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36,
-// 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
-// 0x30a, or 0x9bf once FLAG_SERPENT_SLAIN is set.
+/// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36,
+/// 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
+/// 0x30a, or 0x9bf once FLAG_SERPENT_SLAIN is set.
 void GaiaRockInside_CycloneClearsHallBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -853,9 +853,9 @@ void GaiaRockInside_RestoreSusa(void) {
 extern s32
     gGaiaRockInside_SavedSusa__restore[] __asm__("gGaiaRockInside_SavedSusa");
 
-// Object 10 turns to the leader, talks and walks to its place while the camera
-// follows; flag 0x9de is set, and object 9's script decides whether two
-// words of gGaiaRockInside_SavedSusa are copied into place.
+/// Object 10 turns to the leader, talks and walks to its place while the camera
+/// follows; flag 0x9de is set, and object 9's script decides whether two
+/// words of gGaiaRockInside_SavedSusa are copied into place.
 void GaiaRockInside_MeetSusa(void) {
   struct Actor *object = Actor_Get(9);
 
@@ -909,9 +909,9 @@ void GaiaRockInside_MeetSusa(void) {
   Event_End();
 }
 
-// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
-// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
-// before that it turns to the leader and speaks.
+/// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
+/// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
+/// before that it turns to the leader and speaks.
 void GaiaRockInside_TalkToSusa(void) {
   if (*((u8 *)Actor_Get(10) + 96) > 2)
     return;
@@ -992,10 +992,10 @@ void GaiaRockInside_SpawnSpark(s32 a0) {
 }
 #undef FIELD_AT
 
-// Steps an orbiting object around its anchor: turns it by half its speed, puts
-// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
-// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
-// takes a second, shrinking step. Returns 1 while it runs.
+/// Steps an orbiting object around its anchor: turns it by half its speed, puts
+/// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
+/// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
+/// takes a second, shrinking step. Returns 1 while it runs.
 s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
   s16 *angle;
@@ -1220,9 +1220,9 @@ void Actor_MoveToObject(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
 
-// The party meets person 11 on the ledge: they talk, the ground shakes, the
-// screen blends out and back while the ledge changes, the party gains the item
-// and person 11 joins the leader (flag 0x9ba).
+/// The party meets person 11 on the ledge: they talk, the ground shakes, the
+/// screen blends out and back while the ledge changes, the party gains the item
+/// and person 11 joins the leader (flag 0x9ba).
 s32 GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   /* FAKEMATCH(volatile): the blend level rereads through its slot. */
@@ -1350,10 +1350,10 @@ void GaiaRockInside_RingOfDust(void) {
   } while (i <= 16);
 }
 
-// Unless flag 0x9ee or 0x9ba is set: fades the blend out, lowers person 12 by
-// one unit every 2 frames for 20 steps, with GaiaRockInside_RingOfDust's ring
-// at the start and halfway, places object 323, sets flag 0x9ee, and fades the
-// blend back.
+/// Unless flag 0x9ee or 0x9ba is set: fades the blend out, lowers person 12 by
+/// one unit every 2 frames for 20 steps, with GaiaRockInside_RingOfDust's ring
+/// at the start and halfway, places object 323, sets flag 0x9ee, and fades the
+/// blend back.
 void GaiaRockInside_AltarFalls(void) {
   struct Actor *person;
   struct Actor *object;
@@ -1476,7 +1476,7 @@ void GaiaRockInside_FindCloudBrand(void) {
   Scene_TalkToActor(4162);
 }
 
-// Examines the altar.
+/// Examines the altar.
 void GaiaRockInside_CheckAltar(void) {
   const u8 *message = MsgCheckedTheAltar;
   const u8 *next;
@@ -1601,10 +1601,10 @@ L_0200a1f8:
   Event_End();
 }
 
-// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
-// 14: the first object shakes with random vertical speeds, and while the flag
-// of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
-// the way and the partner returns to the leader.
+/// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
+/// 14: the first object shakes with random vertical speeds, and while the flag
+/// of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
+/// the way and the partner returns to the leader.
 void GaiaRockInside_PlaceDollOnWestAltar(void) {
   struct Actor *object;
   struct Actor *partner;
@@ -1874,8 +1874,8 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
 
 extern s16 gGaiaRockInside_RockSpots[][2];
 
-// Records which of eleven listed cells persons 10 and 11 stand on, as the two
-// halves of the byte flag 0x210.
+/// Records which of eleven listed cells persons 10 and 11 stand on, as the two
+/// halves of the byte flag 0x210.
 s32 GaiaRockInside_RecordRockSpots(void) {
   struct Actor *first = Actor_Get(10);
   s8 firstIndex = 0;
@@ -1921,7 +1921,7 @@ extern struct Trigger gGaiaRockInside_Room3Triggers[];
 extern struct Trigger gGaiaRockInside_Room4Triggers[];
 extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
-// Returns the current room's table.
+/// Returns the current room's table.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
     return gGaiaRockInside_Room2Triggers;
@@ -2078,8 +2078,8 @@ extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4
 extern s16 gGaiaRockInside_PlatformPlaces[][2];
 
-// Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
-// the sway state and places each person, then starts the sway's task.
+/// Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
+/// the sway state and places each person, then starts the sway's task.
 void GaiaRockInside_StartPlatforms(u8 mode) {
   u16 *state = gSceneState;
   u16 *pending = state + 1;
@@ -2104,9 +2104,10 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
   }
 }
 
-// Opens the passages on each side of the hall by how many of its two pairs of
-// flags (0x9bc and 0x9bd, 0x9be and 0x9bf) are set: both open the wide way, one
-// a side way, and a single side opened alone also opens its connecting cells.
+/// Opens the passages on each side of the hall by how many of its two pairs of
+/// flags (0x9bc and 0x9bd, 0x9be and 0x9bf) are set: both open the wide way,
+/// one a side way, and a single side opened alone also opens its connecting
+/// cells.
 void GaiaRockInside_OpenHallPassages(void) {
   u8 a = GameFlag_Get(0x9bc);
   u8 third = GameFlag_Get(0x9be);
@@ -2214,8 +2215,8 @@ void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
-// in the first room.
+/// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
+/// in the first room.
 s32 Scene_Initialize(void) {
   s32 message;
   struct MainRoutineWork *work;
@@ -2913,8 +2914,8 @@ void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
-// in the first room.
+/// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
+/// in the first room.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *room;
   struct MainRoutineWork *work;
@@ -3953,9 +3954,9 @@ void GaiaRockInside_TakeMazeExit(s32 direction) {
 
 extern s8 gGaiaRockInside_MazeOrigins[][2];
 
-// From the third state on, for each of the two map layers:
-// Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
-// 10 size and the layer's cell plus one.
+/// From the third state on, for each of the two map layers:
+/// Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
+/// 10 size and the layer's cell plus one.
 void GaiaRockInside_DrawMazeRoom(void) {
   s32 state = *(s32 *)(gInventorySnapshot + 0x288);
   s8 *origin = gGaiaRockInside_MazeOrigins[state];
@@ -3981,8 +3982,8 @@ void GaiaRockInside_DrawMazeRoom(void) {
 #define GAIA_ROCK_INSIDE_PATH                                                  \
   ((struct GaiaRockInsidePath *)(gInventorySnapshot + 0x288))
 
-// The direction from the current node whose link is 251 or the next node:
-// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.
+/// The direction from the current node whose link is 251 or the next node:
+/// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.
 s32 GaiaRockInside_GetMazeWayOn(void) {
   struct GaiaRockInsidePath *path = GAIA_ROCK_INSIDE_PATH;
   s32 current = path->current;

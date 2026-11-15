@@ -49,8 +49,8 @@ void FlagBlock_PlaceAllMarkingEdges(const void *data);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 extern s32 gAlhafranCave_ClearedWord;
 
-// Set while the way down to the jail is open, as the leader stands on the
-// ledge above it.
+/// Set while the way down to the jail is open, as the leader stands on the
+/// ledge above it.
 #define FLAG_WAY_TO_JAIL_OPEN 0x204
 /// The jail's people, numbering the rows of gAlhafranCave_JailActorPlacements.
 enum AlhafraJailActorId {

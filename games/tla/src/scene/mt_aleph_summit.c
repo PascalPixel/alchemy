@@ -299,7 +299,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// Scatters count dust puffs in a ring of radius around actor 8.
+/// Scatters count dust puffs in a ring of radius around actor 8.
 void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
   struct Actor *object;
   struct EffectOptions options;

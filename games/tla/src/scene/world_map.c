@@ -2484,8 +2484,8 @@ extern u8 gData_02006f20[][32];
 
 #include "shared/gauge_draw.h"
 
-// The world map cursor: counts down while A or B is held, redraws the gauge and
-// queues its sprite over the leader.
+/// The world map cursor: counts down while A or B is held, redraws the gauge
+/// and queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
   s32 tile = gVramCacheEntries[gData_02006e0e].offset >> 5;

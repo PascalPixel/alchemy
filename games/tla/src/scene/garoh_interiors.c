@@ -415,7 +415,7 @@ s32 Scene_Initialize(void) {
         s32 z = 336 << 16;
 
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
-                                                       345 << 16, z, angle);
+                                                       px(345), z, angle);
       }
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);

@@ -329,9 +329,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAquaRockInside_Placements;
 }
 
-// When object 10 reaches row 12, or object 11 column 51, stops its motion,
-// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
-// row 12.
+/// When object 10 reaches row 12, or object 11 column 51, stops its motion,
+/// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
+/// row 12.
 void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -891,8 +891,8 @@ void AquaRockInside_StartPushingRock(void) {
   MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34);
 }
 
-// When object 10 or 11 arrives, stops both and redraws row 33 at each one's
-// column.
+/// When object 10 or 11 arrives, stops both and redraws row 33 at each one's
+/// column.
 void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
   if ((u32)(id - 10) <= 1) {
     struct Actor *object = Actor_Get(10);
@@ -1484,9 +1484,9 @@ extern u32 gAquaRockInside_SecondOutletLevels[];
 s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
                                 void (*handler)(void));
 
-// Aqua Rock's entry setup: in each room it shows the statues already filled by
-// their flags (or dims those still empty), opens what the story has opened and
-// arms the room's water and cell handlers by entrance.
+/// Aqua Rock's entry setup: in each room it shows the statues already filled by
+/// their flags (or dims those still empty), opens what the story has opened and
+/// arms the room's water and cell handlers by entrance.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1607,11 +1607,11 @@ s32 Scene_Initialize(void) {
 
 void Tightrope_Initialize();
 
-// Aqua Rock's map preparation: for each room and entrance it sets the water
-// level, places the statues and boulders the flags have moved, opens or
-// closes the cells around them, and in the rooms whose water drains it shows
-// the drained state once its flag is set. Room 6 clears its actors' x and z
-// where the other rooms clear terrainHeight and y.
+/// Aqua Rock's map preparation: for each room and entrance it sets the water
+/// level, places the statues and boulders the flags have moved, opens or
+/// closes the cells around them, and in the rooms whose water drains it shows
+/// the drained state once its flag is set. Room 6 clears its actors' x and z
+/// where the other rooms clear terrainHeight and y.
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1990,8 +1990,8 @@ void Leader_SpinAway(s32 entrance) {
 
 #include "shared/leader_rise_from_water.h"
 
-// Draws the scene's pillars: a top sprite for each active one and, when it
-// stands above its base, a column sprite as tall as its height.
+/// Draws the scene's pillars: a top sprite for each active one and, when it
+/// stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
   s32 *view = &Ram_HeapSlots->mapGrid->viewX;
   struct PillarWork *work = &gAquaRockInside_Pillars;
@@ -2091,9 +2091,9 @@ void AquaRockInside_StartPillars(void) {
 
 #define LAYER_S32(layer, off) (*(s32 *)((layer)->unk08 + (off) - 8))
 
-// Adds a water spout on every map cell of the given layer whose spout kind lies
-// in [first, first + 8), at the given heights, and marks those cells as spout
-// cells (120).
+/// Adds a water spout on every map cell of the given layer whose spout kind
+/// lies in [first, first + 8), at the given heights, and marks those cells as
+/// spout cells (120).
 void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = map->layers;
@@ -2206,7 +2206,7 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
   }
 }
 
-// Draws thirty-two sprites that each shake by a random few pixels a frame.
+/// Draws thirty-two sprites that each shake by a random few pixels a frame.
 void AquaRockInside_DrawSplashes(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -2287,11 +2287,11 @@ s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind) {
 
 extern s8 gAquaRockInside_StreamTurns[];
 
-// Advances Aqua Rock's two water streams one cell along the map: each stream
-// follows the turn its cell's kind gives, leaves a splash on every open cell
-// (255) it crosses, stops on a wall kind and counts the cells of the given kind
-// it reaches; then it clears the splashes past the new count and opens the
-// cells under those left.
+/// Advances Aqua Rock's two water streams one cell along the map: each stream
+/// follows the turn its cell's kind gives, leaves a splash on every open cell
+/// (255) it crosses, stops on a wall kind and counts the cells of the given
+/// kind it reaches; then it clears the splashes past the new count and opens
+/// the cells under those left.
 s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   s32 reached = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;

@@ -36,16 +36,16 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 
-// Daila2's puddles dried by Parch for this visit, one flag each, in the order
-// of the puddles' rows, and frozen into pillars by Frost.
+/// Daila2's puddles dried by Parch for this visit, one flag each, in the order
+/// of the puddles' rows, and frozen into pillars by Frost.
 #define FLAG_DAILA_FIRST_PUDDLE_PARCHED 0x210
 #define FLAG_DAILA_SECOND_PUDDLE_PARCHED 0x211
 #define FLAG_DAILA_THIRD_PUDDLE_PARCHED 0x212
 #define FLAG_DAILA_FOURTH_PUDDLE_PARCHED 0x213
 #define FLAG_DAILA_FIFTH_PUDDLE_PARCHED 0x214
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
-// The first of six flags, one for each of Daila2's puddles that Frost has
-// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
+/// The first of six flags, one for each of Daila2's puddles that Frost has
+/// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
@@ -286,7 +286,7 @@ void Daila_MeetAlex(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Event_SetMessageId(msg);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, 472 << 16, 264 << 16);
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, px(472), px(264));
   Event_Wait(30);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 504, 296);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);

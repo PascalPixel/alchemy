@@ -490,8 +490,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 

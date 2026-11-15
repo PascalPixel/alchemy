@@ -56,9 +56,9 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-// Set once the log has been pushed off the ledge this visit.
+/// Set once the log has been pushed off the ledge this visit.
 #define FLAG_LOG_OFF_LEDGE 0x200
-// Set as Move drops each pillar into its gap.
+/// Set as Move drops each pillar into its gap.
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
@@ -202,7 +202,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPositionFixed(14, px(328), px(584));
+    Actor_SetPosition(14, 328, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
@@ -210,7 +210,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->groundHeight = px(-32);
     object->y.fixed = px(-32);
-    Actor_SetPositionFixed(15, px(520), px(584));
+    Actor_SetPosition(15, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
@@ -458,8 +458,8 @@ s32 gPushLeaderSteps[] = {
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 extern struct CellTarget gCrackedTiles;
 
 void CrackedTiles_Update(void);
@@ -563,8 +563,8 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 extern u16 gPushKinds[];
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 extern struct CellTarget gCrackedTiles;
 
 #include "shared/cracked_tile_drop_in.h"

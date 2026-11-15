@@ -586,8 +586,8 @@ struct ContigoGlow {
   u8 motionFlags;
 };
 
-// The glow that grows over actor 17 and sinks away again, then the scene goes
-// on.
+/// The glow that grows over actor 17 and sinks away again, then the scene goes
+/// on.
 void Contigo_BabyThinks(void) {
   struct ContigoGlow *effect;
   s32 x = px(706);
@@ -862,8 +862,8 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_End();
 }
 
-// The bytes of an actor this handler uses. unk63 is the last of the four
-// scene-owned bytes the Broken Seal's actors keep at this place.
+/// The bytes of an actor this handler uses. unk63 is the last of the four
+/// scene-owned bytes the Broken Seal's actors keep at this place.
 struct TalkActor {
   u8 unk00[6];
   u16 angle; ///< 1/65536 turns
@@ -1022,7 +1022,7 @@ void Contigo_ScoopForSalt(void) {
 
     Event_Start();
     Event_ResolvePendingActions(1);
-    Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
+    Actor_SetHorizontalPositionWithTerrain(16, px(664), px(952));
     wait(1);
     Actor_FaceActorById(16, gMainRoutineWork.leaderActorId, 0);
     work->raisedTrigger = 200;
@@ -1108,8 +1108,8 @@ void Contigo_PlaceStatue(s32 id) {
   object->y.fixed = px(64);
 }
 
-// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
-// child and collision flags for 27 to 33.
+/// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
+/// child and collision flags for 27 to 33.
 void Contigo_SetUpStatues(void) {
   Actor_SetModeById(19, 0);
   Actor_SetModeById(20, 1);
@@ -1149,8 +1149,8 @@ void Contigo_SetUpStatues(void) {
 extern void MessageArgument_Push(s32 value, s32 digits);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
-// The lucky wheels attendant: checks the game tickets and free item slots,
-// then sends the player in.
+/// The lucky wheels attendant: checks the game tickets and free item slots,
+/// then sends the player in.
 void Contigo_SendToLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -1241,7 +1241,7 @@ s32 Contigo_PickTopic(s32 topic) {
 
 extern u8 gSceneState[];
 
-// The dice game attendant: the fee is ten coins a level.
+/// The dice game attendant: the fee is ten coins a level.
 void Contigo_SendToLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
@@ -1280,7 +1280,7 @@ void Contigo_SendToLuckyDice(void) {
   Event_End();
 }
 
-// The Super Lucky Dice attendant: the same check without the fee shown.
+/// The Super Lucky Dice attendant: the same check without the fee shown.
 void Contigo_SendToSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
@@ -1369,7 +1369,7 @@ extern u32 gContigo_KradenReunionScript[];
 extern u32 gContigo_IsaacLeavesScript[];
 extern const u8 gContigo_SparkleWork[];
 
-// The reunion scene. It opens with "Glad you kept your promise".
+/// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
   struct ContigoObject *object;
   s32 answer;
@@ -2167,12 +2167,12 @@ void Contigo_KeepPriorityWithLeader(void) {
 
 void MapGrid_CenterOnFollowedPoint(void);
 
-// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
-// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
-// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17 by
-// flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109
-// is set, and while flag 0x200 is set has the camera follow the leader; it ends
-// with Palette_SetColors.
+/// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
+/// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
+/// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17
+/// by flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag
+/// 0x109 is set, and while flag 0x200 is set has the camera follow the leader;
+/// it ends with Palette_SetColors.
 void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
@@ -2454,8 +2454,8 @@ struct CounterBits {
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
-// The sparkle's update: raises two pairs of sprites over the object, each pair
-// starting when its counter is cleared, until both counters pass 31.
+/// The sparkle's update: raises two pairs of sprites over the object, each pair
+/// starting when its counter is cleared, until both counters pass 31.
 void Contigo_RaiseSparkle(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
@@ -2554,8 +2554,8 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
-// hands the object to its update, Contigo_RaiseSparkle.
+/// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
+/// hands the object to its update, Contigo_RaiseSparkle.
 void Contigo_StartSparkle(struct Actor *object,
                           struct SparkleWork__s3e54 *work) {
   struct SparkleSprite__s3e54 *sprite;

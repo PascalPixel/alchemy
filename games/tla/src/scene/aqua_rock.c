@@ -365,10 +365,10 @@ extern s32 gAquaRock_SecondStreamTimer;
 extern s32 gAquaRock_ThirdStreamTimer;
 extern s32 gAquaRock_FourthStreamTimer;
 
-// Unless flag 0x104 is set, runs four 240-frame timers
-// (gAquaRock_FirstStreamTimer to gAquaRock_FourthStreamTimer) that hold flags
-// 0x200 to 0x203 set for their last 90 frames; in their first 150 the first two
-// follow flags 0x320 and 0x321 and the last two are clear.
+/// Unless flag 0x104 is set, runs four 240-frame timers
+/// (gAquaRock_FirstStreamTimer to gAquaRock_FourthStreamTimer) that hold flags
+/// 0x200 to 0x203 set for their last 90 frames; in their first 150 the first
+/// two follow flags 0x320 and 0x321 and the last two are clear.
 void AquaRock_TimeStreams(void) {
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
     return;
@@ -496,9 +496,9 @@ void AquaRock_StopFlashing(struct Actor *object) {
 
 void Map_SetLayerEntryFlag(s32 layer);
 
-// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
-// rounds of a random colour value, then one pair's blend scripts and layer
-// fields set and the other's cleared, while the object blinks.
+/// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
+/// rounds of a random colour value, then one pair's blend scripts and layer
+/// fields set and the other's cleared, while the object blinks.
 void AquaRock_DouseWaterStone(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 i;
@@ -764,9 +764,9 @@ DEFINE_AQUA_ROCK_DROP_AT_COLUMN(AquaRock_DropFirstRock, 0x951, 52)
 
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(AquaRock_DropSecondRock, 0x952, 58)
 
-// Sets flag 0xa69 after four rounds of a random colour value, runs the
-// blend scripts, then moves the camera to object 15, starts its update and
-// plays cue 623 six times.
+/// Sets flag 0xa69 after four rounds of a random colour value, runs the
+/// blend scripts, then moves the camera to object 15, starts its update and
+/// plays cue 623 six times.
 void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 i;
@@ -937,9 +937,9 @@ void AquaRock_RockMoai(struct Actor *object) {
   sprite->rotation = Trig_Sin(object->timer) / 64 + 0x600;
 }
 
-// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
-// at z 824, then settles them under cue 298 and leaves object 21 rocking;
-// sets flags 0x109 and 0x955 and clears 0x12f.
+/// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
+/// at z 824, then settles them under cue 298 and leaves object 21 rocking;
+/// sets flags 0x109 and 0x955 and clears 0x12f.
 void AquaRock_MoaiStepAside(void) {
   s32 i;
 
@@ -1034,7 +1034,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(id, 0);
     }
     if (GameFlag_Get(0x950))
-      Actor_SetPositionFixed(25, px(520), px(584));
+      Actor_SetPosition(25, 520, 584);
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
@@ -1059,11 +1059,11 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       AquaRock_MoaiStepAside();
     if (GameFlag_Get(0x955)) {
-      Actor_SetPositionFixed(17, px(392), px(824));
-      Actor_SetPositionFixed(18, px(424), px(824));
-      Actor_SetPositionFixed(19, px(456), px(824));
-      Actor_SetPositionFixed(20, px(488), px(824));
-      Actor_SetPositionFixed(21, px(520), px(824));
+      Actor_SetPosition(17, 392, 824);
+      Actor_SetPosition(18, 424, 824);
+      Actor_SetPosition(19, 456, 824);
+      Actor_SetPosition(20, 488, 824);
+      Actor_SetPosition(21, 520, 824);
       MapGrid_CopyCellAttributes(64, 66, 9, 3, 24, 53);
       MapGrid_CopyCells(64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = AquaRock_RockMoai;
@@ -1087,12 +1087,12 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Get(0x951)) {
-      Actor_SetPositionFixed(12, px(856), px(840));
+      Actor_SetPosition(12, 856, 840);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
     if (GameFlag_Get(0x952)) {
-      Actor_SetPositionFixed(13, px(856), px(936));
+      Actor_SetPosition(13, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
@@ -1488,9 +1488,9 @@ void AquaRock_SetCellMarkerAnchor(s32 id) {
 
 #include "shared/ground_particles_draw.h"
 
-// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
-// move them; the overlay's copy of FieldEffect_InitializeSparkles.
+/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
+/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void AquaRock_StartSparkles(void) {
   struct DustWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));

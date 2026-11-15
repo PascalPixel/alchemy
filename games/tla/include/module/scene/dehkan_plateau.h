@@ -68,7 +68,7 @@ void DehkanPlateau_PushRoom3SecondPillar(void);
 void DehkanPlateau_StepOffCrack(void);
 
 void DehkanPlateau_StepOnCrack(void);
-void Scene_RunIfHeld(void);
+void DehkanPlateau_PushRaisedPillar(void);
 void DehkanPlateau_LiftRoom3RaisedPillar(void);
 void DehkanPlateau_FinishMovingRaisedPillar(void);
 void DehkanPlateau_CannonFleesOverCracks(void);

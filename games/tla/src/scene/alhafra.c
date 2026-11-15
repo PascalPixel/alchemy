@@ -57,7 +57,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// The town's own story, which no other scene reads.
+/// The town's own story, which no other scene reads.
 #define FLAG_TOLD_INDRA_MOVED 0x8b0 ///< told the fisherman Indra moved
 #define FLAG_LOOKOUT_LEFT 0x8b4     ///< the Champa lookout ran to his crew
 #define FLAG_HUNGRY_BOY_FED 0x8b5   ///< the boy at the inn ate the bread

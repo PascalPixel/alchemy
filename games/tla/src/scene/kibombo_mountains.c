@@ -8,16 +8,16 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-// Once the message of the Gabomba is carried the Kibombo let the party pass:
-// the guards and the dog are gone.
+/// Once the message of the Gabomba is carried the Kibombo let the party pass:
+/// the guards and the dog are gone.
 #define FLAG_KIBOMBO_LETS_PARTY_PASS FLAG_GABOMBA_MESSAGE_CARRIED
 #define FLAG_KIBOMBO_GUARDS_REPORTED 0x880
 #define FLAG_KIBOMBO_OVERGROWTH_CLEARED 0x882
 #define FLAG_KIBOMBO_FIRST_CRATE_DROPPED 0x8e7
 #define FLAG_KIBOMBO_SECOND_CRATE_DROPPED 0x8e8
-// For this visit: the lower guard knocked out by the crate, the dog shut in
-// south or north of the dropped crate or eating the bone, and the party turned
-// back by the guards.
+/// For this visit: the lower guard knocked out by the crate, the dog shut in
+/// south or north of the dropped crate or eating the bone, and the party turned
+/// back by the guards.
 #define FLAG_GUARD_KNOCKED_OUT FLAG_SCENE_TEMP_00
 #define FLAG_DOG_SHUT_SOUTH FLAG_SCENE_TEMP_01
 #define FLAG_DOG_EATING_BONE FLAG_SCENE_TEMP_02
@@ -128,7 +128,7 @@ void Pillar_SetMoved(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_21);
 }
 
-// Growth on the plant: it grows into a vine to climb to Waft.
+/// Growth on the plant: it grows into a vine to climb to Waft.
 void KibomboMountains_GrowVine(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
   MapGrid_CopyCellAttributes(30, 34, 1, 1, 28, 33);
@@ -147,9 +147,9 @@ extern s32 gKibomboMountains_BobScript[];
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Actor_StartIdle(struct Actor *object);
 
-// A crate pushed off the ledge: dropped by the dog it shuts the dog in on one
-// side; dropped on the lower guard it knocks him out, and missing him only
-// puzzles him.
+/// A crate pushed off the ledge: dropped by the dog it shuts the dog in on one
+/// side; dropped on the lower guard it knocks him out, and missing him only
+/// puzzles him.
 void KibomboMountains_DropCrate(s32 unused, s32 id) {
   struct Actor saved;
 
@@ -227,8 +227,8 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
   }
 }
 
-// Tremor on the chest: the bone drops, and the dog, unless shut in, runs to it
-// and stays there eating.
+/// Tremor on the chest: the bone drops, and the dog, unless shut in, runs to it
+/// and stays there eating.
 void KibomboMountains_TremorDropsBone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -251,7 +251,7 @@ void KibomboMountains_TremorDropsBone(void) {
   Event_End();
 }
 
-// Whirlwind on the overgrowth opens the small cavern.
+/// Whirlwind on the overgrowth opens the small cavern.
 void KibomboMountains_WhirlwindClearsOvergrowth(void) {
   GameFlag_Set(FLAG_KIBOMBO_OVERGROWTH_CLEARED);
 }
@@ -447,8 +447,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// The first time the party climbs the pass: "Is the way clear?" Two warriors
-// report, and one goes back to his watch.
+/// The first time the party climbs the pass: "Is the way clear?" Two warriors
+/// report, and one goes back to his watch.
 void KibomboMountains_GuardsReport(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -510,8 +510,8 @@ void KibomboMountains_WalkSlowly(s32 id) {
   object->speedLimit = px(1) / 2;
 }
 
-// Caught: "Here! The intruder is here!" The warriors march the party back down
-// the road.
+/// Caught: "Here! The intruder is here!" The warriors march the party back down
+/// the road.
 void KibomboMountains_GuardsTurnPartyBack(void) {
   s32 owner = gMainRoutineWork.leaderActorId;
 
@@ -589,8 +589,8 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   Event_SetFlag(FLAG_TURNED_BACK);
 }
 
-// Sends the party back to the foot of the pass, by whether it was turned back
-// on this visit.
+/// Sends the party back to the foot of the pass, by whether it was turned back
+/// on this visit.
 void KibomboMountains_SendPartyBack(void) {
   s32 moved = Event_GetFlag(FLAG_TURNED_BACK);
   s32 scene = SCENE_KIBOMBO_MOUNTAINS_2;
@@ -601,7 +601,7 @@ void KibomboMountains_SendPartyBack(void) {
     Event_SetDestination(scene, 8);
 }
 
-// A warrior sees the party: "Guards! An intruder!"
+/// A warrior sees the party: "Guards! An intruder!"
 void KibomboMountains_GuardSpotsParty(s32 id) {
   s32 owner = gMainRoutineWork.leaderActorId;
 
@@ -625,7 +625,7 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
   Event_End();
 }
 
-// The dog sees the party and barks for the warriors.
+/// The dog sees the party and barks for the warriors.
 void KibomboMountains_DogSpotsParty(s32 id) {
   s32 owner = gMainRoutineWork.leaderActorId;
 
@@ -649,7 +649,7 @@ void KibomboMountains_DogSpotsParty(s32 id) {
   Event_End();
 }
 
-// Stepping in the first lookout's sight, unless the crate hides the leader.
+/// Stepping in the first lookout's sight, unless the crate hides the leader.
 void KibomboMountains_StepWestOfCrate(void) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guard = Actor_Get(14);

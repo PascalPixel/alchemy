@@ -37,17 +37,17 @@
 #include "objcmd.h"
 #include "field/sprite.h"
 
-// Set as the stone circle's guard finds the misaligned stone back in place.
+/// Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
-// Set while Move has set the stone in its place, for this visit.
+/// Set while Move has set the stone in its place, for this visit.
 #define FLAG_STONE_IN_PLACE 0x250
-// Set while Reveal is shown.
+/// Set while Reveal is shown.
 #define FLAG_REVEALING 0x301
-// Set while the one who stopped the party waits by the gate.
+/// Set while the one who stopped the party waits by the gate.
 #define FLAG_THANKFUL_ONE_WAITS 0x302
-// Set as the party is stopped on its way out to be thanked.
+/// Set as the party is stopped on its way out to be thanked.
 #define FLAG_STOPPED_TO_THANK_THE_PARTY 0x929
-// Set once the token of gratitude has been offered.
+/// Set once the token of gratitude has been offered.
 #define FLAG_TOKEN_OFFERED 0x92a
 
 extern u32 gIzumo_FirstSpinnerScript[];

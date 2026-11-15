@@ -53,8 +53,8 @@
 #include "system/io_write.h"
 #include "module/field/field_effect.h"
 
-// Set while the leader stands on the button by the gates, which holds them
-// open.
+/// Set while the leader stands on the button by the gates, which holds them
+/// open.
 #define FLAG_GATES_BUTTON_HELD 0x200
 
 /// The pillar the party pushes onto the button by the gates, after the two
@@ -401,8 +401,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-// leader steps on.
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 

@@ -1125,7 +1125,7 @@ s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 
 /// Actor 15 casts Move, with no target.
 void IzumoInteriors_ShowMove(void) {
-  BattleEffect_LoadActionEffectResources(140, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(15, -1);
   FIELD_AT(Ram_HeapSlots->fieldEffectWork, HandlerFn, 36) =
       IzumoInteriors_FindNoMoveTarget;

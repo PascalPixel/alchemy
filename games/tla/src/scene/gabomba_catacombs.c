@@ -116,8 +116,8 @@ void GabombaCatacombs_ClearRoom5SmallBushes(void) {
   GabombaCatacombs_ClearBushes(21, 9, 0, 2, 2, 57, 52);
 }
 
-// Cyclone on the bushes before the statue, hopping the leader off the cleared
-// patch.
+/// Cyclone on the bushes before the statue, hopping the leader off the cleared
+/// patch.
 void GabombaCatacombs_ClearBushesByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -134,8 +134,8 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   }
 }
 
-// Cyclone on the bushes uncovers the teleporter stone, which carries the party
-// a level down.
+/// Cyclone on the bushes uncovers the teleporter stone, which carries the party
+/// a level down.
 void GabombaCatacombs_UncoverFirstTeleporter(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 9, 65);
   Import_EventSetExitRequest(3);
@@ -222,7 +222,7 @@ void GabombaCatacombs_ClearRoom4Bushes(void) {
   GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
 }
 
-// Cyclone on the last bushes: a Mad Plant hides there, and attacks.
+/// Cyclone on the last bushes: a Mad Plant hides there, and attacks.
 void GabombaCatacombs_UncoverMadPlant(void) {
   GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
@@ -277,7 +277,7 @@ DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSeventhPuddle, 14,
 DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeRoom5Puddle, 8, 0x200,
                                    15, 18, 17, 18)
 
-// Moves the leader and camera along z by dz when nothing is in the way.
+/// Moves the leader and camera along z by dz when nothing is in the way.
 void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
   struct GabombaCatacombsFollower *follower;
   struct GabombaCatacombsVec position;
@@ -307,8 +307,8 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
   }
 }
 
-// Walking in the stream: spray rises every eighth frame and the water pushes
-// the leader along.
+/// Walking in the stream: spray rises every eighth frame and the water pushes
+/// the leader along.
 void GabombaCatacombs_WadeStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *steam;
@@ -338,8 +338,8 @@ void Actor_MoveToObject(s32 actor, s32 target);
 #define TALK()                                                                 \
   EventMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
 
-// At the end of the catacombs the Great Gabomba speaks: "By reaching this
-// place, you have proven your power."
+/// At the end of the catacombs the Great Gabomba speaks: "By reaching this
+/// place, you have proven your power."
 void GabombaCatacombs_GabombaBestowsPower(void) {
   struct Actor *follower = Actor_GetById(9);
   struct Actor *statue = Actor_GetById(64);

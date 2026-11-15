@@ -241,8 +241,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIslets_Placements;
 }
 
-// Pushing the log off the ice: it falls into the water and makes a way back for
-// Pengulina.
+/// Pushing the log off the ice: it falls into the water and makes a way back
+/// for Pengulina.
 void Islets_PushLogIntoWater(void) {
   struct PushTarget target;
   struct Actor *object = Actor_Get(10);
@@ -744,7 +744,7 @@ extern s32 gIslets_BirdFliesBackScript[];
    Actor_WalkToAndWait(actor, x, z), FieldEvent_Wait(1),                       \
    Actor_GetById(actor)->steeringFlags |= 1)
 
-// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
+/// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
 void Islets_TradeWithDog(void) {
   struct Actor *leader, *trader, *item, *gift;
   s32 right;
@@ -879,7 +879,7 @@ extern struct ActionScript
     gIslets_SpinScript__first __asm__("gIslets_SpinScript");
 #define gIslets_SpinScript gIslets_SpinScript__first
 
-// "At long last, I have a friend! Lonesome George I am no more!"
+/// "At long last, I have a friend! Lonesome George I am no more!"
 void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guide = Actor_Get(9);
@@ -970,7 +970,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
     }                                                                          \
   }
 
-// "Oh! You're really going to let me take care of your li'l turtle?"
+/// "Oh! You're really going to let me take care of your li'l turtle?"
 void Islets_GiveTurtle(void) {
   struct Actor *leader, *a, *b, *other;
   const u8 *message;
@@ -1120,8 +1120,8 @@ void Islets_GiveTurtle(void) {
 extern u32 gIslets_GeorgeWalksScript[];
 extern u32 gIslets_TurtleWalksScript[];
 
-// "You all set to go back to the island?" Lonesome George carries the party
-// back.
+/// "You all set to go back to the island?" Lonesome George carries the party
+/// back.
 void Islets_RideBackToIsland(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(9);
@@ -1259,7 +1259,7 @@ void Islets_FillWaveLines(void) {
   gIslets_WaveTableIndex ^= 1;
 }
 
-// The water ripples by an HBlank wave on BG1.
+/// The water ripples by an HBlank wave on BG1.
 void Islets_StartWave(void) {
   Task_AddFrame(Islets_FillWaveLines, 0x480);
   Task_AddFrame(Islets_StartWaveDma, 0xc80);
@@ -1325,7 +1325,7 @@ void Islets_PlayFootsteps(void) {
     Event_PlaySound(SE_FOOTSTEP);
 }
 
-// Coming near the nest, the bird flies back onto it.
+/// Coming near the nest, the bird flies back onto it.
 void Islets_BirdReturnsToNest(void) {
   struct Actor *object = Actor_Get(10);
 
@@ -1678,7 +1678,7 @@ void Islets_EnterDoor(void) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-// "Here we are!" Lonesome George's secret spot.
+/// "Here we are!" Lonesome George's secret spot.
 void Islets_ArriveAtSecretSpot(void) {
   struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1863,12 +1863,13 @@ void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   FieldActor_SetMoveTargetFixed(object, x, object->y.fixed, z);
 }
 
-// The Islets' marching guards (objects 11 to 18): while the event work is busy
-// or flag 0x218 is set they stand still; once the controlled character drops
-// below height -12 they stand and the event work's counter 0x16a becomes 200;
-// otherwise, for each frame owed (gSceneState's halfword 2) while no event
-// runs, a 260-frame routine sets them walking with their facing steps
-// (Islets_MoveIceberg) at 0, still at 100 and 220, and walking in place at 130.
+/// The Islets' marching guards (objects 11 to 18): while the event work is busy
+/// or flag 0x218 is set they stand still; once the controlled character drops
+/// below height -12 they stand and the event work's counter 0x16a becomes 200;
+/// otherwise, for each frame owed (gSceneState's halfword 2) while no event
+/// runs, a 260-frame routine sets them walking with their facing steps
+/// (Islets_MoveIceberg) at 0, still at 100 and 220, and walking in place at
+/// 130.
 void Islets_DriftIcebergs(void) {
   u16 *step = (u16 *)((u8 *)gSceneState);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

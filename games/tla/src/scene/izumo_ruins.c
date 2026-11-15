@@ -152,7 +152,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-// Set as Parch dries the pool before the room of the stone tablet.
+/// Set as Parch dries the pool before the room of the stone tablet.
 #define FLAG_IZUMO_RUINS_POOL_PARCHED 0x941
 
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
@@ -191,14 +191,14 @@ s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
-// Updates the cells under a pillar object by its flag (the object's action):
-// set, the upper layer's cell is marked 0xff in its high byte, the lower
-// cell loses bit 7, the height drops 4 when the object's ground height is not
-// the map's and the sprite takes priority 3; clear, the upper cell's high byte
-// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
-// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
-// are written back and MapGrid_SetCellHeight is given the cell's position and
-// height.
+/// Updates the cells under a pillar object by its flag (the object's action):
+/// set, the upper layer's cell is marked 0xff in its high byte, the lower
+/// cell loses bit 7, the height drops 4 when the object's ground height is not
+/// the map's and the sprite takes priority 3; clear, the upper cell's high byte
+/// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
+/// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
+/// are written back and MapGrid_SetCellHeight is given the cell's position and
+/// height.
 void IzumoRuins_ShowPillarState(struct Actor *object) {
   s32 column = object->x.fixed >> 20;
   s32 row = object->z.fixed >> 20;
@@ -269,8 +269,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIzumoRuins_ActorPlacements;
 }
 
-// Starts the effect for this scene's room, then, for a first argument of 1,
-// runs IzumoRuins_ShowPillarState on the effect work's object.
+/// Starts the effect for this scene's room, then, for a first argument of 1,
+/// runs IzumoRuins_ShowPillarState on the effect work's object.
 void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
   struct IzumoRuinsEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -313,8 +313,8 @@ void IzumoRuins_SinkIntoSand(void) {
 
 #include "shared/leader_set_layer.h"
 
-// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
-// to 0xff; then starts the room's effect.
+/// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
+/// to 0xff; then starts the room's effect.
 void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);

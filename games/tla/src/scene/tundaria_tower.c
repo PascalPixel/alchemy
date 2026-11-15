@@ -1048,7 +1048,7 @@ loop:
     goto loop;
 }
 
-// Finds the current target's table row and shrinks it.
+/// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1084,9 +1084,9 @@ top:
 
 #include "shared/actor_set_cell_open.h"
 
-// On entering, sets each listed pillar from its two flags (pushed: moved to
-// its place; else its cell raised and its shape redrawn), then lifts the
-// leader onto the ground under it.
+/// On entering, sets each listed pillar from its two flags (pushed: moved to
+/// its place; else its cell raised and its shape redrawn), then lifts the
+/// leader onto the ground under it.
 UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
@@ -1261,10 +1261,10 @@ void TundariaTower_SetPillarMode3(s32 id) {
   Actor_DisableById(id);
 }
 
-// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
-// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
-// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
-// it copy actor 9's visual attributes.
+/// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
+/// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
+/// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
+/// it copy actor 9's visual attributes.
 UNUSED void TundariaTower_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
@@ -1558,8 +1558,8 @@ struct RockSprite__s29d0 {
   u8 unk20[8];
 };
 
-// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-// ring that next walks round.
+/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
@@ -1573,8 +1573,8 @@ struct RockWork {
 // thrown up and out along it.
 #include "shared/rocks_spawn.h"
 
-// The falling rocks' setup: loads their picture, sets up 64 small sprites,
-// marks each rock idle and starts the task that spawns them.
+/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
+/// marks each rock idle and starts the task that spawns them.
 void TundariaTower_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));

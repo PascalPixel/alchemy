@@ -128,9 +128,9 @@ struct MagmaRockWork {
 
 #endif
 
-// For each id of a list ended by 0xffff: clears the object's mark and, on a
-// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-// the mark.
+/// For each id of a list ended by 0xffff: clears the object's mark and, on a
+/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
+/// the mark.
 void Blocks_MarkCells(u16 *ids) {
   struct Actor *object;
   u8 *blocked;
@@ -173,9 +173,9 @@ void Blocks_MarkCells(u16 *ids) {
 // cell with attribute bit 6.
 #include "text/msg_ids.h"
 
-// For each id of a list ended by 0xffff: settles the object on its ground,
-// copies the cell under it, and blocks the cells ahead of and behind it on a
-// cell with attribute bit 6.
+/// For each id of a list ended by 0xffff: settles the object on its ground,
+/// copies the cell under it, and blocks the cells ahead of and behind it on a
+/// cell with attribute bit 6.
 void MagmaRock_SettleBlocks(u16 *ids) {
   while (*ids != 0xffff) {
     struct Actor *object = Actor_Get(*ids);
@@ -288,8 +288,8 @@ void Event_Start();
 void Actor_PlaceMovedBlock();
 s32 MagmaRock_EndEvent();
 
-// Rebuilds the room's opened passages on entry and sets the flag of the cell
-// the leader stands on.
+/// Rebuilds the room's opened passages on entry and sets the flag of the cell
+/// the leader stands on.
 s32 MagmaRock_BlockMovedPillar(void) {
   struct Actor *leader = gFieldWork->movedBlock;
   s32 x, z;
@@ -346,7 +346,7 @@ void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 void MagmaRock_PlayBurst(s16 value) {
   struct MainRoutineWork *party;
 
-  BattleEffect_LoadActionEffectResources(151, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_BURST, 1);
   party = &gMainRoutineWork;
   Import_FieldPsynergySetupActorPair(party->leaderActorId, value);
   FieldPsynergy_RunHandler(1);
@@ -429,8 +429,8 @@ struct MagmaRockEffectConfig {
 
 void Event_PlayCueNearFocus(struct Actor *object, s32 value);
 
-// Every fourth frame, spawns effect 403 at the object with a random z offset
-// and z velocity.
+/// Every fourth frame, spawns effect 403 at the object with a random z offset
+/// and z velocity.
 void MagmaRock_TrailEmbers(struct Actor *object) {
   u32 frame = gFrameCount;
 
@@ -612,9 +612,9 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   return result;
 }
 
-// Picks the cell table for the room and entrance, finds the target in it and,
-// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
-// with MagmaRock_FlashStatue.
+/// Picks the cell table for the room and entrance, finds the target in it and,
+/// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
+/// with MagmaRock_FlashStatue.
 void MagmaRock_TargetStatue(s32 mode) {
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
   s16 *table = gMagmaRock_Room1Statues;
@@ -650,8 +650,8 @@ void MagmaRock_TargetStatue(s32 mode) {
   }
 }
 
-// Adds the velocity to the position and decays it by one eighth each
-// update.
+/// Adds the velocity to the position and decays it by one eighth each
+/// update.
 void MagmaRock_DriftAndSlow(struct Actor *object) {
   object->x.fixed += object->bounce;
   object->y.fixed += object->gravity;
@@ -846,7 +846,7 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
  * games/tla/src/scene/magma_rock.c:838: `Position' defined as wrong kind of
  * tag. */
 #define Position Position__s0ff4
-// A 16.16 position word, read whole or by halves.
+/// A 16.16 position word, read whole or by halves.
 union Position {
   s32 word;
   s16 half[2];
@@ -856,8 +856,8 @@ union Position {
 
 void Actor_Release(struct Actor *part);
 
-// One of the four parts MagmaRock_BurnStatue builds: rises and falls with its
-// owner's action counter.
+/// One of the four parts MagmaRock_BurnStatue builds: rises and falls with its
+/// owner's action counter.
 void MagmaRock_RaiseFlamePart(struct Actor *part) {
   struct Actor *owner = part->watchedActor;
 
@@ -898,8 +898,8 @@ struct MagmaRockEffectConfig {
 
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
-// The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
-// others, throws effect 403 every eighth frame and marks the ground beneath.
+/// The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
+/// others, throws effect 403 every eighth frame and marks the ground beneath.
 void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   struct Actor *watched = (struct Actor *)object->effect.countdown;
   struct MagmaRockEffectConfig config;
@@ -948,8 +948,8 @@ void Event_PlayCueNearFocus(struct Actor *object, s32 a);
 
 struct AnimationEntry;
 
-// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
-// declares it.
+/// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
+/// declares it.
 struct ResourceSprite {
   u32 imageAttributes[3];
   s32 scale;
@@ -1074,8 +1074,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     object->timer++;
 }
 
-// In room 1 or 2, targets actor 15 or 14, runs MagmaRock_BurstStatue and sets
-// flag 0x200.
+/// In room 1 or 2, targets actor 15 or 14, runs MagmaRock_BurstStatue and sets
+/// flag 0x200.
 #define DEFINE_MAGMA_ROCK_BURST_COLUMN(name, n1, n2, n3)                       \
   void name(s32 mode, s32 cue) {                                               \
     struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;               \
@@ -1360,10 +1360,10 @@ void MagmaRock_FlashTarget(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-// MagmaRock_BurstStatue's counterpart: on cue 0 it hands the target to
-// MagmaRock_FlashTarget; modes 2 and 3 run MagmaRock_ScatterEmbers at the
-// target's cell, and mode 3 also clears its position and copies the cells at
-// columns 32 and 96.
+/// MagmaRock_BurstStatue's counterpart: on cue 0 it hands the target to
+/// MagmaRock_FlashTarget; modes 2 and 3 run MagmaRock_ScatterEmbers at the
+/// target's cell, and mode 3 also clears its position and copies the cells at
+/// columns 32 and 96.
 void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 

@@ -590,7 +590,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, 16);
-  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
   Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -790,7 +790,7 @@ void MadraInteriors_MindReadPiers(void) {
 /// Unused: Piers' Psynergy at actor 8 alone, as the interrogation plays it;
 /// nothing calls it.
 UNUSED void MadraInteriors_PiersUsesPsynergy(void) {
-  BattleEffect_LoadActionEffectResources(24, 1);
+  BattleEffect_LoadActionEffectResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);

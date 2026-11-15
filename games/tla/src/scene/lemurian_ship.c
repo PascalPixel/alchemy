@@ -1220,7 +1220,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
 
     object->motionFlags = 0;
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
-                                         206 << 18, px(-32), 144 << 15);
+                                         px(824), px(-32), px(72));
     object->groundHeight = -px(32);
     if (Event_GetFlag((FLAG_PUDDLE_FROZEN + 2)))
       MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);

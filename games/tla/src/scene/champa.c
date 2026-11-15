@@ -57,7 +57,7 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
     Actor_SetDestination(id, actor->x.part[0].pixel, actor->z.part[0].pixel);
 }
 
-// The town's own story, which no other scene reads.
+/// The town's own story, which no other scene reads.
 #define FLAG_NEAR_THE_CLIFF 0x970 ///< the party walked up to Obaba's cliff
 #define FLAG_TOLD_OF_OBABA 0x972  ///< a villager told of Obaba
 #define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs

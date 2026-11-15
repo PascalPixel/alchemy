@@ -361,9 +361,9 @@ void JupiterLighthouse_KarstAndAgatioWait(void) {
 
 extern s32 gJupiterLighthouse_BeaconParticleScript[];
 
-// Every third frame, or every frame once flag 0x201 is set, spawns a particle
-// at a random height above object 31 that circles it
-// (JupiterLighthouse_CircleBeacon).
+/// Every third frame, or every frame once flag 0x201 is set, spawns a particle
+/// at a random height above object 31 that circles it
+/// (JupiterLighthouse_CircleBeacon).
 void JupiterLighthouse_SpawnBeaconParticle(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -406,9 +406,9 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
   }
 }
 
-// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
-// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
-// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
+/// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
+/// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
+/// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *object = Actor_Get(36);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -2149,9 +2149,9 @@ void JupiterLighthouse_WeBeatThem(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
-// the three rows from 72 less the row of z. Nothing in this overlay calls it.
-// As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
+/// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
+/// the three rows from 72 less the row of z. Nothing in this overlay calls it.
+/// As ☀️'s MercuryLighthouseAerie_CollectBandSlots does.
 void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
   s32 z = zArg;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -2438,7 +2438,7 @@ void JupiterLighthouse_SetCycleFrame(s32 a0) {
 
 extern s32 gPaletteCycleFrame;
 
-// Sets the counter, its value built as a word.
+/// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 #include "shared/palette_cycle_step.h"

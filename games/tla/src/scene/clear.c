@@ -49,7 +49,7 @@
 #include "owner_state.h"
 #include "macros.h"
 
-// The two secret button codes: unlocked, held and progress of each.
+/// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeEntered;
 
 extern u16 gClear_PackedKeptItems[];
@@ -838,9 +838,9 @@ done:
   return 1;
 }
 
-// This overlay's copy of Window_SetTilemapFlagRect (window/fixed_block.c): sets
-// the field in the tilemap flags of a rectangle of a window, clipped to the
-// screen.
+/// This overlay's copy of Window_SetTilemapFlagRect (window/fixed_block.c):
+/// sets the field in the tilemap flags of a rectangle of a window, clipped to
+/// the screen.
 void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,
                         s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -916,12 +916,12 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
 }
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-// The Japanese grid has 20 columns of kana and its side column is 20.
+/// The Japanese grid has 20 columns of kana and its side column is 20.
 #define SIDE_COLUMN 20
 #define SIDE_HIGHLIGHT_WIDTH 3
 #define CHECK_WINDOW_X 8
 #define CHECK_WINDOW_WIDTH 14
-// Japanese decodes into the bytes after its 260-byte entered password.
+/// Japanese decodes into the bytes after its 260-byte entered password.
 #define DECODED_PASSWORD gClear_PasswordCodes
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) == SIDE_COLUMN)
 #else

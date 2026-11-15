@@ -569,8 +569,8 @@ void Map_SetLayerEntryFlag(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
-// Touching the lobby counter: waits for the opponent, walks the lead to the
-// arena door, swaps party records and starts the link battle.
+/// Touching the lobby counter: waits for the opponent, walks the lead to the
+/// arena door, swaps party records and starts the link battle.
 s32 LinkLobby_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -812,7 +812,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 digits);
 
-// Tells the leader's win count, total or in a row by the way the lead faces.
+/// Tells the leader's win count, total or in a row by the way the lead faces.
 s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Actor_GetById(ACTOR_FELIX)->facing;
   u16 *count;

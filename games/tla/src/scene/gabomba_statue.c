@@ -15,8 +15,8 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-// Story flags: both cone pillars Pounded and the cogs turned back, each cone
-// Pounded, and the mouse that shows the way seen.
+/// Story flags: both cone pillars Pounded and the cogs turned back, each cone
+/// Pounded, and the mouse that shows the way seen.
 #define FLAG_GABOMBA_COGS_TURNED_BACK 0x8cd
 /// The party has watched how the statue's works run.
 #define FLAG_GABOMBA_SAW_HOW_IT_WORKS 0x8f6
@@ -160,7 +160,7 @@ struct Wanderer {
 void GabombaStatue_FightSteel(void) {
   Field_RequestDjinnBattle(33, DJINNI_STEEL);
 }
-// A wanderer's update: it turns between its two facings at random intervals.
+/// A wanderer's update: it turns between its two facings at random intervals.
 s32 GabombaStatue_LookAround(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
 
@@ -216,7 +216,7 @@ const u8 *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// The flashing cog's update: its picture alternates every ten frames.
+/// The flashing cog's update: its picture alternates every ten frames.
 s32 GabombaStatue_FlashCog(struct Actor *actor) {
   u32 frame = gFrameCount;
 
@@ -263,7 +263,8 @@ void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
   *z = position[2];
 }
 
-// A cog tooth's update: it turns about the cog's centre by the cogs' direction.
+/// A cog tooth's update: it turns about the cog's centre by the cogs'
+/// direction.
 s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
   u8 *phase = &actor->phase;
   s32 angle = (*phase << 16) / 180;
@@ -450,7 +451,7 @@ GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
   return NULL;
 }
 
-// The leader hops off a cog by dx, dz.
+/// The leader hops off a cog by dx, dz.
 void GabombaStatue_HopOffCog(struct Actor *object, s32 dx, s32 dz,
                              s32 velocity) {
   u8 *flags = &object->motionFlags;
@@ -476,7 +477,7 @@ void GabombaStatue_HopOffCog(struct Actor *object, s32 dx, s32 dz,
   System_Wait(3);
 }
 
-// Standing on a turning cog (kind 358) turns the leader with it.
+/// Standing on a turning cog (kind 358) turns the leader with it.
 void GabombaStatue_TurnWithCog(void) {
   s32 step = gGabombaStatue_CogDirection;
 
@@ -496,8 +497,8 @@ void GabombaStatue_TurnWithCog(void) {
   }
 }
 
-// Standing on a turntable (kind 357) carries the leader round with it, unless a
-// wall stops him.
+/// Standing on a turntable (kind 357) carries the leader round with it, unless
+/// a wall stops him.
 void GabombaStatue_RideTurntable(void) {
   struct Actor *actor, *table;
   struct Vector3 test;
@@ -554,10 +555,10 @@ void GabombaStatue_RideTurntable(void) {
   actor->facing += turn;
 }
 
-// Moves the controlled character with the platform kind 359 along x by the
-// speed in gGabombaStatue_CogDirection, backward when the platform faces half a
-// turn; it stays within 2 pixels of the platform's z, and past 20 pixels on x
-// it steps off (GabombaStatue_HopOffCog).
+/// Moves the controlled character with the platform kind 359 along x by the
+/// speed in gGabombaStatue_CogDirection, backward when the platform faces half
+/// a turn; it stays within 2 pixels of the platform's z, and past 20 pixels on
+/// x it steps off (GabombaStatue_HopOffCog).
 void GabombaStatue_RideSlidingCog(void) {
   s32 *speed = &gGabombaStatue_CogDirection;
 
@@ -628,13 +629,13 @@ void GabombaStatue_EndRide(struct Actor *object) {
   }
 }
 
-// Moves the controlled character with the moving platforms
-// (GabombaStatue_FindCogUnder finds the one under it, 360 forward and 361
-// back): it stays within 2 pixels of the platform's x and is carried along z by
-// the speed in gGabombaStatue_CogDirection; past 20 pixels from the platform it
-// steps off (GabombaStatue_HopOffCog). In GabombaStatue4 at cell (28, 15) or
-// (30, 15) it ends the ride (GabombaStatue_EndRide) and runs exit 5 or 6
-// (Import_EventSetExitRequest).
+/// Moves the controlled character with the moving platforms
+/// (GabombaStatue_FindCogUnder finds the one under it, 360 forward and 361
+/// back): it stays within 2 pixels of the platform's x and is carried along z
+/// by the speed in gGabombaStatue_CogDirection; past 20 pixels from the
+/// platform it steps off (GabombaStatue_HopOffCog). In GabombaStatue4 at cell
+/// (28, 15) or (30, 15) it ends the ride (GabombaStatue_EndRide) and runs exit
+/// 5 or 6 (Import_EventSetExitRequest).
 void GabombaStatue_RideRollingCog(void) {
   struct Actor *actor, *platform;
   s32 speed, d, sign, x, z, platformZ, offset;
@@ -699,7 +700,7 @@ void GabombaStatue_RideRollingCog(void) {
   }
 }
 
-// Walking east or west off a sliding cog hops the leader to the next.
+/// Walking east or west off a sliding cog hops the leader to the next.
 void GabombaStatue_HopAcrossEastOrWest(void) {
   s32 *speed = &gGabombaStatue_CogDirection;
 
@@ -741,7 +742,7 @@ void GabombaStatue_HopAcrossNorthOrSouth(void) {
   }
 }
 
-// A little mouse pops up and hops from cog to cog, showing the way across.
+/// A little mouse pops up and hops from cog to cog, showing the way across.
 void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -821,8 +822,8 @@ void GabombaStatue_ResetCharge(s32 id) {
   Actor_SetAnimation(id, 1);
 }
 
-// Puts the four charges at their starting cells, ready to run along the
-// channel.
+/// Puts the four charges at their starting cells, ready to run along the
+/// channel.
 void GabombaStatue_ReleaseCharges(void) {
   GabombaStatue_ResetCharge(11);
   GabombaStatue_ResetCharge(12);
@@ -920,8 +921,8 @@ const u8 *Scene_GetTriggers(void) {
   return table;
 }
 
-// The leader walks to the hole at x, z, drops in and the scene leaves by its
-// exit.
+/// The leader walks to the hole at x, z, drops in and the scene leaves by its
+/// exit.
 void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
@@ -1104,7 +1105,7 @@ void GabombaStatue_JumpDownHole(void) {
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeader, 152,
                                      424)
 
-// A turning pinion carries the leader along and throws him down.
+/// A turning pinion carries the leader along and throws him down.
 void GabombaStatue_PinionThrowsLeader(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 speed;
@@ -1177,8 +1178,8 @@ void GabombaStatue_PoundConePillar(s32 a, s32 b) {
     gFieldWork->raisedTrigger = 200;
 }
 
-// With both cone pillars Pounded, the flashing cog stops, and all the cogs
-// start turning the other way.
+/// With both cone pillars Pounded, the flashing cog stops, and all the cogs
+/// start turning the other way.
 void GabombaStatue_CogsTurnBack(void) {
   struct Actor *actor = Actor_Get(26);
 
@@ -1204,7 +1205,7 @@ void GabombaStatue_CogsTurnBack(void) {
 }
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-// Pound on the grey cone of the channel room raises all the floating tiles.
+/// Pound on the grey cone of the channel room raises all the floating tiles.
 void GabombaStatue_PoundGreyCone(s32 value) {
   GabombaStatue_RaiseTiles(value);
   if (value == 1)
@@ -1223,7 +1224,7 @@ void GabombaStatue_ConeChimes(void) {
   Event_End();
 }
 
-// When the clock has run out, the offering below is heard again.
+/// When the clock has run out, the offering below is heard again.
 void GabombaStatue_CheckOfferingClock(void) {
   if (GabombaStatue_GetClock() == 0)
     gFieldWork->raisedTrigger = 201;
@@ -1266,7 +1267,7 @@ void GabombaStatue_RestoreHiddenActors(void) {
 DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimRoom1Actors, 8, 1)
 
 DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimRoom2Actors, 29, 2)
-// While a menu or Psynergy is up the cogs and wanderers stand still.
+/// While a menu or Psynergy is up the cogs and wanderers stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
   s32 value = 16;
   s32 open = 0;
@@ -1427,7 +1428,7 @@ void GabombaStatue_SetCogTurn(s32 id, s32 direction, s32 value) {
   Sprite_SetAnimationTimers(animation, value);
 }
 
-// Sets the cogs' direction and turns every cog of the room that way.
+/// Sets the cogs' direction and turns every cog of the room that way.
 void GabombaStatue_TurnCogs(s32 direction) {
   s16 scene;
 
@@ -1482,7 +1483,7 @@ extern s32 gGabombaStatue_ChargeScript[];
 
 void Actor_SetSpriteColorMode(struct Orbiter__find_near *object, s32 value);
 
-// Starts a charge from its cell toward the target at the angle given.
+/// Starts a charge from its cell toward the target at the angle given.
 void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *object =
       ((struct Orbiter__find_near *)Actor_Get(slot));
@@ -1516,7 +1517,7 @@ void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
  * before has its own. */
 #define Wanderer Wanderer__s2394
 #define SceneState SceneState__s2394
-// The leader falls in from the cog above and lands with a thump beside Steel.
+/// The leader falls in from the cog above and lands with a thump beside Steel.
 void GabombaStatue_LandFromFall(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -1658,7 +1659,7 @@ void GabombaStatue_FocusEnergies(void) {
   FieldEvent_SetExitRequest(11);
 }
 
-// The charges flow along the channel and stick, while the party watches.
+/// The charges flow along the channel and stick, while the party watches.
 void GabombaStatue_WatchTheChargesStick(void) {
   s32 speed;
 
@@ -1749,16 +1750,16 @@ void GabombaStatue_SeeHowItWorks(void) {
     s32 leader = gMainRoutineWork.leaderActorId;
 
     north = FACING_NORTH;
-    Actor_SetPositionAndFacing(leader, 174 << 17, 156 << 17, north);
+    Actor_SetPositionAndFacing(leader, px(348), px(312), north);
   }
-  Actor_SetPositionAndFacing(ACTOR_PIERS, 165 << 17, 156 << 17, north);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, px(330), px(312), north);
   {
     s32 facing = FACING_NORTH_NORTHWEST;
 
-    Actor_SetPositionAndFacing(23, 216 << 17, 156 << 17, facing);
+    Actor_SetPositionAndFacing(23, px(432), px(312), facing);
   }
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, 224 << 17, 156 << 17, north);
-  Actor_SetPositionAndFacing(ACTOR_JENNA, 234 << 17, 156 << 17, north);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(448), px(312), north);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, px(468), px(312), north);
   System_Wait(1);
   gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
@@ -2025,7 +2026,7 @@ void GabombaStatue_FixTheChannel(void) {
   GabombaStatue_RestartClock();
 }
 
-// Prepares the current room.
+/// Prepares the current room.
 s32 Scene_Initialize(void) {
   s16 scene;
 
@@ -2109,7 +2110,7 @@ void GabombaStatue_InitializeRoom5(void) {
   ((s32 (*)(s32, s32, s32))GabombaStatue_CoilRope)(0, 8, 9);
 }
 
-// The channel's random seed, from the leader's stats.
+/// The channel's random seed, from the leader's stats.
 s32 GabombaStatue_GetPuzzleSeed(void) {
   u8 *state = Unit_Get(gMainRoutineWork.leaderActorId);
   s32 sum = 0;
@@ -2356,8 +2357,8 @@ extern s32
 GabombaStatue_GetPiece__path(s32 col, s32 row,
                              s32 turn) __asm__("GabombaStatue_GetPiece");
 
-// Lays this game's channel puzzle at random: paths of the given length to the
-// head in the middle (GabombaStatue_LayPath), their pieces scattered as tiles.
+/// Lays this game's channel puzzle at random: paths of the given length to the
+/// head in the middle (GabombaStatue_LayPath), their pieces scattered as tiles.
 s32 GabombaStatue_LayChannel(s32 value) {
   struct SceneState *state = &gSceneState;
   s32 row, col, n, straight, corner, cross, tries, left, mode;
@@ -2595,14 +2596,14 @@ extern u8 gGabombaStatue_PathDirections[], gGabombaStatue_PathXs[],
     gGabombaStatue_PathTried[], gGabombaStatue_PathFlags[];
 extern s8 gGabombaStatue_PathSteps[];
 extern u8 gGabombaStatue_PieceJoins[];
-// Lays a random path of `length` cells across the Gabomba Statue grid
-// (gSceneState, 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ),
-// backtracking through per-step stacks (gGabombaStatue_PathDirections to
-// gGabombaStatue_PathFlags: direction, x, z, kind, tried directions and flags)
-// when a cell has no free neighbour; each step joins the cells
-// (GabombaStatue_PickPiece picks the piece, GabombaStatue_WritePiece writes
-// it). Returns 0, or -1 when the parity of the distance rules a path out or the
-// search gives up.
+/// Lays a random path of `length` cells across the Gabomba Statue grid
+/// (gSceneState, 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ),
+/// backtracking through per-step stacks (gGabombaStatue_PathDirections to
+/// gGabombaStatue_PathFlags: direction, x, z, kind, tried directions and flags)
+/// when a cell has no free neighbour; each step joins the cells
+/// (GabombaStatue_PickPiece picks the piece, GabombaStatue_WritePiece writes
+/// it). Returns 0, or -1 when the parity of the distance rules a path out or
+/// the search gives up.
 s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
                           s32 direction, s32 last, s32 bit) {
   u8 *cells, *kinds;
@@ -2758,9 +2759,9 @@ void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state) {
   gSceneState.cells[i].state = state;
 }
 
-// Shows or hides the statues: gives each occupied cell's actor, numbered from
-// id, its world position and draws its tile, or clears the actor and restores
-// the cell's kind tile.
+/// Shows or hides the statues: gives each occupied cell's actor, numbered from
+/// id, its world position and draws its tile, or clears the actor and restores
+/// the cell's kind tile.
 void GabombaStatue_ShowTiles(s32 id, s32 show) {
   struct SceneState *state = &gSceneState;
   s32 row;
@@ -2848,7 +2849,7 @@ void GabombaStatue_RaiseTiles(s32 value, s32 row) {
   }
 }
 
-// Pounding a raised tile brings it down into its place in the channel.
+/// Pounding a raised tile brings it down into its place in the channel.
 void GabombaStatue_PoundTile(s32 mode) {
   struct SceneState *state;
   struct Actor *object;
@@ -2891,7 +2892,7 @@ void GabombaStatue_SetTileMode(s32 mode) {
   Actor_SetModeById(gSceneState.firstId, mode);
 }
 
-// Turns every raised tile a quarter turn.
+/// Turns every raised tile a quarter turn.
 void GabombaStatue_TurnTiles(s32 value) {
   struct SceneState *state = &gSceneState;
   s32 id;
@@ -2904,8 +2905,8 @@ void GabombaStatue_TurnTiles(s32 value) {
   }
 }
 
-// Redraws side A once; with the statues ready, moves their offset down by
-// 0x333 a frame for twenty frames, then clears it.
+/// Redraws side A once; with the statues ready, moves their offset down by
+/// 0x333 a frame for twenty frames, then clears it.
 void GabombaStatue_LowerArrowA(void) {
   struct SceneState *state = &gSceneState;
   s32 i;
@@ -2942,7 +2943,7 @@ void GabombaStatue_RedrawArrowA(void) {
   }
 }
 
-// Side B's twin of GabombaStatue_LowerArrowA: the offset moves up instead.
+/// Side B's twin of GabombaStatue_LowerArrowA: the offset moves up instead.
 void GabombaStatue_RaiseArrowB(void) {
   struct SceneState *state = &gSceneState;
   s32 i;
@@ -2979,7 +2980,7 @@ void GabombaStatue_RedrawArrowB(void) {
   }
 }
 
-// Draws the raised tiles as sprites over the room.
+/// Draws the raised tiles as sprites over the room.
 void GabombaStatue_DrawFloatingTiles(void) {
   s32 affine = 0;
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0xe4);
@@ -3027,8 +3028,8 @@ void GabombaStatue_DrawFloatingTiles(void) {
   }
 }
 
-// Sets up the channel puzzle on entering the room, or redraws it when
-// returning.
+/// Sets up the channel puzzle on entering the room, or redraws it when
+/// returning.
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
   struct SceneState *state = &gSceneState;
   s32 count;
@@ -3054,7 +3055,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
 extern s32 gGabombaStatue_TileFallScript[];
 extern u32 gGabombaStatue_TileRiseScript[];
 
-// A charge's step along the channel's pieces, splashing at its end.
+/// A charge's step along the channel's pieces, splashing at its end.
 void GabombaStatue_MoveCharge(struct Actor *ball, s32 step) {
   s16 *colp = (s16 *)((u8 *)ball + 100);
   s32 col = *colp;
@@ -3234,7 +3235,7 @@ done:
 extern void
 GabombaStatue_MoveCharge__charges() __asm__("GabombaStatue_MoveCharge");
 
-// Runs a pair of charges, one red and one blue, along the channel to the head.
+/// Runs a pair of charges, one red and one blue, along the channel to the head.
 s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   struct Unk02004d48 *actor;
   s32 second = first + 1;
@@ -3374,8 +3375,8 @@ struct ClockWork {
   u8 mode;
 };
 
-// Converts the remaining frames into minutes, seconds and tenths
-// (`MM:SS:T`).
+/// Converts the remaining frames into minutes, seconds and tenths
+/// (`MM:SS:T`).
 void GabombaStatue_FormatClock(s32 time, u8 *text) {
   if (time < 0)
     time = 0;
@@ -3419,10 +3420,10 @@ s32 GabombaStatue_TickClock(s32 time) {
   return volume;
 }
 
-// Draws the clock's five-digit count: copies the pictures of the digits of
-// timer + 50 out of the digit sheet and loads them, builds a plain and a
-// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
-// to the middle digit and to each digit where timer + 60 and timer differ.
+/// Draws the clock's five-digit count: copies the pictures of the digits of
+/// timer + 50 out of the digit sheet and loads them, builds a plain and a
+/// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
+/// to the middle digit and to each digit where timer + 60 and timer differ.
 void GabombaStatue_DrawClock(void) {
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *digit = clock->digit;
@@ -3493,7 +3494,7 @@ void GabombaStatue_CountDown(void) {
     clock->timer--;
 }
 
-// Starts the clock at one minute, shown or hidden.
+/// Starts the clock at one minute, shown or hidden.
 void GabombaStatue_StartClock(s32 mode) {
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
   u8 *tiles;
@@ -3544,7 +3545,7 @@ void GabombaStatue_ResetClock(void) {
   ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer = 3600;
 }
 
-// Layer switch table: three words (id, mode, flag), terminated by 0xffff.
+/// Layer switch table: three words (id, mode, flag), terminated by 0xffff.
 void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
   s32 value;
 

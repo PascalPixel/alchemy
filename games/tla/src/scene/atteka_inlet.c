@@ -35,7 +35,7 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-// The inlet's own story, which no other scene reads.
+/// The inlet's own story, which no other scene reads.
 #define FLAG_SHIPWRIGHTS_STOPPED_PARTY                                         \
   0x9b0 ///< "We worked really hard on that ship"
 #define FLAG_HAMMA_SHOWED_THE_WINGS 0x9b1 ///< Hamma showed the ship's wings
@@ -142,11 +142,11 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
+    FieldCamera_MoveWithinMapBounds(px(96), -1, px(308), 1);
     {
       s32 angle = 208;
 
-      Actor_SetPositionAndFacing(9, 60 << 16, 362 << 16, angle << 8);
+      Actor_SetPositionAndFacing(9, px(60), px(362), angle << 8);
     }
     wait(1);
     Actor_SetSpeed(9, 2);
@@ -157,7 +157,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     {
       s32 angle = 160;
 
-      Actor_SetPositionAndFacing(10, 94 << 16, 272 << 16, angle << 7);
+      Actor_SetPositionAndFacing(10, px(94), px(272), angle << 7);
     }
     wait(1);
     Actor_SetSpeed(10, 2);
@@ -351,7 +351,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;
     }
-    Actor_SetHorizontalPositionWithTerrain(14, 120 << 16, 376 << 16);
+    Actor_SetHorizontalPositionWithTerrain(14, px(120), px(376));
     wait(1);
     Actor_Jump(14, 4, 10);
     GameFlag_Set(FLAG_AREA_TEMP_00);
@@ -586,8 +586,8 @@ void AttekaInlet_SetUpTheShore(void) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
-    Actor_SetPositionAndFacing(9, 70 << 16, 308 << 16, FACING_EAST);
-    Actor_SetPositionAndFacing(10, 80 << 16, 316 << 16, FACING_EAST);
+    Actor_SetPositionAndFacing(9, px(70), px(308), FACING_EAST);
+    Actor_SetPositionAndFacing(10, px(80), px(316), FACING_EAST);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);

@@ -371,8 +371,8 @@ void SeaOfTime_RideCurrent(void) {
   }
 }
 
-// Walks actor 8 along a run of cells in the facing the event work names,
-// throwing sparks from both sides of it every fourth frame.
+/// Walks actor 8 along a run of cells in the facing the event work names,
+/// throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
@@ -466,8 +466,8 @@ extern u16 gSeaOfTime_LastLapCell;
 extern struct Spots gSeaOfTime_LapSpots;
 extern u8 gSeaOfTime_LapsNeeded[];
 
-// Tracks actor 8 around the ring of cells: counts steps made in one direction,
-// spawning an effect every fourth frame once past 3, and rewards a full count.
+/// Tracks actor 8 around the ring of cells: counts steps made in one direction,
+/// spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(8);
@@ -572,9 +572,9 @@ extern u32 gSeaOfTime_WaveState;
  * Event_End(void); not tried: Event_End's bound declaration was not found. */
 extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
-// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-// channel every 10 frames, then hands the rest of the event to
-// SeaOfTime_TrackWaves's task.
+/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
+/// channel every 10 frames, then hands the rest of the event to
+/// SeaOfTime_TrackWaves's task.
 s32 SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -702,8 +702,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
-// it is done, raises a pair of effects at its two sides every fourth frame.
+/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
+/// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
@@ -816,7 +816,7 @@ void SeaOfTime_CrossToLemuria(void) {
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
+  FieldCamera_MoveWithinMapBounds(px(352), -1, px(196), 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -990,9 +990,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSeaOfTime_Triggers;
 }
 
-// The Sea of Time's frame callback: rotates two runs of the background
-// palette, pulses the red of colour 15 (or steps it with the alarm), copies
-// the palette and ripples the layer's horizontal scroll line by line.
+/// The Sea of Time's frame callback: rotates two runs of the background
+/// palette, pulses the red of colour 15 (or steps it with the alarm), copies
+/// the palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
@@ -1125,9 +1125,9 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-// The Sea of Time's opening: places the camera and the first effects, showers
-// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
-// RGB(11, 6, 23).
+/// The Sea of Time's opening: places the camera and the first effects, showers
+/// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
+/// RGB(11, 6, 23).
 void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
@@ -1252,9 +1252,9 @@ void SeaOfTime_Open(void) {
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
 
-// The overlay's start: sets the screen effect, restores the clock and palette
-// in the first room, draws the unlit cells in the second, and schedules the
-// frame callback.
+/// The overlay's start: sets the screen effect, restores the clock and palette
+/// in the first room, draws the unlit cells in the second, and schedules the
+/// frame callback.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_1) {

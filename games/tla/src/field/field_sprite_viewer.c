@@ -98,7 +98,9 @@ restart:
     {
       s32 a;
 
-      /* FAKEMATCH(dead): a once-only block. */
+      /* FAKEMATCH(dead): the index read in a once-only block, before i moves
+       * into r0; as the plain call with layers[i].animationIndex, 2 of 665
+       * instructions differ in tla-en. */
       do {
         a = layers[i].animationIndex;
       } while (0);

@@ -733,6 +733,9 @@ counted:
       effect->motionFlags = 0;
       Sound_PlayFar(SE_SAND_MOVE);
       if (sprite != NULL) {
+        /* FAKEMATCH(signature): the field work read through SandTrailWork,
+         * whose priority is the low byte of a halfword; as struct FieldWork *
+         * and work->unkd4a & 3, 8 of 965 instructions differ in tla-en. */
         struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
 
         Sprite_StartAnimation(sprite, 1);

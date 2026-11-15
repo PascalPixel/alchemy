@@ -1618,7 +1618,8 @@ void FieldPsynergy_Ply(void) {
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(dead): target set again to actor. */
+      /* FAKEMATCH(dead): target set again to actor at each step; as the loop
+       * without it, 123 of 188 instructions differ in tla-en. */
       target = actor;
       if (i & 3)
         Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BLUE_TINT);

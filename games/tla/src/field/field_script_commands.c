@@ -633,7 +633,10 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
-       * for the distance. */
+       * for the distance; Camelot's template: the sibling routine
+       * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
+       * whole-pixel deltas and uses y's in its distance; as the line removed,
+       * 129 of 345 instructions differ in tla-en. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -711,7 +714,10 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
-       * for the distance. */
+       * for the distance; Camelot's template: the sibling routine
+       * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
+       * whole-pixel deltas and uses y's in its distance; as the line removed,
+       * 54 of 228 instructions differ in tla-en. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -835,7 +841,8 @@ retry:
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (MapGrid_CheckCollision(actor, &probePosition) != 0)
       goto retry;
-    /* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
+    /* FAKEMATCH(dead): the offsets in both arms of a test of actor; as the two
+     * lines alone, 16 of 188 instructions differ in tla-en. */
     if (actor != 0) {
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;

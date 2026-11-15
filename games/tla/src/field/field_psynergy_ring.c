@@ -72,7 +72,9 @@ void FieldPsynergy_UpdateRing(void) {
     red = 28;
   cycle:
     {
-      /* FAKEMATCH(pin): green pinned to r5. */
+      /* FAKEMATCH(pin): green pinned to r5, so the call's result is shifted
+       * straight into it; as a plain local, 17 of 272 instructions differ in
+       * tla-en. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
 
@@ -403,7 +405,9 @@ void FieldPsynergy_EndRing(void) {
     mote = work->motes;
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body. */
+      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, keeping
+       * the index's mask loaded inside the loop; as the loop without it, 36 of
+       * 226 instructions differ in tla-en. */
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;

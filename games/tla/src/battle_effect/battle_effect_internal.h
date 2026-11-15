@@ -1100,7 +1100,7 @@ extern const u16 gCastingImpact_BandMesh[];
 extern const u8 gBattleEffect_RingCorners[];
 extern const u16 gBattleEffect_RingMesh[];
 extern const u8
-    gBattleEffect_TaperedBeamCorners[];     // its corners (Thunder Mine)
+    gBattleEffect_TaperedBeamCorners[];      // its corners (Thunder Mine)
 extern const u16 gBattleEffect_ColumnMesh[]; // a bolt's mesh
 
 // particle_streams.c
@@ -1188,7 +1188,7 @@ extern u8 Data_02010318[];
 extern const u8 gWindFunnel_Counts[]; // the funnels per mode
 extern char ResourceId_CrystalBitmapSheet;
 extern u8 Data_02014e20[]; // gMapGridCellBuffer + 20000, the berg
-extern const u16 gBattleEffect_CylinderMesh[];    // the ripple's mesh
+extern const u16 gBattleEffect_CylinderMesh[];   // the ripple's mesh
 extern const u8 gBattleEffect_CylinderCorners[]; // its corners
 extern const u8 gDiamondBerg_RingStarts[4];      // per ripple: its start,
 extern const u8 gDiamondBerg_RingGrowth[4];      // its growth
@@ -1223,7 +1223,7 @@ extern const u8 gBattleEffect_TriangleCorners[];
 // heavy_divide.c
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
-extern const u16 gHeavyBlow_SwordMesh[];      // the sword's mesh
+extern const u16 gHeavyBlow_SwordMesh[];     // the sword's mesh
 extern const u8 gBattleEffect_BeamCorners[]; // its corners
 extern u8 gHeavyBlow_StrikeFrames[];         // per mode: the strike's frame
 extern u8 gHeavyBlow_ChipCounts[];           // per mode: the chips
@@ -1385,7 +1385,7 @@ extern s8 gDaedalus_RingX[];
 extern u8 gDaedalus_SpritePoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
 extern u16 gDaedalus_ParticleStarts[];
-extern const u8 gDaedalusAlt_StrikeFrames[];     // the seven strike frames
+extern const u8 gDaedalusAlt_StrikeFrames[];      // the seven strike frames
 extern const u16 gBattleEffect_SmallSquareMesh[]; // the rings' mesh
 
 // vengeance.c
@@ -1396,8 +1396,8 @@ extern u8 Data_020112e8[];                  // the reaper's raised pose
 extern u8 Data_0201276b[];                  // the blade's texture
 extern u8 Data_0201476b[];                  // the handle's texture
 extern u8 Data_0201576b[];                  // the flash's texture
-extern const u16 gLifeShear_BladeMesh[];     // the blade's mesh
-extern const u16 gLifeShear_HandleMesh[];    // the handle's mesh
+extern const u16 gLifeShear_BladeMesh[];    // the blade's mesh
+extern const u16 gLifeShear_HandleMesh[];   // the handle's mesh
 extern const u8 gLifeShear_ScytheCorners[]; // their corners
 extern char ResourceId_CrossTextureSheet;
 // Per mode: the drops' gravity, and their smallest cel.

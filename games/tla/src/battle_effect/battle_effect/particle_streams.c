@@ -646,6 +646,7 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define BLAST_FLASH_FRAME 16 ///< the flashes rise from here
 #define BLAST_HIT_FRAME 48
 
+/// A flame sprite as the particle streams set its priority and flags.
 struct FxAnimObject {
   u8 unk00[9];
   u8 unk09_0 : 2;

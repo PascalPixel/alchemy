@@ -81,6 +81,8 @@ struct SummonWork__f175f74 {
   s32 frameDone;
 };
 
+/// The battle work as Charon reads it: the backdrop's colours, its background
+/// and the byte at 0x867.
 struct CharonBattle {
   u8 unk000[0x56c];
   u16 palette[0x82];
@@ -89,21 +91,25 @@ struct CharonBattle {
   u8 unk867;
 };
 
+/// The battle camera as Charon reads it: its yaw.
 struct CharonCamera {
   u8 unk00[0x36];
   s16 yaw;
 };
 
+/// The line scroll's work as Charon reads it.
 struct LineScrollView {
   u8 unk00[0x10];
   s32 unk10;
 };
 
+/// A list of units to spawn, as Charon passes an empty one.
 struct SpawnList {
   u16 value;
   u8 unk02[26];
 };
 
+/// The heap slots as Charon reads them.
 struct SystemWork {
   u8 unk00[0x24];
   struct CharonBattle *battle;

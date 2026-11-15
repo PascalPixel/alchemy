@@ -64,6 +64,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags);
 
+/// A dragon sprite as Eclipse reads its priority and palette.
 struct EclipseObject {
   u8 unk0[9];
   u8 unk09 : 2;
@@ -76,6 +77,7 @@ struct EclipseObject {
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
+/// The battle effect work as Cruel Ruin's fade reads it.
 struct BattleFxFadeWork {
   s32 unk00;
   s32 halvePending;
@@ -83,15 +85,28 @@ struct BattleFxFadeWork {
   s32 step;
 };
 
+/// The battle effect work as Cruel Ruin's streaks read it.
 struct StreakWork {
   s32 frame;
   s32 transferPending;
 };
 
+/// A point of a streak: x, y and z.
 struct StreakPoint {
   s32 x;
   s32 y;
   s32 z;
+};
+
+/// One of Cruel Ruin's 256 streaks: its head and tail and how it is turned.
+struct Streak {
+  s32 head;
+  s32 tail;
+  s32 unused08;
+  s32 pitch;
+  s32 yaw;
+  s32 roll;
+  s32 unused18;
 };
 
 /// The backdrop's work, in place of the battle effect work.
@@ -103,6 +118,7 @@ struct StreakSceneWork {
   s32 fadeStep;
 };
 
+/// A sprite as Cruel Ruin reads its tile, priority, palette and resource.
 struct RuinObject {
   u8 unk0[8];
   union {

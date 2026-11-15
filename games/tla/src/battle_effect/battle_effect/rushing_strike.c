@@ -233,6 +233,7 @@ void BattleEffect_BuildRepeatingTilemap(void) {
 
 struct StripQuad;
 
+/// Two corners of a row of the strip.
 struct CornerRow {
   struct Corner corners[2];
 };

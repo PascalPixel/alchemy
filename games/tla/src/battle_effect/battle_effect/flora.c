@@ -9,6 +9,7 @@
 
 struct StripQuad;
 
+/// A sprite as Flora reads it: its tile, flags and resource.
 struct FloraObject {
   u8 unk0[8];
   u16 tile : 10;
@@ -855,6 +856,7 @@ struct DaggerTexture {
   void *pixels;
 };
 
+/// One entry of the model list Flora draws its dagger with.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -996,6 +998,7 @@ struct FxSlot {
   u8 hidden;
 };
 
+/// A sprite record as Flora sets its priority.
 struct FxRecord {
   u8 unk00[9];
   u8 low : 2;

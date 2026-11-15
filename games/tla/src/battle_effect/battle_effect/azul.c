@@ -9,6 +9,8 @@
 struct MeshTriangle;
 struct StripQuad;
 
+/// One face of the serpent's mesh: its three corners and their texture
+/// coordinates.
 struct AzulFace {
   u8 corner[3];
   u8 unk3;

@@ -6,6 +6,7 @@
 
 struct StripQuad;
 
+/// One corner of the plume: signed x, y and depth.
 struct Corner {
   s8 x;
   s8 y;

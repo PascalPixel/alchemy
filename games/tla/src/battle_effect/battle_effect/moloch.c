@@ -540,6 +540,7 @@ struct IrisScene {
   struct IrisPoint streaks[15][10];
 };
 
+/// A sprite as Iris reads its tile and resource.
 struct IrisSprite {
   u8 unk00[8];
   u16 tile : 10;
@@ -548,6 +549,7 @@ struct IrisSprite {
   u8 resource;
 };
 
+/// A sprite as Iris sets its priority.
 struct IrisSpriteFlags {
   u8 unk00[9];
   u8 unk09_0 : 2;
@@ -555,10 +557,12 @@ struct IrisSpriteFlags {
   u8 unk09_4 : 4;
 };
 
+/// The five widths a rising pillar takes.
 struct FiveWidths {
   s32 w[5];
 };
 
+/// The seven widths a widening pillar takes.
 struct SevenWidths {
   s32 w[7];
 };
@@ -2847,6 +2851,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   }
 }
 
+/// A block of the render pool, as Render_AllocateModelList hands it out.
 struct PoolEntry {
   s32 head;
   s32 next;

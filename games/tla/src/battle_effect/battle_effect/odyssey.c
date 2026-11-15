@@ -637,6 +637,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
+/// An actor's child sprite, as Actor_SetActiveChildParam sets its mode.
 struct ChildObject {
   u8 unk00[5];
   u8 mode;
@@ -644,6 +645,7 @@ struct ChildObject {
   s32 active;
 };
 
+/// An actor's group of child sprites.
 struct ChildGroup {
   u8 unk00[25];
   u8 dirty;

@@ -613,6 +613,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
 struct StripQuad;
 
+/// A sprite as Judgment reads it: its priority and resource.
 struct JudgmentObject {
   u8 unk0[9];
   u8 flagsLow : 2;

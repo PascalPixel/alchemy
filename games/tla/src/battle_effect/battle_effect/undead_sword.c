@@ -336,6 +336,7 @@ void BattleEffect_RunWateryGrave(struct BattleEffectParams *args) {
 
 struct StripQuad;
 
+/// A corner of the water sheet: x, y and depth, a byte each.
 struct WaterVertex {
   s32 x : 8;
   s32 y : 8;

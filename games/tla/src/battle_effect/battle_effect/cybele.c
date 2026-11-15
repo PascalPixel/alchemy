@@ -12,11 +12,13 @@
 #include "module/window/screens.h"
 #include "resource_ids.h"
 
+/// The menu work as Cybele reads it: its busy flag.
 struct MenuFlagWork {
   u8 unk000[0x506];
   u8 busy;
 };
 
+/// A row of gData_080eff28, as Cybele reads its id.
 struct DescriptorEntry {
   s16 id;
   u8 unk02[6];

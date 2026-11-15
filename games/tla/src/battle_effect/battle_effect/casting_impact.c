@@ -40,6 +40,7 @@ void BattleEffect_StepPaletteToResource(s32 resource) {
   Dma_Set(dst, (void *)BG_PLTT, DMA_COPY_HALFWORDS(64), REG_DMA3);
 }
 
+/// The battle effect work as the casting impacts lay it out, the sheet in two.
 struct SummonWork {
   struct Particle particle[64];
   u8 frames[0x5100];
@@ -59,10 +60,12 @@ struct SummonWork {
 
 typedef s32 (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
 
+/// The two blitters an impact draws with.
 struct DrawFuncs {
   DrawFunc draw[2];
 };
 
+/// The heap slots as the casting impacts read them.
 struct IwramPointers {
   u8 unk00[0x30];
   void *bg;

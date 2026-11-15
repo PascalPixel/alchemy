@@ -505,6 +505,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
 
 struct StripQuad;
 
+/// A point projected onto the screen: x, y and depth.
 struct ProjectedPoint {
   s32 x, y, depth;
 };

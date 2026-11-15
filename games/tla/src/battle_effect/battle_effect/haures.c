@@ -7,6 +7,7 @@
 
 struct StripQuad;
 
+/// Two corners of a wing, each signed x, y and z.
 struct WingVertex {
   s8 x;
   s8 y;

@@ -40,6 +40,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
+/// The sprite group behind a battler, as the tint reads its entries.
 struct FxGroup {
   u8 unk00[27];
   u8 count;

@@ -13,6 +13,7 @@
 /// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
+/// One OAM entry of a rock sprite.
 struct RockSpritePart {
   u8 unk00[4];
   u16 y : 8;
@@ -30,6 +31,7 @@ struct RockSpritePart {
   u8 unk0a[2];
 };
 
+/// A rock sprite of the wall: its two OAM entries and its flags.
 struct RockObject {
   struct RockSpritePart part[2];
   u8 unk18[2];
@@ -392,6 +394,7 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
 
 struct AnimationEntry;
 
+/// An effect sprite as Gaia searches them: its attributes and OAM word.
 struct EffectSprite {
   s32 unk00;
   s32 attributes;

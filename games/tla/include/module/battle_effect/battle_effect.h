@@ -76,6 +76,8 @@ struct Texture {
   void *pixels;
 };
 
+/// An animation slot of a sprite: its object, its entries and whether it is
+/// fading.
 struct FxSlot {
   void *object;
   u8 unk04[28];
@@ -128,6 +130,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
+/// A battle background's id, as the summons read it.
 union BattleBackgroundId {
   u16 id;
   u8 bytes[6];
@@ -254,6 +257,8 @@ extern char ResourceId_CrossedDaggersSheet;
 void BattleEffect_RunCloudSwirl(struct BattleEffectParams *effect);
 void BattleCamera_ApplyPhasedDelta(void);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
+/// The window BattleEffect_BuildCenteredIndexList builds a list of indices
+/// around: its value, radius and limit, and the values it lists.
 typedef struct {
   s32 reserved00[3];
   s32 currentValue;
@@ -309,6 +314,7 @@ enum {
   TIMING_SHAKE        // the camera shake
 };
 
+/// The four rock pillars' heights, in pixels.
 struct RockWallHeights {
   s32 column[4]; // each pillar's height in pixels
 };
@@ -391,16 +397,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
 extern char ResourceId_LeafWarriorTiles;
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
-struct Streak {
-  s32 head;
-  s32 tail;
-  s32 unused08;
-  s32 pitch;
-  s32 yaw;
-  s32 roll;
-  s32 unused18;
-};
-
+/// One animation entry of a sprite group.
 struct FxGroupEntry {
   u8 unk00[5];
   u8 param;

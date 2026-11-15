@@ -2845,7 +2845,8 @@ L_0200ccdc:;
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
 L_0200cda2:;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
-  Djinn_JoinParty(12, 3, 9);
+  Djinn_JoinParty(12, DJINNI_ETHER / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_ETHER));
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   FieldEvent_Wait(20);

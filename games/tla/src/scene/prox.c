@@ -148,7 +148,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
        ->v)
 
 /// Mold, the Venus Djinni, joins the party.
-void Prox_MoldJoins(void) { Djinn_JoinParty(0x14, 0, 0x10); }
+void Prox_MoldJoins(void) {
+  Djinn_JoinParty(0x14, DJINNI_MOLD / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_MOLD));
+}
 
 /// The Mercury Djinni kept in the house joins the party.
 void Prox_MercuryDjinniJoins(void) { Djinn_JoinParty(0x18, 1, 0x13); }

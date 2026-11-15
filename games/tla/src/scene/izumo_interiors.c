@@ -1208,7 +1208,8 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "Please, accept this gift."
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
-  Djinn_JoinParty(24, 2, 11);
+  Djinn_JoinParty(24, DJINNI_COAL / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_COAL));
   Event_End();
   Event_Start();
   Event_ResolvePendingActions(0);

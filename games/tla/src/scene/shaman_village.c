@@ -6,6 +6,7 @@
 #include "../field/object/set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
+#include "djinn_ids.h"
 
 /// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
 /// and blown the sand away.
@@ -311,7 +312,10 @@ extern struct SceneEntrance gShamanVillage_Room6Entrances[];
 
 #endif
 
-void ShamanVillage_MeetAroma(void) { Djinn_JoinParty(18, 3, 13); }
+void ShamanVillage_MeetAroma(void) {
+  Djinn_JoinParty(18, DJINNI_AROMA / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_AROMA));
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;

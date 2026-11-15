@@ -55,7 +55,8 @@ void AttekaInlet_SetUpTheHarbour(void);
 void AttekaInlet_SetUpTheShore(void);
 
 void AttekaInlet_GeodeJoins(void) {
-  Djinn_JoinParty(14, 0, 15);
+  Djinn_JoinParty(14, DJINNI_GEODE / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_GEODE));
   GameFlag_Clear(FLAG_AREA_TEMP_00);
 }
 

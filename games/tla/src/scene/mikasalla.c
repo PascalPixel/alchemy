@@ -27,6 +27,7 @@
 #include "field/event_inline.h"
 #include "objcmd.h"
 #include "field/sprite.h"
+#include "djinn_ids.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
@@ -142,7 +143,10 @@ void Mikasalla_EnterDoor(void) {
 
 /// Spark, the Mars Djinni behind the inn, joins the party when spoken to,
 /// without a fight.
-void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
+void Mikasalla_MeetSpark(void) {
+  Djinn_JoinParty(ACTOR_SPARK, DJINNI_SPARK / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SPARK));
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;

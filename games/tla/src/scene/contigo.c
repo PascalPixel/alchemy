@@ -350,10 +350,14 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-void Contigo_SaltJoinsParty(void) { Djinn_JoinParty(16, 0, 14); }
+void Contigo_SaltJoinsParty(void) {
+  Djinn_JoinParty(16, DJINNI_SALT / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SALT));
+}
 
 void Contigo_FreedDjinniJoinsParty(void) {
-  Djinn_JoinParty(17, 2, 15);
+  Djinn_JoinParty(17, DJINNI_SHINE / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_SHINE));
   GameFlag_Set(2534);
 }
 

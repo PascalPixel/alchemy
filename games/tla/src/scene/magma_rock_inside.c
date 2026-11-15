@@ -5,6 +5,7 @@
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
 #include "../field/object/set_sprite_priority.c"
+#include "djinn_ids.h"
 
 #include "../field/object/prepare_object.c"
 
@@ -263,7 +264,9 @@ s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
 
 void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 
-void MagmaRockInside_MeetDjinni(void) { Djinn_JoinParty(17, 2, 19); }
+void MagmaRockInside_MeetDjinni(void) {
+  Djinn_JoinParty(17, DJINNI_59 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_59));
+}
 
 #include "shared/position_flat_distance.h"
 

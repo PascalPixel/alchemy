@@ -31,6 +31,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
+#include "djinn_ids.h"
 
 extern u32 gLoho_VillagerMovesNorth[];
 extern u32 gLoho_VillagerMovesWest[];
@@ -84,7 +85,10 @@ struct LohoSpark {
 
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
 /// when spoken to.
-void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
+void Loho_MeetLull(void) {
+  Djinn_JoinParty(19, DJINNI_LULL / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_LULL));
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

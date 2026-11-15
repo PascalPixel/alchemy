@@ -170,7 +170,10 @@ extern u16 gApojiiIslands_StoneColors[16];
 
 extern u8 Data_0202c001[];
 
-void ApojiiIslands_HazeJoinsParty(void) { Djinn_JoinParty(10, 3, 11); }
+void ApojiiIslands_HazeJoinsParty(void) {
+  Djinn_JoinParty(10, DJINNI_HAZE / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_HAZE));
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

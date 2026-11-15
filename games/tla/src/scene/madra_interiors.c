@@ -28,6 +28,7 @@
 #include "field_sprite.h"
 #include "field/field_sequence_event.h"
 #include "objcmd.h"
+#include "djinn_ids.h"
 
 /// Set once the old man of the mushroom house has been given the Healing
 /// Fungus and has traded Char for it.
@@ -40,23 +41,99 @@
 /// Set once the ill man has groaned on this visit.
 #define FLAG_MADRA_ILL_MAN_GROANED FLAG_SCENE_TEMP_11
 
-/// The old couple of the mushroom house, by the rows of
-/// gMadraInteriors_Placements.
+/// Madra's houses, numbering the rows gMadraInteriors_Placements and
+/// gMadraInteriors_PlacementsOnReturn share.
 enum MadraInteriorsActorId {
+  /// A couple who fear what lies south in Gondowan, and then the Kibombo.
+  ACTOR_OLD_MAN_WARY_OF_GONDOWAN = ACTOR_FIRST_PLACED,
+  ACTOR_WOMAN_WARY_OF_GONDOWAN,
   /// The old man who loves the rare mushrooms of the Gondowan Cliffs.
-  ACTOR_MUSHROOM_LOVER = ACTOR_FIRST_PLACED + 2,
+  ACTOR_MUSHROOM_LOVER,
   /// His wife, who cooks them.
-  ACTOR_MUSHROOM_COOK
+  ACTOR_MUSHROOM_COOK,
+  /// Two men curious about the strange ship grounded in the cove to the east.
+  ACTOR_MAN_ON_THE_STRANGE_SHIP,
+  ACTOR_MAN_ON_THE_GROUNDED_SHIP,
+  /// The elder's household: who keeps the jewel on his mantel with Milady,
+  /// his daughter, the old woman of the house, and his two grandchildren.
+  ACTOR_JEWEL_KEEPER,
+  ACTOR_ELDERS_DAUGHTER,
+  ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE,
+  ACTOR_ELDERS_GRANDSON,
+  ACTOR_ELDERS_GRANDDAUGHTER,
+  /// The sanctum's healer and the two women who pray there.
+  ACTOR_HEALER,
+  ACTOR_WOMAN_OF_THE_SANCTUM,
+  ACTOR_OLD_WOMAN_OF_THE_SANCTUM,
+  ACTOR_INNKEEPER,
+  /// Who helps at the inn, sure it is safe from the Champa.
+  ACTOR_INN_HELPER,
+  /// A girl staying at the inn, who hid under her bed in the raid.
+  ACTOR_GIRL_STAYING_AT_THE_INN,
+  /// Char, the Mars Djinni the mushroom couple keep.
+  ACTOR_CHAR,
+  /// A blank actor on the elder's mantel that shows the Black Crystal
+  /// (MadraInteriors_PlaceBlackCrystal).
+  ACTOR_BLACK_CRYSTAL
 };
 
-/// The jail's actors, by the rows of gMadraInteriors_JailPlacements.
+/// The rest of gMadraInteriors_Placements.
+enum MadraInteriorsTravelersActorId {
+  /// Two travelers at the inn, the first slept through the pirate raid; his
+  /// partner wears the same sprite in other colours.
+  ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID = ACTOR_BLACK_CRYSTAL + 1,
+  ACTOR_TRAVELERS_PARTNER,
+  /// The two warriors on their way to Colosso in Tolbi, there once flag 0x821
+  /// is set: "I'm Morgan, and this here's Dekka."
+  ACTOR_MORGAN,
+  ACTOR_DEKKA
+};
+
+/// The rest of gMadraInteriors_PlacementsOnReturn, when the party brings Piers
+/// home. The rows for Piers, Jenna and Sheba go to their party slots.
+enum MadraInteriorsReturnActorId {
+  /// The elder, who held Piers' jewel, and Madra's mayor.
+  ACTOR_ELDER = ACTOR_BLACK_CRYSTAL + 1,
+  ACTOR_MAYOR,
+  /// Unused: two more rows with Kraden's sprite, out of sight.
+  ACTOR_UNUSED_FIRST_KRADEN,
+  ACTOR_UNUSED_SECOND_KRADEN,
+  ACTOR_KRADEN,
+  ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN,
+  ACTOR_TRAVELERS_PARTNER_ON_RETURN
+};
+
+/// The jail's actors, by the rows of gMadraInteriors_JailPlacements; Piers' row
+/// goes to his party slot.
 enum MadraInteriorsJailActorId {
+  /// The puddle Piers freezes into a shaft of ice.
+  ACTOR_JAIL_PUDDLE = ACTOR_FIRST_PLACED,
   /// The two who question Piers.
-  ACTOR_STERN_INTERROGATOR = ACTOR_FIRST_PLACED + 1,
+  ACTOR_STERN_INTERROGATOR,
   ACTOR_ACCUSING_INTERROGATOR,
   /// Kraden, who jumps out from behind Felix.
-  ACTOR_JAIL_KRADEN
+  ACTOR_JAIL_KRADEN,
+  ACTOR_SECOND_JAIL_PUDDLE,
+  /// Once FLAG_GABOMBA_MESSAGE_CARRIED is set: who saw Isaac's party hear of
+  /// Felix, and the ill man who has feared the cold since Piers' ice.
+  ACTOR_WITNESS_ON_ISAACS_PARTY,
+  ACTOR_ILL_MAN
 };
+
+/// The left cavern home (MadraInteriors2), by the rows of
+/// gMadraInteriors_SecondRoomsPlacements.
+enum MadraInteriorsCavernHomeActorId {
+  /// A couple who talk of Alhafra, and later of a plan to make money.
+  ACTOR_MAN_ON_ALHAFRA = ACTOR_FIRST_PLACED,
+  ACTOR_WOMAN_ON_ALHAFRA,
+  /// A woman lying ill in bed until Briggs is caught.
+  ACTOR_SISTER_IN_BED,
+  /// Her sister, glad she is better.
+  ACTOR_HER_SISTER
+};
+
+/// Madra's inn, as Inn_CheckIn numbers the inns.
+enum { MADRA_INN = 1 };
 
 extern s32 gMadraInteriors_InterrogatorLifted[];
 extern s32 gMadraInteriors_InterrogatorTopples[];
@@ -79,13 +156,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern struct ActorPlacement gMadraInteriors_Placements[];
 extern struct ActorPlacement gMadraInteriors_PlacementsOnReturn[];
@@ -123,7 +193,7 @@ void MadraInteriors_AskWillWeBeSafe(void) {
   msg = (s32)MsgMadraInteriors06;
   FieldEvent_SetMessageId(msg);
   // "Indra is in direct contact with southern Gondowan... Will we be safe?"
-  Event_OpenMessage(9, 0);
+  Event_OpenMessage(ACTOR_WOMAN_WARY_OF_GONDOWAN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     FieldEvent_Wait(10);
@@ -132,7 +202,7 @@ void MadraInteriors_AskWillWeBeSafe(void) {
     FieldEvent_Wait(20);
     FieldEvent_SetMessageId(msg + 2);
   }
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_WOMAN_WARY_OF_GONDOWAN, 0);
   Event_End();
 }
 
@@ -143,7 +213,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(1, 22);
+    Inn_CheckIn(MADRA_INN, ACTOR_INNKEEPER);
   } else {
 #if !TLA_PATCH_1
     // Before patch 1 there is no choice prompt.
@@ -154,13 +224,13 @@ void MadraInteriors_TalkToInnkeeper(void) {
     else
       FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
     // "Earthquakes, pirate attacks... What a week!"
-    Event_ShowMessage(22, 0);
+    Event_ShowMessage(ACTOR_INNKEEPER, 0);
 #else
     if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
       s32 msg = (s32)MsgMadraInteriors155;
 
       FieldEvent_SetMessageId(msg);
-      Event_OpenMessage(22, 0);
+      Event_OpenMessage(ACTOR_INNKEEPER, 0);
       if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
                                                 0) == 0) {
         FieldEvent_Wait(10);
@@ -169,14 +239,14 @@ void MadraInteriors_TalkToInnkeeper(void) {
         FieldEvent_Wait(20);
         FieldEvent_SetMessageId(msg + 2);
       }
-      Event_ShowMessage(22, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     } else {
       if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
         FieldEvent_SetMessageId((s32)MsgMadraInteriors87);
       else
         FieldEvent_SetMessageId((s32)MsgMadraInteriors39);
       // "Earthquakes, pirate attacks... What a week!"
-      Event_ShowMessage(22, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
 #endif
   }
@@ -205,13 +275,13 @@ void MadraInteriors_TalkToHealer(s32 actor) {
 void MadraInteriors_GuardElderGem(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceActor(14, ACTOR_FELIX, 0);
-  FieldActor_Jump(14, 6, 20);
-  Actor_FaceActor(ACTOR_FELIX, 14, 0);
+  Actor_FaceActor(ACTOR_JEWEL_KEEPER, ACTOR_FELIX, 0);
+  FieldActor_Jump(ACTOR_JEWEL_KEEPER, 6, 20);
+  Actor_FaceActor(ACTOR_FELIX, ACTOR_JEWEL_KEEPER, 0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors18);
   // "Don't touch that gem! The elder gave us strict orders to protect it!"
-  Event_ShowMessage(14, 0);
-  Actor_FaceDirection(14, FACING_SOUTHEAST, 0);
+  Event_ShowMessage(ACTOR_JEWEL_KEEPER, 0);
+  Actor_FaceDirection(ACTOR_JEWEL_KEEPER, FACING_SOUTHEAST, 0);
   Event_End();
 }
 
@@ -265,6 +335,8 @@ void MadraInteriors_TalkToMushroomCook(void) {
   }
 }
 
+/// Mind Read on the mushroom lover: he thinks of the Healing Fungus he longs
+/// for, and once he has it, of dinner.
 void MadraInteriors_MindReadMushroomLover(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
@@ -290,6 +362,8 @@ void MadraInteriors_MindReadMushroomLover(void) {
   }
 }
 
+/// Mind Read on the mushroom cook: she thinks of her husband's mushrooms, and
+/// once he has the Healing Fungus, of cooking it.
 void MadraInteriors_MindReadMushroomCook(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
@@ -322,23 +396,23 @@ void MadraInteriors_TalkToIllMan(void) {
   if (!Event_GetFlag(FLAG_MADRA_ILL_MAN_GROANED)) {
     Event_SetFlag(FLAG_MADRA_ILL_MAN_GROANED);
     FieldEvent_SetMessageId((s32)MsgUhhhnnnUhhhnnn2);
-    Actor_WalkByAndWait(14, -12, 0);
+    Actor_WalkByAndWait(ACTOR_ILL_MAN, -12, 0);
     FieldEvent_Wait(20);
-    Actor_RunRepeatedMotion(14, 2);
+    Actor_RunRepeatedMotion(ACTOR_ILL_MAN, 2);
     FieldEvent_Wait(20);
     // "Uhhhnnn... UHHHNNN!"
-    Event_ShowMessage(14, 0);
-    FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Event_ShowMessage(ACTOR_ILL_MAN, 0);
+    FieldActor_ShowEmote(ACTOR_ILL_MAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_Wait(20);
-    Actor_WalkByAndWait(14, 12, 0);
-    Actor_FaceActor(14, ACTOR_FELIX, 0);
+    Actor_WalkByAndWait(ACTOR_ILL_MAN, 12, 0);
+    Actor_FaceActor(ACTOR_ILL_MAN, ACTOR_FELIX, 0);
     // "They told me that you make Psynergy by focusing your mind... I've..."
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_ILL_MAN, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgMadraInteriors97);
-    Actor_FaceActor(14, ACTOR_FELIX, 0);
+    Actor_FaceActor(ACTOR_ILL_MAN, ACTOR_FELIX, 0);
     // "How can anyone just create ice by thinking about it? I mean, imagine..."
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_ILL_MAN, 0);
   }
 }
 
@@ -354,14 +428,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMadraInteriors_TriggersBeforeRaid;
 }
 
-/// The Black Crystal (item 242) sits on the elder's mantel until it is stolen
-/// (flag 0x8ab), after which its actor is put out of sight.
+/// The Black Crystal sits on the elder's mantel until the Kibombo steal it
+/// (FLAG_BRIGGS_CAUGHT), after which its actor is put out of sight.
 void MadraInteriors_PlaceBlackCrystal(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    Actor_SetPosition(26, 888, 8);
+    Actor_SetPosition(ACTOR_BLACK_CRYSTAL, 888, 8);
   } else {
-    Actor_SetItemIcon(Actor_Get(26), 242);
-    Actor_SetSpriteFlags(Actor_Get(26), 0);
+    Actor_SetItemIcon(Actor_Get(ACTOR_BLACK_CRYSTAL), ITEM_BLACK_CRYSTAL);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_BLACK_CRYSTAL), 0);
   }
 }
 
@@ -384,13 +458,17 @@ void MadraInteriors_SetUpJail(void) {
       Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHEAST);
-    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
-    Actor_SetPosition(8, 0, 0);
+    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, px(515), px(841),
+                               FACING_NORTHEAST);
+    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, px(472), px(877),
+                               FACING_NORTH);
+    Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   } else {
-    MadraInteriors_PlaceFacing(9, px(515), px(841), FACING_NORTHWEST);
-    MadraInteriors_PlaceFacing(10, px(472), px(877), FACING_NORTH);
-    Actor_SetPosition(8, 0, 0);
+    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, px(515), px(841),
+                               FACING_NORTHWEST);
+    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, px(472), px(877),
+                               FACING_NORTH);
+    Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   }
 }
 
@@ -400,24 +478,24 @@ void BattleEffect_LoadActionEffectResources();
 void FieldPsynergy_SetupActorPair();
 void BattleEffect_StopMainActor();
 
-/// The rooms' setup: the leader's sprite priority, the two rooms' actors and
-/// the sprite of actor 10, by the story flags.
+/// The rooms' setup: the leader's sprite priority, the two rooms' actors, and
+/// the sister lying ill in the cavern home, by the story flags.
 s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
-  void *event;
+  struct FieldWork *event;
 
   gFieldWork->transition = 521;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_1) {
     event = Ram_HeapSlots->fieldWork;
-    FIELD_AT(event, u16, 0xd4c) = 3;
+    event->unkd4c = 3;
     if (!Event_GetFlag(0x821)) {
-      Actor_SetPosition(29, 0, 0);
-      Actor_SetPosition(30, 0, 0);
+      Actor_SetPosition(ACTOR_MORGAN, 0, 0);
+      Actor_SetPosition(ACTOR_DEKKA, 0, 0);
     } else {
-      FieldActor_SetSpriteColor(Actor_Get(29), 3);
-      FieldActor_SetSpriteColor(Actor_Get(30), 5);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_MORGAN), 3);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_DEKKA), 5);
     }
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
@@ -428,21 +506,22 @@ s32 Scene_Initialize(void) {
     MadraInteriors_SetUpJail();
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_2) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-      Actor_SetPosition(10, 0, 0);
+      Actor_SetPosition(ACTOR_SISTER_IN_BED, 0, 0);
     } else {
-      Actor_SetSpriteRotationById(10, 0xc000);
-      Actor_SetSpriteFlags(Actor_Get(10), 0);
-      ((struct FieldSprite *)Actor_Get(10)->sprite)->nextFrame |= 8;
-      sprite = Actor_Get(10)->sprite;
+      Actor_SetSpriteRotationById(ACTOR_SISTER_IN_BED, 0xc000);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SISTER_IN_BED), 0);
+      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)
+          ->nextFrame |= 8;
+      sprite = Actor_Get(ACTOR_SISTER_IN_BED)->sprite;
       sprite->unk11 = (sprite->unk11 & 3) | 32;
-      ((struct FieldSprite *)Actor_Get(10)->sprite)->unk19 = 1;
+      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->unk19 = 1;
     }
   }
   MadraInteriors_PlaceBlackCrystal();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    FieldActor_SetSpriteColor(Actor_Get(33), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER_ON_RETURN), 2);
   else
-    FieldActor_SetSpriteColor(Actor_Get(28), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER), 2);
   return 0;
 }
 
@@ -492,7 +571,7 @@ void MadraInteriors_InterrogatePiers(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(8, 1);
+  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 1);
   Actor_SetPosition(ACTOR_FELIX, 400, 888);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 848, 1);
   Event_StartScreenTransition();
@@ -591,7 +670,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, 16);
   BattleEffect_LoadActionEffectResources(ABILITY_FROST, 1);
-  FieldPsynergy_SetupActorPair(7, 8);
+  FieldPsynergy_SetupActorPair(ACTOR_PIERS, ACTOR_JAIL_PUDDLE);
   EventObject_Initialize();
   Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   30);
@@ -697,8 +776,8 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldActor_RefreshSelectorById(ACTOR_ACCUSING_INTERROGATOR);
   Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
   Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
-  Actor_SetAnimation(8, 6);
-  Actor_SetSpriteColorById(8, 0);
+  Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 6);
+  Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
@@ -863,10 +942,10 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_FaceDirectionAndWait(ACTOR_MUSHROOM_COOK, FACING_WEST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_MUSHROOM_COOK, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-  FieldActor_Stop(25);
+  FieldActor_Stop(ACTOR_CHAR);
   Actor_SetSpeed(ACTOR_MUSHROOM_LOVER, 0.5);
   Actor_SetSpeed(ACTOR_MUSHROOM_COOK, 0.5);
-  Actor_SetSpeed(25, 0.5);
+  Actor_SetSpeed(ACTOR_CHAR, 0.5);
   Actor_SetScript(ACTOR_MUSHROOM_COOK,
                   (s32)gMadraInteriors_WifeWalksToBackRoom);
   Actor_SetScript(ACTOR_FELIX, (s32)gMadraInteriors_LeaderStepsAside);
@@ -879,15 +958,16 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MUSHROOM_COOK);
   FieldEvent_Wait(60);
   Actor_SetScript(ACTOR_MUSHROOM_LOVER, (s32)gMadraInteriors_OldManComesBack);
-  Actor_SetScript(25, (s32)gMadraInteriors_CharFollows);
+  Actor_SetScript(ACTOR_CHAR, (s32)gMadraInteriors_CharFollows);
   FieldActor_RefreshSelectorById(ACTOR_MUSHROOM_LOVER);
   FieldActor_RefreshSelectorById(ACTOR_MUSHROOM_COOK);
-  FieldActor_RefreshSelectorById(25);
+  FieldActor_RefreshSelectorById(ACTOR_CHAR);
   Actor_RunRepeatedMotion(ACTOR_MUSHROOM_COOK, 2);
   FieldEvent_Wait(20);
   // "I don't know if you want a pet, but this is all we can offer. Take..."
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 10);
-  Djinn_JoinParty(25, 2, 10);
+  Djinn_JoinParty(ACTOR_CHAR, DJINNI_CHAR / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_CHAR));
   gFieldWork->message += 1;
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MUSHROOM_LOVER, FACING_SOUTH, 0);
@@ -977,40 +1057,41 @@ void MadraInteriors_WelcomePiersHome(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors126);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceActor(28, ACTOR_FELIX, 0);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceActor(ACTOR_MAYOR, ACTOR_FELIX, 0);
   // "Felix! You're back!"
-  FieldEvent_ShowMessageThenWait(28, 0, 10);
-  Actor_FaceActor(15, ACTOR_FELIX, 0);
-  Actor_FaceDirection(17, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceActor(18, ACTOR_FELIX, 0);
-  Actor_FaceActor(14, ACTOR_FELIX, 0);
-  Actor_FaceActor(15, ACTOR_FELIX, 0);
-  Actor_FaceActor(16, ACTOR_FELIX, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_FaceActor(ACTOR_ELDERS_DAUGHTER, ACTOR_FELIX, 0);
+  Actor_FaceDirection(ACTOR_ELDERS_GRANDSON, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceActor(ACTOR_ELDERS_GRANDDAUGHTER, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_JEWEL_KEEPER, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_ELDERS_DAUGHTER, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, ACTOR_FELIX, 0);
   FieldEvent_Wait(20);
   Actor_WalkToAndWait(ACTOR_FELIX, 701, 93);
   Actor_WalkBy(ACTOR_FELIX, -32, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, -8, 32, FACING_WEST);
-  FieldActor_LaunchFromLeader(31, -16, 0, FACING_SOUTH_SOUTHWEST);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, -16, 0, FACING_SOUTH_SOUTHWEST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, -8, 16, FACING_SOUTHWEST);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -24, 16, FACING_SOUTHWEST);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
   // "And you've brought Piers with you!"
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
+  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(27, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ELDER, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(27, 2);
+  Actor_RunRepeatedMotion(ACTOR_ELDER, 2);
   FieldEvent_Wait(20);
   // "Oh! Piers!"
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Piers, I must apologize for the trouble we've caused you. I'm sorry..."
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
   Actor_FaceEachOther(ACTOR_PIERS, ACTOR_FELIX, 0);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1018,54 +1099,55 @@ void MadraInteriors_WelcomePiersHome(void) {
   FieldEvent_Wait(20);
   // "Don't be. Everything worked out for the best."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_Jump(18, 6, 20);
+  FieldActor_Jump(ACTOR_ELDERS_GRANDDAUGHTER, 6, 20);
   FieldEvent_Wait(20);
   // "Piers, you said you were going to go to Gondowan. Did you make it?"
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
   // "Yes. In fact, we have just returned."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "And your jewel..."
-  Event_OpenMessage(28, 0);
-  result0 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  Event_OpenMessage(ACTOR_MAYOR, 0);
+  result0 = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result0 != 0)
     goto answeredNo;
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
+  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
+  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
   gFieldWork->message += 3;
   goto answered;
 answeredNo:
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   MadraInteriors_CountAnswer();
   gFieldWork->message += 3;
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
+  Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
 answered:
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimation(31, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(31, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   result1 = Event_GetFlag(0x981);
   if (result1 == 0)
     goto firstGoodbye;
@@ -1082,20 +1164,20 @@ saidGoodbye:
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
-  Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   FieldEvent_Wait(40);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetAnimation(31, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  MadraInteriors_WalkIntoLeader(31);
-  MadraInteriors_WalkIntoLeader(6);
-  MadraInteriors_WalkIntoLeader(7);
-  MadraInteriors_WalkIntoLeader(5);
+  MadraInteriors_WalkIntoLeader(ACTOR_KRADEN);
+  MadraInteriors_WalkIntoLeader(ACTOR_SHEBA);
+  MadraInteriors_WalkIntoLeader(ACTOR_PIERS);
+  MadraInteriors_WalkIntoLeader(ACTOR_JENNA);
   Event_SetFlag(0x989);
   Event_End();
   return;
@@ -1106,42 +1188,43 @@ saidGoodbye:
 void MadraInteriors_SayGoodbyeAgain(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors127);
   // "Ah, so you'll be leaving again, will you?"
-  FieldEvent_ShowMessageThenWait(28, 0, 10);
-  Actor_FaceEachOther(ACTOR_FELIX, 31, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
   // "Are you sure you must leave so soon, Piers?"
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
   // "I may yet return here again, but I'm afraid I must be going soon."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "You seem to be quite busy."
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
-  Actor_SetAnimationAndWait(31, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
   // "It is their youth that allows them to be so busy."
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
   FieldEvent_Wait(20);
   // "I'd like that..."
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(18, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, 3);
   FieldEvent_Wait(20);
   // "So would I!"
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
   return;
 }
 
@@ -1151,10 +1234,10 @@ void MadraInteriors_SayGoodbyeAgain(void) {
 /// longer?"
 void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriors128);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
   FieldEvent_Wait(20);
   // "If you've already recovered your jewel, why don't you stay here for..."
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
@@ -1167,16 +1250,16 @@ void MadraInteriors_AskToStayLonger(void) {
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceActor(ACTOR_PIERS, 17, 0);
+  Actor_ShowEmote(ACTOR_ELDERS_GRANDSON, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_ELDERS_GRANDSON, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "We must go...to the island that is my home."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_FaceActor(31, ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_PIERS, 0);
   // "Piers, are you... Are you sure?"
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
-  Actor_FaceActor(ACTOR_PIERS, 31, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_KRADEN, 0);
   FieldEvent_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
@@ -1212,48 +1295,49 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceActor(ACTOR_PIERS, 31, 0);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_KRADEN, 0);
   FieldEvent_Wait(20);
   // "And the sooner we depart, the better, right, Kraden?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(31, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
   FieldEvent_Wait(20);
   // "We shall set sail, Felix! To my ship! To the Eastern Sea!"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Event_SetFlag(0x981);
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
   // "Do you truly mean to leave so soon, Piers?"
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(20);
   // "I may yet again have reason to visit your town, but... yes, I must go."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "You seem quite busy."
-  FieldEvent_ShowMessageThenWait(27, 0, 10);
-  Actor_SetAnimationAndWait(31, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
   // "It is their youth that allows them to be so busy."
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
   FieldEvent_Wait(20);
   // "I'd like that..."
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(18, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, 3);
   FieldEvent_Wait(20);
   // "So would I!"
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
   return;
 }
 
@@ -1270,6 +1354,7 @@ u32 gMadraInteriors_WifeWalksToBackRoom[] = {
     SC_END,
 };
 
+/// The leader's script as the old man passes: one step aside.
 u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ARG(2),
     SC_MOVE_XZ(px(339), px(111)),
@@ -1281,6 +1366,7 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_END,
 };
 
+/// The mushroom lover's script off to the back room to fetch Char.
 u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_ARG(2),
     SC_MOVE_XZ(px(356), px(72)),
@@ -1291,6 +1377,7 @@ u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_END,
 };
 
+/// The mushroom cook's script back to her place.
 u32 gMadraInteriors_WifeComesBack[] = {                                                               
       SC_ARG(2),                                                               
       SC_POSITION(px(327), 0, px(71)),                                 
@@ -1309,6 +1396,7 @@ u32 gMadraInteriors_WifeComesBack[] = {
       SC_END,                                                                  
   };
 
+/// The mushroom lover's script back from the back room with Char.
 u32 gMadraInteriors_OldManComesBack[] = {                                                               
       SC_ARG(2),                                                               
       SC_POSITION(px(327), 0, px(71)),                                 
@@ -1327,6 +1415,8 @@ u32 gMadraInteriors_OldManComesBack[] = {
       SC_END,                                                                  
   };
 
+/// Char's script once the old man gives him to the party: he follows the
+/// leader.
 u32 gMadraInteriors_CharFollows[] = {
     SC_ARG(2),
     SC_POSITION(px(327), px(24), px(71)),
@@ -1374,6 +1464,8 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Madra's houses, shops, inn and sanctum until the party returns with Piers
+/// (enum MadraInteriorsActorId, then MadraInteriorsTravelersActorId).
 struct ActorPlacement gMadraInteriors_Placements[] = {
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1401,6 +1493,8 @@ struct ActorPlacement gMadraInteriors_Placements[] = {
     ACTOR_PLACEMENT(-1, 0, 0, 0, 0, 0, 0, TALK_FACING_PARTY, 0),
 };
 
+/// Madra's houses once the party returns with Piers (enum
+/// MadraInteriorsActorId, then MadraInteriorsReturnActorId).
 struct ActorPlacement gMadraInteriors_PlacementsOnReturn[] = {
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1434,6 +1528,7 @@ struct ActorPlacement gMadraInteriors_PlacementsOnReturn[] = {
     {SCENE_TABLE_END},
 };
 
+/// The jail (enum MadraInteriorsJailActorId).
 struct ActorPlacement gMadraInteriors_JailPlacements[] = {
     ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(192, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 522, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1446,6 +1541,7 @@ struct ActorPlacement gMadraInteriors_JailPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The left cavern home (enum MadraInteriorsCavernHomeActorId).
 struct ActorPlacement gMadraInteriors_SecondRoomsPlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 128, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1454,6 +1550,7 @@ struct ActorPlacement gMadraInteriors_SecondRoomsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The houses' talk and Mind Read before the Kibombo raid.
 struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1472,49 +1569,49 @@ struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(MadraInteriors_AskWillWeBeSafe)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors05)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, EVENT(MadraInteriors_AskWillWeBeSafe)},
+    {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors09)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors10)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors14)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors17)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors19)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors20)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors21)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors22)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors34)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors35)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors40)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors41)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors42)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors43)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors165)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors166)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors08)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors12)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors23)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors25)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors27)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors36)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors37)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors38)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors47)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors167)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors168)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors13)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors14)},
+    {TRIGGER_TALK, ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors17)},
+    {TRIGGER_TALK, ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors19)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors20)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors21)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors22)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
+    {TRIGGER_TALK, ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors34)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors35)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors40)},
+    {TRIGGER_TALK, ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors41)},
+    {TRIGGER_TALK, ACTOR_BLACK_CRYSTAL, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors42)},
+    {TRIGGER_TALK, ACTOR_TRAVELERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors43)},
+    {TRIGGER_TALK, ACTOR_MORGAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors165)},
+    {TRIGGER_TALK, ACTOR_DEKKA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors166)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors07)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors08)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors23)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors25)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors27)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors36)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors37)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors47)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors48)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MORGAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors167)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEKKA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors168)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
@@ -1523,53 +1620,56 @@ struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The jail's talk and Mind Read, by the story flags.
 struct Trigger gMadraInteriors_JailTriggers[] = {
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
-    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors143)},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors144)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 13, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
-    {TALK_TRIGGER_FACING(FACING_NORTHWEST), 13, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
-    {TALK_TRIGGER_FACING(FACING_WEST), 13, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
-    {TRIGGER_TALK, 14, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraInteriors_TalkToIllMan)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToPiers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors145)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors146)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgSoThisFellow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1211, MSGNO(MsgIKnewI)},
+    {TRIGGER_TALK, ACTOR_STERN_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors143)},
+    {TRIGGER_TALK, ACTOR_ACCUSING_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors144)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
+    {TALK_TRIGGER_FACING(FACING_NORTHWEST), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
+    {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
+    {TRIGGER_TALK, ACTOR_ILL_MAN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraInteriors_TalkToIllMan)},
+    {TRIGGER_TALK, ACTOR_STERN_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors75)},
+    {TRIGGER_TALK, ACTOR_ACCUSING_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors76)},
+    {TRIGGER_TALK, ACTOR_PIERS, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToPiers)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STERN_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors145)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACCUSING_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriors146)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgSoThisFellow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ILL_MAN, IF_FLAG_SET(FLAG_MADRA_ILL_MAN_GROANED), MSGNO(MsgIKnewI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraInteriors_TalkToIllMan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadPiers)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STERN_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACCUSING_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIERS, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadPiers)},
     {TRIGGER_TABLE_END},
 };
 
+/// The left cavern home's talk and Mind Read, by the story flags.
 struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, 8, 0x8ab, MSGNO(MsgMadraInteriors01)},
-    {TRIGGER_TALK, 8, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors49)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors98)},
-    {TRIGGER_TALK, 9, 0x8ab, MSGNO(MsgMadraInteriors02)},
-    {TRIGGER_TALK, 9, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors50)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors99)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors31)},
-    {TRIGGER_TALK, 11, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors79)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors147)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8ab, MSGNO(MsgMadraInteriors03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors51)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors100)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8ab, MSGNO(MsgMadraInteriors04)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors52)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors101)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors80)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriors01)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors49)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors98)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriors02)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors50)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors99)},
+    {TRIGGER_TALK, ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors31)},
+    {TRIGGER_TALK, ACTOR_HER_SISTER, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors79)},
+    {TRIGGER_TALK, ACTOR_HER_SISTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors147)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors51)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors100)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriors04)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors52)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors101)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HER_SISTER, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriors80)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HER_SISTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
     {TRIGGER_TABLE_END},
 };
 
+/// The houses' talk and Mind Read once the Kibombo have raided Madra.
 struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1588,45 +1688,45 @@ struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors53)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors54)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors57)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors58)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors61)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors62)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors65)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors66)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors67)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors68)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors69)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors82)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors83)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors88)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors89)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors90)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors91)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors55)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors56)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors60)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors63)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors64)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors70)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors71)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors72)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors73)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors74)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors85)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors86)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors92)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors93)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors94)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors95)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors96)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors53)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors54)},
+    {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors57)},
+    {TRIGGER_TALK, ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors58)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors61)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors62)},
+    {TRIGGER_TALK, ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors65)},
+    {TRIGGER_TALK, ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors66)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors67)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors68)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors69)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
+    {TRIGGER_TALK, ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors82)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors83)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors88)},
+    {TRIGGER_TALK, ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors89)},
+    {TRIGGER_TALK, ACTOR_BLACK_CRYSTAL, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors90)},
+    {TRIGGER_TALK, ACTOR_TRAVELERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors91)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors55)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors56)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors59)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors60)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors63)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors64)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors70)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors71)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors72)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors73)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors74)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors85)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors86)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors92)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors93)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors94)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors95)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors96)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors170))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
@@ -1635,6 +1735,8 @@ struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The houses' talk and Mind Read once the party returns with Piers, the
+/// welcome, and the mushroom trade.
 struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1654,49 +1756,49 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 30, 0x989, EVENT(MadraInteriors_WelcomePiersHome)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors102)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors103)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomLover)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomCook)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors122)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors123)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors129)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors130)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors131)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors132)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors133)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors134)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors135)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors150)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors151)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors156)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors157)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
-    {TRIGGER_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors158)},
-    {TRIGGER_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors159)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors105)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomLover)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomCook)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors125)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors136)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors137)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors138)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors139)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors140)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors141)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors142)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors152)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors153)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors154)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors160)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors161)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors102)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors103)},
+    {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomLover)},
+    {TRIGGER_TALK, ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomCook)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors122)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors123)},
+    {TRIGGER_TALK, ACTOR_ELDER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors129)},
+    {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors130)},
+    {TRIGGER_TALK, ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors131)},
+    {TRIGGER_TALK, ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors132)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors133)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors134)},
+    {TRIGGER_TALK, ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors135)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToHealer)},
+    {TRIGGER_TALK, ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors150)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors151)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors156)},
+    {TRIGGER_TALK, ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors157)},
+    {TRIGGER_TALK, ACTOR_BLACK_CRYSTAL, CONDITION_ALWAYS, EVENT(MadraInteriors_GuardElderGem)},
+    {TRIGGER_TALK, ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors158)},
+    {TRIGGER_TALK, ACTOR_TRAVELERS_PARTNER_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors159)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors104)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors105)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomLover)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadMushroomCook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors124)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors125)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors136)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors137)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors138)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors139)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_ELDERS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors140)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors141)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ELDERS_GRANDDAUGHTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors142)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors152)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors153)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors154)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors160)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_HELPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors161)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors162)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors163)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors164)},
     {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
     {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors169))},

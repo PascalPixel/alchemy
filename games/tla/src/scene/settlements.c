@@ -7,6 +7,7 @@
 #include "../field/object/set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
+#include "djinn_ids.h"
 
 #include "../field/field_effect/move.c"
 
@@ -226,11 +227,18 @@ void Settlements_SpawnSplashRing(s32 objectId);
 
 void Settlements_MovePillar(void);
 
-void Settlements_MeetGel(void) { Djinn_JoinParty(10, 1, 14); }
+void Settlements_MeetGel(void) {
+  Djinn_JoinParty(10, DJINNI_GEL / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_GEL));
+}
 
-void Settlements_MeetTinder(void) { Djinn_JoinParty(11, 2, 14); }
+void Settlements_MeetTinder(void) {
+  Djinn_JoinParty(11, DJINNI_TINDER / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_TINDER));
+}
 
-void Settlements_MeetLostJupiterDjinni(void) { Djinn_JoinParty(23, 3, 19); }
+void Settlements_MeetLostJupiterDjinni(void) {
+  Djinn_JoinParty(23, DJINNI_79 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_79));
+}
 
 s32 Settlements_ClearSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);

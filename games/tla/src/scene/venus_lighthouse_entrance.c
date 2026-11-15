@@ -1358,15 +1358,14 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     s16 *timer;
 
     scale = effect->scaleX;
-    if (scale > 0)
+    if (scale > 0) {
       scale -= Q16_ONE * 2 / 100;
-    else
-      scale = 0;
-    effect->scaleX = scale;
-    effect->scaleY = scale;
-    /* FAKEMATCH(dead): an empty once-only block after the scale's stores. */
-    do {
-    } while (0);
+      effect->scaleX = scale;
+      effect->scaleY = scale;
+    } else {
+      effect->scaleX = 0;
+      effect->scaleY = 0;
+    }
     timer = &work->timer;
     if (work->timer == 10)
       Sound_Play(SE_FALL);

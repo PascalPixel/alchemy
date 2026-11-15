@@ -194,7 +194,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 }
 
 /// Starts casting: the caster takes its casting pose (animation 20) and stops,
-/// flashes with a sound, and the ability's name is announced; with flag 0x140
+/// flashes with a sound, and the ability's name is announced; with FLAG_PLAY_PSYNERGY_CAST
 /// set the caster takes animation 21 and keeps its glow.
 void FieldPsynergy_StartCast(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
@@ -231,7 +231,7 @@ void FieldPsynergy_StartCast(void) {
     Actor_SetOthersPaused(object, 0, 16);
     work->messageShown = zero;
   }
-  if (GameFlag_Get(0x140)) {
+  if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (work->visible != 0)
       BattleEffect_SetObjectUpdateMode(object, 2);
     Actor_SelectAnimationFar(object, 21);

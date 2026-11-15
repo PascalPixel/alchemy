@@ -23,6 +23,9 @@ struct BattlePlaybackWork {
 STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
 STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingCue) == 0x168);
 
+/// The most actions a turn's queue holds.
+enum { BATTLE_ACTION_CAPACITY = 20 };
+
 /// The battle's own work: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.
 struct BattleWork {
@@ -63,7 +66,7 @@ struct BattleWork {
   s16 enemyIds[7];   ///< ends with 0xff
   u8 placement[16];  ///< each unit's index in slots; 0xff for none
   struct BattleObject slots[14];
-  struct BattleActionRecord actions[20]; ///< the actions chosen for the turn
+  struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
   u8 unk42c[0x124];                      ///< not named by TLA code
   struct BattleSpoils spoils;            ///< what the battle has won so far
   /// A queue of two enemies to call in (an ability of effect 87): their

@@ -598,8 +598,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       x = maxX;
     if (z > maxZ)
       z = maxZ;
-    if (*(s16 **)bounds->unk0fc != NULL) {
-      region = *(s16 **)bounds->unk0fc;
+    if (bounds->cameraBoxes != NULL) {
+      region = bounds->cameraBoxes;
       while (region[0] != -1) {
         minX = px(region[0]) - px(120);
         minZ = px(region[1]) + leader->y.fixed - px(64);

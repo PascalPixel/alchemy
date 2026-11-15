@@ -56,11 +56,6 @@ struct ActionDescriptor {
   u8 flags;
 };
 
-struct FxSprite {
-  u8 unk00[91];
-  u8 visible;
-};
-
 s32 WorldPicture_Show(s32 mode);
 void WorldMap_ZoomOutWhileLHeld(void);
 void BattleBackground_SelectForEnvironment(s32 terrain);

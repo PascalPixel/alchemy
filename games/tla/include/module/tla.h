@@ -90,11 +90,6 @@ struct AnimatedSprite {
   struct SpritePictures *pictures;
 };
 
-struct EventWork15a {
-  u8 unk000[0x15a];
-  u16 flag;
-};
-
 struct EncounterWork {
   u8 unk000[0x194];
   s32 bias;

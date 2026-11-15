@@ -479,7 +479,7 @@ extern s32 gGondowanCliffs_MapRects[];
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS)
-    *(const u8 **)Ram_HeapSlots->mapGrid->unk0fc = gGondowanCliffs_MapRects;
+    Ram_HeapSlots->mapGrid->cameraBoxes = (const s16 *)gGondowanCliffs_MapRects;
   return 0;
 }
 

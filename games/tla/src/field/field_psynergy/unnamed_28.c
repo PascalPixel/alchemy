@@ -505,7 +505,7 @@ void ViewMove_Start(s32 direction) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0) {
+  if (map->cameraBoxes != NULL) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
@@ -585,7 +585,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (*(s32 *)Ram_HeapSlots->mapGrid->unk0fc != 0)
+  if (Ram_HeapSlots->mapGrid->cameraBoxes != NULL)
     return;
 #endif
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -634,7 +634,7 @@ void ViewMove_End(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (map->cameraBoxes != NULL || event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #else
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #endif

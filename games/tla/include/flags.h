@@ -90,6 +90,20 @@
 #define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
 /// The file was recovered at its last Sanctum, as ☀️'s.
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
+/// Play the kind's usual cast: the caster's glow, animation and sound
+/// (FieldPsynergy_StartCast). Field_UsePsynergy sets it for each use and
+/// clears it when the after trigger plays its own cast.
+#define FLAG_PLAY_PSYNERGY_CAST 0x140
+/// Aim the field Psynergy at the actor ahead rather than run the kind's
+/// untargeted body; Field_UsePsynergy keeps it set only when a trigger
+/// applies to what the leader faces.
+#define FLAG_PSYNERGY_TARGET 0x141
+/// The next layout keeps the palette and tiles already loaded, once
+/// (MapGrid_LoadMap).
+#define FLAG_KEEP_LAYER_GRAPHICS 0x170
+/// With it set, holding B on the World Map moves the party at 4 pixels a
+/// frame. Nothing in the game sets it.
+#define FLAG_FAST_WALK 0x17f
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 #define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
 /// While set, the save screen refuses to save with "Cannot save here".

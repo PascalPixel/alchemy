@@ -92,9 +92,6 @@
 #define ENEMY_LETTER_FIRST_TOO 0x8000
 #define ENEMY_LETTER_MASK 0x7fff
 
-/// The most actions BattleWork.actions holds for a turn.
-#define BATTLE_ACTION_CAPACITY 20
-
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2

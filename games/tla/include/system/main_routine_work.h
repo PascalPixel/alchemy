@@ -100,7 +100,10 @@ struct MainRoutineWork {
   /// Option 2, the message speed, 0 to 2: 1 on a new game; some scenes set 2
   /// and restore it after.
   u8 messageSpeed;
-  u8 unk22d[3]; ///< byte 2 goes into the save summary's sendFlag
+  u8 unusedAfterMessageSpeed[2];
+  /// Set on saving at the end of the game, marking the file cleared: its data
+  /// can be sent. Copied to the file's summary as sendFlag.
+  u8 sendFlag;
   /// The buttons for each field command, as KEY_ masks, set on a new game;
   /// read with gInput.pressed except dashKeys, held.
   ///@{
@@ -118,9 +121,10 @@ struct MainRoutineWork {
   u16 firstShortcut;
   u16 secondShortcut;
 
-  /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
-  /// idleSleepEnabled.
-  u8 unk244[7];
+  u8 perspectiveMap; ///< set to 1 on the world map
+  u8 unusedAfterPerspective[5];
+  /// Option 4, Auto-Sleep, saved from gIdleSleepEnabled.
+  u8 idleSleepEnabled;
   u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
                  ///< end
   /// Hazardous ground, as The Broken Seal's: when hazardSteps reaches

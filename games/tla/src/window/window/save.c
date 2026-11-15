@@ -367,7 +367,7 @@ s32 Save_BuildFileSummary(void) {
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gPlayTimeFrames;
   gData_02001000__screens = gPlayTimeFrames;
-  gMainRoutineWork.unk244[6] = gIdleSleepEnabled;
+  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   owner = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = owner->name;
@@ -389,7 +389,7 @@ s32 Save_BuildFileSummary(void) {
   summary->party[i] = -1;
   summary->windowHue = gMainRoutineWork.windowHue;
   summary->windowBrightness = gMainRoutineWork.windowBrightness;
-  summary->sendFlag = gMainRoutineWork.unk22d[2];
+  summary->sendFlag = gMainRoutineWork.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_Get(i))
@@ -577,7 +577,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
       result = -2;
     } else {
       gPlayTimeFrames = SAVE_GAME_WORDS->playTime;
-      gIdleSleepEnabled = gMainRoutineWork.unk244[6];
+      gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
       gIdleFrames = 0;
       gSaveSlot = file;
     }

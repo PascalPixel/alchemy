@@ -1011,7 +1011,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
           song = 96;
         if ((u32)song > 96)
           song = 0;
-        if (all != 0 || gMainRoutineWork.unk22d[2] != 0 || gData_02003860 != 0)
+        if (all != 0 || gMainRoutineWork.sendFlag != 0 || gData_02003860 != 0)
           break;
         if (SoundFlag_Test(gLinkLobby_RequestableSounds[song]) != 0)
           goto keys;
@@ -1432,7 +1432,7 @@ s32 LinkLobby_Initialize(void) {
     Serial_Initialize();
     Event_ClearFlag(0x172);
     GameFlag_SetByte(0x3f8, -1);
-    if (gMainRoutineWork.unk244[6] != 0) {
+    if (gMainRoutineWork.idleSleepEnabled != 0) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
@@ -1443,7 +1443,7 @@ s32 LinkLobby_Initialize(void) {
       Event_ShowMessage(8, 0);
       Event_End();
     }
-    gMainRoutineWork.unk244[6] = 0;
+    gMainRoutineWork.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);

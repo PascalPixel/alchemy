@@ -345,7 +345,7 @@ s32 Scene_Initialize(void) {
     Message_CloseFinishedWindows();
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
-      gMainRoutineWork.unk22d[2] = 1;
+      gMainRoutineWork.sendFlag = 1;
       Party_AddMember(5);
       Party_AddMember(6);
       Party_AddMember(7);
@@ -367,7 +367,7 @@ s32 Scene_Initialize(void) {
 top:
   result = Save_ScanFileSummaries();
   if (result < 0 && gDebugMode) {
-    gMainRoutineWork.unk244[6] = 1;
+    gMainRoutineWork.idleSleepEnabled = 1;
     gIdleSleepEnabled = 1;
     FieldMessage_ShowCentered(SCENE_DAILA_INTERIORS_1, 1, 8);
   }

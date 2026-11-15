@@ -127,16 +127,16 @@ s32 Field_UsePsynergy(u32 code) {
       during = NULL;
     }
   }
-  GameFlag_Set(0x140);
-  GameFlag_Clear(0x141);
+  GameFlag_Set(FLAG_PLAY_PSYNERGY_CAST);
+  GameFlag_Clear(FLAG_PSYNERGY_TARGET);
   target = -1;
   if (before != NULL || after != NULL || during != NULL) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 0xff;
-    GameFlag_Set(0x141);
+    GameFlag_Set(FLAG_PSYNERGY_TARGET);
     if (after != NULL && (after->flags & 0x400)) {
-      GameFlag_Clear(0x140);
-      GameFlag_Clear(0x141);
+      GameFlag_Clear(FLAG_PLAY_PSYNERGY_CAST);
+      GameFlag_Clear(FLAG_PSYNERGY_TARGET);
     }
   }
   FieldPsynergy_LoadResources(abilityId, 0);
@@ -163,8 +163,8 @@ s32 Field_UsePsynergy(u32 code) {
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   FieldPsynergy_StartCast();
   Field_RunPsynergyEvent(before, userId, target);
-  if (GameFlag_Get(0x140)) {
-    if (GameFlag_Get(0x141))
+  if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
+    if (GameFlag_Get(FLAG_PSYNERGY_TARGET))
       FieldPsynergy_Dispatch();
     else
       FieldPsynergy_Run();
@@ -178,12 +178,12 @@ s32 Field_UsePsynergy(u32 code) {
       Field_RunPsynergyEvent(pending, userId, event->unkd30);
   }
   Field_RunPsynergyEvent(after, userId, target);
-  if (GameFlag_Get(0x140))
+  if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST))
     FieldPsynergy_FinishMindRead();
   event->psynergyActing = 0;
   FieldPsynergy_End();
-  GameFlag_Clear(0x140);
-  GameFlag_Clear(0x141);
+  GameFlag_Clear(FLAG_PLAY_PSYNERGY_CAST);
+  GameFlag_Clear(FLAG_PSYNERGY_TARGET);
   return 0;
 }
 

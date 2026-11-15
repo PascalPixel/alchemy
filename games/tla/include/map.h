@@ -69,7 +69,11 @@ struct MapWork {
   s32 minZ;
   s32 maxX;
   s32 maxZ;
-  u8 unk0fc[0xb]; ///< 0xfc: a pointer to a -1-ended rectangle list
+  /// The camera boxes: a -1-ended list of s16 rectangles (x0, z0, x1, z1 in
+  /// pixels) that FieldCamera_FollowLeaderInBounds keeps the view out of;
+  /// NULL for none.
+  const s16 *cameraBoxes;
+  u8 unk100[7];
   /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
   /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;

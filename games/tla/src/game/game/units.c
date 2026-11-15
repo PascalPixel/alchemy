@@ -601,7 +601,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gIdleSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
   /* FAKEMATCH(volatile): the auto-sleep flag. */
-  gMainRoutineWork.unk244[6] = gIdleSleepEnabled;
+  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   gMainRoutineWork.unk284[2] = gData_02003860;
@@ -862,7 +862,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     state->windowBrightness = party->windowBrightness;
     state->messageSpeed = party->messageSpeed;
     state->speech = party->speech;
-    state->unk244[6] = party->unk244[6];
+    state->idleSleepEnabled = party->idleSleepEnabled;
     WindowColor_ApplyFar(state->windowHue, state->windowBrightness);
   }
 
@@ -907,7 +907,7 @@ void ClearData_Apply(u8 *save) {
   gMainRoutineWork.windowBrightness = party->windowBrightness;
   gMainRoutineWork.messageSpeed = party->messageSpeed;
   gMainRoutineWork.speech = party->speech;
-  gMainRoutineWork.unk244[6] = party->unk244[6];
+  gMainRoutineWork.idleSleepEnabled = party->idleSleepEnabled;
   WindowColor_ApplyFar(gMainRoutineWork.windowHue,
                        gMainRoutineWork.windowBrightness);
   count = PIERS + 1;

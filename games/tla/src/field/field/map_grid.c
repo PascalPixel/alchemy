@@ -125,7 +125,7 @@ void Map_CopyPalette(s32 map, void *destination) {
 /// Loads layout index from gMaps: its cell pictures, collision (cleared to -1
 /// first), cells, shapes, tileset animations, blend script and script; sets up
 /// the three background layers' origins, parallax and wrap from the layout
-/// header; loads the palette and tile graphics unless flag 0x170 says they are
+/// header; loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
 /// loaded; and starts the layer scrolling (MapGrid_UpdateLayerScroll).
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
@@ -240,8 +240,8 @@ s32 MapGrid_LoadMap(s32 index) {
   Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
                  BGCNT_SCREEN_BASE(7),
              &REG_BG1CNT);
-  if (GameFlag_Get(0x170) != 0) {
-    GameFlag_Clear(0x170);
+  if (GameFlag_Get(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+    GameFlag_Clear(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
     graphicsBuffer = Heap_Alloc(0x4000);
     if (graphicsBuffer != NULL) {
@@ -591,7 +591,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   work->viewX = x;
   work->viewZ = y;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++) {
-    if (work->unk0fc[layerIndex + 8] != 0) {
+    if (work->unk100[layerIndex + 4] != 0) {
       u32 maskX, maskY, originY;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;

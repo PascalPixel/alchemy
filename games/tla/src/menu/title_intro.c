@@ -124,17 +124,6 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 #include "module/system/system.h"
 #include "resource_ids.h"
 
-/// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
-/// colours.
-#define TITLE_PALETTE_FADE_CHANNELS (512 * 3)
-
-/// Which palettes TitlePaletteFade_BuildColors builds.
-enum PaletteSelection {
-  PALETTES_ALL = 0,
-  PALETTES_BG = 1,
-  PALETTES_OBJECTS = 2
-};
-
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define DATA018_TILE_BYTES 0xa000

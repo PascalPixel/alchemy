@@ -46,7 +46,6 @@
 #include "game/game.h"
 #include "menu/menu.h"
 #include "field_event.h"
-#include "battle/b5_context.h"
 #include "battle/battle_action.h"
 #include "field/sprite.h"
 #include "graphics/render_placement.h"

@@ -132,7 +132,7 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[2] = 3;
   work->option[3] = gMainRoutineWork.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gMainRoutineWork.unk244[6];
+  work->option[4] = gMainRoutineWork.idleSleepEnabled;
   work->optionCount[4] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_VBLANK);
 }
@@ -508,7 +508,7 @@ s32 SettingsMenu_Run(void) {
   Window_Close((struct Window *)helpWindow, 2);
   Window_Close((struct Window *)settingsWindow, 2);
   if (result == 0) {
-    if (gMainRoutineWork.unk244[6] == 0 && work->option[4] == 1)
+    if (gMainRoutineWork.idleSleepEnabled == 0 && work->option[4] == 1)
       FieldMessage_Show((s32)MsgKey1161, 1);
   }
   if (result == 0) {
@@ -516,8 +516,8 @@ s32 SettingsMenu_Run(void) {
     gMainRoutineWork.windowBrightness = work->option[1];
     gMainRoutineWork.messageSpeed = work->option[2];
     gMainRoutineWork.speech = work->option[3];
-    gMainRoutineWork.unk244[6] = work->option[4];
-    gIdleSleepEnabled = gMainRoutineWork.unk244[6];
+    gMainRoutineWork.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
   } else {
     WindowColor_Apply(gMainRoutineWork.windowHue,
                       gMainRoutineWork.windowBrightness);

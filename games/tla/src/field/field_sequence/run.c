@@ -82,7 +82,7 @@ s32 FieldSequence_Run(void) {
   Djinn_ResolvePending(0);
   if (gMainRoutineWork.mapId == SCENE_CLEAR) {
     WorldMap_InitializePerspectiveFar();
-    gMainRoutineWork.unk244[0] = 1;
+    gMainRoutineWork.perspectiveMap = 1;
     mode = 3;
     Encounter_SelectMapZones(0);
   } else {

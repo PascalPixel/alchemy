@@ -259,7 +259,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   }
   object->speedLimit = px(1);
   object->acceleration = px(1) / 4;
-  if (GameFlag_Get(0x17f) != 0 && (gInput.held & KEY_B)) {
+  if (GameFlag_Get(FLAG_FAST_WALK) != 0 && (gInput.held & KEY_B)) {
     object->speedLimit = px(4);
     object->acceleration = px(1);
   }

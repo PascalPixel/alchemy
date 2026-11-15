@@ -589,19 +589,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-      void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+      LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
     }
     Resource_LoadAndDecompress(
         (s32)&ResourceId_WindStreakSheet,
         work->sheet + PROJECTILE_VOLLEY_WIND_STREAK_PICTURES, 1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-      void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+      LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&

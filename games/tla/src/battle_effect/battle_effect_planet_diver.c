@@ -316,9 +316,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
   {
-    const void *source_ = Resource_GetTableEntry(palette);
-    __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
-    routine((void *)BG_PLTT, source_, 128);
+    const void *colors = Resource_GetTableEntry(palette);
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    copy((void *)BG_PLTT, colors, SHEET_PALETTE_BYTES);
   }
   if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
     Palette_MirrorBgColors();
@@ -426,8 +427,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               // target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
               moteDistance = x;
-              /* FAKEMATCH(barrier): an empty asm through moteDistance. */
-              __asm__("" : "=r"(moteDistance) : "0"(moteDistance));
               if (moteDistance < 0)
                 moteDistance = -moteDistance;
               /* FAKEMATCH(dead): each arm stores its test in crossed, never
@@ -440,7 +439,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                   BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(2),
                                                 toFIXED(2), toFIXED(2),
                                                 i * 8 + 100);
-                  if ((i & 1) && frame != 80)
+                  /* FAKEMATCH(temporary): i tested through its copy in
+                   * moteDistance. */
+                  moteDistance = i;
+                  if ((moteDistance & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);
                 }
               }

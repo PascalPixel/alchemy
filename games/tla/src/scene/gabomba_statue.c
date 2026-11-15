@@ -331,6 +331,13 @@ struct Orbiter__gabomba_statue {
 
 /// The steps of a cog tooth's turn: its phase counts them, two degrees each.
 enum { COG_TOOTH_STEPS = 180 };
+
+/// The arrows room's channel: a grid of blocks, eleven columns by eight rows.
+enum {
+  CHANNEL_COLUMNS = 11,
+  CHANNEL_ROWS = 8,
+  CHANNEL_CELLS = CHANNEL_COLUMNS * CHANNEL_ROWS
+};
 extern s32 gGabombaStatue_CogDirection;
 s32 __divsi3(s32 numerator, s32 denominator);
 
@@ -368,7 +375,7 @@ s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
 }
 
 struct SceneState {
-  struct PuzzleCell cells[88];
+  struct PuzzleCell cells[CHANNEL_CELLS];
   u8 unk160[4];
   s16 firstId;
   s16 endId;
@@ -2306,7 +2313,7 @@ struct SpriteView {
 };
 
 struct SceneState {
-  struct PuzzleCell cells[88];
+  struct PuzzleCell cells[CHANNEL_CELLS];
   s32 count;
   s16 firstId;
   s16 endId;
@@ -2350,10 +2357,10 @@ void GabombaStatue_LoadTileGraphics(void) {
 s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
   u8 *cells = ((u8 *)&gSceneState);
 
-  if (x > 10 || z > 7)
+  if (x >= CHANNEL_COLUMNS || z >= CHANNEL_ROWS)
     return 0;
   {
-    u8 *cell = cells + (z * 11 + x) * 4;
+    u8 *cell = cells + (z * CHANNEL_COLUMNS + x) * 4;
     s32 code;
 
     if (cell[3] != 0 || cell[1] != 0)
@@ -2379,9 +2386,9 @@ void GabombaStatue_ClearGrid(void) {
   u32 row;
   u32 col;
 
-  for (row = 0; row <= 7; row++)
-    for (col = 0; col <= 10; col++) {
-      struct PuzzleCell *cell = &state->cells[row * 11 + col];
+  for (row = 0; row < CHANNEL_ROWS; row++)
+    for (col = 0; col < CHANNEL_COLUMNS; col++) {
+      struct PuzzleCell *cell = &state->cells[row * CHANNEL_COLUMNS + col];
       s32 occupied = cell->occupied;
 
       if (Event_GetFlag(FLAG_GABOMBA_RESPONDED) && cell->occupied == 2) {
@@ -2392,10 +2399,11 @@ void GabombaStatue_ClearGrid(void) {
         MapGrid_CopyCells(0, 11, 1, 1, state->originX + col,
                           state->originZ + row);
       else if (occupied == 1)
-        MapGrid_CopyCells(1, state->cells[row * 11 + col].kind, 1, 1,
-                          state->originX + col, state->originZ + row);
+        MapGrid_CopyCells(1, state->cells[row * CHANNEL_COLUMNS + col].kind, 1,
+                          1, state->originX + col, state->originZ + row);
       else
-        MapGrid_CopyCells(occupied, state->cells[row * 11 + col].kind, 1, 1,
+        MapGrid_CopyCells(occupied,
+                          state->cells[row * CHANNEL_COLUMNS + col].kind, 1, 1,
                           state->originX + col, state->originZ + row);
     }
 }
@@ -2444,28 +2452,28 @@ retry:
   state->count += 1;
   gRandomSeed = state->count;
   Iwram_ClearWordsEntry(state, sizeof(state->cells));
-  state->cells[3 * 11 + 5].kind = 10;
-  state->cells[7 * 11 + 1].kind = 10;
-  state->cells[7 * 11 + 9].kind = 10;
-  state->cells[7 * 11 + 0].blocked = 1;
-  state->cells[7 * 11 + 2].blocked = 1;
-  state->cells[7 * 11 + 8].blocked = 1;
-  state->cells[7 * 11 + 10].blocked = 1;
+  state->cells[3 * CHANNEL_COLUMNS + 5].kind = 10;
+  state->cells[7 * CHANNEL_COLUMNS + 1].kind = 10;
+  state->cells[7 * CHANNEL_COLUMNS + 9].kind = 10;
+  state->cells[7 * CHANNEL_COLUMNS + 0].blocked = 1;
+  state->cells[7 * CHANNEL_COLUMNS + 2].blocked = 1;
+  state->cells[7 * CHANNEL_COLUMNS + 8].blocked = 1;
+  state->cells[7 * CHANNEL_COLUMNS + 10].blocked = 1;
   row = 0;
 draw_row:
   col = 0;
 draw_col:
   /* FAKEMATCH(temporary): the form kept. */
   {
-    s32 drawn = state->cells[row * 11 + col].kind;
+    s32 drawn = state->cells[row * CHANNEL_COLUMNS + col].kind;
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;
     Map_CopyCellsRect(0, drawn, 1, 1, drawX + col, drawZ);
   }
 draw_next:
-  if (++col <= 10)
+  if (++col < CHANNEL_COLUMNS)
     goto draw_col;
-  if (++row <= 7)
+  if (++row < CHANNEL_ROWS)
     goto draw_row;
   n = 0;
   if (Random16() < 0x8000) {
@@ -2494,8 +2502,8 @@ draw_next:
 count_row:
   col = 0;
 count_col:
-  piece = state->cells[row * 11 + col].kind;
-  shape = state->cells[row * 11 + col].state;
+  piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+  shape = state->cells[row * CHANNEL_COLUMNS + col].state;
   if (shape == 5)
     straight++;
   if (shape == 10)
@@ -2503,9 +2511,9 @@ count_col:
   if (shape == 12 && (u32)(piece - 8) <= 1)
     cross++;
 count_next:
-  if (++col <= 10)
+  if (++col < CHANNEL_COLUMNS)
     goto count_col;
-  if (++row <= 7)
+  if (++row < CHANNEL_ROWS)
     goto count_row;
   if (straight == 0)
     goto retry;
@@ -2517,34 +2525,34 @@ count_next:
   left = 7;
   tries = 1;
 start_try:
-  col = Random_Below(11);
+  col = Random_Below(CHANNEL_COLUMNS);
   row = (Random_Below(3)) + 5;
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * 11 + col].kind;
+    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
     if ((u32)(piece - 1) <= 1) {
-      shape = state->cells[row * 11 + col].state;
+      shape = state->cells[row * CHANNEL_COLUMNS + col].state;
       if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
-        state->cells[row * 11 + col].kind = 10;
-        state->cells[row * 11 + col].occupied = 1;
+        state->cells[row * CHANNEL_COLUMNS + col].kind = 10;
+        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
         left = 6;
         goto start_done;
       }
     }
   }
 start_miss:
-  if (++tries <= 88)
+  if (++tries <= CHANNEL_CELLS)
     goto start_try;
 start_done:
   n = 3;
 corner_next:
   tries = 1;
 corner_try:
-  col = Random_Below(11);
+  col = Random_Below(CHANNEL_COLUMNS);
   row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * 11 + col].kind;
+    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
     if (piece == 3 || piece == 8 || piece == 9) {
-      cell = &state->cells[row * 11 + col];
+      cell = &state->cells[row * CHANNEL_COLUMNS + col];
       shape = cell->state;
       if (shape != 6 && shape != 9) {
         switch (piece) {
@@ -2558,32 +2566,32 @@ corner_try:
           cell->kind = ((Random_Below(2)) << 1) + 5;
           break;
         }
-        state->cells[row * 11 + col].occupied = 1;
+        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
         left--;
         goto corner_done;
       }
     }
   }
 corner_miss:
-  if (++tries <= 88)
+  if (++tries <= CHANNEL_CELLS)
     goto corner_try;
 corner_done:
   if (--n >= 0)
     goto corner_next;
   tries = 1;
 straight_try:
-  col = Random_Below(11);
+  col = Random_Below(CHANNEL_COLUMNS);
   row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row * 11 + col].kind;
+    piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
     if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
-      state->cells[row * 11 + col].occupied = 1;
+      state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
       left--;
       goto straight_done;
     }
   }
 straight_miss:
-  if (++tries <= 88)
+  if (++tries <= CHANNEL_CELLS)
     goto straight_try;
 straight_done:
   if (left > 0) {
@@ -2591,17 +2599,17 @@ straight_done:
   plain_next:
     tries = 1;
   plain_try:
-    col = Random_Below(11);
+    col = Random_Below(CHANNEL_COLUMNS);
     row = Random_Below(8);
     if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-      piece = state->cells[row * 11 + col].kind;
+      piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
       if ((u32)(piece - 1) <= 1) {
-        state->cells[row * 11 + col].occupied = 1;
+        state->cells[row * CHANNEL_COLUMNS + col].occupied = 1;
         goto plain_done;
       }
     }
   plain_miss:
-    if (++tries <= 88)
+    if (++tries <= CHANNEL_CELLS)
       goto plain_try;
   plain_done:
     if (--n != 0)
@@ -2611,8 +2619,8 @@ straight_done:
 turn_row:
   col = 0;
 turn_col:
-  piece = state->cells[row * 11 + col].kind;
-  shape = state->cells[row * 11 + col].occupied;
+  piece = state->cells[row * CHANNEL_COLUMNS + col].kind;
+  shape = state->cells[row * CHANNEL_COLUMNS + col].occupied;
   if (shape != 0) {
     switch (Random_Below(8)) {
     case 0:
@@ -2638,9 +2646,9 @@ turn_col:
     Map_CopyCellsRect(shape, piece, 1, 1, drawX + col, drawZ);
   }
 turn_next:
-  if (++col <= 10)
+  if (++col < CHANNEL_COLUMNS)
     goto turn_col;
-  if (++row <= 7)
+  if (++row < CHANNEL_ROWS)
     goto turn_row;
   return state->count;
 }
@@ -2687,7 +2695,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
     if (++attempts > 1280)
       return -1;
     {
-      s32 offset = (z * 11 + x) * 4;
+      s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
       gGabombaStatue_PathKinds[step] = cells[offset];
       gGabombaStatue_PathFlags[step] =
           ((struct PuzzleCell *)(cells + offset))->state;
@@ -2726,7 +2734,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       if (step == length - 1 && (nextX != endX || nextZ != endZ))
         goto blocked;
       {
-        u8 *cell = cells + (nextZ * 11 + nextX) * 4;
+        u8 *cell = cells + (nextZ * CHANNEL_COLUMNS + nextX) * 4;
         if (cell[1] != 0)
           goto blocked;
         used = (cell[2] >> bit) & one;
@@ -2740,7 +2748,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       kinds = gGabombaStatue_PathKinds;
       piece = GabombaStatue_PickPiece(direction, dir, kinds[step]);
       {
-        s32 offset = (z * 11 + x) * 4;
+        s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
         GabombaStatue_WritePiece(x, z, piece, (cells + offset)[2] | one << bit);
       }
       step++;
@@ -2771,7 +2779,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
   }
 done:
   {
-    s32 offset = (nextZ * 11 + nextX) * 4;
+    s32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * 4;
     piece = GabombaStatue_PickPiece(dir, last, cells[offset]);
     GabombaStatue_WritePiece(nextX, nextZ, piece,
                              (cells + offset)[2] | 1 << bit);
@@ -2807,7 +2815,7 @@ void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state) {
 
     /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
-    i = z * 11 + column;
+    i = z * CHANNEL_COLUMNS + column;
   }
   gSceneState.cells[i].kind = kind;
   gSceneState.cells[i].state = state;
@@ -2828,7 +2836,7 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
     column = 0;
     do {
       {
-        struct PuzzleCell *cell = &state->cells[row * 11 + column];
+        struct PuzzleCell *cell = &state->cells[row * CHANNEL_COLUMNS + column];
 
         if (cell->occupied != 0) {
           struct Actor *object = Actor_Get(id);
@@ -2837,8 +2845,8 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
           s32 kind;
 
           if (show != 0) {
-            object->x.fixed = ((state->originX + column) << 20) + 0x80000;
-            object->z.fixed = ((state->originZ + row) << 20) + 0x80000;
+            object->x.fixed = FIELD_CELL_CENTER(state->originX + column);
+            object->z.fixed = FIELD_CELL_CENTER(state->originZ + row);
             MapGrid_CopyCells(0, 11, 1, 1, state->originX + column,
                               state->originZ + row);
             cell->occupied = 2;
@@ -2855,7 +2863,7 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
       column++;
     } while (column <= 10);
     row++;
-  } while (row <= 7);
+  } while (row < CHANNEL_ROWS);
   state->endId = id;
 }
 #undef FIELD_AT
@@ -2868,7 +2876,7 @@ u8 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
 
     /* FAKEMATCH(barrier): an empty asm on column that names the cell table. */
     asm("" : "+l"(column) : "l"(gSceneState.cells));
-    i = z * 11 + column;
+    i = z * CHANNEL_COLUMNS + column;
   }
   gSceneState.cells[i].kind =
       gGabombaStatue_TurnedPieces[gSceneState.cells[i].kind * 2 + direction];
@@ -2878,7 +2886,7 @@ u8 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
 void GabombaStatue_RaiseTiles(s32 value, s32 row) {
   struct Actor *object = Actor_Get(ACTOR_GREY_CONE);
 
-  if (row <= 7)
+  if (row < CHANNEL_ROWS)
     object->scaleY += -0x1f00;
   if (value == 1) {
     GabombaStatue_ShowTiles(gSceneState.firstId, 1);
@@ -2903,9 +2911,9 @@ void GabombaStatue_PoundTile(s32 mode) {
   x = (FIELD_CELL(object->x.fixed)) - state->originX;
   z = (FIELD_CELL(object->z.fixed)) - state->originZ;
   {
-    s32 kind = state->cells[z * 11 + x].kind;
+    s32 kind = state->cells[z * CHANNEL_COLUMNS + x].kind;
 
-    cell = &state->cells[z * 11 + x];
+    cell = &state->cells[z * CHANNEL_COLUMNS + x];
     cell->occupied = mode;
     MapGrid_CopyCells(1, kind, 1, 1, state->originX + x, state->originZ + z);
   }
@@ -2913,9 +2921,9 @@ void GabombaStatue_PoundTile(s32 mode) {
   object->z.fixed = 0;
   found = 0;
   row = 0;
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 10; col++) {
-      if (state->cells[row * 11 + col].occupied == 2) {
+  for (row = 0; row < CHANNEL_ROWS; row++) {
+    for (col = 0; col < CHANNEL_COLUMNS; col++) {
+      if (state->cells[row * CHANNEL_COLUMNS + col].occupied == 2) {
         found = 1;
         break;
       }
@@ -3047,9 +3055,9 @@ void GabombaStatue_DrawFloatingTiles(void) {
       s32 z = pz - scrollZ;
       s32 sy = z - y;
       s32 depth = ((y + z) >> 16) + 58;
-      s32 cellX = (px >> 20) - state->originX;
-      s32 cellZ = (pz >> 20) - state->originZ;
-      s32 kind = state->cells[cellZ * 11 + cellX].kind;
+      s32 cellX = FIELD_CELL(px) - state->originX;
+      s32 cellZ = FIELD_CELL(pz) - state->originZ;
+      s32 kind = state->cells[cellZ * CHANNEL_COLUMNS + cellX].kind;
       u32 *p;
       x = ((x >> 16) - 8) & 0x1ff;
       sy = ((sy >> 16) - 8) & 255;
@@ -3105,20 +3113,20 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   u8 *headingp = (u8 *)ball + 98;
   s32 heading = *headingp;
   s32 angle = heading << 14;
-  s32 cell = row * 11 + col;
+  s32 cell = row * CHANNEL_COLUMNS + col;
   struct SceneState *board = &gSceneState;
   s32 piece = board->cells[cell].kind;
   s32 goal = board->cells[cell].occupied;
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  s32 s = Math_MulQ16(0x80000, Trig_Sin(arc));
-  s32 c = Math_MulQ16(0x80000, Trig_Cos(arc));
+  s32 s = Math_MulQ16(px(8), Trig_Sin(arc));
+  s32 c = Math_MulQ16(px(8), Trig_Cos(arc));
   s32 z;
   s32 x;
 
-  x = ((board->originX + col) << 20) + 0x80000;
-  z = ((board->originZ + row) << 20) + 0x80000;
+  x = FIELD_CELL_CENTER(board->originX + col);
+  z = FIELD_CELL_CENTER(board->originZ + row);
   if (goal == 2) {
     heading = row = col = 0;
     if (((u8 *)ball)[99] == 1) {
@@ -3132,86 +3140,86 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   case 514:
   case 515:
     col--;
-    x -= d << 16;
+    x -= px(d);
     break;
   case 2:
   case 3:
     col++;
-    x += d << 16;
+    x += px(d);
     break;
   case 257:
   case 259:
     row++;
-    z += d << 16;
+    z += px(d);
     break;
   case 769:
   case 771:
     row--;
-    z -= d << 16;
+    z -= px(d);
     break;
   case 516:
   case 520:
     row++;
     heading = 1;
-    x = x - s + 0x80000;
-    z = z - c + 0x80000;
-    angle = 0x8000 - arc;
+    x = x - s + px(8);
+    z = z - c + px(8);
+    angle = TRIG_TURN / 2 - arc;
     break;
   case 773:
   case 777:
     col--;
     heading = 2;
-    x = x + c - 0x80000;
-    z = z - s + 0x80000;
-    angle = 0xc000 - arc;
+    x = x + c - px(8);
+    z = z - s + px(8);
+    angle = TRIG_TURN * 3 / 4 - arc;
     break;
   case 6:
   case 8:
     row--;
     heading = 3;
-    x = x + s - 0x80000;
-    z = z + c - 0x80000;
+    x = x + s - px(8);
+    z = z + c - px(8);
     angle = -arc;
     break;
   case 263:
   case 265:
     col++;
     heading = 0;
-    x = x - c + 0x80000;
-    z = z + s - 0x80000;
-    angle = 0x4000 - arc;
+    x = x - c + px(8);
+    z = z + s - px(8);
+    angle = TRIG_TURN / 4 - arc;
     break;
   case 519:
   case 521:
     row--;
     heading = 3;
-    x = x - s + 0x80000;
-    z = z + c - 0x80000;
-    angle = arc + 0x8000;
+    x = x - s + px(8);
+    z = z + c - px(8);
+    angle = arc + TRIG_TURN / 2;
     break;
   case 262:
   case 264:
     col--;
     heading = 2;
-    x = x + c - 0x80000;
-    z = z + s - 0x80000;
-    angle = arc + 0x4000;
+    x = x + c - px(8);
+    z = z + s - px(8);
+    angle = arc + TRIG_TURN / 4;
     break;
   case 5:
   case 9:
     row++;
     heading = 1;
-    x = x + s - 0x80000;
-    z = z - c + 0x80000;
+    x = x + s - px(8);
+    z = z - c + px(8);
     angle = arc;
     break;
   case 772:
   case 776:
     col++;
     heading = 0;
-    x = x - c + 0x80000;
-    z = z - s + 0x80000;
-    angle = arc + 0xc000;
+    x = x - c + px(8);
+    z = z - s + px(8);
+    angle = arc + TRIG_TURN * 3 / 4;
     break;
   case 11:
     heading = row = col = 0;
@@ -3231,7 +3239,7 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
       ball->y.fixed = 0;
       ball->z.fixed = z;
       ball->facing = angle;
-      if (x >> 20 == 24 && z >> 20 == 14) {
+      if (FIELD_CELL(x) == 24 && FIELD_CELL(z) == 14) {
         ((u8 *)ball)[99] = 7;
       } else {
         Sound_Play(SE_DUST_PUFF);
@@ -3384,8 +3392,8 @@ void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out) {
 
   for (z = 0; z <= 7; z++) {
     for (x = 0; x <= 10; x++) {
-      if (gSceneState.cells[z * 11 + x].kind == 10 && !(x == 5 && z == 3) &&
-          !(z == 7 && (x == 1 || x == 9))) {
+      if (gSceneState.cells[z * CHANNEL_COLUMNS + x].kind == 10 &&
+          !(x == 5 && z == 3) && !(z == 7 && (x == 1 || x == 9))) {
         *x_out = x;
         *z_out = z;
         return;
@@ -3407,28 +3415,31 @@ struct ClockWork {
   u8 mode;
 };
 
+/// The clock's work, kept in the inventory snapshot's spare room.
+#define CLOCK_WORK ((struct ClockWork *)(gInventorySnapshot + 0x288))
+
 /// Converts the remaining frames into minutes, seconds and tenths
 /// (`MM:SS:T`).
 void GabombaStatue_FormatClock(s32 time, u8 *text) {
   if (time < 0)
     time = 0;
-  *text = time / 36000 + '0';
-  time %= 36000;
-  *++text = time / 3600 + '0';
-  time %= 3600;
+  *text = time / (FRAMES_PER_SECOND * 60 * 10) + '0';
+  time %= (FRAMES_PER_SECOND * 60 * 10);
+  *++text = time / (FRAMES_PER_SECOND * 60) + '0';
+  time %= (FRAMES_PER_SECOND * 60);
   *++text = ':';
-  *++text = time / 600 + '0';
-  time %= 600;
-  *++text = time / 60 + '0';
-  time %= 60;
+  *++text = time / (FRAMES_PER_SECOND * 10) + '0';
+  time %= (FRAMES_PER_SECOND * 10);
+  *++text = time / FRAMES_PER_SECOND + '0';
+  time %= FRAMES_PER_SECOND;
   *++text = ':';
-  *++text = time / 6 + '0';
+  *++text = time / (FRAMES_PER_SECOND / 10) + '0';
   text[1] = 0;
 }
 
 s32 GabombaStatue_TickClock(s32 time) {
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
-  s32 second = time % 60;
+  struct ClockWork *clock = CLOCK_WORK;
+  s32 second = time % FRAMES_PER_SECOND;
   s32 volume = 512;
   u8 *ringing = &clock->ringing;
 
@@ -3457,7 +3468,7 @@ s32 GabombaStatue_TickClock(s32 time) {
 /// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
 /// to the middle digit and to each digit where timer + 60 and timer differ.
 void GabombaStatue_DrawClock(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
   u8 *digit = clock->digit;
   u8 *old = clock->tiles;
   u8 *now = clock->digits;
@@ -3509,7 +3520,7 @@ s32 __modsi3(s32 numerator, s32 denominator);
 
 void GabombaStatue_CountDownShowingClock(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
 
   if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
       clock->timer > 0)
@@ -3519,7 +3530,7 @@ void GabombaStatue_CountDownShowingClock(void) {
 
 void GabombaStatue_CountDown(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
 
   if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
       clock->timer > 0)
@@ -3528,7 +3539,7 @@ void GabombaStatue_CountDown(void) {
 
 /// Starts the clock at one minute, shown or hidden.
 void GabombaStatue_StartClock(s32 mode) {
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
   u8 *tiles;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -3551,7 +3562,7 @@ void GabombaStatue_StartClock(s32 mode) {
 }
 
 void GabombaStatue_StopClock(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
 
   if (clock->mode)
     FieldTask_Remove(GabombaStatue_CountDownShowingClock);
@@ -3560,7 +3571,7 @@ void GabombaStatue_StopClock(void) {
 }
 
 void GabombaStatue_RestartClock(void) {
-  struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
+  struct ClockWork *clock = CLOCK_WORK;
 
   if (clock->mode)
     Task_AddFrame(GabombaStatue_CountDownShowingClock, TASK_PASS_VBLANK);
@@ -3569,12 +3580,10 @@ void GabombaStatue_RestartClock(void) {
   clock->timer = 3600;
 }
 
-s32 GabombaStatue_GetClock(void) {
-  return ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer;
-}
+s32 GabombaStatue_GetClock(void) { return CLOCK_WORK->timer; }
 
 void GabombaStatue_ResetClock(void) {
-  ((struct ClockWork *)(gInventorySnapshot + 0x288))->timer = 3600;
+  CLOCK_WORK->timer = FRAMES_PER_SECOND * 60;
 }
 
 /// Layer switch table: three words (id, mode, flag), terminated by 0xffff.
@@ -3587,7 +3596,7 @@ void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
     s16 mode = entry[0];
     s16 flag = entry[1];
 
-    object->collisionFlags &= 0xfe;
+    object->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
     entry += 2;

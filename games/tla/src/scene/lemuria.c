@@ -14,6 +14,47 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/scene_tables.h"
+
+/// Lemuria, by the rows of gActorPlacements; Piers' row goes to his party
+/// slot.
+enum LemuriaActorId {
+  /// The two posts of the rope Lash ties.
+  ACTOR_ROPE_POST_A = ACTOR_FIRST_PLACED,
+  ACTOR_ROPE_POST_B,
+  ACTOR_SPROUT, ///< grown into a hanging vine (FLAG_LEMURIA_VINE_GROWN)
+  ACTOR_SIGNPOST,
+  /// A girl at the south of the town, whom the arrival events dress as
+  /// Kraden (sprite 56) to speak his lines; Lemuria_RestoreGirl puts her
+  /// back.
+  ACTOR_KRADEN_STAND_IN,
+  /// "Lemuria has no disease, no war..."
+  ACTOR_WOMAN_ON_PARADISE,
+  /// "In Lemuria, we do not..."
+  ACTOR_MAN_ON_LEMURIAN_WAYS,
+  /// "Life never changes here..."
+  ACTOR_LEMURIAN_ON_UNCHANGING_LIFE,
+  ACTOR_OLD_WOMAN,
+  /// "How old am I again?"
+  ACTOR_GIRL_FORGETTING_HER_AGE,
+  ACTOR_SPOILED_CHILD, ///< Lemuria_TalkToSpoiledChild
+  ACTOR_LONELY_CHILD,  ///< Lemuria_TalkToLonelyChild
+  ACTOR_CAT,
+  ACTOR_DOG,
+  ACTOR_COW,
+  ACTOR_CHICKEN,
+  /// The two guards at the palace stair. "Who goes there!"
+  ACTOR_WEST_PALACE_GUARD,
+  ACTOR_EAST_PALACE_GUARD,
+  /// "If you and Lunpa..."
+  ACTOR_GIRL_ON_LUNPA,
+  /// The rope let down from the ledge (FLAG_LEMURIA_ROPE_LET_DOWN), as
+  /// Rope_Place takes its posts: the low one, then the high one.
+  ACTOR_LET_DOWN_ROPE_HIGH_POST,
+  ACTOR_LET_DOWN_ROPE_LOW_POST,
+  ACTOR_GIRL_BY_THE_SPRING,
+  ACTOR_MAN_AT_THE_SPRING, ///< Lemuria_OfferSpringLuck
+  ACTOR_SPRING             ///< Lemuria_DrinkFromSpring
+};
 #include "scene_ids.h"
 #include "field/call.h"
 #include "battle/battle.h"
@@ -157,11 +198,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-void Lemuria_PoseActor12(void) {
-  Actor_SetPosition(12, 488, 1256);
-  Actor_SetFirstSpriteAnimation(Actor_Get(12), 157);
-  Actor_SetAnimation(12, 3);
-  Actor_FaceDirection(12, FACING_WEST, 0);
+void Lemuria_RestoreGirl(void) {
+  Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 488, 1256);
+  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN), 157);
+  Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 3);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_WEST, 0);
 }
 
 void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
@@ -237,7 +278,7 @@ void Lemuria_EnterDoor(s32 door) {
 /// set; the actor's angle is restored after.
 void Lemuria_TalkToSpoiledChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(18);
+  struct Actor *object = Actor_Get(ACTOR_SPOILED_CHILD);
   s16 angle = object->facing;
 
   object->timer = 1;
@@ -245,13 +286,13 @@ void Lemuria_TalkToSpoiledChild(void) {
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaItHasBeenManyMany);
-    Actor_FaceEachOther(18, gMainRoutineWork.leaderActorId, 2);
+    Actor_FaceEachOther(ACTOR_SPOILED_CHILD, gMainRoutineWork.leaderActorId, 2);
   } else {
     FieldEvent_SetMessageId((s32)&MsgLemuriaEveryoneSpoilsMeSoMuch);
   }
-  Actor_SetAnimation(18, 0);
+  Actor_SetAnimation(ACTOR_SPOILED_CHILD, 0);
   // "Everyone spoils me so much... I don't ever want to grow up! But in..."
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SPOILED_CHILD, 0, 10);
   Event_End();
   object->timer = 0;
   object->facing = angle;
@@ -261,7 +302,7 @@ void Lemuria_TalkToSpoiledChild(void) {
 /// The same for actor 19.
 void Lemuria_TalkToLonelyChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(19);
+  struct Actor *object = Actor_Get(ACTOR_LONELY_CHILD);
   s16 angle = object->facing;
 
   object->timer = 1;
@@ -269,13 +310,13 @@ void Lemuria_TalkToLonelyChild(void) {
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaWeAreOnlyChildren);
-    Actor_FaceEachOther(19, gMainRoutineWork.leaderActorId, 2);
+    Actor_FaceEachOther(ACTOR_LONELY_CHILD, gMainRoutineWork.leaderActorId, 2);
   } else {
     FieldEvent_SetMessageId((s32)&MsgLemuriaAreThereOtherChildren);
   }
-  Actor_SetAnimation(19, 0);
+  Actor_SetAnimation(ACTOR_LONELY_CHILD, 0);
   // "Are there other children in the lands beyond the Sea of Time? Are..."
-  FieldEvent_ShowMessageThenWait(19, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_LONELY_CHILD, 0, 10);
   Event_End();
   object->timer = 0;
   object->facing = angle;
@@ -420,27 +461,27 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgLemuriaAreYouKidsPierssTraveling);
-  Actor_SetPosition(12, 872, 880);
-  object = Actor_Get(12);
+  Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 872, 880);
+  object = Actor_Get(ACTOR_KRADEN_STAND_IN);
   Actor_SetFirstSpriteAnimation(object, 43);
-  Actor_SetAnimation(12, 3);
-  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 3);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
   // "Are you kids Piers's traveling companions?"
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 776, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "The door's broken, I'm afraid."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetAnimationAndWait(12, 4);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 4);
   // "But I opened up a window just above the door."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   // "Sorry about this, but you'll have to climb through there."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
   if (Party_FindOwnerWithAction(133) != -1 || Event_GetFlag(0x962))
@@ -454,34 +495,34 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldCamera_MoveTo(872, CAMERA_KEEP, 792, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's the matter? Can't you climb up? ...Fine. Just a moment."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
-  FieldActor_Jump(12, 4, 0);
-  Actor_WalkToAndWait(12, 872, 912);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 4, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 872, 912);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(12, 1);
-  Actor_WalkByAndWait(12, -32, 0);
-  Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHEAST);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1);
+  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, -32, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHEAST);
   FieldCamera_MoveTo(848, CAMERA_KEEP, 904, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   // "You came all this way and then got stuck here? You can't be very bright."
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetPosition(28, 840, 920);
-  Actor_SetPosition(27, 840, 936);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+  Actor_SetPosition(ACTOR_LET_DOWN_ROPE_LOW_POST, 840, 920);
+  Actor_SetPosition(ACTOR_LET_DOWN_ROPE_HIGH_POST, 840, 936);
   Value3((s32 (*)())Rope_Coil, 1, 28, 27);
   Rope_Lash(1, 28, 27);
   FieldEvent_Wait(30);
   // "There! Is that better? Now climb up here."
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_WalkByAndWait(12, 32, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 32, 0);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
-  Actor_WalkByAndWait(12, 0, -32);
+  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 0, -32);
   Event_SetFlag(FLAG_LEMURIA_ROPE_LET_DOWN);
 done:
-  Lemuria_PoseActor12();
+  Lemuria_RestoreGirl();
   Event_End();
 }
 
@@ -505,39 +546,40 @@ void Lemuria_DrinkFromSpring(void) {
 /// Actor 30 offers a test of luck at the Spring of Lemuria, once.
 void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
-    Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
-    FieldActor_WaitForScriptEndById(30);
+    Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
+    FieldActor_WaitForScriptEndById(ACTOR_MAN_AT_THE_SPRING);
     FieldEvent_SetMessageId((s32)MsgLemuriaYouLookLikeYoure);
     // "You look like you're in for a spell of good luck. After all, your..."
-    Event_ShowMessage(30, 0);
-    Actor_FaceDirectionAndWait(30, FACING_NORTH_NORTHEAST);
+    Event_ShowMessage(ACTOR_MAN_AT_THE_SPRING, 0);
+    Actor_FaceDirectionAndWait(ACTOR_MAN_AT_THE_SPRING, FACING_NORTH_NORTHEAST);
     return;
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaDoYouWishToTest);
-  Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
-  FieldActor_WaitForScriptEndById(30);
+  Actor_ShowEmote(ACTOR_MAN_AT_THE_SPRING, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
+  Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
+  FieldActor_WaitForScriptEndById(ACTOR_MAN_AT_THE_SPRING);
   FieldEvent_Wait(5);
   // "Do you wish to test your luck at the Spring of Lemuria?"
-  Event_OpenMessage(30, 0);
+  Event_OpenMessage(ACTOR_MAN_AT_THE_SPRING, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
-    FieldEvent_ShowMessageThenWait(30, 0, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 0);
   } else {
     FieldEvent_Wait(20);
-    Actor_SetAnimationAndWait(30, 3);
+    Actor_SetAnimationAndWait(ACTOR_MAN_AT_THE_SPRING, 3);
     (gFieldWork->message)++;
-    FieldEvent_ShowMessageThenWait(30, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 5);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
     FieldEvent_Wait(5);
-    Actor_SetSpeed(30, 1.2);
-    Actor_WalkToAndWait(30, 440, 1048);
+    Actor_SetSpeed(ACTOR_MAN_AT_THE_SPRING, 1.2);
+    Actor_WalkToAndWait(ACTOR_MAN_AT_THE_SPRING, 440, 1048);
     Event_SetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED);
   }
-  Actor_FaceDirectionAndWait(30, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_MAN_AT_THE_SPRING, FACING_NORTH_NORTHEAST);
   Event_End();
 }
 
@@ -634,33 +676,33 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x201;
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_FRAME);
   FieldEffect_StartBlankOverlay(0);
-  Actor_SetSpriteFlags(Actor_Get(11), 0);
-  FieldActor_SetSpritePriority(9, 3);
-  FieldActor_SetSpritePriority(29, 3);
-  Actor_Get(21)->update = Lemuria_TakeLeaderLayer;
-  Actor_SetAnimation(22, 3);
-  Actor_SetPosition(18, 40, 952);
-  Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
-  actor = Actor_Get(18);
-  actor->watchedActor = Actor_Get(19);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SIGNPOST), 0);
+  FieldActor_SetSpritePriority(ACTOR_ROPE_POST_B, 3);
+  FieldActor_SetSpritePriority(ACTOR_GIRL_BY_THE_SPRING, 3);
+  Actor_Get(ACTOR_DOG)->update = Lemuria_TakeLeaderLayer;
+  Actor_SetAnimation(ACTOR_COW, 3);
+  Actor_SetPosition(ACTOR_SPOILED_CHILD, 40, 952);
+  Actor_SetScript(ACTOR_SPOILED_CHILD, (s32)&gLemuria_FirstWalkerPaces);
+  actor = Actor_Get(ACTOR_SPOILED_CHILD);
+  actor->watchedActor = Actor_Get(ACTOR_LONELY_CHILD);
   actor->update = Lemuria_NoticeLeader;
-  Actor_SetPosition(19, 88, 904);
-  Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
-  actor = Actor_Get(19);
-  actor->watchedActor = Actor_Get(18);
+  Actor_SetPosition(ACTOR_LONELY_CHILD, 88, 904);
+  Actor_SetScript(ACTOR_LONELY_CHILD, (s32)&gLemuria_SecondWalkerPaces);
+  actor = Actor_Get(ACTOR_LONELY_CHILD);
+  actor->watchedActor = Actor_Get(ACTOR_SPOILED_CHILD);
   actor->update = Lemuria_NoticeLeader;
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
-    Actor_SetPosition(30, 440, 1048);
+    Actor_SetPosition(ACTOR_MAN_AT_THE_SPRING, 440, 1048);
   }
   if (Event_GetFlag(FLAG_LEMURIA_CITY_ADMIRED) &&
       !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
-    Actor_SetPosition(24, 456, 520);
-    Actor_SetPosition(25, 472, 520);
+    Actor_SetPosition(ACTOR_WEST_PALACE_GUARD, 456, 520);
+    Actor_SetPosition(ACTOR_EAST_PALACE_GUARD, 472, 520);
   }
   if (!Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
-    Actor_SetPosition(26, 0, 0);
+    Actor_SetPosition(ACTOR_GIRL_ON_LUNPA, 0, 0);
   } else {
-    Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
+    Actor_Get(ACTOR_GIRL_ON_LUNPA)->update = Lemuria_TakeLeaderLayer;
   }
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) &&
       !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
@@ -668,19 +710,20 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_PIERS, 9);
   }
   Rope_Initialize();
-  Rope_Place(0, 0x962, 8, 9);
-  Actor_Get(8)->priorityFlags |= 32;
-  Actor_Get(9)->priorityFlags |= 32;
+  Rope_Place(0, 0x962, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Actor_Get(ACTOR_ROPE_POST_A)->priorityFlags |= 32;
+  Actor_Get(ACTOR_ROPE_POST_B)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_LEMURIA_ROPE_LET_DOWN)) {
-    FieldActor_SetSpritePriority(28, 2);
-    FieldActor_SetSpritePriority(27, 2);
-    Actor_SetPosition(28, 840, 920);
-    Actor_SetPosition(27, 840, 936);
-    Call4(Rope_Place, 1, FLAG_LEMURIA_ROPE_LET_DOWN, 28, 27);
+    FieldActor_SetSpritePriority(ACTOR_LET_DOWN_ROPE_LOW_POST, 2);
+    FieldActor_SetSpritePriority(ACTOR_LET_DOWN_ROPE_HIGH_POST, 2);
+    Actor_SetPosition(ACTOR_LET_DOWN_ROPE_LOW_POST, 840, 920);
+    Actor_SetPosition(ACTOR_LET_DOWN_ROPE_HIGH_POST, 840, 936);
+    Call4(Rope_Place, 1, FLAG_LEMURIA_ROPE_LET_DOWN,
+          ACTOR_LET_DOWN_ROPE_LOW_POST, ACTOR_LET_DOWN_ROPE_HIGH_POST);
   }
-  Actor_SetSpriteFlags(Actor_Get(28), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LET_DOWN_ROPE_LOW_POST), 0);
   if (Event_GetFlag(FLAG_LEMURIA_VINE_GROWN)) {
-    HangingVine_Place(10, 1);
+    HangingVine_Place(ACTOR_SPROUT, 1);
     Lemuria_GrowVine();
   }
   if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
@@ -698,7 +741,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);
   }
-  actor = Actor_Get(31);
+  actor = Actor_Get(ACTOR_SPRING);
   actor->motionFlags = 0;
   actor->groundHeight = px(64);
   actor->y.fixed = px(64);
@@ -717,65 +760,69 @@ void Lemuria_AdmirePalace(s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaOh);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
-  if (id == 21) {
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+                                SPRITE_KRADEN);
+  if (id == ACTOR_DOG) {
     Actor_WalkToAndWait(ACTOR_FELIX, 376, 968);
     Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
-    FieldActor_LaunchFromLeader(12, 16, -16, FACING_EAST);
+    FieldActor_LaunchFromLeader(ACTOR_KRADEN_STAND_IN, 16, -16, FACING_EAST);
     a = 0;
     b = 0x800a;
     c = 0x5000;
   } else {
     Actor_WalkToAndWait(ACTOR_FELIX, 552, 968);
     Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-    FieldActor_LaunchFromLeader(12, -16, -16, FACING_WEST);
+    FieldActor_LaunchFromLeader(ACTOR_KRADEN_STAND_IN, -16, -16, FACING_WEST);
     a = 0x8000;
     b = -10;
     c = 0x3000;
   }
-  FieldActor_WaitForMoveById(12);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 12);
-  Actor_SetSpeed(12, 1);
-  EventCamera_FollowActor(12, 1);
-  Actor_WalkToAndWait(12, 464, 952);
-  Actor_FaceDirectionAndWait(12, a);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_KRADEN_STAND_IN);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1);
+  EventCamera_FollowActor(ACTOR_KRADEN_STAND_IN, 1);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 464, 952);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, a);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
   // "Oh!"
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_FaceDirectionAndWait(12, b);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, b);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
   // "Goodness!"
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_WalkToAndWait(12, 464, 784);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 464, 784);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_Jump(12, 6, 15);
-  FieldActor_Jump(12, 6, 23);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 15);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 23);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(12, c);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, c);
   FieldEvent_Wait(10);
   // "Felix! Look over here! This palace is magnificient!"
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
   FieldEvent_Wait(20);
   FieldActor_SetSpritePriority(ACTOR_FELIX, 1);
   Actor_SetPosition(ACTOR_FELIX, 464, 856);
   Actor_WalkToAndWait(ACTOR_FELIX, 464, 796);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(12, 1.2);
-  Actor_SetAnimation(12, 2);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
-  FieldActor_WaitForMoveById(12);
-  Actor_SetPosition(12, 0, 0);
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
+  Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   FieldEvent_Wait(10);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= 1;
   Actor_WalkToAndWait(ACTOR_FELIX, 464, 776);
-  Lemuria_PoseActor12();
+  Lemuria_RestoreGirl();
   Event_End();
 }
 
@@ -786,24 +833,27 @@ void Lemuria_KeepLookingAround(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaWhereAreYouGoingFelix);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+                                SPRITE_KRADEN);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
-  FieldActor_SetSpritePriority(12, 1);
-  FieldActor_LaunchFromLeader(12, 0, 16, FACING_NORTH_NORTHEAST);
-  FieldActor_WaitForMoveById(12);
+  FieldActor_SetSpritePriority(ACTOR_KRADEN_STAND_IN, 1);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN_STAND_IN, 0, 16,
+                              FACING_NORTH_NORTHEAST);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   FieldEvent_Wait(5);
   // "Where are you going, Felix? Let's take a longer look around!"
-  FieldEvent_ShowMessageThenWait(12, 0, 5);
-  Actor_SetSpeed(12, 1.2);
-  Actor_SetAnimation(12, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
-  FieldActor_WaitForMoveById(12);
-  Actor_SetPosition(12, 0, 0);
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
+  Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
-  Lemuria_PoseActor12();
+  Lemuria_RestoreGirl();
   Event_End();
 }
 
@@ -818,68 +868,71 @@ void Lemuria_MarvelAtCity(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaThisPlaceIsRemarkableTruly);
-  Actor_SetSpeed(24, 1);
-  Actor_SetSpeed(25, 1);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
+  Actor_SetSpeed(ACTOR_WEST_PALACE_GUARD, 1);
+  Actor_SetSpeed(ACTOR_EAST_PALACE_GUARD, 1);
+  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+                                SPRITE_KRADEN);
   Actor_WalkToAndWait(ACTOR_FELIX, 472, 568);
-  FieldActor_LaunchFromLeader(12, -16, 0, FACING_NORTH_NORTHEAST);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN_STAND_IN, -16, 0,
+                              FACING_NORTH_NORTHEAST);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-  FieldActor_WaitForMoveById(12);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldActor_Jump(12, 6, 15);
-  FieldActor_Jump(12, 6, 23);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 15);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 23);
   // "This place is remarkable... Truly remarkable..."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_WalkByAndWait(24, 16, 0);
-  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
+  Actor_ShowEmote(ACTOR_WEST_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  40);
+  Actor_WalkByAndWait(ACTOR_WEST_PALACE_GUARD, 16, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "Who goes there! I've not seen you in Lemuria before!"
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_FaceDirection(12, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldEvent_Wait(45);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(25, -16, 0);
+  Actor_WalkByAndWait(ACTOR_EAST_PALACE_GUARD, -16, 0);
   // "Wait a moment..."
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_WalkToAndWait(25, 464, 552);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
+  Actor_WalkToAndWait(ACTOR_EAST_PALACE_GUARD, 464, 552);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  FieldActor_SetSpritePriority(25, 2);
-  Actor_WalkByAndWait(25, 16, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  FieldActor_SetSpritePriority(ACTOR_EAST_PALACE_GUARD, 2);
+  Actor_WalkByAndWait(ACTOR_EAST_PALACE_GUARD, 16, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_WalkByAndWait(25, -8, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_WalkByAndWait(ACTOR_EAST_PALACE_GUARD, -8, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_PALACE_GUARD, 3);
   FieldEvent_Wait(20);
-  Actor_WalkToAndWait(25, 472, 520);
-  Actor_FaceDirection(25, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_EAST_PALACE_GUARD, 472, 520);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_WEST, 0);
   FieldEvent_Wait(20);
   // "You must be the travelers who arrived with Piers. Is your name..."
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(24, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_WEST_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Piers? You mean Piers, the Lost One?"
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -8, -16, FACING_NORTH);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   FieldEvent_Wait(20);
@@ -887,76 +940,79 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(10);
   // "Have I earned a title in my absence? Well, worry not! Piers is lost..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_StartRepeatedMotion(24, 3);
-  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_WEST_PALACE_GUARD, 3);
+  Actor_SetAttachedEffect(ACTOR_WEST_PALACE_GUARD,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_EAST_PALACE_GUARD, 3);
+  Actor_SetAttachedEffect(ACTOR_EAST_PALACE_GUARD,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
-  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I seek counsel with King Hydros. Has His Highness been told of my..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_FaceDirection(24, FACING_EAST, 0);
-  Actor_FaceDirection(25, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_WEST, 0);
   FieldEvent_Wait(35);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_PALACE_GUARD, 3);
   FieldEvent_Wait(10);
   // "Word was sent, but I do not know if it has reached the king."
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What do you mean?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "Lord Conservato is meeting with His Highness as we speak."
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Not Conservato..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's wrong, Piers? You don't look pleased to hear that name..."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   // "Kraden... What do you think of what you have seen of Lemuria?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 12);
-  FieldActor_WatchAndSetScript(ACTOR_PIERS, 12);
-  FieldActor_WatchAndSetScript(24, 12);
-  FieldActor_WatchAndSetScript(25, 12);
-  Actor_SetSpeed(12, 1);
-  EventCamera_FollowActor(12, 1);
-  Actor_WalkToAndWait(12, 424, 600);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  60);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_KRADEN_STAND_IN);
+  FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_KRADEN_STAND_IN);
+  FieldActor_WatchAndSetScript(ACTOR_WEST_PALACE_GUARD, ACTOR_KRADEN_STAND_IN);
+  FieldActor_WatchAndSetScript(ACTOR_EAST_PALACE_GUARD, ACTOR_KRADEN_STAND_IN);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1);
+  EventCamera_FollowActor(ACTOR_KRADEN_STAND_IN, 1);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 424, 600);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(400, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(40);
-  EventCamera_FollowActor(12, 1);
-  Actor_WalkToAndWait(12, 432, 536);
+  EventCamera_FollowActor(ACTOR_KRADEN_STAND_IN, 1);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 432, 536);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
@@ -964,20 +1020,20 @@ void Lemuria_MarvelAtCity(void) {
   FieldCamera_MoveTo(440, CAMERA_KEEP, 528, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(10);
-  EventCamera_FollowActor(12, 1);
-  Actor_WalkToAndWait(12, 456, 568);
+  EventCamera_FollowActor(ACTOR_KRADEN_STAND_IN, 1);
+  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 456, 568);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
-  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   // "It is a magnificent city! Or do you mean the castle? Both are..."
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_SetSpeed(ACTOR_PIERS, 0.7);
   Actor_WalkByAndWait(ACTOR_PIERS, 8, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -985,7 +1041,7 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   // "And you, Felix? Do you agree?"
-  Event_OpenMessage(7, 0);
+  Event_OpenMessage(ACTOR_PIERS, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     FieldEvent_Wait(30);
@@ -1000,13 +1056,13 @@ void Lemuria_MarvelAtCity(void) {
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   }
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 7);
-  FieldActor_WatchAndSetScript(12, 7);
-  FieldActor_WatchAndSetScript(24, 7);
-  FieldActor_WatchAndSetScript(25, 7);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN_STAND_IN, 7);
+  FieldActor_WatchAndSetScript(ACTOR_WEST_PALACE_GUARD, 7);
+  FieldActor_WatchAndSetScript(ACTOR_EAST_PALACE_GUARD, 7);
   FieldActor_SetSpritePriority(ACTOR_PIERS, 2);
   Actor_WalkByAndWait(ACTOR_PIERS, 32, 0);
-  Actor_FaceDirection(24, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
@@ -1020,58 +1076,59 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_FaceDirection(12, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
   FieldEvent_Wait(50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(12, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldActor_Jump(12, 6, 15);
-  FieldActor_Jump(12, 6, 23);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  30);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 15);
+  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 23);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_RunRepeatedMotion(24, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_RunRepeatedMotion(25, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_EAST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_FaceDirection(12, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(24, 3);
+  Actor_SetAnimationAndWait(ACTOR_WEST_PALACE_GUARD, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_RunRepeatedMotion(25, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_EAST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
   Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(24, 3);
+  Actor_SetAnimationAndWait(ACTOR_WEST_PALACE_GUARD, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(24, 0, 10);
-  Actor_SetAnimationAndWait(25, 4);
-  FieldEvent_ShowMessageThenWait(25, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_EAST_PALACE_GUARD, 4);
+  FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -1079,9 +1136,9 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_FaceDirection(12, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(10);
@@ -1094,14 +1151,15 @@ void Lemuria_MarvelAtCity(void) {
                          leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  Actor_SetSpeed(12, 1.2);
-  Actor_SetAnimation(12, 2);
+  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
-  FieldActor_WaitForMoveById(12);
-  Actor_SetPosition(12, 0, 0);
-  Lemuria_PoseActor12();
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
+  Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
+  Lemuria_RestoreGirl();
   Event_End();
 }
 
@@ -1233,101 +1291,119 @@ struct Trigger gSceneEvents[] = {
      EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 5, 0x1908, 5},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, 0x1966,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_KRADEN_STAND_IN, 0x1966,
      EVENT(Lemuria_EnterDoor)},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, 0x1969,
+    {TRIGGER_EXIT, ACTOR_LEMURIAN_ON_UNCHANGING_LIFE, CONDITION_ALWAYS, 15},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_OLD_WOMAN, 0x1969,
      EVENT(Lemuria_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_SIGNPOST, CONDITION_ALWAYS,
      EVENT(Lemuria_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_SPROUT, CONDITION_ALWAYS,
      EVENT(Lemuria_EnterDoor)},
-    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_MarvelAtCity)},
-    {TRIGGER_STEP, 21, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_AdmirePalace)},
-    {TRIGGER_STEP, 22, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_AdmirePalace)},
-    {TRIGGER_STEP, 23, FLAG_LEMURIA_CITY_ADMIRED,
+    {TRIGGER_EXIT, ACTOR_GIRL_FORGETTING_HER_AGE, CONDITION_ALWAYS, 17},
+    {TRIGGER_STEP, ACTOR_CAT, FLAG_LEMURIA_CITY_ADMIRED,
+     EVENT(Lemuria_MarvelAtCity)},
+    {TRIGGER_STEP, ACTOR_DOG, FLAG_LEMURIA_CITY_ADMIRED,
+     EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, ACTOR_COW, FLAG_LEMURIA_CITY_ADMIRED,
+     EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, ACTOR_CHICKEN, FLAG_LEMURIA_CITY_ADMIRED,
      EVENT(Lemuria_KeepLookingAround)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_KRADEN_STAND_IN, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaICannotRememberLastTime)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaInLemuriaWeDoNot)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLemuriaLifeNeverChangesHere)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_PARADISE, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaHasNo)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_LEMURIAN_WAYS, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInLemuriaWeDoNot)},
+    {TRIGGER_TALK, ACTOR_LEMURIAN_ON_UNCHANGING_LIFE, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaLifeNeverChangesHere)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaIOughtToFeelSurprised)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLemuriaHowOldAmIAgain)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgLemuriaMeowMrrrfle)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgLemuriaWoofRrrrrroof)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLemuriaMoo)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgLemuriaBukbukbuk)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgLemuriaSilence)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaMoreOfSameToday)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaIHaventBeenSurprised)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaIveAgedSoSlowly)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaSometimesIThinkBuildingsFall)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaLongAgoManNamedLunpa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaKingHydrosIsFarOlder)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GIRL_FORGETTING_HER_AGE, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaHowOldAmIAgain)},
+    {TRIGGER_TALK, ACTOR_SPOILED_CHILD, CONDITION_ALWAYS,
      EVENT(Lemuria_TalkToSpoiledChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_LONELY_CHILD, CONDITION_ALWAYS,
      EVENT(Lemuria_TalkToLonelyChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_CAT, CONDITION_ALWAYS, MSGNO(MsgLemuriaMeowMrrrfle)},
+    {TRIGGER_TALK, ACTOR_DOG, CONDITION_ALWAYS, MSGNO(MsgLemuriaWoofRrrrrroof)},
+    {TRIGGER_TALK, ACTOR_COW, CONDITION_ALWAYS, MSGNO(MsgLemuriaMoo)},
+    {TRIGGER_TALK, ACTOR_CHICKEN, CONDITION_ALWAYS, MSGNO(MsgLemuriaBukbukbuk)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgLemuriaSilence)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KRADEN_STAND_IN,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaMoreOfSameToday)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_PARADISE,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaIHaventBeenSurprised)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_LEMURIAN_WAYS,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaIveAgedSoSlowly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIAN_ON_UNCHANGING_LIFE,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaSometimesIThinkBuildingsFall)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaLongAgoManNamedLunpa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_FORGETTING_HER_AGE,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaKingHydrosIsFarOlder)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPOILED_CHILD,
+     CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LONELY_CHILD, CONDITION_ALWAYS,
+     EVENT(Lemuria_TalkToLonelyChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CAT, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaNoOneInLemuriaFeels)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaTheresSoMuchTreasureBuried)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COW, CONDITION_ALWAYS,
      MSGNO(MsgLemuriansAreSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHICKEN, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaIfItWerentForPeople)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaMotherWhyHaveYouLeft)},
-    {TRIGGER_TALK, 24, 0x196a, MSGNO(MsgLemuriaIveNeverSeenLordConservato)},
-    {TRIGGER_TALK, 25, 0x196a, MSGNO(MsgLemuriaLordConservatoHasOrderedUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x196a,
+    {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD, 0x196a,
+     MSGNO(MsgLemuriaIveNeverSeenLordConservato)},
+    {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD, 0x196a,
+     MSGNO(MsgLemuriaLordConservatoHasOrderedUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_PALACE_GUARD, 0x196a,
      MSGNO(MsgLemuriaImSureSenateHasSomething)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x196a,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_PALACE_GUARD, 0x196a,
      MSGNO(MsgLemuriaHowCouldLordConservatoExpect)},
-    {TRIGGER_TALK, 24, 0x1969, MSGNO(MsgLemuriaKingHydrosAwaits)},
-    {TRIGGER_TALK, 25, 0x1969, MSGNO(MsgLemuriaHisHighnessKingHasInstructed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x1969,
+    {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD, 0x1969,
+     MSGNO(MsgLemuriaKingHydrosAwaits)},
+    {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD, 0x1969,
+     MSGNO(MsgLemuriaHisHighnessKingHasInstructed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_PALACE_GUARD, 0x1969,
      MSGNO(MsgLemuriaTheyAreClearlyUsingPsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x1969,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_PALACE_GUARD, 0x1969,
      MSGNO(MsgLemuriaWhatDoesHisHighnessHave)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgLemuriaKingIsHoldingCounsel)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgLemuriaKingWillBeThrilled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaHowMuchLongerWillConservato)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaIHadHeardPiers)},
-    {TRIGGER_TALK, 26, 0x196a, MSGNO(MsgLemuriaIfYouAndLunpa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x196a,
+    {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaKingIsHoldingCounsel)},
+    {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaKingWillBeThrilled)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_PALACE_GUARD,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaHowMuchLongerWillConservato)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_PALACE_GUARD,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaIHadHeardPiers)},
+    {TRIGGER_TALK, ACTOR_GIRL_ON_LUNPA, 0x196a, MSGNO(MsgLemuriaIfYouAndLunpa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_LUNPA, 0x196a,
      MSGNO(MsgLemuriaIKnowWhyLemuriaEnded)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GIRL_ON_LUNPA, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaSenateHoldsKingHydros)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaITrustKingIfHis)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_LUNPA,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaITrustKingIfHis)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SIGNPOST, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaHouseOfSenate)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_GIRL_BY_THE_SPRING, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaDrinkingFromThisSpringRestores)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaTheseTurtlesHaveLived)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Lemuria_OfferSpringLuck)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaNoOneIsLuckierThan)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
-    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_BY_THE_SPRING,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaTheseTurtlesHaveLived)},
+    {TRIGGER_TALK, ACTOR_MAN_AT_THE_SPRING, CONDITION_ALWAYS,
+     EVENT(Lemuria_OfferSpringLuck)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_AT_THE_SPRING,
+     CONDITION_ALWAYS, MSGNO(MsgLemuriaNoOneIsLuckierThan)},
+    {TRIGGER_TALK, ACTOR_SPRING, CONDITION_ALWAYS,
+     EVENT(Lemuria_DrinkFromSpring)},
+    {TRIGGER_EXAMINE, ACTOR_EAST_PALACE_GUARD, CONDITION_ALWAYS,
+     EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x962, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, FLAG_LEMURIA_VINE_GROWN,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x962, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_LEMURIA_VINE_GROWN,
      EVENT(Lemuria_GrowVine)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(Lemuria_DigFirstSpot)},

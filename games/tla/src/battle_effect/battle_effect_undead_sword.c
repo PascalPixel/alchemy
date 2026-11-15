@@ -437,12 +437,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   if (mode == WATER_SHEET_WATERY_GRAVE) {
     u8 *pixel;
 
-    /* FAKEMATCH(temporary): pixel set inside the call that takes the sheet's
-     * address. */
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                               pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS, 1,
-                               0);
-    for (i = 0; i != 0x1b00; i++, pixel++) {
+                               work->sheet + WATER_SHEET_SMOKE_PUFFS, 1, 0);
+    for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS; i != 0x1b00;
+         i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;
         if (*pixel > 63) {

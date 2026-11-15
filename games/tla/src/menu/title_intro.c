@@ -858,11 +858,8 @@ s32 TitleIntro_Run(void) {
    */
   volatile u8 cpuLoad;
   s32 result;
-  /* FAKEMATCH(temporary): the flag is read before the stack byte's address is
-   * formed. */
-  u8 saved = gCpuLoadDisplayEnabled;
 
-  cpuLoad = saved;
+  cpuLoad = gCpuLoadDisplayEnabled;
   DebugText_Clear();
   VramCache_Reset();
   wait(1);

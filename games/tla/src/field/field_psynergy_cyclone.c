@@ -199,9 +199,8 @@ void FieldPsynergy_Cyclone(void) {
   blue = RGB_LEVEL_MAX << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    Io_Write16((c << 5) | blue | c, palette++);
-    /* FAKEMATCH(barrier): an empty asm. */
-    asm("");
+    Io_Write16((c << 5) | blue | c, palette);
+    palette++;
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;

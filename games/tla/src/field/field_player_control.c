@@ -143,7 +143,8 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   if (onObject)
     onObject = 1;
   if (gDebugMode != 0 && (gInput.held & KEY_L)) {
-    /* FAKEMATCH(dead): a store of the 0 collision already holds. */
+    // DEAD: collision is already 0 here; the ROM keeps its clearing, which
+    // cross-jumping shares with clear's.
     collision = 0;
     goto counted;
   }

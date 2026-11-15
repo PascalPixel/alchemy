@@ -75,19 +75,13 @@ void FieldPsynergy_UpdateRing(void) {
       /* FAKEMATCH(pin): green pinned to r5. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
-      s32 color;
 
       blue = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      color = blue | green | red;
-
-      ((u16 *)&BG_PLTT_COLOR(15, 0))[i] = color;
-      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = color;
+      Io_Write16(blue | green | red, &((u16 *)&BG_PLTT_COLOR(15, 0))[i]);
+      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = ((u16 *)&BG_PLTT_COLOR(15, 0))[i];
     }
     if (++i < 16)
       goto cycle;

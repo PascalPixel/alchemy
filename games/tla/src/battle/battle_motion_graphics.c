@@ -558,7 +558,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       targetOrFadeIndex++;
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
-    if (plan->battleEffect & 0x4000)
+    if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
@@ -600,7 +600,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       BattlePlayback_RunAll();
     }
   } else if (itemDefinition->useType == ITEM_USE_EMPTIES) {
-    if ((inventoryEntry & 0x1ff) == ITEM_HERMES_WATER)
+    if ((inventoryEntry & INVENTORY_ITEM_ID_MASK) == ITEM_HERMES_WATER)
       inventoryEntry = ITEM_EMPTY_BOTTLE;
     unit->inventory[selection->parameter] = inventoryEntry;
   }

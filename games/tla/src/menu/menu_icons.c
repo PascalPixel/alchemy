@@ -603,24 +603,24 @@ s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
 
   count = 0;
   if (state->hp == 0 && requested == 1) {
-    output[0] = requested;
+    output[CHARACTER_DOWN] = requested;
     count = 1;
   }
 
   mode = state->poison;
   if (mode != 0) {
     if (mode == 1)
-      output[1] = mode;
+      output[CHARACTER_POISON] = mode;
     else
-      output[2] = 1;
+      output[CHARACTER_VENOM] = 1;
     count++;
   }
   if (state->curse != 0) {
-    output[3] = 1;
+    output[CHARACTER_CURSE] = 1;
     count++;
   }
   if (state->haunt != 0) {
-    output[4] = 1;
+    output[CHARACTER_HAUNT] = 1;
     count++;
   }
   return count;

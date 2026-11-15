@@ -19,7 +19,7 @@ becomes a unit filled in from its row of the enemy table. It is
 `BattleFormation_BuildEnemyList`.
 
 The Lost Age has 660 formations. Here they are still assembly rows in
-[`battle_tables.s`](battle_tables.s), `gBattleFormation_Records`; The Broken
+[`battle_tables.s`](battle_tables.s), `gFormations`; The Broken
 Seal writes its formations as a C array. With one game flag set, the
 battle passes over the number it was given: it picks among the formations
 whose enemies are near the party's average level, and moves the enemies'

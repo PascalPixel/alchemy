@@ -1,14 +1,32 @@
-#ifndef BATTLE_H
-#define BATTLE_H
+#ifndef ALCHEMY_BATTLE_H
+#define ALCHEMY_BATTLE_H
 
 /// @file
-/// BATTLE
+/// The battle bank's routines and globals, as the other banks see them.
 
 #include "types.h"
 #include "edition.h"
 #include "system/vector3.h"
 #include "battle/battle_type.h"
 #include "field/sprite.h"
+
+/// A battle unit's sprites' OBJ mode, as BattleHighlight_SetSpriteMode
+/// sets it: faded units are semi-transparent, and the battle's blends act on
+/// them.
+enum BattleSpriteMode { SPRITE_OPAQUE, SPRITE_SEMI_TRANSPARENT };
+
+/// The glows ElementGlow_Play plays about a unit in its element.
+enum BattleElementGlow {
+  /// The star field gathering on the unit while the background darkens: a
+  /// cast.
+  GLOW_STAR_FIELD,
+  GLOW_STREAKS, ///< the element's streaks: an enemy's cast
+  GLOW_PILLAR,  ///< the element's pillar, at a strength: a summon's boost
+  GLOW_BURST    ///< the element's burst: a Djinni set
+};
+
+/// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
+#define BATTLE_ZOOM_NORMAL 100
 
 struct BattleActionRecord;
 struct BattleEffectParams;
@@ -188,6 +206,8 @@ void PartyStatus_DrawFar(s32 mode);
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
   POSE_STANDING = 1,
+  POSE_LEAP = 2,       ///< running up to a target and leaping
+  POSE_CAST = 3,       ///< a hand raised to cast or use an item
   POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed member
   POSE_DAMAGE = 5,     ///< taking damage
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose

@@ -56,7 +56,7 @@ void UpdateLinkSessionCountdown(void) {
     i = 2;
     do {
       if (*active++ != 0)
-        Oam_AddSpriteAtDepth(entry, 240);
+        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW);
       i--;
       entry++;
     } while (i >= 0);

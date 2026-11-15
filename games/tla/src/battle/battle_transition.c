@@ -9,6 +9,15 @@
 #include "battle/presentation.h"
 #include "system/system_bank.h"
 
+/// The curtain's map entries: tile 128 + n, WINDOW_PALETTE.
+#define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
+/// The screen block of the curtain's map, and its middle row, from which it
+/// opens a row up and a row down every eight frames for TRANSITION_OPEN_FRAMES.
+#define TRANSITION_CURTAIN_SCREEN 12
+#define TRANSITION_CURTAIN_MIDDLE_ROW 13
+#define TRANSITION_CURTAIN_LAST_ROW 20
+#define TRANSITION_OPEN_FRAMES 80
+
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
 /// backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT in mode 1
@@ -149,61 +158,49 @@ void BattleTransition_AdvanceTimer(void) {
   timer = (u32 *)Ram_HeapSlots->battleEntryTimer;
   frame = *timer;
   camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
-  scroll = 0x34 - frame;
-  if (scroll > 0x20)
-    scroll = 0x20;
+  scroll = 52 - frame;
+  if (scroll > 32)
+    scroll = 32;
   if (scroll < 0)
     scroll = 0;
   gBgScroll[0].y = scroll;
-  if (frame <= 0x50U)
-    camera->yaw = 45 * frame * 8 + 0xaf80;
+  if (frame <= TRANSITION_OPEN_FRAMES)
+    camera->yaw = frame * 360 + 44928;
   next = (*timer = *timer + 1);
-  if (next <= 0x50U) {
-    BattleCamera_SetView(0, 0, 0, 0xb4 - next);
+  if (next <= TRANSITION_OPEN_FRAMES) {
+    BattleCamera_SetView(0, 0, 0,
+                         BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES - next);
     return;
   }
-  BattleCamera_SetView(0, 0, 0, 0x64);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 }
 
-/// Draws the transition's two rows of tiles, closing in from row 13 as the
-/// timer runs; the lower row takes the vertically flipped tiles.
+/// Draws the curtain opening from the middle of the screen, one row up and one
+/// down every eight frames.
 void BattleTransition_DrawRows(void) {
-  u32 i;
-  s32 frame;
-  s32 aligned;
-  s32 tile;
-  u32 row;
-  u16 *tiles;
+  u32 column;
+  s32 transitionFrame;
+  s32 tileEntry;
+  u32 tileRow;
+  u16 *tilemap;
 
-  frame = *(s32 *)Ram_HeapSlots->battleEntryTimer;
-  if (frame >= 0 && frame <= 79) {
-    tile = (7 & frame) + 0xf081;
-    if (frame >= 0)
-      aligned = frame;
-    else
-      aligned = frame + 7;
-    row = 13 - (aligned >> 3);
-    i = 0;
-    tiles = (u16 *)((row << 6) + 0x06006000);
-    do {
-      i++;
-      *tiles = tile;
-      tiles++;
-    } while (i != 32);
+  transitionFrame = *(s32 *)Ram_HeapSlots->battleEntryTimer;
+  if (transitionFrame >= 0 && transitionFrame < TRANSITION_OPEN_FRAMES) {
+    tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
+    tileRow = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrame / 8;
+    tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) +
+              tileRow * BG_SCREEN_WIDTH;
+    for (column = 0; column != BG_SCREEN_WIDTH; column++)
+      tilemap[column] = tileEntry;
 
-    tile |= 0x800;
-    aligned = frame;
-    if (frame < 0)
-      aligned += 7;
-    row = (aligned >> 3) + 13;
-    if (row <= 20) {
-      i = 0;
-      tiles = (u16 *)((row << 6) + 0x06006000);
-      do {
-        i++;
-        *tiles = tile;
-        tiles++;
-      } while (i != 32);
+    // The lower half: the same tile flipped vertically.
+    tileEntry |= TILE_VFLIP;
+    tileRow = transitionFrame / 8 + TRANSITION_CURTAIN_MIDDLE_ROW;
+    if (tileRow <= TRANSITION_CURTAIN_LAST_ROW) {
+      tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) +
+                tileRow * BG_SCREEN_WIDTH;
+      for (column = 0; column != BG_SCREEN_WIDTH; column++)
+        tilemap[column] = tileEntry;
     }
   }
 }
@@ -265,21 +262,24 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       Iwram_FillWordsEntry((void *)BG_SCREEN_BLOCK(10), 32, v);
     }
     IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
-    REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
-    REG_BG0CNT |= 2;
-    view->mode = 2;
+    REG_BG1CNT =
+        BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
+    REG_BG0CNT |= BGCNT_PRIORITY(2);
+    view->mode = BATTLE_BACKGROUND_ZOOMED;
+    // A closed curtain: solid rows 0 to TRANSITION_CURTAIN_LAST_ROW, clear
+    // below.
     {
-      u16 *map = (u16 *)BG_SCREEN_BLOCK(12);
+      u16 *map = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN);
 
-      for (i = 0; i < 32; i++) {
+      for (i = 0; i < BG_SCREEN_WIDTH; i++) {
         u32 tile;
         u32 column;
 
-        if (i <= 20)
-          tile = 0xf080;
+        if (i <= TRANSITION_CURTAIN_LAST_ROW)
+          tile = TRANSITION_CURTAIN_ENTRY(0);
         else
-          tile = 0xf088;
-        for (column = 0; column < 32; column++)
+          tile = TRANSITION_CURTAIN_ENTRY(8);
+        for (column = 0; column < BG_SCREEN_WIDTH; column++)
           *map++ = tile;
       }
     }

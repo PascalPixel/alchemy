@@ -94,6 +94,10 @@ enum {
   SHOP_STOCK_ROWS = 32
 };
 
+/// The stock row the shop code itself names: it sells nothing and stands in for
+/// a bad row.
+#define SHOP_STOCK_ROW_EMPTY 0
+
 enum {
   /// Icons a row in a party member's 15-slot inventory grid, 16 pixels apart.
   SHOP_INVENTORY_COLUMNS = 5,

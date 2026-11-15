@@ -17,7 +17,7 @@ again:
   selection = PauseMenu_Choose(selection);
   if (selection == -1)
     return -1;
-  if (selection == 0) {
+  if (selection == PAUSE_MENU_SAVE_QUEST) {
     if (GameFlag_Get(FLAG_CANNOT_SAVE_HERE)) {
       FieldMessage_Show((s32)MsgCannotSaveHere, 1);
       goto again;
@@ -28,10 +28,10 @@ again:
     }
     if (Save_ToChosenFile() == -1)
       goto again;
-  } else if (selection == 1) {
-    FieldMessage_Show((s32)MsgSleepMode, 1);
+  } else if (selection == PAUSE_MENU_SLEEP) {
+    FieldMessage_Show((s32)MsgSleepMode, FIELD_MESSAGE_ZOOM);
     gSleepRequested = selection;
-  } else if (selection == 2) {
+  } else if (selection == PAUSE_MENU_CHANGE_SETTINGS) {
     if (SettingsMenu_Run() == -1)
       goto again;
   }
@@ -151,14 +151,14 @@ s32 DebugBrowser_Icons(void) {
         y = row * 16 + 16;
         if (mode == 0) {
           Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
-          WindowSprite_Create(slot, 0x40000000, window, x, y);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else if (mode == 1) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
-          WindowSprite_Create(slot, 0x40000000, window, x, y);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
           slot = VramCache_FindFreeEntry();
           Icon_BuildMiscIconTiles(i, 0, slot);
-          WindowSprite_Create(slot, 0x40000000, window, x, y);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         }
       }
     }

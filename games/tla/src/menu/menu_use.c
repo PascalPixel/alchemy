@@ -72,7 +72,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   /* FAKEMATCH(dead): the dead test loads effect->range ahead of the count
    * guard. */
   if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
-    messageOffset = 3;
+    messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == ABILITY_RANGE_ALL) {
@@ -97,26 +97,26 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
       if (target->hp <= 0) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         if (target->hp == target->hpMax) {
           if (partyResultShown == 0)
-            messageOffset = 4;
+            messageOffset = ITEM_USE_RESULT_HP_FULL;
         } else {
           target->hp += amount;
           if (target->hp > target->hpMax) {
             amount -= target->hp - target->hpMax;
             target->hp = target->hpMax;
             if (partyResultShown == 0)
-              messageOffset = 0;
+              messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
           } else if (partyResultShown == 0) {
-            messageOffset = 1;
+            messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
           Unit_RecalculateGaugesFar(targetId);
           changed = 1;
           if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
-            messageOffset = 3;
+            messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
           }
         }
       }
@@ -135,34 +135,34 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       switch (effectId & PSYNERGY_ABILITY_MASK) {
       case ABILITY_POWER_BREAD:
         target->baseHp += amount + randomAdjust;
-        messageOffset = 0x10;
+        messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
         changed = 1;
         break;
       case ABILITY_COOKIE:
         target->basePp += amount + randomAdjust;
-        messageOffset = 0x11;
+        messageOffset = ITEM_USE_RESULT_MAX_PP_UP;
         changed = 1;
         break;
       case ABILITY_MINT:
         target->baseAgility += amount + randomAdjust;
-        messageOffset = 0x12;
+        messageOffset = ITEM_USE_RESULT_AGILITY_UP;
         changed = 1;
         break;
       case ABILITY_LUCKY_PEPPER:
         target->baseLuck += amount;
-        messageOffset = 0x13;
+        messageOffset = ITEM_USE_RESULT_LUCK_UP;
         changed = 1;
         break;
       case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
         MessageArgument_PushFar(3, MESSAGE_ARGUMENT_NUMBER);
-        messageOffset = 0x14;
+        messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
       case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
         MessageArgument_PushFar(4, MESSAGE_ARGUMENT_NUMBER);
-        messageOffset = 0x15;
+        messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
         changed = 1;
         break;
       }
@@ -171,22 +171,22 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case BATTLE_DAMAGE_PP_HEAL:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->ppMax) {
           amount -= target->pp - target->ppMax;
           target->pp = target->ppMax;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
-          messageOffset = 8;
+          messageOffset = ITEM_USE_RESULT_PARTY_PP_RECOVERED;
         }
       }
       break;
@@ -203,36 +203,36 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     switch (effect->effect) {
-    case 1:
+    case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->hpMax) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         target->hp += amount;
         if (target->hp > target->hpMax) {
           target->hp = target->hpMax;
           if (partyResultShown == 0)
-            messageOffset = 0;
+            messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 1;
+          messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
 
-    case 2:
+    case ABILITY_EFFECT_RESTORE_PP:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->ppMax) {
           target->pp = target->ppMax;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
@@ -245,9 +245,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -256,9 +256,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->hpMax / 2;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -267,9 +267,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->hpMax * 7 / 10;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -278,9 +278,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->poison = 0;
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xa;
+          messageOffset = ITEM_USE_RESULT_POISON_PURGED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xb;
+        messageOffset = ITEM_USE_RESULT_NOT_POISONED;
       }
       break;
     }

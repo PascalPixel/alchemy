@@ -111,9 +111,9 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
 
     current = state->resourceIds[1];
     side = 1;
-    if (current != 999) {
+    if (current != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (state->resourceIds[0] != 999)
+      if (state->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
         return object;
     }
   }

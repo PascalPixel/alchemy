@@ -209,7 +209,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                 break;
             }
             affordable = element == ELEMENT_COUNT;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
+            Ability_LoadGlyph(summon->nameMessageId & ACTION_ID_MASK, 0,
                               &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
@@ -258,7 +258,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth(&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
     cursorPosition.x = (s16)window->x * 8 - 2;
@@ -315,8 +315,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       pressed = 0;
       if (navigation->tutorialDelay == 0) {
         navigation->tutorialDelay = 120;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         navigation->tutorialDelay--;
       }

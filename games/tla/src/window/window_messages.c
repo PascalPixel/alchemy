@@ -368,7 +368,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
-    if (mode != 0)
+    if (mode != CENTERED_MESSAGE_BARE)
       window = Window_Create(x, y, width, height, 0);
     else {
       window = Window_Create(x, y, 0, 0, WINDOW_FLAG_INSTANT);
@@ -380,7 +380,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     else {
       while (Message_AllTyped() == 0)
         wait(1);
-      if (mode != 0) {
+      if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(window, 0);
         while (Window_IsClosed(window) == 0)
           wait(1);

@@ -9,6 +9,10 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// The text control code that sets the colour of the text after it, from the
+/// byte that follows ({text_color:N} in the message catalogs).
+#define TEXT_COLOR_COMMAND 8
+
 // The Japanese name entry screen enters kana, whose voicing marks (dakuten
 // and handakuten) are characters of their own that join the kana before them.
 // The other editions have no marks: in the first function's place they keep
@@ -191,14 +195,14 @@ void NameEntry_DrawName(s32 output, u8 *input) {
     } while (*input != 0);
   }
 
-  text[length++] = 8;
+  text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_RED;
 
   while (length <= 6) {
     text[length++] = 95;
   }
 
-  text[length++] = 8;
+  text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_WHITE;
   text[length] = 0;
   Text_DrawString(text, output, 0, -2);

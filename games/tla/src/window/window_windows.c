@@ -480,7 +480,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
     if ((u8)entry->kind == 2) {
       u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
       s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
-      *(u16 *)(dst + idx) = 0x3E7;
+      *(u16 *)(dst + idx) = PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -498,7 +498,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   struct UiChannelSlot *found = NULL;
   u32 i;
 
-  for (i = 0; i != 3; i++, render++) {
+  for (i = 0; i != MESSAGE_COUNT; i++, render++) {
     if (render->work == NULL) {
       found = render;
       break;
@@ -511,19 +511,19 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
     found->y = y << 8;
     found->entry = entry;
     found->colour = 15;
-    found->lineSpacing = 10;
+    found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
-    found->outline = 0;
+    found->outline = TEXT_STYLE_PLAIN;
     found->ended = 0;
     found->unk26 = 0;
     found->flags = flags;
     if (work->textMode != 0 && spacing != NULL)
       found->unk26 = spacing[3];
     if (spacing != NULL) {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -550,7 +550,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
 
   slot = UI_WORK->channels;
   selected = 0;
-  for (index = 0; index != 3; slot++, index++) {
+  for (index = 0; index != MESSAGE_COUNT; slot++, index++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selected = slot;
       break;
@@ -592,7 +592,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     do {
       index++;
       *spacing++ = zero;
-    } while (index < 4);
+    } while (index < MESSAGE_LINE_COUNT);
   }
   return selected;
 }
@@ -619,7 +619,7 @@ void Message_ResetIdle(void) {
   struct UiChannelSlot *selection = 0;
   s32 i;
 
-  for (i = 0; i != 3; slot++, i++) {
+  for (i = 0; i != MESSAGE_COUNT; slot++, i++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selection = slot;
       break;
@@ -633,8 +633,8 @@ void Message_ResetIdle(void) {
     selection->x = 0;
     selection->countdown = 0;
     selection->colour = 0xF;
-    selection->outline = 0;
-    selection->lineSpacing = 0xA;
+    selection->outline = TEXT_STYLE_PLAIN;
+    selection->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   }
 }
 

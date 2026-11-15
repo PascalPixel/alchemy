@@ -32,6 +32,10 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }
 
+/// The battle has six enemy sprite slots; a large enemy takes two side by
+/// side, a small one one.
+#define ENEMY_SPRITE_SLOTS 6
+
 /// Returns 1 if an enemy of the class would find room among the enemy sprite
 /// slots, two side by side for a large one.
 s32 Enemy_HasSpriteRoom(s32 classId) {
@@ -42,7 +46,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
   retval = BattleSprite_IsSmall(classId);
   battle = Ram_HeapSlots->battleWork;
   i = 0;
-  for (; i < 6; i++) {
+  for (; i < ENEMY_SPRITE_SLOTS; i++) {
     if (battle->spriteSlots[i] != 0)
       continue;
     if (retval != 0)
@@ -50,7 +54,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
     if (i <= 4 && battle->spriteSlots[i + 1] == 0)
       break;
   }
-  return i != 6;
+  return i != ENEMY_SPRITE_SLOTS;
 }
 
 /// Loads the battle sprites of a unit into free sprite slots: one slot, or
@@ -89,7 +93,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
         break;
     }
 
-    if (slot == 6)
+    if (slot == ENEMY_SPRITE_SLOTS)
       break;
 
     // The buffers' address held in a local, taken before the palette's call,
@@ -133,25 +137,42 @@ void BattleObject_ReleaseSpriteSlots(s32 value) {
   }
 }
 
-/// Returns the kind of the weapon whose item id is
-/// itemId, which picks a party member's weapon sprite.
-s32 BattleUnit_GetWeaponKind(s32 key) {
-  s32 index;
-  u32 value;
-  s32 result;
+// gBattleUnit_WeaponKinds: a weapon's item id with its kind above it.
+#define WEAPON_ITEM_MASK 0x1ff
+#define WEAPON_KIND_SHIFT 9
 
-  for (index = 0;; index++) {
-    if (key == (gBattleUnit_WeaponKinds[index] & 0x1ff)) {
-      value = gBattleUnit_WeaponKinds[index];
-      result = value >> 9;
+/// The kinds of weapon a party member's attack shows, by the rows of
+/// gBattleUnit_WeaponKinds.
+enum BattleWeaponKind {
+  WEAPON_KIND_LONG_SWORD,
+  WEAPON_KIND_LIGHT_BLADE,
+  WEAPON_KIND_AXE,
+  WEAPON_KIND_MACE,
+  WEAPON_KIND_STAFF,
+  WEAPON_KIND_ANKH,
+  WEAPON_KIND_NONE ///< an item the list lacks
+};
+
+/// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
+/// itemId, which picks a party member's weapon sprite.
+s32 BattleUnit_GetWeaponKind(s32 itemId) {
+  s32 assignmentIndex;
+  u32 assignment;
+  s32 weaponKind;
+
+  for (assignmentIndex = 0;; assignmentIndex++) {
+    if (itemId ==
+        (gBattleUnit_WeaponKinds[assignmentIndex] & WEAPON_ITEM_MASK)) {
+      assignment = gBattleUnit_WeaponKinds[assignmentIndex];
+      weaponKind = assignment >> WEAPON_KIND_SHIFT;
       break;
     }
-    if ((s16)gBattleUnit_WeaponKinds[index] == -1) {
-      result = 6;
+    if ((s16)gBattleUnit_WeaponKinds[assignmentIndex] == -1) {
+      weaponKind = WEAPON_KIND_NONE;
       break;
     }
   }
-  return result;
+  return weaponKind;
 }
 
 /// Returns the battle sprite of a character holding its equipped weapon, from

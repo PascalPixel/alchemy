@@ -279,7 +279,7 @@ s32 SpriteAnimation_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 
 /// The enemy flags (0x600 + id) cleared before every search.
-extern const u16 Data_08130c5c[];
+extern const u16 gBattleFormation_LevelMatchedEnemies[];
 
 void BattleMessage_OpenFar(s32 message);
 

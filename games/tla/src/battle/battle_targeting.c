@@ -609,11 +609,11 @@ u32 BattlePlayback_RunAll(void) {
         MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_NUMBER);
         break;
       case PLAYBACK_ITEM_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x1ff,
+        MessageArgument_PushFar(queue->operands[i] & INVENTORY_ITEM_ID_MASK,
                                 MESSAGE_ARGUMENT_ITEM);
         break;
       case PLAYBACK_ABILITY_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x3fff,
+        MessageArgument_PushFar(queue->operands[i] & PSYNERGY_ABILITY_MASK,
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:

@@ -83,6 +83,20 @@ struct PlaybackBattleWork {
   struct PlaybackEvents events;
 };
 
+// BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
+// BATTLE_PLAYBACK_PHASE_ names.
+#define PLAY_MESSAGE 3      ///< waits for the message, then for the player
+#define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
+#define PLAY_HIT 10         ///< flashes the unit that was hit
+#define PLAY_FELLED 11      ///< greys a fallen enemy and dissolves it
+#define PLAY_MESSAGE_ADD 13 ///< waits for the message, then goes straight on
+
+/// PLAY_FELLED's timer from here counts the Djinn bonus's colour cycle, kept
+/// apart from the counts of the fall itself (0 to 36).
+#define FELLED_FLASH 1024
+/// The Djinn bonus's colour cycle lasts 30 frames.
+#define FELLED_FLASH_FRAMES 30
+
 /// Plays the action's targets one at a time: resolves each with
 /// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
 /// follow, without waiting.
@@ -144,11 +158,13 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_NUMBER);
             break;
           case PLAYBACK_ITEM_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
+                                        INVENTORY_ITEM_ID_MASK,
                                     MESSAGE_ARGUMENT_ITEM);
             break;
           case PLAYBACK_ABILITY_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
+                                        PSYNERGY_ABILITY_MASK,
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case PLAYBACK_MARK:
@@ -158,13 +174,13 @@ void BattlePlayback_Run(void) {
           case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
-            events->phase = 3;
+            events->phase = PLAY_MESSAGE;
             gInput.pendingPressed = 0;
             break;
           case PLAYBACK_MESSAGE_NO_WAIT:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
-            events->phase = 13;
+            events->phase = PLAY_MESSAGE_ADD;
             break;
           case PLAYBACK_CLEAR_ARGUMENTS:
             MessageArgument_ClearAllFar();
@@ -179,7 +195,7 @@ void BattlePlayback_Run(void) {
             events->actorId = events->queue.operands[eventIndex];
             Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->object,
                                      POSE_DAMAGE);
-            events->phase = 10;
+            events->phase = PLAY_HIT;
             events->timer = 0;
             break;
           case PLAYBACK_DEFEAT: {
@@ -202,7 +218,7 @@ void BattlePlayback_Run(void) {
                 Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
             }
             if (unit->side == 1) {
-              events->phase = 11;
+              events->phase = PLAY_FELLED;
               events->timer = 0;
             }
             break;
@@ -232,18 +248,19 @@ void BattlePlayback_Run(void) {
       }
       if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH)
         events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
-    } else if (events->phase == 3 || events->phase == 13) {
+    } else if (events->phase == PLAY_MESSAGE ||
+               events->phase == PLAY_MESSAGE_ADD) {
       if (Message_AllTypedFar() == 0)
         return;
-      if (events->phase == 13) {
+      if (events->phase == PLAY_MESSAGE_ADD) {
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        events->phase = 5;
+        events->phase = PLAY_ADVANCE;
         events->arrowResource = -1;
         events->timer = gVBlankCount;
       }
-    } else if (events->phase == 5) {
+    } else if (events->phase == PLAY_ADVANCE) {
       struct ArrowSprite__presentation *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
@@ -268,15 +285,16 @@ void BattlePlayback_Run(void) {
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
       if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
-          ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
+          ((u32)(gVBlankCount - events->timer) > 10 &&
+           (gInput.held & KEY_ADVANCE))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        Oam_AddSpriteAtDepth(prompt, 240);
+        Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
         return;
       }
-    } else if (events->phase == 10) {
+    } else if (events->phase == PLAY_HIT) {
       if (gLastFrameVBlanks)
         events->timer |= 1;
       if (events->timer & 1) {
@@ -300,8 +318,8 @@ void BattlePlayback_Run(void) {
         return;
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
-    } else if (events->phase == 11) {
-      if (events->timer == 0 || events->timer >= 0x400) {
+    } else if (events->phase == PLAY_FELLED) {
+      if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
         if (events->timer == 0 && events->flags != 0) {
@@ -314,9 +332,9 @@ void BattlePlayback_Run(void) {
               kind = 0;
             Sound_PlayFar(SE_ENEMY_CRY + kind);
           }
-          events->timer = 0x400;
+          events->timer = FELLED_FLASH;
         }
-        if (events->timer > 0x400 + 30 - 1)
+        if (events->timer > FELLED_FLASH + FELLED_FLASH_FRAMES - 1)
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind =
@@ -325,8 +343,8 @@ void BattlePlayback_Run(void) {
           if (kind >= 0)
             Sound_PlayFar(SE_ENEMY_CRY + kind);
         }
-        if (events->timer >= 0x400)
-          colorMode = (events->timer - 0x400) / 8 % 5 + SPRITE_COLOR_GRB;
+        if (events->timer >= FELLED_FLASH)
+          colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct MotionRecord *record;
           s32 recordIndex;

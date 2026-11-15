@@ -208,7 +208,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->speedLimit = dist;
   object->snapToTarget = 1;
 
-  if (object->motionFlags & 4)
+  if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;
@@ -216,7 +216,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   Actor_StartIdleFar(object);
   if (dist != 0)
     Actor_SetMoveTargetFar(object, x, 0, z);
-  Actor_SelectAnimationFar(object, 2);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Restarts unit id's motion in its leap (animation 2). Nothing in the source
@@ -226,7 +226,7 @@ void BattleMotion_RestartLeap(s32 id) {
 
   object = BattleObject_Get(id)->object;
   Actor_StartIdleFar(object);
-  Actor_SelectAnimationFar(object, 2);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 #undef Actor_StartIdleFar

@@ -117,4 +117,7 @@ struct PartyStatusWindow {
   u16 flags;
 };
 
+/// The rows a battle list window shows.
+enum { BATTLE_LIST_ROWS = 5 };
+
 #endif

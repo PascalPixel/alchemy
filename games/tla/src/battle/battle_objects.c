@@ -67,6 +67,9 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 
 #define ICON_MAX 14 ///< the kinds of icon
 
+/// The frames each status icon shows before the next one's turn.
+#define ICON_CYCLE_FRAMES 80
+
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
@@ -100,7 +103,7 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
         slot->selectedCondition = anim;
         changed = 1;
       }
-      slot->cycleTimer = 80;
+      slot->cycleTimer = ICON_CYCLE_FRAMES;
     } else {
       changed = 1;
     }
@@ -244,7 +247,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         (battleObject->resource & 0xfff) == 585 ||
         (battleObject->resource & 0xfff) == 579 ||
         (battleObject->resource & 0xfff) == 581 ||
-        (battleObject->resource & 0xfff) == 583) {
+        (battleObject->resource & SPRITE_ID_MASK) == 583) {
       records = (struct TlaSpriteRecord **)Ram_HeapSlots->actorSystem->unk08 +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
@@ -260,7 +263,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         records++;
       }
       record->flags = 0;
-      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId + 0x2001);
+      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId +
+                                                          SPRITE_SECOND_PART);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;

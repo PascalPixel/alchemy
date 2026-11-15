@@ -467,4 +467,77 @@ void Render_ApplyProjectedPlacementAtDepthFar(struct Sprite *object,
                                               struct SpriteScale *scale,
                                               s32 depth, s32 mode);
 
+/// The result of using an item or Psynergy from the menu: its message,
+/// counted from MsgItemUseResult (Ability_ApplyToTargets).
+enum ItemUseResult {
+  ITEM_USE_RESULT_HP_FULLY_RECOVERED = 0, ///< "You recovered all HP!"
+  ITEM_USE_RESULT_HP_RECOVERED = 1,       ///< "You recovered HP!"
+  ITEM_USE_RESULT_HP_NOT_RECOVERED = 2,   ///< "You couldn't recover HP."
+  ITEM_USE_RESULT_PARTY_HP_RECOVERED = 3, ///< "Everyone recovered HP!"
+  ITEM_USE_RESULT_HP_FULL = 4,            ///< "Your HP is maxed out!"
+  ITEM_USE_RESULT_PP_FULLY_RECOVERED = 5, ///< "You recovered all PP!"
+  ITEM_USE_RESULT_PP_RECOVERED = 6,       ///< "You recovered some PP!"
+  ITEM_USE_RESULT_PP_FULL = 7,            ///< "Your PP is maxed out!"
+  ITEM_USE_RESULT_PARTY_PP_RECOVERED = 8, ///< "Everyone recovered PP!"
+  /// A second "Your PP is maxed out!", which no use chooses.
+  ITEM_USE_RESULT_PP_FULL_UNUSED = 9,
+  ITEM_USE_RESULT_POISON_PURGED = 10, ///< "The poison was purged!"
+  ITEM_USE_RESULT_NOT_POISONED = 11,  ///< "You're not poisoned."
+  ITEM_USE_RESULT_REVIVED = 12,       ///< "You were revived!"
+  ITEM_USE_RESULT_NOT_DOWN = 13,      ///< "You're not down."
+  /// "The curse was removed." and "You are not cursed.", which no use chooses.
+  ITEM_USE_RESULT_CURSE_REMOVED = 14,
+  ITEM_USE_RESULT_NOT_CURSED = 15,
+  ITEM_USE_RESULT_MAX_HP_UP = 16,  ///< "Your maximum HP increased!"
+  ITEM_USE_RESULT_MAX_PP_UP = 17,  ///< "Your maximum PP increased!"
+  ITEM_USE_RESULT_AGILITY_UP = 18, ///< "Your Agility increased!"
+  ITEM_USE_RESULT_LUCK_UP = 19,    ///< "Your Luck increased!"
+  ITEM_USE_RESULT_ATTACK_UP = 20,  ///< "Your Attack increased!"
+  ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
+};
+
+/// StatusScreenWork.page: which screen the party member row belongs to.
+enum StatusScreenPage {
+  STATUS_SCREEN_PAGE_STATUS = 0, ///< the Status menu (StatusScreen_Run)
+  /// The party member chooser (PartyMemberChooser_Open).
+  STATUS_SCREEN_PAGE_CHOOSER = 3
+};
+
+/// Which Psynergy PsynergyMenu_CollectActions lists.
+enum PsynergyListMode {
+  /// Those with a field effect or usable in the field first, then the rest.
+  PSYNERGY_LIST_ALL = 0,
+  PSYNERGY_LIST_SHORTCUTS = 1, ///< only those that work on the field
+  /// Those with a field effect or usable in the field.
+  PSYNERGY_LIST_FIELD = 2
+};
+
+/// How the item menu can use an item (Item_ClassifyUseMode).
+enum ItemUseMode {
+  /// It cannot be used here: it has no action, it is equipment the party member
+  /// cannot wear or that teaches Psynergy, or its action is usable only in
+  /// battle.
+  ITEM_USE_MODE_UNUSABLE = -1,
+  /// It works on the field (Scene_HasPsynergyTriggerFar), or its action is
+  /// usable
+  /// neither in the field nor in battle, and is used once the menu closes.
+  ITEM_USE_MODE_FROM_FIELD = 0,
+  ITEM_USE_MODE_CHOOSE_MEMBER = 1, ///< choose a party member to use it on
+  ITEM_USE_MODE_WHOLE_PARTY = 2 ///< ABILITY_RANGE_ALL: the whole party at once
+};
+
+/// Inventory icons occupy five columns in the fifteen-slot list.
+#define MENU_ITEM_GRID_COLUMNS 5
+
+/// The statuses the Status screens show, as StatusScreen_BuildAvailability
+/// fills them: one byte each, nonzero while the party member has it.
+enum UnitStatus {
+  CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it
+  CHARACTER_POISON, ///< Unit.poison 1
+  CHARACTER_VENOM,  ///< Unit.poison any other nonzero value
+  CHARACTER_CURSE,  ///< Unit.curse nonzero
+  CHARACTER_HAUNT,  ///< Unit.haunt nonzero
+  CHARACTER_AILMENT_COUNT
+};
+
 #endif

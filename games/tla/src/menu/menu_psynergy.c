@@ -84,6 +84,15 @@ s32 PsynergyMenu_Run(void) {
 
 s32 Scene_HasPsynergyTriggerFar(s32 type);
 
+/// A Psynergy shortcut, and the field's Psynergy request packed the same way:
+/// its party member above bit 10, the Psynergy's id below.
+#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
+#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
+
+/// PsynergyMenuWork.flags: the Psynergy list shows the shortcut help (Select
+/// held).
+#define PSYNERGY_MENU_SHORTCUT_HELP 2
+
 #define MENU_TARGET_WHOLE_PARTY 9 ///< memberIds[1] for the whole party
 
 /// The steps of the Psynergy menu (PsynergyMenu_RunSteps).
@@ -381,7 +390,8 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   unit = Unit_Get(menu->memberTable[memberIndex]);
   actions = menu->psynergies;
-  menu->psynergyCount = PsynergyMenu_CollectActions(unit, actions, 2);
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
   Icon_PrepareActor(icon);
@@ -507,7 +517,8 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu = Ram_HeapSlots->menuWork;
   owner = Unit_Get(ownerId);
   psynergies = menu->psynergies;
-  menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
   PsynergyMenu_RefreshMemberEntries(0x6c, 0x20, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
@@ -610,7 +621,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// memberId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second) {
-  u32 packed = (kind << 10) | (id & 0x3fff);
+  u32 packed = (kind << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | (id & 0x3fff);
 
   if (second == 0)
     gMainRoutineWork.firstShortcut = packed;
@@ -679,14 +690,16 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.firstShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.firstShortcut & 0x3ff,
+    MessageArgument_PushFar(gMainRoutineWork.firstShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 4, window, 0, 0);
 #if TLA_PATCH_2
     if (!wide)
 #endif
-      Text_DrawStringAtOffsetFar(
-          (s32)Unit_Get(gMainRoutineWork.firstShortcut >> 10), window, 80, 0);
+      Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.firstShortcut >>
+                                               PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                                 window, 80, 0);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
@@ -700,14 +713,17 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.secondShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.secondShortcut & 0x3ff,
+    MessageArgument_PushFar(gMainRoutineWork.secondShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 5, window, 0, 8);
 #if TLA_PATCH_2
     if (!wide)
 #endif
       Text_DrawStringAtOffsetFar(
-          (s32)Unit_Get(gMainRoutineWork.secondShortcut >> 10), window, 80, 8);
+          (s32)Unit_Get(gMainRoutineWork.secondShortcut >>
+                        PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+          window, 80, 8);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 0, 8);
   }
@@ -737,8 +753,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
       Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
       Text_DrawMessageAsTilesFar((s32)name, window, 16, 0);
     }
-    Text_DrawStringAtOffsetFar(
-        (s32)Unit_Get(gMainRoutineWork.firstShortcut >> 10), window, 80, 0);
+    Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.firstShortcut >>
+                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                               window, 80, 0);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
@@ -754,8 +771,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
       Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
       Text_DrawMessageAsTilesFar((s32)name, window, 16, 8);
     }
-    Text_DrawStringAtOffsetFar(
-        (s32)Unit_Get(gMainRoutineWork.secondShortcut >> 10), window, 80, 8);
+    Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.secondShortcut >>
+                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                               window, 80, 8);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 24, 8);
@@ -874,10 +892,10 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if ((selectedIndex + 1) > entryCount) {
     selectedIndex = entryCount - 1;
   }
-  page = selectedIndex / 5;
-  row = selectedIndex % 5;
-  pageCount = entryCount / 5;
-  if (entryCount % 5 != 0) {
+  page = selectedIndex / LIST_PAGE_SIZE;
+  row = selectedIndex % LIST_PAGE_SIZE;
+  pageCount = entryCount / LIST_PAGE_SIZE;
+  if (entryCount % LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
   result->ownerState = ownerState;
@@ -986,21 +1004,22 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   WindowSprite_RedrawSavedRectFar(window);
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
+  if (PSYNERGY_MENU_SHORTCUT_HELP & *(u16 *)((u8 *)menu + 0x21c)) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window, HELP_X,
                                88);
   }
 
-  firstEntry = state->page * 5;
+  firstEntry = state->page * LIST_PAGE_SIZE;
   visibleCount = (u8)(state->entryCount - firstEntry);
-  if (visibleCount > 5) {
-    visibleCount = 5;
+  if (visibleCount > LIST_PAGE_SIZE) {
+    visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
-  PagedList_DrawPageNumbers(window, state->entryCount, 5, state->page, 15);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 0x22);
+  PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
+                            state->page, 15);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              HEADING_X, 0);
 
@@ -1009,20 +1028,23 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
     cursor = firstEntry * 2 + 0x1c4;
     do {
       owner = Unit_Get(menu->memberIds[0]);
-      ability = Ability_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
+      ability = Ability_Get(PSYNERGY_ABILITY_MASK &
+                            *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
         Text_SetColorFar(TEXT_COLOR_RED);
       } else if (PsynergyMenu_IsActionRestricted(
-                     0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
+                     PSYNERGY_ABILITY_MASK &
+                     *(const u16 *)(cursor + (s32)menu)) != 0) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
-      Text_DrawMessageAsTilesFar((0x3fff & *(const u16 *)(cursor + (s32)menu)) +
-                                     (s32)MsgAbilityName,
-                                 window, NAME_X, row * 16 + 8);
+      Text_DrawMessageAsTilesFar(
+          (PSYNERGY_ABILITY_MASK & *(const u16 *)(cursor + (s32)menu)) +
+              (s32)MsgAbilityName,
+          window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
 

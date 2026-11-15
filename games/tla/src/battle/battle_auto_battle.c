@@ -259,13 +259,13 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId)
-      Actor_SelectAnimationFar((struct Actor *)actorRecord, 3);
+      Actor_SelectAnimationFar((struct Actor *)actorRecord, POSE_CAST);
   }
 
   wait(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 1);
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
     REG_BLDALPHA = (BLEND_WEIGHT_MAX - index) | 0x1000;
     wait(1);
@@ -304,14 +304,14 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 1);
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
     REG_BLDALPHA = index | 0x1000;
     wait(1);
   }
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 0);
-  BattleCamera_SetView(0, 0, 0, 0x64);
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(3);
   return 0;
 }
@@ -402,7 +402,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
                       ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.actor)->object;
-  Actor_SelectAnimationFar((struct Actor *)object, 3);
+  Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
     work.side = EFFECT_SIDE_PARTY;
@@ -465,7 +465,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 
   slot = BattleObject_Get(unitId);
   Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_DAMAGE);
-  PartyStatus_DrawFar(0);
+  PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
   MessageArgument_ClearAllFar();
 
   if (unitId <= ALLY_MAX) {
@@ -516,6 +516,10 @@ void BattleMotion_PlayFall(s32 unitId) {
   }
 }
 
+/// BattleAbility_ReplaceDefeated's result when the target's side is all down,
+/// which the battle's end comes before.
+#define TARGET_SIDE_DEFEATED 256
+
 /// Returns the action's target, or a random living unit of its side when the
 /// target is down; 0x100 when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
@@ -535,7 +539,7 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   }
 
   if (livingCount == 0) {
-    return 0x100;
+    return TARGET_SIDE_DEFEATED;
   }
 
   return livingUnits[(u32)(Random16() * livingCount) >> 16];

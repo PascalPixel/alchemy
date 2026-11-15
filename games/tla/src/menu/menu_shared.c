@@ -8,6 +8,11 @@
 #include "resource_ids.h"
 #include "sounds.h"
 
+/// Window_UpdateOrCreate: keep an existing window as it is, without redrawing
+/// its saved rectangle. The low byte of the flags is the window style.
+#define WINDOW_KEEP_EXISTING 0x100
+#define WINDOW_STYLE_MASK 0xff
+
 /// @file
 /// The pieces the menu screens share: windows, the status panel, numbers,
 /// icons, the party figures, the hand cursor, paged lists, palettes, the
@@ -63,13 +68,13 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
 
   cur = *handle;
   if (cur != 0) {
-    if (0x100 & flags) {
+    if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
     WindowSprite_RedrawSavedRectFar((struct Window *)cur);
     return 0;
   }
-  style = flags & 0xff;
+  style = flags & WINDOW_STYLE_MASK;
   *handle = (s32)Window_CreateFar(x, y, w, h, style);
   return 1;
 }
@@ -181,22 +186,22 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Text_DrawStringAtOffsetFar(unit->name, (s32)window, STATUS_PANEL_NAME_X, 0);
     StatusScreen_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
-    if (ailments[1]) {
+    if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[2]) {
+    if (ailments[CHARACTER_VENOM]) {
       Text_DrawMessageAsTilesFar(MESSAGE_VENOM_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[3]) {
+    if (ailments[CHARACTER_CURSE]) {
       Text_DrawMessageAsTilesFar(MESSAGE_CURSE_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[4]) {
+    if (ailments[CHARACTER_HAUNT]) {
       Text_DrawMessageAsTilesFar(MESSAGE_HAUNT_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
@@ -448,6 +453,10 @@ void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant);
 
+/// The stat arrows: the up and down arrow sprites the menu loads into its two
+/// sprite picture cache slots (Resource_LoadPairedBlocks).
+enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
+
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
@@ -459,9 +468,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->atk != base->atk) {
     Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
     if (alt->atk > base->atk) {
-      Icon_CreateStatChangeArrow(work, 44, 36, 0);
+      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 36, 1);
+      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
@@ -470,9 +479,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->def != base->def) {
     Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
     if (alt->def > base->def) {
-      Icon_CreateStatChangeArrow(work, 44, 52, 0);
+      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 52, 1);
+      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct RenderInput *)work,
@@ -481,9 +490,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->agi != base->agi) {
     Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
     if (alt->agi > base->agi) {
-      Icon_CreateStatChangeArrow(work, 44, 68, 0);
+      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 68, 1);
+      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_DOWN);
     }
   }
 }
@@ -743,7 +752,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   do {
     object = *scan++;
     if (object != NULL) {
-      ItemMenu_PlaceIcon(slot, index, 0x74, originY, 5);
+      ItemMenu_PlaceIcon(slot, index, 0x74, originY, MENU_ITEM_GRID_COLUMNS);
     }
     index++;
     slot++;
@@ -841,16 +850,17 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
     sorted[i] = 0;
 
   pass = 0;
-  while (order[pass] != 0xff) {
+  while (order[pass] != LIST_ORDER_END) {
     for (;;) {
       best = 0;
       for (i = 0; i < count; i++) {
         if (items[i] == 0)
           continue;
         item = Item_GetDirectFar(items[i]);
-        if ((order[pass] & 0x7f) != item->type)
+        if ((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
+        if ((order[pass] & LIST_ORDER_EQUIPPED) &&
+            (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
         value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
@@ -872,35 +882,35 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   return 1;
 }
 
-/// Copies the order table for modes 0-2, or the default table, into order.
-/// Tables end with 0xff; at most 32 bytes are copied, the terminator
-/// included.
+/// Copies the list order of mode (enum ListSort; any other mode takes
+/// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
+/// and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
 
-  src = gMenu_ListOrderDefault;
+  src = gMenu_ListOrderItemsFirst;
   switch (mode) {
-  case 0:
-    src = gMenu_ListOrderMode0;
+  case LIST_SORT_EQUIPPED_THEN_ITEMS:
+    src = gMenu_ListOrderEquippedThenItems;
     break;
-  case 1:
-    src = gMenu_ListOrderMode1;
+  case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
+    src = gMenu_ListOrderEquippedThenEquipment;
     break;
-  case 2:
-    src = gMenu_ListOrderMode2;
+  case LIST_SORT_EQUIPMENT_FIRST:
+    src = gMenu_ListOrderEquipmentFirst;
     break;
   }
   *order = *src;
   n = 0;
-  if (*order != 0xff) {
+  if (*order != LIST_ORDER_END) {
     do {
       if (++n > 31)
         break;
       src++;
       order++;
       *order = *src;
-    } while (*order != 0xff);
+    } while (*order != LIST_ORDER_END);
   }
 }
 

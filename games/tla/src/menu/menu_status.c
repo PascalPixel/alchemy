@@ -6,6 +6,19 @@
 #include "menu_internal.h"
 #include "sounds.h"
 
+// A bit over the page mode of StatusScreen_DrawStatusAilments and
+// ItemMenu_DrawMemberStatus: draw without clearing the window first, as for a
+// window just opened.
+#define STATUS_PAGE_NO_CLEAR 0x100
+
+/// The worn items' rows in ItemMenu_DrawCategory's window, 16 pixels apart:
+/// weapon, helm, shield and armor from the top. A slot's label stands on its
+/// row, its item's name a line below, and its icon at EQUIPPED_ICON_X on
+/// screen.
+#define EQUIPPED_ROW_Y(row) ((row) * 16)
+#define EQUIPPED_ICON_X 216
+#define EQUIPPED_ICON_Y(row) (EQUIPPED_ROW_Y(row) + 32)
+
 void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
                              s32 unusedD);
 
@@ -37,7 +50,7 @@ s32 PartyMemberChooser_Open(void) {
     for (index = 3; index >= 0; index--)
       state->memberY[index] = y.value;
   }
-  state->page = 3;
+  state->page = STATUS_SCREEN_PAGE_CHOOSER;
 
   result = PartyMemberChooser_Run();
 
@@ -236,7 +249,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
     menu->memberIndex[slot] = 0;
   else
     MenuCursor_Slide(index * 24 - 10, 16);
-  if (menu->page == 3)
+  if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     result = PsynergyMenu_ChooseMember();
   else
     result = PartyMemberChooser_RunRearrange();
@@ -590,10 +603,11 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   if (created != 0) {
     object = Portrait_CreateFar(resource, 0, 0, handle, 0, 0);
     state->statusCursor = object;
-    if ((((Object0f *)object)->field0f = 0xF0, state->page) == 3) {
+    if ((((Object0f *)object)->field0f = OAM_DEPTH_WINDOW, state->page) ==
+        STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries(state, handle);
     }
-    StatusScreen_DrawStatusAilments(handle, resource, 0x100);
+    StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_NO_CLEAR);
     return;
   }
   StatusScreen_DrawStatusAilments(handle, resource, 0);
@@ -916,7 +930,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   menu->statusCursor->motion = ICON_SHOWN;
   ItemMenu_DrawMemberStatus(window, ownerId, mode);
   StatusScreen_BuildAvailability(ailments, 1, ownerId);
-  keepDrawn = mode & 0x100;
+  keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
   MenuPanel_DrawEntryList(window, 0, 40, ailments);
@@ -992,7 +1006,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   menu = Ram_HeapSlots->menuWork;
   unit = Unit_Get(owner);
   menu->cursor->motion = ICON_SHOWN;
-  flags &= 0x100;
+  flags &= STATUS_PAGE_NO_CLEAR;
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
@@ -1142,7 +1156,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 
   n = range * 2;
   tile = n + RANGE_ICON_TILE + 1;
-  Window_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
+  Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y, 0);
   Window_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
   Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
@@ -1938,19 +1952,19 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
       if (icon != 0) {
         switch (Item_GetDirectFar(items[i] & INVENTORY_ITEM_ID_MASK)->type) {
         case ITEM_TYPE_WEAPON:
-          icon->x = 216;
+          icon->x = EQUIPPED_ICON_X;
           icon->y = 32;
           break;
         case ITEM_TYPE_ARMOR:
-          icon->x = 216;
+          icon->x = EQUIPPED_ICON_X;
           icon->y = 80;
           break;
         case ITEM_TYPE_SHIELD:
-          icon->x = 216;
+          icon->x = EQUIPPED_ICON_X;
           icon->y = 64;
           break;
         case ITEM_TYPE_HELM:
-          icon->x = 216;
+          icon->x = EQUIPPED_ICON_X;
           icon->y = 48;
           break;
         }

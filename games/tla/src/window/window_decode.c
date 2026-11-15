@@ -46,10 +46,13 @@ enum {
   MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
   MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
   MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOR
-  MESSAGE_TEXT_EFFECT = 9, ///< kept with its operand as TEXT_OUTLINE
+  MESSAGE_TEXT_EFFECT = 9,   ///< kept with its operand as TEXT_OUTLINE
+  MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
+  /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
+  MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gMainRoutineWork.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
@@ -842,9 +845,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 
-/// The window work's menuState while BattleMessage_Open decodes a message.
-#define WINDOW_BATTLE_MESSAGE 2
-
 // An enemy's id is 8 above its name's place after MsgEnemyName.
 
 extern u8 MsgWaitingForOpponent[];
@@ -1077,7 +1077,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit =
                 Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
-            if (work->battleMode != 0 &&
+            if (work->battleMode != WINDOW_FIELD &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
               message = MSG_MYSTERY_MAN;
@@ -1164,7 +1164,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef ITEM_PLURAL_NAME_OFFSET
 #undef SUFFIX_START
 #undef POSSESSIVE_COUNT
-#undef WINDOW_BATTLE_MESSAGE
 #undef ENEMY_MYSTERY_MAN
 #undef ENEMY_MYSTERY_WOMAN
 #undef MSG_MYSTERY_MAN

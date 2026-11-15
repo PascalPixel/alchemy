@@ -18,22 +18,22 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 kind;
   u8 effect;
 
-  kind = 0;
+  kind = TARGET_HINT_NONE;
   type = act->flags & ABILITY_FORMULA_MASK;
   if (type == ABILITY_FORMULA_HEAL_HP) // Restore HP.
-    kind = 1;
+    kind = TARGET_HINT_HP;
   if (type == ABILITY_FORMULA_HEAL_PP) // Restore PP.
-    kind = 2;
+    kind = TARGET_HINT_PP;
   val = (s8)act->effect;
   effect = val;
   if (effect == ABILITY_EFFECT_CURE_POISON) // Cure poison.
-    kind = 3;
+    kind = TARGET_HINT_CURE_POISON;
   if (effect == ABILITY_EFFECT_RESTORE) // Cure an ailment.
-    kind = 4;
+    kind = TARGET_HINT_RESTORE;
   if (effect == ABILITY_EFFECT_CURE_ALL) // Cure all ailments.
-    kind = 6;
+    kind = TARGET_HINT_CURE_ALL;
   if (Battle_IsReviveEffectFar(act->effect) != 0) // Revive.
-    kind = 5;
+    kind = TARGET_HINT_REVIVE;
   return kind;
 }
 

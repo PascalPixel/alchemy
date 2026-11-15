@@ -7,13 +7,20 @@
 #include "field/flag_call.h"
 #include "battle/presentation.h"
 
+/// The most formations a monster battle chooses among.
+#define FORMATION_POOL_SIZE 32
+/// How far above the party's level a monster battle's formation may be.
+#define FORMATION_LEVEL_MARGIN 3
+
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
 /// through outMargin. It first sets flags from others, clears the enemy flags
-/// of Data_08130c5c, sets flags 71, 230 and 117, and searches 660 formations.
+/// of gBattleFormation_LevelMatchedEnemies, sets flags 71, 230 and 117, and
+/// searches every formation.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Heap_AllocEwram(128);
+  struct FormationCandidate *pool =
+      Heap_AllocEwram(FORMATION_POOL_SIZE * sizeof *pool);
   u16 party[8];
   s32 targetLevel = 0;
   s32 unitCount = BattleParty_PrepareMembers(party);
@@ -41,7 +48,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   if (targetLevel > UNIT_LEVEL_MAX)
     targetLevel = UNIT_LEVEL_MAX;
 
-  for (candidateOrUnitIndex = 0; candidateOrUnitIndex <= 31;
+  for (candidateOrUnitIndex = 0; candidateOrUnitIndex < FORMATION_POOL_SIZE;
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
@@ -65,20 +72,22 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
        candidateOrUnitIndex++)
-    GameFlag_Clear(Data_08130c5c[candidateOrUnitIndex] + 0x600);
+    GameFlag_Clear(ENEMY_DEFEATED_FLAG(
+        gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
   GameFlag_Set(71);
   GameFlag_Set(230);
   GameFlag_Set(117);
 
-  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < 660;
+  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < FORMATION_COUNT;
        candidateOrUnitIndex++) {
     s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
 
-    if (score >= 0 && score <= targetLevel + 3) {
+    if (score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
       s32 lowestIndex = -1;
       s32 lowestLevel;
 
-      for (lowestLevel = 999, poolIndex = 0; poolIndex <= 31; poolIndex++) {
+      for (lowestLevel = 999, poolIndex = 0; poolIndex < FORMATION_POOL_SIZE;
+           poolIndex++) {
         if (pool[poolIndex].score < lowestLevel) {
           lowestLevel = pool[poolIndex].score;
           lowestIndex = poolIndex;
@@ -93,8 +102,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     }
   }
 
-  if (matchCount > 32)
-    matchCount = 32;
+  if (matchCount > FORMATION_POOL_SIZE)
+    matchCount = FORMATION_POOL_SIZE;
 
   if (matchCount != 0) {
     struct FormationCandidate *chosen = &pool[(matchCount * Random16()) >> 16];
@@ -378,7 +387,7 @@ next_object:
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
   s32 choices[5];
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   s32 *choiceCursor;
   u8 *maximumCount;
   u16 *memberId;
@@ -386,10 +395,10 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   u32 count;
 
   count = 0;
-  if ((u32)recordId >= 660)
+  if ((u32)recordId >= FORMATION_COUNT)
     recordId = 1;
 
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   choicesBase = choices;
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
@@ -415,7 +424,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
   struct BattleWork *battle;
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   s32 freeSpriteSlots;
   s32 enemyCount;
   s32 levelAdjustment;
@@ -440,15 +449,15 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   enemyClasses = listBuffer;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
-  if ((u32)recordId >= 660)
+  if ((u32)recordId >= FORMATION_COUNT)
     recordId = 1;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   for (memberIndex = 0;
        memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
   if (memberIndex == 5)
-    record = &gBattleFormation_Records[1];
+    record = &gFormations[1];
 
   freeSpriteSlots = 6;
   enemyCount = 0;
@@ -505,7 +514,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     }
   } while (changed);
 
-  battle->layout = record->unk14[0];
+  battle->layout = record->layout;
   switch (battle->layout) {
   case 0:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
@@ -553,7 +562,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   }
   enemyClasses[enemyCount] = 0;
   battle->firstDefeated = 6;
-  battle->defeatState = 0;
+  battle->defeatState = DEFEAT_ONE;
   for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
     Iwram_ClearWordsEntry(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 

@@ -847,10 +847,10 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         Sound_PlayFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+        Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);
-        ElementGlow_Play(unitId, i, 2, -1);
+        ElementGlow_Play(unitId, i, GLOW_PILLAR, -1);
         BattlePlayback_WaitForReady();
       }
     }

@@ -1586,7 +1586,7 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   s32 encodedDjinn;
 
   if (element == -1) {
-    for (elementIndex = 0; elementIndex < 4; elementIndex++) {
+    for (elementIndex = 0; elementIndex < DJINN_ELEMENTS; elementIndex++) {
       for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[elementIndex] & (1 << djinnIndex)) {
           encodedDjinn = (elementIndex << 5) | djinnIndex | DJINN_ENTRY_SET;

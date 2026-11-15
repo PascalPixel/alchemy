@@ -464,6 +464,9 @@ void Text_FillCanvasBackground(void);
 
 void PartyStatus_OpenAndWait(void);
 
+/// An action's id in its encoded list entry, below its flags.
+#define ACTION_ID_MASK 0x3fff
+
 /// The party status window's flags (PartyStatus_Draw,
 /// PartyStatus_CreateWindow): one column of six tiles per party member
 /// (name, HP and, when shown, PP with a bar under each), and in battle an
@@ -475,5 +478,50 @@ enum PartyStatusFlag {
   PARTY_STATUS_CLOSED = 9,      ///< erase the window
   PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
 };
+
+/// Where the windows are drawn (WindowWork.battleMode).
+enum WindowBattleMode {
+  WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block
+  WINDOW_BATTLE = 1, ///< in battle, from WindowSystem_InitBattle
+  /// In battle, while BattleMessage_Open decodes a battle message: the
+  /// Japanese decoder then sets names off with spaces and style codes.
+  WINDOW_BATTLE_MESSAGE = 2,
+};
+
+/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// writes it.
+#define PORTRAIT_SLOT_EMPTY 999
+
+/// The window FieldMessage_ShowCentered shows its message in.
+enum CenteredMessageMode {
+  /// No frame or size: it opens and closes at once.
+  CENTERED_MESSAGE_BARE = 0,
+  /// A zooming window sized to the message, waited for as it closes.
+  CENTERED_MESSAGE_WINDOW = 1
+};
+
+/// The flags FieldMessage_Show takes.
+enum FieldMessageFlag {
+  FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
+  FIELD_MESSAGE_WAITING_FOR_SOUND =
+      2,                            ///< the window work is busy while it shows
+  FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
+  FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
+  FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
+  FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
+};
+
+/// The Pause menu's entries, as PauseMenu_Choose returns them
+/// (counted from Save your quest even when only Change settings shows).
+enum PauseMenuEntry {
+  PAUSE_MENU_SAVE_QUEST = 0,
+  PAUSE_MENU_SLEEP = 1,
+  PAUSE_MENU_CHANGE_SETTINGS = 2
+};
+
+/// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The
+/// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
+/// in front of the field's and the battle's.
+#define OAM_DEPTH_WINDOW 240
 
 #endif

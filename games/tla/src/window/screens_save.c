@@ -12,6 +12,21 @@
 #include "window/screens.h"
 
 #define SAVE_FILE_COUNT 3
+
+#define SAVE_NO_FREE_FILE 999
+
+/// What the file list is choosing a file for, which decides the files the
+/// cursor may stop on.
+enum FileMenuMode {
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
+  /// The title's Battle: files with any of game flags 48-127 set.
+  FILE_LIST_EXTRA,
+  FILE_LIST_CLEARED ///< the title's Send: cleared files only
+};
+
 #include "window/window.h"
 #include "gamepak/far_call/field.h"
 
@@ -277,7 +292,7 @@ u32 Save_FindFreeFile(void) {
     if (p->level == 0)
       return i;
   }
-  return 999;
+  return SAVE_NO_FREE_FILE;
 }
 
 /// Returns how many save files there are, leaving out those whose summary has
@@ -642,7 +657,7 @@ s32 Save_EraseSelectedFile(void) {
   s32 found;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -661,10 +676,10 @@ s32 Save_EraseSelectedFile(void) {
         found = Save_DeletePartMasked(value);
         SaveProgress_Close((struct Window *)token);
         if (found != 0) {
-          FieldMessage_Show((s32)&MsgEraseFailed, 1);
+          FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = -4;
         } else {
-          FieldMessage_Show((s32)&MsgFileErased, 1);
+          FieldMessage_Show((s32)&MsgFileErased, FIELD_MESSAGE_ZOOM);
         }
       }
     }
@@ -950,7 +965,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   buildStamp = BuildStamp_GetTimeFar();
   if (selectedFile < 0)
     selectedFile = 0;
-  if (menuMode == 1) {
+  if (menuMode == FILE_LIST_CONTINUE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  save->summary[selectedFile].sendFlag != 0);
@@ -963,7 +978,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = SAVE_MENU_NO_FILE;
       goto done;
     }
-  } else if (menuMode == 4) {
+  } else if (menuMode == FILE_LIST_EXTRA) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  save->summary[selectedFile].flagCount == 0);
@@ -976,7 +991,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = SAVE_MENU_NO_FILE;
       goto done;
     }
-  } else if (menuMode == 5) {
+  } else if (menuMode == FILE_LIST_CLEARED) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  save->summary[selectedFile].sendFlag == 0);
@@ -1025,7 +1040,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage((s32)MsgSaveContinue, (s32)fileList, 10, i * 16);
     } else if (save->summary[i].playTime != *(u32 *)save->summary[i].unk38) {
       Text_DrawMessage((s32)MsgSaveCorrupted, (s32)fileList, 10, i * 16);
-    } else if (menuMode == 5 && save->summary[i].sendFlag == 0) {
+    } else if (menuMode == FILE_LIST_CLEARED &&
+               save->summary[i].sendFlag == 0) {
       Text_DrawMessage((s32)MsgSaveNotCleared, (s32)fileList, 10, i * 16);
     } else if (menuMode == 6 && save->summary[i].reunited != 0) {
       Text_DrawMessage((s32)MsgSavePostReunion, (s32)fileList, 10, i * 16);
@@ -1100,24 +1116,30 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
-        if (menuMode == 0)
+        if (menuMode == FILE_LIST_SAVE)
           break;
       } while (save->summary[selectedFile].level == 0 ||
-               (menuMode == 1 && save->summary[selectedFile].sendFlag != 0) ||
-               (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
-               (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
+               (menuMode == FILE_LIST_CONTINUE &&
+                save->summary[selectedFile].sendFlag != 0) ||
+               (menuMode == FILE_LIST_EXTRA &&
+                save->summary[selectedFile].flagCount == 0) ||
+               (menuMode == FILE_LIST_CLEARED &&
+                save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].reunited != 0));
     } else if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
-        if (menuMode == 0)
+        if (menuMode == FILE_LIST_SAVE)
           break;
       } while (save->summary[selectedFile].level == 0 ||
-               (menuMode == 1 && save->summary[selectedFile].sendFlag != 0) ||
-               (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
-               (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
+               (menuMode == FILE_LIST_CONTINUE &&
+                save->summary[selectedFile].sendFlag != 0) ||
+               (menuMode == FILE_LIST_EXTRA &&
+                save->summary[selectedFile].flagCount == 0) ||
+               (menuMode == FILE_LIST_CLEARED &&
+                save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].reunited != 0));
     } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);

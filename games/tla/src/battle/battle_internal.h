@@ -93,6 +93,22 @@
 #define ENEMY_LETTER_FIRST_TOO 0x8000
 #define ENEMY_LETTER_MASK 0x7fff
 
+/// The length of a unit's name, its terminator excluded.
+#define UNIT_NAME_LENGTH 14
+
+/// In a link battle each console sends LINK_PARTY_SIZE places, at most three
+/// party members (LinkBattle_SendParty), and the opponent's take the first
+/// three enemy ids from FIRST_ENEMY_UNIT.
+#define LINK_PARTY_SIZE 3
+
+/// gLinkStatus: both consoles are connected.
+#define LINK_BOTH_CONNECTED 3
+
+/// The frames a link battle tolerates without a connection before it gives
+/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// the sync or transfer under way (battle_link.c, battle_turn.c).
+#define LINK_MAX_MISSED_FRAMES 24
+
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
@@ -107,6 +123,19 @@
 /// BattleWork.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.
 #define BATTLE_OBJECT_NONE 0xff
+
+// BattleWork.defeatState: whether the last enemy fell alone, or with others
+// before it, or a party member's action ended the battle with a single
+// defeat. The messages are "has been downed!" and "'s party goes down!",
+// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
+#define DEFEAT_ONE 0
+#define DEFEAT_SEVERAL 1
+#define DEFEAT_BY_PARTY_MEMBER 3
+
+/// The game flag of an enemy the party has defeated, set by
+/// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
+/// choose only formations of defeated enemies (BattleFormation_AverageLevel).
+#define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
 
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)

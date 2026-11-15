@@ -22,7 +22,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   s32 width;
   s32 x;
 
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     n = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
@@ -152,7 +152,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   u32 pixels;
   u32 result;
 
-  if (canvas->battleMode == 0) {
+  if (canvas->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -165,7 +165,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
     id = canvas->tilemap[0][y * BG_SCREEN_WIDTH + x];
     light = PIXELS_4BPP(2);
     dark = PIXELS_4BPP(12);
-    id &= 0x3ff;
+    id &= TILE_NUMBER_MASK;
     if (value > 7) {
       light = PIXELS_4BPP(8);
       dark = PIXELS_4BPP(13);

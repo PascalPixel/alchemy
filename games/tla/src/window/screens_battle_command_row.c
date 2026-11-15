@@ -28,6 +28,12 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
+/// The command window's top tile row: it runs along the bottom three rows.
+#define COMMAND_ROW_TOP 17
+
+/// BG1's tile number of the command row's first icon tile.
+#define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
+
 #include "system/bg_scroll.h"
 #include "system/main_routine_work.h"
 
@@ -71,13 +77,13 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   for (i = 255; i >= 0; i--)
     selectionUi->paletteSlots[i] = 255;
   selectionUi->paletteCount = 1;
-  if (mode == 0)
+  if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window =
-        Window_Create(WINDOW_X, 17, DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
+    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
+                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
-  if (mode == 0) {
+  if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = 14;
     if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
@@ -124,7 +130,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       s32 x = (entryIndex - selectionUi->iconCount) * 24;
 
       selectionUi->entries[entryIndex].positionX = x + 155;
-      if (mode != 0)
+      if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
       selectionUi->entries[entryIndex].positionY = 136;
       entryIndex++;
@@ -142,7 +148,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
-      if (mode != 0) {
+      if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
 
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
@@ -150,8 +156,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
-                panel * 3 + WINDOW_X - 18 + (col & 3)) = 0xf07f;
+              *(work->tilemap[0] +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                WINDOW_X - 18 + (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -164,10 +171,10 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + 0x100;
-              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
-                panel * 3 + (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) =
-                  0;
+                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
+              *(work->tilemap[0] +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
           }
         }
@@ -179,8 +186,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
-                panel * 3 + 2 + (col & 3)) = 0xf07f;
+              *(work->tilemap[0] +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                2 + (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -193,9 +201,10 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + 0x100;
-              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
-                panel * 3 + (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
+                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
+              *(work->tilemap[0] +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }
@@ -240,9 +249,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         if ((u32)(navigation->commandActor - 5) <= 1) {
           if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
               COMMAND_ICON_DEFEND)
-            keys = repeat = 1;
+            keys = repeat = KEY_A;
           else
-            keys = repeat = 32;
+            keys = repeat = KEY_LEFT;
           navigation->tutorialDelay = 30;
         } else if (navigation->commandActor == 4) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
@@ -267,22 +276,22 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
             } else {
-              keys = repeat = 1;
+              keys = repeat = KEY_A;
               navigation->tutorialDelay = 200;
             }
           } else {
-            keys = repeat = 16;
+            keys = repeat = KEY_RIGHT;
             navigation->tutorialDelay = 40;
           }
         } else {
           navigation->tutorialDelay = 60;
-          keys = repeat = 1;
+          keys = repeat = KEY_A;
         }
       } else {
         navigation->tutorialDelay--;
       }
     }
-    if ((keys & KEYS_SHOULDERS) && mode != 0) {
+    if ((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
       command = -2;
       break;
     }
@@ -312,7 +321,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     work->holdTilemapUpload = 0;
     wait(1);
   }
-  if (mode != 0)
+  if (mode != COMMAND_ROW_PARTY)
     NAVIGATION->commandSelection[1] = selectionUi->selectedIndex;
   else
     NAVIGATION->commandSelection[0] = selectionUi->selectedIndex;
@@ -329,8 +338,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap[0] +
-                            (entryIndex + 17) * BG_SCREEN_WIDTH + panel * 3 +
-                            5 + (col & 3)) = 0xf07f;
+                            (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+                            panel * 3 + 5 + (col & 3)) = 0xf07f;
       }
     }
   }
@@ -406,17 +415,17 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   count = BattleUnit_ListIdsFar(1, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
-  if (ids[0] != 0xff) {
+  if (ids[0] != BATTLE_UNIT_LIST_END) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
-      if (battle->partyUnits[j] == 0xff) {
+      if (battle->partyUnits[j] == BATTLE_UNIT_LIST_END) {
         j = 4;
         break;
       }
     }
     if (j != 4)
       Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
-    if (++i < 4 && ids[i] != 0xff)
+    if (++i < 4 && ids[i] != BATTLE_UNIT_LIST_END)
       goto next_id;
   }
   return 0;

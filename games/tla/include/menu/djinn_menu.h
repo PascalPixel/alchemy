@@ -111,4 +111,7 @@ STATIC_ASSERT(offsetof(struct DjinnMenuWork, members) == 0x204);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, shownMember) == 0x216);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairMember) == 0x25c);
 
+/// The four elements' Djinn, Venus to Jupiter.
+#define DJINN_ELEMENTS 4
+
 #endif

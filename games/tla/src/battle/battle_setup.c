@@ -25,9 +25,9 @@ void BattleCamera_Update(void) {
   u32 linkId;
 
   if (Ram_HeapSlots->battleWork->isLink != 0) {
-    if ((gLinkStatus & 3) != 3) {
+    if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
       Ram_HeapSlots->battleWork->linkMisses++;
-      if (Ram_HeapSlots->battleWork->linkMisses > 24) {
+      if (Ram_HeapSlots->battleWork->linkMisses > LINK_MAX_MISSED_FRAMES) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
     } else {
@@ -120,8 +120,8 @@ void BattleUnit_Collect(void) {
 
   count = BattleEnemy_List(buf);
   kind = battle->layout;
-  if (kind >= 0) {
-    if (kind <= 1) {
+  if (kind >= FORMATION_LAYOUT_SHUFFLED) {
+    if (kind <= FORMATION_LAYOUT_INTERLEAVED) {
       for (i = 0; i < count; i++)
         battle->enemyIds[i] = buf[i];
       goto done;

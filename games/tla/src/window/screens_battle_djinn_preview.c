@@ -28,6 +28,13 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   } while (n >= 0);
 }
 
+/// A changed stat's arrow, right of its value on window tile row `row` (HP
+/// on row 1 to Luck on row 6).
+#define PREVIEW_STAT_ARROW_X 80
+
+/// Entries of the change list: the new list's 32 and the lost ones after.
+#define DJINN_PREVIEW_ABILITY_CAPACITY 48
+
 /// The marks BattleDjinnMenu_ListChangedDjinn gives an ability in its list.
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
 #define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change
@@ -194,7 +201,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       output->kind = 1;
       output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)&output->sprite;
-      output->sentinel = 240;
+      output->sentinel = OAM_DEPTH_WINDOW;
       output->x = 120;
       output->y = 120;
       entry->attributes.word =
@@ -224,7 +231,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 
   numberText = Heap_Alloc(64 * sizeof(*numberText));
   savedUnit = Heap_Alloc(sizeof(*savedUnit));
-  changedAbilities = Heap_AllocEwram(48 * sizeof(*changedAbilities));
+  changedAbilities = Heap_AllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY *
+                                     sizeof(*changedAbilities));
   Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
 
   element = (encodedDjinn >> 8) & 15;
@@ -299,14 +307,14 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
       WindowSprite_CreateAbilityIcon((struct RenderInput *)window, 0,
                                      visibleRow * 16 - 4,
-                                     changedAbilities[i] & 0x3fff);
-      if (changedAbilities[i] & 0x8000)
+                                     changedAbilities[i] & ACTION_ID_MASK);
+      if (changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED)
         Text_SetColor(TEXT_COLOR_YELLOW);
-      else if (changedAbilities[i] & 0x4000)
+      else if (changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST)
         Text_SetColor(TEXT_COLOR_RED);
       else
         Text_SetColor(TEXT_COLOR_WHITE);
-      Text_DrawMessageAsTiles((changedAbilities[i] & 0x3fff) +
+      Text_DrawMessageAsTiles((changedAbilities[i] & ACTION_ID_MASK) +
                                   (s32)MsgAbilityName,
                               window, 16, visibleRow * 16);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, 11, visibleRow * 2,
@@ -349,7 +357,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->hp > oldHp)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 14, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 14, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->pp);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 2);
@@ -357,7 +365,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->pp > oldPp)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 22, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 22, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->atk);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 3);
@@ -365,7 +373,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->atk > oldAtk)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 30, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 30, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->def);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 4);
@@ -373,7 +381,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->def > oldDef)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 38, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 38, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->agi);
     Text_DrawWideStringInWindow(numberText + 7, window, 11, 5);
@@ -381,7 +389,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->agi > oldAgi)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 46, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 46, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->luck);
     Text_DrawWideStringInWindow(numberText + 8, window, 12, 6);
@@ -389,7 +397,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       rising = 0;
       if (unit->luck > savedUnit->luck)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 54, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 54, rising);
     }
   }
 

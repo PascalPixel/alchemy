@@ -276,14 +276,16 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   renderBounds[1] = 0;
   renderBounds[2] = scene->distance;
   Iwram_TransformVector(renderBounds, scene->eye);
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -331,14 +333,16 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
     renderBounds[2] = span;
     Iwram_TransformVectorEntry(renderBounds, camera);
   }
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -538,7 +542,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 except) {
 
   for (i = 0; i < cnt; i++) {
     if (list[i] != except)
-      BattleHighlight_SetSpriteMode(list[i], 1);
+      BattleHighlight_SetSpriteMode(list[i], SPRITE_SEMI_TRANSPARENT);
   }
 }
 
@@ -549,7 +553,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
   s32 i;
 
   for (i = 0; i < cnt; i++)
-    BattleHighlight_SetSpriteMode(list[i], 0);
+    BattleHighlight_SetSpriteMode(list[i], SPRITE_OPAQUE);
 }
 
 // Steps the battle highlight's blend.
@@ -663,12 +667,21 @@ struct Ring {
   s32 age;
 };
 
+/// The star field's sparks and rings, and the frames in which a spent spark
+/// starts again.
+#define STAR_FIELD_SPARKS 16
+#define STAR_FIELD_RINGS 3
+#define STAR_FIELD_SPAWN_FRAMES 25
+#define STAR_FIELD_SIZE 128 ///< the canvas's width and height in pixels
+#define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
+#define STAR_FIELD_RING_SIZE 32
+
 /// The star field's work: the canvas sheet, sixteen sparks, three rings, the
 /// frames counted, whether the canvas is ready, and its centre.
 struct SparkWork {
-  u8 sheet[0x11c0];
-  struct Spark sparks[16];
-  struct Ring rings[3];
+  u8 sheet[4544];
+  struct Spark sparks[STAR_FIELD_SPARKS];
+  struct Ring rings[STAR_FIELD_RINGS];
   s32 frames;
   s32 ready;
   s32 originX;
@@ -679,11 +692,11 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// The star tables: each frame's size and sheet offset, and
-// the ring's four frames.
+// The star tables: each picture's size and sheet offset, and the ring's four
+// pictures.
 extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
-extern const s32 Data_08129830[];
+extern const s32 gElementGlow_RingPictures[];
 
 /// Steps the star field behind a summon one frame: its sparks spiral in
 /// towards the centre along a damped spiral and shrink as they near it; while
@@ -720,7 +733,7 @@ void ElementGlow_UpdateStarField(void) {
   work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
   work->ready = 0;
   draw = (DrawFunc)Ram_HeapSlots->ramCode;
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     spark = &work->sparks[i];
     life = spark->life;
     if (life != 0) {
@@ -743,7 +756,7 @@ void ElementGlow_UpdateStarField(void) {
       }
       life = spark->life;
     }
-    if (life == 0 && work->frames <= 24) {
+    if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
       radius = Random16() + Q16_ONE;
       half = radius >> 1;
@@ -760,8 +773,8 @@ void ElementGlow_UpdateStarField(void) {
       life = spark->life = (radius >> 13) + 1;
     }
     if (life != 0) {
-      x = (spark->pos[0] >> 10) + 64;
-      y = (spark->pos[1] >> 10) + 64;
+      x = (spark->pos[0] >> 10) + STAR_FIELD_CENTER;
+      y = (spark->pos[1] >> 10) + STAR_FIELD_CENTER;
       frame = life;
       if (frame < 0)
         frame = 0;
@@ -773,7 +786,7 @@ void ElementGlow_UpdateStarField(void) {
     }
   }
   draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
-  for (ring = work->rings, j = 2; j >= 0; j--, ring++) {
+  for (ring = work->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
     ring->x += ring->velX;
     ring->y += ring->velY;
     ringX = ring->x >> 10;
@@ -784,8 +797,10 @@ void ElementGlow_UpdateStarField(void) {
       /* FAKEMATCH(dead): an empty once-only block after the age's store. */
       do {
       } while (0);
-      draw(dest, (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,
-           32);
+      draw(dest, (u8 *)work + gElementGlow_RingPictures[phase],
+           ringX + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           ringY + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           STAR_FIELD_RING_SIZE, STAR_FIELD_RING_SIZE);
     }
   }
   work->frames++;
@@ -841,10 +856,10 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   u8 *data;
   s32 zero;
 
-  ((s32 *)Ram_HeapSlots->battleBackground)[2] = 1;
+  ((s32 *)Ram_HeapSlots->battleBackground)[2] = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + Q16_ONE;
     u32 half = radius >> 1;
@@ -862,7 +877,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     spark->pos[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < STAR_FIELD_RINGS; i++) {
     s32 radius = 0x1000;
     s32 angle;
 
@@ -1034,7 +1049,7 @@ void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
 /// player has met (flag 0x608 + id, or all with flag 0x174); -1 for an empty
 /// formation, -2 when one present kind is unmet, -3 when none counts.
 s32 BattleFormation_AverageLevel(s32 recordId) {
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   const struct EnemyDefinition *enemy;
   u32 memberIndex;
   s32 enemyId;
@@ -1045,7 +1060,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 
   enemyCount = 0;
   levelTotal = 0;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   for (memberIndex = 0; memberIndex < 5; memberIndex++) {
     if (record->minimumCounts[memberIndex] != 0)
       break;

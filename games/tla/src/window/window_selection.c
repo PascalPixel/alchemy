@@ -10,6 +10,9 @@
 #include "field/particle.h"
 #include "window/menu_list.h"
 
+/// The selection row's icons stand 16 pixels apart.
+#define SELECTION_ICON_SPACING 16
+
 // The part's functions its code calls before their definitions, declared
 // once as they are defined.
 s32 SelectionMenu_FindFreeIcon(s32 kind);
@@ -98,7 +101,7 @@ void SelectionMenu_Clear(void) {
   screen = Ram_HeapSlots->selectionMenu;
   screen->head = NULL;
   screen->unk39a = 0;
-  if (screen->cursorIndex & 0x80) {
+  if (screen->cursorIndex & SELECTION_CURSOR_RESET) {
     screen->top = 0;
     screen->cursorIndex = 0;
   }
@@ -115,7 +118,7 @@ void SelectionMenu_AddEntry(u32 first, u32 second) {
   struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   u16 cnt = state->count;
 
-  if (cnt != 16) {
+  if (cnt != SELECTION_MENU_ENTRY_LIMIT) {
     state->kinds[cnt] = first;
     state->bases[cnt] = second;
     state->count++;
@@ -141,7 +144,8 @@ void SelectionMenu_BuildEntries(u32 unused) {
     s32 base = screen->bases[index];
     u32 kind = screen->kinds[index];
 
-    node = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
+    node =
+        (struct SelectionNode *)SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == 0)
       break;
     SelectionMenu_SetupIcon(kind, base, node, 0);
@@ -181,7 +185,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
     }
     previous->dx = 0;
     previous->dy = 0;
-    rowPosition += 16;
+    rowPosition += SELECTION_ICON_SPACING;
   }
   SelectionMenu_LoadLargeIcon();
 }
@@ -203,7 +207,7 @@ s32 SelectionMenu_FindFreeIcon(s32 kind) {
       (struct SelectionScreen *)Ram_HeapSlots->selectionMenu;
   s32 i;
 
-  if (kind != 0) {
+  if (kind != SELECTION_ICON_ROW) {
     for (i = 0; i != 5; i++) {
       if (state->records[i + SELECTION_RECORD_CHOSEN].kind == ICON_KIND_NONE)
         return (s32)&state->records[i + SELECTION_RECORD_CHOSEN];
@@ -368,7 +372,7 @@ void SelectionMenu_Draw(void) {
         e->mode = 1;
       }
     }
-    Oam_AddSpriteAtDepth((s32 *)e, 240);
+    Oam_AddSpriteAtDepth((s32 *)e, OAM_DEPTH_WINDOW);
     node = node->next;
   }
   if (cursor->kind != ICON_KIND_NONE) {
@@ -555,7 +559,7 @@ void SelectionMenu_SetPosition(u32 first, u32 second) {
     node->y = second;
     node->targetY = second;
     node = node->next;
-    first += 16;
+    first += SELECTION_ICON_SPACING;
   }
 }
 
@@ -590,7 +594,8 @@ void SelectionMenu_SetupArrow(struct SelectionScreen *state, s32 side) {
       count = 5;
     }
     arrowTiles = right;
-    state->records[1].x = state->baseX + 16 * (count - 1) + 17;
+    state->records[1].x =
+        state->baseX + SELECTION_ICON_SPACING * (count - 1) + 17;
   } else {
     arrowTiles = gMenu_CursorLeftActorTiles;
     state->records[0].x = state->baseX - 9;
@@ -803,13 +808,13 @@ void SelectionMenu_StepRight(struct SelectionScreen *state) {
       state->cursorIndex = 0;
       state->top = 0;
       node = state->head;
-      y = node->x + 16;
+      y = node->x + SELECTION_ICON_SPACING;
       node = node->next;
       while (node != NULL) {
         node->targetX = y;
         node->dx = 12;
         node = node->next;
-        y += 16;
+        y += SELECTION_ICON_SPACING;
       }
       state->records[1].kind = 1;
     } else if (state->cursorIndex == SELECTION_LAST_PLACE &&
@@ -863,7 +868,7 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
         node->targetX = node->x + i;
         node->dx = 12;
         node = node->next;
-        i -= 16;
+        i -= SELECTION_ICON_SPACING;
       }
       node = state->head;
       while (node->x != node->targetX)
@@ -885,7 +890,7 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
         node->targetX = i;
         node->dx = -12;
         node = node->next;
-        i += 16;
+        i += SELECTION_ICON_SPACING;
       }
       state->records[0].kind = 1;
     }
@@ -981,7 +986,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     index = screen->top + SELECTION_LAST_PLACE;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
+    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (p == NULL)
       return;
     SelectionMenu_SetupIcon(kind, base, p, 0);
@@ -1000,7 +1005,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     p->scaleStep = -32;
     p->scaleEnd = 0;
     for (;;) {
-      p->targetX = p->x - 16;
+      p->targetX = p->x - SELECTION_ICON_SPACING;
       p->dx = -2;
       if (p->next == NULL)
         break;
@@ -1022,17 +1027,17 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     index = screen->top;
     base = screen->bases[index];
     kind = screen->kinds[index];
-    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(0);
+    p = (struct SelectionNode *)SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);
     if (p == NULL)
       return;
     SelectionMenu_SetupIcon(kind, base, p, 0);
-    p->x = screen->baseX - 16;
+    p->x = screen->baseX - SELECTION_ICON_SPACING;
     p->y = screen->baseY;
     p->targetY = p->y;
     p->dx = 2;
     p->scale = 32;
     p->scaleStep = 32;
-    p->targetX = p->x + 16;
+    p->targetX = p->x + SELECTION_ICON_SPACING;
     p->scaleEnd = 256;
     first = p;
     p = screen->head;
@@ -1042,7 +1047,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     screen->head = first;
     p = first;
     for (;;) {
-      p->targetX = p->x + 16;
+      p->targetX = p->x + SELECTION_ICON_SPACING;
       p->dx = 2;
       if (p->next == NULL)
         break;
@@ -1221,16 +1226,17 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   node->next = NULL;
   node->targetX = 4;
   for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
-    node->targetX += 16;
+    node->targetX += SELECTION_ICON_SPACING;
     cnt++;
   }
   screen->pathTop[cnt] = screen->top;
   screen->pathCursor[cnt] = screen->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
   screen->unk39a = 0;
-  screen->cursorIndex |= 0x80;
+  screen->cursorIndex |= SELECTION_CURSOR_RESET;
   wait(2);
-  other = (struct SelectionNode *)SelectionMenu_FindFreeIcon(1);
+  other =
+      (struct SelectionNode *)SelectionMenu_FindFreeIcon(SELECTION_ICON_CHOSEN);
   other->kind = node->kind;
   other->message = node->message;
   other->base = node->base;
@@ -1426,22 +1432,22 @@ s32 FieldMenu_Run(void) {
         ret = 0xff;
       state->examineCell = ret;
       break;
-    case 1:
+    case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();
       if (ret == -1)
         continue;
       break;
-    case 2:
+    case FIELD_MENU_DJINN:
       ret = DjinnMenu_RunFar();
       if (ret != 0)
         continue;
       break;
-    case 3:
+    case FIELD_MENU_ITEM:
       ret = ItemMenu_RunFar();
       if (ret == -1)
         continue;
       break;
-    case 4:
+    case FIELD_MENU_STATUS:
       ret = StatusScreen_RunFar();
       if (ret == -1)
         continue;

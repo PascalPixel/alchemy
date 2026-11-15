@@ -31,7 +31,7 @@ void AreaNameWindow_Show(void) {
   window = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   work->noticeWindow = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
-  work->noticeFrames = 90;
+  work->noticeFrames = AREA_NAME_WINDOW_FRAMES;
   Task_Add(AreaNameWindow_Update, TASK_PASS_VBLANK);
 }
 

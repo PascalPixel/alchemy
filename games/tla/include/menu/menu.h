@@ -1,17 +1,42 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef ALCHEMY_MENU_H
+#define ALCHEMY_MENU_H
 
 /// @file
-/// MENU
+/// The menus' list orders, sign strings and routines.
 
 #include "types.h"
 #include "edition.h"
 
+// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+// type, ending with LIST_ORDER_END.
+#define LIST_ORDER_TYPE_MASK 0x7f
+#define LIST_ORDER_EQUIPPED 0x80
+#define LIST_ORDER_END 0xff
+
+/// The item menu's four sort orders (ItemMenu_Sort), which
+/// L + A cycles through in this order.
+enum ListSort {
+  /// The equipped items, the items that are not equipment, then the other
+  /// equipment (gMenu_ListOrderEquippedThenItems).
+  LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
+  /// The equipped items, the other equipment, then the rest
+  /// (gMenu_ListOrderEquippedThenEquipment).
+  LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
+  LIST_SORT_EQUIPMENT_FIRST = 2, ///< gMenu_ListOrderEquipmentFirst
+  /// The items that are not equipment first (gMenu_ListOrderItemsFirst).
+  LIST_SORT_ITEMS_FIRST = 3,
+  LIST_SORT_COUNT = 4
+};
+
+/// The rows a page of the item and Psynergy lists shows.
+#define LIST_PAGE_SIZE 5
+
 extern u8 gStatusScreen_CursorWidths[];
-extern u8 gMenu_ListOrderDefault[];
-extern u8 gMenu_ListOrderMode0[];
-extern u8 gMenu_ListOrderMode1[];
-extern u8 gMenu_ListOrderMode2[];
+extern u8 gMenu_ListOrderItemsFirst[];
+extern u8 gMenu_ListOrderEquippedThenItems[];
+extern u8 gMenu_ListOrderEquippedThenEquipment[];
+extern u8 gMenu_ListOrderEquipmentFirst[];
 extern u8 gMenu_MinusSignString;
 extern u8 gMenu_PlusSignString;
 extern s8 gMenu_TopEntryCommandByPosition[];

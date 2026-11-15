@@ -42,7 +42,7 @@ void BattleCamera_SetCommandView(s32 pos) {
   result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
   Projection_Set(0, result, px(1938));
 
-  gProjection.centerY = pos + 120;
+  gProjection.centerY = pos + BATTLE_PROJECTION_CENTER_Y;
   secondary->active = one;
   BattleCamera_SetRange(px(120), px(118 - pos), 0, 8 << 8, Q16_ONE * 2);
   secondary->flag = one;
@@ -258,6 +258,11 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
+/// The link sends in packets of 20 bytes (the header is one), and a transfer
+/// may take 300 frames.
+#define LINK_PACKET_BYTES 20
+#define LINK_TRANSFER_TIMEOUT 300
+
 /// Link battle: exchanges the turn's actions with the other console and appends
 /// the opponent's, their units and targets seen from this side. Returns how
 /// many were received, or -1 when the exchange fails.
@@ -272,18 +277,18 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = Serial_StartSend(state, 20);
+    s32 status = Serial_StartSend(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
       wait(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
@@ -297,8 +302,8 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
         wait(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
@@ -314,23 +319,23 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
     s32 status = Serial_StartReceive(state);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
-      if (gSerialReceivedSize > 20)
+      if (gSerialReceivedSize > LINK_PACKET_BYTES)
         return -1;
       wait(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
       }
     }
-    if (gSerialReceivedSize != 20)
+    if (gSerialReceivedSize != LINK_PACKET_BYTES)
       return -1;
     result = state->count;
     if (state->count) {
@@ -343,8 +348,8 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
         wait(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
@@ -570,7 +575,7 @@ s32 Battle_FindUnitPlace(u32 id) {
       if (unit == BATTLE_UNIT_LIST_END)
         return -1;
       if (unit != BATTLE_UNIT_REMOVED && unit == id)
-        return i | 0x100;
+        return i | PLACE_PARTY;
     }
   }
   for (i = 0;; i++) {
@@ -578,6 +583,6 @@ s32 Battle_FindUnitPlace(u32 id) {
     if (unit == BATTLE_UNIT_LIST_END)
       return -1;
     if (unit != BATTLE_UNIT_REMOVED && unit == id)
-      return i | 0x180;
+      return i | PLACE_ENEMY;
   }
 }

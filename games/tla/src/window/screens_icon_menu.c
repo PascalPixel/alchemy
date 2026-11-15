@@ -397,7 +397,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 ATTACK_NAME_X, 0);
         COMMAND_ICON_X(state) = 64;
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
+        mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto mark_visible;
@@ -537,7 +537,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
-            summon->nameMessageId & 0x3fff, summonIconSlot);
+            summon->nameMessageId & ACTION_ID_MASK, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
           Text_SetColor(TEXT_COLOR_RED);
@@ -640,7 +640,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = 1;
         wait(1);
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
+        mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto djinn_menu;
@@ -1327,7 +1327,7 @@ s32 FileList_SelectAction(void) {
     group = 1;
   else if (type == 103)
     group = 2;
-  else if (type > 100)
+  else if (type > SAVE_SCAN_ALL_CLEARED)
     group = 3;
   else
     initial = 1;
@@ -1425,12 +1425,12 @@ void Menu_DrawModeIndicator(void) {
 
 #if LANGUAGE == LANGUAGE_FRENCH
   if (*shown != *current) {
-    if (*current == 0) {
+    if (*current == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
-    } else if (*shown == 0) {
+    } else if (*shown == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
@@ -1712,7 +1712,7 @@ s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
   selection = IconMenu_Run(selection);
   IconMenu_Close();
   if (selection == -1) {
-    selection = 1;
+    selection = NO;
   }
   return selection;
 }
@@ -1728,7 +1728,7 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   selection = IconMenu_Run(selection);
   IconMenu_Close();
   if (selection == -1) {
-    selection = 1;
+    selection = NO;
   }
   return selection;
 }

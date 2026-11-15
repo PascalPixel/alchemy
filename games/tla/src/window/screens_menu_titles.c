@@ -184,7 +184,7 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
   s32 tile_offset = pattern * 2;
   s32 tile = tile_offset + 0xF315;
 
-  Window_SetTilemapEntry((struct Window *)window, 0x400 | tile, x, y, 0);
+  Window_SetTilemapEntry((struct Window *)window, TILE_HFLIP | tile, x, y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile_offset + 0xF314, x + 1,
                          y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);

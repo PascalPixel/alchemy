@@ -625,7 +625,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
     if (quantityLimit > SHOP_STACK_LIMIT)
       quantityLimit = SHOP_STACK_LIMIT;
 
-    shop->mode = 12;
+    shop->mode = SHOP_CURSOR_ENTER_FRAMES;
     MenuCursor_Place(0, SHOP_QUANTITY_CURSOR_X, 48);
     result =
         Shop_SelectQuantity(carriedQuantity, quantityLimit, (u16)item->price);

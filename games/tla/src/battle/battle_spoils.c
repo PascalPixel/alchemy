@@ -14,7 +14,7 @@
 /// rare one, then the higher item id; 0 for none.
 u32 BattleSpoils_RankItem(u32 value) {
   u32 bank = 0;
-  u32 base = value & 0x1ff;
+  u32 base = value & INVENTORY_ITEM_ID_MASK;
   if (base == 0)
     return 0;
   {
@@ -150,17 +150,20 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;
+  // The first class to fall names the victory message.
+  // XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2,
+  // so the test never fails.
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
     if (spoils->defeated)
-      battle->defeatState = 1;
+      battle->defeatState = DEFEAT_SEVERAL;
   }
   spoils->defeated++;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     return 0;
   if (unit->enemyId < 0x200)
-    GameFlag_Set(unit->enemyId + 0x600);
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(unit->enemyId));
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)
@@ -203,8 +206,6 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   return 0;
 }
-
-#define ACTION_ID_MASK PSYNERGY_ABILITY_MASK
 
 /// Hands out the spoils after a victory: experience to each party member still
 /// standing, with every level gained, then the coins, then the items best
@@ -347,4 +348,3 @@ void Battle_AwardSpoils(void) {
 }
 #undef FIRST_DIGIT_BASE
 #undef FIRST_DIGIT_COUNT
-#undef ACTION_ID_MASK

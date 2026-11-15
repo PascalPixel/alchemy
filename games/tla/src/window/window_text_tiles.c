@@ -159,9 +159,9 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           script++;
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if !TEXT_JAPANESE_FONT
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           script++;
           break;
@@ -310,7 +310,7 @@ void Window_MarkVisibleTextTiles(void) {
 
   for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
-      u32 tile = *cursor++ & 0x3ff;
+      u32 tile = *cursor++ & TILE_NUMBER_MASK;
 
       if ((tile - TEXT_TILE_FIRST) <= 0x7f ||
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
@@ -593,7 +593,7 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
 /// Draws a byte string into a text canvas window at pixel (x, y). The
 /// 256-halfword scratch requires at most 255 input bytes before the terminator.
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y) {
-  u16 *buffer = Heap_AllocEwram(0x200);
+  u16 *buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   u16 *output = buffer;
 
   while (*text != 0) {
@@ -647,7 +647,7 @@ u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 /// Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
 /// rounded down to tiles.
 void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
-  u16 *buffer = Heap_AllocEwram(0x200);
+  u16 *buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   u16 *output = buffer;
 
   while (*text != 0) {

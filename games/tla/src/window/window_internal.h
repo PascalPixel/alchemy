@@ -106,6 +106,17 @@
 /// of this many halfwords.
 #define MESSAGE_NAME_HALFWORDS 24
 #define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
+/// A byte string widened to codes: 255 bytes and the terminator.
+#define TEXT_WIDE_STRING_BUFFER_SIZE 512
+#define SELECTION_MENU_ENTRY_LIMIT 16 ///< entries a selection row can list
+#define AREA_NAME_WINDOW_FRAMES 90    ///< how long the area's name shows
+
+// WindowWork owns three messages, each with four line gaps.
+#define MESSAGE_COUNT 3
+#define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
+#define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
+/// The pixels a line of text takes in a window fitted to it.
+#define TEXT_LINE_HEIGHT 15
 
 /// The control codes of decoded message text (WindowWork.textBuffer). Codes
 /// from TEXT_SPACE up are characters.
@@ -124,7 +135,13 @@ enum {
   /// its line's top.
   TEXT_LINE_SPACING = 10,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
-  TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
+  /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
+  /// entry names the unit, and drawing and measuring skip both.
+  TEXT_ACTOR_NAME = 17,
+  /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
+  /// the head of an item or class name: drawing skips it and its class.
+  TEXT_ARTICLE_CLASS = 29,
+  TEXT_END_ALT = 30, ///< ends the text as TEXT_END does
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,
@@ -187,5 +204,53 @@ enum {
 #define STATUS_PAGE_ARROW_VRAM                                                 \
   ((s32)BG_CHAR_BLOCK(0) +                                                     \
    (STATUS_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
+
+/// Which selection icon records SelectionMenu_FindFreeIcon looks in.
+enum SelectionIconGroup {
+  SELECTION_ICON_ROW = 0,   ///< the seven icons of the row
+  SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
+};
+
+/// The style of sprite text (WindowWork.outline, set by TEXT_OUTLINE): its
+/// glyphs outlined, or a motion of the glyph sprites (Glyph_Draw).
+enum TextStyle {
+  TEXT_STYLE_PLAIN = 0,
+  TEXT_STYLE_OUTLINED = 1, ///< drawn a pixel wider (Text_DrawGlyphPair)
+  TEXT_STYLE_WOBBLE = 2,
+  TEXT_STYLE_SHAKE = 3,
+  TEXT_STYLE_POP = 4,
+  TEXT_STYLE_SPIN = 5 ///< a pixel wider too
+};
+
+/// The two battle command rows BattleCommandRow_Run runs.
+enum CommandRowMode {
+  COMMAND_ROW_PARTY = 0, ///< the start of a turn: Fight, Flee and Status
+  COMMAND_ROW_MEMBER =
+      1 ///< a party member's commands; any mode but 0 is this row
+};
+
+/// What BattleTarget_RunSelection shows on a party member for the action
+/// being aimed (Battle_ClassifyEntryKind), and which party member it starts on.
+enum BattleTargetHint {
+  TARGET_HINT_NONE = 0,
+  TARGET_HINT_HP = 1, ///< heals HP: the party member's HP
+  TARGET_HINT_PP = 2, ///< restores PP: the party member's PP
+  /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned party
+  /// member.
+  TARGET_HINT_CURE_POISON = 3,
+  /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a party
+  /// member who has one of those statuses, and lists them.
+  TARGET_HINT_RESTORE = 4,
+  /// Revives: starts on a downed party member.
+  TARGET_HINT_REVIVE = 5,
+  /// Cures Restore's statuses, poison and the evil spirit, as Tonic does
+  /// (ABILITY_EFFECT_CURE_ALL).
+  TARGET_HINT_CURE_ALL = 6,
+  TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
+};
+
+/// What Save_ScanFileSummaries adds to its count of files when every file is
+/// cleared (its sendFlag set by saving at the game's end).
+#define SAVE_SCAN_ALL_CLEARED 100
 
 #endif

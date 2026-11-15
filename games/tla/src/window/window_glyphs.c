@@ -86,7 +86,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     colour = work->colour;
   }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  if (work->outline == 1) {
+  if (work->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
     if (mark != NULL) {
@@ -206,7 +206,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
-        idx = c - 0xde;
+        idx = c - TEXT_MARK_VOICED;
         if (idx > 1U) {
           idx += 0xbe; // The font starts at character 0x20.
           width += FONT_GLYPH(idx)->width;
@@ -273,7 +273,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         break;
       case TEXT_NEWLINE:
         x = start;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
       case TEXT_WINDOW_STATE:
@@ -281,9 +281,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         text++;
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      case 29:
+      case TEXT_ARTICLE_CLASS:
 #endif
         text++;
         break;
@@ -300,7 +300,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         text++;
       }
 #else
-      if ((window->flags & 8) == 0) {
+      if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         next = *text;
 #if TLA_PATCH_4
         if (c > TEXT_SPACE && next > TEXT_SPACE) {
@@ -308,7 +308,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                           gFont_Glyphs[next - TEXT_SPACE].width;
 
           // Outlined text joins only pairs one pixel narrower.
-          if (work->outline == 1) {
+          if (work->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)pairWidth <= 14) {
               c |= next << 8;
               text++;
@@ -425,6 +425,9 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
+/// The digits String_FormatNumber writes, in buffer[1] to [12].
+#define NUMBER_DIGITS 12
+
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
 /// text starts. With width 0 the number has no padding and a minus sign when
 /// negative; otherwise it is right-aligned in width characters (up to 12) and
@@ -449,7 +452,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
 
   // Twelve digits, then spaces for the leading zeros and the sign in front.
   buffer[0] = ' ';
-  for (offset = 12; offset != 0; offset--) {
+  for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] = Math_UnsignedMulHighAdd(value, 0x1999999a, -10) + '0';
     value = Math_UnsignedMulHigh(value, 0x1999999a);
   }
@@ -461,7 +464,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   minusCharacter = '-';
   for (leading = buffer; offset != 13; leading++, offset++) {
     if (leading[1] == '0') {
-      if (offset != 12)
+      if (offset != NUMBER_DIGITS)
         leading[1] = spaceCharacter;
     } else {
       if (negative != 0)
@@ -476,7 +479,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
       trim = buffer;
       do {
         offset++;
-        if (offset == 12)
+        if (offset == NUMBER_DIGITS)
           break;
         trim++;
       } while (*trim == ' ');
@@ -484,8 +487,8 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     return buffer + offset;
   }
 
-  if ((u32)width > 12)
-    width = 12;
+  if ((u32)width > NUMBER_DIGITS)
+    width = NUMBER_DIGITS;
   return buffer + 13 - width;
 }
 

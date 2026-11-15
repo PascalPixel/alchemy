@@ -375,7 +375,7 @@ s32 Battle_Run(s32 enemyGroup) {
         if (actingUnit <= ALLY_MAX && battle->defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
-          battle->defeatState = 3;
+          battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         }
         goto won;
       }
@@ -453,7 +453,7 @@ won_scripted:
         Sound_PlayFar(MUS_VICTORY);
       if (battle->defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
-        if (battle->defeatState <= 1) {
+        if (battle->defeatState <= DEFEAT_SEVERAL) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
           MessageArgument_ClearAllFar();
@@ -529,7 +529,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
   limit = PARTY_BATTLE_SIZE;
   if (Ram_HeapSlots->battleWork->isLink != 0)
-    limit = 3;
+    limit = LINK_PARTY_SIZE;
 
   count = Party_CountMembersFar();
   if (count > limit)
@@ -544,7 +544,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   }
 
   if (owners != 0)
-    *owners = 0xff;
+    *owners = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -572,7 +572,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   }
 
   if (owners != 0)
-    *owners = 0xff;
+    *owners = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -601,7 +601,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
       }
     }
     count = listed;
-    *output = 0xff;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return count;
 }
@@ -626,7 +626,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   livingCount = 0;
   enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = 3;
+    enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = activeMembers;
@@ -667,7 +667,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (output != NULL) {
-    *output = 0xFF;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return livingCount;
 }
@@ -692,7 +692,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   livingCount = 0;
   enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = 3;
+    enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = members;
@@ -734,7 +734,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     }
   }
   if (output != NULL) {
-    *output = 0xFF;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return livingCount;
 }
@@ -767,7 +767,7 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
     }
   }
   if (dst != NULL)
-    *dst = 255;
+    *dst = BATTLE_UNIT_LIST_END;
   return count;
 }
 

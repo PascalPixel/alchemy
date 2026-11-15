@@ -78,4 +78,19 @@ struct ArrowSprite {
   } tile;
 };
 
+/// The field menu's commands, as FieldMenu_SelectCommand takes and returns them
+/// (gMenu_TopEntryCommandByPosition).
+enum FieldMenuCommand {
+  FIELD_MENU_PSYNERGY = 1,
+  FIELD_MENU_DJINN = 2,
+  FIELD_MENU_ITEM = 3,
+  FIELD_MENU_STATUS = 4
+};
+
+/// The places of the transfer method menu.
+enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
+
+/// What YesNoMenu_Run and YesNoMenu_RunAt return.
+enum YesNo { YES = 0, NO = 1 };
+
 #endif

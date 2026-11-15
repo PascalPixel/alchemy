@@ -93,6 +93,8 @@ enum AbilityTarget {
 /// effects no code here reads.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
+  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
   ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
   ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
@@ -437,5 +439,8 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
   } while (0)
 
 extern struct Unit gCharacterUnits[];
+
+/// A unit's name buffer: 14 characters and the 0 that ends them.
+#define UNIT_NAME_SIZE 15
 
 #endif

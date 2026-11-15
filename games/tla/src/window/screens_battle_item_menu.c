@@ -249,7 +249,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     for (i = 0; i < iconCount; i++) {
       iconSprite = &sprites[i];
-      Oam_AddSpriteAtDepth(iconSprite, 240);
+      Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW);
     }
 
     cursorPosition.x = (s16)window->x * 8 - 2;

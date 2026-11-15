@@ -413,7 +413,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
     s16 event[2];
 
     event[0] = plan->unitId;
-    event[1] = 0xff;
+    event[1] = BATTLE_UNIT_LIST_END;
     BattleMotion_SetupEscapeObject(event[0]);
     wait(8);
     BattleObject_RemoveFromLists(plan->unitId);

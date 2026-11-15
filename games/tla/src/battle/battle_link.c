@@ -51,13 +51,13 @@ s32 LinkBattle_ReceiveParty(void) {
 #else
     len = i;
 #endif
-    for (i = 14; i >= len; i--) {
+    for (i = UNIT_NAME_LENGTH; i >= len; i--) {
       name_entry[i] = name_entry[i - len];
     }
     for (i = 0; i < len; i++) {
       name_entry[i] = name_text[i];
     }
-    name_entry[14] = 0;
+    name_entry[UNIT_NAME_LENGTH] = 0;
     index += 1;
   }
   Heap_Release(buffer);
@@ -175,10 +175,11 @@ s32 LinkBattle_WaitSync(void) {
       sig[3] = 'C';
 
       for (i = 0; i <= 29; i++) {
-        if ((gLinkStatus & 3) != 3) // The two consoles lost their connection.
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) !=
+            LINK_BOTH_CONNECTED) // The two consoles lost their connection.
         {
           lost++;
-          if (lost > 24)
+          if (lost > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           lost = 0;
@@ -220,8 +221,8 @@ s32 LinkBattle_SyncTurn(void) {
     sig[5] = 'U';
     wait(1);
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++lost > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         lost = 0;
@@ -238,8 +239,8 @@ s32 LinkBattle_SyncTurn(void) {
     sig[6] = 'r';
     sig[7] = 'n';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++lost > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         lost = 0;
@@ -257,8 +258,8 @@ s32 LinkBattle_SyncTurn(void) {
     sig[2] = 'E';
     sig[3] = 'C';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++lost > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         lost = 0;
@@ -275,8 +276,8 @@ s32 LinkBattle_SyncTurn(void) {
     sig[4] = 't';
     sig[5] = 'u';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++lost > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         lost = 0;
@@ -293,8 +294,8 @@ s32 LinkBattle_SyncTurn(void) {
     sig[6] = 'R';
     sig[7] = 'N';
     for (;;) {
-      if ((gLinkStatus & 3) != 3) {
-        if (++lost > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++lost > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         lost = 0;

@@ -115,4 +115,9 @@ STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 0x39e);
 STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 0x3b8);
 STATIC_ASSERT(sizeof(struct SelectionScreen) == 0x3e4);
 
+/// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
+/// which SelectionMenu_Clear puts the next list's top and cursor back to its
+/// first entry.
+#define SELECTION_CURSOR_RESET 0x80
+
 #endif

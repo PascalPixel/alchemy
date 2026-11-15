@@ -8,6 +8,13 @@
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
+/// What Message_Type reports.
+enum {
+  CHANNEL_STEP_RUNNING = 0, ///< the text goes on next frame
+  CHANNEL_STEP_ENDED = 8,   ///< the text has ended; the window stays open
+  CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
+};
+
 /// Scrolls the message canvas up by 6 pixel rows per step, below its top 8
 /// rows, and clears the rows this uncovers. A typing message calls it with
 /// step 1 on each frame of a line scroll.
@@ -55,10 +62,10 @@ void Message_UpdateAll(void) {
         } else {
           kind = Message_Type(channel);
           switch (kind) {
-          case 8:
+          case CHANNEL_STEP_ENDED:
             *(u16 *)(*(u8 **)channel + 0x14) = one;
             break;
-          case 9: {
+          case CHANNEL_STEP_CLOSE: {
             u8 *entity = *(u8 **)channel;
 
             Window_Close((struct Window *)entity,
@@ -128,7 +135,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
   (void)keys;
 
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     // The VBlank count read through a volatile view, a load apart from the
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
     if (frameVBlanks < 0)
@@ -141,11 +148,11 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   if (channel->transition != 0) {
     Text_ScrollCanvasUp(1);
     channel->transition = (s16)channel->transition - 1;
-    return 0;
+    return CHANNEL_STEP_RUNNING;
   }
   if (gInput.held == 0 && channel->glyphDelay != 0) {
     channel->glyphDelay--;
-    return 0;
+    return CHANNEL_STEP_RUNNING;
   }
 
   do {
@@ -235,8 +242,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->y = 0;
         channel->line = 0;
         channel->colour = 15;
-        channel->outline = 0;
-        channel->lineSpacing = 10;
+        channel->outline = TEXT_STYLE_PLAIN;
+        channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);
         VramCache_FreeEntry(work->glyphResource);
         work->glyphResource = NO_GLYPH_RESOURCE;
@@ -249,7 +256,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
             gInput.pendingPressed = 0;
         }
         if (Text_CheckTextDismissed(channel) != 0)
-          return 9;
+          return CHANNEL_STEP_CLOSE;
         break;
 
       case TEXT_PAUSE_SHORT:
@@ -292,8 +299,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case TEXT_COLORS_RESET:
         channel->colour = 15;
-        channel->outline = 0;
-        channel->lineSpacing = 10;
+        channel->outline = TEXT_STYLE_PLAIN;
+        channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);
         break;
 
@@ -307,10 +314,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       case TEXT_END:
       case TEXT_END_ALT:
         channel->ended = 1;
-        return 8;
+        return CHANNEL_STEP_ENDED;
       }
 
-      if (work->battleMode == 0)
+      if (work->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     } else {
       pixelX = (channel->x + 128) / 256;
@@ -324,10 +331,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       nextEntryIndex = (nextEntryIndex + 1) & ENTRY_MASK;
       nextCode = work->textBuffer[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
-      if (nextCode == 222) {
+      if (nextCode == TEXT_MARK_VOICED) {
         code |= 1 << 14;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
-      } else if (nextCode == 223) {
+      } else if (nextCode == TEXT_MARK_SEMIVOICED) {
         code |= 2 << 14;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
@@ -339,7 +346,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         s16 pairWidth = gFont_Glyphs[code - TEXT_SPACE].width +
                         gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
-        if (work->outline == 1) {
+        if (work->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pairWidth <= 14) {
             code |= nextCode << 8;
             channel->entry = (channel->entry + 1) & ENTRY_MASK;
@@ -384,7 +391,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         glyphAdvance += channel->spacing[channel->line];
 #endif
       channel->x += glyphAdvance;
-      if (code == TEXT_SPACE && work->battleMode == 0)
+      if (code == TEXT_SPACE && work->battleMode == WINDOW_FIELD)
         glyphsLeft = 1;
     }
 
@@ -396,7 +403,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
     channel->entry = (channel->entry + 1) & ENTRY_MASK;
   } while (--glyphsLeft != 0);
 
-  return 0;
+  return CHANNEL_STEP_RUNNING;
 }
 
 #undef CANVAS_COLUMNS

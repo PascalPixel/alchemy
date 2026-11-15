@@ -71,11 +71,29 @@ STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
 
+/// BattleBackgroundView.mode and secondMode: how the battle background is
+/// shown.
+enum BattleBackgroundMode {
+  /// Not loaded yet.
+  BATTLE_BACKGROUND_NONE,
+  /// The picture at a fixed size on BG1, its scroll following the camera, BG2
+  /// left to a battle effect.
+  BATTLE_BACKGROUND_FIXED,
+  /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
+  /// each line's BG2CNT to the half of the picture it reads.
+  BATTLE_BACKGROUND_ZOOMED
+};
+
+/// Where the battle centres its projection on the screen: across the middle,
+/// and 120 pixels down, below the screen's middle.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+
 /// The battle background's heap slot as the background code reads it: its
 /// display mode.
 struct BattleBackgroundView {
   u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames
-  s32 mode;       ///< 2 draws the affine plane through the HBlank DMA
+  s32 mode;       ///< enum BattleBackgroundMode
   s32 secondMode; ///< set by an effect while its canvas is open
   s32 busy;
 };

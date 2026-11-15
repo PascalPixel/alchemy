@@ -271,9 +271,9 @@ void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   state->colour = 15;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->glyphSpacing = 9;
-  state->outline = 0;
+  state->outline = TEXT_STYLE_PLAIN;
   state->unknownAfterLineSpacing = 1;
 }
 
@@ -287,8 +287,8 @@ void WindowSystem_StartFieldUpdate(void) {
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
-  state->lineSpacing = 10;
-  state->outline = 0;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
@@ -306,8 +306,8 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   if (initialize != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
-  state->lineSpacing = 10;
-  state->outline = 0;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
   if (initialize != 0)
@@ -463,13 +463,13 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   if (width == 0 && height == 0)
     return NULL;
   if (!(packed & 1))
-    flags |= 2;
+    flags |= WINDOW_FLAG_INSTANT;
   if (packed & 8)
-    flags |= 8;
+    flags |= WINDOW_FLAG_TEXT_CANVAS;
   if (packed & 16)
-    flags |= 128;
+    flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
   if (packed & 32)
-    flags |= 256;
+    flags |= WINDOW_FLAG_FIXED_X;
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
     return NULL;
@@ -509,9 +509,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   s32 rows;
 
   y = x = 0;
-  release = flags & 1;
+  release = flags & FIELD_MESSAGE_ZOOM;
 
-  if (flags & 2) {
+  if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
     *(u8 *)(base + TEXT_WORK_TAIL + 5) = 1;
   }
 
@@ -522,9 +522,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   x = margin >> 1;
   y = (12 - rows) >> 1;
 
-  if (flags & 8) {
+  if (flags & FIELD_MESSAGE_LOWER) {
     y = y + 4;
-  } else if (flags & 0x40) {
+  } else if (flags & FIELD_MESSAGE_LOWEST) {
     y = y + 12;
   } else {
     s32 dy;
@@ -545,11 +545,11 @@ void FieldMessage_Show(s32 no, s32 flags) {
       wait(1);
     }
 
-    if (flags & 0x20) {
+    if (flags & FIELD_MESSAGE_HOLD_UPLOAD) {
       Ram_HeapSlots->windowWork[6] = 1;
     }
 
-    if (!(flags & 4)) {
+    if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
       Window_Close(work, release);
       while (Window_IsClosed(work) == 0) {
         wait(1);

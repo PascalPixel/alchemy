@@ -7,6 +7,10 @@
 #include "resource_ids.h"
 #include "sounds.h"
 
+/// Each item command's state in the grid.
+#define ITEM_COMMAND_STATE_DISABLED (-1)
+#define ITEM_COMMAND_STATE_AVAILABLE 1
+
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
 s32 ItemMenu_ChooseCommand(void);
@@ -1617,23 +1621,23 @@ s32 ItemMenu_ChooseCommand(void) {
 
   lastCommand = menu->listMode;
   if (lastCommand == -1) {
-    if (commandStates[ITEM_COMMAND_INSPECT] == 1) {
+    if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 2;
       row = 0;
     }
-    if (commandStates[ITEM_COMMAND_GIVE] == 1) {
+    if (commandStates[ITEM_COMMAND_GIVE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 0;
       row = 1;
     }
-    if (commandStates[ITEM_COMMAND_EQUIP] == 1) {
+    if (commandStates[ITEM_COMMAND_EQUIP] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 1;
       row = 0;
     }
-    if (commandStates[ITEM_COMMAND_REMOVE] == 1) {
+    if (commandStates[ITEM_COMMAND_REMOVE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 1;
       row = 1;
     }
-    if (commandStates[ITEM_COMMAND_USE] == 1) {
+    if (commandStates[ITEM_COMMAND_USE] == ITEM_COMMAND_STATE_AVAILABLE) {
       column = 0;
       row = 0;
     }
@@ -1880,7 +1884,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   itemData = Item_GetDirectFar(masked);
 
   if (Scene_HasItemTriggerFar(masked) != 0) {
-    return 0;
+    return ITEM_USE_MODE_FROM_FIELD;
   }
 
   {
@@ -1896,22 +1900,23 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
       if (FIELD_AT_OFFSET(itemData, u8, 2) != ITEM_TYPE_NONE) {
         if (FIELD_AT_OFFSET(itemData, u8, 12) != ITEM_USE_TEACHES) {
           if (Item_CanUnitEquip(owner, masked) != 0) {
-            result = 1;
+            result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }
         }
       } else {
-        result = 1;
+        result = ITEM_USE_MODE_CHOOSE_MEMBER;
       }
 
-      if (result == 1) {
-        s32 mask = 0x80;
+      if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
+        s32 mask = ABILITY_USABLE_IN_BATTLE;
         u8 field1 = FIELD_AT_OFFSET(abilityData, u8, 1);
 
-        if ((field1 & 0x40) != 0) {
+        if ((field1 & ABILITY_USABLE_IN_FIELD) != 0) {
           u8 field8 = FIELD_AT_OFFSET(abilityData, u8, 8);
-          result = (field8 == ABILITY_RANGE_ALL) ? 2 : 1;
+          result = (field8 == ABILITY_RANGE_ALL) ? ITEM_USE_MODE_WHOLE_PARTY
+                                                 : ITEM_USE_MODE_CHOOSE_MEMBER;
         } else {
-          result = (field1 & mask) ? -1 : 0;
+          result = (field1 & mask) ? -1 : ITEM_USE_MODE_FROM_FIELD;
         }
       }
     }
@@ -1998,7 +2003,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   wait(1);
 
   for (;;) {
-    if (GameFlag_Get(336) != 0)
+    if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
       break;
 
     if (changed != 0) {
@@ -2293,7 +2298,7 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
     }
     }
   }
-  if (def->flags & 16) {
+  if (def->flags & ITEM_STACKABLE) {
     if (row != 0)
       row++;
     i = (s32)MsgNumberHeading;
@@ -2467,8 +2472,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   entry = VramCache_FindFreeEntry();
   if (entry != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(entry, 0x100, 0);
-    WindowSprite_CreateFar(entry, 0x40004000, window, 48, 32);
-    arrow = WindowSprite_CreateFar(entry, 0x40004000, window, 80, 32);
+    WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 48, 32);
+    arrow = WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 80, 32);
     arrow->sprite.oam.index = arrow->sprite.oam.index + 4;
     MenuCursor_Slide(CURSOR_X, 40);
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
@@ -2592,7 +2597,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   Text_DrawMessageAsTilesFar(answer, window, 24, 56);
   MenuCursor_Slide(104, 86);
   for (;;) {
-    if (GameFlag_Get(336))
+    if (GameFlag_Get(FLAG_MENU_START_PRESSED))
       break;
     if (changed) {
       changed = 0;
@@ -2620,7 +2625,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
     }
     wait(1);
   }
-  if (GameFlag_Get(336)) {
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     selection = 1;
   }
   Window_CloseFar(window, 1);
@@ -2704,7 +2709,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
     Text_DrawMessageAsTilesFar(EQUIP_QUESTION, window, EQUIP_QUESTION_X, 16);
     MenuCursor_Slide(EQUIP_CURSOR_X(0), EQUIP_CURSOR_Y(0));
     for (;;) {
-      if (GameFlag_Get(336))
+      if (GameFlag_Get(FLAG_MENU_START_PRESSED))
         break;
       if (changed) {
         changed = 0;
@@ -2733,7 +2738,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
       wait(1);
     }
   }
-  if (GameFlag_Get(336))
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED))
     selection = 1;
   if (selection == 1)
     Iwram_CopyWordsEntry(unit, saved, size);
@@ -2774,10 +2779,10 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if ((value + 1) > limit) {
     value = limit - 1;
   }
-  quotient = value / 5;
-  remainder = value % 5;
-  groups = limit / 5;
-  if (limit % 5 != 0) {
+  quotient = value / LIST_PAGE_SIZE;
+  remainder = value % LIST_PAGE_SIZE;
+  groups = limit / LIST_PAGE_SIZE;
+  if (limit % LIST_PAGE_SIZE != 0) {
     groups++;
   }
   result->ownerState = encoded;
@@ -2867,14 +2872,15 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
   page = state->page;
-  firstEntry = page * 5;
+  firstEntry = page * LIST_PAGE_SIZE;
   visibleCount = (u8)(state->entryCount - firstEntry);
-  if (visibleCount > 5) {
-    visibleCount = 5;
+  if (visibleCount > LIST_PAGE_SIZE) {
+    visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 34);
-  PagedList_DrawPageNumbers(window, state->entryCount, 5, state->page, 15);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
+  PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
+                            state->page, 15);
 
   row = 0;
   if (visibleCount > row) {

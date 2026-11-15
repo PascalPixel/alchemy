@@ -350,8 +350,8 @@ s32 BattleDjinnMenu_Run(s32 member) {
       held = 0;
       if (navigation->tutorialDelay == 0) {
         navigation->tutorialDelay = 60;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         navigation->tutorialDelay--;
       }
@@ -527,7 +527,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       Iwram_CopyWordsEntry((void *)0x06006500, gDjinnMenu_BlinkTile, 32);
       Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     } else {
-      Iwram_FillWordsEntry((void *)0x06006500, 32, 0x44444444);
+      Iwram_FillWordsEntry((void *)0x06006500, 32, TEXT_CANVAS_BACKGROUND_WORD);
       Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
     }
     wait(1);

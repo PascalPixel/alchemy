@@ -10,6 +10,8 @@
 /// back to fire and its ice is gone, here and in every room below.
 
 #include "system/task.h"
+#include "graphics/palette_buffers.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "scene/ride.h"
 #include "item_ids.h"
@@ -277,7 +279,7 @@ void MarsLighthouseStarRoom_ClearDragonIce(void);
 void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if (phase == 1) {
     Event_PlaySound(SE_574);
-    PaletteFade_ApplyTarget(0x10000, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(60);
     MarsLighthouseStarRoom_ClearDragonIce();
     Actor_SetPosition(ACTOR_ICE_CRACK, 0, 0);
@@ -289,7 +291,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
     MarsLighthouseStarRoom_ScatterIceChips(ACTOR_ICE_CRACK);
   if (frame == 276) {
-    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
     PaletteFade_Interpolate(20);
   }
 }
@@ -328,10 +330,8 @@ s32 Scene_Initialize(void) {
     if (entrance == ENTRANCE_FROM_CRACK) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
       struct FieldWork *work = Ram_HeapSlots->fieldWork;
-      /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
-       * its definition returns u8. */
-      s32 column = GameFlag_GetByte(0x340);
-      s32 row = GameFlag_GetByte(0x348);
+      s32 column = FieldGameFlag_GetByte(0x340);
+      s32 row = FieldGameFlag_GetByte(0x348);
       struct Actor *other;
       s32 x;
 
@@ -446,17 +446,10 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Field_RequestBattleFromEncounterTable(102, 0);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Event_End();
 void Actor_MoveToObject();
 void Scene_PlayMusic();
-extern u8 MsgMarsStar01[];
+extern u8 MsgMarsLighthouseStarRoomWhyWhyAmILying[];
 extern s32 gMarsLighthouseStarRoom_LightRiseScript[];
 extern s32 gMarsLighthouseStarRoom_LightSinkScript[];
 extern s32 gMarsLighthouseStarRoom_AgatioDragonShrinkScript[];
@@ -466,40 +459,29 @@ extern s32 gMarsLighthouseStarRoom_KarstDragonShrinkScript[];
 /// and Agatio and Karst lie there: lost in the frozen lighthouse, its eye took
 /// their will, and they ask Felix to light the beacon with the Mars Star.
 void MarsLighthouseStarRoom_WakeAfterBattle(void) {
-  s32 t1, t2, t3, t8, t10, t12, t14, t28, t30, t32, t34, t50, t52, t87, v5, v6,
-      v8;
+  s32 answer;
+  struct Actor *dragon, *agatioLight, *karstLight;
 
-  t1 = Actor_Get(ACTOR_AGATIO_DRAGON);
-  v5 = t1;
-  t2 = Actor_Get(ACTOR_AGATIO_LIGHT);
-  v6 = t2;
-  t3 = Actor_Get(ACTOR_KARST_LIGHT);
-  v8 = t3;
+  dragon = Actor_Get(ACTOR_AGATIO_DRAGON);
+  agatioLight = Actor_Get(ACTOR_AGATIO_LIGHT);
+  karstLight = Actor_Get(ACTOR_KARST_LIGHT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MarsLighthouseStarRoom_ClearDragonIce();
-  t8 = Actor_Get(ACTOR_AGATIO);
-  Actor_SetSpriteFlags(t8, 0);
-  t10 = Actor_Get(ACTOR_KARST);
-  Actor_SetSpriteFlags(t10, 0);
-  t12 = Actor_Get(ACTOR_AGATIO_LIGHT);
-  FieldActor_SetSpriteColor(t12, SPRITE_COLOR_WHITE);
-  t14 = Actor_Get(ACTOR_KARST_LIGHT);
-  FieldActor_SetSpriteColor(t14, SPRITE_COLOR_WHITE);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_AGATIO), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_KARST), 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO_LIGHT), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST_LIGHT), SPRITE_COLOR_WHITE);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(v5, FIELD_AT(v5, s32, 8), 0,
-                                       (FIELD_AT(v5, s32, 16) + px(-8)));
-  FIELD_AT(v6, u8, 85) = 0;
-  FIELD_AT(v6, s32, 24) = 0x4000;
-  FIELD_AT(v6, s32, 28) = 0x4000;
-  FIELD_AT(v8, u8, 85) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-   */
-  do {
-  } while (0);
-  FIELD_AT(v8, s32, 24) = 0x4000;
-  FIELD_AT(v8, s32, 28) = 0x4000;
+  FieldActor_SetPositionAndResetMotion(dragon, dragon->x.fixed, 0,
+                                       dragon->z.fixed - px(8));
+  agatioLight->motionFlags = 0;
+  agatioLight->scaleX = Q16_ONE / 4;
+  agatioLight->scaleY = Q16_ONE / 4;
+  karstLight->motionFlags = 0;
+  karstLight->scaleX = Q16_ONE / 4;
+  karstLight->scaleY = Q16_ONE / 4;
   FieldCamera_MoveTo(680, CAMERA_KEEP, 228, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 680, 264);
   System_Wait(1);
@@ -510,14 +492,10 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_LIGHT_APPEAR);
-  t28 = Actor_Get(ACTOR_AGATIO_DRAGON);
-  FieldActor_SetSpriteColor(t28, SPRITE_COLOR_WHITE);
-  t30 = Actor_Get(ACTOR_KARST_DRAGON);
-  FieldActor_SetSpriteColor(t30, SPRITE_COLOR_WHITE);
-  t32 = Actor_Get(ACTOR_AGATIO);
-  FieldActor_SetSpriteColor(t32, SPRITE_COLOR_WHITE);
-  t34 = Actor_Get(ACTOR_KARST);
-  FieldActor_SetSpriteColor(t34, SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO_DRAGON), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST_DRAGON), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST), SPRITE_COLOR_WHITE);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_WARP);
   Actor_MoveToObject(ACTOR_AGATIO_LIGHT, ACTOR_AGATIO_DRAGON);
@@ -538,15 +516,13 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_RunScriptAndWait(ACTOR_KARST_LIGHT,
                          (s32)&gMarsLighthouseStarRoom_LightSinkScript);
   FieldEvent_Wait(10);
-  t50 = Actor_Get(ACTOR_AGATIO);
-  FieldActor_SetSpriteColor(t50, SPRITE_COLOR_NORMAL);
-  t52 = Actor_Get(ACTOR_KARST);
-  FieldActor_SetSpriteColor(t52, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO), SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST), SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   FieldEvent_Wait(20);
-  FieldEvent_SetMessageId((s32)&MsgMarsStar01);
+  FieldEvent_SetMessageId((s32)&MsgMarsLighthouseStarRoomWhyWhyAmILying);
   // "Why... Why am I lying here?"
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 1);
@@ -589,19 +565,15 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Felix? Is that you?"
   Event_OpenMessage(ACTOR_AGATIO, 0);
-  t87 =
+  answer =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  if (t87 == 0) {
+  if (answer == 0) {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 7);
     Event_ShowMessage(ACTOR_AGATIO, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldWork->message++;
   } else {
-    gFieldWork->message = (gFieldWork->message + 1);
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-     */
-    do {
-    } while (0);
+    gFieldWork->message++;
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 6);
     Event_ShowMessage(ACTOR_AGATIO, 0);
@@ -643,7 +615,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
   bits.priority = source.priority;
   to->bits = bits;
 }
-#undef FIELD_AT
 
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
@@ -665,7 +636,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   sprite->fullColor = 0;
   sprite->palette = 0;
   sprite->priority = 1;
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   object->retainSpriteCache = 1;
   object->update = MarsLighthouseStarRoom_KeepStarAtLeaderPriority;
   size = 0x608;
@@ -696,7 +667,7 @@ void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_KARST, 5);
-  FieldEvent_SetMessageId((s32)MsgMarsStar03);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseStarRoomYourHandSoWarmPeople);
   // "Your hand...so warm... People have such warm hands... I had forgotten..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_SetAnimation(ACTOR_KARST, 9);
@@ -721,7 +692,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
-  Event_SetMessageId((s32)MsgMarsStar02);
+  Event_SetMessageId((s32)MsgMarsLighthouseStarRoomItsTooLateForUs);
   // "It's too late for us now... Hurry, light the beacon."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_AGATIO, 10);
@@ -740,7 +711,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     PartyInventory_Remove(ITEM_MYTHRIL_BAG);
     Inventory_AddItem(4, ITEM_MYTHRIL_BAG_MARS_STAR);
     // "Felix got the Mars Star!"
-    Message_ShowCentered((s32)MsgMarsStar08, 1);
+    Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixGotMarsStar, 1);
     i = 0;
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
@@ -760,8 +731,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     FieldCamera_SetSpeed(4.8);
     FieldCamera_MoveTo(680, CAMERA_KEEP, 146, 1);
     FieldCamera_WaitForArrival();
-    PaletteFade_ApplySource(0x10000, 0);
-    PaletteFade_ApplyTarget(0x10003, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
     PaletteFade_Interpolate(20);
     System_Wait(20);
     {
@@ -774,8 +745,9 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
       OBJ_PLTT_COLOR(0, 15) = white.value;
     }
     System_Wait(1);
-    FieldMessage_ShowCentered((s32)MsgMarsStar06, 0, 0);
-    PaletteFade_ApplyTarget(0x10000, 0);
+    FieldMessage_ShowCentered((s32)MsgMarsLighthouseStarRoomYouWhoHoldStarOpen,
+                              0, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(20);
     System_Wait(20);
   }
@@ -822,7 +794,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "There's a space for you to place something."
-  Message_ShowCentered((s32)MsgMarsStar07, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
   ((struct EventNote *)work)->unk15a = 1;
   Event_End();
 }
@@ -846,7 +818,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
-  Message_ShowCentered((s32)MsgMarsStar09, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
@@ -880,8 +852,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10006, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
   Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
@@ -891,7 +863,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(80);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(80);
   System_Wait(60);
   FieldTask_Remove(MarsLighthouseStarRoom_SpawnThawSparks);
@@ -907,7 +879,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                   screen);
   zero = 0;
   *screen = zero;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(160);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 186, 1);
@@ -915,7 +887,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(40);
   object = *slot;
   if (object != 0) {
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = px(2);
     object->speedLimit = px(2);
     object->acceleration = px(1);
@@ -931,17 +903,21 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   object = *slot;
   if (object != 0)
     Actor_Release(object);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   gMainRoutineWork.battleBackground = SCENE_NARIBWE;
@@ -954,10 +930,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
 /// ice melts away and the lighthouse turns to fire; the star falls back out.
 void MarsLighthouseStarRoom_UseMarsStar(void) {
   s32 flag;
-  struct Actor **slot, **slot2;
-  struct Actor *object, *object2;
-  struct FieldSprite *sprite, *sprite2;
-  u8 *buffer, *buffer2;
+  struct Actor **slot, **placedStarSlot;
+  struct Actor *object, *placedStar;
+  struct FieldSprite *sprite, *placedStarSprite;
+  u8 *buffer, *placedStarGlyphs;
   u16 *screen;
 
   flag = Event_GetFlag(FLAG_MARS_STAR_SET);
@@ -966,7 +942,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     // "Felix used the Mars Star!"
-    Message_ShowCentered((s32)MsgMarsStar09, 1);
+    Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     System_Wait(1);
     Event_PlaySound(SE_GEM_SET);
@@ -997,7 +973,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     object = *slot;
     if (object != 0) {
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       object->velocityY = px(2);
       object->speedLimit = px(2);
       object->acceleration = px(1);
@@ -1013,10 +989,12 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+        ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
     FieldEvent_Wait(1);
-    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+        ACTOR_FACES_MOTION;
     object = *slot;
     if (object != 0)
       Actor_Release(object);
@@ -1029,26 +1007,26 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
-  Message_ShowCentered((s32)MsgMarsStar09, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
-  slot2 = &gMarsLighthouseStarRoom_MarsStar;
-  object2 = FieldActor_Create(BLANK_SPRITE, px(680), px(8), px(147));
-  *slot2 = object2;
-  if (object2 != 0) {
-    sprite2 = object2->sprite;
-    sprite2->nextFrame = 0;
-    sprite2->unk1b[0] = 0;
-    sprite2->fullColor = 0;
-    sprite2->palette = 0;
-    sprite2->priority = 2;
-    object2->motionFlags = 0;
-    object2->retainSpriteCache = 1;
-    object2->priorityFlags |= 2;
-    buffer2 = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  placedStarSlot = &gMarsLighthouseStarRoom_MarsStar;
+  placedStar = FieldActor_Create(BLANK_SPRITE, px(680), px(8), px(147));
+  *placedStarSlot = placedStar;
+  if (placedStar != 0) {
+    placedStarSprite = placedStar->sprite;
+    placedStarSprite->nextFrame = 0;
+    placedStarSprite->unk1b[0] = 0;
+    placedStarSprite->fullColor = 0;
+    placedStarSprite->palette = 0;
+    placedStarSprite->priority = 2;
+    placedStar->motionFlags = 0;
+    placedStar->retainSpriteCache = 1;
+    placedStar->priorityFlags |= 2;
+    placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
+    Vram_Load(placedStarSprite->vramBlock, 128, placedStarGlyphs + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
@@ -1063,8 +1041,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10006, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
   Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
@@ -1074,7 +1052,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(80);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(80);
   System_Wait(60);
   FieldTask_Remove(MarsLighthouseStarRoom_SpawnThawSparks);
@@ -1089,37 +1067,39 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                       (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                   screen);
   *screen = 0;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(160);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 186, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  object2 = *slot2;
-  if (object2 != 0) {
-    object2->motionFlags = 3;
-    object2->velocityY = px(2);
-    object2->speedLimit = px(2);
-    object2->acceleration = px(1);
-    FieldActor_SetMoveTarget(object2, 672, 0, 160);
-    FieldActor_WaitForMove((s32)*slot2);
+  placedStar = *placedStarSlot;
+  if (placedStar != 0) {
+    placedStar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    placedStar->velocityY = px(2);
+    placedStar->speedLimit = px(2);
+    placedStar->acceleration = px(1);
+    FieldActor_SetMoveTarget(placedStar, 672, 0, 160);
+    FieldActor_WaitForMove((s32)*placedStarSlot);
     Event_PlaySound(SE_CLICK);
-    object2 = *slot2;
-    object2->acceleration = px(1) / 2;
-    object2->velocityY = px(4);
-    object2->speedLimit = px(1);
-    FieldActor_SetMoveTarget(object2, 664, 0, 158);
-    FieldActor_WaitForMove((s32)*slot2);
+    placedStar = *placedStarSlot;
+    placedStar->acceleration = px(1) / 2;
+    placedStar->velocityY = px(4);
+    placedStar->speedLimit = px(1);
+    FieldActor_SetMoveTarget(placedStar, 664, 0, 158);
+    FieldActor_WaitForMove((s32)*placedStarSlot);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
-  object2 = *slot2;
-  if (object2 != 0)
-    Actor_Release(object2);
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
+  placedStar = *placedStarSlot;
+  if (placedStar != 0)
+    Actor_Release(placedStar);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
@@ -1143,7 +1123,7 @@ void MarsLighthouseStarRoom_UpdateThawSpark(struct Actor *object) {
 
   s32 growth;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
   growth = 0x51e;
   object->scaleX += growth;
   object->scaleY += growth;
@@ -1305,9 +1285,9 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
 DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Flame_UpdateLanding)
 
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
-  if (DIFF(a->x.fixed, b->x.fixed) < 0xc0000) {
+  if (DIFF(a->x.fixed, b->x.fixed) < px(12)) {
     if ((u32)(a->y.fixed - b->y.fixed - 1) <= 0xffffe) {
-      if (DIFF(a->z.fixed, b->z.fixed) < 0x80000)
+      if (DIFF(a->z.fixed, b->z.fixed) < px(8))
         return 1;
     }
   }
@@ -1332,35 +1312,24 @@ extern void
 Actor_SetupScripted__s1b78(struct Actor *object,
                            s32 priority) __asm__("Actor_SetupScripted");
 
-void Ride_SpawnSpark(s32 *position, s32 base) {
+void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
   struct Actor *object = ObjectCreate_(SPARK_SPRITE, position[0], position[1],
-                                       position[2] - 0x20000);
-  s32 angle;
+                                       position[2] - px(2));
+  s32 spin;
 
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
-    /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000. */
-    angle = (u16)Random16() - 0x8000;
-    object->timer = angle;
+    spin = (u16)Random16() - 0x8000;
+    object->timer = spin;
     Actor_SetupScripted__s1b78(object, 2);
     object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
   }
 }
 
-/* VIEW(s1bf8): tag struct Actor as struct Actor__s1bf8; actor.h has another
- * definition; not tried: struct Actor__s1bf8 was not found. */
-typedef struct Actor__s1bf8 {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1385,10 +1354,6 @@ void Ride_SpawnForward();
 void Ride_SpawnBackward();
 void Ride_SpawnLandingForward();
 void Ride_SpawnLandingBackward();
-/* VIEW(s1bf8): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; not tried: Ride_SpawnSpark's declaration
- * holds a FAKEMATCH tag. */
-extern void Ride_SpawnSpark__s1bf8() __asm__("Ride_SpawnSpark");
 extern u8 gInventorySnapshot[];
 
 typedef struct Position {
@@ -1450,17 +1415,13 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
-    y = actor->y;
+    dz = actor->z.fixed;
+    dx = actor->x.fixed - cameraX;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1479,19 +1440,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s1bf8(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -1546,8 +1507,10 @@ struct MarsLighthouseBeam__ride_handle {
   u8 unk0c[4];
   s32 unk10;
   struct MarsLighthouseBeamTarget targets[4];
-  u16 stopCount;
-  u16 stops[7];
+  struct MarsLighthouseBeamStop {
+    u16 kind;
+    u16 value;
+  } stops[4];
 };
 
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
@@ -1558,81 +1521,35 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   s32 i;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    i = 0;
-    id = *targets++;
-    {
-      /* FAKEMATCH(dead): a test combine folds, keeping the first loop's refs
-       * unweighted. */
-      s32 never = id & 0x40;
-      if (never < 0) {
-        id = 0;
-        goto afterTarget;
-      }
-    }
-    if (id > 0) {
-    nextTarget:
-      {
-        s32 flags = *targets;
-        s32 height = flags & 15;
-        struct Actor *object;
-        s32 one;
+    for (i = 0; i <= 3 && (id = *targets++) > 0; i++) {
+      s32 flags = *targets;
+      s32 height = flags & 15;
+      struct Actor *object;
 
-        flags &= 0xf0;
-        object = Actor_Get(id);
-        targets++;
-        if (object != NULL) {
-          Actor_SetSpriteFlags(object, 0);
-          ((u8 *)object)[98] = one = 1;
-          if ((flags & 0x80) == 0)
-            object->collisionFlags = 0;
-          target->active = one;
-          target->flags = flags;
-          target->object = Actor_Get(id);
-          target->height = height << 16;
-          target->index = i;
-          target++;
-        }
-      }
-    afterTarget:
-      i++;
-      if (i <= 3) {
-        if ((id = *targets++) > 0)
-          goto nextTarget;
+      flags &= 0xf0;
+      object = Actor_Get(id);
+      targets++;
+      if (object != NULL) {
+        Actor_SetSpriteFlags(object, 0);
+        object->riseCounter = 1;
+        if ((flags & 0x80) == 0)
+          object->collisionFlags = 0;
+        target->active = 1;
+        target->flags = flags;
+        target->object = Actor_Get(id);
+        target->height = height << 16;
+        target->index = i;
+        target++;
       }
     }
     if (stops != NULL) {
-      s32 count;
-      s32 stopOffset;
-      u16 *p;
+      for (i = 0; i <= 3; i++) {
+        s32 kind = *stops++;
 
-      i = 0;
-      count = *stops++;
-      stopOffset = 84;
-      *(u16 *)((u8 *)beam + stopOffset) = count;
-      {
-        /* FAKEMATCH(dead): a test combine folds, keeping the second loop's refs
-         * unweighted. */
-        s32 never = count & 0x40;
-        if (never < 0) {
-          p = stops;
-          goto afterStop;
-        }
-      }
-      if (count > 0) {
-        p = &beam->stopCount;
-      nextStop:
-        p[1] = *stops;
-      afterStop:
-        stops++;
-        i++;
-        p += 2;
-        if (i <= 3) {
-          s32 stop = *stops++;
-
-          *p = stop;
-          if (stop > 0)
-            goto nextStop;
-        }
+        beam->stops[i].kind = kind;
+        if (kind <= 0)
+          break;
+        beam->stops[i].value = *stops++;
       }
     }
   }
@@ -1765,7 +1682,7 @@ s32 Fireball_CarryLeader(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX
@@ -1918,7 +1835,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct FlameHitWork *other;
     struct Actor *target;
 
@@ -1989,15 +1906,15 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->active = 2;
       other->car = actor;
-      work2->stepTrigger = other->value0a + 2;
+      fieldWork->stepTrigger = other->value0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;
@@ -2079,7 +1996,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #undef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 #undef DIFF
-#undef FIELD_AT
 #undef DEFINE_RIDE_SPAWN_BACKWARD
 #undef ABS
 #undef IWRAM
@@ -2561,15 +2477,15 @@ struct ActorPlacement gActorPlacements[] = {
                     FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
@@ -2606,11 +2522,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgMarsStar05)},
+     MSGNO(MsgMarsLighthouseStarRoomImSoColdColderThan)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgMarsStar04)},
+     MSGNO(MsgMarsLighthouseStarRoomImSoTiredFog)},
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_ExamineStatue)},
     {USE_ITEM(ITEM_MYTHRIL_BAG_MARS_STAR), 1045, CONDITION_ALWAYS,

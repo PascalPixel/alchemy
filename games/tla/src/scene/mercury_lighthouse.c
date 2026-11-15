@@ -4,6 +4,7 @@
 /// heroes, motes of light drifting round them.
 
 #include "types.h"
+#include "sprite_ids.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
@@ -44,10 +45,10 @@ s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
   return 0;
 }
 
-/// An Imil child's update while the voices talk: every 40 to 120 frames it
-/// turns between two headings, as if looking around for them.
+/// An Imil villager's update while the voices talk: every 40 to 120 frames
+/// it turns between two headings, as if looking around for them.
 void MercuryLighthouse_LookAround(struct Actor *object) {
-  u8 *timer = (u8 *)object + 98;
+  u8 *timer = &object->riseCounter;
   u8 *state;
 
   if (*timer != 0) {
@@ -55,7 +56,7 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
     return;
   }
   *timer = ((Random16() * 80) >> 16) + 40;
-  state = (u8 *)object + 99;
+  state = &object->blockMarked;
   switch (*state) {
   case 0:
     object->facing = FACING_WEST;
@@ -88,6 +89,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// The actors at the lighthouse, by the rows of gActorPlacements; Mia's,
+/// Garet's and Sheba's rows go to their party slots.
+enum {
+  /// Two of Imil's children, who hear the party: "Hey! I know that voice!
+  /// It's Mia, I just know it!" and "Of course it's us! We can hear you,
+  /// Mia!"
+  ACTOR_BOY = ACTOR_FIRST_PLACED,
+  ACTOR_GIRL,
+  ACTOR_WOMAN, ///< placed nowhere
+  /// "I don't know. They've been standing here telling everyone to leave..."
+  ACTOR_OLD_MAN,
+  ACTOR_OLD_WOMAN, ///< "Who are those two kids talking to?"
+  /// Two unseen actors the voices' Mind Read wave runs between.
+  ACTOR_VOICES_SOURCE,
+  ACTOR_VOICES_TARGET
+};
+
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// The task MercuryLighthouse_HearVoices starts: every 16 frames it starts a
@@ -100,8 +118,8 @@ void MercuryLighthouse_SpawnMotes(void) {
   s32 x;
   s32 z;
 
-  Actor_SetSpritePriority(8, 3);
-  Actor_SetSpritePriority(9, 3);
+  Actor_SetSpritePriority(ACTOR_BOY, 3);
+  Actor_SetSpritePriority(ACTOR_GIRL, 3);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
@@ -132,6 +150,7 @@ void MercuryLighthouse_SpawnMotes(void) {
 /// "We're in Imil! We're at the base of Mercury Lighthouse!"
 void MercuryLighthouse_HearVoices(void) {
   struct Actor *actor;
+  u8 delay;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -139,102 +158,99 @@ void MercuryLighthouse_HearVoices(void) {
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
-  Actor_SetSpritePriority(8, 2);
-  Actor_SetSpritePriority(9, 2);
+  Actor_SetSpritePriority(ACTOR_BOY, 2);
+  Actor_SetSpritePriority(ACTOR_GIRL, 2);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   Event_SetMessageId(MsgImilVoicesDisbeliefReply);
   // "You... You can't be!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_Jump(8, 4, 10);
+  Actor_ShowEmote(ACTOR_BOY, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_BOY, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirection(ACTOR_BOY, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_Jump(ACTOR_BOY, 4, 10);
   // "Hey! I know that voice! It's Mia, I just know it! Mia!!!"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
-  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_BOY, 0);
+  Actor_ShowEmote(ACTOR_OLD_MAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(ACTOR_OLD_MAN, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH_NORTHWEST, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "It's you!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_SetAnimation(9, 3);
+  Actor_SetAnimation(ACTOR_GIRL, 3);
   // "Of course it's us! We can hear you, Mia! You're all right! I'm so happy!"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-  Actor_FaceDirectionAndWait(12, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GIRL, 0);
+  Actor_FaceDirectionAndWait(ACTOR_OLD_WOMAN, FACING_EAST);
   // "Who are those two kids talking to?"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 12, 0);
-  Actor_FaceDirectionAndWait(11, FACING_WEST);
-  Actor_SetAnimation(11, 4);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_OLD_WOMAN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_OLD_MAN, FACING_WEST);
+  Actor_SetAnimation(ACTOR_OLD_MAN, 4);
   // "I don't know. They've been standing here telling everyone to leave..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
-  actor = Actor_GetById(11);
-  *((u8 *)actor + 98) = ((Random16() * 80) >> 16) + 40;
-  *((u8 *)actor + 99) = 0;
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_OLD_MAN, 0);
+  actor = Actor_GetById(ACTOR_OLD_MAN);
+  delay = ((Random16() * 80) >> 16) + 40;
+  actor->riseCounter = delay;
+  actor->blockMarked = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
-  actor = Actor_GetById(12);
-  {
-    /* FAKEMATCH(temporary): the timer's + 40 comes before its address. */
-    u8 timer = ((Random16() * 80) >> 16) + 40;
-
-    *((u8 *)actor + 98) = timer;
-  }
-  *((u8 *)actor + 99) = 2;
+  actor = Actor_GetById(ACTOR_OLD_WOMAN);
+  delay = ((Random16() * 80) >> 16) + 40;
+  actor->riseCounter = delay;
+  actor->blockMarked = 2;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
-  FieldPsynergy_StartMindReadWave(13, 14);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "How is it that we can hear you?"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_SetAnimation(8, 4);
+  Actor_SetAnimation(ACTOR_BOY, 4);
   // "I don't know, but he told us we'd be able to talk to you if we came..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_BOY, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "He? Who's "he"?"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
   // "I don't know... We were sleeping, and he came to us in a dream... He..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GIRL, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "The lighthouse? Why?"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
   // "He said that we have to deliver a message... He was too busy to do..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_BOY, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "What message?"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
   // "We have to warn everyone to stay clear of the lighthouses!"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GIRL, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "What's going to happen?"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BOY, 3);
   // "I don't know, but he told us to warn people away from Mt. Aleph as well!"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_BOY, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "But who is "he"!? You still haven't told us!!!"
   Event_ShowMessage(ACTOR_GARET, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_Jump(9, 2, 0);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Actor_Jump(ACTOR_GIRL, 2, 0);
+  FieldActor_ShowEmote(ACTOR_GIRL, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "You're a meanie! I don't tell meanies anything!"
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_GIRL, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "Don't pay any attention to him... It's me, Mia... Can you tell me..."
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BOY, 3);
   // "I told you, I don't know, but he looked like a big rock... with a..."
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 8, 0);
-  FieldPsynergy_StartMindReadWave(13, 14);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_BOY, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "The... The Wise One!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldPsynergy_StopMindReadWave();
@@ -299,14 +315,14 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 696, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 696, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(190, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(188, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 906, 0, 744, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(194, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 782, 0, 762, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(3, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 780, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 696, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 696, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 906, 0, 744, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 782, 0, 762, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 780, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

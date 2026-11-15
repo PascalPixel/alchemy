@@ -13,6 +13,8 @@
 /// aerie.
 
 #include "system/task.h"
+#include "graphics/palette_buffers.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "scene/ride.h"
@@ -393,7 +395,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_WARP);
@@ -414,7 +416,7 @@ void MarsLighthouseRoomM_LightFlame(void) {
   work = Ram_HeapSlots->fieldWork;
   work->psynergy = 0;
   FieldEvent_Wait(30);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   FieldEvent_Wait(10);
@@ -533,7 +535,6 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   if ((state ^ gMarsLighthouseRoomM_DoorwayStep) & 1)
     Event_PlaySound(SE_560);
   gMarsLighthouseRoomM_DoorwayStep = state;
-  /* FAKEMATCH(temporary): the low bit held in a local. */
   odd = state & 1;
   flash = (u16 *)&gMarsLighthouseRoomM_DoorwayBlendTarget;
   next = state - 20;
@@ -713,15 +714,16 @@ s32 Scene_Initialize(void) {
         FieldCamera_MoveTo(224, 64, 216, 1);
         FieldCamera_WaitForArrival();
         FieldEvent_Wait(20);
-        PaletteFade_ApplySource(0x10000, 0);
-        PaletteFade_ApplyTarget(0x10003, 0);
+        PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+        PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
         entrance = 0x500021e;
         *(u16 *)entrance = 0x7fff;
         System_Wait(1);
-        EventMessage_ShowCentered((s32)MsgYouHaveProven, 0, 4);
-        PaletteFade_ApplyTarget(0x10000, 0);
+        EventMessage_ShowCentered(
+            (s32)MsgMarsLighthouseRoomMYouHaveProvenYourWorth, 0, 4);
+        PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
         FieldCamera_SetSpeed(1);
@@ -885,13 +887,14 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMMankindWithPowerOfWisdom,
+                            0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -904,13 +907,14 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMFishWithColdCourageThey,
+                            0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -923,13 +927,14 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
+  EventMessage_ShowCentered(
+      (s32)MsgMarsLighthouseRoomMDragonsBurningWithMightThey, 0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -942,13 +947,14 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMBirdOnWingsOfTruth, 0,
+                            0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -960,10 +966,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
   struct Actor *object;
 
-  /* FAKEMATCH(temporary): z shifted ahead of the call. */
-  z <<= 16;
-  object = (struct Actor *)Import_ActorCreate(403, x << 16, 0, z);
-
+  object = FieldActor_Create(403, px(x), 0, px(z));
   if (object != 0) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 3);
@@ -1011,13 +1014,14 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       FieldCamera_MoveTo(224, 64, 216, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
-      PaletteFade_ApplySource(0x10000, 0);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_SetTarget(0x10003, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
       *color = 0x7fff;
       wait(1);
-      EventMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
+      EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMIfYouDoNotHold, 0,
+                                4);
       PaletteFade_SetTarget(0x10000, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
@@ -1038,15 +1042,17 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_MoveTo(224, 64, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
-    PaletteFade_ApplySource(0x10000, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_SetTarget(0x10003, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     *color = 0x7fff;
     wait(1);
-    EventMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
+    EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMYouWhoHoldStarOpen, 0,
+                              4);
     wait(10);
-    EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
+    EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMYouWhoHoldStarOpen + 1,
+                              0, 3);
     FieldCamera_MoveTo(224, 88, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
@@ -1091,7 +1097,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
@@ -1188,8 +1194,8 @@ void Teleport_ArriveWhirling(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1197,7 +1203,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {
@@ -1304,11 +1310,11 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   s32 height;
 
   if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
-                                    : b->x.fixed - a->x.fixed) < 0xc0000) {
+                                    : b->x.fixed - a->x.fixed) < px(12)) {
     height = a->y.fixed - b->y.fixed;
     if (height > 0 && height < 0x100000) {
       if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
-                                        : b->z.fixed - a->z.fixed) < 0x80000)
+                                        : b->z.fixed - a->z.fixed) < px(8))
         return 1;
     }
   }
@@ -1344,35 +1350,25 @@ void Ride_UpdateDrift(struct Actor *object) {
 
 #include "shared/actor_setup_scripted.h"
 
-void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value) {
-  struct Actor *object = FieldActor_Create(285, position->x, position->y,
-                                           position->z + 0xfffe0000);
-  s32 angle;
+void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value,
+                     s32 mode) {
+  struct Actor *object =
+      FieldActor_Create(285, position->x, position->y, position->z - px(2));
+  s32 spin;
 
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
     object->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
-    /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000. */
-    angle = (u16)Random16() - 0x8000;
-    object->timer = angle;
+    spin = (u16)Random16() - 0x8000;
+    object->timer = spin;
     ((void (*)())Actor_SetupScripted)(object, 2);
     object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
   }
 }
 
-/* VIEW(s1f94): tag struct Actor as struct Actor__s1f94; actor.h has another
- * definition; not tried: struct Actor__s1f94 was not found. */
-typedef struct Actor__s1f94 {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1397,10 +1393,6 @@ void Ride_SpawnForward();
 void Ride_SpawnBackward();
 void Ride_SpawnLandingForward();
 void Ride_SpawnLandingBackward();
-/* VIEW(s1f94): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; not tried: Ride_SpawnSpark's declaration
- * holds a FAKEMATCH tag. */
-extern void Ride_SpawnSpark__s1f94() __asm__("Ride_SpawnSpark");
 extern u8 gInventorySnapshot[];
 
 typedef struct Position {
@@ -1462,17 +1454,13 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
-    y = actor->y;
+    dz = actor->z.fixed;
+    dx = actor->x.fixed - cameraX;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1491,19 +1479,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s1f94(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -1656,7 +1644,7 @@ s32 Fireball_CarryLeader(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX
@@ -1826,7 +1814,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct Work020023c4 *other;
     struct Actor *target;
 
@@ -1897,15 +1885,15 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->stepTrigger = other->unk0a + 2;
+      fieldWork->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;
@@ -2065,7 +2053,7 @@ struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[] = {
     ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 224, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

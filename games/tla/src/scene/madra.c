@@ -9,6 +9,7 @@
 /// triggers.
 
 #include "flags.h"
+#include "sprite_ids.h"
 #include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -215,11 +216,11 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    Event_SetMessageId((s32)&MsgItLooksLikeThe);
+    Event_SetMessageId((s32)&MsgMadraItLooksLikeKibomboMust);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
-    Event_SetMessageId((s32)&MsgTheArmorerAnd);
+    Event_SetMessageId((s32)&MsgMadraArmorerAndIAreBusy);
   else
-    Event_SetMessageId((s32)&MsgAfterTheChampa);
+    Event_SetMessageId((s32)&MsgMadraAfterChampaOpenedJailCells);
   // "After the Champa opened the jail cells, they came over here... All..."
   Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 }
@@ -233,11 +234,11 @@ void Madra_TalkToArmorMerchant(s32 arg) {
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    Event_SetMessageId((s32)&MsgPeopleAreSaying);
+    Event_SetMessageId((s32)&MsgMadraPeopleAreSayingChampa);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
-    Event_SetMessageId((s32)&MsgIKnewThere);
+    Event_SetMessageId((s32)&MsgMadraIKnewThereWasSomething);
   else
-    Event_SetMessageId((s32)&MsgOwOwOw);
+    Event_SetMessageId((s32)&MsgMadraOwOwOwIThink);
   // "Ow. Ow. Ow... I think I got a bone bruise. I hate those..."
   Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 }
@@ -251,11 +252,11 @@ void Madra_TalkToItemMerchant(s32 arg) {
     return;
   }
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    Event_SetMessageId((s32)&MsgMyBoyfriendShin);
+    Event_SetMessageId((s32)&MsgMadraMyBoyfriendShinSeems);
   else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
-    Event_SetMessageId((s32)&MsgAllMyInjuries);
+    Event_SetMessageId((s32)&MsgMadraAllMyInjuriesHaveHealed);
   else
-    Event_SetMessageId((s32)&MsgMySisterWas);
+    Event_SetMessageId((s32)&MsgMadraMySisterWasHurtWhen);
   // "My sister was hurt when the Champa attacked... She's recovering, but..."
   Event_ShowMessage(arg, 0);
 }
@@ -263,7 +264,7 @@ void Madra_TalkToItemMerchant(s32 arg) {
 /// Karst, told the party does not know her sister, sends it off.
 /// "If you don't know my sister, then I have nothing to say to you."
 void Madra_KarstSendsPartyAway(void) {
-  Event_SetMessageId((s32)&MsgIfYouDon);
+  Event_SetMessageId((s32)&MsgMadraIfYouDontKnow);
   Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "If you don't know my sister, then I have nothing to say to you. Get..."
@@ -274,7 +275,7 @@ void Madra_KarstSendsPartyAway(void) {
 /// her sister.
 /// "Have you by chance seen a girl named Menardi?"
 void Madra_KarstAsksAboutMenardi(void) {
-  Event_SetMessageId(MsgHaveYouBy);
+  Event_SetMessageId(MsgMadraHaveYouByChanceSeen);
   // "Have you by chance seen a girl named Menardi?"
   Event_OpenMessage(ACTOR_KARST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
@@ -308,7 +309,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
 /// "Using Psynergy on me? Are you so dense that you don't know when to be
 /// afraid?"
 void Madra_MindReadKarst(void) {
-  Event_SetMessageId((s32)MsgUsingPsynergyOn);
+  Event_SetMessageId((s32)MsgMadraUsingPsynergyOnMe);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -328,7 +329,7 @@ void Madra_KarstCallsForMenardi(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-    Event_SetMessageId((s32)&MsgWhereCouldMenardi);
+    Event_SetMessageId((s32)&MsgMadraWhereCouldMenardiHaveGone);
     // "Where could Menardi have gone? Where are you, my sister?"
     Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
     Event_End();
@@ -339,7 +340,7 @@ void Madra_KarstCallsForMenardi(void) {
 /// "Everyone here in Madra is afraid of the Kibombo now. Do they scare you,
 /// too?"
 void Madra_AskAfraidOfKibombo(s32 actor) {
-  s32 msg = (s32)&MsgEveryoneHereIn;
+  s32 msg = (s32)&MsgMadraEveryoneHereInMadra;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -361,9 +362,9 @@ void Madra_AskComingThroughHole(void) {
 
   Actor_FaceActor(ACTOR_HOLE_WORKER, ACTOR_FELIX, 0);
   if (Event_GetFlag(FLAG_MADRA_TOLD_WORKER_COMING_THROUGH)) {
-    Event_SetMessageId((s32)&MsgYeahWellWe);
+    Event_SetMessageId((s32)&MsgMadraYeahWellWereWorkin);
   } else {
-    msg = (s32)&MsgYouCominThrough;
+    msg = (s32)&MsgMadraYouCominThroughHere;
     Event_SetMessageId(msg);
     // "You comin' through here?"
     Event_OpenMessage(ACTOR_HOLE_WORKER, 0);
@@ -388,9 +389,9 @@ void Madra_AskComingThroughSealedHole(void) {
 
   Actor_FaceActor(ACTOR_HOLE_WORKER, ACTOR_FELIX, 0);
   if (Event_GetFlag(FLAG_MADRA_TOLD_WORKER_COMING_THROUGH)) {
-    Event_SetMessageId((s32)&MsgYeahUhWe);
+    Event_SetMessageId((s32)&MsgMadraYeahUhWereSealingHole);
   } else {
-    msg = (s32)&MsgOhUhYou;
+    msg = (s32)&MsgMadraOhUhYouComingThrough;
     Event_SetMessageId(msg);
     // "Oh, uh... You coming through?"
     Event_OpenMessage(ACTOR_HOLE_WORKER, 0);
@@ -533,7 +534,7 @@ void Madra_AskAboutIceShaft(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)&MsgWasIJust;
+  msg = (s32)&MsgMadraWasIJustDreamingWhen;
   Event_SetMessageId(msg);
   // "Was I just dreaming when that shaft of ice appeared?"
   Event_OpenMessage(actor, 0);
@@ -560,7 +561,7 @@ void Madra_AskAboutBriggs(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    msg = (s32)&MsgHeyMisterAre;
+    msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
     // "Hey, mister! Are you the guy who beat up Briggs?"
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
@@ -575,7 +576,7 @@ void Madra_AskAboutBriggs(void) {
   } else {
     if (Event_GetFlag(FLAG_MADRA_BOY_HAS_ASKED) == 0)
       Actor_FaceActor(ACTOR_BRIGGS_FAN, ACTOR_FELIX, 0);
-    msg = (s32)&MsgDidYouCome;
+    msg = (s32)&MsgMadraDidYouComeHereOver;
     Event_SetMessageId(msg);
     // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
@@ -600,7 +601,7 @@ void Madra_MindReadBriggsFan(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    msg = (s32)&MsgHeyMisterAre;
+    msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
     // "Hey, mister! Are you the guy who beat up Briggs?"
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
@@ -619,7 +620,7 @@ void Madra_MindReadBriggsFan(void) {
       FieldActor_ShowEmote(ACTOR_BRIGGS_FAN, x, z);
       Actor_FaceActor(ACTOR_BRIGGS_FAN, ACTOR_FELIX, 0);
     }
-    msg = (s32)&MsgDidYouCome;
+    msg = (s32)&MsgMadraDidYouComeHereOver;
     Event_SetMessageId(msg);
     // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
     Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
@@ -644,7 +645,7 @@ void Madra_AskAboutJenna(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(ACTOR_BOAT_OWNER, ACTOR_FELIX, 0);
-  Event_SetMessageId((s32)&MsgIsThereBy);
+  Event_SetMessageId((s32)&MsgMadraIsThereByAnyChance);
   flags = 0;
   // "Is there by any chance a girl named Jenna with you?" Yes: "Ah! Those
   // people must have been looking for..." No: "Oh... Well, if you run across
@@ -687,7 +688,7 @@ void Madra_InspectPartyAtGate(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgYouThereHold);
+  Event_SetMessageId(MsgMadraYouThereHoldYourGround);
   // "You there! Hold your ground!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 420, 1);
@@ -844,7 +845,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_StartScreenTransition();
   Actor_SetPosition(ACTOR_LADY, 172, 332);
   Actor_SetPosition(ACTOR_LADYS_GUARD, 172, 324);
-  Event_SetMessageId(MsgHasEscaped2);
+  Event_SetMessageId(MsgMadraHasPiersEscaped);
   Event_WaitTransitionFrames();
   // "Has Piers escaped!?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -1020,7 +1021,7 @@ void Madra_StopPartyAfterRaid(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgHeyYouLot);
+  Event_SetMessageId(MsgMadraHeyYouLotHold);
   // "Hey! You lot! Hold it right there!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 400, 1);
@@ -1096,7 +1097,7 @@ void Madra_StopPartyAfterRaid(void) {
   // "Right after the mayor left, actually..."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 10);
   if (Event_GetFlag(FLAG_KIBOMBO_WARRIORS_FOUND)) {
-    Event_SetMessageId(MsgItWasThem);
+    Event_SetMessageId(MsgMadraItWasThemWasnt);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Event_Wait(20);
     // "It was them, wasn't it, Felix?"
@@ -1116,7 +1117,7 @@ void Madra_StopPartyAfterRaid(void) {
       Event_ShowMessage(ACTOR_KRADEN, 0);
     }
   }
-  Event_SetMessageId(MsgWasAnythingStolen);
+  Event_SetMessageId(MsgMadraWasAnythingStolen);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
@@ -1180,6 +1181,12 @@ void Madra_StopPartyAfterRaid(void) {
     Actor_SetAnimation(id, mode);                                              \
   } while (0)
 
+#define SET_MODE_AND_WAIT(id, mode, frames)                                    \
+  do {                                                                         \
+    Actor_SetAnimation(id, mode);                                              \
+    Event_Wait(frames);                                                        \
+  } while (0)
+
 /// On the party's return the mayor stops Felix to give him the Cyclone Chip he
 /// promised for mending the boat (or, with no room for it, puts it in a pot),
 /// and Karst comes in at the gate looking for Menardi.
@@ -1194,7 +1201,7 @@ void Madra_MeetKarst(void) {
   Event_StartScreenTransition();
   if (GameFlag_Get(0x825) || GameFlag_Get(0x826))
     GameFlag_Set(0xa76);
-  Event_SetMessageId(MsgWait3);
+  Event_SetMessageId(MsgMadraFelixWait);
   // "Felix, wait!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_WalkToAndWait(ACTOR_FELIX, 150, 280);
@@ -1211,12 +1218,7 @@ void Madra_MeetKarst(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 4);
-  SET_MODE(34, 3);
-  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region. */
-  do {
-    Event_Wait(20);
-  } while (0);
+  SET_MODE_AND_WAIT(34, 3, 20);
   // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -1287,7 +1289,7 @@ void Madra_MeetKarst(void) {
   } else {
     s32 count = gFieldWork->message + 1;
 
-    Event_SetMessageId(MsgTheMayorTried);
+    Event_SetMessageId(MsgMadraMayorTriedToGiveFelix);
     MessageArgument_Push(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_Show((gFieldWork->message)++, 5);
     Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
@@ -1391,7 +1393,7 @@ void Madra_MeetKarst(void) {
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   } else {
-    Event_SetMessageId(MsgICanTBelieveIt);
+    Event_SetMessageId(MsgMadraICantBelieveItNo);
     // "I can't believe it... No one has the power to defeat Saturos and my..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     Actor_TurnToFaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
@@ -1407,7 +1409,7 @@ void Madra_MeetKarst(void) {
     // "Yet you all avoid my gaze... And that look on your faces... It...is..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   }
-  Event_SetMessageId(MsgWhoIsThis);
+  Event_SetMessageId(MsgMadraWhoIsThisIsaac);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Event_Wait(20);
   // "Who is this Isaac?"
@@ -1681,12 +1683,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   SET_MODE(4, 3);
   Event_Wait(20);
-  SET_MODE(32, 3);
-  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region. */
-  do {
-    Event_Wait(20);
-  } while (0);
+  SET_MODE_AND_WAIT(32, 3, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   SET_MODE(32, 2);
   object = Actor_GetById(ACTOR_FELIX);
@@ -1746,7 +1743,7 @@ void Madra_ClimbDownLadder(void) {
     next = 15;
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
@@ -1780,18 +1777,11 @@ UNUSED void Madra_StepOntoLadderFacingWest(void) {
   Madra_ClimbDownLadder();
 }
 
-/// Unused: the leader turns north on the spot and climbs down; no trigger runs
-/// it.
+/// Unused: Felix turns north on the spot and climbs down; no trigger runs it.
 UNUSED void Madra_TurnAndClimbDownLadder(void) {
-  s32 id, a;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirectionById(id, a << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Madra_ClimbDownLadder();
 }
 
@@ -1837,24 +1827,24 @@ struct ActorPlacement gMadra_Placements[] = {
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 248, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(187, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(192, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(198, IF_FLAG_SET(FLAG_BRIGGS_CAUGHT), MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(200, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, IF_FLAG_SET(FLAG_BRIGGS_CAUGHT), MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_BLUE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(186, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1871,27 +1861,27 @@ struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(224, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(187, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(192, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(198, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 276, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 276, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(238, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 393, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 393, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1947,45 +1937,47 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
     {TRIGGER_STEP, 19, 0x910, EVENT(Madra_SkipGateInspection)},
     {TRIGGER_STEP, 20, 0x910, EVENT(Madra_InspectPartyAtGate)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
-     MSGNO(MsgTheTownElder)},
+     MSGNO(MsgMadraTownElderTookOff)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,
-     MSGNO(MsgYouPickedThe)},
+     MSGNO(MsgMadraYouPickedWrongTime)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_WAVE, CONDITION_ALWAYS,
-     MSGNO(MsgThatBigWave)},
-    {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS, MSGNO(MsgLetMeGuess)},
+     MSGNO(MsgMadraThatBigWaveMovedWhole)},
+    {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
+     MSGNO(MsgMadraLetMeGuessYouWant)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
-     MSGNO(MsgMaybeWeLl)},
+     MSGNO(MsgMadraMaybeWellLearnBriggssWhereabouts)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
-     MSGNO(MsgIfICould)},
+     MSGNO(MsgMadraIfICouldWalk)},
     {TRIGGER_TALK, ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
      EVENT(Madra_AskAboutBriggs)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SUPERCONTINENT, CONDITION_ALWAYS,
-     MSGNO(MsgItSLike)},
+     MSGNO(MsgMadraItsLikeAllThreeContinents)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA, CONDITION_ALWAYS,
-     MSGNO(MsgTheChampaWere)},
+     MSGNO(MsgMadraChampaWereSwarmingOverVillage)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgThoseChampaCurs)},
+     MSGNO(MsgMadraThoseChampaCursDugHole)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_CHAMPAS_PLAN, CONDITION_ALWAYS,
-     MSGNO(MsgIDoubtThe)},
+     MSGNO(MsgMadraIDoubtChampaCouldHave)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_BIG_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgIGotSomeone)},
+     MSGNO(MsgMadraIGotSomeoneToShow)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER, CONDITION_ALWAYS,
-     MSGNO(MsgIDonTCare)},
+     MSGNO(MsgMadraIDontCareWhatElder)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_PRISONER, CONDITION_ALWAYS,
-     MSGNO(MsgWeTookThat)},
+     MSGNO(MsgMadraWeTookThatUnconsciousGuy)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_FRIEND, CONDITION_ALWAYS,
-     MSGNO(MsgMyFriendWas)},
+     MSGNO(MsgMadraMyFriendWasOnGuard)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_PARTNER, CONDITION_ALWAYS,
-     MSGNO(MsgMyPartnerWas)},
-    {TRIGGER_TALK, ACTOR_GATE_GUARD, CONDITION_ALWAYS, MSGNO(MsgThereSNoWay)},
+     MSGNO(MsgMadraMyPartnerWasGuardingPrison)},
+    {TRIGGER_TALK, ACTOR_GATE_GUARD, CONDITION_ALWAYS,
+     MSGNO(MsgMadraTheresNoWayThosePirates)},
     {TRIGGER_TALK, ACTOR_SECOND_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgAllOfIndra)},
+     MSGNO(MsgMadraAllOfIndraShifted)},
     {TRIGGER_TALK, ACTOR_HOLE_WORKER, CONDITION_ALWAYS,
      EVENT(Madra_AskComingThroughHole)},
     {TRIGGER_TALK, ACTOR_ICE_SHAFT_WITNESS, CONDITION_ALWAYS,
      EVENT(Madra_AskAboutIceShaft)},
     {TRIGGER_TALK, ACTOR_FRIGHTENED_WITNESS, CONDITION_ALWAYS,
-     MSGNO(MsgEvenIfWe)},
+     MSGNO(MsgMadraEvenIfWeTried)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
      EVENT(Madra_TalkToWeaponMerchant)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -1995,57 +1987,57 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
     {TRIGGER_TALK, ACTOR_ITEM_MERCHANTS_SIBLING, CONDITION_ALWAYS,
      EVENT(Madra_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_ELDER,
-     CONDITION_ALWAYS, MSGNO(MsgEveryoneThinksBriggs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraEveryoneThinksBriggsFled)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS,
-     CONDITION_ALWAYS, MSGNO(MsgTheTownElderIs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraTownElderIsGettingPretty)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_WAVE,
-     CONDITION_ALWAYS, MSGNO(MsgIfABig)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIfBigWaveCanMove)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
-     MSGNO(MsgItSABit)},
+     MSGNO(MsgMadraItsBitOfProblem)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
-     CONDITION_ALWAYS, MSGNO(MsgThatChampaIn)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraThatChampaInCellLooks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
-     CONDITION_ALWAYS, MSGNO(MsgIVeAlways)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIveAlwaysWantedToSee)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14 | TRIGGER_SUBJECT_OWN_EFFECT,
      0x300, EVENT(Madra_MindReadBriggsFan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
-     MSGNO(MsgWhoWasIt)},
+     MSGNO(MsgMadraWhoWasItWhoTold)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SUPERCONTINENT,
-     CONDITION_ALWAYS, MSGNO(MsgNowMadraIs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraNowMadraIsPinnedBetween)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA,
-     CONDITION_ALWAYS, MSGNO(MsgWhenISaw)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraWhenISawThoseChampa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgTheChampaMust)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraChampaMustHaveKnownExactly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_CHAMPAS_PLAN,
-     CONDITION_ALWAYS, MSGNO(MsgItSNot)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraItsNotLikeChampa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_BIG_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgIMNotSure)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraImNotSureChampaActually)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER,
-     CONDITION_ALWAYS, MSGNO(MsgILlNever)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIllNeverForgiveThoseDogs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_PRISONER,
-     CONDITION_ALWAYS, MSGNO(MsgILookedInto)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraILookedIntoThatMans)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_FRIEND,
-     CONDITION_ALWAYS, MSGNO(MsgIWonderHowMany)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIWonderHowMany)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_PARTNER,
-     CONDITION_ALWAYS, MSGNO(MsgIMissMy)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIMissMyPartner)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgItSSoWeird)},
+     MSGNO(MsgMadraItsSoWeird)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GATE_GUARD,
-     CONDITION_ALWAYS, MSGNO(MsgTheseAreRough)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraTheseAreRoughTimes)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLE_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgTheChampaDug)},
+     MSGNO(MsgMadraChampaDugThisHoleWhen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ICE_SHAFT_WITNESS,
-     CONDITION_ALWAYS, MSGNO(MsgItWasAll)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraItWasAllJustDream)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FRIGHTENED_WITNESS,
-     CONDITION_ALWAYS, MSGNO(MsgMySoreBottom)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraMySoreBottomTellsMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgTheItemVendor)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraItemVendorGotWounded)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgThoseLousyChampa)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraThoseLousyChampaNextTime)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraBriggsAndHisMen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANTS_SIBLING,
-     CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraBriggsAndHisMen)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2079,40 +2071,41 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
     {TRIGGER_STEP, 20, FLAG_MADRA_RAID_QUESTIONING_DONE,
      EVENT(Madra_StopPartyAfterRaid)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
-     MSGNO(MsgWeThinkThe)},
+     MSGNO(MsgMadraWeThinkKibomboCameInto)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,
-     MSGNO(MsgSoTheKibombo)},
+     MSGNO(MsgMadraSoKibomboGotIntoMadra)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_WAVE, CONDITION_ALWAYS,
-     MSGNO(MsgTheKibomboCame)},
-    {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS, MSGNO(MsgIHeardThatThe)},
+     MSGNO(MsgMadraKibomboCameInThroughBroken)},
+    {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
+     MSGNO(MsgMadraIHeardThatElderGot)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
-     MSGNO(MsgIGuessThat)},
+     MSGNO(MsgMadraIGuessThatGuy)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
-     MSGNO(MsgGondowanSoundsLike)},
+     MSGNO(MsgMadraGondowanSoundsLikeFrighteningPlace)},
     {TRIGGER_TALK, ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
      EVENT(Madra_AskAboutBriggs)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SUPERCONTINENT, CONDITION_ALWAYS,
-     MSGNO(MsgICanTBelieveSomeone)},
+     MSGNO(MsgMadraICantBelieveSomeoneStomped)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA, CONDITION_ALWAYS,
-     MSGNO(MsgNowThatWe)},
+     MSGNO(MsgMadraNowThatWereSealingOff)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgThereAreStill)},
+     MSGNO(MsgMadraThereAreStillPlenty)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_CHAMPAS_PLAN, CONDITION_ALWAYS,
-     MSGNO(MsgBriggsDidnT)},
+     MSGNO(MsgMadraBriggsDidntHaveNearly)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_BIG_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgTheseCavesWere)},
+     MSGNO(MsgMadraTheseCavesWereMySecret)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER, CONDITION_ALWAYS,
      MSGNO(MsgThatGuyWasn)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_PRISONER, CONDITION_ALWAYS,
      MSGNO(MsgOhWeReleased)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_FRIEND, CONDITION_ALWAYS,
-     MSGNO(MsgEveryoneYelledAt)},
+     MSGNO(MsgMadraEveryoneYelledAtMe)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_PARTNER, CONDITION_ALWAYS,
-     MSGNO(MsgYouShouldaSeen)},
+     MSGNO(MsgMadraYouShouldaSeenMyPartner)},
     {TRIGGER_TALK, ACTOR_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgFirstPiratesRaid)},
+     MSGNO(MsgMadraFirstPiratesRaidOurTown)},
     {TRIGGER_TALK, ACTOR_SECOND_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgMyGuessIs)},
+     MSGNO(MsgMadraMyGuessIsKibomboHave)},
     {TRIGGER_TALK, ACTOR_HOLE_WORKER, CONDITION_ALWAYS,
      EVENT(Madra_AskComingThroughSealedHole)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
@@ -2122,49 +2115,49 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
     {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
      EVENT(Madra_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_ELDER,
-     CONDITION_ALWAYS, MSGNO(MsgIfItWerenT)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIfItWerent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS,
-     CONDITION_ALWAYS, MSGNO(MsgIfGondowanIs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIfGondowanIsReally)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_WAVE,
-     CONDITION_ALWAYS, MSGNO(MsgItSStrangeIt)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraItsStrangeItsAlmost)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
-     MSGNO(MsgTheMayorIs)},
+     MSGNO(MsgMadraMayorIsSupposed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
-     CONDITION_ALWAYS, MSGNO(MsgHeToldUs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraHeToldUsHe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
-     CONDITION_ALWAYS, MSGNO(MsgInGondowanThey)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraInGondowanTheyHaveEvil)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
-     MSGNO(MsgIHeardThe)},
+     MSGNO(MsgMadraIHeardGuysWhoCaptured)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SUPERCONTINENT,
-     CONDITION_ALWAYS, MSGNO(MsgIfTheyWere)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIfTheyWereStrongEnough)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA,
-     CONDITION_ALWAYS, MSGNO(MsgItWasSo)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraItWasSoConvenientBeing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgIWonderWhoDug)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIWonderWhoDugThose)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_CHAMPAS_PLAN,
-     CONDITION_ALWAYS, MSGNO(MsgWaitIfBriggs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraWaitIfBriggsOnlyHas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_BIG_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgIVeNeverSeenAny)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIveNeverSeenAnyMonsters)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER,
      CONDITION_ALWAYS, MSGNO(MsgDidnTSeem)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_PRISONER,
      CONDITION_ALWAYS, MSGNO(MsgWasSoHappy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_FRIEND,
-     CONDITION_ALWAYS, MSGNO(MsgIDidnT)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIDidntHaveChance)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_PARTNER,
-     CONDITION_ALWAYS, MSGNO(MsgICanTBelieveNobody)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraICantBelieveNobodySeems)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgTheWayThings)},
+     MSGNO(MsgMadraWayThingsHaveBeenGoing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GATE_GUARD,
-     CONDITION_ALWAYS, MSGNO(MsgIVeBeenStanding)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIveBeenStanding)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLE_WORKER, CONDITION_ALWAYS,
-     MSGNO(MsgWeSealedUp)},
+     MSGNO(MsgMadraWeSealedUpHole)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgTheChampaWeapons)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraChampaWeaponsWeFoundBefore)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgTheGroupThat)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraGroupThatAttackedFromEast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgThatShinIs)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraThatShinIsAlwaysBugging)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2194,42 +2187,45 @@ struct Trigger gMadra_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_STEP, 21, FLAG_MADRA_KARST_MET, EVENT(Madra_KarstCallsForMenardi)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
-     MSGNO(MsgIDonTThink)},
+     MSGNO(MsgMadraIDontThinkMayorEver)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,
-     MSGNO(MsgWeGoTo)},
+     MSGNO(MsgMadraWeGoToAll)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_WAVE, CONDITION_ALWAYS,
-     MSGNO(MsgIHeardTheBoat)},
+     MSGNO(MsgMadraIHeardBoatMayorGot)},
     {TRIGGER_TALK, ACTOR_BOAT_OWNER, FLAG_MADRA_TOLD_OF_JENNA,
      EVENT(Madra_AskAboutJenna)},
     {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
-     MSGNO(MsgThoseTravelersLooked)},
+     MSGNO(MsgMadraThoseTravelersLookedWorriedAbout)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
-     MSGNO(MsgIWonderIfThe)},
+     MSGNO(MsgMadraIWonderIfLegends)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
      MSGNO(MsgIDonTKnowWhatWill)},
-    {TRIGGER_TALK, ACTOR_BRIGGS_FAN, CONDITION_ALWAYS, MSGNO(MsgAGroupOfSharp)},
+    {TRIGGER_TALK, ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
+     MSGNO(MsgMadraGroupOfSharpLookingTravelers)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SUPERCONTINENT, CONDITION_ALWAYS,
-     MSGNO(MsgIfYouHaveA)},
+     MSGNO(MsgMadraIfYouHaveBigEnough)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA, CONDITION_ALWAYS,
-     MSGNO(MsgIWasAt)},
+     MSGNO(MsgMadraIWasAtMayorsHouse)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgItSNotThat)},
+     MSGNO(MsgMadraItsNotThatIDont)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_CHAMPAS_PLAN, CONDITION_ALWAYS,
-     MSGNO(MsgTheMayorAsked)},
+     MSGNO(MsgMadraMayorAskedMeToGo)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_BIG_HOLE, CONDITION_ALWAYS,
-     MSGNO(MsgItSeemsNo)},
+     MSGNO(MsgMadraItSeemsNoOne)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER, CONDITION_ALWAYS,
      MSGNO(MsgSayThereWas)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_PRISONER, CONDITION_ALWAYS,
-     MSGNO(MsgIThoughtShin)},
+     MSGNO(MsgMadraIThoughtShinAndOthers)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_FRIEND, CONDITION_ALWAYS,
      MSGNO(MsgWhenAndHis)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_PARTNER, CONDITION_ALWAYS,
-     MSGNO(MsgUhhhnnnUhhhnnn2)},
+     MSGNO(MsgMadraUhhhnnnUhhhnnn)},
     {TRIGGER_TALK, ACTOR_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgTheMayorFinally)},
-    {TRIGGER_TALK, ACTOR_SECOND_GATE_GUARD, CONDITION_ALWAYS, MSGNO(MsgHeyItS)},
-    {TRIGGER_TALK, ACTOR_HOLE_WORKER, CONDITION_ALWAYS, MSGNO(MsgYeahWellWe)},
+     MSGNO(MsgMadraMayorFinallyReturnedFromAlhafra)},
+    {TRIGGER_TALK, ACTOR_SECOND_GATE_GUARD, CONDITION_ALWAYS,
+     MSGNO(MsgMadraHeyItsYouGuys)},
+    {TRIGGER_TALK, ACTOR_HOLE_WORKER, CONDITION_ALWAYS,
+     MSGNO(MsgMadraYeahWellWereWorkin)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
      EVENT(Madra_TalkToWeaponMerchant)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
@@ -2241,50 +2237,50 @@ struct Trigger gMadra_TriggersOnReturn[] = {
     {TRIGGER_TALK, ACTOR_KIBOMBO_WORRIER, CONDITION_ALWAYS,
      EVENT(Madra_AskAfraidOfKibombo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_ELDER,
-     CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyoneBe)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraWhyWouldAnyoneBeHappy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS,
-     CONDITION_ALWAYS, MSGNO(MsgTheyVeBeenHaving)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraTheyveBeenHavingSoMany)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_WAVE,
-     CONDITION_ALWAYS, MSGNO(MsgEveryoneGetsThe)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraEveryoneGetsUrgeToExplore)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
-     MSGNO(MsgIWonderWhy)},
+     MSGNO(MsgMadraIWonderWhyThoseTravelers)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
-     CONDITION_ALWAYS, MSGNO(MsgWhatWasThat)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraWhatWasThatIslandAgain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
-     CONDITION_ALWAYS, MSGNO(MsgThePeopleOf)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraPeopleOfMadraKnowOur)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
-     MSGNO(MsgThatIslandThat)},
+     MSGNO(MsgMadraThatIslandThatGroup)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SUPERCONTINENT,
-     CONDITION_ALWAYS, MSGNO(MsgHowBigWould)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraHowBigWouldShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WHO_SCARED_THE_CHAMPA,
-     CONDITION_ALWAYS, MSGNO(MsgTheseNewBoats)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraTheseNewBoatsApparentlyUse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CHAMPAS_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgIfABuilding)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIfBuildingHasBrokenColumns)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_CHAMPAS_PLAN,
-     CONDITION_ALWAYS, MSGNO(MsgSailorsAreSupposed)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraSailorsAreSupposedToUse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_BIG_HOLE,
-     CONDITION_ALWAYS, MSGNO(MsgOurMayorS)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraOurMayorsDoneSoLittle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_AGAINST_THE_PRISONER,
-     CONDITION_ALWAYS, MSGNO(MsgIsTurningWater)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIsTurningWaterToIce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_WOMAN_ON_THE_PRISONER,
      CONDITION_ALWAYS, MSGNO(MsgMadraIsAlways)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_FRIEND,
      CONDITION_ALWAYS, MSGNO(MsgSoThisFellow)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_ON_HIS_PARTNER,
-     CONDITION_ALWAYS, MSGNO(MsgIKnewI)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraIKnewIShouldHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GATE_GUARD, CONDITION_ALWAYS,
-     MSGNO(MsgHeWasGone)},
+     MSGNO(MsgMadraHeWasGoneSoLong)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GATE_GUARD,
-     CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerDo)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraHowMuchLongerDo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgThePiratesAnd)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraPiratesAndKibomboMustHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgThatNightThe)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraThatNightChampaCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgShinSeemsTerrified)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraShinSeemsTerrifiedOfPiers)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KARST, CONDITION_ALWAYS,
      EVENT(Madra_MindReadKarst)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KIBOMBO_WORRIER,
-     CONDITION_ALWAYS, MSGNO(MsgWeReStill)},
+     CONDITION_ALWAYS, MSGNO(MsgMadraWereStillRecoveringFromKibombo)},
     {TRIGGER_TABLE_END},
 };

@@ -4,6 +4,7 @@
 /// a visitor takes song requests.
 
 #include "battle/battle.h"
+#include "sprite_ids.h"
 #include "window/message_argument.h"
 #include "field/field_work.h"
 #include "sound/sound_driver_symbols.h"
@@ -52,6 +53,41 @@ void LinkLobby_InitializeSerial(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+/// The lobby's people, by the rows of gActorPlacements, as The Broken Seal's
+/// Battle Arena keeps them where it has the same ones; the party's rows go to
+/// their party slots.
+enum LinkLobbyActorId {
+  ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle
+  ACTOR_LINKED_WINS_TELLER,             ///< reports the linked battles won
+  ACTOR_HEALER,                         ///< opens a Sanctum's services
+  ACTOR_GREETER, ///< "Welcome to the Battle Arena, where..."
+  /// "Hm... It comes in like this... Then you do this, and... Whoa, that's
+  /// not right..."
+  ACTOR_FUMBLING_VISITOR,
+  /// "You look a little scrawny...", then "I'll be rooting..."
+  ACTOR_ROOTING_VISITOR,
+  /// "I like my men macho"; with L or R held, takes a song request.
+  ACTOR_MACHO_LOVING_VISITOR,
+  ACTOR_DEBUG_HELPER, ///< loads a debug parameter set
+  /// Explains the linked finals' limit of three allies, then the party order.
+  ACTOR_PARTY_ORDER_VISITOR,
+  /// "In the linked finals, you can't delay after your opponent selects a
+  /// move."
+  ACTOR_COMMAND_TIME_VISITOR,
+  /// "So you win against one guy, and then you lose against the next."
+  ACTOR_WIN_AND_LOSE_VISITOR,
+  /// "You could use Psynergy, Djinn, even summons and items!"
+  ACTOR_STRATEGY_VISITOR,
+  ACTOR_WARY_VISITOR, ///< "Should I enter or not? I'm so stressed..."
+  ACTOR_MONSTER_RULES_VISITOR,
+  ACTOR_MONSTER_WINS_TELLER, ///< reports the most Monster Battles won in a row
+  /// "Sometimes, your class changes when you unleash a Djinni."
+  ACTOR_CLASS_CHANGE_VISITOR,
+  ACTOR_SONG_REQUEST_TAKER, ///< "You have a song request?"
+  /// "I don't have the guts to fight in the battle arena."
+  ACTOR_GUTLESS_VISITOR
+};
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
@@ -189,9 +225,9 @@ s32 LinkLobby_PromptToParticipate(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgIfYouWantToParticipate);
+  Event_SetMessageId((s32)MsgLobbyIfYouWantToParticipate);
   // "If you want to participate, please step into the circle!"
-  Event_OpenMessage(8, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   wait(5);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_End();
@@ -206,9 +242,9 @@ s32 LinkLobby_ReportDisconnection(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
-  Event_SetMessageId((s32)MsgTheLinkWas);
+  Event_SetMessageId((s32)MsgLobbyLinkWasDisconnected);
   // "The link was disconnected."
-  Event_OpenMessage(8, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
   Event_End();
 }
@@ -496,17 +532,11 @@ done:
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
-  volatile u16 *ime;
   u32 saved;
   u32 zero;
 
   state = &gSerialTransfer;
-  ime = &REG_IME;
-  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
-  do {
-    saved = *ime;
-    *ime = (u16)ime;
-  } while (0);
+  IRQ_LOCK(saved);
   zero = 0;
   state = &gSerialTransfer;
   state->status = 0x80;
@@ -516,7 +546,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;
   gSerialReceivedSize = zero;
-  *ime = saved;
+  IRQ_UNLOCK(saved);
 }
 
 /// Exchanges the two parties. The parent sends first, and the child (area flag
@@ -601,7 +631,7 @@ s32 LinkLobby_EnterBattle(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_03);
     LinkLobby_WriteSlotValue(2);
     if (!LinkLobby_PeerSlotMatches(2))
-      window = Message_OpenWindow(MsgAwaitingYourOpponent, 5, 4, 1);
+      window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4, 1);
     while (!LinkLobby_PeerSlotMatches(2)) {
       wait(1);
       stop = 0;
@@ -637,10 +667,10 @@ s32 LinkLobby_EnterBattle(void) {
     wait(8);
     TilesetAnim_Pause(5);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
-      Event_SetMessageId((s32)MsgGoodLuck2);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Event_SetMessageId((s32)MsgLobbyGoodLuck);
       // "Good luck!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       wait(45);
       Actor_SetSpeed(ACTOR_FELIX, 1);
       Actor_WalkTo(ACTOR_FELIX, 216, 184);
@@ -723,10 +753,10 @@ s32 LinkLobby_ChooseBattleMode(void) {
   s32 msg;
   s32 line;
 
-  msg = (s32)MsgPleaseSpeakTo;
+  msg = (s32)MsgLobbyPleaseSpeakToMeWhen;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
   if (LinkLobby_PeerSlotMatches(0) == 0)
     wait(1);
   if (LinkLobby_PeerSlotMatches(0) == 0) {
@@ -735,8 +765,8 @@ s32 LinkLobby_ChooseBattleMode(void) {
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(msg + 5);
       // "You do not have an opponent. Would you like to battle a monster?"
-      Event_OpenMessage(8, 0);
-      answer = Event_AskYesNoWithActorAnimation(4, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
+      answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
@@ -759,9 +789,9 @@ s32 LinkLobby_ChooseBattleMode(void) {
   } else {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       LinkLobby_WriteSlotValue(0);
-      Event_SetMessageId((s32)MsgYourOpponentHas);
+      Event_SetMessageId((s32)MsgLobbyYourOpponentHasArrived);
       // "Your opponent has arrived!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       Event_ClearFlag(FLAG_SCENE_TEMP_02);
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
     }
@@ -770,12 +800,12 @@ s32 LinkLobby_ChooseBattleMode(void) {
     message:
       Event_SetMessageId(line);
     open_message:
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01) &&
                !Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Event_SetMessageId(msg);
       // "Please speak to me when you want to fight in a battle."
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       Event_SetFlag(FLAG_AREA_TEMP_00);
     } else {
       Event_SetFlag(FLAG_AREA_TEMP_00);
@@ -784,8 +814,8 @@ s32 LinkLobby_ChooseBattleMode(void) {
       else
         Event_SetMessageId(msg + 1);
       // "Would you like to apply?"
-      Event_OpenMessage(8, 0);
-      if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
+      if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(0)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
           Event_SetFlag(0x172);
@@ -802,7 +832,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       } else {
         Event_SetMessageId(msg);
         // "Please speak to me when you want to fight in a battle."
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -822,7 +852,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
-    base = (s32)MsgItLooksLikeThisIs;
+    base = (s32)MsgLobbyItLooksLike;
     count = &gMainRoutineWork.linkTallies[4];
     if (*count != 0) {
       MessageArgument_ClearAll();
@@ -831,7 +861,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actor, 0);
     } else {
-      Event_SetMessageId((s32)MsgIWillTell);
+      Event_SetMessageId((s32)MsgLobbyIWillTell);
       // "I will tell you your total wins when you finish the linked finals."
       Event_ShowMessage(actor, 0);
     }
@@ -845,7 +875,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       // "You've won ... Linked Battle. Check the board on the wall for..."
       Event_ShowMessage(actor, 0);
     } else {
-      Event_SetMessageId((s32)MsgIWillTellYou);
+      Event_SetMessageId((s32)MsgLobbyIWillTellYouYourConsecutive);
       // "I will tell you your consecutive wins when you finish the finals."
       Event_ShowMessage(actor, 0);
     }
@@ -865,7 +895,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
-  Event_SetMessageId((s32)MsgChooseYourParameters);
+  Event_SetMessageId((s32)MsgLobbyChooseYourParametersHere);
   // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
@@ -903,21 +933,21 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     if (choice >= 0) {
       ok = DebugParameterSet_Load(choice);
     } else {
-      message = (s32)MsgWhatIsThis;
+      message = (s32)MsgLobbyWhatIsThisJustTease;
       goto show;
     }
     // The refusal jumps into the unknown-preset branch, so the two share one
     // message call.
     if (ok != 0) {
-      message = (s32)MsgThereSNoSuch;
+      message = (s32)MsgLobbyTheresNoSuchParameterAsk;
     show:
       Event_SetMessageId(message);
       // "There's no such parameter. Ask Mr. Sugimoto."
-      Event_ShowMessage(9, 0);
+      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
     } else {
-      Event_SetMessageId((s32)MsgTheSettingsAre);
+      Event_SetMessageId((s32)MsgLobbySettingsAreMadeRest);
       // "The settings are made. The rest is up to you."
-      Event_ShowMessage(9, 0);
+      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
     }
   }
   wait(10);
@@ -956,8 +986,8 @@ s32 LinkLobby_PartyContains(s32 owner) {
 UNUSED void LinkLobby_DoNothing(void) {}
 #undef LOBBY_PREFIX_LIMIT
 
-extern u8 MsgYouHaveA[];
-extern u8 MsgComeBackWhen[];
+extern u8 MsgLobbyYouHaveSongRequest[];
+extern u8 MsgLobbyComeBackWhenYoureReady[];
 extern u16 gLinkLobby_RequestableSounds[];
 extern s16 gData_02003860;
 
@@ -983,7 +1013,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
-  Event_SetMessageId((s32)MsgYouHaveA);
+  Event_SetMessageId((s32)MsgLobbyYouHaveSongRequest);
   // "You have a song request?"
   Event_ShowMessage(actor, 0);
   song = 0;
@@ -1035,7 +1065,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_PlaySound(MUS_LEMURIA_SPRING);
   /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
-    Event_SetMessageId((s32)MsgComeBackWhen);
+    Event_SetMessageId((s32)MsgLobbyComeBackWhenYoureReady);
   } while (0);
   // "Come back when you're ready to rock!"
   Event_ShowMessage(actor, 0);
@@ -1059,12 +1089,12 @@ void Event_Start(void);
  * conflicting types for `Actor_ShowEmoteById'. */
 extern void Actor_ShowEmoteById__talk(s32 actor, s32 animation,
                                       s32 flags) __asm__("Actor_ShowEmoteById");
-s32 Import_EventSetDestination(s32 scene, s32 entrance);
+void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
 s32 LinkLobby_TalkByProgress(s32 actor) {
-  s32 base = (s32)MsgItSOur;
+  s32 base = (s32)MsgLobbyItsOurTurnLetsGo;
   s32 lead = LinkLobby_PartyContains(4);
   s32 own = LinkLobby_PartyContains(actor);
 
@@ -1076,25 +1106,25 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
     base = Event_GetFlag(actor + 0x2f0);
     if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
       if (base)
-        base = (s32)MsgEverybodyDeservesA;
+        base = (s32)MsgLobbyEverybodyDeservesLittleCredit;
       else
-        base = (s32)MsgEverybodyDidGreat;
+        base = (s32)MsgLobbyEverybodyDidGreatIDidnt;
     } else {
       if (base)
-        base = (s32)MsgDonTBlame;
+        base = (s32)MsgLobbyDontBlameYourself;
       else
-        base = (s32)MsgYouWinSome;
+        base = (s32)MsgLobbyYouWinSomeYouLose;
     }
   } else if (lead != 0) {
     if (own == 0)
       base = (s32)MsgOkWeRe;
   } else {
-    base = (s32)MsgILlFight;
+    base = (s32)MsgLobbyIllFightEnoughForBoth;
   }
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
-  if (base == (s32)MsgILlFight && actor == 5) {
-    Actor_ShowEmoteById__talk(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  if (base == (s32)MsgLobbyIllFightEnoughForBoth && actor == 5) {
+    Actor_ShowEmoteById__talk(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Event_Wait(10);
   }
   Event_End();
@@ -1105,45 +1135,45 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
 s32 LinkLobby_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  /* FAKEMATCH(dead): the return in a once-only block. */
-  do {
-    return Import_EventSetDestination(SCENE_CLEAR, 1);
-  } while (0);
+  Import_EventSetDestination(SCENE_CLEAR, 1);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// The visitors' talk, by whether the party has fought here (flag 0x206);
-/// actor 14 takes song requests while L or R is held.
+/// the macho-loving visitor takes song requests while L or R is held.
 s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
-  if (actor == 14 && (gInput.held & KEYS_SHOULDERS)) {
-    LinkLobby_TakeSongRequest(14);
+  if (actor == ACTOR_MACHO_LOVING_VISITOR && (gInput.held & KEYS_SHOULDERS)) {
+    LinkLobby_TakeSongRequest(ACTOR_MACHO_LOVING_VISITOR);
     return;
   }
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SCENE_TEMP_06)) {
     switch (actor) {
-    case 13:
-      message = (s32)MsgILlBe;
+    case ACTOR_ROOTING_VISITOR:
+      message = (s32)MsgLobbyIllBeRooting;
       break;
-    case 14:
-      message = (s32)MsgILikeMy;
+    case ACTOR_MACHO_LOVING_VISITOR:
+      message = (s32)MsgLobbyILikeMyMenMacho;
       break;
     default:
-      message = (s32)MsgSometimesYourClass;
+      message = (s32)MsgLobbySometimesYourClassChangesWhen;
       break;
     }
   } else {
     switch (actor) {
-    case 13:
-      message = (s32)MsgYouLookA;
+    case ACTOR_ROOTING_VISITOR:
+      message = (s32)MsgLobbyYouLookLittleScrawny;
       break;
-    case 14:
-      message = (s32)MsgILikeMy;
+    case ACTOR_MACHO_LOVING_VISITOR:
+      message = (s32)MsgLobbyILikeMyMenMacho;
       break;
     default:
-      message = (s32)MsgSometimesYourClass;
+      message = (s32)MsgLobbySometimesYourClassChangesWhen;
       break;
     }
     Event_SetFlag(FLAG_SCENE_TEMP_06);
@@ -1152,13 +1182,14 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
   // "Sometimes, your class changes when you unleash a Djinni. You need to..."
   Event_OpenMessage(actor, 0);
   Event_Wait(1);
-  if (message == (s32)MsgYouLookA) {
-    Actor_StartRepeatedMotion(14, 1);
-    Actor_SetAnimation(14, 4);
+  if (message == (s32)MsgLobbyYouLookLittleScrawny) {
+    Actor_StartRepeatedMotion(ACTOR_MACHO_LOVING_VISITOR, 1);
+    Actor_SetAnimation(ACTOR_MACHO_LOVING_VISITOR, 4);
     Event_Wait(15);
-    Actor_FaceActor(14, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_MACHO_LOVING_VISITOR, gMainRoutineWork.leaderActorId,
+                    0);
     Event_Wait(5);
-    Event_OpenMessage(14, 0);
+    Event_OpenMessage(ACTOR_MACHO_LOVING_VISITOR, 0);
   }
   Event_End();
 }
@@ -1171,14 +1202,14 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
     if (Party_CountMembers() == 8)
-      message = (s32)MsgUpToThree;
+      message = (s32)MsgLobbyUpToThreeAlliesCan;
     else if (Party_CountMembers() <= 3)
-      message = (s32)MsgUpToThreeAllies;
+      message = (s32)MsgLobbyUpToThreeAlliesCanFight;
     else
-      message = (s32)MsgUpToThreeAlliesCan;
+      message = (s32)MsgLobbyUpToThreeAlliesCanFightInLinked;
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   } else {
-    message = (s32)MsgYouCanChange;
+    message = (s32)MsgLobbyYouCanChangeOrder;
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
   Event_SetMessageId(message);
@@ -1196,9 +1227,9 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Actor_FaceActor(id, gs->leaderActorId, 0);
   if (gs->linkTallies[2] != 0) {
     MessageArgument_Push(gs->linkTallies[2], MESSAGE_ARGUMENT_NUMBER);
-    Event_SetMessageId((s32)MsgYouVeWon);
+    Event_SetMessageId((s32)MsgLobbyYouveWonConsecutiveMonsterBattle);
   } else {
-    Event_SetMessageId((s32)MsgICanTWaitTo);
+    Event_SetMessageId((s32)MsgLobbyICantWaitToSee);
   }
   // "I can't wait to see how many Monster Battles you win. I'll be..."
   Event_OpenMessage(id, 0);
@@ -1212,18 +1243,17 @@ void MapGrid_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_End(void);
-s32 Import_EventSetDestination(s32 scene, s32 entrance);
 
 /// Saves and reports the link battle's results.
 s32 LinkLobby_SaveBattleResults(void) {
   Save_ProcessSelectedFile();
-  FieldMessage_Show(MsgBattleResultsWere, 1);
+  FieldMessage_Show(MsgLobbyBattleResultsWereSaved, 1);
 }
 
 /// Saves and reports the monster battle's results.
 s32 LinkLobby_SaveMonsterBattleResults(void) {
   Save_ProcessSelectedFile();
-  FieldMessage_Show(MsgMonsterBattleResults, 1);
+  FieldMessage_Show(MsgLobbyMonsterBattleResultsWereSaved, 1);
 }
 
 /// Draws value, at most 999, as three digits from right to left.
@@ -1324,10 +1354,10 @@ s32 LinkLobby_Initialize(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
-    Event_SetMessageId((s32)MsgNotBadWould + msg);
-    Event_OpenMessage(8, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+    Event_SetMessageId((s32)MsgLobbyNotBadWouldYouLike + msg);
+    Event_OpenMessage(ACTOR_ATTENDANT, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       if (wins > 90)
         wins = 90;
       GameFlag_SetByte(0x3f8, wins);
@@ -1340,14 +1370,14 @@ s32 LinkLobby_Initialize(void) {
       score = *(u16 *)score;
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
-        Event_SetMessageId((s32)MsgYouWonBattle);
+        Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
         // "You won ... battle. You broke the record!"
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
         LinkLobby_SaveMonsterBattleResults();
       } else {
-        Event_SetMessageId((s32)MsgYouWonBattlePlease);
+        Event_SetMessageId((s32)MsgLobbyYouWonBattlePleaseSpeak);
         // "You won ... battle. Please speak to me when you wish to battle..."
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
       LinkLobby_WriteSlotValue(0);
     }
@@ -1359,21 +1389,21 @@ s32 LinkLobby_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[3];
     MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
     score = *(u16 *)score;
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
-      Event_SetMessageId((s32)MsgYouWonBattle);
+      Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
       // "You won ... battle. You broke the record!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       LinkLobby_SaveMonsterBattleResults();
     } else {
-      Event_SetMessageId((s32)MsgYouWonBattleI);
+      Event_SetMessageId((s32)MsgLobbyYouWonBattleITold);
       // "You won ... battle. I told you our monsters were tough! Please..."
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
@@ -1437,10 +1467,10 @@ s32 LinkLobby_Initialize(void) {
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
-      Event_SetMessageId((s32)MsgNoteYouCan);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
+      Event_SetMessageId((s32)MsgLobbyNoteYouCantUseSleep);
       // "Note: you can't use the sleep function in battle stages!"
-      Event_ShowMessage(8, 0);
+      Event_ShowMessage(ACTOR_ATTENDANT, 0);
       Event_End();
     }
     gMainRoutineWork.idleSleepEnabled = 0;
@@ -1513,92 +1543,116 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(190, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, 1),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, 1),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(192, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 272, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(344, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 380, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 272, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 380, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 252, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 284, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(242, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 384, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(231, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(234, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 256, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(196, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(188, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(223, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(192, CONDITION_ALWAYS, 8, 360, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(0, 0x1000, MOVEMENT_TYPE_STAND, 324, 0, 216, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(1, 0x1001, MOVEMENT_TYPE_STAND, 296, 0, 168, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(2, 0x1002, MOVEMENT_TYPE_STAND, 352, 0, 152, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(3, 0x1003, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(6, 0x1006, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(7, 0x1007, MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(5, 0x1005, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 384, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 256, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, 8, 360, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, 0x1000, MOVEMENT_TYPE_STAND, 324, 0, 216, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, 0x1001, MOVEMENT_TYPE_STAND, 296, 0, 168, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, 0x1002, MOVEMENT_TYPE_STAND, 352, 0, 152, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, 0x1003, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, 0x1006, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, 0x1007, MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, 0x1005, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 /// Unused: a placement table nothing reads.
-u32 gLinkLobby_UnusedPlacements[] = {
-    0xffff00be, 1, 0x980000, 0, 0xcc0000, 0x1004000,
-    0xffff00bb, 1, 0x1180000, 0, 0xcc0000, 0x14000,
-    0xffff00c9, 1, 0x1300000, 0, 0xa80000, 0x10000,
-    0xffff00c0, 1, 0xc00000, 0, 0x1100000, 0x10000,
-    344, 1, 0x1480000, 0, 0x880000, 0x10000,
-    0xffff0056, 1, 0x400000, 0, 0x5c0000, 0x14000,
-    0xffff0078, 1, 0x280000, 0, 0x740000, 0x10000,
-    0xffff00f2, 1, 0x1000000, 0, 0x1800000, 0x14000,
-    0xffff00bf, 1, 0x680000, 0, 0xf80000, 0x14000,
-    0xffff00ba, 1, 0x1480000, 0, 0xf80000, 0x14000,
-    0x100e8, 1, 0x1600000, 0, 0x6c0000, 0x14000,
-    0x200e7, 1, 0x1600000, 0, 0x9c0000, 0x1c000,
-    0x300ea, 1, 0x1780000, 0, 0x880000, 0x18000,
-    0xffff00c4, 1, 0x400000, 0, 0x880000, 0x1c000,
-    0xffff00bc, 1, 0xf80000, 0, 0xb80000, 0x14000,
-    0xffff00df, 1, 0x1480000, 0, 0x580000, 0x14000,
-    0xffff00bb, 1, 0x480000, 0, 0x1200000, 0x10000,
-    0xffff00c0, 8, 0x1680000, 0, 0x1280000, 0x10000,
-    0x10000000, 1, 0x1480000, 0, 0x880000, 0x10000,
-    0x10010001, 1, 0x1600000, 0, 0x6c0000, 0x14000,
-    0x10020002, 1, 0x1600000, 0, 0x9c0000, 0x1c000,
-    0x10030003, 1, 0x1780000, 0, 0x880000, 0x18000,
-    0x10060006, 1, 0x980000, 0, 0x900000, 0x18000,
-    0x10070007, 1, 0x680000, 0, 0x900000, 0x10000,
-    0x10050005, 1, 0x800000, 0, 0x7c0000, 0x14000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gLinkLobby_UnusedPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, 1),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 272, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, 0x0, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 116, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 248, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, 0x1, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, 0x2, MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, 0x3, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 360, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, 0x1000, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, 0x1001, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, 0x1002, MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, 0x1003, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, 0x1006, MOVEMENT_TYPE_STAND, 152, 0, 144, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, 0x1007, MOVEMENT_TYPE_STAND, 104, 0, 144, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, 0x1005, MOVEMENT_TYPE_STAND, 128, 0, 124, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_TALK, 0, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 1, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 2, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 3, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 5, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 6, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseBattleMode)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(LinkLobby_ReportWinTallies)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(LinkLobby_OpenSanctum)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ISAAC, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_IVAN, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_MIA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_JENNA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_SHEBA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_PIERS, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ChooseBattleMode)},
+    {TRIGGER_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportWinTallies)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_OpenSanctum)},
+    {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyWelcomeToBattleArenaWhere)},
+    {TRIGGER_TALK, ACTOR_FUMBLING_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyHmItComesInLike)},
+    {TRIGGER_TALK, ACTOR_ROOTING_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkToVisitor)},
+    {TRIGGER_TALK, ACTOR_MACHO_LOVING_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkToVisitor)},
+    {TRIGGER_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
      EVENT(LinkLobby_ChooseDebugParameterSet)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(LinkLobby_ExplainPartyOrder)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouCouldUse)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgShouldIEnter)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(LinkLobby_ReportMonsterRecord)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(LinkLobby_TakeSongRequest)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
+    {TRIGGER_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ExplainPartyOrder)},
+    {TRIGGER_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyInLinkedFinalsYouCant)},
+    {TRIGGER_TALK, ACTOR_WIN_AND_LOSE_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbySoYouWinAgainstOne)},
+    {TRIGGER_TALK, ACTOR_STRATEGY_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyYouCouldUsePsynergyDjinn)},
+    {TRIGGER_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyShouldIEnterOrNot)},
+    {TRIGGER_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyMonsterBattleRulesSay)},
+    {TRIGGER_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportMonsterRecord)},
+    {TRIGGER_TALK, ACTOR_CLASS_CHANGE_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbySometimesYourClassChangesWhen)},
+    {TRIGGER_TALK, ACTOR_SONG_REQUEST_TAKER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TakeSongRequest)},
+    {TRIGGER_TALK, ACTOR_GUTLESS_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyIDontHaveGuts)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
     {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},

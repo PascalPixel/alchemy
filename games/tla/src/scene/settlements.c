@@ -5,6 +5,7 @@
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
 #include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -28,13 +29,89 @@
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
+
+/// The Gondowan Settlement, by the rows of
+/// gSettlements_GondowanSettlementPlacements.
+enum GondowanSettlementActorId {
+  ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK = ACTOR_FIRST_PLACED,
+  ACTOR_GONDOWAN_BOY
+};
+
+/// The Gondowan Settlement's houses.
+enum GondowanSettlementHousesActorId {
+  /// "I hear the Kibombo has finally..."
+  ACTOR_WOMAN_ON_THE_KIBOMBO = ACTOR_FIRST_PLACED
+};
+
+/// The Hesperia Settlement, by the rows of
+/// gSettlements_HesperiaSettlementPlacements.
+enum HesperiaSettlementActorId {
+  ACTOR_HESPERIA_MAN = ACTOR_FIRST_PLACED,
+  ACTOR_SPROUT, ///< grown into a vine (Settlements_GrowVine)
+  ACTOR_WALL_CRATE,
+  ACTOR_TINDER
+};
+
+/// The Hesperia Settlement's houses.
+enum HesperiaSettlementHousesActorId {
+  /// "There's a place called Shaman Village..."
+  ACTOR_WOMAN_ON_SHAMAN_VILLAGE = ACTOR_FIRST_PLACED,
+  /// "The people of Shaman Village..."
+  ACTOR_BOY_ON_THE_SHAMANS
+};
+
+/// Kalt Island, by the rows of gSettlements_KaltIslandPlacements.
+enum KaltIslandActorId {
+  /// The two posts of the rope Lash ties.
+  ACTOR_ROPE_POST_A = ACTOR_FIRST_PLACED,
+  ACTOR_ROPE_POST_B,
+  ACTOR_GEL,
+  ACTOR_APPLE ///< Settlements_CatchApple
+};
+
+/// Kalt Island's houses.
+enum KaltIslandHousesActorId {
+  /// "If you want to cross the glaciers of the Northern Sea..."
+  ACTOR_OLD_MAN_ON_THE_GLACIERS = ACTOR_FIRST_PLACED,
+  /// "A long time ago, we used to trade with a village named Prox..."
+  ACTOR_OLD_WOMAN_ON_PROX_TRADE
+};
+
+/// SW Atteka Islet, by the rows of gSettlements_AttekaIsletPlacements.
+enum AttekaIsletActorId {
+  ACTOR_ISLANDER = ACTOR_FIRST_PLACED,
+  ACTOR_PILLAR,      ///< moved over the falls (Settlements_MovePillar)
+  ACTOR_FALLS_CRATE, ///< moved over the falls (Settlements_MoveCrate)
+  /// The eleven stones of the river, alike, bobbing in the current.
+  ACTOR_RIVER_STONE_A,
+  ACTOR_RIVER_STONE_B,
+  ACTOR_RIVER_STONE_C,
+  ACTOR_RIVER_STONE_D,
+  ACTOR_RIVER_STONE_E,
+  ACTOR_RIVER_STONE_F,
+  ACTOR_RIVER_STONE_G,
+  ACTOR_RIVER_STONE_H,
+  ACTOR_RIVER_STONE_I,
+  ACTOR_RIVER_STONE_J,
+  ACTOR_RIVER_STONE_K,
+  ACTOR_BOULDER, ///< raised by Lift
+  /// The Djinni the game's text calls Wind19 (FLAG_DJINNI(DJINNI_79)),
+  /// met in Settlements_MeetLostJupiterDjinni.
+  ACTOR_JUPITER_DJINNI
+};
+
+/// SW Atteka Islet's houses.
+enum AttekaIsletHousesActorId {
+  /// "There's nothing to the west..."
+  ACTOR_ISLANDER_ON_THE_WEST = ACTOR_FIRST_PLACED
+};
 #include "system/iwram_call.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 
 s32 Trig_Cos(s32 angle);
 
-extern u8 MsgSettlements01[];
+extern u8 MsgSettlementsDontTellMeYoureHere[];
 
 #include "system/frame.h"
 
@@ -56,7 +133,7 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
-void Settlements_EnterDoor(void);
+void Settlements_ClimbDownLadder(void);
 void Settlements_DriftSmoke(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_Release(struct Actor *object);
@@ -71,8 +148,8 @@ void ItemDisplay_ShowItem(s32 a, s32 b);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
-extern u32 gSettlements_Room5Regions[];
-extern u32 gSettlements_Room3Regions[];
+extern u32 gSettlements_HesperiaSettlementHousesRegions[];
+extern u32 gSettlements_GondowanSettlementCaveRegions[];
 
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
@@ -124,9 +201,9 @@ void Settlements_CutLeftBush(void);
 
 void Settlements_CutStairsBush(void);
 
-void Settlements_EnterDoor5(void);
+void Settlements_StepOntoLadderFromEast(void);
 
-void Settlements_EnterDoor3(void);
+void Settlements_TurnAndClimbDownLadder(void);
 
 void Settlements_StepOntoIce(void);
 
@@ -255,44 +332,44 @@ u32 *Scene_GetExitRegions(void) {
   u32 *placements;
 
   if (scene == SCENE_SETTLEMENTS_5)
-    return gSettlements_Room5Regions;
+    return gSettlements_HesperiaSettlementHousesRegions;
   placements = 0;
   if (scene == SCENE_SETTLEMENTS_3)
-    placements = gSettlements_Room3Regions;
+    placements = gSettlements_GondowanSettlementCaveRegions;
   return placements;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gSettlements_Placements[];
-extern struct ActorPlacement gSettlements_Room1Placements[];
-extern struct ActorPlacement gSettlements_Room2Placements[];
-extern struct ActorPlacement gSettlements_Room4Placements[];
-extern struct ActorPlacement gSettlements_Room5Placements[];
-extern struct ActorPlacement gSettlements_Room9Placements[];
-extern struct ActorPlacement gSettlements_Room10Placements[];
-extern struct ActorPlacement gSettlements_Room7Placements[];
-extern struct ActorPlacement gSettlements_Room8Placements[];
+extern struct ActorPlacement gSettlements_GondowanSettlementPlacements[];
+extern struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[];
+extern struct ActorPlacement gSettlements_HesperiaSettlementPlacements[];
+extern struct ActorPlacement gSettlements_HesperiaSettlementHousesPlacements[];
+extern struct ActorPlacement gSettlements_AttekaIsletPlacements[];
+extern struct ActorPlacement gSettlements_AttekaIsletHousesPlacements[];
+extern struct ActorPlacement gSettlements_KaltIslandPlacements[];
+extern struct ActorPlacement gSettlements_KaltIslandHousesPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SETTLEMENTS_1)
-    return gSettlements_Room1Placements;
+    return gSettlements_GondowanSettlementPlacements;
   if (scene == SCENE_SETTLEMENTS_2)
-    return gSettlements_Room2Placements;
+    return gSettlements_GondowanSettlementHousesPlacements;
   if (scene == SCENE_SETTLEMENTS_4)
-    return gSettlements_Room4Placements;
+    return gSettlements_HesperiaSettlementPlacements;
   if (scene == SCENE_SETTLEMENTS_5)
-    return gSettlements_Room5Placements;
+    return gSettlements_HesperiaSettlementHousesPlacements;
   if (scene == SCENE_SETTLEMENTS_7)
-    return gSettlements_Room7Placements;
+    return gSettlements_KaltIslandPlacements;
   if (scene == SCENE_SETTLEMENTS_8)
-    return gSettlements_Room8Placements;
+    return gSettlements_KaltIslandHousesPlacements;
   if (scene == SCENE_SETTLEMENTS_9)
-    return gSettlements_Room9Placements;
+    return gSettlements_AttekaIsletPlacements;
   if (scene == SCENE_SETTLEMENTS_10)
-    return gSettlements_Room10Placements;
+    return gSettlements_AttekaIsletHousesPlacements;
   return gSettlements_Placements;
 }
 
@@ -301,7 +378,7 @@ void Settlements_CatchApple(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(11, 0, 0);
+  Actor_SetPosition(ACTOR_APPLE, 0, 0);
   Event_SetFlag(0xf5d);
   ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
@@ -310,7 +387,7 @@ void Settlements_CatchApple(void) {
 }
 
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
-  s32 msg = (s32)MsgSettlements01;
+  s32 msg = (s32)MsgSettlementsDontTellMeYoureHere;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -342,12 +419,12 @@ void Settlements_CutStairsBush(void) {
   Event_SetFlag(0xa60);
 }
 
-void Settlements_EnterDoor(void) {
+void Settlements_ClimbDownLadder(void) {
   s32 next = gFieldWork->stepTrigger;
 
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_Get(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
@@ -362,27 +439,27 @@ void Settlements_EnterDoor(void) {
   Event_End();
 }
 
-void Settlements_EnterDoor4(void) {
+void Settlements_StepOntoLadderFromWest(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
-  Settlements_EnterDoor();
+  Settlements_ClimbDownLadder();
 }
 
-void Settlements_EnterDoor5(void) {
+void Settlements_StepOntoLadderFromEast(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
   Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
-  Settlements_EnterDoor();
+  Settlements_ClimbDownLadder();
 }
 
-void Settlements_EnterDoor3(void) {
+void Settlements_TurnAndClimbDownLadder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-  Settlements_EnterDoor();
+  Settlements_ClimbDownLadder();
 }
 
 void Settlements_GrowVine(void) {
@@ -391,34 +468,34 @@ void Settlements_GrowVine(void) {
 }
 
 extern struct Trigger gSettlements_Triggers[];
-extern struct Trigger gSettlements_Room1Triggers[];
-extern struct Trigger gSettlements_Room2Triggers[];
-extern struct Trigger gSettlements_Room4Triggers[];
-extern struct Trigger gSettlements_Room5Triggers[];
-extern struct Trigger gSettlements_Room7Triggers[];
-extern struct Trigger gSettlements_Room8Triggers[];
-extern struct Trigger gSettlements_Room9Triggers[];
-extern struct Trigger gSettlements_Room10Triggers[];
+extern struct Trigger gSettlements_GondowanSettlementTriggers[];
+extern struct Trigger gSettlements_GondowanSettlementHousesTriggers[];
+extern struct Trigger gSettlements_HesperiaSettlementTriggers[];
+extern struct Trigger gSettlements_HesperiaSettlementHousesTriggers[];
+extern struct Trigger gSettlements_KaltIslandTriggers[];
+extern struct Trigger gSettlements_KaltIslandHousesTriggers[];
+extern struct Trigger gSettlements_AttekaIsletTriggers[];
+extern struct Trigger gSettlements_AttekaIsletHousesTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SETTLEMENTS_1)
-    return gSettlements_Room1Triggers;
+    return gSettlements_GondowanSettlementTriggers;
   if (scene == SCENE_SETTLEMENTS_2)
-    return gSettlements_Room2Triggers;
+    return gSettlements_GondowanSettlementHousesTriggers;
   if (scene == SCENE_SETTLEMENTS_4)
-    return gSettlements_Room4Triggers;
+    return gSettlements_HesperiaSettlementTriggers;
   if (scene == SCENE_SETTLEMENTS_5)
-    return gSettlements_Room5Triggers;
+    return gSettlements_HesperiaSettlementHousesTriggers;
   if (scene == SCENE_SETTLEMENTS_7)
-    return gSettlements_Room7Triggers;
+    return gSettlements_KaltIslandTriggers;
   if (scene == SCENE_SETTLEMENTS_8)
-    return gSettlements_Room8Triggers;
+    return gSettlements_KaltIslandHousesTriggers;
   if (scene == SCENE_SETTLEMENTS_9)
-    return gSettlements_Room9Triggers;
+    return gSettlements_AttekaIsletTriggers;
   if (scene == SCENE_SETTLEMENTS_10)
-    return gSettlements_Room10Triggers;
+    return gSettlements_AttekaIsletHousesTriggers;
   return gSettlements_Triggers;
 }
 
@@ -427,7 +504,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;
@@ -513,10 +590,10 @@ void Settlements_SetUpKaltIsland(void) {
   Rope_Initialize();
   Settlements_Func_02002180(1, 0x203, 8, 9);
   if (Event_GetFlag(0xf5d)) {
-    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
   }
-  actor = (struct OrbitObject *)Actor_Get(11);
+  actor = (struct OrbitObject *)Actor_Get(ACTOR_APPLE);
   sprite = actor->sprite;
   sprite->flags09Mode = 1;
   sprite->flags05Bit5 = 0;
@@ -554,19 +631,19 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
-      Actor_SetPosition(10, 0, 0);
-    Actor_GetById(10)->priorityFlags |= 2;
-    Actor_SetAnimation(18, 2);
-    Actor_SetAnimation(19, 2);
-    Actor_SetAnimation(21, 2);
+      Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
+    Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= 2;
+    Actor_SetAnimation(ACTOR_RIVER_STONE_H, 2);
+    Actor_SetAnimation(ACTOR_RIVER_STONE_I, 2);
+    Actor_SetAnimation(ACTOR_RIVER_STONE_K, 2);
     if (Event_GetFlag(FLAG_SCENE_TEMP_05))
-      Actor_SetAnimation(10, 2);
+      Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
     Settlements_StartWaterfall();
 #if TLA_PATCH_1
     if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, 184, 184);
-      Actor_GetById(21)->motionFlags = 0;
+      Actor_SetPosition(ACTOR_PILLAR, 0, 0);
+      Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
+      Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
@@ -574,7 +651,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_SETTLEMENTS_4) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
-      Actor_SetAnimation(9, 4);
+      Actor_SetAnimation(ACTOR_SPROUT, 4);
     }
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         Event_GetFlag(FLAG_SCENE_TEMP_20)) {
@@ -602,9 +679,9 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
     if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(21, 184, 184);
-      Actor_GetById(21)->motionFlags = 0;
+      Actor_SetPosition(ACTOR_PILLAR, 0, 0);
+      Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
+      Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
@@ -751,7 +828,7 @@ void Settlements_BlockFallsObject(void) {
 void Settlements_SplashCrate(s32 id);
 
 void Settlements_SinkPillar(void) {
-  struct Actor *object = Actor_GetById(9);
+  struct Actor *object = Actor_GetById(ACTOR_PILLAR);
   s32 column = object->x.fixed >> 20;
   s32 row = object->z.fixed >> 20;
   s32 i;
@@ -763,17 +840,17 @@ void Settlements_SinkPillar(void) {
       Event_Wait(1);
     }
     Settlements_SplashCrate(9);
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(21, 184, 184);
-    Actor_GetById(21)->motionFlags = 0;
-    Actor_GetById(21)->y.fixed -= px(64);
+    Actor_SetPosition(ACTOR_PILLAR, 0, 0);
+    Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
+    Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
+    Actor_GetById(ACTOR_RIVER_STONE_K)->y.fixed -= px(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
 }
 
 void Settlements_SlideCrateDownFalls(void) {
-  struct Actor *object = Actor_GetById(10);
+  struct Actor *object = Actor_GetById(ACTOR_FALLS_CRATE);
   s32 column = object->x.fixed >> 20;
   s32 row = object->z.fixed >> 20;
   s32 i;
@@ -791,33 +868,33 @@ void Settlements_SlideCrateDownFalls(void) {
     Settlements_SplashCrate(10);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 224, 1);
-    Actor_SetSpeed(10, 0.8);
-    Actor_SetDestinationOffset(10, 0, 8);
-    FieldActor_WaitForMoveById(10);
+    Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
+    Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 8);
+    FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
     FieldEvent_Wait(10);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-    Actor_SetSpeed(10, 2.4);
-    Actor_SetDestinationOffset(10, 0, 80);
-    FieldActor_WaitForMoveById(10);
+    Actor_SetSpeed(ACTOR_FALLS_CRATE, 2.4);
+    Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
+    FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
     Settlements_SplashCrate(10);
     if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
       FieldEvent_Wait(10);
-      Actor_SetSpeed(10, 0.8);
-      Actor_SetDestinationOffset(10, 0, 80);
-      FieldActor_WaitForMoveById(10);
-      Actor_SetSpeed(10, 2.5);
-      Actor_SetDestinationOffset(10, 0, 80);
+      Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
+      Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
+      FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
+      Actor_SetSpeed(ACTOR_FALLS_CRATE, 2.5);
+      Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
       FieldEvent_Wait(5);
-      Actor_SetPosition(10, 0, 0);
+      Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
       Event_SetFlag(FLAG_SCENE_TEMP_06);
     } else {
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
-      Actor_SetDestinationOffset(10, 0, 12);
-      FieldActor_WaitForMoveById(10);
+      Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 12);
+      FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
       FieldEvent_Wait(20);
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
-      Actor_SetAnimation(10, 2);
+      Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
       FieldEvent_Wait(30);
       Event_SetFlag(FLAG_SCENE_TEMP_05);
     }
@@ -879,7 +956,7 @@ void Settlements_StepOffWall(void) {
 }
 
 void Settlements_UnblockCrate(void) {
-  struct Actor *object = Actor_Get(10);
+  struct Actor *object = Actor_Get(ACTOR_WALL_CRATE);
   s32 x = object->x.fixed >> 20;
   s32 z = object->z.fixed >> 20;
 
@@ -917,8 +994,8 @@ void Settlements_DropCrate(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  EventCamera_FollowActor(10, 1);
-  object = Actor_Get(10);
+  EventCamera_FollowActor(ACTOR_WALL_CRATE, 1);
+  object = Actor_Get(ACTOR_WALL_CRATE);
   column = object->x.fixed >> 20;
   row = object->z.fixed >> 20;
   if (column == 12 && row == 15) {
@@ -941,8 +1018,8 @@ void Settlements_DropCrate(void) {
     SINK(32);
     Settlements_SpawnSplashRing(10);
     if (!Event_GetFlag(102)) {
-      Actor_SetPosition(11, 0, 0);
-      Actor_SetScript(10, gSettlements_CrateDropScript);
+      Actor_SetPosition(ACTOR_TINDER, 0, 0);
+      Actor_SetScript(ACTOR_WALL_CRATE, gSettlements_CrateDropScript);
       FieldEvent_Wait(20);
     }
     FieldEvent_Wait(20);
@@ -1058,7 +1135,7 @@ void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
-void Settlements_EnterDoor4(void);
+void Settlements_StepOntoLadderFromWest(void);
 void Settlements_GrowVine(void);
 void Settlements_EnterCave(void);
 void Settlements_PushIntoFalls(void);
@@ -1152,12 +1229,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSettlements_Room5Regions[] = {
+u32 gSettlements_HesperiaSettlementHousesRegions[] = {
     0x2e02a0, 0x2b00190, 0x1a0003e, 0xeffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gSettlements_Room3Regions[] = {
+u32 gSettlements_GondowanSettlementCaveRegions[] = {
     0xc00d4, 0xdc0084, 0x8c0014, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -1201,38 +1278,38 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gSettlements_Placements[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 808, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 808, FACING_NORTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room1Placements[] = {
+struct ActorPlacement gSettlements_GondowanSettlementPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room2Placements[] = {
+struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 632, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room4Placements[] = {
+struct ActorPlacement gSettlements_HesperiaSettlementPlacements[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(245, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room5Placements[] = {
+struct ActorPlacement gSettlements_HesperiaSettlementHousesPlacements[] = {
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 696, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room9Placements[] = {
+struct ActorPlacement gSettlements_AttekaIsletPlacements[] = {
     ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
@@ -1245,25 +1322,25 @@ struct ActorPlacement gSettlements_Room9Placements[] = {
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(246, 0x7f, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, 0x7f, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room10Placements[] = {
+struct ActorPlacement gSettlements_AttekaIsletHousesPlacements[] = {
     ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 816, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room7Placements[] = {
+struct ActorPlacement gSettlements_KaltIslandPlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(244, 0x52, MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, 0x52, MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gSettlements_Room8Placements[] = {
+struct ActorPlacement gSettlements_KaltIslandHousesPlacements[] = {
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 216, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
@@ -1280,19 +1357,21 @@ struct Trigger gSettlements_Triggers[] = {
 };
 // clang-format on
 
-struct Trigger gSettlements_Room1Triggers[] = {
+struct Trigger gSettlements_GondowanSettlementTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterDoor3)},
+     EVENT(Settlements_TurnAndClimbDownLadder)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterDoor4)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements04)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements06)},
+     EVENT(Settlements_StepOntoLadderFromWest)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK, CONDITION_ALWAYS,
+     EVENT(Settlements_WarnOfRiddleOfRock)},
+    {TRIGGER_TALK, ACTOR_GONDOWAN_BOY, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsThereWasGiantExplosion)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsMountainIsCalledMagmaRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GONDOWAN_BOY, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsExplosionsWithinMagmaRock)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10,
      CONDITION_ALWAYS, EVENT(Settlements_CutLeftBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11,
@@ -1300,107 +1379,121 @@ struct Trigger gSettlements_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room2Triggers[] = {
+struct Trigger gSettlements_GondowanSettlementHousesTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements05)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_KIBOMBO, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsIHearKibomboHasFinally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_KIBOMBO,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsWereLuckyRiverFloodsOver)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room4Triggers[] = {
+struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Settlements_EnterCave)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterDoor3)},
+     EVENT(Settlements_TurnAndClimbDownLadder)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterDoor4)},
+     EVENT(Settlements_StepOntoLadderFromWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 5, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterDoor5)},
+     EVENT(Settlements_StepOntoLadderFromEast)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, 34, 0x220, EVENT(Settlements_StepOntoWall)},
     {TRIGGER_STEP, 35, 0x1220, EVENT(Settlements_StepOffWall)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements10)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Settlements_MeetTinder)},
+    {TRIGGER_TALK, ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsYouMustBeVeryBrave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsForContinentAsDesolate)},
+    {TRIGGER_TALK, ACTOR_TINDER, CONDITION_ALWAYS,
+     EVENT(Settlements_MeetTinder)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_CRATE, CONDITION_ALWAYS,
      EVENT(Settlements_BlockCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Settlements_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, 0x230,
+     EVENT(Settlements_GrowVine)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room5Triggers[] = {
+struct Trigger gSettlements_HesperiaSettlementHousesTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements08)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements12)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_SHAMAN_VILLAGE, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsTheresPlaceCalledShamanVillage)},
+    {TRIGGER_TALK, ACTOR_BOY_ON_THE_SHAMANS, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsPeopleOfShamanVillage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_SHAMAN_VILLAGE,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsIThinkTheresCaveDown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_SHAMANS,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsLongAgoShamanWasRavaged)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room7Triggers[] = {
+struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Settlements_EnterCave)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_StepOffIce)},
+    {TRIGGER_STEP, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
+    {TRIGGER_STEP, ACTOR_APPLE, CONDITION_ALWAYS,
+     EVENT(Settlements_StepOffIce)},
     {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x203, EVENT(Settlements_LashRope)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xf5d,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x203,
+     EVENT(Settlements_LashRope)},
+    {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, 0xf5d,
      EVENT(Settlements_CatchApple)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room8Triggers[] = {
+struct Trigger gSettlements_KaltIslandHousesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements13)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements16)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_GLACIERS, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsIfYouWantToCross)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_PROX_TRADE, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsLongTimeAgoWeUsed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_GLACIERS,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsPeopleOfLohoHaveLegendary)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_PROX_TRADE,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsNorthernSeaIsThick)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgSettlements21))},
+     FIND_MESSAGE(MSGNO(MsgSettlementsTheresKalticStewMade))},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room9Triggers[] = {
+struct Trigger gSettlements_AttekaIsletTriggers[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ISLANDER, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsSeaWestOfHereSpills)},
+    {TRIGGER_TALK, ACTOR_JUPITER_DJINNI, CONDITION_ALWAYS,
      EVENT(Settlements_MeetLostJupiterDjinni)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsMyBuddyThinksImNuts)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
      0x204, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x204, EVENT(Settlements_MovePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, 0x204,
+     EVENT(Settlements_MovePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      0x205, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x205, EVENT(Settlements_MoveCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE, 0x205,
+     EVENT(Settlements_MoveCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x208,
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, 0x208,
      EVENT(Settlements_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gSettlements_Room10Triggers[] = {
+struct Trigger gSettlements_AttekaIsletHousesTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements17)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements19)},
+    {TRIGGER_TALK, ACTOR_ISLANDER_ON_THE_WEST, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsTheresNothingToWest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_ON_THE_WEST,
+     CONDITION_ALWAYS, MSGNO(MsgSettlementsCurrentsAreSoStrongNear)},
     {TRIGGER_TABLE_END},
 };
 

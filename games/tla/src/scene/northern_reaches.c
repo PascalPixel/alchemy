@@ -3,6 +3,8 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "graphics/palette_buffers.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "system/io_reg.h"
 #include "battle/battle.h"
@@ -29,6 +31,15 @@
 #include "graphics/resource.h"
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
+
+/// The Northern Reaches, by the rows of gActorPlacements; the rows for
+/// Jenna, Sheba and Piers go to their party slots.
+enum NorthernReachesActorId {
+  ACTOR_SHIP = ACTOR_FIRST_PLACED, ///< the ship at rest, the leader at sea
+  ACTOR_MAGMA_BALL_SHOT, ///< the Magma Ball fired at the ice wall (sprite 263)
+  ACTOR_BLAST,           ///< its burst at the wall (sprite 285)
+  ACTOR_KRADEN
+};
 
 struct IceShard;
 struct IceShardSpark;
@@ -100,24 +111,20 @@ void NorthernReaches_ClearIceWall(void) {
 /// Kraden to see it.
 /// "Kraden, come look at this... There's a huge ice wall blocking our path..."
 void NorthernReaches_SightIceWall(void) {
-  s32 result0;
-  struct Actor *object1;
 
-  result0 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-  if (result0 != 0)
+  if (Event_GetFlag(FLAG_SCENE_TEMP_00) != 0)
     goto done;
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
-  object1 = Actor_Get(8);
-  FieldActor_WaitForMove((s32)object1);
-  Actor_FaceDirectionAndWait(8, FACING_NORTH);
+  FieldActor_WaitForMove((s32)Actor_Get(ACTOR_SHIP));
+  Actor_FaceDirectionAndWait(ACTOR_SHIP, FACING_NORTH);
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
   // "Hm... If we can't do something about that wall, we're not going any..."
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Event_End();
 done:
   return;
@@ -125,34 +132,30 @@ done:
 
 /// The crew gathers at the bow to talk the ice wall over, once (flag 0x90c).
 void NorthernReaches_DiscussIceWall(void) {
-  s32 result0;
-  struct Actor *object1;
 
-  result0 = Event_GetFlag(0x90c);
-  if (result0 != 0)
+  if (Event_GetFlag(0x90c) != 0)
     goto done;
   Event_SetFlag(0x90c);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
-  object1 = Actor_Get(8);
-  FieldActor_WaitForMove((s32)object1);
+  FieldActor_WaitForMove((s32)Actor_Get(ACTOR_SHIP));
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Actor_SetPosition(11, 408, 288);
+  Actor_SetPosition(ACTOR_KRADEN, 408, 288);
   Actor_SetPosition(ACTOR_JENNA, 408, 288);
   Actor_SetPosition(ACTOR_SHEBA, 408, 288);
   // "Nothing to worry about, Jenna. We'll just have to use that cannon we..."
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   // "That's right! If the cannon can blast away a stone wall, think what..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
   // "Felix, take us between those two blocks of ice for shelter when you..."
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Actor_SetPosition(11, 0, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();
@@ -174,31 +177,20 @@ s32 Actor_SetSpriteColorMode();
 /// "We should be safe if we fire from this distance."
 void NorthernReaches_FireMagmaBall(void) {
   s32 from[3];
-  struct Actor *t18;
-  struct Actor *t12;
   struct Actor *t1;
   struct Actor *v_r7;
   struct Actor *t0;
-  struct Actor *t20;
-  struct Actor *t11;
-  struct Actor *t40;
   struct Actor *v_r6;
-  struct Actor *t13;
   struct Actor *t2;
   struct Actor *v_r8;
-  struct Actor *t10;
-  struct Actor *t14;
-  struct Actor *t16;
-  struct Actor *t45;
   s32 to[3];
   s32 v_r5, v_r10, t3;
   s32 t26, t36;
-  s32 t37, t52, t53, t59, t60, t61, t66;
-  s32 t70, t79, t82, t85, t88, t91, t96;
+  s32 t79, t82, t85, t88, t91, t96;
 
-  t0 = Actor_Get(9);
-  t1 = Actor_Get(10);
-  t2 = Actor_Get(8);
+  t0 = Actor_Get(ACTOR_MAGMA_BALL_SHOT);
+  t1 = Actor_Get(ACTOR_BLAST);
+  t2 = Actor_Get(ACTOR_SHIP);
   t3 = Event_GetFlag(0x90e);
   v_r7 = t2;
   v_r6 = t0;
@@ -211,26 +203,18 @@ fire:
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
-  Actor_MoveToAndWait(8, 464, 216);
-  Actor_FaceDirectionAndWait(8, FACING_NORTH);
+  Actor_MoveToAndWait(ACTOR_SHIP, 464, 216);
+  Actor_FaceDirectionAndWait(ACTOR_SHIP, FACING_NORTH);
   FieldEvent_Wait(5);
-  t10 = Actor_Get(11);
-  t10->scaleX = v_r5;
-  t11 = Actor_Get(ACTOR_PIERS);
-  t11->scaleX = v_r5;
-  t12 = Actor_Get(ACTOR_JENNA);
-  t12->scaleX = v_r5;
-  t13 = Actor_Get(ACTOR_SHEBA);
-  t13->scaleX = v_r5;
-  t14 = Actor_Get(11);
-  Actor_SetSpriteFlags(t14, 0);
-  t16 = Actor_Get(ACTOR_PIERS);
-  Actor_SetSpriteFlags(t16, 0);
-  t18 = Actor_Get(ACTOR_JENNA);
-  Actor_SetSpriteFlags(t18, 0);
-  t20 = Actor_Get(ACTOR_SHEBA);
-  Actor_SetSpriteFlags(t20, 0);
-  Actor_SetPosition(11, 464, 216);
+  Actor_Get(ACTOR_KRADEN)->scaleX = v_r5;
+  Actor_Get(ACTOR_PIERS)->scaleX = v_r5;
+  Actor_Get(ACTOR_JENNA)->scaleX = v_r5;
+  Actor_Get(ACTOR_SHEBA)->scaleX = v_r5;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
+  Actor_SetPosition(ACTOR_KRADEN, 464, 216);
   Actor_SetPosition(ACTOR_PIERS, 464, 216);
   Actor_SetPosition(ACTOR_JENNA, 464, 216);
   Actor_SetPosition(ACTOR_SHEBA, 464, 216);
@@ -242,105 +226,94 @@ fire:
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0, 5);
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
-  Event_OpenMessage(11, 0);
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0))
     goto ready;
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Actor_SetDestinationOffset(8, 0, 16);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, 16);
   FieldActor_WaitForMove(v_r7);
   FieldEvent_Wait(5);
   goto putAway;
 ready:
-  t36 = (s32)Ram_HeapSlots->fieldWork;
-  t37 = FIELD_AT(t36, u16, 452);
-  FIELD_AT(t36, u16, 452) = (t37 + 1);
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
-  Actor_SetSpeed(8, 3);
-  t40 = Actor_Get(8);
-  t40->steeringFlags &= 254;
-  Actor_WalkBy(8, 0, 16);
+  gFieldWork->message++;
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+  Actor_SetSpeed(ACTOR_SHIP, 3);
+  Actor_Get(ACTOR_SHIP)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkBy(ACTOR_SHIP, 0, 16);
   Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);
   v_r8->scaleX = Q16_ONE * 3 / 2;
   v_r8->scaleY = Q16_ONE * 3 / 2;
-  t45 = Actor_Get(10);
-  Actor_SetSpriteColorMode(t45, 6);
-  Actor_SetPosition(10, 464, 200);
-  Actor_SetAnimation(10, 1);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), 6);
+  Actor_SetPosition(ACTOR_BLAST, 464, 200);
+  Actor_SetAnimation(ACTOR_BLAST, 1);
   v_r6->scaleX = Q16_ONE / 2;
   v_r6->scaleY = Q16_ONE / 2;
-  Actor_SetSpeed(9, 2);
-  Actor_SetPosition(9, 464, 216);
-  Actor_WalkTo(9, 464, 144);
+  Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
+  Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 464, 216);
+  Actor_WalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
   v_r5 = 15;
 growBall:
-  t52 = v_r6->scaleX;
-  v_r6->scaleX = (t52 + 0x800);
-  t53 = v_r6->scaleY;
-  v_r6->scaleY = (t53 + 0x800);
+  v_r6->scaleX = ((v_r6->scaleX) + 0x800);
+  v_r6->scaleY = ((v_r6->scaleY) + 0x800);
   System_Wait(1);
   v_r5 = (v_r5 - 1);
   if (v_r5 >= 0)
     goto growBall;
   FieldCamera_MoveTo(472, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
-  FieldActor_WaitForMoveById(9);
+  FieldActor_WaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
   Event_PlaySound(SE_CRASH);
-  t59 = v_r6->x.fixed;
-  from[0] = (t59 - 0x20000);
-  t60 = v_r6->y.fixed;
-  from[1] = t60;
-  t61 = v_r6->z.fixed;
-  from[2] = (t61 - 0x80000);
+  from[0] = ((v_r6->x.fixed) - 0x20000);
+  from[1] = (v_r6->y.fixed);
+  from[2] = ((v_r6->z.fixed) - 0x80000);
   to[0] = 0x1900000;
   to[1] = 0;
   to[2] = 0x500000;
   NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
   FieldEvent_Wait(20);
-  Actor_SetPosition(10, 0, 0);
-  Actor_SetPosition(9, 0, 0);
-  t66 = (s32)Ram_HeapSlots->fieldWork;
-  FIELD_AT(t66, s32, 436) = 100;
-  PaletteFade_ApplyTarget(0x10000, 0);
+  Actor_SetPosition(ACTOR_BLAST, 0, 0);
+  Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
+  gFieldWork->transitionFrames = 100;
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t70 = (s32)Ram_HeapSlots->fieldWork;
-  FIELD_AT(t70, s32, 436) = 8;
+  gFieldWork->transitionFrames = 8;
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
-  FieldEvent_ShowMessageThenWait(11, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 5);
-  Actor_SetSpeed(8, 0.8);
-  Actor_MoveToAndWait(8, 464, 176);
-  EventCamera_FollowActor(8, 1);
-  Actor_MoveToAndWait(8, 464, 152);
-  Actor_SetSpeed(8, 0.6);
+  Actor_SetSpeed(ACTOR_SHIP, 0.8);
+  Actor_MoveToAndWait(ACTOR_SHIP, 464, 176);
+  EventCamera_FollowActor(ACTOR_SHIP, 1);
+  Actor_MoveToAndWait(ACTOR_SHIP, 464, 152);
+  Actor_SetSpeed(ACTOR_SHIP, 0.6);
   t79 = v_r7->scaleY;
   v_r7->scaleY = (t79 - 0x1000);
   v_r7->scaleX = (t79 - 0x1000);
-  Actor_SetDestinationOffset(8, 0, -16);
-  FieldActor_WaitForMoveById(8);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+  FieldActor_WaitForMoveById(ACTOR_SHIP);
   t82 = v_r7->scaleY;
   v_r7->scaleY = (t82 - 0x1000);
   v_r7->scaleX = (t82 - 0x1000);
-  Actor_SetDestinationOffset(8, 0, -16);
-  FieldActor_WaitForMoveById(8);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+  FieldActor_WaitForMoveById(ACTOR_SHIP);
   t85 = v_r7->scaleY;
   v_r7->scaleY = (t85 - 0x1000);
   v_r7->scaleX = (t85 - 0x1000);
-  Actor_SetDestinationOffset(8, 0, -16);
-  FieldActor_WaitForMoveById(8);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+  FieldActor_WaitForMoveById(ACTOR_SHIP);
   t88 = v_r7->scaleY;
   v_r7->scaleY = (t88 - 0x1000);
   v_r7->scaleX = (t88 - 0x1000);
-  Actor_SetDestinationOffset(8, 0, -16);
-  FieldActor_WaitForMoveById(8);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+  FieldActor_WaitForMoveById(ACTOR_SHIP);
   t91 = v_r7->scaleY;
   v_r7->scaleY = (t91 - 0x1000);
   v_r7->scaleX = (t91 - 0x1000);
-  Actor_SetDestinationOffset(8, 0, -16);
-  FieldActor_WaitForMoveById(8);
-  Actor_SetSpeed(8, 0.2);
-  Actor_SetDestinationOffset(8, 0, -12);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+  FieldActor_WaitForMoveById(ACTOR_SHIP);
+  Actor_SetSpeed(ACTOR_SHIP, 0.2);
+  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
   v_r5 = 19;
 settle:
   t96 = v_r7->scaleY;
@@ -356,7 +329,7 @@ settle:
   Event_SetFlag(0x90e);
   FieldEvent_SetExitRequest(4);
 putAway:
-  Actor_SetPosition(11, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -535,8 +508,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, 120,
-                    0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gNorthernReaches_ShipAtRest, 120, 0, 280, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
     {263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

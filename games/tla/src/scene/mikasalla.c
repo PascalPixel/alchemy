@@ -8,6 +8,7 @@
 /// (Mikasalla_MeetSpark).
 
 #include "flags.h"
+#include "sprite_ids.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -90,18 +91,15 @@ void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
 
-/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mikasalla.c:110: invalid use of undefined type `struct
- * WarpEntry'. */
-struct WarpEntry__mikasalla {
-  s32 map;
+/// A door that opens with a cell animation: the animation and the cell it
+/// plays at.
+struct WarpTarget {
+  const void *script;
   u16 x;
   u16 z;
 };
 
-extern struct WarpEntry__mikasalla gMikasalla_Doors[];
+extern struct WarpTarget gMikasalla_Doors[];
 
 /// The party leader walks into one of the village's doors. Everyone stops, the
 /// door opens with its cell animation (gMikasalla_Doors), and the leader walks
@@ -125,8 +123,8 @@ void Mikasalla_EnterDoor(void) {
   index = *choice;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
-  MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
-                       gMikasalla_Doors[index].z);
+  MapGrid_AnimateCells(gMikasalla_Doors[index].script,
+                       gMikasalla_Doors[index].x, gMikasalla_Doors[index].z);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 
@@ -298,18 +296,11 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top facing south, the leader turns and climbs down.
-/// Turns actor 4, then runs Mikasalla_ClimbDownLadder.
+/// Stepping onto a ladder top facing south: Felix turns north and climbs down.
 void Mikasalla_TurnAndClimbDownLadder(void) {
-  s32 id, a;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirectionById(id, a << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Mikasalla_ClimbDownLadder();
 }
 
@@ -363,12 +354,12 @@ s16 gMikasalla_WideDoorOpening[] = {
 
 /// The village's doors that open with a cell animation as the party walks
 /// through.
-struct WarpEntry__mikasalla gMikasalla_Doors[] = {
-    {(s32)gMikasalla_DoorOpening, 84, 29},
-    {(s32)gMikasalla_DoorOpening, 77, 34},
-    {(s32)gMikasalla_ThirdDoorOpening, 86, 38},
-    {(s32)gMikasalla_DoorOpening, 75, 41},
-    {(s32)gMikasalla_WideDoorOpening, 69, 27},
+struct WarpTarget gMikasalla_Doors[] = {
+    {gMikasalla_DoorOpening, 84, 29},
+    {gMikasalla_DoorOpening, 77, 34},
+    {gMikasalla_ThirdDoorOpening, 86, 38},
+    {gMikasalla_DoorOpening, 75, 41},
+    {gMikasalla_WideDoorOpening, 69, 27},
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -606,7 +597,7 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(203, CONDITION_ALWAYS, (s32)gMikasalla_ChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(81, CONDITION_ALWAYS, (s32)gMikasalla_SheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(245, 0x60, MOVEMENT_TYPE_STAND, 312, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x60, MOVEMENT_TYPE_STAND, 312, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

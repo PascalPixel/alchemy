@@ -4,6 +4,7 @@
 /// sail out.
 
 #include "types.h"
+#include "sprite_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -25,7 +26,31 @@
 #include "field/actor_script.h"
 
 extern u32 gLemuriaEntrance_ShipSailsOut[];
-void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
+/// The way in's actors, by the rows of gActorPlacements.
+enum {
+  /// The party's ship, placed blank; it sails out of the harbour
+  /// (gLemuriaEntrance_ShipSailsOut).
+  ACTOR_SHIP = ACTOR_FIRST_PLACED,
+  /// Boats moored in the harbour: four on sprite 342, six on the ship's own
+  /// boat sheet (sprite 11).
+  ACTOR_MOORED_BOAT_A,
+  ACTOR_MOORED_BOAT_B,
+  ACTOR_MOORED_BOAT_C,
+  ACTOR_MOORED_BOAT_D,
+  ACTOR_MOORED_SHIP_A,
+  ACTOR_MOORED_SHIP_B,
+  ACTOR_MOORED_SHIP_C,
+  ACTOR_MOORED_SHIP_D,
+  ACTOR_MOORED_SHIP_E,
+  ACTOR_MOORED_SHIP_F,
+  ACTOR_ROCK ///< sprite 424, which Grind breaks up
+};
+
+/// Who speaks a line of LemuriaEntrance_ShebaAsksPiersAge: the party by
+/// their numbers, and Kraden as 8, who shows his own portrait.
+enum { SPEAKER_KRADEN = 8 };
+
+void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames);
 
 void LemuriaEntrance_ShebaAsksPiersAge(void);
 
@@ -64,7 +89,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  party->leaderActorId = 4;
+  party->leaderActorId = ACTOR_FELIX;
   FieldEvent_SetExitRequest(arg);
 }
 
@@ -77,14 +102,14 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  party->leaderActorId = 4;
+  party->leaderActorId = ACTOR_FELIX;
   FieldEvent_SetExitRequest(arg);
 }
 
 /// Grind breaks up the rock in the way, for good (flag 0x909).
 void LemuriaEntrance_GrindRock(void) {
   Event_SetFlag(0x909);
-  Actor_SetPosition(19, 0, 0);
+  Actor_SetPosition(ACTOR_ROCK, 0, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -104,12 +129,12 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
       state->movementMode = 6;
       state->ownerOverride = 1;
     }
-    Actor_SetAnimation(8, 7);
+    Actor_SetAnimation(ACTOR_SHIP, 7);
     Event_End();
   } else {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->leaderActorId = 4;
+    party->leaderActorId = ACTOR_FELIX;
     party->movementMode = 0;
     party->ownerOverride = 0;
   }
@@ -123,21 +148,21 @@ s32 Scene_Initialize(void) {
 
   *screen = effect;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-  Actor_SetSpriteFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);
   if (Event_GetFlag(0x909))
-    Actor_SetPosition(19, 0, 0);
-  Actor_SetSpriteFlags(Actor_Get(9), 0);
-  Actor_SetSpriteFlags(Actor_Get(10), 0);
-  Actor_SetSpriteFlags(Actor_Get(11), 0);
-  Actor_SetSpriteFlags(Actor_Get(12), 0);
-  Actor_SetSpriteFlags(Actor_Get(13), 0);
-  Actor_SetSpriteFlags(Actor_Get(14), 0);
-  Actor_SetSpriteFlags(Actor_Get(15), 0);
-  Actor_SetSpriteFlags(Actor_Get(16), 0);
-  Actor_SetSpriteFlags(Actor_Get(17), 0);
-  Actor_SetSpriteFlags(Actor_Get(18), 0);
+    Actor_SetPosition(ACTOR_ROCK, 0, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_A), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_B), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_C), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_D), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_A), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_B), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_C), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_D), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_E), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_SHIP_F), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination(SCENE_LEMURIA_ENTRANCE, 1);
@@ -160,8 +185,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// Shows the next line of a conversation in a window beside its speaker's
-/// portrait (portrait 56 for kind 8) and closes it after the frames.
-void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
+/// portrait (Kraden's for SPEAKER_KRADEN) and closes it after the frames.
+void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 b;
   s32 a;
@@ -173,11 +198,11 @@ void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
 
   width = 0;
   height = 0;
-  id = 56;
-  if (kind != 8)
-    id = kind;
+  id = SPRITE_KRADEN;
+  if (speaker != SPEAKER_KRADEN)
+    id = speaker;
   resource = Speaker_GetVoice(id);
-  if (kind == 7) {
+  if (speaker == ACTOR_PIERS) {
     width = 10;
     height = 10;
     Text_GetMessageSize(work->message, &width, &height, &a, &b);
@@ -207,32 +232,32 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   gMainRoutineWork.messageSpeed = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(8, 0.27);
-  Actor_SetScript(8, gLemuriaEntrance_ShipSailsOut);
+  Actor_SetSpeed(ACTOR_SHIP, 0.27);
+  Actor_SetScript(ACTOR_SHIP, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
-  LemuriaEntrance_ShowPortraitLine(6, 90);
-  LemuriaEntrance_ShowPortraitLine(7, 90);
-  LemuriaEntrance_ShowPortraitLine(6, 180);
-  LemuriaEntrance_ShowPortraitLine(7, 90);
-  LemuriaEntrance_ShowPortraitLine(6, 250);
-  LemuriaEntrance_ShowPortraitLine(7, 180);
-  LemuriaEntrance_ShowPortraitLine(5, 250);
-  LemuriaEntrance_ShowPortraitLine(8, 90);
-  LemuriaEntrance_ShowPortraitLine(7, 180);
-  LemuriaEntrance_ShowPortraitLine(8, 180);
-  LemuriaEntrance_ShowPortraitLine(7, 180);
-  LemuriaEntrance_ShowPortraitLine(6, 90);
-  LemuriaEntrance_ShowPortraitLine(7, 250);
-  LemuriaEntrance_ShowPortraitLine(5, 250);
-  LemuriaEntrance_ShowPortraitLine(7, 250);
-  LemuriaEntrance_ShowPortraitLine(6, 90);
-  LemuriaEntrance_ShowPortraitLine(5, 90);
-  LemuriaEntrance_ShowPortraitLine(8, 90);
-  LemuriaEntrance_ShowPortraitLine(7, 250);
-  LemuriaEntrance_ShowPortraitLine(4, 90);
-  LemuriaEntrance_ShowPortraitLine(7, 250);
-  FieldActor_WaitForScriptEndById(8);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 180);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 250);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 250);
+  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 180);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 250);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 90);
+  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_FELIX, 90);
+  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
+  FieldActor_WaitForScriptEndById(ACTOR_SHIP);
   FieldEvent_Wait(10);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 30;
@@ -305,8 +330,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, 14,
-                    0, 4, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gLemuriaEntrance_ShipAtRest, 14, 0, 4, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 112,
                     FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 112,
@@ -338,7 +364,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit3)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit5)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 19, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK, CONDITION_ALWAYS,
      EVENT(LemuriaEntrance_GrindRock)},
     {TRIGGER_TABLE_END},
 };

@@ -8,6 +8,7 @@
 /// blocked.
 
 #include "flags.h"
+#include "sprite_ids.h"
 #include "item_ids.h"
 #include "shared/tables.h"
 #include "types.h"
@@ -101,26 +102,26 @@ struct Actor;
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 extern struct SceneEntrance gMadraCatacombs_Entrances[];
-extern struct SceneEntrance gMadraCatacombs_Room4Entrances[];
+extern struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[];
 
-extern struct SceneEntrance gMadraCatacombs_Room5Entrances[];
+extern struct SceneEntrance gMadraCatacombs_BookshelfEntrances[];
 
 extern s16 gMadraCatacombs_LadderRoomRegions[];
 
 extern struct ActorPlacement gMadraCatacombs_Placements[];
 
-extern struct ActorPlacement gMadraCatacombs_Room1Placements[];
+extern struct ActorPlacement gMadraCatacombs_EntrancePlacements[];
 
-extern struct ActorPlacement gMadraCatacombs_Room3Placements[];
+extern struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[];
 
-extern struct ActorPlacement gMadraCatacombs_Room5Placements[];
-extern struct ActorPlacement gMadraCatacombs_Room6Placements[];
-extern struct Trigger gMadraCatacombs_Room1Triggers[];
-extern struct Trigger gMadraCatacombs_Room2Triggers[];
-extern struct Trigger gMadraCatacombs_Room3Triggers[];
-extern struct Trigger gMadraCatacombs_Room4Triggers[];
-extern struct Trigger gMadraCatacombs_Room5Triggers[];
-extern struct Trigger gMadraCatacombs_Room6Triggers[];
+extern struct ActorPlacement gMadraCatacombs_BookshelfPlacements[];
+extern struct ActorPlacement gMadraCatacombs_TabletPlacements[];
+extern struct Trigger gMadraCatacombs_EntranceTriggers[];
+extern struct Trigger gMadraCatacombs_LaddersTriggers[];
+extern struct Trigger gMadraCatacombs_ChampaTunnelTriggers[];
+extern struct Trigger gMadraCatacombs_StoneDoorTriggers[];
+extern struct Trigger gMadraCatacombs_BookshelfTriggers[];
+extern struct Trigger gMadraCatacombs_TabletTriggers[];
 
 void MadraCatacombs_SetUpVillage(void);
 
@@ -173,9 +174,9 @@ void MadraCatacombs_SetUpRoomBelowBookshelf(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
-    return gMadraCatacombs_Room4Entrances;
+    return gMadraCatacombs_StoneDoorEntrances;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-    return gMadraCatacombs_Room5Entrances;
+    return gMadraCatacombs_BookshelfEntrances;
   return gMadraCatacombs_Entrances;
 }
 
@@ -191,29 +192,29 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
-    return gMadraCatacombs_Room1Placements;
+    return gMadraCatacombs_EntrancePlacements;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
-    return gMadraCatacombs_Room3Placements;
+    return gMadraCatacombs_ChampaTunnelPlacements;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-    return gMadraCatacombs_Room5Placements;
+    return gMadraCatacombs_BookshelfPlacements;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
-    return gMadraCatacombs_Room6Placements;
+    return gMadraCatacombs_TabletPlacements;
   return gMadraCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
-    return gMadraCatacombs_Room1Triggers;
+    return gMadraCatacombs_EntranceTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_2)
-    return gMadraCatacombs_Room2Triggers;
+    return gMadraCatacombs_LaddersTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
-    return gMadraCatacombs_Room3Triggers;
+    return gMadraCatacombs_ChampaTunnelTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
-    return gMadraCatacombs_Room4Triggers;
+    return gMadraCatacombs_StoneDoorTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-    return gMadraCatacombs_Room5Triggers;
+    return gMadraCatacombs_BookshelfTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
-    return gMadraCatacombs_Room6Triggers;
+    return gMadraCatacombs_TabletTriggers;
   return gMadraCatacombs_Triggers;
 }
 
@@ -394,7 +395,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Event_PlaySound(SE_DUST_PUFF);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       wait(10);
       Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
       Event_SetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL);
@@ -468,21 +469,22 @@ void MadraCatacombs_LightFlames(void) {
   wait(1);
 }
 
-/// The chest on the bookshelf shakes with it, and each shake nudges it two
-/// pixels west with a hop.
+/// The chest on the bookshelf tilts as the bookshelf rocks, and each time the
+/// bookshelf comes upright again it nudges the chest two pixels west with a
+/// hop.
 void MadraCatacombs_RockChestWithBookshelf(void) {
   struct Actor *bookshelf = Actor_GetById(ACTOR_BOOKSHELF);
   struct Actor *chest = Actor_GetById(ACTOR_SHAKEN_CHEST);
-  struct AnimationRecord18 *animation = chest->sprite;
+  struct Sprite *sprite = chest->sprite;
 
-  animation->frame = ((struct AnimationRecord18 *)bookshelf->sprite)->frame;
-  if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && animation->frame == 0) {
+  sprite->rotation = ((struct Sprite *)bookshelf->sprite)->rotation;
+  if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && sprite->rotation == 0) {
     Event_PlaySound(SE_535);
     chest->x.fixed += px(-2);
     chest->velocityY = px(2);
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
-  if (animation->frame != 0)
+  if (sprite->rotation != 0)
     Event_SetFlag(FLAG_SCENE_TEMP_04);
 }
 
@@ -601,10 +603,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 void MadraCatacombs_SetUpVillage(void) {
   s32 a;
   s32 b;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *object;
 
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
@@ -618,15 +616,8 @@ void MadraCatacombs_SetUpVillage(void) {
   Actor_DisableById(ACTOR_HOLE_PILLAR);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED) != 0) {
     MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, 13);
-    object = Actor_GetById(ACTOR_HOLE_PILLAR);
-    x = 162;
-    z = 216;
-    x <<= 18;
-    y = 0;
-    /* FAKEMATCH(barrier): x, y and z held at an empty asm, the second of the
-     * pair above. */
-    __asm__("" : "+r"(x), "+r"(y), "+r"(z));
-    Actor_SetPositionAndResetMotion(object, x, y, z << 16);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_HOLE_PILLAR),
+                                         px(648), 0, px(216));
   }
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED) != 0)
     Actor_SetPosition(ACTOR_PUSHED_PILLAR, 712, 424);
@@ -679,8 +670,8 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
     Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
   } else {
     object = Actor_GetById(ACTOR_SHAKEN_CHEST);
-    object->collisionFlags = 8;
-    object->motionFlags = 2;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
+    object->motionFlags = ACTOR_FALLS;
     object->y.fixed = px(32);
     object->groundHeight = px(32);
     object->update = MadraCatacombs_RockChestWithBookshelf;
@@ -780,12 +771,12 @@ struct SceneEntrance gMadraCatacombs_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gMadraCatacombs_Room4Entrances[] = {
+struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[] = {
     {3, CONDITION_ALWAYS, 512, 0, 224, FACING_NORTH, 0, 392, 40, 632, 280, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gMadraCatacombs_Room5Entrances[] = {
+struct SceneEntrance gMadraCatacombs_BookshelfEntrances[] = {
     {5, CONDITION_ALWAYS, 728, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
     {6, CONDITION_ALWAYS, 872, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
     {7, CONDITION_ALWAYS, 872, 0, 120, FACING_EAST, 0, 680, 32, 920, 192, 0},
@@ -855,41 +846,41 @@ struct ActorPlacement gMadraCatacombs_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMadraCatacombs_Room1Placements[] = {
+struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
     ACTOR_PLACEMENT(250, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMadraCatacombs_Room3Placements[] = {
+struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 794, 0, 236, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMadraCatacombs_Room5Placements[] = {
+struct ActorPlacement gMadraCatacombs_BookshelfPlacements[] = {
     ACTOR_PLACEMENT(679, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 202, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMadraCatacombs_Room6Placements[] = {
-    ACTOR_PLACEMENT(330, CONDITION_ALWAYS, 7, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(330, CONDITION_ALWAYS, 7, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gMadraCatacombs_TabletPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -907,7 +898,7 @@ struct Trigger gMadraCatacombs_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMadraCatacombs_Room1Triggers[] = {
+struct Trigger gMadraCatacombs_EntranceTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
@@ -928,14 +919,14 @@ struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMadraCatacombs_Room2Triggers[] = {
+struct Trigger gMadraCatacombs_LaddersTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gMadraCatacombs_Room3Triggers[] = {
+struct Trigger gMadraCatacombs_ChampaTunnelTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -952,7 +943,7 @@ struct Trigger gMadraCatacombs_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMadraCatacombs_Room4Triggers[] = {
+struct Trigger gMadraCatacombs_StoneDoorTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -970,7 +961,7 @@ struct Trigger gMadraCatacombs_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMadraCatacombs_Room5Triggers[] = {
+struct Trigger gMadraCatacombs_BookshelfTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -986,7 +977,7 @@ struct Trigger gMadraCatacombs_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMadraCatacombs_Room6Triggers[] = {
+struct Trigger gMadraCatacombs_TabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,

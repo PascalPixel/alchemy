@@ -4,6 +4,7 @@
 /// houses' doors and the treasure Scoop digs up.
 
 #include "shared/tables.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "system/io_reg.h"
 #include "item_ids.h"
@@ -31,6 +32,46 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
+
+/// Loho, by the rows of gLoho_TownPlacements. Each digger is named for what he
+/// says before the cannon breaches the wall.
+enum LohoActorId {
+  /// "Welcome to Loho! We've been excavating all sorts of ores..."
+  ACTOR_MINER_WELCOMING_TO_LOHO = ACTOR_FIRST_PLACED,
+  /// "We have a lot of important excavations going on..."
+  ACTOR_MINER_ON_THE_EXCAVATIONS,
+  /// "Some of the miners found an ancient cannon when they were digging..."
+  ACTOR_MINER_WHO_FOUND_THE_CANNON,
+  /// "That wall seems indestructible!"
+  ACTOR_DIGGER_AT_THE_WALL,
+  /// "Once we can get through the wall, there will be enough work for
+  /// everyone in town!"
+  ACTOR_MINER_AWAITING_WORK,
+  /// "If you want to be a miner, you have to know the earth..."
+  ACTOR_MINER_WHO_KNOWS_THE_EARTH,
+  /// "This is the spot. A good hole here..."
+  ACTOR_MINER_AT_HIS_SPOT,
+  /// "I haven't found anything worth the trouble of digging up."
+  ACTOR_DIGGER_FINDING_NOTHING,
+  /// "We brought the cannon up here to break down the old wall..."
+  ACTOR_MINER_BY_THE_CANNON,
+  /// "If you're only here for the cannon, you can forget about it."
+  ACTOR_MAN_KEEPING_THE_CANNON,
+  /// "You can put metal balls in the barrel, but what makes them come out
+  /// again?"
+  ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+  ACTOR_LULL,
+  ACTOR_CANNON,
+  ACTOR_MAGMA_BALL, ///< shown as ITEM_MAGMA_BALL as it is loaded
+  ACTOR_BOULDER     ///< raised by Lift
+};
+
+/// Loho's houses, by the rows of gLoho_InteriorsPlacements.
+enum LohoInteriorsActorId {
+  ACTOR_VILLAGER_ON_COMMERCE = ACTOR_FIRST_PLACED, ///< Loho_TalkAboutCommerce
+  ACTOR_INNKEEPER,
+  ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
+};
 #include "djinn_ids.h"
 
 extern u32 gLoho_VillagerMovesNorth[];
@@ -40,8 +81,8 @@ extern u32 gLoho_VillagerReturns[];
 
 void Loho_ClimbDownLadder(void);
 extern u32 gLoho_Regions[];
-extern struct ActorPlacement gLoho_Placements[];
-extern struct ActorPlacement gLoho_Room2Placements[];
+extern struct ActorPlacement gLoho_TownPlacements[];
+extern struct ActorPlacement gLoho_InteriorsPlacements[];
 extern u32 gLoho_FirstMinerGoesToWall[];
 extern s32 gLoho_SecondMinerStepsUp[];
 
@@ -52,8 +93,8 @@ extern u32 gLoho_FirstMinerFetchesCannon[];
 extern u32 gLoho_FirstMinerReturns[];
 extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
-extern struct Trigger gLoho_Room1Triggers[];
-extern struct Trigger gLoho_Room2Triggers[];
+extern struct Trigger gLoho_TownTriggers[];
+extern struct Trigger gLoho_InteriorsTriggers[];
 extern struct LohoPicture gLoho_HouseDoor;
 extern u32 gLoho_VillagerPaces[];
 
@@ -102,8 +143,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_LOHO_2)
-    return gLoho_Room2Placements;
-  return gLoho_Placements;
+    return gLoho_InteriorsPlacements;
+  return gLoho_TownPlacements;
 }
 
 void Loho_DrawBrokenWall(void) {
@@ -117,7 +158,7 @@ void Loho_DrawBrokenWall(void) {
 
 /// "Did you want this cannon?"
 void Loho_AskWantCannon(s32 actor) {
-  s32 msg = (s32)MsgLoho23;
+  s32 msg = (s32)MsgLohoDidYouWantThisCannon;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -134,7 +175,7 @@ void Loho_AskWantCannon(s32 actor) {
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
   // "It looks like it's empty."
-  FieldMessage_Show((s32)MsgLoho27, 1);
+  FieldMessage_Show((s32)MsgLohoItLooksLikeItsEmpty, 1);
   gFieldWork->fieldMenu = 1;
 }
 
@@ -213,12 +254,13 @@ inPlace:
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_SPIN);
-  FieldActor_StartRepeatedMotion(16, 2);
-  FieldActor_StartRepeatedMotion(18, 2);
-  Actor_RunRepeatedMotion(17, 2);
-  Actor_FaceActor(16, ACTOR_FELIX, 0);
-  Actor_FaceActor(17, ACTOR_FELIX, 0);
-  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
+  FieldActor_StartRepeatedMotion(ACTOR_MINER_BY_THE_CANNON, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 2);
+  Actor_RunRepeatedMotion(ACTOR_MAN_KEEPING_THE_CANNON, 2);
+  Actor_FaceActor(ACTOR_MINER_BY_THE_CANNON, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_SOUTH_SOUTHWEST,
+                      0);
   Event_Wait(25);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -227,15 +269,15 @@ inPlace:
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_CLATTER);
-  FieldActor_ShowItemIconById(21, ITEM_MAGMA_BALL);
-  Actor_SetPosition(21, 488, 330);
-  Actor_SetDestinationOffset(20, 0, 8);
-  Actor_SetSpeed(21, 3);
+  FieldActor_ShowItemIconById(ACTOR_MAGMA_BALL, ITEM_MAGMA_BALL);
+  Actor_SetPosition(ACTOR_MAGMA_BALL, 488, 330);
+  Actor_SetDestinationOffset(ACTOR_CANNON, 0, 8);
+  Actor_SetSpeed(ACTOR_MAGMA_BALL, 3);
   MapGrid_SetShake(2, 2, 1);
-  Actor_SetDestination(21, 488, 300);
+  Actor_SetDestination(ACTOR_MAGMA_BALL, 488, 300);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 308, 1);
-  Actor_WaitForMoveById(21);
-  Actor_SetPosition(21, 0, 0);
+  Actor_WaitForMoveById(ACTOR_MAGMA_BALL);
+  Actor_SetPosition(ACTOR_MAGMA_BALL, 0, 0);
   MapGrid_SetShake(7, 7, 1);
   table = (struct LohoSpark *)Heap_AllocEwram(0x600);
   p = (struct LohoSpark *)Heap_Alloc(0x1000);
@@ -308,155 +350,179 @@ nextSpark:
   VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
-  Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
+  Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, px(248), px(480),
+                             FACING_EAST);
   Loho_DrawBrokenWall();
   MapGrid_SetShake(0, 0, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(180);
   ScreenFade_FromWhite(120);
-  Event_SetMessageId((s32)MsgLoho28);
+  Event_SetMessageId((s32)MsgLohoIsEveryoneAllRight);
   Event_Wait(120);
-  Actor_RunRepeatedMotion(18, 2);
-  Actor_FaceDirectionAndWait(18, FACING_WEST);
+  Actor_RunRepeatedMotion(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 2);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_WEST);
   // "Is everyone all right?"
-  Event_ShowMessage(18, 0);
-  Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
-  Actor_SetAnimation(17, 3);
-  Actor_SetAnimation(16, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTHEAST, 0);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   Event_Wait(30);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   // "Did you hear that? That sound was incredible!"
-  Event_ShowMessage(17, 0);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 35);
-  Actor_WalkByAndWait(16, -12, 24);
-  Actor_RunRepeatedMotion(16, 2);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  FieldActor_ShowEmote(ACTOR_MINER_BY_THE_CANNON, EMOTE_IN_FRONT | EMOTE_SCOWL,
+                       35);
+  Actor_WalkByAndWait(ACTOR_MINER_BY_THE_CANNON, -12, 24);
+  Actor_RunRepeatedMotion(ACTOR_MINER_BY_THE_CANNON, 2);
   // "What do you think you're doing, making all that noise?"
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-  Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                             FACING_NORTH_NORTHWEST);
   Event_Wait(30);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 35);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 35);
   // "Hey, look at that!"
-  Event_ShowMessage(18, 0);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
-  Actor_FaceActor(16, 18, 0);
-  Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  FieldActor_ShowEmote(ACTOR_MINER_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
+  Actor_FaceActor(ACTOR_MINER_BY_THE_CANNON, ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                  0);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTHEAST, 0);
   Event_Wait(60);
-  Actor_FaceDirection(18, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_WEST, 0);
   Event_Wait(60);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   // "What are you looking at? It wasn't me! It was the wall! Look at the..."
-  Event_ShowMessage(18, 0);
-  Actor_FaceEachOther(16, 17, 0);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  Actor_FaceEachOther(ACTOR_MINER_BY_THE_CANNON, ACTOR_MAN_KEEPING_THE_CANNON,
+                      0);
   Event_Wait(40);
-  Actor_FaceDirection(16, FACING_NORTH, 0);
-  Actor_FaceDirection(17, FACING_NORTH, 0);
-  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MINER_BY_THE_CANNON, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH_NORTHWEST,
+                      0);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 326, 1);
   Event_Wait(60);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  FieldActor_ShowEmote(ACTOR_MINER_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   // "The wall... It's gone!"
-  Event_ShowMessage(17, 0);
-  Actor_SetAnimation(16, 3);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   // "Well, it's mostly gone, yeah... You can get through to the other..."
-  Event_ShowMessage(16, 0);
-  Actor_FaceActor(18, ACTOR_FELIX, 0);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 35);
+  Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
+  Actor_FaceActor(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ACTOR_FELIX, 0);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 35);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 366, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_SOUTH_SOUTHWEST,
+                      0);
   // "How did you manage to break down the wall?"
-  Event_ShowMessage(18, 0);
-  Actor_SetSpeed(17, 0.8);
-  Actor_WalkBy(17, 0, 16);
-  Actor_WaitForMoveById(17);
-  Actor_FaceDirectionAndWait(17, FACING_SOUTHEAST);
-  Actor_SetAnimation(17, 4);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  Actor_SetSpeed(ACTOR_MAN_KEEPING_THE_CANNON, 0.8);
+  Actor_WalkBy(ACTOR_MAN_KEEPING_THE_CANNON, 0, 16);
+  Actor_WaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
+  Actor_FaceDirectionAndWait(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTHEAST);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 4);
   // "Ah, never mind... What's important here is that we can dig on the..."
-  Event_ShowMessage(17, 0);
-  Actor_SetAnimation(16, 3);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   // "Yeah, who cares how it happened? We can dig again!"
-  Event_ShowMessage(16, 0);
-  Actor_SetAnimation(18, 3);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
+  Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTH_SOUTHEAST, 0);
   // "Well, you did what we asked, so the cannon's all yours!"
-  Event_ShowMessage(17, 0);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_Wait(60);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTH);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_MINER_BY_THE_CANNON, 2);
   // "Hmmm... It's gonna be tough carrying that thing around..."
-  Event_ShowMessage(16, 0);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(ACTOR_MINER_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  FieldActor_ShowEmote(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   // "Those guys are new in town, aren't they? Do you think they came from..."
-  Event_ShowMessage(18, 0);
-  Actor_SetAnimation(17, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
   Event_Wait(40);
-  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
+                       EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   // "I don't know, but I can tell you they came by boat..."
-  Event_ShowMessage(17, 0);
-  Actor_SetAnimation(16, 3);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 256, 1);
   zero = 0;
-  t147 = Actor_GetById(16);
+  t147 = Actor_GetById(ACTOR_MINER_BY_THE_CANNON);
   t147->motionFlags = zero;
-  Actor_SetSpeed(16, 1.5);
-  Actor_SetScript(16, (s32)gLoho_FirstMinerGoesToWall);
-  Actor_SetSpeed(18, 0.5);
-  Actor_SetScript(18, (s32)gLoho_SecondMinerStepsUp);
-  Actor_SetSpeed(17, 0.4);
-  Actor_SetScript(17, (s32)gLoho_ThirdMinerStepsUp);
-  Actor_WaitForScriptEndById(16);
-  Actor_FaceDirectionAndWait(16, FACING_SOUTHWEST);
+  Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1.5);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerGoesToWall);
+  Actor_SetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.5);
+  Actor_SetScript(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
+                  (s32)gLoho_SecondMinerStepsUp);
+  Actor_SetSpeed(ACTOR_MAN_KEEPING_THE_CANNON, 0.4);
+  Actor_SetScript(ACTOR_MAN_KEEPING_THE_CANNON, (s32)gLoho_ThirdMinerStepsUp);
+  Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTHWEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_WEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_NORTHWEST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_NORTHEAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_EAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTHEAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(16, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTH_SOUTHWEST);
   Event_Wait(40);
-  Actor_SetAnimation(16, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   Event_Wait(60);
   // "Yeah, I saw one anchored off the beach!"
-  Event_ShowMessage(16, 0);
-  Actor_WaitForScriptEndById(17);
-  Actor_WaitForScriptEndById(18);
-  Actor_FaceEachOther(17, 18, 0);
+  Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
+  Actor_WaitForScriptEndById(ACTOR_MAN_KEEPING_THE_CANNON);
+  Actor_WaitForScriptEndById(ACTOR_MINER_PUZZLED_BY_THE_CANNON);
+  Actor_FaceEachOther(ACTOR_MAN_KEEPING_THE_CANNON,
+                      ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   Event_Wait(20);
   goto askCannon;
 askCannon:
-  Actor_SetAnimation(18, 3);
-  Actor_SetAnimation(17, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
   Event_Wait(30);
-  Actor_FaceActor(17, ACTOR_FELIX, 0);
-  Actor_SetSpeed(16, 1);
-  Actor_SetScript(16, (s32)gLoho_FirstMinerWalksBack);
+  Actor_FaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
+  Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerWalksBack);
   FieldCamera_SetSpeed(1.8);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
   // "That boat's yours, isn't it?"
-  Event_OpenMessage(17, 0);
+  Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0))
     goto answeredNo;
-  Actor_SetAnimation(18, 3);
-  Event_ShowMessage(18, 0);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   t189 = (s32)Ram_HeapSlots->fieldWork;
   t190 = FIELD_AT(t189, u16, 452);
   FIELD_AT(t189, u16, 452) = (t190 + 1);
@@ -465,64 +531,66 @@ fromSouth:
   Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
   goto inPlace;
 answeredNo:
-  Actor_SetAnimation(18, 4);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
   t193 = (s32)Ram_HeapSlots->fieldWork;
   t194 = FIELD_AT(t193, u16, 452);
   FIELD_AT(t193, u16, 452) = (t194 + 1);
-  Event_ShowMessage(17, 0);
-  Actor_SetAnimation(18, 3);
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
 crewLeaves:
-  Actor_WalkBy(18, 0, 24);
-  Actor_WalkByAndWait(17, 0, 24);
-  Actor_FaceDirection(17, FACING_EAST, 0);
-  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
-  Actor_WaitForScriptEndById(16);
-  Actor_SetScript(16, (s32)gLoho_FirstMinerFetchesCannon);
-  Actor_WaitForScriptEndById(16);
-  Actor_FaceDirection(18, FACING_NORTH, 0);
-  Actor_FaceDirection(17, FACING_EAST, 0);
-  Actor_FaceDirection(16, FACING_SOUTHWEST, 0);
+  Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 24);
+  Actor_WalkByAndWait(ACTOR_MAN_KEEPING_THE_CANNON, 0, 24);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH_NORTHEAST,
+                      0);
+  Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON,
+                  (s32)gLoho_FirstMinerFetchesCannon);
+  Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
+  Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTHWEST, 0);
   Event_Wait(50);
-  Actor_SetAnimation(18, 3);
-  Actor_SetAnimation(17, 3);
-  Actor_SetAnimation(16, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
   Event_Wait(60);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 16);
-  Actor_WalkTo(18, 504, 370);
-  Actor_WalkTo(17, 504, 352);
-  Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
-  Actor_WaitForMoveById(17);
-  Actor_WaitForMoveById(18);
-  Actor_WaitForScriptEndById(16);
-  Actor_FaceDirectionAndWait(16, FACING_EAST);
-  Actor_SetSpeed(16, 0.3);
-  Actor_SetSpeed(17, 0.3);
-  Actor_SetSpeed(18, 0.3);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MINER_BY_THE_CANNON);
+  Actor_WalkTo(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 504, 370);
+  Actor_WalkTo(ACTOR_MAN_KEEPING_THE_CANNON, 504, 352);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerReturns);
+  Actor_WaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
+  Actor_WaitForMoveById(ACTOR_MINER_PUZZLED_BY_THE_CANNON);
+  Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
+  Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_EAST);
+  Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 0.3);
+  Actor_SetSpeed(ACTOR_MAN_KEEPING_THE_CANNON, 0.3);
+  Actor_SetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.3);
   Event_Wait(40);
-  Actor_SetSpeed(20, 0.1);
-  t226 = Actor_GetById(20);
+  Actor_SetSpeed(ACTOR_CANNON, 0.1);
+  t226 = Actor_GetById(ACTOR_CANNON);
   t226->motionFlags = 0;
-  Actor_SetScript(20, (s32)gLoho_ForemanComes);
-  Actor_WaitForScriptEndById(20);
-  Actor_SetSpeed(20, 0.3);
+  Actor_SetScript(ACTOR_CANNON, (s32)gLoho_ForemanComes);
+  Actor_WaitForScriptEndById(ACTOR_CANNON);
+  Actor_SetSpeed(ACTOR_CANNON, 0.3);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
   Event_Wait(30);
-  t233 = Actor_GetById(16);
-  t233->steeringFlags &= 254;
-  Actor_WalkBy(18, -40, -20);
-  Actor_WalkBy(17, -40, -20);
-  Actor_WalkBy(16, -40, -20);
-  Actor_WalkByAndWait(20, -40, -20);
-  Actor_WalkBy(18, -138, 0);
-  Actor_WalkBy(17, -138, 0);
-  Actor_WalkBy(16, -138, 0);
-  Actor_WalkByAndWait(20, -138, 0);
-  Actor_SetPosition(16, 0, 0);
-  Actor_SetPosition(18, 0, 0);
-  Actor_SetPosition(17, 0, 0);
-  Actor_SetPosition(20, 0, 0);
+  t233 = Actor_GetById(ACTOR_MINER_BY_THE_CANNON);
+  t233->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, -40, -20);
+  Actor_WalkBy(ACTOR_MAN_KEEPING_THE_CANNON, -40, -20);
+  Actor_WalkBy(ACTOR_MINER_BY_THE_CANNON, -40, -20);
+  Actor_WalkByAndWait(ACTOR_CANNON, -40, -20);
+  Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, -138, 0);
+  Actor_WalkBy(ACTOR_MAN_KEEPING_THE_CANNON, -138, 0);
+  Actor_WalkBy(ACTOR_MINER_BY_THE_CANNON, -138, 0);
+  Actor_WalkByAndWait(ACTOR_CANNON, -138, 0);
+  Actor_SetPosition(ACTOR_MINER_BY_THE_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_MAN_KEEPING_THE_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_CANNON, 0, 0);
   Event_End();
   return;
 }
@@ -531,24 +599,26 @@ crewLeaves:
 /// work!"
 void Loho_TalkAboutBreachedWall(void) {
   if (Event_GetFlag(0x90a))
-    Event_SetMessageId((s32)MsgLoho32);
+    Event_SetMessageId((s32)MsgLohoNowThatWallsBeenBreached);
   else
-    Event_SetMessageId((s32)MsgLoho55);
+    Event_SetMessageId((s32)MsgLohoISawSomeOfVillage);
   // "I saw some of the village men carrying the cannon out of town..."
-  Event_ShowMessage(11, 0);
+  Event_ShowMessage(ACTOR_DIGGER_AT_THE_WALL, 0);
 }
 
 void Loho_MindReadMiner(void) {
   if (Event_GetFlag(0x90a))
-    Event_SetMessageId((s32)MsgLoho36);
+    Event_SetMessageId((s32)MsgLohoWeDontHaveAnything);
   else
-    Event_SetMessageId((s32)MsgLoho56);
+    Event_SetMessageId((s32)MsgLohoIDontKnowWhereThey);
   // "I don't know where they were taking it, but I'm glad the cannon's..."
-  Event_ShowMessage(11, 0);
+  Event_ShowMessage(ACTOR_DIGGER_AT_THE_WALL, 0);
 }
 
 /// The Scoop spots: each digs up its treasure actor and sets its flag.
-void Loho_ScoopFirstTreasure(s32 id) { Event_DigUpTreasure(id, 64, 0x300); }
+void Loho_ScoopFirstTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, 0x300);
+}
 
 #define DEFINE_SCOOP_TREASURE(name, n1, n2)                                    \
   void name(s32 id) { Event_DigUpTreasure(id, n1, 0x300 + n2); }
@@ -561,16 +631,16 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 /// it is dug up (flag 0xff7).
 void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
-  Actor_GetById(22)->collisionFlags &= 0xfe;
+  Actor_GetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
   if (Event_GetFlag(0xff7) == 0)
-    Actor_SetPosition(66, 520, 136);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_LOHO_1)
-    return gLoho_Room1Triggers;
+    return gLoho_TownTriggers;
   if (gMainRoutineWork.next == SCENE_LOHO_2)
-    return gLoho_Room2Triggers;
+    return gLoho_InteriorsTriggers;
   return gLoho_Triggers;
 }
 
@@ -582,7 +652,7 @@ void Loho_ReadInnSign(void) {
 
   if (facing == FACING_NORTH)
     // "Felix checked the sign It reads "People staying at the inn can..."
-    FieldMessage_Show((s32)MsgLoho57, 1);
+    FieldMessage_Show((s32)MsgLohoCheckedSignItReadsPeople, 1);
 }
 
 /// Loho's shops, as Shop_Run numbers them.
@@ -592,11 +662,9 @@ enum { SHOP_LOHO = 30 };
 enum { LOHO_INN = 13 };
 
 void Loho_TalkToInnkeeper(void) {
-  s32 count = 8;
-
-  /* FAKEMATCH(barrier): the empty asm on count. */
-  asm("" : "+l"(count));
-  Inn_CheckIn(LOHO_INN, count);
+  // XXX: the lines take actor 8's portrait, not the innkeeper's (9); a render
+  // of the inn's counter would show whose face they carry.
+  Inn_CheckIn(LOHO_INN, ACTOR_VILLAGER_ON_COMMERCE);
 }
 
 /// "Commerce really took off when we started this mining colony in Loho."
@@ -606,11 +674,11 @@ void Loho_TalkAboutCommerce(void) {
     Shop_Run(SHOP_LOHO, 8);
   } else {
     if (Event_GetFlag(0xa5f))
-      Event_SetMessageId((s32)MsgLoho51);
+      Event_SetMessageId((s32)MsgLohoIHearYouTookOur);
     else
-      Event_SetMessageId((s32)MsgLoho17);
+      Event_SetMessageId((s32)MsgLohoCommerceReallyTookOffWhen);
     // "Commerce really took off when we started this mining colony in Loho...."
-    Event_ShowMessage(8, 0);
+    Event_ShowMessage(ACTOR_VILLAGER_ON_COMMERCE, 0);
   }
 }
 
@@ -624,27 +692,27 @@ void Loho_TalkAboutCannon(s32 actor) {
     Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0xa5f))
-      Event_SetMessageId((s32)MsgLoho53);
+      Event_SetMessageId((s32)MsgLohoYouveAcquiredSplendidCannonJust);
     else
-      Event_SetMessageId((s32)MsgLoho19);
+      Event_SetMessageId((s32)MsgLohoIfYoureOnlyHere);
     // "If you're only here for the cannon, you can forget about it."
     Event_ShowMessage(actor, 0);
   }
 }
 
 void Loho_VillagerStepsAsideNorth(void) {
-  Actor_SetScript(8, gLoho_VillagerMovesNorth);
+  Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_VillagerMovesNorth);
   Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsAsideWest(void) {
-  Actor_SetScript(8, gLoho_VillagerMovesWest);
+  Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_VillagerMovesWest);
   Event_SetFlag(FLAG_AREA_TEMP_20);
 }
 
 void Loho_VillagerStepsBack(void) {
   Event_ClearFlag(FLAG_AREA_TEMP_20);
-  Actor_SetScript(8, gLoho_VillagerReturns);
+  Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_VillagerReturns);
 }
 
 static __inline__ void Loho_AnimateCells(const void *data, s32 a, s32 b) {
@@ -683,13 +751,9 @@ loop:
 }
 
 void Loho_EnterDoor(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
 
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
-  Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
@@ -700,12 +764,12 @@ void Loho_ClimbDownLadder(void) {
   s32 value = gFieldWork->stepTrigger;
 
   if (value == 2)
-    Actor_SetPosition(8, 144, 224);
+    Actor_SetPosition(ACTOR_MINER_WELCOMING_TO_LOHO, 144, 224);
   else
-    Actor_SetPosition(8, 224, 224);
+    Actor_SetPosition(ACTOR_MINER_WELCOMING_TO_LOHO, 224, 224);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
@@ -748,12 +812,12 @@ void Loho_TurnAndClimbDownLadder(void) {
 
 void Loho_SetUpTown(void) {
   gFieldWork->transition = 256;
-  Actor_SetSpriteFlags(Actor_GetById(20), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
 }
 
-void Loho_SetUpRoom2(void) {
+void Loho_SetUpInteriors(void) {
   gFieldWork->transition = 521;
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_INNKEEPER), 0);
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);
@@ -767,29 +831,32 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_LOHO_1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(64, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetWideSprite(65, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_02))
-      Actor_SetWideSprite(66, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, 1);
     Loho_SetUpTown();
   } else {
-    Loho_SetUpRoom2();
+    Loho_SetUpInteriors();
   }
   if (Event_GetFlag(0xa5f)) {
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPositionAndFacing(14, px(248), px(480), FACING_EAST);
+    Actor_SetPosition(ACTOR_CANNON, 0, 0);
+    Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, px(248), px(480),
+                               FACING_EAST);
     if (!Event_GetFlag(0x90a)) {
-      Actor_SetPosition(17, 0, 0);
-      Actor_SetPosition(16, 0, 0);
-      Actor_SetPosition(18, 0, 0);
+      Actor_SetPosition(ACTOR_MAN_KEEPING_THE_CANNON, 0, 0);
+      Actor_SetPosition(ACTOR_MINER_BY_THE_CANNON, 0, 0);
+      Actor_SetPosition(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 0);
     } else {
       Loho_PlaceFacing(16, px(459), px(254), FACING_NORTHEAST);
       Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
       Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
-      Actor_GetById(17)->timer = Actor_GetById(17)->x.fixed >> 16;
-      Actor_GetById(17)->userValue = Actor_GetById(17)->z.fixed >> 16;
-      Actor_SetScript(17, 2);
+      Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->timer =
+          Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed >> 16;
+      Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->userValue =
+          Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->z.fixed >> 16;
+      Actor_SetScript(ACTOR_MAN_KEEPING_THE_CANNON, 2);
     }
   }
   return 0;
@@ -978,7 +1045,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gLoho_Placements[] = {
+struct ActorPlacement gLoho_TownPlacements[] = {
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 304, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 392, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -990,17 +1057,17 @@ struct ActorPlacement gLoho_Placements[] = {
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 336, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 336, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 360, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(246, 0x7c, MOVEMENT_TYPE_STAND, 232, 0, 248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, 0x7c, MOVEMENT_TYPE_STAND, 232, 0, 248, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(421, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 360, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 136, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 136, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gLoho_Room2Placements[] = {
+struct ActorPlacement gLoho_InteriorsPlacements[] = {
     ACTOR_PLACEMENT(130, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1008,72 +1075,72 @@ struct Trigger gLoho_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gLoho_Room1Triggers[] = {
+struct Trigger gLoho_TownTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Loho_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS, EVENT(Loho_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), ACTOR_MINER_WELCOMING_TO_LOHO, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), ACTOR_MINER_ON_THE_EXCAVATIONS, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
-    {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
-    {TRIGGER_TALK, 10, 0x1a5f, MSGNO(MsgLoho31)},
-    {TRIGGER_TALK, 11, 0x1a5f, EVENT(Loho_TalkAboutBreachedWall)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho33)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x1a5f, MSGNO(MsgLoho34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho35)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x1a5f, EVENT(Loho_MindReadMiner)},
-    {TRIGGER_TALK, 12, 0x1a5f, MSGNO(MsgLoho37)},
-    {TRIGGER_TALK, 13, 0x1a5f, MSGNO(MsgLoho38)},
-    {TRIGGER_TALK, 14, 0x1a5f, MSGNO(MsgLoho39)},
-    {TRIGGER_TALK, 15, 0x1a5f, MSGNO(MsgLoho40)},
-    {TRIGGER_TALK, 16, 0x1a5f, MSGNO(MsgLoho41)},
-    {TRIGGER_TALK, 18, 0x1a5f, MSGNO(MsgLoho42)},
-    {TRIGGER_TALK, 17, 0x1a5f, MSGNO(MsgLoho43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x1a5f, MSGNO(MsgLoho44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x1a5f, MSGNO(MsgLoho45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1a5f, MSGNO(MsgLoho46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x1a5f, MSGNO(MsgLoho47)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x1a5f, MSGNO(MsgLoho48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x1a5f, MSGNO(MsgLoho49)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x1a5f, MSGNO(MsgLoho50)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLoho01)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLoho02)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLoho03)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLoho04)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLoho09)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLoho10)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLoho11)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLoho12)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLoho21)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLoho22)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Loho_AskWantCannon)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Loho_ExamineCannon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLoho05)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLoho06)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLoho07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLoho08)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLoho13)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLoho14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLoho15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLoho16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLoho24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
-    {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
+    {TRIGGER_TALK, ACTOR_MINER_WELCOMING_TO_LOHO, 0x1a5f, MSGNO(MsgLohoWasThatYouThatFired)},
+    {TRIGGER_TALK, ACTOR_MINER_ON_THE_EXCAVATIONS, 0x1a5f, MSGNO(MsgLohoThatCannonSureGivesOff)},
+    {TRIGGER_TALK, ACTOR_MINER_WHO_FOUND_THE_CANNON, 0x1a5f, MSGNO(MsgLohoWhenWeFoundThatCannon)},
+    {TRIGGER_TALK, ACTOR_DIGGER_AT_THE_WALL, 0x1a5f, EVENT(Loho_TalkAboutBreachedWall)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WELCOMING_TO_LOHO, 0x1a5f, MSGNO(MsgLohoThatCannonCanShatterAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_ON_THE_EXCAVATIONS, 0x1a5f, MSGNO(MsgLohoThatCannonWasReallyLoud)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WHO_FOUND_THE_CANNON, 0x1a5f, MSGNO(MsgLohoIDontThinkWeShould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DIGGER_AT_THE_WALL, 0x1a5f, EVENT(Loho_MindReadMiner)},
+    {TRIGGER_TALK, ACTOR_MINER_AWAITING_WORK, 0x1a5f, MSGNO(MsgLohoIveGottaGoStakeMyself)},
+    {TRIGGER_TALK, ACTOR_MINER_WHO_KNOWS_THE_EARTH, 0x1a5f, MSGNO(MsgLohoYouProbablyOnlyWantCannon)},
+    {TRIGGER_TALK, ACTOR_MINER_AT_HIS_SPOT, 0x1a5f, MSGNO(MsgLohoAhSoYouHaveQuest)},
+    {TRIGGER_TALK, ACTOR_DIGGER_FINDING_NOTHING, 0x1a5f, MSGNO(MsgLohoIThinkWeveDugUp)},
+    {TRIGGER_TALK, ACTOR_MINER_BY_THE_CANNON, 0x1a5f, MSGNO(MsgLohoThanksForOpeningUpWall)},
+    {TRIGGER_TALK, ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0x1a5f, MSGNO(MsgLohoIKeepDiggingUpLittle)},
+    {TRIGGER_TALK, ACTOR_MAN_KEEPING_THE_CANNON, 0x1a5f, MSGNO(MsgLohoHaHaHaIveGot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_AWAITING_WORK, 0x1a5f, MSGNO(MsgLohoIJustNeedToStick)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WHO_KNOWS_THE_EARTH, 0x1a5f, MSGNO(MsgLohoTheseGuysMustBeReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_AT_HIS_SPOT, 0x1a5f, MSGNO(MsgLohoWhenTheyGetWhereverTheyre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DIGGER_FINDING_NOTHING, 0x1a5f, MSGNO(MsgLohoEvenAtMyAge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_BY_THE_CANNON, 0x1a5f, MSGNO(MsgLohoIOnlyJustStartedDigging)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0x1a5f, MSGNO(MsgLohoIveHitMotherLode)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KEEPING_THE_CANNON, 0x1a5f, MSGNO(MsgLohoItDoesntMatterHowOld)},
+    {TRIGGER_TALK, ACTOR_MINER_WELCOMING_TO_LOHO, CONDITION_ALWAYS, MSGNO(MsgLohoWelcomeToLohoWeveBeen)},
+    {TRIGGER_TALK, ACTOR_MINER_ON_THE_EXCAVATIONS, CONDITION_ALWAYS, MSGNO(MsgLohoWeHaveLotOfImportant)},
+    {TRIGGER_TALK, ACTOR_MINER_WHO_FOUND_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoSomeOfMinersFoundAncient)},
+    {TRIGGER_TALK, ACTOR_DIGGER_AT_THE_WALL, CONDITION_ALWAYS, MSGNO(MsgLohoThatWallSeemsIndestructibleWeve)},
+    {TRIGGER_TALK, ACTOR_MINER_AWAITING_WORK, CONDITION_ALWAYS, MSGNO(MsgLohoOnceWeCanGetThrough)},
+    {TRIGGER_TALK, ACTOR_MINER_WHO_KNOWS_THE_EARTH, CONDITION_ALWAYS, MSGNO(MsgLohoIfYouWant)},
+    {TRIGGER_TALK, ACTOR_MINER_AT_HIS_SPOT, CONDITION_ALWAYS, MSGNO(MsgLohoThisIsSpotGoodHole)},
+    {TRIGGER_TALK, ACTOR_DIGGER_FINDING_NOTHING, CONDITION_ALWAYS, MSGNO(MsgLohoIHaventFoundAnythingWorth)},
+    {TRIGGER_TALK, ACTOR_MINER_BY_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoWeBroughtCannonUpHere)},
+    {TRIGGER_TALK, ACTOR_MINER_PUZZLED_BY_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoYouCanPutMetalBalls)},
+    {TRIGGER_TALK, ACTOR_MAN_KEEPING_THE_CANNON, CONDITION_ALWAYS, EVENT(Loho_AskWantCannon)},
+    {TRIGGER_TALK, ACTOR_CANNON, CONDITION_ALWAYS, EVENT(Loho_ExamineCannon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WELCOMING_TO_LOHO, CONDITION_ALWAYS, MSGNO(MsgLohoWeOnlySettledHereShort)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_ON_THE_EXCAVATIONS, CONDITION_ALWAYS, MSGNO(MsgLohoEveryoneInLohoSureLoves)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WHO_FOUND_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoAllWeNeedIsWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DIGGER_AT_THE_WALL, CONDITION_ALWAYS, MSGNO(MsgLohoIfWeCantGetThrough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_AWAITING_WORK, CONDITION_ALWAYS, MSGNO(MsgLohoIfYouLiveInLoho)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_WHO_KNOWS_THE_EARTH, CONDITION_ALWAYS, MSGNO(MsgLohoRealExpertsCanFindBest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_AT_HIS_SPOT, CONDITION_ALWAYS, MSGNO(MsgLohoOnceYouveBeenMining)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DIGGER_FINDING_NOTHING, CONDITION_ALWAYS, MSGNO(MsgLohoIThinkImStarting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_BY_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoCannonsAreSoHeavyWhy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MINER_PUZZLED_BY_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoWhatIdiotSaidThatWed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KEEPING_THE_CANNON, CONDITION_ALWAYS, MSGNO(MsgLohoAllRightWeFiguredOut)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLohoThisWellLooksReallyOld))},
+    {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), ACTOR_CANNON, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
+    {TRIGGER_TALK, ACTOR_LULL, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, 0x300, EVENT(Loho_ScoopFirstTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 102, 0x301, EVENT(Loho_ScoopSecondTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 103, 0x302, EVENT(Loho_ScoopThirdTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Loho_LiftRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, 0x201, EVENT(Loho_LiftRock)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gLoho_Room2Triggers[] = {
+struct Trigger gLoho_InteriorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1081,20 +1148,20 @@ struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, ACTOR_VILLAGER_ON_COMMERCE, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, ACTOR_INNKEEPER, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, ACTOR_BEARDED_MAN_ON_THE_CANNON, CONDITION_ALWAYS, 10},
     {STEP_TRIGGER_FACING(FACING_NORTH), 20, 0x320, EVENT(Loho_VillagerStepsAsideWest)},
     {STEP_TRIGGER_FACING(FACING_WEST), 22, 0x320, EVENT(Loho_VillagerStepsAsideNorth)},
     {TRIGGER_STEP, 21, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_STEP, 23, 0x1320, EVENT(Loho_VillagerStepsBack)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLoho18)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho52)},
-    {TRIGGER_TALK, 9, 0x1320, EVENT(Loho_TalkToInnkeeper)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa5f, MSGNO(MsgLoho20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho54)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_COMMERCE, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, 0xa5f, MSGNO(MsgLohoWheneverSomeoneStrikesGold)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, 0x1a5f, MSGNO(MsgLohoNowWeDontHaveSymbol)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, 0x1320, EVENT(Loho_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_BEARDED_MAN_ON_THE_CANNON, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, 0xa5f, MSGNO(MsgLohoIfCannonIsTruly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, 0x1a5f, MSGNO(MsgLohoItWorriesMeToNo)},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Loho_ReadInnSign)},
     {TRIGGER_TABLE_END},

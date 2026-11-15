@@ -5,6 +5,7 @@
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
 #include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "djinn_ids.h"
 
 #include "../field/actor_prepare.c"
@@ -91,7 +92,7 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
     object->priorityFlags |= 0x22;
@@ -159,10 +160,10 @@ void MagmaRockInside_PressGateSwitch1(void);
 void MagmaRockInside_PressGateSwitch2(void);
 void MagmaRockInside_PressGateSwitch3(void);
 
-extern s16 gMagmaRockInside_PlatformPath6[];
-extern s16 gMagmaRockInside_PlatformPath7[];
-extern s16 gMagmaRockInside_PlatformPath8[];
-extern s16 gMagmaRockInside_PlatformPath9[];
+extern s16 gMagmaRockInside_PlatformPathF[];
+extern s16 gMagmaRockInside_PlatformPathG[];
+extern s16 gMagmaRockInside_PlatformPathH[];
+extern s16 gMagmaRockInside_PlatformPathI[];
 
 void FieldEffect_StartBlankOverlay(s32 value);
 
@@ -359,61 +360,33 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
     *state = 0;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Actor_SelectAnimation();
 void Actor_StartScript();
 s32 GameFlag_Get();
-/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
- * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
- * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja (magma_rock_inside.c):
- * games/tla/src/scene/magma_rock_inside.c:383: too few arguments to function
- * `Actor_GetById'. */
-extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
-void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
-  s32 t1, t4, v5, v6, v7;
+void MagmaRockInside_StartLavaPlatform(s32 id, s32 path, s16 flag) {
+  struct Actor *platform;
+  s32 risen;
 
-  v5 = (a2 << 16);
-  v7 = a1;
-  t1 = Actor_GetById__s0800();
-  v6 = t1;
-  Actor_SelectAnimation(t1, 4);
-  FIELD_AT(v6, u8, 90) = 0;
-  FIELD_AT(v6, s32, 48) = 0x8000;
-  FIELD_AT(v6, s32, 52) = 0x8000;
-  FIELD_AT(v6, u8, 85) = 2;
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
-  asm("");
-  v5 = (v5 >> 16);
-  v5 = (v5 << 16);
-  FIELD_AT(v6, u8, 35) = (128 | FIELD_AT(v6, u8, 35));
-  v5 = ((u32)v5 >> 16);
-  Actor_SetSpriteFlags(v6, 0);
-  t4 = Event_GetFlag(v5);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here. */
-  asm("");
-  if (t4 == 0)
-    goto sunk;
-  FIELD_AT(v6, s32, 20) = 0x100000;
-  FIELD_AT(v6, s32, 12) = 0x100000;
-  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    goto hook;
-  Actor_StartScript(v6, v7);
-  goto hook;
-sunk:
-  FIELD_AT(v6, s32, 20) = -0xe0000;
-  FIELD_AT(v6, s32, 12) = -0xe0000;
-hook:
-  FIELD_AT(v6, s32, 108) = (s32)MagmaRockInside_PausePlatform;
+  platform = Actor_GetById(id);
+  Actor_SelectAnimation(platform, 4);
+  platform->steeringFlags = 0;
+  platform->speedLimit = px(1) / 2;
+  platform->acceleration = px(1) / 2;
+  platform->motionFlags = ACTOR_FALLS;
+  platform->priorityFlags |= 0x80;
+  Actor_SetSpriteFlags(platform, 0);
+  if (Event_GetFlag((u16)flag)) {
+    platform->groundHeight = px(16);
+    platform->y.fixed = px(16);
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
+      Actor_StartScript(platform, path);
+  } else {
+    platform->groundHeight = -px(14);
+    platform->y.fixed = -px(14);
+  }
+  platform->update = (void (*)(void))MagmaRockInside_PausePlatform;
 }
-#undef FIELD_AT
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 
@@ -494,7 +467,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
     if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
         object->y.fixed) {
       object->layer = 2;
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
       if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
         object->gravity = px(1) / 16;
@@ -522,7 +495,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
     if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
         object->y.fixed) {
       object->layer = 2;
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
       object->gravity = px(1) / 16;
       object->priorityFlags |= 2;
@@ -787,7 +760,7 @@ end:
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
-  flame->update = 0;
+  flame->update = NULL;
   Actor_Release(flame);
   id = 0;
 spark:
@@ -826,7 +799,7 @@ hit:
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(flame);
-  flame->update = 0;
+  flame->update = NULL;
   Actor_Release(flame);
   Event_SetFlag(FLAG_SCENE_TEMP_F0);
   MagmaRockInside_PlayBurst__s0e20((u16)id);
@@ -907,7 +880,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   leader->speedLimit = px(3);
   leader->acceleration = px(2);
   leader->velocityY = 0x4cccc;
-  leader->motionFlags &= 0x7e;
+  leader->motionFlags &= ~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE);
   Actor_SetSpriteFlags(leader, 0);
   stepX = (position[0] - leader->x.fixed) / 12;
   stepZ = (position[2] - leader->z.fixed) / 12;
@@ -925,7 +898,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   leader->z.fixed = target->z.fixed;
   Actor_SelectAnimation(leader, 6);
   Actor_SetSpriteFlags(leader, 1);
-  leader->motionFlags |= 3;
+  leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_End();
 }
 
@@ -993,7 +966,6 @@ void MagmaRockInside_DrainLava(void) {
   }
   i = 0;
 burst:
-  /* FAKEMATCH(temporary): burstRandom holding the first call's value. */
   burstRandom = Random16();
   mask = 31;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp. */
@@ -1064,7 +1036,6 @@ rise:
     if ((t & 3) == 0) {
       i = 0;
     spark:
-      /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
       sparkRandom = Random16();
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1105,7 +1076,6 @@ rise:
   lastOptions->startScaleX = 0x1cccc;
   i = 0;
 last:
-  /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
   sparkRandom = Random16();
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1284,7 +1254,7 @@ void MagmaRockInside_FloodWithLava(void) {
   FieldVector_AddPolarOffset(16, (s32)facing ^ 0x8000, p);
   leader->facing = facing;
   Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
-  Actor_Get(*(s32 *)j)->steeringFlags |= 1;
+  Actor_Get(*(s32 *)j)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -1305,7 +1275,7 @@ DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillar2, 11,
 
 void MagmaRockInside_SmokeEmber(struct Actor *object) {
   if (++object->timer > 64)
-    object->update = 0;
+    object->update = NULL;
   if ((object->timer & 1) == 0) {
     struct EffectConfig config;
 
@@ -1539,6 +1509,7 @@ void MagmaRockInside_TrackStepCell(void) {
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
+  s32 trigger;
   struct FieldWork *work;
 
   if (object->velocityX != 0 || object->velocityZ != 0)
@@ -1557,10 +1528,8 @@ void MagmaRockInside_TrackStepCell(void) {
   work = Ram_HeapSlots->fieldWork;
   value = MapCell_Get(2, x, z) >> 8;
   if (value != 0) {
-    /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
-     */
-    s32 delay = value + 200;
-    work->raisedTrigger = delay;
+    trigger = value + 200;
+    work->raisedTrigger = trigger;
   }
 }
 
@@ -1845,7 +1814,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
   position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
   position[2] = object->z.fixed;
-  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, 0x8000,
+  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, px(1) / 2,
                     frame, 0x130000, &options);
 }
 
@@ -1944,52 +1913,41 @@ burst:
     goto burst;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  i = 0;
-  /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1. */
-  probe = second->conditionResult;
-  if (probe & 0x100) {
-    wait(1);
-    goto tail;
+  for (i = 0; i != 16; i++) {
+    spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
+                              second->z.fixed);
+    Event_PlaySound(SE_195);
+    spark->timer = (Random16() & 0x7fff) + 0x8000;
+    spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
+    noMotion = 0;
+    spark->motionFlags = noMotion;
+    spark->riseBaseY = px(122);
+    spark->watchedActor = second;
+    ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+    FieldActor_SetSpriteColor(spark, 10);
+    Scene_SetActorSpritePriority(spark, 1);
+    Actor_SelectAnimation(spark, 7);
+    Actor_SetSpriteFlags(spark, 0);
+    Actor_SetBlendMode(spark, 1);
+    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
+                                    &spark->x.fixed);
+    Actor_StartScript(spark, gMagmaRockInside_SparkScript);
+    if (i == 3) {
+      Actor_SetSpriteColorById(b, 256);
+      second->motionFlags = noMotion;
+      second->acceleration = 0x3333;
+      second->speedLimit = 0x3333;
+      Actor_SetScript(b, script);
+    }
+    wait(8);
   }
-spiral:
-  spark =
-      FieldActor_Create(672, second->x.fixed, second->y.fixed, second->z.fixed);
-  Event_PlaySound(SE_195);
-  spark->timer = (Random16() & 0x7fff) + 0x8000;
-  spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
-  noMotion = 0;
-  spark->motionFlags = noMotion;
-  spark->riseBaseY = 0x7a0000;
-  spark->watchedActor = second;
-  ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-  FieldActor_SetSpriteColor(spark, 10);
-  Scene_SetActorSpritePriority(spark, 1);
-  Actor_SelectAnimation(spark, 7);
-  Actor_SetSpriteFlags(spark, 0);
-  Actor_SetBlendMode(spark, 1);
-  FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
-                                  &spark->x.fixed);
-  Actor_StartScript(spark, gMagmaRockInside_SparkScript);
-  if (i == 3) {
-    Actor_SetSpriteColorById(b, 256);
-    second->motionFlags = noMotion;
-    second->acceleration = 0x3333;
-    second->speedLimit = 0x3333;
-    Actor_SetScript(b, script);
-  }
-tail:
-  wait(8);
-  i++;
-  if (i != 16)
-    goto spiral;
   Event_PlaySound(SE_SHIMMER);
   wait(16);
   i = 2;
 column:
-  riser = FieldActor_Create(672, second->x.fixed,
-                            second->y.fixed + i * 0x10000 - 0x80000,
-                            second->z.fixed);
+  riser =
+      FieldActor_Create(672, second->x.fixed,
+                        second->y.fixed + i * px(1) - px(8), second->z.fixed);
   riser->timer = Random16();
   riser->userValue = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
@@ -2023,19 +1981,11 @@ column:
   Actor_SetScript(b, gMagmaRockInside_BlazeWatcherReturnScript);
   second->update = (void (*)(void))MagmaRockInside_TrailSparks;
   wait(120);
-  second->update = 0;
+  second->update = NULL;
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-#define EVENT_WORK gFieldWork
 
 s32 Actor_MoveToObject();
 
@@ -2051,7 +2001,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Event_End();
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.7);
     Actor_SetSpeed(ACTOR_JENNA, 0.7);
     Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
@@ -2099,8 +2049,8 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestination(ACTOR_JENNA, FIELD_AT(object, s16, 10),
-                           FIELD_AT(object, s16, 18));
+      Actor_SetDestination(ACTOR_JENNA, object->x.part[0].pixel,
+                           object->z.part[0].pixel);
     FieldActor_WaitForMoveById(ACTOR_JENNA);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetMovementType(Actor_Get(8), 9);
@@ -2204,22 +2154,22 @@ void MagmaRockInside_PressGateSwitch3(void) {
   // called directly differs in 56 instructions.
   Event_SetFlag(FLAG_AREA_TEMP_02);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_4) {
-    s16 *script = gMagmaRockInside_PlatformPath6;
+    s16 *script = gMagmaRockInside_PlatformPathF;
 
     MagmaRockInside_StartLavaPlatform(15, script, 0x302);
-    MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPath6,
+    MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPathF,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPath7,
+    MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPathG,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPath7,
+    MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPathG,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPath8,
+    MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPathH,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPath8,
+    MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPathH,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPath9,
+    MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPathI,
                                       0x302);
-    MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPath9,
+    MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPathI,
                                       0x302);
     if (Actor_Get(16)->scriptCursor == 0) {
       Actor_Get(16)->scriptCursor = 10;
@@ -2259,8 +2209,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
   }
 }
 #undef BYTE_AT
-#undef FIELD_AT
-#undef EVENT_WORK
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
@@ -2269,14 +2217,14 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 void Tightrope_Initialize(void);
 
-extern s16 gMagmaRockInside_PlatformPath1[];
-extern u32 gMagmaRockInside_PlatformPath2[];
-extern u16 gMagmaRockInside_PlatformPath3[];
-extern u32 gMagmaRockInside_PlatformPath4[];
-extern s16 gMagmaRockInside_PlatformPath5[];
-extern s16 gMagmaRockInside_PlatformPath10[];
-extern s16 gMagmaRockInside_PlatformPath11[];
-extern s16 gMagmaRockInside_PlatformPath12[];
+extern s16 gMagmaRockInside_PlatformPathA[];
+extern u32 gMagmaRockInside_PlatformPathB[];
+extern u16 gMagmaRockInside_PlatformPathC[];
+extern u32 gMagmaRockInside_PlatformPathD[];
+extern s16 gMagmaRockInside_PlatformPathE[];
+extern s16 gMagmaRockInside_PlatformPathJ[];
+extern s16 gMagmaRockInside_PlatformPathK[];
+extern s16 gMagmaRockInside_PlatformPathL[];
 extern s32 gMagmaRockInside_Statues[];
 
 void Actor_PlaceBlocks(const u8 *table);
@@ -2292,7 +2240,7 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
 static __inline__ void Raise(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->motionFlags = 2;
+  object->motionFlags = ACTOR_FALLS;
   object->y.fixed = object->groundHeight = 20 << 16;
   object->priorityFlags |= 128;
 }
@@ -2308,7 +2256,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 516;
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath1, 768);
+    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPathA, 768);
     if (!Event_GetFlag(FLAG_AREA_TEMP_00)) {
       CLOSED_BLEND();
       MapGrid_CopyCellsTo(71, 64, 47, 98, 1, 1);
@@ -2347,8 +2295,8 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     Raise(9);
-    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath2, 769);
-    MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath3, 769);
+    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathB, 769);
+    MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPathC, 769);
     if (Event_GetFlag(FLAG_AREA_TEMP_01))
       MagmaRockInside_PressGateSwitch2();
     else
@@ -2358,9 +2306,9 @@ s32 Scene_Initialize(void) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Room4Statues);
     if (gMainRoutineWork.entrance <= 7) {
-      MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath4,
+      MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathD,
                                         769);
-      MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPath5,
+      MagmaRockInside_StartLavaPlatform(12, gMagmaRockInside_PlatformPathE,
                                         769);
       if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
         MagmaRockInside_PressGateSwitch2();
@@ -2391,21 +2339,21 @@ s32 Scene_Initialize(void) {
       Actor_GetById(20)->retainSpriteCache = 3;
       Actor_GetById(21)->retainSpriteCache = 3;
       Actor_GetById(22)->retainSpriteCache = 3;
-      MagmaRockInside_StartLavaPlatform(15, gMagmaRockInside_PlatformPath6,
+      MagmaRockInside_StartLavaPlatform(15, gMagmaRockInside_PlatformPathF,
                                         770);
-      MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPath6,
+      MagmaRockInside_StartLavaPlatform(16, gMagmaRockInside_PlatformPathF,
                                         770);
-      MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPath7,
+      MagmaRockInside_StartLavaPlatform(17, gMagmaRockInside_PlatformPathG,
                                         770);
-      MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPath7,
+      MagmaRockInside_StartLavaPlatform(18, gMagmaRockInside_PlatformPathG,
                                         770);
-      MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPath8,
+      MagmaRockInside_StartLavaPlatform(19, gMagmaRockInside_PlatformPathH,
                                         770);
-      MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPath8,
+      MagmaRockInside_StartLavaPlatform(20, gMagmaRockInside_PlatformPathH,
                                         770);
-      MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPath9,
+      MagmaRockInside_StartLavaPlatform(21, gMagmaRockInside_PlatformPathI,
                                         770);
-      MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPath9,
+      MagmaRockInside_StartLavaPlatform(22, gMagmaRockInside_PlatformPathI,
                                         770);
       if (Event_GetFlag(FLAG_AREA_TEMP_02))
         MagmaRockInside_PressGateSwitch3();
@@ -2423,7 +2371,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       MagmaRockInside_SwapCells(0, 22, 26, 0);
       MagmaRockInside_SwapCells(0, 25, 26, 0);
-      Actor_SetSpritePriority(64, 3);
+      Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
     } else {
       CLOSED_BLEND();
     }
@@ -2437,9 +2385,9 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(2550))
       Actor_SetPosition(12, 920, 616);
     Actor_PlaceBlocks(gMagmaRockInside_Room6Pillars);
-    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPath10, 770);
-    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPath11, 770);
-    MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPath12, 770);
+    MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPathJ, 770);
+    MagmaRockInside_StartLavaPlatform(10, gMagmaRockInside_PlatformPathK, 770);
+    MagmaRockInside_StartLavaPlatform(11, gMagmaRockInside_PlatformPathL, 770);
     if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       Actor_SetAnimation(9, 4);
       if (Event_GetFlag(2550))
@@ -2665,7 +2613,7 @@ next:
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        leader->motionFlags = 3;
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
@@ -2695,16 +2643,12 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
+  s32 y;
 
   do {
-    {
-      /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
-
-      effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
-    }
+    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    effect = (struct FieldEffect *)FieldActor_Create(
+        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2783,7 +2727,7 @@ void MagmaRockInside_SetActorCellShape(s32 level, s32 layer, s32 owner) {
 
   height += level;
 
-  shape += object->x.fixed / 0x100000 + object->z.fixed / 0x100000 * 128;
+  shape += object->x.fixed / px(16) + object->z.fixed / px(16) * 128;
   *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }
 
@@ -2812,9 +2756,6 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
 
-  /* FAKEMATCH(barrier): an empty asm before the work is read keeps the
-   * spills of x and y at the entry. */
-  asm("");
   work = Ram_HeapSlots->menuWork;
   /* A goto loop carries no loop notes, so the offsets are rebuilt on every
    */
@@ -2833,7 +2774,7 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       FieldVector_AddPolarOffsetFixed((Random16() << 3) + 0x80000, angle,
                                       rock->position);
       rock->velocity[0] = 0;
-      rock->velocity[1] = 0x50000;
+      rock->velocity[1] = px(5);
       rock->velocity[2] = 0;
       FieldVector_AddPolarOffsetFixed((Random16() << 1) + 0x20000, angle,
                                       rock->velocity);
@@ -2944,13 +2885,13 @@ u32 gMagmaRockInside_FlameEmberScript[] = {
     SC_END,
 };
 
-s16 gMagmaRockInside_PlatformPath1[] = {                                                               
+s16 gMagmaRockInside_PlatformPathA[] = {                                                               
       4, 0,  0, 776, 0, 16, 0, 680, 1,  0,  4,  0,  0, 744, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 744, 0,  16, 0,  632, 1, 0,  4,  0,                
       0, 776, 0, 16, 0, 632, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-u32 gMagmaRockInside_PlatformPath2[] = {                                                               
+u32 gMagmaRockInside_PlatformPathB[] = {                                                               
       SC_MOVE(216, 16, 568),                             
       SC_SYNC,                                                                 
       SC_MOVE(216, 16, 584),                             
@@ -2963,7 +2904,7 @@ u32 gMagmaRockInside_PlatformPath2[] = {
       SC_END,                                                                  
   };
 
-u16 gMagmaRockInside_PlatformPath3[] = {
+u16 gMagmaRockInside_PlatformPathC[] = {
     4, 0, 0, 600, 0, 16, 0, 664,
     1, 0, 4, 0, 0, 728, 0, 16,
     0, 664, 1, 0, 4, 0, 0, 728,
@@ -2973,7 +2914,7 @@ u16 gMagmaRockInside_PlatformPath3[] = {
     1, 0, 17, 0,
 };
 
-u32 gMagmaRockInside_PlatformPath4[] = {                                                               
+u32 gMagmaRockInside_PlatformPathD[] = {                                                               
       SC_MOVE(184, 16, 232),                             
       SC_SYNC,                                                                 
       SC_MOVE(280, 16, 232),                             
@@ -2986,49 +2927,49 @@ u32 gMagmaRockInside_PlatformPath4[] = {
       SC_END,                                                                  
   };
 
-s16 gMagmaRockInside_PlatformPath5[] = {                                                               
+s16 gMagmaRockInside_PlatformPathE[] = {                                                               
       4, 0,  0, 472, 0, 16, 0, 296, 1,  0,  4,  0,  0, 424, 0,  16,               
       0, 296, 1, 0,  4, 0,  0, 424, 0,  16, 0,  264, 1, 0,  4,  0,                
       0, 472, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath6[] = {                                                               
+s16 gMagmaRockInside_PlatformPathF[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 600, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 280, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath7[] = {                                                               
+s16 gMagmaRockInside_PlatformPathG[] = {                                                               
       4, 0,  0, 312, 0, 16, 0, 664, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 376, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 312, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath8[] = {                                                               
+s16 gMagmaRockInside_PlatformPathH[] = {                                                               
       4, 0,  0, 440, 0, 16, 0, 600, 1,  0,  4,  0,  0, 504, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 504, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 440, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath9[] = {                                                               
+s16 gMagmaRockInside_PlatformPathI[] = {                                                               
       4, 0,  0, 536, 0, 16, 0, 664, 1,  0,  4,  0,  0, 600, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 600, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 536, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath10[] = {                                                               
+s16 gMagmaRockInside_PlatformPathJ[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 264, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 232, 1, 0,  4, 0,  0, 408, 0,  16, 0,  232, 1, 0,  4,  0,                
       0, 408, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath11[] = {                                                               
+s16 gMagmaRockInside_PlatformPathK[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 680, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 280, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-s16 gMagmaRockInside_PlatformPath12[] = {                                                               
+s16 gMagmaRockInside_PlatformPathL[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 680, 1,  0,  4,  0,  0, 312, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 312, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 376, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
@@ -3248,7 +3189,7 @@ struct ActorPlacement gMagmaRockInside_Room2Placements[] = {
     {334, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_NORTH, 2, 3},
     {312, CONDITION_ALWAYS, 7, 8, 0, 0, FACING_NORTH, 2, 2},
     {489, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(245, 0x6b, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x6b, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3260,7 +3201,7 @@ struct ActorPlacement gMagmaRockInside_Room3Placements[] = {
     {319, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_SOUTH, 2, 3},
-    ACTOR_PLACEMENT(245, 0x68, MOVEMENT_TYPE_STAND, 456, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x68, MOVEMENT_TYPE_STAND, 456, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3329,7 +3270,7 @@ struct ActorPlacement gMagmaRockInside_Room8Placements[] = {
     {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {365, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
     {365, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -3632,9 +3573,7 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef FIELD_AT
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
 #undef BYTE_AT
-#undef EVENT_WORK
 #undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM

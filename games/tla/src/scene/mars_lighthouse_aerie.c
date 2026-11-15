@@ -2,7 +2,7 @@
 /// Mars Lighthouse's aerie, at the top of the last lighthouse: the party faces
 /// the Doom Dragon (MarsLighthouseAerie_FaceDoomDragon) and learns who the
 /// dragon was (MarsLighthouseAerie_FindWhoTheDragonWas), the parents it held
-/// speak to their children (MarsLighthouseAerie_TalkToBlindedParent and its
+/// speak to their children (MarsLighthouseAerie_TalkToJennasMother and its
 /// siblings), and the beacon is lit with the Mars Star
 /// (MarsLighthouseAerie_LightBeacon) before the Golden Sun rises
 /// (MarsLighthouseAerie_WatchGoldenSunRise).
@@ -15,6 +15,8 @@
 /// party leaves.
 
 #include "flags.h"
+#include "graphics/palette_buffers.h"
+#include "sprite_ids.h"
 #include "item_ids.h"
 #include "field/field_sequence_event.h"
 #include "scene/mars_lighthouse_aerie.h"
@@ -59,12 +61,67 @@
 /// The beacon's light has broken through: its orbs rise every frame.
 #define FLAG_BEACON_BROKE_THROUGH FLAG_SCENE_TEMP_00
 
+/// The aerie's actors, by the rows of its three actor placement tables; the
+/// party's rows go to their party slots. Ids 8 to 16 and Kraden's are the same
+/// in all three.
 enum {
+  /// The beacon's fire and its glow: SPRITE_BLUE_ORB on the beacon's table,
+  /// placed over the beacon once FLAG_MARS_BEACON_BURNING is set.
   ACTOR_BEACON_FIRE = 8,
-  ACTOR_DOOM_DRAGON = 17,
-  /// The voice at the beacon ("Betrayers, you have arrived!").
-  ACTOR_VOICE = 18,
-  ACTOR_KRADEN = 19
+  ACTOR_BEACON_GLOW,
+  /// Seven platforms (SPRITE_FLOATING_PLATFORM) along the aerie's east edge,
+  /// floating before the battle.
+  ACTOR_FIRST_PLATFORM,
+  ACTOR_LAST_PLATFORM = ACTOR_FIRST_PLATFORM + 6,
+  /// Before the battle (gMarsLighthouseAerie_Placements) and after it: the
+  /// Doom Dragon (sprite 182) and the Wise One (sprite 311), the voice that
+  /// calls the party betrayers.
+  ACTOR_DOOM_DRAGON,
+  ACTOR_WISE_ONE,
+  ACTOR_KRADEN
+};
+
+/// After the battle (gMarsLighthouseAerie_AfterBattlePlacements): the party
+/// but the leader stand in on sprites 48 to 54, the dragon's three heads
+/// (sprite 183) fall, and under each lies one of the three it was.
+enum {
+  ACTOR_JENNA_STAND_IN = 20,
+  ACTOR_SHEBA_STAND_IN,
+  ACTOR_PIERS_STAND_IN,
+  ACTOR_ISAAC_STAND_IN,
+  ACTOR_GARET_STAND_IN,
+  ACTOR_MIA_STAND_IN,
+  ACTOR_IVAN_STAND_IN,
+  ACTOR_DRAGON_HEAD_A,
+  ACTOR_DRAGON_HEAD_B,
+  ACTOR_DRAGON_HEAD_C,
+  ACTOR_FREED_JENNAS_MOTHER,
+  ACTOR_FREED_JENNAS_FATHER,
+  ACTOR_FREED_KYLE
+};
+
+/// At the beacon (gMarsLighthouseAerie_BeaconPlacements), entered by 3 to 5:
+/// the three lie dying, and an unseen actor beside each answers for them
+/// when talked to.
+enum {
+  ACTOR_JENNAS_MOTHER_TALK_SPOT = 17,
+  /// Unseen: "Will you cast in the Mars Star?"
+  ACTOR_VOICE,
+  ACTOR_JENNAS_MOTHER = 20, ///< "I...can't see you, but I sense..."
+  ACTOR_JENNAS_FATHER,      ///< "I am so happy...to have one last chance..."
+  ACTOR_KYLE,               ///< "Tell Dora...to live her life..."
+  /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
+  /// bottom up, as at Venus Lighthouse's aerie.
+  ACTOR_BEAM_BOTTOM,
+  ACTOR_BEAM_LOWER,
+  ACTOR_BEAM_MIDDLE,
+  ACTOR_BEAM_UPPER,
+  ACTOR_BEAM_TOP,
+  /// Hama, who speaks to the party from afar as the Golden Sun rises; until
+  /// then her actor stands unseen beside Ivan as his talk spot.
+  ACTOR_HAMA,
+  ACTOR_JENNAS_FATHER_TALK_SPOT,
+  ACTOR_KYLE_TALK_SPOT
 };
 #ifndef TLA_MARS_LIGHTHOUSE_AERIE_H
 #define TLA_MARS_LIGHTHOUSE_AERIE_H
@@ -94,24 +151,19 @@ extern u8 MsgUnnnnIAm[];
 extern u8 MsgIUnderstandYour[];
 extern struct ActorPlacement gMarsLighthouseAerie_Placements[];
 extern struct ActorPlacement gMarsLighthouseAerie_AfterBattlePlacements[];
-extern s16 gMarsLighthouseAerie_BeaconPlacements[];
+extern struct ActorPlacement gMarsLighthouseAerie_BeaconPlacements[];
 extern u32 gMarsLighthouseAerie_FlickerFrame;
 extern u32 gMarsLighthouseAerie_FlickerRate;
 
-void MarsLighthouseAerie_HaltParent(s32 from, s32 to);
+void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker);
 
-extern u8 MsgDoNotLet[];
+extern u8 MsgMarsLighthouseAerieDoNotLetYourSadness[];
 extern u16 gPaletteCycle_Flash;
 extern u16 gPaletteCycle_Countdown;
 extern u16 gPaletteCycle_Period;
 extern u16 *gPaletteCycle_Slots;
 extern u16 gPaletteCycle_Count;
 extern u16 gPaletteCycle_Step;
-
-struct MarsLighthouseAerieParty {
-  u8 unk000[0x26a];
-  s16 held;
-};
 
 s32 List_CountEntries(u16 *list);
 
@@ -217,11 +269,7 @@ const struct Trigger *Scene_GetActorPlacements(void) {
 void Scene_LeaveByExit(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
+  gMainRoutineWork.teleportState = 2;
   FieldEvent_SetExitRequest(1);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
@@ -255,18 +303,18 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   if (!Event_GetFlag(FLAG_MARS_BEACON_BURNING))
     return;
   Actor_SetPosition(ACTOR_BEACON_FIRE, 512, 264);
-  Actor_SetPosition(9, 512, 271);
+  Actor_SetPosition(ACTOR_BEACON_GLOW, 512, 271);
   System_Wait(1);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 1);
   object = Actor_Get(ACTOR_BEACON_FIRE);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   object->y.fixed = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
-  FieldActor_SetSpritePriority(9, 2);
-  object = Actor_Get(9);
-  object->motionFlags = 4;
+  FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 2);
+  object = Actor_Get(ACTOR_BEACON_GLOW);
+  object->motionFlags = ACTOR_FLOATS;
   object->y.fixed = px(112);
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
@@ -295,10 +343,10 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.entrance == 4) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_SetAnimation(20, 8);
-    Actor_SetAnimation(21, 8);
-    Actor_SetAnimation(22, 7);
-    Actor_SetPosition(19, 498, 320);
+    Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 8);
+    Actor_SetAnimation(ACTOR_JENNAS_FATHER, 8);
+    Actor_SetAnimation(ACTOR_KYLE, 7);
+    Actor_SetPosition(ACTOR_KRADEN, 498, 320);
     Actor_SetPosition(ACTOR_GARET, 538, 320);
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 506, 280);
     System_Wait(1);
@@ -313,9 +361,9 @@ s32 Scene_Initialize(void) {
     MarsLighthouseAerie_LightBeacon();
     Event_End();
   } else if (gMainRoutineWork.entrance == 3) {
-    Actor_SetAnimation(20, 8);
-    Actor_SetAnimation(21, 8);
-    Actor_SetAnimation(22, 7);
+    Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 8);
+    Actor_SetAnimation(ACTOR_JENNAS_FATHER, 8);
+    Actor_SetAnimation(ACTOR_KYLE, 7);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
       MarsLighthouseAerie_UrgeOnToBeacon();
   } else if (gMainRoutineWork.entrance == 2) {
@@ -346,12 +394,13 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
+  s32 angle;
 
   if (anchor != NULL &&
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
     object =
         FieldActor_Create(0x2a0, anchor->x.fixed + px(8),
-                          anchor->y.fixed + offset + 0x80000, anchor->z.fixed);
+                          anchor->y.fixed + offset + px(8), anchor->z.fixed);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
@@ -360,12 +409,8 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       Actor_StartScript(object, gMarsLighthouseAerie_BeaconFlameScript);
       FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
-      {
-        /* FAKEMATCH(temporary): the masked value held in a local. */
-        s32 action = Random16() & 0x0ffff000;
-
-        object->timer = action;
-      }
+      angle = Random16() & 0xffff000;
+      object->timer = angle;
       object->userValue = phase;
       object->update = MarsLighthouseAerie_SwingBeaconFlame;
       zero = 0;
@@ -412,12 +457,6 @@ void MarsLighthouseAerie_StopLookingAround(s32 id) {
   Actor_FaceDirection(id, FACING_NORTH, 0);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 struct SparkleWork;
 s32 Actor_ReleaseById();
 s32 Actor_MoveToObject();
@@ -440,53 +479,37 @@ extern u32 gMarsLighthouseAerie_GaretReadyScript[];
 /// The party reaches the beacon in the storm, and the voice calls them
 /// betrayers before the Doom Dragon's battle.
 void MarsLighthouseAerie_FaceDoomDragon(void) {
-  u8 *unk85;
+  u8 *motionFlags;
   u16 *dispcnt;
   struct MainRoutineWork *work;
-  s32 t0;
   u16 *palette;
-  s32 actor, t4, t16, t18, t21, t23, t25, t27, t48, t50;
-  s32 t53, t55, t57, t59, t61, t88, t91, t94, t98, t99;
-  s32 t100, t102, t112, t114, t118, t120, t122, t123, t125;
-  s32 t127, t129, t132, t134, t136, t137, t141, t144, t166;
-  s32 t182, t191, t194, t206, t278, t298, t334, t356, t406;
-  s32 t414, t419, t420, t423, t424, t433, t451, t461;
-  s32 t463, t465, t466, t469, t471, t473, t482, t484, t490, t492;
-  s32 t494, t496, t497, t499, t502, t503, t523, t528;
-  s32 t531, t540, t545, t562, t628, t670, t679;
+  struct Actor *actor;
 
-  t0 = gMainRoutineWork.leaderActorId;
-  actor = Actor_Get(t0);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   palette = (u16 *)&OBJ_PLTT_COLOR(0, 15);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t4 = Actor_Get(18);
-  FieldActor_SetSpriteColor(t4, 15);
-  Actor_SetPosition(18, 512, 276);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 15);
+  Actor_SetPosition(ACTOR_WISE_ONE, 512, 276);
   System_Wait(1);
   FieldActor_SetSpritePriority(ACTOR_SHEBA, 1);
   FieldActor_SetSpritePriority(ACTOR_JENNA, 1);
-  FieldActor_SetSpritePriority(19, 1);
+  FieldActor_SetSpritePriority(ACTOR_KRADEN, 1);
   FieldActor_SetSpritePriority(ACTOR_IVAN, 1);
   FieldActor_SetSpritePriority(ACTOR_MIA, 1);
   Event_PlaySound(MUS_SILENCE);
-  FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieBetrayersYouHaveArrived);
   // "Betrayers, you have arrived!"
-  Event_ShowMessage(18, 0);
-  t16 = gMainRoutineWork.leaderActorId;
-  Actor_ShowEmote(t16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  t18 = EventCamera_GetActor();
-  FIELD_AT(t18, u8, 85) = 0;
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
-  t21 = gMainRoutineWork.leaderActorId;
-  Actor_SetSpeed(t21, 1.6);
-  t23 = gMainRoutineWork.leaderActorId;
-  Actor_WalkToAndWait(t23, 504, 320);
-  t25 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t25, FACING_NORTH, 0);
-  t27 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(ACTOR_ISAAC, t27);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_WalkToAndWait(ACTOR_ISAAC, 520, 320);
@@ -508,120 +531,89 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   // "The wind's too strong! I can't see anything!"
   Event_ShowMessage(ACTOR_MIA, 0);
-  t48 = gMainRoutineWork.leaderActorId;
-  FieldActor_Stop(t48);
-  t50 = Random16();
-  FIELD_AT(actor, u8, 98) = (((u32)(((t50 << 2) + t50) << 2) >> 16) + 20);
-  FIELD_AT(actor, s32, 108) = (s32)MarsLighthouseAerie_LookAround;
-  MarsLighthouseAerie_StartLookingAround(1);
-  MarsLighthouseAerie_StartLookingAround(3);
-  t53 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(ACTOR_JENNA, t53);
-  t55 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(ACTOR_SHEBA, t55);
-  t57 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(ACTOR_PIERS, t57);
-  t59 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(ACTOR_IVAN, t59);
-  t61 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToObject(19, t61);
+  FieldActor_Stop(gMainRoutineWork.leaderActorId);
+  actor->riseCounter = ((Random16() * 20) >> 16) + 20;
+  actor->update = (void (*)(void))MarsLighthouseAerie_LookAround;
+  MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
   Actor_SetSpeed(ACTOR_IVAN, 1.6);
-  Actor_SetSpeed(19, 1.6);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetScript(ACTOR_JENNA, (s32)gMarsLighthouseAerie_JennaApproachScript);
   Actor_SetScript(ACTOR_SHEBA, (s32)gMarsLighthouseAerie_ShebaApproachScript);
   Actor_SetScript(ACTOR_PIERS, (s32)gMarsLighthouseAerie_PiersApproachScript);
-  Actor_SetScript(19, (s32)gMarsLighthouseAerie_KradenApproachScript);
+  Actor_SetScript(ACTOR_KRADEN, (s32)gMarsLighthouseAerie_KradenApproachScript);
   Actor_RunScriptAndWait(ACTOR_IVAN,
                          (s32)gMarsLighthouseAerie_IvanApproachScript);
   FieldEvent_Wait(10);
-  Actor_ReleaseById(16);
-  Actor_ReleaseById(15);
-  Actor_ReleaseById(14);
-  Actor_ReleaseById(13);
-  Actor_ReleaseById(12);
-  Actor_ReleaseById(11);
-  Actor_ReleaseById(10);
-  MarsLighthouseAerie_StartLookingAround(5);
-  MarsLighthouseAerie_StartLookingAround(6);
-  MarsLighthouseAerie_StartLookingAround(7);
-  MarsLighthouseAerie_StartLookingAround(2);
-  MarsLighthouseAerie_StartLookingAround(19);
+  Actor_ReleaseById(ACTOR_LAST_PLATFORM);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM + 5);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM + 4);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM + 3);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM + 2);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM + 1);
+  Actor_ReleaseById(ACTOR_FIRST_PLATFORM);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_JENNA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_SHEBA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_PIERS);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_IVAN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_KRADEN);
   FieldEvent_Wait(80);
-  t88 = Actor_Get(ACTOR_SHEBA);
-  FIELD_AT(t88, void *, 108) = 0;
+  Actor_Get(ACTOR_SHEBA)->update = NULL;
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
   // "I heard it too, but I don't see anyone else up here!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  t91 = Actor_Get(ACTOR_JENNA);
-  FIELD_AT(t91, void *, 108) = 0;
+  Actor_Get(ACTOR_JENNA)->update = NULL;
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
   FieldActor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-  t94 = Actor_Get(ACTOR_PIERS);
-  FIELD_AT(t94, void *, 108) = 0;
+  Actor_Get(ACTOR_PIERS)->update = NULL;
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   FieldActor_Jump(ACTOR_PIERS, 4, 10);
   // "Felix! Quick! Cast the Mars Star in before anything has a chance to..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  t98 = gMainRoutineWork.leaderActorId;
-  t99 = Actor_Get(t98);
-  FIELD_AT(t99, void *, 108) = 0;
-  t100 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirectionAndWait(t100, FACING_WEST);
-  t102 = gMainRoutineWork.leaderActorId;
-  FieldActor_SetAnimationAndWait(t102, 3);
-  MarsLighthouseAerie_StopLookingAround(0);
-  MarsLighthouseAerie_StopLookingAround(1);
-  MarsLighthouseAerie_StopLookingAround(19);
-  MarsLighthouseAerie_StopLookingAround(2);
-  MarsLighthouseAerie_StopLookingAround(3);
-  PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+  FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 3);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_ISAAC);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_KRADEN);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_IVAN);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
-  t112 = gMainRoutineWork.leaderActorId;
-  Actor_SetSpeed(t112, 0.8);
-  t114 = gMainRoutineWork.leaderActorId;
-  Actor_WalkToAndWait(t114, 504, 292);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 504, 292);
   Event_PlaySound(SE_162);
   FieldEvent_Wait(20);
-  t118 = gMainRoutineWork.leaderActorId;
-  Actor_RunRepeatedMotion(t118, 2);
-  t120 = gMainRoutineWork.leaderActorId;
-  Actor_SetAttachedEffect(t120,
+  Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  t122 = gMainRoutineWork.leaderActorId;
-  t123 = Actor_Get(t122);
-  {
-    u8 *f = (u8 *)t123 + 90;
-    *f &= 254;
-  }
-  t125 = gMainRoutineWork.leaderActorId;
-  Actor_SetSpeed(t125, 0.2);
-  t127 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToAndWait(t127, 504, 308);
-  t129 = gMainRoutineWork.leaderActorId;
-  Actor_RunRepeatedMotion(t129, 3);
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.2);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 504, 308);
+  Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 3);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  t132 = gMainRoutineWork.leaderActorId;
-  Actor_SetAttachedEffect(t132,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  t134 = gMainRoutineWork.leaderActorId;
-  Actor_MoveToAndWait(t134, 504, 320);
-  t136 = gMainRoutineWork.leaderActorId;
-  t137 = Actor_Get(t136);
-  FIELD_AT(t137, u8, 90) |= 1;
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   *palette = 0x7fff;
   System_Wait(1);
   // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
-  Event_ShowMessage(18, 0);
-  t141 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t141, FACING_EAST, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 40);
-  t144 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t144, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
   Actor_WalkToAndWait(ACTOR_ISAAC, 520, 308);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 20);
@@ -630,7 +622,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   // "Who said that!?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 20);
   // "Have you forgotten me so soon, Isaac? And you, Garet?"
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
@@ -643,41 +635,38 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_PlaySound(MUS_036);
   // "Then search your heart, boy!"
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTH);
-  t166 = gMainRoutineWork.leaderActorId;
-  MarsLighthouseAerie_StartLookingAround(t166);
-  MarsLighthouseAerie_StartLookingAround(5);
-  MarsLighthouseAerie_StartLookingAround(6);
-  MarsLighthouseAerie_StartLookingAround(7);
-  MarsLighthouseAerie_StartLookingAround(0);
-  MarsLighthouseAerie_StartLookingAround(1);
-  MarsLighthouseAerie_StartLookingAround(3);
-  MarsLighthouseAerie_StartLookingAround(2);
-  MarsLighthouseAerie_StartLookingAround(19);
+  MarsLighthouseAerie_StartLookingAround(gMainRoutineWork.leaderActorId);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_JENNA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_SHEBA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_PIERS);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_ISAAC);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_IVAN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_KRADEN);
   FieldEvent_Wait(40);
-  MarsLighthouseAerie_StopLookingAround(19);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  FieldActor_Jump(19, 4, 10);
-  FieldActor_Jump(19, 6, 10);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_KRADEN);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 10);
+  FieldActor_Jump(ACTOR_KRADEN, 6, 10);
   // "That voice..."
-  Event_ShowMessage(19, 0);
-  t182 = gMainRoutineWork.leaderActorId;
-  MarsLighthouseAerie_StopLookingAround(t182);
-  MarsLighthouseAerie_StopLookingAround(5);
-  MarsLighthouseAerie_StopLookingAround(6);
-  MarsLighthouseAerie_StopLookingAround(7);
-  MarsLighthouseAerie_StopLookingAround(0);
-  MarsLighthouseAerie_StopLookingAround(1);
-  MarsLighthouseAerie_StopLookingAround(3);
-  MarsLighthouseAerie_StopLookingAround(2);
-  t191 = Actor_Get(18);
-  FieldActor_SetSpriteColor(t191, 0);
-  actor = Actor_Get(18);
-  FIELD_AT(actor, u8, 85) = 0;
-  t194 = Actor_Get(18);
-  FieldActor_SetPositionAndResetMotion(t194, px(512), px(120), px(208));
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  MarsLighthouseAerie_StopLookingAround(gMainRoutineWork.leaderActorId);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_JENNA);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_SHEBA);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_PIERS);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_ISAAC);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_IVAN);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 0);
+  actor = Actor_Get(ACTOR_WISE_ONE);
+  actor->motionFlags = 0;
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_WISE_ONE), px(512),
+                                       px(120), px(208));
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
@@ -690,17 +679,17 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_ISAAC,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  t206 = gMainRoutineWork.leaderActorId;
-  Actor_SetAttachedEffect(t206,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "Isaac, since when are you on a first-name basis with the Wise One?"
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
@@ -732,36 +721,36 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
-  Actor_SetSpeed(18, 0.8);
+  Actor_SetSpeed(ACTOR_WISE_ONE, 0.8);
   FieldActor_SetMoveTarget(actor, 512, 96, 276);
-  FieldActor_WaitForMoveById(18);
+  FieldActor_WaitForMoveById(ACTOR_WISE_ONE);
   FieldEvent_Wait(10);
   // "I did not just save you. I also tasked you with recovering the four..."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_RunRepeatedMotion(ACTOR_ISAAC, 1);
   Actor_WalkToAndWait(ACTOR_ISAAC, 520, 320);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
-  FieldActor_SetAnimation(18, 9);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 9);
   FieldEvent_Wait(20);
   // "Why have you disobeyed my command? Why have you come to light the..."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   // "Because Prox will be destroyed if we don't! We can't let that happen..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldActor_SetAnimation(18, 1);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(10);
   // "Prox? They have brought this disaster upon themselves."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "Are you saying we should just abandon them to die? What did they do..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  FieldActor_SetAnimation(18, 9);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 9);
   FieldEvent_Wait(20);
   // "The people of Prox have committed an unforgivable sin. They must pay..."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   // "For lighting the lighthouses? Is that their sin? Does that warrant..."
   Event_ShowMessage(ACTOR_ISAAC, 0);
   // "If we don't light the beacon, Gaia Falls will eventually erode away..."
@@ -774,15 +763,15 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "How can you just allow the world to crumble into nothingness?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldActor_SetAnimation(18, 11);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 11);
   FieldEvent_Wait(20);
   // "The seal needs to be broken! The world will be destroyed if it's not!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  FieldActor_SetAnimation(18, 12);
-  Actor_WaitForAnimationChange(18);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 12);
+  Actor_WaitForAnimationChange(ACTOR_WISE_ONE);
   FieldEvent_Wait(20);
   // "You have learned far too much."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
@@ -790,21 +779,20 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  t278 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t278, FACING_WEST, 20);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Wise One! You can't continue to protect the lighthouses! You know..."
-  Event_ShowMessage(19, 0);
-  FieldActor_SetAnimation(18, 10);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 10);
   FieldEvent_Wait(20);
-  FieldActor_SetAnimation(18, 1);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(10);
-  FieldActor_SetAnimation(18, 10);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 10);
   FieldEvent_Wait(5);
-  FieldActor_SetAnimation(18, 1);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(20);
   // "It is your duty to protect all of Weyard! If Weyard is destroyed..."
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -812,43 +800,42 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  t298 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t298, FACING_NORTH, 0);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "Why won't you answer us, Wise One?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldActor_SetAnimation(18, 9);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 9);
   FieldEvent_Wait(20);
   // "If Alchemy is unleashed, mankind may well destroy all of Weyard itself."
-  Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "But we can combine our strengths, ensure that Alchemy not be used..."
-  Event_ShowMessage(19, 0);
-  FieldActor_SetAnimation(18, 10);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 10);
   FieldEvent_Wait(20);
   // "It is inevitable. In time, one man will seek to rule over all. It is..."
-  Event_ShowMessage(18, 0);
-  FieldActor_SetAnimation(18, 9);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 9);
   FieldEvent_Wait(20);
-  FieldActor_SetAnimation(18, 3);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
   FieldEvent_Wait(10);
-  FieldActor_SetAnimation(18, 6);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 6);
   FieldEvent_Wait(10);
   MarsLighthouseAerie_StartRisingRings(actor,
                                        (s32)gMarsLighthouseAerie_RisingRingsA);
   FieldEvent_Wait(80);
-  FieldActor_SetAnimation(18, 3);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
   FieldEvent_Wait(10);
   // "And it shall come sooner than any of you think."
-  Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Why do you say that?"
-  Event_ShowMessage(19, 0);
-  FieldActor_SetAnimation(18, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
   FieldEvent_Wait(20);
   // "The Water Adept who climbs toward the peak of Mt. Aleph even as we..."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
@@ -856,22 +843,21 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  t334 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t334, FACING_WEST, 20);
-  FieldActor_SetAnimation(18, 6);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 20);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 6);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_SWIRL);
-  PaletteFade_ApplyTarget(0x10005, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(40);
   FieldEvent_Wait(40);
-  FieldActor_SetAnimation(18, 3);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
   FieldEvent_Wait(20);
   // "Alex is his name. Surely, you have not forgotten him?"
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -879,54 +865,53 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  t356 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirectionAndWait(t356, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   // "Alex!? What would he be doing on Mt. Aleph?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldActor_SetAnimation(18, 4);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 4);
   FieldEvent_Wait(20);
   // "He understands far more than you do. He knows that when the four..."
-  Event_ShowMessage(18, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "But what would he gain from being there?"
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(20);
-  FieldActor_SetAnimation(18, 13);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 13);
   FieldEvent_Wait(20);
   // "When the final beam of light reaches the peak of Mt. Aleph, the..."
-  FieldEvent_ShowMessageThenWait(18, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 20);
   // "The Golden Sun!? What is that? And what would Alex want with it?"
-  Event_ShowMessage(19, 0);
-  FieldActor_SetAnimation(18, 8);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 8);
   FieldEvent_Wait(180);
   // "When the four beams merge into one, they form a golden light..."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   // "Is... Is that Alchemy? I mean, pure Alchemy made real, at the heart..."
   Event_ShowMessage(ACTOR_IVAN, 0);
-  Actor_FaceDirection(19, FACING_EAST, 0);
-  FieldActor_SetAnimation(18, 1);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(5);
-  Actor_SetAnimation(18, 9);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_SetAnimation(ACTOR_WISE_ONE, 9);
+  Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "And it's that light that gives shape to the Stone of Sages?"
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   MarsLighthouseAerie_EndRisingRings(actor);
-  FieldActor_SetAnimation(18, 1);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(20);
   // "This has been Alex's one true desire from the very start."
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   FieldActor_Jump(ACTOR_PIERS, 4, 10);
   // "Alex planned all of this? Then he must have been after this power..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-  FieldActor_SetAnimation(18, 10);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 10);
   FieldEvent_Wait(20);
-  FieldActor_SetAnimation(18, 11);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 11);
   FieldEvent_Wait(5);
-  FieldActor_SetAnimation(18, 1);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 1);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
@@ -943,29 +928,24 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
-  t406 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t406, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
   // "If we don't do it now, Prox will be destroyed! Felix... We have to..."
-  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
-  t414 = gMainRoutineWork.leaderActorId;
-  if (!FieldEvent_AskYesNoWithActorAnimation(t414, 0)) {
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
+  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                             0)) {
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
     FieldActor_Jump(ACTOR_SHEBA, 4, 10);
     Event_ShowMessage(ACTOR_SHEBA, 0);
-    t419 = (s32)Ram_HeapSlots->fieldWork;
-    t420 = FIELD_AT(t419, u16, 452);
-    FIELD_AT(t419, u16, 452) = (t420 + 1);
+    gFieldWork->message++;
   } else {
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     FieldActor_Jump(ACTOR_SHEBA, 4, 10);
-    t423 = (s32)Ram_HeapSlots->fieldWork;
-    t424 = FIELD_AT(t423, u16, 452);
-    FIELD_AT(t423, u16, 452) = (t424 + 1);
+    gFieldWork->message++;
     Event_ShowMessage(ACTOR_SHEBA, 0);
   }
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
@@ -975,97 +955,76 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  t433 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t433, FACING_NORTH, 0);
-  FieldActor_SetAnimation(18, 11);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 11);
   FieldEvent_Wait(20);
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimation(18, 8);
-  Actor_FaceDirection(19, FACING_WEST, 0);
+  Actor_SetAnimation(ACTOR_WISE_ONE, 8);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
-  t451 = gMainRoutineWork.leaderActorId;
-  Actor_FaceDirection(t451, FACING_SOUTH, 0);
-  Actor_WaitForAnimationChange(18);
-  Actor_SetAnimation(18, 1);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_WaitForAnimationChange(ACTOR_WISE_ONE);
+  Actor_SetAnimation(ACTOR_WISE_ONE, 1);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
-  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
-  t461 = gMainRoutineWork.leaderActorId;
-  if (!FieldEvent_AskYesNoWithActorAnimation(t461, 0)) {
-    t463 = gMainRoutineWork.leaderActorId;
-    Actor_WaitForAnimationChange(t463);
-    t465 = (s32)Ram_HeapSlots->fieldWork;
-    t466 = FIELD_AT(t465, u16, 452);
-    FIELD_AT(t465, u16, 452) = (t466 + 1);
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
+  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                             0)) {
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
+    gFieldWork->message++;
   } else {
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   work = &gMainRoutineWork;
-  t469 = work->leaderActorId;
-  Actor_FaceDirectionAndWait(t469, FACING_EAST);
-  t471 = work->leaderActorId;
-  FieldActor_SetAnimationAndWait(t471, 3);
-  t473 = work->leaderActorId;
-  Actor_FaceDirectionAndWait(t473, FACING_NORTH);
+  Actor_FaceDirectionAndWait(work->leaderActorId, FACING_EAST);
+  FieldActor_SetAnimationAndWait(work->leaderActorId, 3);
+  Actor_FaceDirectionAndWait(work->leaderActorId, FACING_NORTH);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  Actor_FaceDirection(19, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-  t482 = work->leaderActorId;
-  Actor_SetSpeed(t482, 0.4);
-  t484 = work->leaderActorId;
-  Actor_WalkToAndWait(t484, 504, 308);
+  Actor_SetSpeed(work->leaderActorId, 0.4);
+  Actor_WalkToAndWait(work->leaderActorId, 504, 308);
   Event_PlaySound(SE_ASCEND);
-  FieldActor_SetAnimation(18, 14);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 14);
   FieldEvent_Wait(10);
-  Actor_SetSpriteColorById(18, 0x100);
-  t490 = work->leaderActorId;
-  Actor_RunRepeatedMotion(t490, 2);
-  t492 = work->leaderActorId;
-  Actor_SetSpeed(t492, 1.6);
-  t494 = work->leaderActorId;
-  FieldActor_Jump(t494, 4, 0);
-  t496 = work->leaderActorId;
-  t497 = Actor_Get(t496);
-  {
-    u8 *f = (u8 *)t497 + 90;
-    *f &= 254;
-  }
-  t499 = work->leaderActorId;
-  Actor_WalkToAndWait(t499, 504, 320);
+  Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0x100);
+  Actor_RunRepeatedMotion(work->leaderActorId, 2);
+  Actor_SetSpeed(work->leaderActorId, 1.6);
+  FieldActor_Jump(work->leaderActorId, 4, 0);
+  Actor_Get(work->leaderActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(work->leaderActorId, 504, 320);
   FieldEvent_Wait(1);
-  t502 = work->leaderActorId;
-  t503 = Actor_Get(t502);
-  FIELD_AT(t503, u8, 90) |= 1;
+  Actor_Get(work->leaderActorId)->steeringFlags |= 1;
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  FieldActor_SetAnimation(18, 14);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 14);
   FieldEvent_Wait(10);
-  FieldActor_SetAnimation(18, 10);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 10);
   FieldEvent_Wait(20);
-  Event_ShowMessage(18, 0);
-  FieldActor_SetAnimation(18, 9);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  FieldActor_SetAnimation(ACTOR_WISE_ONE, 9);
   FieldEvent_Wait(20);
-  Event_ShowMessage(18, 0);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
@@ -1073,16 +1032,13 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  t523 = work->leaderActorId;
-  Actor_FaceDirection(t523, FACING_WEST, 40);
+  Actor_FaceDirection(work->leaderActorId, FACING_WEST, 40);
   Event_ShowMessage(ACTOR_PIERS, 0);
   Event_PlaySound(SE_572);
-  Actor_SetSpriteColorById(18, 0);
-  t528 = Actor_Get(18);
-  FieldActor_SetSpriteColor(t528, 7);
+  Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 7);
   FieldEvent_Wait(20);
-  t531 = Actor_Get(18);
-  FieldActor_SetSpriteColor(t531, 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -1090,13 +1046,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  t540 = work->leaderActorId;
-  Actor_FaceDirection(t540, FACING_NORTH, 20);
-  Event_ShowMessage(18, 0);
-  Event_ShowMessage(19, 0);
+  Actor_FaceDirection(work->leaderActorId, FACING_NORTH, 20);
+  Event_ShowMessage(ACTOR_WISE_ONE, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  t545 = work->leaderActorId;
-  FieldActor_SetAnimation(t545, 3);
+  FieldActor_SetAnimation(work->leaderActorId, 3);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -1104,111 +1058,110 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   FieldActor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  FIELD_AT(actor, s32, 108) = (s32)MarsLighthouseAerie_FlickerWhite;
-  Actor_SetScript(18, (s32)gMarsLighthouseAerie_VoiceFadeScript);
-  PaletteFade_ApplyTarget(0x10001, 1);
+  actor->update = (void (*)(void))MarsLighthouseAerie_FlickerWhite;
+  Actor_SetScript(ACTOR_WISE_ONE, (s32)gMarsLighthouseAerie_VoiceFadeScript);
+  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   PaletteFade_Interpolate(20);
   System_Wait(20);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(40);
   System_Wait(40);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  t562 = work->leaderActorId;
-  Actor_SetPosition(t562, 0, 0);
+  Actor_SetPosition(work->leaderActorId, 0, 0);
   Actor_SetPosition(ACTOR_ISAAC, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_SetPosition(19, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   System_Wait(1);
-  actor = Actor_Get(17);
-  FIELD_AT(actor, s32, 24) = 0x1000;
-  FIELD_AT(actor, s32, 28) = 0x1000;
-  Actor_SetPosition(17, 512, 280);
+  actor = Actor_Get(ACTOR_DOOM_DRAGON);
+  actor->scaleX = 0x1000;
+  actor->scaleY = 0x1000;
+  Actor_SetPosition(ACTOR_DOOM_DRAGON, 512, 280);
   System_Wait(1);
-  unk85 = (u8 *)actor + 85;
-  *unk85 = 0;
+  motionFlags = &actor->motionFlags;
+  *motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, px(512), px(48), px(280));
   System_Wait(1);
-  *unk85 = 0;
-  PaletteFade_ApplyTarget(0x10000, 2);
+  *motionFlags = 0;
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(20);
   dispcnt = (u16 *)&REG_DISPCNT;
   Event_PlaySound(MUS_039);
-  Actor_RunScriptAndWait(17, (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
+  Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
+                         (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
   *dispcnt = *dispcnt & 0xf9ff;
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
-  Actor_SetSpeedAndAcceleration(17, 3.2, 0.2);
+  Actor_SetSpeedAndAcceleration(ACTOR_DOOM_DRAGON, 3.2, 0.2);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 544, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
-  FieldActor_WaitForMoveById(17);
+  FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 464, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
-  FieldActor_WaitForMoveById(17);
+  FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 576, 88, 280);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
-  FieldActor_WaitForMoveById(17);
-  Actor_SetSpeed(17, 6.4);
+  FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
+  Actor_SetSpeed(ACTOR_DOOM_DRAGON, 6.4);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   FieldActor_SetMoveTarget(actor, 508, 208, 288);
-  PaletteFade_ApplyTarget(0x10000, 2);
-  PaletteFade_ApplyTarget(0x10003, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(10);
-  FieldActor_WaitForMoveById(17);
+  FieldActor_WaitForMoveById(ACTOR_DOOM_DRAGON);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
   *dispcnt |= 0x600;
   Actor_SetPosition(ACTOR_PIERS, 488, 320);
-  t628 = work->leaderActorId;
-  Actor_SetPosition(t628, 504, 320);
+  Actor_SetPosition(work->leaderActorId, 504, 320);
   Actor_SetPosition(ACTOR_ISAAC, 520, 320);
   Actor_SetPosition(ACTOR_GARET, 536, 320);
   Actor_SetPosition(ACTOR_SHEBA, 480, 328);
   Actor_SetPosition(ACTOR_JENNA, 496, 328);
-  Actor_SetPosition(19, 512, 328);
+  Actor_SetPosition(ACTOR_KRADEN, 512, 328);
   Actor_SetPosition(ACTOR_IVAN, 528, 328);
   Actor_SetPosition(ACTOR_MIA, 544, 328);
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Event_PlaySound(SE_ITEM_BREAK);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(40);
   System_Wait(40);
-  FIELD_AT(actor, s32, 72) = 0x4000;
-  *unk85 = 3;
+  actor->gravity = px(1) / 4;
+  *motionFlags = 3;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
   MapGrid_SetShake(2, 4, 1);
@@ -1216,7 +1169,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
-  FieldActor_StartRepeatedMotion(17, 1);
+  FieldActor_StartRepeatedMotion(ACTOR_DOOM_DRAGON, 1);
   Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(80);
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1229,8 +1182,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
-  t670 = work->leaderActorId;
-  Actor_SetSpeed(t670, 1.6);
+  Actor_SetSpeed(work->leaderActorId, 1.6);
   Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
@@ -1238,8 +1190,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetSpeed(ACTOR_IVAN, 1.6);
   Actor_SetSpeed(ACTOR_MIA, 1.6);
   Actor_SetScript(ACTOR_PIERS, (s32)gMarsLighthouseAerie_PiersReadyScript);
-  t679 = work->leaderActorId;
-  Actor_SetScript(t679, (s32)gMarsLighthouseAerie_LeaderReadyScript);
+  Actor_SetScript(work->leaderActorId,
+                  (s32)gMarsLighthouseAerie_LeaderReadyScript);
   Actor_SetScript(ACTOR_ISAAC, (s32)gMarsLighthouseAerie_IsaacReadyScript);
   Actor_SetScript(ACTOR_SHEBA, (s32)gMarsLighthouseAerie_ShebaReadyScript);
   Actor_SetScript(ACTOR_JENNA, (s32)gMarsLighthouseAerie_JennaReadyScript);
@@ -1247,18 +1199,19 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetScript(ACTOR_MIA, (s32)gMarsLighthouseAerie_MiaReadyScript);
   Actor_RunScriptAndWait(ACTOR_GARET,
                          (s32)gMarsLighthouseAerie_GaretReadyScript);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Event_ShowMessage(19, 0);
-  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirectionAndWait(19, FACING_NORTHWEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTHWEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHWEST);
   FieldActor_Jump(ACTOR_GARET, 6, 10);
   Event_ShowMessage(ACTOR_GARET, 0);
-  FieldActor_Jump(19, 2, 10);
-  FieldActor_Jump(19, 4, 10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
-  FIELD_AT(work, u8, 0x24b) = 2;
+  FieldActor_Jump(ACTOR_KRADEN, 2, 10);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
+  work->battleType = BATTLE_TYPE_NO_ESCAPE;
   FieldEvent_SetAfterBattleDestination(SCENE_MARS_LIGHTHOUSE_AERIE, 2);
   Field_RequestBattleFromEncounterTable(102, 1);
   return;
@@ -1292,69 +1245,69 @@ extern u32 gMarsLighthouseAerie_GaretTurnScript[];
 extern u32 gMarsLighthouseAerie_MiaTurnScript[];
 
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
-  s32 lastArg, spill;
-  s32 owner, actor, owner2, t1;
-  s32 t2, t16, t34;
-  s32 t85, t86, t87;
-  s32 t158, t162;
-  s32 t166, t170;
-  s32 t244, t248;
+  s32 facing;
+  s32 leader, leaderAgain;
+  struct Actor *actor, *mother, *father, *kyle;
+  s32 leaderId;
 
-  actor = Actor_Get(17);
-  t1 = Actor_Get(30);
-  t2 = Actor_Get(31);
-  spill = (Actor_Get(32));
+  actor = Actor_Get(ACTOR_DOOM_DRAGON);
+  mother = Actor_Get(ACTOR_FREED_JENNAS_MOTHER);
+  father = Actor_Get(ACTOR_FREED_JENNAS_FATHER);
+  kyle = Actor_Get(ACTOR_FREED_KYLE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(17, 2);
-  FIELD_AT(actor, u8, 85) = 0;
-  FIELD_AT(actor, s32, 8) -= 0x40000;
-  FIELD_AT(actor, s32, 16) += 0x100000;
-  Actor_SetAnimation(28, 2);
-  Actor_SetAnimation(29, 3);
+  Actor_SetAnimation(ACTOR_DOOM_DRAGON, 2);
+  actor->motionFlags = 0;
+  actor->x.fixed -= px(4);
+  actor->z.fixed += px(16);
+  Actor_SetAnimation(ACTOR_DRAGON_HEAD_B, 2);
+  Actor_SetAnimation(ACTOR_DRAGON_HEAD_C, 3);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  Actor_SetAnimation(30, 7);
-  Actor_SetAnimation(31, 7);
-  Actor_SetAnimation(32, 6);
-  owner = (s32)&gMainRoutineWork;
-  owner = (owner + 0x214);
-  t16 = *(s32 *)owner;
-  lastArg = 0xc000;
-  Actor_SetPositionAndFacing(t16, px(504), px(320), lastArg);
+  Actor_SetAnimation(ACTOR_FREED_JENNAS_MOTHER, 7);
+  Actor_SetAnimation(ACTOR_FREED_JENNAS_FATHER, 7);
+  Actor_SetAnimation(ACTOR_FREED_KYLE, 6);
+  leader = (s32)&gMainRoutineWork;
+  leader += offsetof(struct MainRoutineWork, leaderActorId);
+  leaderId = *(s32 *)leader;
+  facing = FACING_NORTH;
+  Actor_SetPositionAndFacing(leaderId, px(504), px(320), facing);
   System_Wait(1);
-  PaletteFade_ApplySource(0, 0);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(1);
-  FieldActor_SetSpriteColor((Actor_Get(30)), 15);
-  FieldActor_SetSpriteColor((Actor_Get(31)), 15);
-  FieldActor_SetSpriteColor((Actor_Get(32)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_MOTHER)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_FATHER)), 15);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_KYLE)), 15);
   System_Wait(1);
-  FieldActor_SetSpritePriority(21, 1);
-  FieldActor_SetSpritePriority(20, 1);
-  FieldActor_SetSpritePriority(19, 1);
-  FieldActor_SetSpritePriority(26, 1);
-  FieldActor_SetSpritePriority(25, 1);
-  t34 = (s32)Ram_HeapSlots->fieldWork;
-  FIELD_AT(t34, s32, 428) = 0x204;
-  FIELD_AT(t34, s32, 436) = 1;
+  FieldActor_SetSpritePriority(ACTOR_SHEBA_STAND_IN, 1);
+  FieldActor_SetSpritePriority(ACTOR_JENNA_STAND_IN, 1);
+  FieldActor_SetSpritePriority(ACTOR_KRADEN, 1);
+  FieldActor_SetSpritePriority(ACTOR_IVAN_STAND_IN, 1);
+  FieldActor_SetSpritePriority(ACTOR_MIA_STAND_IN, 1);
+  gFieldWork->transition = 0x204;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   FieldEvent_Wait(80);
   *(s32 *)&gMarsLighthouseAerie_FlickerFrame = 0;
   *(s32 *)&gMarsLighthouseAerie_FlickerRate = 4;
-  FIELD_AT((Actor_Get(17)), s32, 108) = (s32)MarsLighthouseAerie_FlickerDragon;
-  FIELD_AT((Actor_Get(27)), s32, 108) = (s32)MarsLighthouseAerie_FlickerDragon;
-  FIELD_AT((Actor_Get(28)), s32, 108) = (s32)MarsLighthouseAerie_FlickerDragon;
-  FIELD_AT((Actor_Get(29)), s32, 108) = (s32)MarsLighthouseAerie_FlickerDragon;
-  FIELD_AT(t1, s32, 108) = (s32)MarsLighthouseAerie_FlickerParent;
-  FIELD_AT(t2, s32, 108) = (s32)MarsLighthouseAerie_FlickerParent;
-  FIELD_AT((spill), s32, 108) = (s32)MarsLighthouseAerie_FlickerParent;
+  Actor_Get(ACTOR_DOOM_DRAGON)->update =
+      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+  Actor_Get(ACTOR_DRAGON_HEAD_A)->update =
+      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+  Actor_Get(ACTOR_DRAGON_HEAD_B)->update =
+      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+  Actor_Get(ACTOR_DRAGON_HEAD_C)->update =
+      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+  mother->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
+  father->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
+  kyle->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
   Event_PlaySound(SE_595);
   System_Wait(10);
   Event_PlaySound(SE_595);
@@ -1369,232 +1322,235 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   System_Wait(30);
   *(s32 *)&gMarsLighthouseAerie_FlickerRate = 2;
   System_Wait(20);
-  Actor_SetPosition(17, 0, 0);
-  Actor_SetPosition(27, 0, 0);
-  Actor_SetPosition(28, 0, 0);
-  Actor_SetPosition(29, 0, 0);
-  FIELD_AT((Actor_Get(17)), s32, 108) = 0;
-  FIELD_AT((Actor_Get(27)), s32, 108) = 0;
-  FIELD_AT((Actor_Get(28)), s32, 108) = 0;
-  FIELD_AT((Actor_Get(29)), s32, 108) = 0;
-  FIELD_AT(t1, s32, 108) = 0;
-  FIELD_AT(t2, s32, 108) = 0;
-  FIELD_AT((spill), s32, 108) = 0;
+  Actor_SetPosition(ACTOR_DOOM_DRAGON, 0, 0);
+  Actor_SetPosition(ACTOR_DRAGON_HEAD_A, 0, 0);
+  Actor_SetPosition(ACTOR_DRAGON_HEAD_B, 0, 0);
+  Actor_SetPosition(ACTOR_DRAGON_HEAD_C, 0, 0);
+  Actor_Get(ACTOR_DOOM_DRAGON)->update = NULL;
+  Actor_Get(ACTOR_DRAGON_HEAD_A)->update = NULL;
+  Actor_Get(ACTOR_DRAGON_HEAD_B)->update = NULL;
+  Actor_Get(ACTOR_DRAGON_HEAD_C)->update = NULL;
+  mother->update = NULL;
+  father->update = NULL;
+  kyle->update = NULL;
   System_Wait(1);
   Event_PlaySound(SE_CURSE);
-  FieldActor_SetSpriteColor((Actor_Get(30)), 9);
-  FieldActor_SetSpriteColor((Actor_Get(31)), 9);
-  FieldActor_SetSpriteColor((Actor_Get(32)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_MOTHER)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_FATHER)), 9);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_KYLE)), 9);
   FieldEvent_Wait(20);
-  FieldActor_SetSpriteColor((Actor_Get(30)), 0);
-  FieldActor_SetSpriteColor((Actor_Get(31)), 0);
-  FieldActor_SetSpriteColor((Actor_Get(32)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_MOTHER)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_FATHER)), 0);
+  FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_KYLE)), 0);
   FieldEvent_Wait(20);
-  t85 = Random16();
-  FIELD_AT(t1, u8, 98) = (((u32)(((t85 << 2) + t85) << 4) >> 16) + 40);
-  t86 = Random16();
-  FIELD_AT(t2, u8, 98) = (((u32)(((t86 << 2) + t86) << 4) >> 16) + 40);
-  t87 = Random16();
-  FIELD_AT((spill), u8, 98) = (((u32)(((t87 << 2) + t87) << 4) >> 16) + 40);
-  FIELD_AT(t1, s32, 108) = (s32)MarsLighthouseAerie_Throb;
-  FIELD_AT(t2, s32, 108) = (s32)MarsLighthouseAerie_Throb;
-  FIELD_AT((spill), s32, 108) = (s32)MarsLighthouseAerie_Throb;
+  mother->riseCounter = ((Random16() * 80) >> 16) + 40;
+  father->riseCounter = ((Random16() * 80) >> 16) + 40;
+  kyle->riseCounter = ((Random16() * 80) >> 16) + 40;
+  mother->update = (void (*)(void))MarsLighthouseAerie_Throb;
+  father->update = (void (*)(void))MarsLighthouseAerie_Throb;
+  kyle->update = (void (*)(void))MarsLighthouseAerie_Throb;
   FieldEvent_Wait(20);
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(40);
   System_Wait(80);
-  FieldEvent_SetMessageId((s32)MsgWhoAreThey);
-  Actor_FaceDirectionAndWait(26, FACING_WEST);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieWhoAreThey);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN_STAND_IN, FACING_WEST);
   // "...Who are they?"
-  Event_ShowMessage(26, 0);
+  Event_ShowMessage(ACTOR_IVAN_STAND_IN, 0);
   // "That's what I was trying to warn you about!"
-  Event_ShowMessage(19, 0);
-  Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection((*(s32 *)owner), FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(23, FACING_SOUTH, 0);
-  Actor_FaceDirection(24, FACING_SOUTH, 0);
-  Actor_FaceDirection(21, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(26, FACING_SOUTH, 0);
-  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_FaceDirection(ACTOR_PIERS_STAND_IN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(*(s32 *)leader, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN_STAND_IN, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MIA_STAND_IN, FACING_SOUTH, 0);
   FieldCamera_SetSpeed(1.6);
-  FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(512, 80, 340, 1);
   FieldCamera_WaitForArrival();
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It wasn't just the dragon you killed..."
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(MUS_008);
-  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET_STAND_IN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "I remember you warning us, but it was too late for us to stop..."
-  Event_ShowMessage(24, 0);
+  Event_ShowMessage(ACTOR_GARET_STAND_IN, 0);
   // "Kraden, what do you know? Why were you trying to stop us from..."
-  Event_ShowMessage(25, 0);
-  Actor_SetAnimationAndWait(19, 3);
+  Event_ShowMessage(ACTOR_MIA_STAND_IN, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   // "It was the Wise One's final trap..."
-  Event_ShowMessage(19, 0);
-  Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAttachedEffect(ACTOR_IVAN_STAND_IN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "Trap? What do you mean?"
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
-  Actor_SetAnimation(19, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN_STAND_IN, 0);
+  Actor_SetAnimation(ACTOR_KRADEN, 4);
   // "The Wise One knew he couldn't stop you, so he played a cruel..."
-  Event_ShowMessage(19, 0);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_SetSpeed(23, 1.6);
-  Actor_WalkToAndWait(23, 512, 328);
-  Actor_FaceDirectionAndWait(23, FACING_SOUTHEAST);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_ShowEmote(ACTOR_ISAAC_STAND_IN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_SetSpeed(ACTOR_ISAAC_STAND_IN, 1.6);
+  Actor_WalkToAndWait(ACTOR_ISAAC_STAND_IN, 512, 328);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC_STAND_IN, FACING_SOUTHEAST);
   // "Kraden, I don't understand... What are you trying to tell us?"
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 23, 0);
-  Actor_FaceDirectionAndWait(20, FACING_WEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC_STAND_IN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA_STAND_IN, FACING_WEST);
   // "Sheba, let's see who those people are while they try to sort this out."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  FieldActor_SetSpritePriority(21, 2);
-  FIELD_AT((Actor_Get(20)), u8, 98) = 0;
-  FIELD_AT((Actor_Get(21)), u8, 98) = 0;
-  Actor_SetSpeed(21, 0.8);
-  Actor_SetSpeed(20, 0.8);
-  Actor_SetScript(21, (s32)gMarsLighthouseAerie_ShebaToBodiesScript);
-  Actor_SetScript(20, (s32)gMarsLighthouseAerie_JennaToBodiesScript);
-  Actor_SetSpeed(19, 2.4);
-  Actor_WalkToAndWait(19, 540, 340);
-  FieldActor_Jump(19, 4, 10);
+  Event_ShowMessage(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  FieldActor_SetSpritePriority(ACTOR_SHEBA_STAND_IN, 2);
+  Actor_Get(ACTOR_JENNA_STAND_IN)->riseCounter = 0;
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->riseCounter = 0;
+  Actor_SetSpeed(ACTOR_SHEBA_STAND_IN, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 0.8);
+  Actor_SetScript(ACTOR_SHEBA_STAND_IN,
+                  (s32)gMarsLighthouseAerie_ShebaToBodiesScript);
+  Actor_SetScript(ACTOR_JENNA_STAND_IN,
+                  (s32)gMarsLighthouseAerie_JennaToBodiesScript);
+  Actor_SetSpeed(ACTOR_KRADEN, 2.4);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 540, 340);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 10);
   // "No, Jenna! Don't look! You mustn't look! It will only bring you pain..."
-  Event_ShowMessage(19, 0);
-  actor = Actor_Get(21);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  actor = Actor_Get(ACTOR_SHEBA_STAND_IN);
 L_0200a47a:
   System_Wait(1);
-  if (FIELD_AT(actor, u8, 98) == 0)
+  if (actor->riseCounter == 0)
     goto L_0200a47a;
-  Actor_FaceDirection(20, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(21, FACING_SOUTHEAST);
-  Event_ShowMessage(21, 0);
-  FieldActor_SetSpritePriority(20, 2);
-  FieldActor_SetSpritePriority(22, 2);
-  FieldActor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_SetSpeed(20, 1.6);
-  Actor_WalkToAndWait(20, 490, 296);
-  Actor_FaceDirection(21, FACING_NORTHEAST, 20);
-  Actor_FaceDirection(20, FACING_NORTHWEST, 20);
-  Actor_FaceDirection(20, FACING_NORTHEAST, 20);
-  Actor_SetSpeed(20, 0.2);
-  t158 = Actor_Get(20);
-  FIELD_AT(t158, u8, 90) &= 254;
-  Actor_WalkToAndWait(20, 488, 300);
+  Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST);
+  Event_ShowMessage(ACTOR_SHEBA_STAND_IN, 0);
+  FieldActor_SetSpritePriority(ACTOR_JENNA_STAND_IN, 2);
+  FieldActor_SetSpritePriority(ACTOR_PIERS_STAND_IN, 2);
+  FieldActor_ShowEmote(ACTOR_JENNA_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                       0);
+  Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 1.6);
+  Actor_WalkToAndWait(ACTOR_JENNA_STAND_IN, 490, 296);
+  Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHEAST, 20);
+  Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 0.2);
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= 254;
+  Actor_WalkToAndWait(ACTOR_JENNA_STAND_IN, 488, 300);
   FieldEvent_Wait(1);
-  t162 = Actor_Get(20);
-  FIELD_AT(t162, u8, 90) |= 1;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= 1;
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(20, 2);
-  t166 = Actor_Get(20);
-  FIELD_AT(t166, u8, 90) &= 254;
-  Actor_WalkToAndWait(20, 486, 308);
+  Actor_RunRepeatedMotion(ACTOR_JENNA_STAND_IN, 2);
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= 254;
+  Actor_WalkToAndWait(ACTOR_JENNA_STAND_IN, 486, 308);
   FieldEvent_Wait(1);
-  t170 = Actor_Get(20);
-  FIELD_AT(t170, u8, 90) |= 1;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= 1;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(512, 96, 320, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(21, FACING_EAST, 40);
-  Actor_FaceDirection(21, FACING_NORTHEAST, 20);
-  Actor_FaceDirectionAndWait(21, FACING_EAST);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 21, 0);
-  Actor_FaceDirection(22, FACING_NORTH, 0);
-  owner2 = (s32)&gMainRoutineWork;
-  owner2 = (owner2 + 0x214);
-  Actor_FaceDirection((*(s32 *)owner2), FACING_NORTHWEST, 0);
-  Actor_FaceDirection(23, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(24, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(26, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(25, FACING_NORTHWEST, 0);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  actor = Actor_Get(32);
-  FIELD_AT(actor, s32, 108) = 0;
+  Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_EAST, 40);
+  Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_NORTHEAST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_EAST);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SHEBA_STAND_IN, 0);
+  Actor_FaceDirection(ACTOR_PIERS_STAND_IN, FACING_NORTH, 0);
+  leaderAgain = (s32)&gMainRoutineWork;
+  leaderAgain += offsetof(struct MainRoutineWork, leaderActorId);
+  Actor_FaceDirection(*(s32 *)leaderAgain, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN_STAND_IN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MIA_STAND_IN, FACING_NORTHWEST, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN, 0);
+  actor = Actor_Get(ACTOR_FREED_KYLE);
+  actor->update = NULL;
   System_Wait(1);
-  FIELD_AT(actor, s32, 24) = 0x10000;
-  FIELD_AT(actor, s32, 28) = 0x10000;
-  Actor_RunRepeatedMotion(32, 2);
-  Event_ShowMessage(32, 0);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(23, FACING_NORTHEAST, 40);
-  Actor_FaceDirection(25, FACING_WEST, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(25, 0);
-  Actor_FaceDirection(23, FACING_EAST, 40);
-  Actor_FaceDirectionAndWait(23, FACING_NORTH);
-  FieldActor_StartRepeatedMotion(32, 3);
-  Event_ShowMessage(32, 0);
-  Actor_FaceDirection(24, FACING_NORTH, 40);
-  Actor_FaceDirectionAndWait(24, FACING_SOUTHWEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
-  Actor_FaceDirectionAndWait(21, FACING_SOUTHEAST);
-  Actor_SetAttachedEffect(21, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessage(21, 0);
-  Actor_FaceDirection((*(s32 *)owner2), FACING_NORTH, 0);
-  Actor_FaceDirection(24, FACING_NORTH, 0);
-  Actor_FaceDirection(26, FACING_NORTH, 0);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
-  actor = Actor_Get(30);
-  FIELD_AT(actor, s32, 108) = 0;
+  actor->scaleX = 0x10000;
+  actor->scaleY = 0x10000;
+  Actor_RunRepeatedMotion(ACTOR_FREED_KYLE, 2);
+  Event_ShowMessage(ACTOR_FREED_KYLE, 0);
+  Actor_ShowEmote(ACTOR_ISAAC_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_NORTHEAST, 40);
+  Actor_FaceDirection(ACTOR_MIA_STAND_IN, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_MIA_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessage(ACTOR_MIA_STAND_IN, 0);
+  Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_EAST, 40);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC_STAND_IN, FACING_NORTH);
+  FieldActor_StartRepeatedMotion(ACTOR_FREED_KYLE, 3);
+  Event_ShowMessage(ACTOR_FREED_KYLE, 0);
+  Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_NORTH, 40);
+  Actor_FaceDirectionAndWait(ACTOR_GARET_STAND_IN, FACING_SOUTHWEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET_STAND_IN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST);
+  Actor_SetAttachedEffect(ACTOR_SHEBA_STAND_IN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessage(ACTOR_SHEBA_STAND_IN, 0);
+  Actor_FaceDirection(*(s32 *)leaderAgain, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN_STAND_IN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA_STAND_IN, FACING_NORTH, 0);
+  actor = Actor_Get(ACTOR_FREED_JENNAS_MOTHER);
+  actor->update = NULL;
   System_Wait(1);
-  FIELD_AT(actor, s32, 24) = 0x10000;
-  FIELD_AT(actor, s32, 28) = 0x10000;
-  actor = Actor_Get(31);
-  FIELD_AT(actor, s32, 108) = 0;
+  actor->scaleX = 0x10000;
+  actor->scaleY = 0x10000;
+  actor = Actor_Get(ACTOR_FREED_JENNAS_FATHER);
+  actor->update = NULL;
   System_Wait(1);
-  FIELD_AT(actor, s32, 24) = 0x10000;
-  FIELD_AT(actor, s32, 28) = 0x10000;
+  actor->scaleX = 0x10000;
+  actor->scaleY = 0x10000;
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(31, 1);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 31, 0);
-  Actor_RunRepeatedMotion(30, 2);
-  Event_ShowMessage(30, 0);
-  FieldActor_Jump(20, 2, 10);
-  FieldActor_Jump(20, 4, 10);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_SetSpeed(20, 2.4);
-  Actor_SetSpeed((*(s32 *)owner2), 2.4);
-  Actor_SetSpeed(23, 2.4);
-  Actor_SetSpeed(24, 2.4);
-  Actor_SetScript(20, (s32)gMarsLighthouseAerie_JennaTurnScript);
-  Actor_SetScript((*(s32 *)owner2), (s32)gMarsLighthouseAerie_LeaderTurnScript);
-  Actor_SetScript(23, (s32)gMarsLighthouseAerie_IsaacTurnScript);
-  Actor_RunScriptAndWait(24, (s32)gMarsLighthouseAerie_GaretTurnScript);
+  Actor_RunRepeatedMotion(ACTOR_FREED_JENNAS_FATHER, 1);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_FREED_JENNAS_FATHER, 0);
+  Actor_RunRepeatedMotion(ACTOR_FREED_JENNAS_MOTHER, 2);
+  Event_ShowMessage(ACTOR_FREED_JENNAS_MOTHER, 0);
+  FieldActor_Jump(ACTOR_JENNA_STAND_IN, 2, 10);
+  FieldActor_Jump(ACTOR_JENNA_STAND_IN, 4, 10);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN, 0);
+  Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 2.4);
+  Actor_SetSpeed(*(s32 *)leaderAgain, 2.4);
+  Actor_SetSpeed(ACTOR_ISAAC_STAND_IN, 2.4);
+  Actor_SetSpeed(ACTOR_GARET_STAND_IN, 2.4);
+  Actor_SetScript(ACTOR_JENNA_STAND_IN,
+                  (s32)gMarsLighthouseAerie_JennaTurnScript);
+  Actor_SetScript(*(s32 *)leaderAgain,
+                  (s32)gMarsLighthouseAerie_LeaderTurnScript);
+  Actor_SetScript(ACTOR_ISAAC_STAND_IN,
+                  (s32)gMarsLighthouseAerie_IsaacTurnScript);
+  Actor_RunScriptAndWait(ACTOR_GARET_STAND_IN,
+                         (s32)gMarsLighthouseAerie_GaretTurnScript);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(22, 1.6);
-  Actor_WalkToAndWait(22, 528, 320);
-  Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(25, FACING_NORTHWEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 22, 0);
-  Actor_SetSpeed(25, 1.6);
-  Actor_SetScript(25, (s32)gMarsLighthouseAerie_MiaTurnScript);
-  Actor_WalkToAndWait(22, 486, 308);
-  Actor_FaceDirectionAndWait(22, FACING_NORTHWEST);
-  Actor_SetSpeed(21, 2.4);
-  t244 = Actor_Get(21);
-  FIELD_AT(t244, u8, 90) &= 254;
-  Actor_WalkToAndWait(21, 474, 316);
+  Actor_SetSpeed(ACTOR_PIERS_STAND_IN, 1.6);
+  Actor_WalkToAndWait(ACTOR_PIERS_STAND_IN, 528, 320);
+  Actor_FaceDirection(ACTOR_PIERS_STAND_IN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MIA_STAND_IN, FACING_NORTHWEST);
+  Event_ShowMessage(
+      SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_STAND_IN, 0);
+  Actor_SetSpeed(ACTOR_MIA_STAND_IN, 1.6);
+  Actor_SetScript(ACTOR_MIA_STAND_IN, (s32)gMarsLighthouseAerie_MiaTurnScript);
+  Actor_WalkToAndWait(ACTOR_PIERS_STAND_IN, 486, 308);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_NORTHWEST);
+  Actor_SetSpeed(ACTOR_SHEBA_STAND_IN, 2.4);
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags &= 254;
+  Actor_WalkToAndWait(ACTOR_SHEBA_STAND_IN, 474, 316);
   FieldEvent_Wait(1);
-  t248 = Actor_Get(21);
-  FIELD_AT(t248, u8, 90) |= 1;
-  Actor_FaceDirection(21, FACING_NORTHEAST, 0);
-  Actor_WalkToAndWait(22, 462, 280);
-  Actor_FaceDirectionAndWait(22, FACING_EAST);
-  FieldActor_SetSpritePriority(22, 1);
-  MarsLighthouseAerie_StartRisingRings((Actor_Get(22)),
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags |= 1;
+  Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_NORTHEAST, 0);
+  Actor_WalkToAndWait(ACTOR_PIERS_STAND_IN, 462, 280);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_EAST);
+  FieldActor_SetSpritePriority(ACTOR_PIERS_STAND_IN, 1);
+  MarsLighthouseAerie_StartRisingRings((Actor_Get(ACTOR_PIERS_STAND_IN)),
                                        (s32)gMarsLighthouseAerie_RisingRingsA);
-  MarsLighthouseAerie_StartRisingRings((Actor_Get(25)),
+  MarsLighthouseAerie_StartRisingRings((Actor_Get(ACTOR_MIA_STAND_IN)),
                                        (s32)gMarsLighthouseAerie_RisingRingsB);
   FieldEvent_Wait(40);
-  Actor_SetAnimationAndWait(19, 4);
-  Event_ShowMessage(19, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
-  MarsLighthouseAerie_EndRisingRings(Actor_Get(22));
-  MarsLighthouseAerie_EndRisingRings(Actor_Get(25));
+  MarsLighthouseAerie_EndRisingRings(Actor_Get(ACTOR_PIERS_STAND_IN));
+  MarsLighthouseAerie_EndRisingRings(Actor_Get(ACTOR_MIA_STAND_IN));
   FieldEvent_Wait(80);
   FieldEvent_SetExitRequest(2);
   return;
@@ -1609,8 +1565,8 @@ void MarsLighthouseAerie_StandAside(s32 id) {
   FieldActor_SetSpritePriority(id, 1);
 }
 
-/// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
-/// steps the event's message number.
+/// The scene that opens with MsgMarsLighthouseAerieWhatsMatterPiersWhyDid;
+/// either answer to its prompt steps the event's message number.
 void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1631,7 +1587,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
-  FieldEvent_SetMessageId(MsgWhatSTheMatter);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieWhatsMatterPiersWhyDid);
   // "What's the matter, Piers? Why did you stop? Jenna's parents need you..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
@@ -1678,13 +1634,13 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetAnimation(ACTOR_JENNA, 0x16);
   // "Mom... Wake up! It's me... It's Jenna! ...Don't leave me..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_SetSpeed(0.2);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   // "Jenna, you must prepare yourself for what comes next..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
@@ -1692,29 +1648,29 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(19, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
   // "Being transformed into a dragon, fighting in that form... This..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   // "What are you saying, Kraden?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "In fighting you, your parents were forced to use every last ounce of..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
   // "They don't have the strength to..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(19, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   // "Even if they had won the battle, they would not have survived. You..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 40);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
-  Actor_Get(ACTOR_GARET)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_GARET)->steeringFlags |= 1;
+  Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(540, 76, 340, 1);
@@ -1760,7 +1716,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
@@ -1783,7 +1739,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   {
     s32 flags = 0;
 
-    Event_OpenMessage(SPEAKER_WINDOW_BELOW | 0, flags);
+    Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, flags);
   }
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
@@ -1810,10 +1766,10 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_MIA, 0);
-  Actor_SetSpeed(19, 0.8);
-  Actor_WalkToAndWait(19, 498, 320);
-  Actor_SetAnimation(19, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 498, 320);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_SetFlag(FLAG_MARS_BEACON_LIT);
@@ -1821,14 +1777,14 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetSpeed(ACTOR_ISAAC, 0.8);
   Actor_WalkToAndWait(ACTOR_ISAAC, 540, 286);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
-  MarsLighthouseAerie_StandAside(7);
-  MarsLighthouseAerie_StandAside(5);
-  MarsLighthouseAerie_StandAside(6);
-  MarsLighthouseAerie_StandAside(19);
-  MarsLighthouseAerie_StandAside(0);
-  MarsLighthouseAerie_StandAside(3);
-  MarsLighthouseAerie_StandAside(2);
-  MarsLighthouseAerie_StandAside(1);
+  MarsLighthouseAerie_StandAside(ACTOR_PIERS);
+  MarsLighthouseAerie_StandAside(ACTOR_JENNA);
+  MarsLighthouseAerie_StandAside(ACTOR_SHEBA);
+  MarsLighthouseAerie_StandAside(ACTOR_KRADEN);
+  MarsLighthouseAerie_StandAside(ACTOR_ISAAC);
+  MarsLighthouseAerie_StandAside(ACTOR_MIA);
+  MarsLighthouseAerie_StandAside(ACTOR_IVAN);
+  MarsLighthouseAerie_StandAside(ACTOR_GARET);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Event_SetFlag(FLAG_ASKED_FOR_MARS_STAR);
   MapGrid_CopyCellAttributes(39, 40, 18, 16, 23, 10);
@@ -1840,16 +1796,19 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Party_RemoveMemberRestored(3);
   Party_RemoveMemberRestored(2);
   Party_RemoveMemberRestored(1);
-  Actor_Get(20)->collisionFlags |= 8;
-  Actor_Get(21)->collisionFlags |= 8;
-  FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
-  Actor_SetPosition(28, 568, 274);
-  Actor_Get(17)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(17), px(492), px(96), px(284));
-  Actor_Get(29)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(29), px(510), px(96), px(295));
-  Actor_Get(30)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(30), px(540), px(96), px(300));
+  Actor_Get(ACTOR_JENNAS_MOTHER)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(ACTOR_JENNAS_FATHER)->collisionFlags |= ACTOR_NOT_TARGETED;
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_HAMA), 0xf);
+  Actor_SetPosition(ACTOR_HAMA, 568, 274);
+  Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT)->motionFlags = 0;
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT),
+                                       px(492), px(96), px(284));
+  Actor_Get(ACTOR_JENNAS_FATHER_TALK_SPOT)->motionFlags = 0;
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_JENNAS_FATHER_TALK_SPOT),
+                                       px(510), px(96), px(295));
+  Actor_Get(ACTOR_KYLE_TALK_SPOT)->motionFlags = 0;
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_KYLE_TALK_SPOT), px(540),
+                                       px(96), px(300));
   System_Wait(1);
   Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
@@ -1858,7 +1817,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
 
 /// An orb circles the beacon's beam as it rises.
 void Orbs_UpdateRising(struct Actor *self) {
-  struct Actor *centre = Actor_Get(23);
+  struct Actor *centre = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
@@ -1875,12 +1834,6 @@ void Orbs_UpdateRising(struct Actor *self) {
   self->timer += -0x800;
 }
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
-                                                    s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline. */
-  return (struct OrbitEffect *)Import_ActorCreate(type, x, y, z);
-}
-
 /// Every third frame, or every frame once the light has broken through, an orb
 /// starts to rise round the beacon's beam.
 void Orbs_SpawnRising(void) {
@@ -1891,23 +1844,23 @@ void Orbs_SpawnRising(void) {
 
   if (Event_GetFlag(FLAG_BEACON_BROKE_THROUGH) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Actor_Get(23);
+  center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (Event_GetFlag(FLAG_BEACON_BROKE_THROUGH) != 0) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -1926,12 +1879,10 @@ void Orbs_SpawnRising(void) {
 
 #include "../field/actor_park_record.c"
 
-#undef FIELD_AT
-
 #include "text/msg_ids.h"
 
 void BattleEffect_GetObjectPriority(void);
-void MarsLighthouseAerie_HaltConsoler(void);
+void MarsLighthouseAerie_HaltIvan(void);
 void FieldCamera_WaitForArrival();
 void Teleport_PlayWhirl(void);
 
@@ -1946,16 +1897,18 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   s32 spawn = 0;
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
+  s32 angle;
+  u8 phase;
 
   switch (gMarsLighthouseAerie_BeaconFireFrame) {
   case 0:
     Event_PlaySound(SE_SHIMMER);
     MapGrid_SetShake(6, 6, 1);
-    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
     PaletteFade_Interpolate(8);
     break;
   case 8:
-    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(8);
     break;
   case 16:
@@ -1973,14 +1926,15 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   case 25:
     gMarsLighthouseAerie_BeaconFireFrame--;
     if (anchor->y.fixed > 0) {
-      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12),
+                              PALETTES_ALL);
       PaletteFade_Interpolate(16);
       gMarsLighthouseAerie_BeaconFireFrame++;
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
       spawn = 1;
-      anchor->y.fixed += 0x24000;
+      anchor->y.fixed += px(9) / 4;
     }
     break;
   case 26:
@@ -1991,7 +1945,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
-      anchor->y.fixed += 0x24000;
+      anchor->y.fixed += px(9) / 4;
       spawn = 1;
     }
     break;
@@ -2009,20 +1963,12 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       Actor_StartScript(object, gMarsLighthouseAerie_BeaconSparkScript);
       FieldActor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
-      {
-        /* FAKEMATCH(temporary): the masked value held in a local. */
-        s32 action = Random16() & 0x0ffff000;
-
-        object->timer = action;
-      }
+      angle = Random16() & 0xffff000;
+      object->timer = angle;
       zero = 0;
       object->userValue = 0;
-      {
-        /* FAKEMATCH(temporary): the byte held in a local. */
-        u8 phase = Random16() >> 13;
-
-        ((u8 *)object)[98] = phase;
-      }
+      phase = Random16() >> 13;
+      object->riseCounter = phase;
       object->update = MarsLighthouseAerie_OrbitBeaconFire;
       object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
@@ -2058,89 +2004,88 @@ void MarsLighthouseAerie_StepBackRight(s32 id) {
 
 /// The actor keeps to the ground as the beacon's beam rises.
 void MarsLighthouseAerie_HoldStill(s32 id) {
-  Actor_GetById(id)->motionFlags = 3;
+  Actor_GetById(id)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
 void MarsLighthouseAerie_StartLookingAround(s32 id);
 void MarsLighthouseAerie_StopLookingAround(s32 id);
 extern s32 gMarsLighthouseAerie_BeamNarrowScript[];
 
-#define OWNER gMainRoutineWork.leaderActorId
-
-#define A(p) ((struct OverlayActor *)(p))
-
 void MarsLighthouseAerie_LightBeacon(void) {
   struct AerieEventWork *work, *later;
   struct OverlaySprite *sprite;
-  s32 created, zero, firstBeam, object, tiles, glowTask, message;
-  s32 anchor, y, x, z, spawned, block;
-  s32 beam, beam2, piece;
-  s32 piece2, piece3;
-  s32 owner, actor;
+  struct Actor *created, *object;
+  s32 zero, firstBeam, tiles, glowTask, message;
+  struct Actor *anchor, *spawned;
+  s32 y, x, z, block;
+  struct Actor *bottomBeam, *lowerBeam, *middleBeam;
+  struct Actor *upperBeam, *topBeam;
+  s32 owner;
+  struct Actor *actor;
 
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  Actor_SetPosition(28, 0, 0);
-  Actor_SetPosition(29, 0, 0);
-  Actor_SetPosition(30, 0, 0);
+  Actor_SetPosition(ACTOR_HAMA, 0, 0);
+  Actor_SetPosition(ACTOR_JENNAS_FATHER_TALK_SPOT, 0, 0);
+  Actor_SetPosition(ACTOR_KYLE_TALK_SPOT, 0, 0);
   FieldCamera_SetSpeed(1.6);
-  A(((s32)FieldCamera_GetActor()))->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(512, 96, 312, 1);
   FieldCamera_WaitForArrival();
   System_Wait(1);
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = 0x3f10;
   MapGrid_CopyCellAttributes(18, 40, 18, 16, 23, 10);
-  MarsLighthouseAerie_HoldStill(7);
-  MarsLighthouseAerie_HoldStill(5);
-  MarsLighthouseAerie_HoldStill(6);
+  MarsLighthouseAerie_HoldStill(ACTOR_PIERS);
+  MarsLighthouseAerie_HoldStill(ACTOR_JENNA);
+  MarsLighthouseAerie_HoldStill(ACTOR_SHEBA);
   firstBeam = 23;
   zero = 0;
-  MarsLighthouseAerie_HoldStill(19);
-  MarsLighthouseAerie_HoldStill(0);
-  MarsLighthouseAerie_HoldStill(3);
-  MarsLighthouseAerie_HoldStill(2);
-  MarsLighthouseAerie_HoldStill(1);
+  MarsLighthouseAerie_HoldStill(ACTOR_KRADEN);
+  MarsLighthouseAerie_HoldStill(ACTOR_ISAAC);
+  MarsLighthouseAerie_HoldStill(ACTOR_MIA);
+  MarsLighthouseAerie_HoldStill(ACTOR_IVAN);
+  MarsLighthouseAerie_HoldStill(ACTOR_GARET);
   Event_PrepareActorAndApplyValue(0, 0);
-  Actor_SetSpeed((OWNER), 0.8);
-  Actor_WalkToAndWait((OWNER), 512, 280);
-  Actor_FaceDirectionAndWait((OWNER), FACING_NORTH);
-  Actor_RunRepeatedMotion((OWNER), 2);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 512, 280);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
   FieldEvent_Wait(20);
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
-  anchor = (s32)Actor_Get(ACTOR_FELIX);
-  y = A(anchor)->y;
-  x = A(anchor)->x;
+  anchor = Actor_Get(ACTOR_FELIX);
+  y = anchor->y.fixed;
+  x = anchor->x.fixed;
   y += 0x80000;
-  z = A(anchor)->z;
+  z = anchor->z.fixed;
   spawned = FieldActor_Create(0x1e9, x, y, z);
   created = spawned;
   object = spawned;
   if (created != 0) {
-    sprite = (struct OverlaySprite *)A(object)->animation;
+    sprite = (struct OverlaySprite *)object->sprite;
     sprite->unk5_5 = 0;
     sprite->unk1b = zero;
     sprite->unk9_4 = 0;
     sprite->unk9_2 = 2;
-    A(object)->priorityFlags &= 254;
-    A(object)->motionFlags = zero;
-    A(object)->unk5c = 1;
-    A(object)->priorityFlags |= 2;
+    object->priorityFlags &= 254;
+    object->motionFlags = zero;
+    object->retainSpriteCache = 1;
+    object->priorityFlags |= 2;
     Actor_SetSpriteFlags(created, 0);
-    A(object)->speedLimit = 0x6666;
-    A(object)->acceleration = 0xccc;
-    A(object)->gravity = px(1) / 2;
+    object->speedLimit = 0x6666;
+    object->acceleration = 0xccc;
+    object->gravity = px(1) / 2;
     block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-    A(object)->motionFlags = zero;
+    object->motionFlags = zero;
     FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
-    A(object)->motionFlags = 4;
+    object->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(60);
-    A(object)->motionFlags = zero;
+    object->motionFlags = zero;
     FieldActor_SetMoveTarget(object, 512, 128, 264);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
@@ -2150,25 +2095,25 @@ void MarsLighthouseAerie_LightBeacon(void) {
     Actor_Release(object);
   }
   FieldEvent_Wait(40);
-  FieldActor_SetSpritePriority(23, 2);
-  FieldActor_SetSpritePriority(24, 2);
-  FieldActor_SetSpritePriority(25, 2);
-  FieldActor_SetSpritePriority(26, 2);
-  FieldActor_SetSpritePriority(27, 2);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_LOWER, 2);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_MIDDLE, 2);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_UPPER, 2);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_TOP, 2);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(1, 1, 1);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 7);
-  beam = (s32)Actor_Get(23);
-  A(beam)->scaleX = 0x1999;
-  A(beam)->scaleY = 0xffff0000;
-  A(beam)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(beam, px(512), px(64), px(204));
-  FieldActor_SetSpriteColor(((s32)Actor_Get(24)), 7);
-  beam2 = (s32)Actor_Get(24);
-  A(beam2)->scaleX = 0x1999;
-  A(beam2)->scaleY = 0xffff0000;
-  A(beam2)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(beam2, px(512), px(96), px(204));
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
+  bottomBeam = Actor_Get(ACTOR_BEAM_BOTTOM);
+  bottomBeam->scaleX = 0x1999;
+  bottomBeam->scaleY = 0xffff0000;
+  bottomBeam->motionFlags = zero;
+  FieldActor_SetPositionAndResetMotion(bottomBeam, px(512), px(64), px(204));
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_LOWER), 7);
+  lowerBeam = Actor_Get(ACTOR_BEAM_LOWER);
+  lowerBeam->scaleX = 0x1999;
+  lowerBeam->scaleY = 0xffff0000;
+  lowerBeam->motionFlags = zero;
+  FieldActor_SetPositionAndResetMotion(lowerBeam, px(512), px(96), px(204));
   Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -2178,93 +2123,95 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
-  Actor_SetScript(23, gMarsLighthouseAerie_BeamWidenScript);
-  Actor_SetScript(24, gMarsLighthouseAerie_BeamWidenScript);
+  Actor_SetScript(ACTOR_BEAM_BOTTOM, gMarsLighthouseAerie_BeamWidenScript);
+  Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamWidenScript);
   Event_PlaySound(SE_CRASH);
   MapGrid_SetShake(6, 6, 1);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
   System_Wait(20);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(24);
   System_Wait(60);
   Event_PlaySound(SE_RUMBLE);
   Event_SetFlag(FLAG_BEACON_BROKE_THROUGH);
-  A(((s32)Actor_Get(23)))->y = 0xffc80000;
-  A(((s32)Actor_Get(24)))->y = 0xffe80000;
-  FieldActor_SetSpriteColor(((s32)Actor_Get(25)), 7);
-  piece = (s32)Actor_Get(25);
-  A(piece)->scaleY = 0xffff0000;
-  A(piece)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
-  A(piece)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece, px(512), px(8), px(204));
-  FieldActor_SetSpriteColor(((s32)Actor_Get(26)), 7);
-  piece2 = (s32)Actor_Get(26);
-  A(piece2)->scaleY = 0xffff0000;
-  A(piece2)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
-  A(piece2)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece2, px(512), px(40), px(204));
-  FieldActor_SetSpriteColor(((s32)Actor_Get(27)), 7);
-  piece3 = (s32)Actor_Get(27);
-  A(piece3)->scaleY = 0xffff0000;
-  A(piece3)->scaleX = (A(((s32)Actor_Get(23)))->scaleX);
-  A(piece3)->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(piece3, px(512), px(72), px(204));
+  Actor_Get(ACTOR_BEAM_BOTTOM)->y.fixed = -px(56);
+  Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -px(24);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_MIDDLE), 7);
+  middleBeam = Actor_Get(ACTOR_BEAM_MIDDLE);
+  middleBeam->scaleY = 0xffff0000;
+  middleBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
+  middleBeam->motionFlags = zero;
+  FieldActor_SetPositionAndResetMotion(middleBeam, px(512), px(8), px(204));
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_UPPER), 7);
+  upperBeam = Actor_Get(ACTOR_BEAM_UPPER);
+  upperBeam->scaleY = 0xffff0000;
+  upperBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
+  upperBeam->motionFlags = zero;
+  FieldActor_SetPositionAndResetMotion(upperBeam, px(512), px(40), px(204));
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_TOP), 7);
+  topBeam = Actor_Get(ACTOR_BEAM_TOP);
+  topBeam->scaleY = 0xffff0000;
+  topBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
+  topBeam->motionFlags = zero;
+  FieldActor_SetPositionAndResetMotion(topBeam, px(512), px(72), px(204));
   MapGrid_CopyCellsTo(106, 36, 87, 7, 17, firstBeam);
   MapGrid_CopyCellsTo(42, 98, 23, 69, 17, firstBeam);
   MapGrid_CopyCellAttributes(0, 40, 18, 20, firstBeam, 10);
-  MarsLighthouseAerie_StepBackLeft(7);
-  MarsLighthouseAerie_StepBackLeft(5);
-  MarsLighthouseAerie_StepBackLeft(6);
+  MarsLighthouseAerie_StepBackLeft(ACTOR_PIERS);
+  MarsLighthouseAerie_StepBackLeft(ACTOR_JENNA);
+  MarsLighthouseAerie_StepBackLeft(ACTOR_SHEBA);
   glowTask = (s32)Orbs_SpawnRising;
-  MarsLighthouseAerie_StepBackLeft(20);
-  MarsLighthouseAerie_StepBackLeft(21);
-  MarsLighthouseAerie_StepBackLeft(19);
-  MarsLighthouseAerie_StepBackRight(2);
-  MarsLighthouseAerie_StepBackRight(1);
-  MarsLighthouseAerie_StepBackRight(22);
-  MarsLighthouseAerie_StepBackRight(0);
-  MarsLighthouseAerie_StepBackRight(3);
-  owner = OWNER;
+  MarsLighthouseAerie_StepBackLeft(ACTOR_JENNAS_MOTHER);
+  MarsLighthouseAerie_StepBackLeft(ACTOR_JENNAS_FATHER);
+  MarsLighthouseAerie_StepBackLeft(ACTOR_KRADEN);
+  MarsLighthouseAerie_StepBackRight(ACTOR_IVAN);
+  MarsLighthouseAerie_StepBackRight(ACTOR_GARET);
+  MarsLighthouseAerie_StepBackRight(ACTOR_KYLE);
+  MarsLighthouseAerie_StepBackRight(ACTOR_ISAAC);
+  MarsLighthouseAerie_StepBackRight(ACTOR_MIA);
+  owner = gMainRoutineWork.leaderActorId;
   {
-    s32 speed = 0xe000;
-    Actor_SetPositionAndFacing(owner, px(484), px(312), speed);
+    s32 facing = FACING_NORTHEAST;
+    Actor_SetPositionAndFacing(owner, px(484), px(312), facing);
   }
-  FieldActor_SetSpritePriority((OWNER), 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   System_Wait(1);
   MapGrid_SetShake(4, 4, 1);
-  PaletteFade_ApplyTarget(0x4063ff, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(120);
-  Actor_SetScript(23, gMarsLighthouseAerie_BeamNarrowScript);
-  Actor_SetScript(24, gMarsLighthouseAerie_BeamNarrowScript);
-  Actor_SetScript(25, gMarsLighthouseAerie_BeamNarrowScript);
-  Actor_SetScript(26, gMarsLighthouseAerie_BeamNarrowScript);
-  Actor_SetScript(27, gMarsLighthouseAerie_BeamNarrowScript);
+  Actor_SetScript(ACTOR_BEAM_BOTTOM, gMarsLighthouseAerie_BeamNarrowScript);
+  Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamNarrowScript);
+  Actor_SetScript(ACTOR_BEAM_MIDDLE, gMarsLighthouseAerie_BeamNarrowScript);
+  Actor_SetScript(ACTOR_BEAM_UPPER, gMarsLighthouseAerie_BeamNarrowScript);
+  Actor_SetScript(ACTOR_BEAM_TOP, gMarsLighthouseAerie_BeamNarrowScript);
   System_Wait(120);
   MapGrid_SetShake(3, 3, 1);
-  PaletteFade_ApplyTarget(0x203210, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(120);
   MapGrid_SetShake(1, 1, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  A(((s32)Actor_Get(23)))->scaleY = 0x51e;
-  Actor_SetScript(24, gMarsLighthouseAerie_BeamShootUpScript);
-  Actor_SetScript(25, gMarsLighthouseAerie_BeamShootUpScript);
-  Actor_SetScript(26, gMarsLighthouseAerie_BeamShootUpScript);
-  Actor_RunScriptAndWait(27, gMarsLighthouseAerie_BeamShootUpScript);
+  Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = 0x51e;
+  Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamShootUpScript);
+  Actor_SetScript(ACTOR_BEAM_MIDDLE, gMarsLighthouseAerie_BeamShootUpScript);
+  Actor_SetScript(ACTOR_BEAM_UPPER, gMarsLighthouseAerie_BeamShootUpScript);
+  Actor_RunScriptAndWait(ACTOR_BEAM_TOP,
+                         gMarsLighthouseAerie_BeamShootUpScript);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(23)), 15);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 15);
   FieldEvent_Wait(20);
-  Actor_RunScriptAndWait(23, gMarsLighthouseAerie_BeamRiseScript);
+  Actor_RunScriptAndWait(ACTOR_BEAM_BOTTOM,
+                         gMarsLighthouseAerie_BeamRiseScript);
   FieldTask_Remove(glowTask);
-  actor = (s32)Actor_Get(ACTOR_BEACON_FIRE);
-  A(actor)->motionFlags = zero;
+  actor = Actor_Get(ACTOR_BEACON_FIRE);
+  actor->motionFlags = zero;
   Actor_SetBlendMode(actor, 1);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_BEACON_FIRE)), 7);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_FIRE), 7);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 2);
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrame = zero;
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrames = 240;
@@ -2276,7 +2223,7 @@ L_0200bcea:
   Event_PlaySound(MUS_MERCURY_LIGHTHOUSE);
   FieldEvent_Wait(120);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieBeaconIsLit);
   // "The beacon is lit!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -2291,7 +2238,7 @@ L_0200bcea:
   // "How many lives have been taken and changed forever just to light..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirection((OWNER), FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -2300,7 +2247,7 @@ L_0200bcea:
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimation((OWNER), 3);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 3);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
@@ -2310,7 +2257,7 @@ L_0200bcea:
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
-  Actor_FaceDirection((OWNER), FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
@@ -2321,35 +2268,35 @@ L_0200bcea:
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0, 10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  FieldPsynergy_StartMindReadWave(23, 24);
-  Message_ShowCentered(((s32)MsgTheBeaconIs + 6), 1);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
+  Message_ShowCentered(((s32)MsgMarsLighthouseAerieBeaconIsLit + 6), 1);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(20);
-  FieldPsynergy_StartMindReadWave(23, 24);
-  Message_ShowCentered(((s32)MsgTheBeaconIs + 7), 1);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
+  Message_ShowCentered(((s32)MsgMarsLighthouseAerieBeaconIsLit + 7), 1);
   FieldPsynergy_StopMindReadWave();
   work = Ram_HeapSlots->fieldWork;
   work->step.value = work->stepRead + 2;
-  MarsLighthouseAerie_StartLookingAround((OWNER));
-  MarsLighthouseAerie_StartLookingAround(7);
-  MarsLighthouseAerie_StartLookingAround(5);
-  MarsLighthouseAerie_StartLookingAround(6);
-  MarsLighthouseAerie_StartLookingAround(19);
-  MarsLighthouseAerie_StartLookingAround(1);
-  MarsLighthouseAerie_StartLookingAround(2);
-  MarsLighthouseAerie_StartLookingAround(3);
+  MarsLighthouseAerie_StartLookingAround(gMainRoutineWork.leaderActorId);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_PIERS);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_JENNA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_SHEBA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_KRADEN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_IVAN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 0, 0, 10);
-  FieldPsynergy_StartMindReadWave(23, 24);
-  message = ((s32)MsgTheBeaconIs + 9);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
+  message = ((s32)MsgMarsLighthouseAerieBeaconIsLit + 9);
   Message_ShowCentered(message, 1);
   FieldPsynergy_StopMindReadWave();
-  MarsLighthouseAerie_StopLookingAround(3);
+  MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
   Actor_FaceDirectionAndWait(24579, FACING_SOUTH);
-  A(((s32)Actor_Get(ACTOR_MIA)))->update = 0;
+  ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
   // Read as a word, so the store to the actor before it may alias.
   later =
       (struct AerieEventWork *)((struct HeapWords *)Ram_HeapSlots)->eventWord;
@@ -2357,171 +2304,141 @@ L_0200bcea:
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_PlaySound(SE_ASCEND);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   System_Wait(20);
   FieldEvent_SetExitRequest(3);
   return;
 }
 
-#undef A
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 void MarsLighthouseAerie_SpawnBeaconFlames(void);
 
 void MarsLighthouseAerie_WatchGoldenSunRise(void) {
-  s32 owner, i, ownerInLoop, ownerAfterLoop, quarterTurn;
-  s32 threeSixteenthsTurn, actor, t2, t3;
-  s32 t4, t5, t6, t7, t8, t9, t10, t17, t21, t25;
-  s32 t31, t49, t62, t76, t87, t101, t104, t107, t156;
-  s32 t158, t160, t168, t184, t186, t189, t195, t205;
-  s32 t215, t228, t238, t250, t263, t271, t274, t284, t292;
-  s32 t296;
+  s32 *leader, *leaderInLoop, *leaderAfterLoop, i, south;
+  s32 southSoutheast, actor;
+  s32 t7;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    owner = (s32)&party->leaderActorId;
+    leader = &party->leaderActorId;
   }
-  quarterTurn = 0x4000;
-  t2 = *(s32 *)owner;
-  t3 = Actor_Get(t2);
-  ((struct Actor *)t3)->facing = quarterTurn;
-  t4 = Actor_Get(ACTOR_PIERS);
-  ((struct Actor *)t4)->facing = quarterTurn;
-  t5 = Actor_Get(ACTOR_JENNA);
-  ((struct Actor *)t5)->facing = quarterTurn;
-  t6 = Actor_Get(ACTOR_SHEBA);
-  ((struct Actor *)t6)->facing = quarterTurn;
-  t7 = Actor_Get(19);
-  threeSixteenthsTurn = 0x3000;
-  ((struct Actor *)t7)->facing = threeSixteenthsTurn;
-  t8 = Actor_Get(ACTOR_ISAAC);
-  ((struct Actor *)t8)->facing = quarterTurn;
-  t9 = Actor_Get(ACTOR_GARET);
-  ((struct Actor *)t9)->facing = quarterTurn;
-  t10 = Actor_Get(ACTOR_IVAN);
-  ((struct Actor *)t10)->facing = quarterTurn;
+  south = FACING_SOUTH;
+  ((struct Actor *)(Actor_Get(*leader)))->facing = south;
+  ((struct Actor *)Actor_Get(ACTOR_PIERS))->facing = south;
+  ((struct Actor *)Actor_Get(ACTOR_JENNA))->facing = south;
+  ((struct Actor *)Actor_Get(ACTOR_SHEBA))->facing = south;
+  t7 = Actor_Get(ACTOR_KRADEN);
+  southSoutheast = FACING_SOUTH_SOUTHEAST;
+  ((struct Actor *)t7)->facing = southSoutheast;
+  ((struct Actor *)Actor_Get(ACTOR_ISAAC))->facing = south;
+  ((struct Actor *)Actor_Get(ACTOR_GARET))->facing = south;
+  ((struct Actor *)Actor_Get(ACTOR_IVAN))->facing = south;
   System_Wait(1);
-  Actor_SetAnimation(20, 8);
-  Actor_SetAnimation(21, 8);
-  Actor_SetAnimation(22, 7);
-  Actor_SetPosition(19, 498, 320);
+  Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 8);
+  Actor_SetAnimation(ACTOR_JENNAS_FATHER, 8);
+  Actor_SetAnimation(ACTOR_KYLE, 7);
+  Actor_SetPosition(ACTOR_KRADEN, 498, 320);
   Actor_SetPosition(ACTOR_GARET, 538, 320);
-  t17 = *(s32 *)owner;
-  Actor_SetPosition(t17, 506, 280);
+  Actor_SetPosition(*leader, 506, 280);
   System_Wait(1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  t21 = FieldCamera_GetActor();
-  ((struct Actor *)t21)->motionFlags = 0;
+  ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_MoveTo(512, 96, 288, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  t25 = (s32)Ram_HeapSlots->fieldWork;
-  FIELD_AT(t25, s32, 428) = 0x201;
+  gFieldWork->transition = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
-  t31 = *(s32 *)owner;
-  Actor_FaceDirection(t31, FACING_EAST, 0);
+  Actor_FaceDirection(*leader, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHEAST);
-  FieldEvent_SetMessageId((s32)MsgWhatCouldHe);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieWhatCouldHeBeDoing);
   // "What could he be doing?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
-  FieldActor_Jump(19, 4, 10);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 10);
   // "Of course! I understand..."
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_PIERS, quarterTurn, 0);
-  t49 = *(s32 *)owner;
-  Actor_FaceDirection(t49, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_PIERS, south, 0);
+  Actor_FaceDirection(*leader, south, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimation(19, 3);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   // "The Wise One said that when all four lighthouses have been lit, the..."
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  t62 = *(s32 *)owner;
-  Actor_SetAnimation(t62, 3);
+  Actor_SetAnimation(*leader, 3);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "When that happens, Mt. Aleph and the lighthouses will probably..."
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "So, the Wise One is warning people in dreams, telling them to seek..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimationAndWait(19, 3);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Why would he do that!? You saw what he did to us... He can't be up..."
   Event_ShowMessage(ACTOR_GARET, 0);
-  t76 = Actor_Get(28);
-  FieldActor_SetSpriteColor(t76, 15);
-  Actor_SetPosition(28, 512, 360);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_HAMA), 15);
+  Actor_SetPosition(ACTOR_HAMA, 512, 360);
   System_Wait(1);
-  PaletteFade_ApplySource(0x10000, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "Have you not learned? One's actions do not always reveal one's true..."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_FaceDirection(ACTOR_IVAN, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_IVAN, south, 0);
   FieldActor_Jump(ACTOR_IVAN, 4, 10);
   // "Hamma... Sister..."
   Event_ShowMessage(ACTOR_IVAN, 0);
-  t87 = *(s32 *)owner;
-  Actor_FaceDirection(t87, quarterTurn, 0);
-  Actor_FaceDirection(ACTOR_PIERS, quarterTurn, 0);
-  Actor_FaceDirection(ACTOR_JENNA, quarterTurn, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, quarterTurn, 0);
-  Actor_FaceDirection(19, threeSixteenthsTurn, 0);
-  Actor_FaceDirection(ACTOR_GARET, quarterTurn, 0);
-  Actor_FaceDirection(ACTOR_MIA, quarterTurn, 0);
-  Actor_FaceDirectionAndWait(ACTOR_ISAAC, quarterTurn);
+  Actor_FaceDirection(*leader, south, 0);
+  Actor_FaceDirection(ACTOR_PIERS, south, 0);
+  Actor_FaceDirection(ACTOR_JENNA, south, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, south, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, southSoutheast, 0);
+  Actor_FaceDirection(ACTOR_GARET, south, 0);
+  Actor_FaceDirection(ACTOR_MIA, south, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, south);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "Master Hamma! Did you receive a message, too?"
   Event_ShowMessage(ACTOR_ISAAC, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "Yes. I was called to Jupiter Lighthouse in a dream."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
-  t101 = *(s32 *)owner;
-  Actor_FaceDirection(t101, FACING_EAST, 0);
+  Actor_FaceDirection(*leader, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 20);
-  t104 = *(s32 *)owner;
-  Actor_SetAnimation(t104, 3);
+  Actor_SetAnimation(*leader, 3);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-  t107 = *(s32 *)owner;
-  Actor_FaceDirection(t107, quarterTurn, 0);
-  Actor_FaceDirectionAndWait(ACTOR_ISAAC, quarterTurn);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  Actor_FaceDirection(*leader, south, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, south);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "You have completed your quest, but I see it comes with great loss......"
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
   actor = Actor_Get(ACTOR_JENNA);
   ((struct Actor *)actor)->facing = FACING_SOUTHWEST;
@@ -2530,46 +2447,46 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldActor_StartRepeatedMotion(ACTOR_JENNA, 2);
   // "Master Hamma... My parents..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "I know, Jenna, and I am sorry. But do not give up hope for them just..."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
-  ((struct Actor *)actor)->facing = quarterTurn;
+  ((struct Actor *)actor)->facing = south;
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "What do you mean, Master Hamma?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "Appearances can be an illusion... The Wise One has a caring heart."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
   // "He forced us to fight Isaac's and Jenna's parents! What's so..."
   Event_ShowMessage(ACTOR_GARET, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "If the Wise One were truly evil, he would not be warning me of..."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Well, I... I guess not... But then, what's he up to?"
   Event_ShowMessage(ACTOR_GARET, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "We do not have time to discuss it right now."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "She's right. If the Wise One said it's not safe to be near the..."
-  Event_ShowMessage(19, 0);
-  FieldPsynergy_StartMindReadWave(23, 24);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  FieldPsynergy_StartMindReadWave(ACTOR_BEAM_BOTTOM, ACTOR_BEAM_LOWER);
   // "I am heading for safety, too. All of you must get away from the..."
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_HAMA, 0);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_FaceDirection(19, threeSixteenthsTurn, 40);
-  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, southSoutheast, 40);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   // "Hurry, everyone! Let's go!"
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   // "What about our parents?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
@@ -2582,43 +2499,36 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   // "Make the decision, Felix! Should we take them with us?"
-  Event_OpenMessage(2, 0);
-  t156 = *(s32 *)owner;
-  Actor_FaceDirectionAndWait(t156, FACING_EAST);
-  t158 = *(s32 *)owner;
-  FieldEvent_AskYesNoWithActorAnimation(t158, 0);
-  t160 = *(s32 *)owner;
-  Actor_WaitForAnimationChange(t160);
-  PaletteFade_ApplyTarget(0x10004, 1);
+  Event_OpenMessage(ACTOR_IVAN, 0);
+  Actor_FaceDirectionAndWait(*leader, FACING_EAST);
+  FieldEvent_AskYesNoWithActorAnimation(*leader, 0);
+  Actor_WaitForAnimationChange(*leader);
+  PaletteFade_ApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
-  t168 = *(s32 *)owner;
-  MarsLighthouseAerie_StartLookingAround(t168);
-  MarsLighthouseAerie_StartLookingAround(5);
-  MarsLighthouseAerie_StartLookingAround(6);
-  MarsLighthouseAerie_StartLookingAround(7);
-  MarsLighthouseAerie_StartLookingAround(19);
-  MarsLighthouseAerie_StartLookingAround(0);
-  MarsLighthouseAerie_StartLookingAround(1);
-  MarsLighthouseAerie_StartLookingAround(2);
-  MarsLighthouseAerie_StartLookingAround(3);
+  MarsLighthouseAerie_StartLookingAround(*leader);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_JENNA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_SHEBA);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_PIERS);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_KRADEN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_ISAAC);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_IVAN);
+  MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldTask_Remove((s32)MarsLighthouseAerie_SpawnBeaconFlames);
   Event_PlaySound(SE_SPIN);
-  t184 = Actor_Get(8);
-  FieldActor_SetSpriteColor(t184, 12);
-  t186 = Actor_Get(9);
-  FieldActor_SetSpriteColor(t186, 12);
-  FieldActor_SetSpritePriority(23, 2);
-  t189 = Actor_Get(23);
-  FieldActor_SetSpriteColor(t189, 7);
-  actor = Actor_Get(23);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_FIRE), 12);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_GLOW), 12);
+  FieldActor_SetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
+  actor = Actor_Get(ACTOR_BEAM_BOTTOM);
   ((struct Actor *)actor)->scaleY = 0xffff0000;
   ((struct Actor *)actor)->scaleX = 0x1999;
   ((struct Actor *)actor)->motionFlags = 0;
@@ -2630,37 +2540,35 @@ L_0200c66c:
     MapGrid_SetShake(2, 2, 1);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
-      ownerInLoop = (s32)&party->leaderActorId;
+      leaderInLoop = &party->leaderActorId;
     }
-    t195 = *(s32 *)ownerInLoop;
-    FieldActor_ShowEmote(t195, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(*leaderInLoop, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    t205 = *(s32 *)ownerInLoop;
-    MarsLighthouseAerie_StopLookingAround(t205);
-    MarsLighthouseAerie_StopLookingAround(5);
-    MarsLighthouseAerie_StopLookingAround(6);
-    MarsLighthouseAerie_StopLookingAround(7);
-    MarsLighthouseAerie_StopLookingAround(19);
-    MarsLighthouseAerie_StopLookingAround(0);
-    MarsLighthouseAerie_StopLookingAround(1);
-    MarsLighthouseAerie_StopLookingAround(2);
-    MarsLighthouseAerie_StopLookingAround(3);
+    MarsLighthouseAerie_StopLookingAround(*leaderInLoop);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_JENNA);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_SHEBA);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_PIERS);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_KRADEN);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_ISAAC);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_GARET);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_IVAN);
+    MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
   }
-  t215 = ((struct Actor *)actor)->scaleX;
-  ((struct Actor *)actor)->scaleX = (t215 + 0x400);
+  ((struct Actor *)actor)->scaleX = ((((struct Actor *)actor)->scaleX) + 0x400);
   System_Wait(1);
   i = (i + 1);
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
   Event_PlaySound(MUS_063);
-  Actor_SetScript(23, (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
+  Actor_SetScript(ACTOR_BEAM_BOTTOM,
+                  (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
   FieldActor_Jump(ACTOR_GARET, 4, 10);
   FieldActor_Jump(ACTOR_GARET, 6, 10);
@@ -2669,39 +2577,36 @@ L_0200c66c:
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHWEST);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    ownerAfterLoop = (s32)&party->leaderActorId;
+    leaderAfterLoop = &party->leaderActorId;
   }
-  t228 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t228, FACING_EAST, 0);
+  Actor_FaceDirection(*leaderAfterLoop, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 40);
-  t238 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t238, FACING_NORTH, 0);
+  Actor_FaceDirection(*leaderAfterLoop, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirection(19, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_WEST);
   Event_ShowMessage(ACTOR_MIA, 0);
-  t250 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t250, FACING_EAST, 0);
+  Actor_FaceDirection(*leaderAfterLoop, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -2709,41 +2614,35 @@ L_0200c66c:
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  t263 = *(s32 *)ownerAfterLoop;
-  Actor_SetAnimation(t263, 3);
+  Actor_SetAnimation(*leaderAfterLoop, 3);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
-  Actor_SetPosition(8, 0, 0);
-  t271 = Actor_Get(9);
-  FieldActor_SetSpriteColor(t271, 7);
-  FieldActor_SetSpritePriority(9, 1);
-  t274 = Actor_Get(9);
-  ((struct Actor *)t274)->priorityFlags &= 253;
+  Actor_SetPosition(ACTOR_BEACON_FIRE, 0, 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_GLOW), 7);
+  FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 1);
+  ((struct Actor *)Actor_Get(ACTOR_BEACON_GLOW))->priorityFlags &= 253;
   Event_PlaySound(SE_SPIN);
   MapGrid_SetShake(3, 3, 1);
-  PaletteFade_ApplyTarget(0x203210, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(40);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(19, FACING_NORTH_NORTHWEST, 0);
-  t284 = *(s32 *)ownerAfterLoop;
-  Actor_FaceDirection(t284, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(*leaderAfterLoop, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 80);
   FieldActor_Jump(ACTOR_GARET, 4, 0);
   Actor_SetSpeed(ACTOR_GARET, 3.2);
-  t292 = Actor_Get(ACTOR_GARET);
-  FIELD_AT(t292, u8, 90) &= 254;
+  Actor_Get(ACTOR_GARET)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  t296 = Actor_Get(ACTOR_GARET);
-  FIELD_AT(t296, u8, 90) |= 1;
+  Actor_Get(ACTOR_GARET)->steeringFlags |= 1;
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -2767,19 +2666,19 @@ L_0200c66c:
   FieldActor_Jump(ACTOR_JENNA, 4, 10);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
-  Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
-  FieldActor_Jump(19, 2, 10);
-  FieldActor_Jump(19, 4, 10);
-  Event_ShowMessage(19, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  FieldActor_Jump(ACTOR_KRADEN, 2, 10);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 10);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_SPIN);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   System_Wait(240);
   REG_DISPCNT = 0;
-  PaletteFade_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_Interpolate(8);
   System_Wait(8);
   FieldEvent_SetExitRequest(4);
@@ -2790,7 +2689,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  FieldEvent_SetMessageId(MsgDoNotLet);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -2803,7 +2702,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
-  FieldEvent_SetMessageId(MsgDoNotLet);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -2817,7 +2716,7 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_VOICE, 512, 232);
   System_Wait(1);
-  FieldEvent_SetMessageId(MsgWillYouCast);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieWillYouCastInMars);
   // "Will you cast in the Mars Star?"
   Event_OpenMessage(ACTOR_VOICE, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
@@ -2843,7 +2742,7 @@ void MarsLighthouseAerie_ClearCastOffer(void) {
 void MarsLighthouseAerie_BeginTalkWhileHalted(s32 id) {
   u8 *work = Ram_HeapSlots->windowWork;
 
-  if (((struct MarsLighthouseAerieParty *)&gMainRoutineWork)->held == id)
+  if (gMainRoutineWork.haltedActor == id)
     work[0x138a] = 1;
 }
 #endif
@@ -2860,11 +2759,10 @@ struct HeldHalfword {
 /// From patch 1: the talk over, Halt's hold on its speaker ends.
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
   u8 *work = Ram_HeapSlots->windowWork;
-  struct MarsLighthouseAerieParty *party =
-      (struct MarsLighthouseAerieParty *)&gMainRoutineWork;
-  s32 held = party->held;
+  struct MainRoutineWork *party = &gMainRoutineWork;
+  s32 held = party->haltedActor;
   /* FAKEMATCH(temporary): the word held in a halfword struct. */
-  struct HeldHalfword raw = *(struct HeldHalfword *)&party->held;
+  struct HeldHalfword raw = *(struct HeldHalfword *)&party->haltedActor;
   struct HeldHalfword ones;
 
   if (held == id) {
@@ -2872,7 +2770,7 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
 
     work[0x138a] = zero;
     ones.value = 0xffff;
-    party->held = raw.value | ones.value;
+    party->haltedActor = raw.value | ones.value;
     Actor_Get(held)->update = (void *)zero;
     FieldActor_SetSpriteColor(Actor_Get(held), 0);
   }
@@ -2880,11 +2778,11 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
 
 #endif
 
-void MarsLighthouseAerie_TalkToConsoler(void) {
+void MarsLighthouseAerie_TalkToIvan(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(2);
+  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_IVAN);
 #endif
   Actor_FaceActor(ACTOR_IVAN, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId(MsgIUnderstandYour);
@@ -2892,54 +2790,54 @@ void MarsLighthouseAerie_TalkToConsoler(void) {
   Event_ShowMessage(ACTOR_IVAN, 0);
 #if TLA_PATCH_1
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
-  MarsLighthouseAerie_EndTalkWhileHalted(2);
+  MarsLighthouseAerie_EndTalkWhileHalted(ACTOR_IVAN);
 #else
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
 #endif
   Event_End();
 }
 
-void MarsLighthouseAerie_TalkToBlindedParent(void) {
+void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(20);
+  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_JENNAS_MOTHER);
 #endif
   FieldEvent_SetMessageId(MsgUhhhhnnnICan);
   // "Uhhhhnnn... Felix... I...can't see you, but I sense that you're..."
-  Event_ShowMessage(20, 0);
+  Event_ShowMessage(ACTOR_JENNAS_MOTHER, 0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_EndTalkWhileHalted(20);
+  MarsLighthouseAerie_EndTalkWhileHalted(ACTOR_JENNAS_MOTHER);
 #endif
   Event_End();
 }
 
-void MarsLighthouseAerie_TalkToCoughingParent(void) {
+void MarsLighthouseAerie_TalkToKyle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(22);
+  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_KYLE);
 #endif
   FieldEvent_SetMessageId(MsgKoffKoffYou);
   // "*Koff! Koff!* Felix... You made it back...alive... Please, I must..."
-  Event_ShowMessage(22, 0);
+  Event_ShowMessage(ACTOR_KYLE, 0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_EndTalkWhileHalted(22);
+  MarsLighthouseAerie_EndTalkWhileHalted(ACTOR_KYLE);
 #endif
   Event_End();
 }
 
-void MarsLighthouseAerie_TalkToGladParent(void) {
+void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(21);
+  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_JENNAS_FATHER);
 #endif
   FieldEvent_SetMessageId(MsgUnnnnIAm);
   // "Unnnn... Felix? ...Jenna? I am so happy...to have one last chance to..."
-  Event_ShowMessage(21, 0);
+  Event_ShowMessage(ACTOR_JENNAS_FATHER, 0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_EndTalkWhileHalted(21);
+  MarsLighthouseAerie_EndTalkWhileHalted(ACTOR_JENNAS_FATHER);
 #endif
   Event_End();
 }
@@ -2948,38 +2846,40 @@ void MarsLighthouseAerie_TalkToGladParent(void) {
 #if TLA_PATCH_1
 
 /// From patch 1: Halt on one of the three holds the speaker beside them.
-void MarsLighthouseAerie_HaltParent(s32 from, s32 to) {
-  struct Actor *found = Actor_Get(from);
+void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker) {
+  struct Actor *found = Actor_Get(spot);
   struct Actor *object;
   struct Actor *target;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   party->pausedPose = 0;
   object = found;
-  ((struct MarsLighthouseAerieParty *)party)->held = to;
-  target = Actor_Get(to);
+  party->haltedActor = speaker;
+  target = Actor_Get(speaker);
   target->update = object->update;
   object->update = NULL;
 }
 #endif
 
-// These four, their rows, and MarsLighthouseAerie_HaltParent are from patch 1.
+// These four, their rows, and MarsLighthouseAerie_HaltSpeaker are from patch 1.
 #if TLA_PATCH_1
 
-void MarsLighthouseAerie_HaltConsoler(void) {
-  MarsLighthouseAerie_HaltParent(28, 2);
+void MarsLighthouseAerie_HaltIvan(void) {
+  MarsLighthouseAerie_HaltSpeaker(ACTOR_HAMA, ACTOR_IVAN);
 }
 
-void MarsLighthouseAerie_HaltBlindedParent(void) {
-  MarsLighthouseAerie_HaltParent(17, 20);
+void MarsLighthouseAerie_HaltJennasMother(void) {
+  MarsLighthouseAerie_HaltSpeaker(ACTOR_JENNAS_MOTHER_TALK_SPOT,
+                                  ACTOR_JENNAS_MOTHER);
 }
 
-void MarsLighthouseAerie_HaltCoughingParent(void) {
-  MarsLighthouseAerie_HaltParent(30, 22);
+void MarsLighthouseAerie_HaltKyle(void) {
+  MarsLighthouseAerie_HaltSpeaker(ACTOR_KYLE_TALK_SPOT, ACTOR_KYLE);
 }
 
-void MarsLighthouseAerie_HaltGladParent(void) {
-  MarsLighthouseAerie_HaltParent(29, 21);
+void MarsLighthouseAerie_HaltJennasFather(void) {
+  MarsLighthouseAerie_HaltSpeaker(ACTOR_JENNAS_FATHER_TALK_SPOT,
+                                  ACTOR_JENNAS_FATHER);
 }
 #endif
 
@@ -3007,7 +2907,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
@@ -3086,8 +2986,8 @@ void Teleport_ArriveWhirling(void) {
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_ApplyTarget(0x202108, 1);
-  PaletteFade_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3095,7 +2995,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_PlayWhirl();
   System_Wait(40);
   Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {
@@ -3130,7 +3030,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
     if (work->unka0[0] > 31 && work->unka0[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
-      object->update = 0;
+      object->update = NULL;
       return;
     }
   }
@@ -3169,9 +3069,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
     }
   }
 }
-#undef OWNER
 #undef A
-#undef FIELD_AT
 
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
@@ -3257,7 +3155,7 @@ void MarsLighthouseAerie_EndRisingRings(struct Actor *object) {
 
 void Scene_LeaveByExit(void);
 void MarsLighthouseAerie_FaceDoomDragon(void);
-void MarsLighthouseAerie_HaltCoughingParent(void);
+void MarsLighthouseAerie_HaltKyle(void);
 
 // clang-format off
 s32 gMarsLighthouseAerie_RisingRingTiles[] = {
@@ -3558,23 +3456,23 @@ u32 gSceneExits[] = {
 struct ActorPlacement gMarsLighthouseAerie_Placements[] = {
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 616, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(302, CONDITION_ALWAYS, 7, 648, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 616, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 648, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 648, 16, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 648, 16, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 648, 16, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7, 648, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(182, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(3, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(2, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3590,7 +3488,7 @@ struct ActorPlacement gMarsLighthouseAerie_AfterBattlePlacements[] = {
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(182, CONDITION_ALWAYS, 7, 512, 0, 236, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 354, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 354, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(48, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(49, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(50, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -3607,78 +3505,62 @@ struct ActorPlacement gMarsLighthouseAerie_AfterBattlePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gMarsLighthouseAerie_BeaconPlacements[] = {
-    303, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 303, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 258,
-    302, -1, 7, 0, 0, 584, 0, 16,
-    0, 440, 0x4000, 2, 302, -1, 7, 0,
-    0, 616, 0, 16, 0, 440, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 440, 0x4000, 258, 302, -1, 7, 0,
-    0, 648, 0, 16, 0, 408, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 376, 0x4000, 258, 302, -1, 7, 0,
-    0, 648, 0, 16, 0, 344, 0x4000, 258,
-    302, -1, 7, 0, 0, 648, 0, 16,
-    0, 312, 0x4000, 258, 489, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    489, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 56, -1, 1, 0,
-    0, 504, 0, 0, 0, 328, 0xb000, 2,
-    5, -1, 1, 0, 0, 458, 0, 0,
-    0, 288, 0, 1, 6, -1, 1, 0,
-    0, 476, 0, 0, 0, 312, 0xe000, 1,
-    7, -1, 1, 0, 0, 482, 0, 0,
-    0, 276, 0x4000, 1, 0, -1, 1, 0,
-    0, 529, 0, 0, 0, 296, 0, 1,
-    1, -1, 1, 0, 0, 538, 0, 0,
-    0, 312, 0xe000, 1, 3, -1, 1, 0,
-    0, 552, 0, 0, 0, 274, 0x4000, 1,
-    2, -1, 1, 0, 0, 566, 0, 0,
-    0, 286, 0x8000, 1, 61, -1, 7, 0,
-    0, 480, 0, 0, 0, 304, 0x4000, 2,
-    60, -1, 7, 0, 0, 502, 0, 0,
-    0, 312, 0x4000, 2, 62, -1, 7, 0,
-    0, 548, 0, 0, 0, 304, 0x4000, 2,
-    294, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 294, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 258,
-    294, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 258, 294, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 258,
-    294, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 258, 59, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    489, -1, 7, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, 489, -1, 7, 0,
-    0, 0, 0, 0, 0, 0, 0x4000, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gMarsLighthouseAerie_BeaconPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 616, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 648, 16, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 328, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 458, 0, 288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 476, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 482, 0, 276, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 529, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 538, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 274, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 566, 0, 286, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(61, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 480, 0, 304, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(60, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 502, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(62, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 548, 0, 304, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
     {TRIGGER_STEP, 10, FLAG_MARS_BEACON_LIT, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
-    {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
-    {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
-    {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},
-    {TRIGGER_TALK, 5, CONDITION_ALWAYS, MSGNO(MsgIThoughtID)},
-    {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
-    {TALK_TRIGGER_FACING(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
-    {TALK_TRIGGER_FACING(FACING_SOUTH), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {TALK_TRIGGER_FACING(FACING_SOUTHWEST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {TALK_TRIGGER_FACING(FACING_NORTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {TALK_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToGladParent)},
+    {TRIGGER_TALK, ACTOR_ISAAC, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieOurQuestIsAlmostOver)},
+    {TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIWishICouldConsole)},
+    {TRIGGER_TALK, ACTOR_MIA, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIfAlexSetThisAll)},
+    {TRIGGER_TALK, ACTOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIThoughtIdGet)},
+    {TRIGGER_TALK, ACTOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIDontKnowMyParents)},
+    {TRIGGER_TALK, ACTOR_PIERS, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieImSorryThingsHad)},
+    {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieBothKyleAndYourParents)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_HAMA, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToIvan)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_JENNAS_MOTHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToJennasMother)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHWEST), ACTOR_JENNAS_MOTHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToJennasMother)},
+    {TALK_TRIGGER_FACING(FACING_NORTHEAST), ACTOR_KYLE_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToKyle)},
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_KYLE_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToKyle)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), ACTOR_KYLE_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToKyle)},
+    {TRIGGER_TALK, ACTOR_JENNAS_FATHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToJennasFather)},
 #if TLA_PATCH_1 /* From patch 1. */
-    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltConsoler)},
-    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltBlindedParent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltCoughingParent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_HALT), 29, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltGladParent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_HAMA, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltIvan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_JENNAS_MOTHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltJennasMother)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KYLE_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltKyle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_JENNAS_FATHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltJennasFather)},
 #endif
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParents)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParentsAgain)},

@@ -1,9 +1,10 @@
 /// @file
-/// Lemuria's dock, where the Lemurian ship ties up: Piers steps off to wait by
+/// Lemuria's dock, where the Lemurian ship ties up: Kraden steps off to wait by
 /// the ship and asks whether the party is ready to sail, and a house stands on
 /// the quay.
 
 #include "system/task.h"
+#include "sprite_ids.h"
 #include "battle/battle.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -26,10 +27,16 @@
 #include "system/io_reg.h"
 #include "field/sprite.h"
 
-#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
+/// The dock's actors, by the rows of gActorPlacements.
+enum {
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  /// Loho's cannon (sprite 420), on the quay once the ship carries it, from
+  /// patch 1.
+  ACTOR_CANNON
+};
 
 struct WarpTarget {
-  s32 scene;
+  s32 script; ///< the door's cell animation
   u16 x;
   u16 z;
 };
@@ -62,41 +69,42 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Arriving on the dock (entrance 2): where Piers is not already on the dock he
-/// steps out of the party and walks to his place by the ship; where he is, he
-/// walks back into the leader.
-void LemuriaDock_MovePiers(void) {
+/// Arriving on the dock (entrance 2): where Kraden is not already on the dock
+/// he steps out from the leader and walks to his place by the ship; where he
+/// is, he walks back into the leader.
+void LemuriaDock_MoveKraden(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->entrance == 2) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (Actor_GetById(8)->x.fixed == 0) {
+    if (Actor_GetById(ACTOR_KRADEN)->x.fixed == 0) {
       Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
-      FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTH_SOUTHEAST);
-      Actor_WaitForMoveById(8);
-      Actor_SetSpeed(8, 1.2);
-      Actor_WalkToAndWait(8, 472, 392);
-      Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+      FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH_SOUTHEAST);
+      Actor_WaitForMoveById(ACTOR_KRADEN);
+      Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+      Actor_WalkToAndWait(ACTOR_KRADEN, 472, 392);
+      Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
     } else {
       struct Actor *leader;
 
       Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
-      Actor_SetSpeed(8, 2);
-      Actor_WalkToAndWait(8, 440, 440);
-      Actor_SetSpeed(8, 1.2);
-      Actor_SetAnimation(8, 2);
+      Actor_SetSpeed(ACTOR_KRADEN, 2);
+      Actor_WalkToAndWait(ACTOR_KRADEN, 440, 440);
+      Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+      Actor_SetAnimation(ACTOR_KRADEN, 2);
       leader = Actor_GetById(party->leaderActorId);
       if (leader != NULL)
-        Actor_SetDestination(8, S16_AT(leader, 10), S16_AT(leader, 18));
-      Actor_WaitForMoveById(8);
-      Actor_SetPosition(8, 0, 0);
+        Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
+      Actor_WaitForMoveById(ACTOR_KRADEN);
+      Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     }
     Event_End();
   }
 }
 
-/// Piers asks whether the party is ready to sail; yes takes it aboard the ship
+/// Kraden asks whether the party is ready to sail; yes takes it aboard the ship
 /// (exit 1).
 /// "Felix, are we setting off now?"
 void LemuriaDock_AskSettingOff(void) {
@@ -106,20 +114,20 @@ void LemuriaDock_AskSettingOff(void) {
   s32 z;
 
   if (gFieldWork->psynergy != 0) {
-    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId, 0);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
-  Event_OpenMessage(8, 0);
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(15);
     // "Then, to sea we go!"
-    Event_ShowMessage(8, 0);
+    Event_ShowMessage(ACTOR_KRADEN, 0);
     Event_Wait(5);
-    Actor_Jump(8, 4, 0);
-    Actor_FaceDirectionAndWait(8, FACING_EAST);
+    Actor_Jump(ACTOR_KRADEN, 4, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
     Event_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->leaderActorId)->z.fixed;
@@ -129,7 +137,7 @@ void LemuriaDock_AskSettingOff(void) {
       Actor_WalkToAndWait(id, 472, 376);
     else
       Actor_WalkToAndWait(id, 472, 408);
-    id = 4;
+    id = ACTOR_FELIX;
     Actor_FaceDirectionAndWait(id, FACING_EAST);
     Event_Wait(10);
 
@@ -139,7 +147,7 @@ void LemuriaDock_AskSettingOff(void) {
     Event_Wait(20);
     gFieldWork->message++;
     // "Please don't rush on my account. Let's enjoy our stay."
-    Event_ShowMessage(8, 0);
+    Event_ShowMessage(ACTOR_KRADEN, 0);
   }
 }
 
@@ -152,8 +160,8 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  MapGrid_AnimateCells(warp->script, warp->x, warp->z);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   id = gMainRoutineWork.leaderActorId;
@@ -213,9 +221,9 @@ s32 Scene_Initialize(void) {
   Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))
-    Actor_SetSpritePriority(9, 1);
+    Actor_SetSpritePriority(ACTOR_CANNON, 1);
   else
-    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(ACTOR_CANNON, 0, 0);
 #endif
   return 0;
 }
@@ -259,7 +267,7 @@ s32 gLemuriaDock_ExitsWithFlag960[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 #if TLA_PATCH_1
     ACTOR_PLACEMENT(420, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
 #endif
@@ -278,9 +286,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
      EVENT(LemuriaDock_EnterHouse)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT,
-     CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MoveKraden)},
+    {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_AskSettingOff)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_KRADEN | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_AskSettingOff)},
     {TRIGGER_TABLE_END},
 };

@@ -58,7 +58,7 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
     object->priorityFlags |= 34;
@@ -520,9 +520,8 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   object->z.fixed = Actor_Get(linked)->z.fixed;
   Scene_SetActorSpritePriority(object, 2);
   HALF_AT(object, 102) = first;
-  /* FAKEMATCH(temporary): the byte is computed before its address. */
   facing = side ^ 1;
-  BYTE_AT(object, 98) = facing;
+  object->riseCounter = facing;
   object->update = (void *)MagmaRock_RollMagmaRock;
   next = left + 1;
   flags = &object->motionFlags;
@@ -1156,14 +1155,6 @@ void MagmaRock_ClearLedgeBehavior(void) {
 }
 
 void Actor_SetAnimationSpeedById(s32 id, s32 action);
-/* VIEW(s1c00): routine FieldCamera_MoveToActor as void
- * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
- * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
- * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
- * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1149: conflicting
- * types for `FieldCamera_MoveToActor'. */
-extern void
-FieldCamera_MoveToActor__s1c00(s32 a, s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
 
 void MagmaRock_AmplifyBurst(void) {
@@ -1197,14 +1188,14 @@ first:
   }
   offset[1] = (Random16() & 15) << 16;
   FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                    leader->z.fixed, 0, 0x13333, 0, 0xb0000, opt);
+                    leader->z.fixed, 0, 0x13333, 0, px(11), opt);
   wait(5);
   i++;
   if (i != 8)
     goto first;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.movementMode = 0;
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = 0xcccc;
   leader->bounce = 0;
   Event_Wait(1);
@@ -1216,7 +1207,7 @@ second:
     offset[0] = ((Random16() & 15) << 16) - 0x80000;
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                      leader->z.fixed, 0, 0x13333, phase, 0xb0000, opt);
+                      leader->z.fixed, 0, 0x13333, phase, px(11), opt);
   }
   wait(1);
   if (leader->velocityY != 0) {
@@ -1230,7 +1221,7 @@ second:
   MapGrid_SetShake(5, 8, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldCamera_MoveToActor__s1c00(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_MoveToActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_SHAKE_HEAD);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
@@ -1250,6 +1241,9 @@ void MagmaRock_PushPillarEast(void) {
   s32 *cell = position;
   struct Actor *object;
   u8 *terrainId;
+  s32 x;
+  s32 z;
+  s32 height;
 
   cell[0] = leader->x.fixed + px(16);
   cell[1] = leader->y.fixed;
@@ -1257,14 +1251,10 @@ void MagmaRock_PushPillarEast(void) {
   object = Actor_FindInCell(cell, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  {
-    /* FAKEMATCH(temporary): the three values held in locals. */
-    s32 x = object->x.fixed >> 20;
-    s32 z = object->z.fixed >> 20;
-    s32 height = object->groundHeight >> 19;
-
-    MagmaRockInside_SetCellShape(*terrainId, x, z, height);
-  }
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
+  height = object->groundHeight >> 19;
+  MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
@@ -1284,6 +1274,9 @@ void MagmaRock_PushPillarWest(void) {
   s32 position[3];
   struct Actor *object;
   u8 *terrainId;
+  s32 x;
+  s32 z;
+  s32 height;
 
   position[0] = leader->x.fixed - px(16);
   position[1] = leader->y.fixed;
@@ -1291,14 +1284,10 @@ void MagmaRock_PushPillarWest(void) {
   object = Actor_FindInCell(position, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  {
-    /* FAKEMATCH(temporary): the three values held in locals. */
-    s32 x = object->x.fixed >> 20;
-    s32 z = object->z.fixed >> 20;
-    s32 height = object->groundHeight >> 19;
-
-    MagmaRockInside_SetCellShape(*terrainId, x, z, height);
-  }
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
+  height = object->groundHeight >> 19;
+  MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
@@ -1475,7 +1464,7 @@ void MagmaRock_LaunchLeader(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -1617,7 +1606,7 @@ s32 Scene_Initialize(void) {
   // other serves in turn as a table, a step and a size.
   s32 other, rise;
   s32 offset;
-  s32 value1, value2, value3, value4;
+  s32 priorityBit, destinationX, destinationColumn, width;
   u8 zero;
 
   gFieldWork->transition = 0x204;
@@ -1627,10 +1616,10 @@ s32 Scene_Initialize(void) {
   scene = work->next;
   zero = 0;
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
-    value1 = 32;
-    Actor_GetById(work->leaderActorId)->priorityFlags |= value1;
-    Actor_GetById(8)->priorityFlags |= value1;
-    Actor_GetById(10)->priorityFlags |= value1;
+    priorityBit = 32;
+    Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
+    Actor_GetById(8)->priorityFlags |= priorityBit;
+    Actor_GetById(10)->priorityFlags |= priorityBit;
     MagmaRockInside_RaiseActorCells(gMagmaRock_Room1Statues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       MagmaRock_PlaceVolley(21, 13, 0);
@@ -1639,10 +1628,10 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0x8d6))
       Actor_SetPosition(10, 248, 408);
     other = (s32)gMagmaRock_Room1Pillars;
-    value2 = 78;
+    destinationX = 78;
     Actor_PlaceBlocks(other);
-    MapGrid_CopyCellAttributes(98, 21, 4, 3, value2, 21);
-    MapGrid_CopyCellAttributes(98, 27, 4, 3, value2, 24);
+    MapGrid_CopyCellAttributes(98, 21, 4, 3, destinationX, 21);
+    MapGrid_CopyCellAttributes(98, 27, 4, 3, destinationX, 24);
     Blocks_MarkCells(other);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(20);
@@ -1821,13 +1810,13 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_MAGMA_ROCK_STATUE) {
     if (Event_GetFlag(0x8dc)) {
       Actor_SetPosition(8, 0, 0);
-      value3 = 42;
-      MapGrid_CopyCellAttributes(0, 32, 5, 8, value3, 17);
-      MapGrid_CopyCellAttributes(0, 96, 5, 8, value3, 81);
-      value4 = 5;
+      destinationColumn = 42;
+      MapGrid_CopyCellAttributes(0, 32, 5, 8, destinationColumn, 17);
+      MapGrid_CopyCellAttributes(0, 96, 5, 8, destinationColumn, 81);
+      width = 5;
       other = 8;
-      MapGrid_CopyCellsTo(0, 32, 42, 17, value4, other);
-      MapGrid_CopyCellsTo(0, 96, 42, 81, value4, other);
+      MapGrid_CopyCellsTo(0, 32, 42, 17, width, other);
+      MapGrid_CopyCellsTo(0, 96, 42, 81, width, other);
     }
     leader = &work->leaderActorId;
     Actor_GetById(*leader)->priorityFlags |= 32;
@@ -1962,7 +1951,7 @@ body:
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        leader->motionFlags = 3;
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
         Actor_SetPositionAndResetMotion(target, 0, 0, 0);
         wait(2);
@@ -2059,17 +2048,12 @@ void MagmaRock_StepOnTrap(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == 0)
     return;
-  /* FAKEMATCH(dead): a test no u16 can pass enters the loop a second way. */
-  if (list[0] & 0x10000)
-    goto body;
-  goto test;
-body:
-  {
+  while (*list != 0xffff) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != target) {
       list += 2;
-      goto test;
+      continue;
     }
     {
       s32 flag = list[1];
@@ -2126,9 +2110,6 @@ body:
       return;
     }
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
 }
 
 #include "../field/field_effect_advance_motion_priority.c"
@@ -2142,16 +2123,12 @@ void MagmaRock_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
+  s32 y;
 
   do {
-    {
-      /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
-
-      effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
-    }
+    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    effect = (struct FieldEffect *)FieldActor_Create(
+        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;

@@ -24,6 +24,7 @@
 /// throwers or the way on.
 
 #include "flags.h"
+#include "sprite_ids.h"
 #include "scene/ride.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -491,7 +492,7 @@ void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id) {
 
   if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
@@ -502,7 +503,7 @@ void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void) {
   Leader_PushObjectAhead();
   if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
@@ -518,7 +519,8 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     MarsLighthouseRoomF_MoveVenusStatueIntoFlames(unused, 16);
   } else if (id == ACTOR_FIRST_STONE) {
-    Actor_Get(ACTOR_FIRST_STONE)->motionFlags = 3;
+    Actor_Get(ACTOR_FIRST_STONE)->motionFlags =
+        ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #if TLA_PATCH_1 /* From patch 1. */
     MarsLighthouseRoomF_FillGapsWithStones();
 #endif
@@ -774,7 +776,7 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->x.fixed >> 20 == 13) {
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     if (object->groundHeight != Map_GetTerrainHeight(BYTE_AT(object, 34),
                                                      object->x.fixed,
                                                      object->z.fixed)) {
@@ -1524,11 +1526,6 @@ stop:
   }
 }
 
-static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): MulQ16 forwarded inline. */
-  return Iwram_MulQ16(a, b);
-}
-
 /// Unused here: a whirlwind starts from a gust.
 UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct Vector3 position;
@@ -1536,7 +1533,7 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + MulQ16(0x80000, Trig_Cos(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                   position.z);
@@ -1552,67 +1549,77 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
+/// The Jupiter Lighthouse aerie's actors the copy below moves, as
+/// jupiter_lighthouse_aerie.c names them.
+enum {
+  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LID = ACTOR_FIRST_PLACED + 15
+};
+
 /// Unused here: the Jupiter Lighthouse's angels where their flags leave them.
 UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
-  struct PositionedActor *actor9 = Actor_GetById(9);
-  struct PositionedActor *actor10 = Actor_GetById(10);
-  struct PositionedActor *actor23 = Actor_GetById(23);
-  struct FieldSprite *sprite = actor23->animation;
+  struct PositionedActor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
+  struct PositionedActor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
+  struct PositionedActor *lid = Actor_GetById(ACTOR_LID);
+  struct FieldSprite *sprite = lid->animation;
 
   Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(23, 512, 248);
-  Actor_SetPosition(9, 472, 256);
-  Actor_SetPosition(10, 552, 256);
+  Actor_SetPosition(ACTOR_LID, 512, 248);
+  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
+  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_GetById(24)->scaleX = 0;
-  actor23->motionFlags = 0;
-  actor23->y.fixed = actor23->terrainHeight;
-  actor9->motionFlags = 0;
-  actor9->y.fixed = actor9->terrainHeight;
-  actor10->motionFlags = 0;
-  actor10->y.fixed = actor10->terrainHeight;
+  lid->motionFlags = 0;
+  lid->y.fixed = lid->terrainHeight;
+  leftAngel->motionFlags = 0;
+  leftAngel->y.fixed = leftAngel->terrainHeight;
+  rightAngel->motionFlags = 0;
+  rightAngel->y.fixed = rightAngel->terrainHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    actor9->y.fixed += 0x66640;
+    leftAngel->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor23->x.fixed -= 0x28f40;
+    lid->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    actor10->y.fixed += 0x66640;
+    rightAngel->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor23->x.fixed += 0x28f40;
+    lid->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    actor9->y.fixed += 0x199900;
-    actor10->y.fixed += 0x199900;
+    leftAngel->y.fixed += 0x199900;
+    rightAngel->y.fixed += 0x199900;
     {
       s32 step = 0x1b8480;
 
-      actor23->y.fixed += step;
+      lid->y.fixed += step;
     }
-    actor9->motionFlags = 4;
-    actor10->motionFlags = 4;
-    actor23->motionFlags = 4;
+    leftAngel->motionFlags = ACTOR_FLOATS;
+    rightAngel->motionFlags = ACTOR_FLOATS;
+    lid->motionFlags = ACTOR_FLOATS;
   }
 }
 
@@ -1722,9 +1729,9 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-void Ride_SpawnSpark(s32 *position, s32 speed) {
-  struct Actor *object = Import_ActorCreate_(285, position[0], position[1],
-                                             position[2] + 0xfffe0000);
+void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Import_ActorCreate_(285, position[0], position[1], position[2] - px(2));
   s32 spin;
 
   if (object != NULL) {
@@ -1739,18 +1746,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed) {
   }
 }
 
-/* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f.c:1629:
- * structure has no member named `flag5b'. */
-typedef struct Actor__s242c {
-  u8 pad0[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[91 - 20];
-  u8 flag5b;
-} Actor;
+typedef struct Actor Actor;
 
 typedef struct Entry {
   s16 active;
@@ -1770,14 +1766,6 @@ typedef struct State {
   void (*callback)();
   Entry entries[4];
 } State;
-
-/* VIEW(s242c): routine Ride_SpawnSpark as void Ride_SpawnSpark(); the parts
- * before it has another declaration; tried as the definition's void
- * Ride_SpawnSpark(s32 *position, s32 speed), which the object already declares,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:1662: too many arguments to
- * function `Ride_SpawnSpark'. */
-extern void Ride_SpawnSpark__s242c() __asm__("Ride_SpawnSpark");
 
 typedef struct Position {
   s32 x;
@@ -1838,17 +1826,13 @@ void FlameThrowers_Puff(void) {
     flag = GameFlag_Get(FLAG_MENU_OPEN);
     if (*(s16 *)(saved[0] + 358) != 0)
       flag |= 1;
-    mark = &actor->flag5b;
+    mark = &actor->paused;
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x;
-    dz = actor->z;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
-    y = actor->y;
+    dz = actor->z.fixed;
+    dx = actor->x.fixed - cameraX;
+    y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
@@ -1867,19 +1851,19 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Ride_SpawnSpark__s242c(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 32:
-        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 16:
-        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       case 0:
-        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->unk_c, unk6);
         break;
       }
       value = 8;
@@ -2118,7 +2102,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
 #if TLA_PATCH_1
   done:
 #endif
-    actor->update = 0;
+    actor->update = NULL;
     Actor_SetSpriteColorMode(actor, 0);
   }
   work->unk04 = 0;
@@ -2191,7 +2175,7 @@ s32 Fireball_CarryLeader(void) {
     System_Wait(1);
   }
   FieldEvent_Wait(30);
-  leader->update = 0;
+  leader->update = NULL;
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 #ifdef UBFIX
@@ -2370,7 +2354,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     s32 flag;
     struct MapWork *map;
     struct MapCell *cell;
-    struct FieldWork *work2;
+    struct FieldWork *fieldWork;
     struct Work020023c4__s2f80 *other;
     struct Actor *target;
 
@@ -2441,15 +2425,15 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
     FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
 
-    work2 = Ram_HeapSlots->fieldWork;
+    fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
+        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
       other->unk04 = 2;
       other->unk6c = actor;
-      work2->stepTrigger = other->unk0a + 2;
+      fieldWork->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;
@@ -2886,7 +2870,7 @@ void PushTarget_Push(struct PushTarget target) {
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  leader->update = 0;
+  leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
@@ -2946,7 +2930,7 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + 0x80000;
+      y = actor->y.fixed - viewY + px(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
@@ -3450,20 +3434,20 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Placements[] = {
 LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_VenusWestFlameThrowerRoute, 664, 0, 304, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_VenusEastFlameThrowerRoute, 760, 0, 304, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(254, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3475,12 +3459,12 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[] = {
     ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 248, 0, 848, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(293, CONDITION_ALWAYS, 7, 144, 0, 256, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, 7, 104, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(295, CONDITION_ALWAYS, 7, 104, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 144, 0, 256, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7, 104, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, 7, 104, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(415, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3497,7 +3481,7 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
     ACTOR_PLACEMENT(413, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_JupiterFarFlameThrowerRoute, 968, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 872, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -3519,11 +3503,11 @@ LATE_DATA u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[] = {
   };
 
 LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
-    ACTOR_PLACEMENT(294, CONDITION_ALWAYS, 7, 568, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(293, CONDITION_ALWAYS, 7, 544, 0, 240, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(293, CONDITION_ALWAYS, 7, 544, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7, 568, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 544, 0, 240, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 544, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 200, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 576, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 176, FACING_WEST, TALK_FACING_KEEP, 0),
@@ -3531,8 +3515,8 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
     ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 184, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(295, CONDITION_ALWAYS, 7, 600, 0, 204, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, 7, 600, 0, 204, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

@@ -687,7 +687,7 @@ void Kibombo_MeetPiers(void) {
   Actor_SetMovementTypeAndWaitById(ACTOR_SHEBA, gKibombo_ShebaMeetsPiersScript);
   // "What... What are your intentions?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  if (GameFlag_Get(0x911))
+  if (GameFlag_Get(FLAG_PIERS_INTERROGATED))
     Kibombo_PiersHasForgottenParty();
   else
     Kibombo_PiersTakesPartyForEnemies();

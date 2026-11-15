@@ -886,7 +886,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 10);
-  GameFlag_SetBit_(0x11b);
+  GameFlag_SetBit_(FLAG_KEEP_MUSIC_HELD);
   JupiterLighthouse_RequestBattle(13, 5);
   return;
 }

@@ -13,6 +13,16 @@
 #include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
+
+/// The trades along the islets, each set once done: the log Pushed into the
+/// water, the dog's, Pengus's Pretty Stone, the cow's, the bird's, and the Li'l
+/// Turtle given to Lonesome George.
+#define FLAG_LOG_PUSHED_INTO_WATER 0xa2c
+#define FLAG_DOG_TRADED 0xaa1
+#define FLAG_PENGUS_GAVE_PRETTY_STONE 0xaa2
+#define FLAG_COW_TRADED 0xaa3
+#define FLAG_BIRD_TRADED 0xaa4
+#define FLAG_GEORGE_HAS_THE_TURTLE 0xaa5
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -266,7 +276,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_ISLETS_PIER)
     return gIslets_PierActorPlacements;
   if (scene == SCENE_ISLETS_TURTLE) {
-    if (Event_GetFlag(0xaa5))
+    if (Event_GetFlag(FLAG_GEORGE_HAS_THE_TURTLE))
       gIslets_TurtleActorPlacements[1].talkFacing = 1;
     return gIslets_TurtleActorPlacements;
   }
@@ -296,7 +306,7 @@ void Islets_PushLogIntoWater(void) {
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
-    Event_SetFlag(0xa2c);
+    Event_SetFlag(FLAG_LOG_PUSHED_INTO_WATER);
   }
 }
 
@@ -322,7 +332,7 @@ void Islets_TalkToPengus(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Event_GetFlag(0xaa2)) {
+  if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
@@ -347,7 +357,7 @@ void Islets_MindReadPengus(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Event_GetFlag(0xaa2)) {
+  if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       FieldEvent_SetMessageId((s32)MsgThereIsNothing);
     } else {
@@ -367,7 +377,7 @@ void Islets_TalkToPengulina(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Event_GetFlag(0xaa2)) {
+  if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
@@ -388,7 +398,7 @@ void Islets_MindReadPengulina(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Event_GetFlag(0xaa2)) {
+  if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
     } else {
@@ -467,7 +477,7 @@ void Islets_TalkToBird(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Event_GetFlag(0xaa4)) {
+  if (Event_GetFlag(FLAG_BIRD_TRADED)) {
     FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineWork.leaderActorId);
   }
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
@@ -487,7 +497,7 @@ void Islets_TradeWithBird(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(ITEM_PRETTY_STONE) == -1) {
-    if (Event_GetFlag(0xaa4)) {
+    if (Event_GetFlag(FLAG_BIRD_TRADED)) {
       FieldActor_WatchAndSetScript(ACTOR_BIRD, gMainRoutineWork.leaderActorId);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
     } else {
@@ -531,20 +541,21 @@ void Islets_TradeWithBird(void) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     }
     Actor_FaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
-    Event_SetFlag(0xaa4);
+    Event_SetFlag(FLAG_BIRD_TRADED);
   }
   Event_End();
 }
 
-// The Islets' trade of item 453 with object 10. With the item in the party,
-// if flag 513 is set (asked before) the camera moves and object 10 asks again
-// (MsgAreYouGiving); otherwise it notices the item (MsgOhThatRed), the leader
-// steps up and shows it (object type 489, its picture set to the item by
-// Actor_SetItemIcon) and object 10 asks. A yes hands the item across step by
-// step, takes item 453 and gives item 454 (object 10 hands it back over the
-// leader's head), sets flag 0xaa3 and counts the answer in the event work's
-// halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
-// 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
+// The Islets' trade of the Red Cloth with the cow. With the cloth in the
+// party, if FLAG_SCENE_TEMP_01 is set (asked before) the camera moves and the
+// cow asks again (MsgAreYouGiving); otherwise it notices the cloth
+// (MsgOhThatRed), the leader steps up and shows it (sprite 489, its picture set
+// to the item by Actor_SetItemIcon) and the cow asks. A yes hands the cloth
+// across step by step, takes it and gives Milk (the cow hands it back over the
+// leader's head), sets FLAG_COW_TRADED and counts the answer in the event
+// work's halfword 0x1c4 the first time; a no sets FLAG_SCENE_TEMP_01. Without
+// the cloth, the cow says MsgYupANice after the trade or MsgIVeBeenFeeling
+// before it.
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->steeringFlags &= ~1,                                  \
@@ -577,7 +588,7 @@ void Islets_TradeWithBird(void) {
       Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);      \
     }                                                                          \
     FieldPsynergy_GreyMindReadPalette();                                       \
-    GameFlag_Set(0xaa3);                                                       \
+    GameFlag_Set(FLAG_COW_TRADED);                                             \
   }
 
 /// The cow of N Osenia Islet: it notices the Red Cloth ("Oh! That red
@@ -707,7 +718,7 @@ void Islets_TradeWithCow(void) {
       }
     }
   } else {
-    if (Event_GetFlag(0xaa3))
+    if (Event_GetFlag(FLAG_COW_TRADED))
       Event_SetMessageId(MsgYupANice);
     else
       Event_SetMessageId(MsgIVeBeenFeeling);
@@ -852,10 +863,10 @@ void Islets_TradeWithDog(void) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     }
     Actor_FaceDirectionAndWait(ACTOR_DOG, FACING_NORTH);
-    Event_SetFlag(0xaa1);
+    Event_SetFlag(FLAG_DOG_TRADED);
     Event_SetFlag(FLAG_SCENE_TEMP_16);
   } else {
-    if (Event_GetFlag(0xaa1)) {
+    if (Event_GetFlag(FLAG_DOG_TRADED)) {
       FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineWork.leaderActorId);
       if (Event_GetFlag(FLAG_SCENE_TEMP_16))
         Event_SetMessageId(MsgIDonTLike);
@@ -949,7 +960,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);
-  Event_SetFlag(0xaa5);
+  Event_SetFlag(FLAG_GEORGE_HAS_THE_TURTLE);
 }
 
 // The value stored at the event work's 0x1ac: 521 in the Japanese release,
@@ -1069,7 +1080,7 @@ void Islets_GiveTurtle(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_01);
       }
     }
-  } else if (GameFlag_Get(0xaa5)) {
+  } else if (GameFlag_Get(FLAG_GEORGE_HAS_THE_TURTLE)) {
     Actor_FaceActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId(MsgWantToGo);
     // "Want to go to my secret spot again?"
@@ -1324,7 +1335,7 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_PENGUS, FACING_NORTH_NORTHWEST);
-  Event_SetFlag(0xaa2);
+  Event_SetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE);
   Event_End();
 }
 
@@ -1829,7 +1840,7 @@ void Islets_InitializeDog(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DOG), 0);
   Actor_SetSpeed(ACTOR_PACING_SAILOR, 0.8);
   Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags |= 0x80;
-  if (Event_GetFlag(0xaa1)) {
+  if (Event_GetFlag(FLAG_DOG_TRADED)) {
     spawned = FieldActor_Create(489, px(280), 0, px(840));
     if (spawned != 0) {
       spawned->motionFlags = 0;
@@ -1956,7 +1967,7 @@ void Islets_InitializePrettyStone(void) {
     *next = 0;
   }
   FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_VBLANK);
-  if (Event_GetFlag(0xa2c)) {
+  if (Event_GetFlag(FLAG_LOG_PUSHED_INTO_WATER)) {
     object = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 176, 168);
     Actor_SetAnimation(ACTOR_LOG, 4);
@@ -1969,7 +1980,7 @@ void Islets_InitializePrettyStone(void) {
   } else {
     PushTarget_FillFootprint(ACTOR_LOG);
   }
-  if (!Event_GetFlag(0xaa2)) {
+  if (!Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
     Actor_SetAnimation(ACTOR_PENGULINA, 0);
     Actor_Get(ACTOR_PENGULINA)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1998,7 +2009,7 @@ void Islets_InitializeCow(void) {
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_COW), 0);
   Actor_SetAnimation(ACTOR_COW, 4);
-  if (Event_GetFlag(0xaa3)) {
+  if (Event_GetFlag(FLAG_COW_TRADED)) {
     spawned = FieldActor_Create(489, px(104), px(24), px(160));
     if (spawned != 0) {
       spawned->motionFlags = 0;
@@ -2091,7 +2102,7 @@ void Islets_InitializeTurtle(void) {
   Islets_StartPaletteCycle();
   PaletteCycle_Add(3, 12, 5, 4);
   PaletteCycle_Add(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) &&
+  if (Event_GetFlag(FLAG_GEORGE_HAS_THE_TURTLE) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
     Actor_Get(ACTOR_LIL_TURTLE)->motionFlags = done;
@@ -2947,9 +2958,10 @@ struct Trigger gIslets_PrettyStoneTriggers[] = {
      EVENT(Islets_JumpDownLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS,
      EVENT(Islets_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, 0xa2c,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, FLAG_LOG_PUSHED_INTO_WATER,
      EVENT(Islets_PushLogIntoWater)},
-    {TRIGGER_STEP, 20, 0xaa2, EVENT(Islets_PengusGivesPrettyStone)},
+    {TRIGGER_STEP, 20, FLAG_PENGUS_GAVE_PRETTY_STONE,
+     EVENT(Islets_PengusGivesPrettyStone)},
     {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Islets_StepUpOntoIceberg)},
     {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Islets_StepDownFromIceberg)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMyMomSays)},
@@ -3046,7 +3058,7 @@ struct Trigger gIslets_TurtleTriggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYouUsedTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgIRememberHow)},
-    {TRIGGER_TALK, 9, 0xaa5, MSGNO(MsgBlank3)},
+    {TRIGGER_TALK, 9, FLAG_GEORGE_HAS_THE_TURTLE, MSGNO(MsgBlank3)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYup2)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SCENE_TEMP_17,
      EVENT(Islets_GiveTurtle)},

@@ -2227,12 +2227,12 @@ s32 Scene_Initialize(void) {
         Event_Wait(120);
         Actor_SetAnimationById(ACTOR_SERPENT, 1);
         Event_Wait(60);
-        GameFlag_Set(0x109);
+        GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
         Import_EventSetExitRequest(ending);
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
-      GameFlag_Set(0x144);
+      GameFlag_Set(FLAG_RETREAT_BLOCKED);
       if (Test(FLAG_SERPENT_SLAIN)) {
         Actor_SetAnimationById(ACTOR_SERPENT, 4);
         MapGrid_CopyCellsLayered(85, 72, 5, 2, 30, 19);
@@ -2788,7 +2788,7 @@ s32 Scene_Initialize(void) {
       }
       Sound_Play(SE_THUMP);
       Event_Wait(30);
-      GameFlag_Set(0x109);
+      GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
       Import_EventSetExitRequest(3);
     }
     if (!Test(FLAG_ALTAR_FELL))

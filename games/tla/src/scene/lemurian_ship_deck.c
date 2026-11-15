@@ -121,32 +121,32 @@ void LemurianShipDeck_TryHeldDoor(void) {
   Event_End();
 }
 
-#define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+/// The background palette the deck's two colour cycles turn: its colours 12 to
+/// 15 (LemurianShipDeck_RotateHighColors) and 4 to 9 (..._RotateLowColors),
+/// every eighth frame.
+#define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-#define DEFINE_ROTATE_PALETTE_COLORS(name, n1, n2)                             \
+/// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
+/// up and the last round to first, every eighth frame.
+#define DEFINE_ROTATE_PALETTE_COLORS(name, last, first)                        \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \
-      s16 last = OBJ_PALETTE[n1];                                              \
+      s16 saved = DECK_PALETTE[last];                                          \
       s32 i;                                                                   \
                                                                                \
-      /* The loop is written with goto so that it carries no loop notes: the   \
-       * bytes */                                                              \
-      /* rebuild the palette base on every pass, and a for or do loop hoists   \
-       * it */                                                                 \
-      /* and steps two pointers (differ 30). */                                \
-      i = n1;                                                                  \
+      i = last;                                                                \
     loop:                                                                      \
-      OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];                                     \
+      DECK_PALETTE[i] = DECK_PALETTE[i - 1];                                   \
       i--;                                                                     \
-      if (i != n2)                                                             \
+      if (i != first)                                                          \
         goto loop;                                                             \
-      OBJ_PALETTE[n2] = last;                                                  \
+      DECK_PALETTE[first] = saved;                                             \
     }                                                                          \
   }
 
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors12To15, 15, 12)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHighColors, 15, 12)
 
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors4To9, 9, 4)
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateLowColors, 9, 4)
 
 void TilesetAnim_Resume(s32 a);
 
@@ -156,7 +156,7 @@ void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
   TilesetAnim_Resume(13);
@@ -166,30 +166,28 @@ void LemurianShipDeck_ShowArrival(void) {
   Event_End();
 }
 
-#define LAYER_WORD(layer, offset) (*(s32 *)((u8 *)(layer) + (offset)))
-
 /// A task: scrolls the waves' layer half a pixel a frame.
 void LemurianShipDeck_ScrollWaves(void) {
-  s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x108);
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   s32 phase = gLemurianShipDeck_WaveScroll;
 
-  layer[2] = phase;
-  phase += 0x8000;
+  layer->offsetX = phase;
+  phase += px(1) / 2;
   gLemurianShipDeck_WaveScroll = phase;
-  if (phase == 0x200000)
+  if (phase == px(32))
     gLemurianShipDeck_WaveScroll = 0;
 }
 
 /// A task: bobs the camera's actor and the first map layer together on a sine
-/// wave, its phase advancing 0x200 a frame.
+/// wave, a full wave every 128 frames.
 void LemurianShipDeck_BobDeck(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   struct Actor *object = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
   object->y.fixed += offset;
-  LAYER_WORD(layer, 12) += offset;
-  gLemurianShipDeck_BobPhase += 0x200;
+  layer->offsetY += offset;
+  gLemurianShipDeck_BobPhase += TRIG_TURN / 128;
 }
 
 #include "text/msg_ids.h"
@@ -202,7 +200,7 @@ extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
 
 extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
-void LemurianShipDeck_RotateColors12To15(void);
+void LemurianShipDeck_RotateHighColors(void);
 
 void LemurianShipDeck_ScrollWaves(void);
 
@@ -232,7 +230,7 @@ void LemurianShipDeck_EnterCabin(void);
 
 void LemurianShipDeck_TryHeldDoor(void);
 
-void LemurianShipDeck_RotateColors4To9(void);
+void LemurianShipDeck_RotateLowColors(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
@@ -256,11 +254,12 @@ void LemurianShipDeck_TakeTheTiller(void) {
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
   LemurianShipDeck_PlaceFacing(gMainRoutineWork.leaderActorId, px(552), px(376),
                                FACING_EAST);
-  LemurianShipDeck_PlaceFacing(9, px(558), px(345), 0xd000);
-  LemurianShipDeck_PlaceFacing(7, px(534), px(404), FACING_EAST);
-  turn = 0x2000;
-  LemurianShipDeck_PlaceFacing(6, px(568), px(408), turn);
-  LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
+  LemurianShipDeck_PlaceFacing(ACTOR_KRADEN, px(558), px(345),
+                               FACING_NORTH_NORTHEAST);
+  LemurianShipDeck_PlaceFacing(ACTOR_PIERS, px(534), px(404), FACING_EAST);
+  turn = FACING_SOUTHEAST;
+  LemurianShipDeck_PlaceFacing(ACTOR_SHEBA, px(568), px(408), turn);
+  LemurianShipDeck_PlaceFacing(ACTOR_JENNA, px(546), px(440), FACING_SOUTH);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
@@ -527,8 +526,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
-  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 10)
     LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
@@ -547,11 +546,11 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
-    FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
     if (gMainRoutineWork.entrance == 99)
       LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
   }
   return 0;
 }

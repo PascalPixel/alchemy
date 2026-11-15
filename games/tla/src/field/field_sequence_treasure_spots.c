@@ -152,25 +152,11 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & 0x4000));
 }
 
-/* VIEW(field_sequence): tag struct ObjectSprite as struct
- * ObjectSprite__field_sequence; field/field.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:174: structure
- * has no member named `yOffset'. */
-struct ObjectSprite__field_sequence {
-  u8 unused[5]; ///< no code names it
-  u8 attr0High;
-  u8 unk06;
-  u8 attr1High;
-  u8 unusedB[0xf]; ///< no code names it
-  u8 yOffset;
-};
-
 /// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY 0x31415927;
 /// any other mode draws its sprite wide (shape 1), 4 pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
 
   object = Actor_Lookup(objectId);
   if (object == 0)
@@ -184,15 +170,15 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   sprite = object->sprite;
   if (sprite == 0)
     return;
-  sprite->yOffset += 4;
-  sprite->attr0High = (sprite->attr0High & 0x3f) | 0x40;
-  sprite->attr1High &= 0x3f;
+  sprite->offsetY += 4;
+  sprite->image.shape = 1;
+  sprite->image.size = 0;
 }
 
 /// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
 void Actor_SetSquareSprite(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
 
   object = Actor_Lookup(objectId);
   if (object == 0)
@@ -200,23 +186,23 @@ void Actor_SetSquareSprite(u32 objectId) {
   sprite = object->sprite;
   if (sprite == 0)
     return;
-  sprite->yOffset = 8;
-  sprite->attr0High &= 0x3f;
-  sprite->attr1High = (sprite->attr1High & 0x3f) | 0x40;
+  sprite->offsetY = 8;
+  sprite->image.shape = 0;
+  sprite->image.size = 1;
 }
 
 /// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
 /// 0 without one.
 s32 Actor_GetSpriteShape(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
   s32 shape = 0;
 
   object = Actor_Lookup(objectId);
   if (object != 0) {
     sprite = object->sprite;
     if (sprite != 0)
-      shape = sprite->attr0High >> 6;
+      shape = sprite->image.shape;
   }
   return shape;
 }

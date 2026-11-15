@@ -57,7 +57,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
-      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->collisionCode = 0;
       n = gSceneLocalState.count;
       if (n < 64) {
         gSceneLocalState.copies[n].toX = toX + dx;

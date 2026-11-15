@@ -562,10 +562,9 @@ void ViewMove_Start(s32 direction) {
   Actor_StartIdleFar(center);
 }
 
-/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another
- * definition; tried with the definition the rest of the object has,
- * ViewMove_Swing moves: 8 of 117 instructions in tla-ja. */
-#define ABS__f0e82cc(x) ((x) >= 0 ? (x) : -(x))
+/// The swing's size at an angle: its sine without the sign.
+#define SWING_SINE(angle)                                                      \
+  (Trig_Sin(angle) >= 0 ? Trig_Sin(angle) : -Trig_Sin(angle))
 
 /// Swings the view centre away from where ViewMove_Start found it, along the
 /// asked directions, by amplitude times the sine of the phase. The swing goes
@@ -590,14 +589,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_X) {
     edge = work->edgeX;
     if (edge == -1)
-      x = work->x +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      x = work->x +
-          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
     else
-      x = work->x +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
   } else {
     x = work->x;
   }
@@ -605,14 +601,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_Z) {
     edge = work->edgeZ;
     if (edge == -1)
-      z = work->z +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      z = work->z +
-          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
     else
-      z = work->z +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
   } else {
     z = work->z;
   }
@@ -694,4 +687,4 @@ void ViewMove_RestoreNearbySprites(void) {
     ((union FxSprite *)group->objects[i]->sprite)->halves[9] = group->values[i];
 }
 #undef VIEW_EDGE_MARGIN
-#undef ABS__f0e82cc
+#undef SWING_SINE

@@ -1257,22 +1257,6 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   work->group ^= 1;
 }
 
-/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c;
- * field_psynergy.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1290: structure has no
- * member named `x'. */
-struct ArcSprite__f0e150c {
-  u8 unused[12]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[2]; ///< no code names it
-  s16 depth;
-  u8 unusedAfterDepth[8]; ///< no code names it
-};
-
 /// Task: draws the two pairs of swelling arcs on their actor: each pair swells
 /// and shrinks over 32 frames (scale sin(age / 64 turn)) as it rises a pixel a
 /// frame, the second arc of a pair upside down, one in front of the actor and
@@ -1290,7 +1274,7 @@ void BattleEffect_UpdateArcEffect(void) {
     if (work->age[group] < 0)
       continue;
     if (work->age[group] < 32) {
-      struct ArcSprite__f0e150c *sprite;
+      struct EffectSprite *sprite;
       s32 x, y;
 
       position[0] = target->x.fixed;
@@ -1309,7 +1293,7 @@ void BattleEffect_UpdateArcEffect(void) {
           sprite->depth = BattleEffect_GetObjectDepth(work->target) - 1;
         } else {
           sprite->depth = BattleEffect_GetObjectDepth(work->target) + 1;
-          sprite->y += 0xffff0000;
+          sprite->y -= px(1);
           sprite->scaleY = -sprite->scaleY;
         }
         EffectSprite_Draw(sprite);
@@ -1861,19 +1845,9 @@ void FieldPsynergy_RunTouchedEvents(void) {
   }
 }
 
-/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map_grid.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1898: structure has no
- * member named `unk02'. */
-struct MapCell__f0e150c {
-  u8 unused[2]; ///< no code names it
-  u8 unk02;
-};
-
 extern struct TouchCopies gSceneLocalState;
 
-struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
+struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
 /// Clears what Cyclone blew away: each cell of FieldWork.psynergyCells that
 /// falls in the width by height window at (windowX, windowZ) of layerIndex
@@ -1903,7 +1877,7 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 
       MapGrid_CopyCellPictureCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
                                           windowX + x, windowZ + z);
-      MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->collisionCode = 0;
       n = gSceneLocalState.count;
       if (n < 64) {
         gSceneLocalState.copies[n].toX = sourceX + x;
@@ -1925,16 +1899,6 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
  * games/tla/src/field/field_psynergy_radial_effects.c:1938: incompatible types
  * in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
-/* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
- * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
- * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
- * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
- * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1929: conflicting types
- * for `MapGrid_GetCellAt'. */
-extern struct MapCell *
-MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
-                           s32 layer) __asm__("MapGrid_GetCellAt");
 
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
@@ -1948,7 +1912,6 @@ void TileCopies_Restore(void) {
 
     MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
                                         entry[3]);
-    MapGrid_GetCellAt__f0e2718(entry[4] << 20, entry[5] << 20, 2)
-        ->collisionCode = 0;
+    MapGrid_GetCellAt(entry[4] << 20, entry[5] << 20, 2)->collisionCode = 0;
   }
 }

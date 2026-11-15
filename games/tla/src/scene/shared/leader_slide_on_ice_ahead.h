@@ -45,7 +45,7 @@ top:
   z = startZ;
   startBehavior =
       FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->layer), startX, startZ);
-  FieldVector_AddPolarOffset(px(16), heading, position);
+  FieldVector_AddPolarOffset(16, heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
@@ -105,7 +105,7 @@ test:
   /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
-  FieldVector_AddPolarOffset(px(16), angle, step);
+  FieldVector_AddPolarOffset(16, angle, step);
   /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
    */
   step = NULL;

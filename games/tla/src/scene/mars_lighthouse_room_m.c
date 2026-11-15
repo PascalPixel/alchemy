@@ -1846,7 +1846,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x.fixed;
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
-    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
+    FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2143,14 +2143,14 @@ s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
     SC_ADD(SW_Y, 0x1800),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(1)),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };
 
 u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
     SC_WAIT(20),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };

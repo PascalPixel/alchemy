@@ -913,7 +913,7 @@ void LemurianShip_DrawLightToOrb(void) {
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
-    Actor_SetMoveTarget(object, px(808), px(8), px(140));
+    FieldActor_SetMoveTarget(object, 808, 8, 140);
     Actor_StartScript(object, gLemurianShip_LightToOrb);
   }
 }
@@ -1610,13 +1610,13 @@ s32 gLemurianShip_HydraSwells[] = {
 
 u32 gLemurianShip_PiersToPedestal[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(808), 0, px(168)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(808, 0, 168), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gLemurianShip_ShebaStepsUp[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(784), 0, px(196)),                     
+          SC_ANIMATION(2),   SC_MOVE(784, 0, 196),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -1624,14 +1624,14 @@ u32 gLemurianShip_ShebaStepsUp[] =
 
 u32 gLemurianShip_JennaStepsUp[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(832), 0, px(196)),                     
+          SC_ANIMATION(2),   SC_MOVE(832, 0, 196),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
   };
 
 u32 gLemurianShip_KradenStepsUp[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(792), 0, px(216)),                         
+      SC_ANIMATION(2),   SC_MOVE(792, 0, 216),                         
       SC_SYNC,     SC_ANIMATION(1),                                                  
       SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),              
       SC_WAIT(10), SC_END,                                                     

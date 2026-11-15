@@ -2000,19 +2000,19 @@ u32 gJupiterLighthouse_KradenWaitsScript[] = {
 };
 
 u32 gJupiterLighthouse_PiersStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(px(699), px(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(699, 170), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
       SC_END,                                                                  
   };
 
 u32 gJupiterLighthouse_ShebaStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(px(679), px(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(679, 170), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
       SC_END,                                                                  
   };
 
 u32 gJupiterLighthouse_JennaStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(px(659), px(170)), SC_SYNC,                
+      SC_SYNC,    SC_MOVE_XZ(659, 170), SC_SYNC,                
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
       SC_END,                                                                  
   };
@@ -2151,10 +2151,10 @@ LATE_DATA u32 gJupiterLighthouse_IsaacFightsScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),
-    SC_MOVE_XZ(px(737), px(202)),
+    SC_MOVE_XZ(737, 202),
     SC_ANIMATION(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(px(776), px(202)),
+    SC_MOVE_XZ(776, 202),
     SC_CALL(JupiterLighthouse_PlayRandomBlowSound),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2165,19 +2165,19 @@ LATE_DATA u32 gJupiterLighthouse_KarstFightsScript[] = {
     SC_SYNC,
     SC_ANIMATION(9),
     SC_WAIT(60),
-    SC_MOVE_XZ(px(776), px(202)),
+    SC_MOVE_XZ(776, 202),
     SC_ANIMATION(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(px(737), px(202)),
+    SC_MOVE_XZ(737, 202),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 LATE_DATA u32 gJupiterLighthouse_IvanFightsScript[] = {
     SC_CALL(JupiterLighthouse_ClearActionBit),
-    SC_MOVE_XZ(px(731), px(213)),
+    SC_MOVE_XZ(731, 213),
     SC_ANIMATION(2),
     SC_WAIT(4),
-    SC_MOVE_XZ(px(731), px(232)),
+    SC_MOVE_XZ(731, 232),
     SC_CALL(JupiterLighthouse_PlayRandomBlowSound),
     SC_SYNC,
     SC_ANIMATION(1),
@@ -2188,9 +2188,9 @@ LATE_DATA u32 gJupiterLighthouse_IvanFightsScript[] = {
 LATE_DATA u32 gJupiterLighthouse_AgatioFightsScript[] = {
     SC_ANIMATION(2),
     SC_CALL(JupiterLighthouse_ClearActionBit),
-    SC_MOVE_XZ(px(731), px(232)),
+    SC_MOVE_XZ(731, 232),
     SC_WAIT(4),
-    SC_MOVE_XZ(px(731), px(213)),
+    SC_MOVE_XZ(731, 213),
     SC_SYNC,
     SC_ANIMATION(8),
     SC_WAIT(53),
@@ -2207,9 +2207,9 @@ LATE_DATA u32 gJupiterLighthouse_FelixLooksAroundScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_FelixArrivesWestScript[] = {
     SC_ANIMATION(5),
-    SC_MOVE_BY(0, 0, px(32)),
+    SC_MOVE_BY(0, 0, 32),
     SC_SYNC,
-    SC_MOVE_XZ(px(744), px(328)),
+    SC_MOVE_XZ(744, 328),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -2218,9 +2218,9 @@ LATE_DATA u32 gJupiterLighthouse_FelixArrivesWestScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_FelixArrivesEastScript[] = {
     SC_ANIMATION(5),
-    SC_MOVE_BY(px(-8), 0, px(32)),
+    SC_MOVE_BY(-8, 0, 32),
     SC_SYNC,
-    SC_MOVE_XZ(px(896), px(328)),
+    SC_MOVE_XZ(896, 328),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -2229,7 +2229,7 @@ LATE_DATA u32 gJupiterLighthouse_FelixArrivesEastScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_KradenArrivesWestScript[] = {                                                               
       SC_ANIMATION(2),                                                              
-      SC_MOVE_XZ(px(740), px(312)),                                      
+      SC_MOVE_XZ(740, 312),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
@@ -2238,7 +2238,7 @@ LATE_DATA u32 gJupiterLighthouse_KradenArrivesWestScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_KradenArrivesEastScript[] = {                                                               
       SC_ANIMATION(2),                                                              
-      SC_MOVE_XZ(px(900), px(312)),                                     
+      SC_MOVE_XZ(900, 312),                                     
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),                       
@@ -2247,7 +2247,7 @@ LATE_DATA u32 gJupiterLighthouse_KradenArrivesEastScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_PiersArrivesWestScript[] = {                                                               
       SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(px(724), px(312)),                                      
+      SC_MOVE_XZ(724, 312),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
@@ -2256,7 +2256,7 @@ LATE_DATA u32 gJupiterLighthouse_PiersArrivesWestScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_PiersArrivesEastScript[] = {                                                               
       SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(px(916), px(312)),                                     
+      SC_MOVE_XZ(916, 312),                                     
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),                       
@@ -2265,10 +2265,10 @@ LATE_DATA u32 gJupiterLighthouse_PiersArrivesEastScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_JennaArrivesWestScript[] = {
     SC_ANIMATION(5),
-    SC_MOVE_XZ(px(677), px(287)),
+    SC_MOVE_XZ(677, 287),
     SC_SYNC,
     SC_ANIMATION(5),
-    SC_MOVE_XZ(px(740), px(344)),
+    SC_MOVE_XZ(740, 344),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -2277,10 +2277,10 @@ LATE_DATA u32 gJupiterLighthouse_JennaArrivesWestScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_JennaArrivesEastScript[] = {
     SC_ANIMATION(5),
-    SC_MOVE_XZ(px(950), px(287)),
+    SC_MOVE_XZ(950, 287),
     SC_SYNC,
     SC_ANIMATION(5),
-    SC_MOVE_XZ(px(900), px(344)),
+    SC_MOVE_XZ(900, 344),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -2289,7 +2289,7 @@ LATE_DATA u32 gJupiterLighthouse_JennaArrivesEastScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_ShebaArrivesWestScript[] = {                                                               
       SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(px(708), px(328)),                                      
+      SC_MOVE_XZ(708, 328),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
@@ -2298,10 +2298,10 @@ LATE_DATA u32 gJupiterLighthouse_ShebaArrivesWestScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_ShebaArrivesEastScript[] = {
     SC_ANIMATION(5),
-    SC_MOVE_BY(px(-8), 0, 0),
+    SC_MOVE_BY(-8, 0, 0),
     SC_SYNC,
     SC_ANIMATION(5),
-    SC_MOVE_XZ(px(924), px(328)),
+    SC_MOVE_XZ(924, 328),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -2314,21 +2314,21 @@ LATE_DATA u32 gJupiterLighthouse_PiersStepsBackScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_KarstLeavesScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(706), px(172)),
+    SC_MOVE_XZ(706, 172),
     SC_SYNC,
-    SC_MOVE_XZ(px(682), px(151)),
+    SC_MOVE_XZ(682, 151),
     SC_SYNC,
-    SC_MOVE_XZ(px(682), px(120)),
+    SC_MOVE_XZ(682, 120),
     SC_SYNC,
-    SC_MOVE_XZ(px(664), px(106)),
+    SC_MOVE_XZ(664, 106),
     SC_SYNC,
-    SC_MOVE_XZ(px(664), px(100)),
+    SC_MOVE_XZ(664, 100),
     SC_SYNC,
     SC_END,
 };
 
 LATE_DATA u32 gJupiterLighthouse_KarstFliesOffScript[] = {
-    SC_MOVE_XZ(px(664), px(80)),
+    SC_MOVE_XZ(664, 80),
     SC_SYNC,
     SC_RELEASE,
 };

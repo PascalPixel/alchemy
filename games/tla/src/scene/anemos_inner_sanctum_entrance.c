@@ -535,7 +535,7 @@ s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
     SC_ADD(SW_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -545,7 +545,7 @@ s32 gAnemosInnerSanctumEntrance_ShadowScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };

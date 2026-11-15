@@ -1004,7 +1004,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
    * sets r2 from r8 before the second push reads it. */
   angle = &orbiter->angle;
@@ -1018,7 +1018,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, *angle, &orbiter->x);
   GaiaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
@@ -1152,7 +1152,7 @@ second:
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
+    FieldVector_AddPolarOffsetFixed(spark->unk4c, *angle, &spark->x);
     Actor_StartScript(spark, gGaiaRockInside_CirclingSparkScript);
     if (i == 3) {
       Actor_SetSpriteColorById(idB, 0x100);
@@ -1670,7 +1670,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_AREA_TEMP_08);
       Event_Wait(30);
@@ -1694,7 +1694,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Event_End();
   }
 }
@@ -1759,7 +1759,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_AREA_TEMP_09);
       Event_Wait(30);
@@ -1783,7 +1783,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(12);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Event_End();
   }
 }
@@ -1848,7 +1848,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(14);
-    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetPosition(14, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       GameFlag_Set(FLAG_AREA_TEMP_07);
       Event_Wait(30);
@@ -1872,7 +1872,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
                                *(s16 *)((u8 *)leader + 18));
     partner->velocityY = px(6);
     Actor_WaitForMoveById(14);
-    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetPosition(14, 0, 0);
     Event_End();
   }
 }
@@ -4196,7 +4196,7 @@ u32 gFieldEffect_LongScript[] = {
 u32 gGaiaRockInside_SprayScript[] = {
     SC_WAIT(230),
     SC_SET(SW_HOOK, 0),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };
@@ -4204,35 +4204,35 @@ u32 gGaiaRockInside_SprayScript[] = {
 u32 gGaiaRockInside_FlameScript[] = {
     SC_WAIT(25),
     SC_SET(SW_HOOK, 0),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };
 
 s32 gGaiaRockInside_AltarShakesScript[] = {                                                               
-      SC_MOVE_BY(0, 0, px(2)),                                            
+      SC_MOVE_BY(0, 0, 2),                                            
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, px(-4)),                                           
+      SC_MOVE_BY(0, 0, -4),                                           
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, px(2)),                                            
+      SC_MOVE_BY(0, 0, 2),                                            
       SC_SYNC,                                                                 
       SC_WAIT(2),                                                              
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
 s32 gGaiaRockInside_AltarDropsScript[] = {                                                               
-      SC_MOVE_BY(0, 0, px(4)),                                            
+      SC_MOVE_BY(0, 0, 4),                                            
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, px(-8)),                                           
+      SC_MOVE_BY(0, 0, -8),                                           
       SC_SYNC,                                                                 
-      SC_MOVE_BY(0, 0, px(4)),                                            
+      SC_MOVE_BY(0, 0, 4),                                            
       SC_SYNC,                                                                 
       SC_WAIT(2),                                                              
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
 u32 gGaiaRockInside_LeaderStepsBackScript[] = {
-    SC_MOVE(px(744), 0, px(432)),
+    SC_MOVE(744, 0, 432),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -4251,7 +4251,7 @@ u32 gGaiaRockInside_SparkScript[] = {
 };
 
 u32 gGaiaRockInside_RisingSparkScript[] = {                                                               
-      SC_MOVE_BY(0, px(160), 0),                                           
+      SC_MOVE_BY(0, 160, 0),                                           
       SC_SYNC,                                                                 
       SC_RELEASE,                                                                 
       SC_END,                                                                  
@@ -4268,14 +4268,14 @@ s32 gGaiaRockInside_FallingSparkScript[] = {
   };
 
 u32 gGaiaRockInside_TabletRiseScript[] = {                                                               
-      SC_MOVE_BY(0, px(24), 0),                                            
+      SC_MOVE_BY(0, 24, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
 u32 gGaiaRockInside_FelixRiseScript[] = {                                                               
-      SC_MOVE_BY(0, px(16), 0),                                            
+      SC_MOVE_BY(0, 16, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
@@ -4283,7 +4283,7 @@ u32 gGaiaRockInside_FelixRiseScript[] = {
 
 s32 gGaiaRockInside_TabletSettleScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, px(-24), 0),                                           
+      SC_MOVE_BY(0, -24, 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 0),                                                   
       SC_END,                                                                  
@@ -4291,7 +4291,7 @@ s32 gGaiaRockInside_TabletSettleScript[] = {
 
 s32 gGaiaRockInside_FelixSettleScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, px(-16), 0),                                           
+      SC_MOVE_BY(0, -16, 0),                                           
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 3),                                                   
       SC_END,                                                                  
@@ -4427,17 +4427,17 @@ s32 gGaiaRockInside_SerpentLungeScript[] = {
 };
 
 u32 gGaiaRockInside_SerpentStrikeScript[] = {
-    SC_SET(SW_SPEED, 0x4000),
-    SC_MOVE_BY(px(16), 0, 0),
+    SC_SPEED(0.25),
+    SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
     SC_END,
 };
 
 s32 gGaiaRockInside_SerpentThrowScript[] = {
-    SC_SET(SW_SPEED, 0x8000),
+    SC_SPEED(0.5),
     SC_SET(SW_COLLISION, 129),
     SC_SET(SW_MOTION, 3),
-    SC_MOVE(px(472), px(-32), px(344)),
+    SC_MOVE(472, -32, 344),
     SC_SYNC,
     SC_SET(SW_COLLISION, 0),
     SC_CALL(GaiaRockInside_SerpentHoldsStill),
@@ -4445,10 +4445,10 @@ s32 gGaiaRockInside_SerpentThrowScript[] = {
 };
 
 s32 gGaiaRockInside_SerpentSettleScript[] = {
-    SC_SET(SW_SPEED, 0x10000),
+    SC_SPEED(1),
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_COLLISION, 0),
-    SC_MOVE_BY(px(4), px(8), 0),
+    SC_MOVE_BY(4, 8, 0),
     SC_SYNC,
     SC_LABEL(1),
     SC_CALL(GaiaRockInside_SerpentRears),
@@ -4461,15 +4461,15 @@ s32 gGaiaRockInside_SerpentSettleScript[] = {
     SC_CALL(GaiaRockInside_SerpentLowers),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(2)),
-    SC_MOVE_BY(px(-4), px(-8), 0),
+    SC_MOVE_BY(-4, -8, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 3),
     SC_END,
 };
 
 s32 gGaiaRockInside_SerpentTurnLeftScript[] = {                                                               
-      SC_SET(SW_SPEED, 0x20000),                                               
-      SC_MOVE(px(424), 0, px(344)),                                      
+      SC_SPEED(2),                                               
+      SC_MOVE(424, 0, 344),                                      
       SC_SET(SW_VELOCITY_Y, px(8)),                                        
       SC_SYNC,                                                                 
       SC_CALL(GaiaRockInside_SerpentBreathesFire),                                                  
@@ -4481,8 +4481,8 @@ s32 gGaiaRockInside_SerpentTurnLeftScript[] = {
   };
 
 s32 gGaiaRockInside_SerpentTurnRightScript[] = {                                                               
-      SC_SET(SW_SPEED, 0x20000),                                               
-      SC_MOVE(px(512), 0, px(384)),                                      
+      SC_SPEED(2),                                               
+      SC_MOVE(512, 0, 384),                                      
       SC_SET(SW_VELOCITY_Y, px(8)),                                        
       SC_SYNC,                                                                 
       SC_CALL(GaiaRockInside_SerpentBreathesFire),                                                  
@@ -4494,34 +4494,34 @@ s32 gGaiaRockInside_SerpentTurnRightScript[] = {
   };
 
 s32 gGaiaRockInside_SusaWalksOffScript[] = {
-    SC_SET(SW_SPEED, 0x10000),
+    SC_SPEED(1),
     SC_SET(SW_HOOK, (s32)GaiaRockInside_CountClash),
     SC_SET(SW_COLLISION, 129),
     SC_LABEL(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_CALL(GaiaRockInside_SerpentLunges),
     SC_WAIT(15),
-    SC_SET(SW_SPEED, 0x4000),
+    SC_SPEED(0.25),
     SC_SET(SW_STEERING, 0),
     SC_ANIMATION(9),
     SC_CALL(GaiaRockInside_SerpentStrikesSusa),
-    SC_MOVE_BY(px(16), 0, 0),
+    SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x10000),
+    SC_SPEED(1),
     SC_SET(SW_STEERING, 1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(16)),
+    SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
-    SC_MOVE_BY(px(-16), 0, 0),
+    SC_MOVE_BY(-16, 0, 0),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH),
-    SC_SET(SW_SPEED, 0x8000),
+    SC_SPEED(0.5),
     SC_CALL(GaiaRockInside_SerpentThrowsSusa),
     SC_ANIMATION(7),
     SC_WAIT(15),
-    SC_MOVE(px(472), 0, px(360)),
+    SC_MOVE(472, 0, 360),
     SC_SYNC,
     SC_WAIT(10),
     SC_ANIMATION(0),
@@ -4535,10 +4535,10 @@ s32 gGaiaRockInside_SusaWalksOffScript[] = {
     SC_WAIT(10),
     SC_CALL(GaiaRockInside_SerpentTurnsToLeader),
     SC_WAIT(10),
-    SC_SET(SW_SPEED, 0x10000),
+    SC_SPEED(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_ANIMATION(2),
-    SC_MOVE(px(472), 0, px(456)),
+    SC_MOVE(472, 0, 456),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
     SC_ANIMATION(0),

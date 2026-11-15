@@ -398,8 +398,8 @@ void TundariaTower_FreeCenterProng(void) {
   object->gravity = px(1) / 2;
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(68, px(344), px(372));
+  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(68, 344, 372);
   Actor_GetById(68)->update = (void (*)(void))TundariaTower_SparkleCenterProng;
   Event_End();
 }
@@ -494,7 +494,7 @@ void TundariaTower_JumpDownSlide(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   leader->facing = FACING_SOUTH;
   Event_Wait(10);
@@ -608,9 +608,9 @@ void TundariaTower_EndRevealIcyWall(void) {
       s32 owner = gMainRoutineWork.leaderActorId;
 
       if (angle < 0)
-        Actor_SetHorizontalPositionWithTerrain(owner, px(872), px(600));
+        Actor_SetPosition(owner, 872, 600);
       else
-        Actor_SetHorizontalPositionWithTerrain(owner, px(872), px(632));
+        Actor_SetPosition(owner, 872, 632);
     }
   }
 }
@@ -802,7 +802,7 @@ void TundariaTower_LandFromSlide(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = px(130);
@@ -1111,7 +1111,7 @@ next:
   cells = map->layers[object->layer].cells;
   shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (GameFlag_Get(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    Actor_SetPosition(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;
@@ -1287,9 +1287,9 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   TundariaTower_SetPillarMode3(10);
   Actor_SetAnimationById(9, 0);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(9, 0, 0);
+  Actor_SetPosition(10, 0, 0);
   wait(1);
   if (*list == 0xffff)
     goto done;
@@ -1302,7 +1302,7 @@ next:
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->retainSpriteCache = 3;
   if (GameFlag_Get(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    Actor_SetPosition(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;

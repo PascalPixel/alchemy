@@ -75,12 +75,17 @@ static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
   Actor_LaunchFromLeader(actorId, dx, dz, facing);
 }
 
-/// Moves a point radius along a heading on the ground plane
-/// (Vector_AddPolarOffset).
-static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading,
-                                              s32 *probe) {
+/// Moves a point radius, in 16.16 fixed point, along a heading on the ground
+/// plane (Vector_AddPolarOffset).
+static inline void FieldVector_AddPolarOffsetFixed(s32 radius, s32 heading,
+                                                   s32 *probe) {
   Vector_AddPolarOffset(radius, heading, probe);
 }
+
+/// Moves a point a radius in whole pixels along a heading:
+/// `FieldVector_AddPolarOffset(16, heading, &probe)`.
+#define FieldVector_AddPolarOffset(radius, heading, probe)                     \
+  FieldVector_AddPolarOffsetFixed(Q16(radius), heading, probe)
 
 /// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,
 /// opening or closing the way (MapGrid_SetCellBehaviorAt).

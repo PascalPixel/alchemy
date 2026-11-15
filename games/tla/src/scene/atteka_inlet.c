@@ -130,7 +130,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
-    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetPosition(18, 0, 0);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
     Event_End();
   }
@@ -143,7 +143,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
       !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldCamera_MoveWithinMapBounds(px(96), -1, px(308), 1);
+    FieldCamera_MoveTo(96, CAMERA_KEEP, 308, 1);
     {
       s32 angle = 208;
 
@@ -223,7 +223,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_WaitForArrival();
     Event_Wait(40);
     FieldCamera_SetSpeed(4.8);
-    FieldCamera_MoveWithinMapBounds(px(520), px(32), px(372), 1);
+    FieldCamera_MoveTo(520, 32, 372, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
@@ -316,7 +316,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
-    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetPosition(18, 0, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 528, 276);
     Event_End();
@@ -352,7 +352,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;
     }
-    Actor_SetHorizontalPositionWithTerrain(14, px(120), px(376));
+    Actor_SetPosition(14, 120, 376);
     wait(1);
     Actor_Jump(14, 4, 10);
     GameFlag_Set(FLAG_AREA_TEMP_00);
@@ -418,7 +418,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Wait(1);
   Actor_GetById(24)->steeringFlags |= 1;
   Actor_RunRepeatedMotion(24, 2);
-  Actor_SetHorizontalPositionWithTerrain(65, px(520), px(380));
+  Actor_SetPosition(65, 520, 380);
   wait(1);
   Actor_GetById(24)->steeringFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 388);
@@ -428,9 +428,9 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
   Actor_SetAnimationAndWait(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
-  FieldCamera_MoveWithinMapBounds(px(512), -1, px(348), 1);
+  FieldCamera_MoveTo(512, CAMERA_KEEP, 348, 1);
   Actor_WalkToAndWait(24, 504, 460);
-  Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+  Actor_SetPosition(24, 0, 0);
   Actor_FaceDirectionAndRefreshById(23, angle);
   // "On my way here, I stopped in Kalay briefly to speak with Master Hammet."
   Event_ShowMessageAndWait(23, 0);
@@ -552,7 +552,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
 
   GameFlag_Set(0x9b4);
   if (!GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
-    Actor_SetHorizontalPositionWithTerrain(65, 0, 0);
+    Actor_SetPosition(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
@@ -561,11 +561,11 @@ void AttekaInlet_SetUpTheHarbour(void) {
   Actor_SetSpriteFlags(Actor_GetById(17), 0);
   *((u8 *)Actor_GetById(17) + 85) = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
-    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+    Actor_SetPosition(19, 0, 0);
+    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(21, 0, 0);
+    Actor_SetPosition(22, 0, 0);
+    Actor_SetPosition(23, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
@@ -583,9 +583,9 @@ void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(10, 0, 0);
+    Actor_SetPosition(11, 0, 0);
   } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
     Actor_SetPositionAndFacing(9, px(70), px(308), FACING_EAST);
     Actor_SetPositionAndFacing(10, px(80), px(316), FACING_EAST);

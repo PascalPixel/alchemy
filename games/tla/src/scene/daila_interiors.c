@@ -520,18 +520,18 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(194));
+    Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 0, 0);
+    Actor_SetPosition(ACTOR_TEAR_SPOT, 232, 194);
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(MUS_TREASURE_FOUND);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, px(232), px(196));
+      Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 0, 0);
+      Actor_SetPosition(ACTOR_TEAR_SPOT, 232, 196);
       GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
     } else {
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
+      Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 0, 0);
       FieldEvent_Wait(1);
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY = saved28;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed = savedY;
@@ -689,9 +689,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
     }
     if (!GameFlag_Get(FLAG_TAVI_RESCUED)) {
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_SECOND_PILLAR, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_THIRD_PILLAR, 0, 0);
+      Actor_SetPosition(ACTOR_FIRST_PILLAR, 0, 0);
+      Actor_SetPosition(ACTOR_SECOND_PILLAR, 0, 0);
+      Actor_SetPosition(ACTOR_THIRD_PILLAR, 0, 0);
       map->mode17 = 1;
     } else {
       FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);

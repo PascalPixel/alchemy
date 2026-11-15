@@ -122,22 +122,22 @@ const s32 gActor_WaitScript[] = {
 
 /// Action kind 2: wanders near home, pausing between steps.
 const s32 gMovementType_WanderScript[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0xccc),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, 0x83),
     SC_LABEL(1),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
+    SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(20),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
+    SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(20),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
+    SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),
@@ -168,22 +168,22 @@ const s32 gMovementType_ResetActionScript[] = {
 
 /// Action kind 3: wanders a shorter way near home.
 const s32 gMovementType_WanderNearScript[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0xccc),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, 0x83),
     SC_LABEL(1),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x20000, 0x20000, 0x80000),
+    SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(20),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x20000, 0x20000, 0x80000),
+    SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(20),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(0x20000, 0x20000, 0x80000),
+    SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),
@@ -193,14 +193,9 @@ const s32 gMovementType_WanderNearScript[] = {
 
 /// Action kind 4: wanders near home without pausing.
 const s32 gMovementType_WanderCloseScript[] = {
-    SC_SET(SW_SPEED, 0x6666),
-    SC_SET(SW_ACCEL, 0x3333),
-    SC_ANIMATION(2),
-    SC_LABEL(1),
-    SC_WANDER_HOME(0x20000, 0x20000, 0x60000),
-    SC_SYNC,
-    SC_WAIT(4),
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_SPEED(0.4), SC_ACCELERATION(0.2),          SC_ANIMATION(2),
+    SC_LABEL(1),   SC_WANDER_HOME(2, 2, 6),       SC_SYNC,
+    SC_WAIT(4),    SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
 /// Squash and stretch, twice in each round, for ever.

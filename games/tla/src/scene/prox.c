@@ -2376,7 +2376,7 @@ u32 gProx_ThirdChildRuns[] = {
 
 u32 gProx_KradenStepsUpToPuelle[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(176), 0, px(154)),
+    SC_MOVE(176, 0, 154),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2387,7 +2387,7 @@ u32 gProx_KradenStepsUpToPuelle[] = {
 
 u32 gProx_IsaacStepsUpToPuelle[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(160), 0, px(154)),
+    SC_MOVE(160, 0, 154),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2398,11 +2398,11 @@ u32 gProx_IsaacStepsUpToPuelle[] = {
 
 u32 gProx_StepBackFromPuelle[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(144), 0, px(154)),
+    SC_MOVE(144, 0, 154),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -2840,7 +2840,7 @@ struct Trigger gProx_Room6Triggers[] = {
 
 u32 gProx_IsaacStepsForward[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(120), 0, px(196)),
+    SC_MOVE(120, 0, 196),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2851,7 +2851,7 @@ u32 gProx_IsaacStepsForward[] = {
 
 u32 gProx_KradenStepsForward[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(196)),
+    SC_MOVE(152, 0, 196),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2862,57 +2862,57 @@ u32 gProx_KradenStepsForward[] = {
 
 u32 gProx_SecondParentWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(136), 0, px(348)),
+    SC_MOVE(136, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_ThirdParentWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(348)),
+    SC_MOVE(152, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_LeftFileWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(136), 0, px(248)),
+    SC_MOVE(136, 0, 248),
     SC_SYNC,
-    SC_MOVE(px(136), 0, px(348)),
+    SC_MOVE(136, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_RightFileWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(248)),
+    SC_MOVE(152, 0, 248),
     SC_SYNC,
-    SC_MOVE(px(152), 0, px(348)),
+    SC_MOVE(152, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_GaretWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(248)),
+    SC_MOVE(152, 0, 248),
     SC_SYNC,
-    SC_MOVE(px(152), 0, px(272)),
+    SC_MOVE(152, 0, 272),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -2921,7 +2921,7 @@ u32 gProx_GaretWalksSouth[] = {
 
 u32 gProx_JennaWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(168), 0, px(272)),
+    SC_MOVE(168, 0, 272),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -2930,7 +2930,7 @@ u32 gProx_JennaWalksSouth[] = {
 
 u32 gProx_IsaacWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(120), 0, px(220)),
+    SC_MOVE(120, 0, 220),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2947,7 +2947,7 @@ u32 gProx_IsaacWalksSouth[] = {
 
 u32 gProx_LeaderWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(140), 0, px(220)),
+    SC_MOVE(140, 0, 220),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2964,7 +2964,7 @@ u32 gProx_LeaderWalksSouth[] = {
 
 u32 gProx_KradenWalksSouth[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(240)),
+    SC_MOVE(152, 0, 240),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2973,22 +2973,22 @@ u32 gProx_KradenWalksSouth[] = {
 
 u32 gProx_JennaRunsAhead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(168), 0, px(348)),
+    SC_MOVE(168, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(348)),
+    SC_MOVE(152, 0, 348),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };

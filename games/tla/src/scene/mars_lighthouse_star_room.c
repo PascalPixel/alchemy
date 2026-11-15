@@ -1937,7 +1937,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x.fixed;
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
-    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
+    FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2510,7 +2510,7 @@ s32 gMarsLighthouseStarRoom_LightSinkScript[] = {
     SC_ADD(SW_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -2520,7 +2520,7 @@ s32 gMarsLighthouseStarRoom_AgatioDragonShrinkScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -2530,7 +2530,7 @@ s32 gMarsLighthouseStarRoom_KarstDragonShrinkScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };

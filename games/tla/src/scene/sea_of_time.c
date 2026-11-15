@@ -815,7 +815,7 @@ void SeaOfTime_CrossToLemuria(void) {
   Actor_GetById(8)->facing = FACING_NORTH;
   Actor_WalkTo(8, 352, 264);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds(px(352), -1, px(196), 1);
+  FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
   Sound_Play(SOUND_FADE_OUT_BGM);

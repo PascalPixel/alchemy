@@ -814,14 +814,14 @@ void YampiDesert_StirScorpion(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
                           ACTOR_ROOM4_KING_SCORPION);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveToFixed(px(300), -1, px(248), 1);
+  FieldCamera_MoveTo(300, CAMERA_KEEP, 248, 1);
   Actor_MoveToAndWaitById(ACTOR_ROOM4_KING_SCORPION, 254, 248);
   Actor_MoveToAndWaitById(ACTOR_ROOM4_KING_SCORPION, 352, 240);
   Task_Remove(YampiDesert_PlayScorpionRumble);
   FieldEvent_Wait(10);
   Task_Remove(YampiDesert_RippleFollowsScorpion);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM4_SAND_RIPPLE, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM4_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(40);
   YampiDesert_BurstSand(0x1600000, 0, 0xf80000);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
@@ -831,10 +831,10 @@ void YampiDesert_StirScorpion(void) {
   Actor_MoveToAndWaitById(ACTOR_ROOM4_KING_SCORPION, 380, 248);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Sound_Play(SE_WATER_MOVE);
-  Actor_SetSpeedFixed(ACTOR_ROOM4_KING_SCORPION, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_ROOM4_KING_SCORPION, 0.8);
   Actor_WalkToAndWaitById(ACTOR_ROOM4_KING_SCORPION, 428, 248);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM4_KING_SCORPION, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM4_KING_SCORPION, 0, 0);
   GameFlag_Set(FLAG_YAMPI_DESERT_SCORPION_STIRRED);
   Event_End();
 }
@@ -847,14 +847,14 @@ void YampiDesert_StirScorpionAgain(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
                           ACTOR_ROOM5_KING_SCORPION);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveWithinMapBounds(px(246), -1, px(616), 1);
+  FieldCamera_MoveTo(246, CAMERA_KEEP, 616, 1);
   Actor_MoveToAndWait(ACTOR_ROOM5_KING_SCORPION, 248, 648);
   Actor_MoveToAndWait(ACTOR_ROOM5_KING_SCORPION, 248, 576);
   Task_Remove(YampiDesert_PlayScorpionRumble);
   FieldEvent_Wait(10);
   Task_Remove(YampiDesert_RippleFollowsScorpion);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_SAND_RIPPLE, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM5_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(20);
   YampiDesert_BurstSand(0xf80000, 0, 0x2400000);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
@@ -865,10 +865,10 @@ void YampiDesert_StirScorpionAgain(void) {
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Sound_Play(SE_WATER_MOVE);
-  Actor_SetSpeedFixed(ACTOR_ROOM5_KING_SCORPION, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_ROOM5_KING_SCORPION, 0.8);
   Actor_WalkToAndWait(ACTOR_ROOM5_KING_SCORPION, 248, 496);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_KING_SCORPION, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM5_KING_SCORPION, 0, 0);
   GameFlag_Set(FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN);
   Event_End();
 }
@@ -882,9 +882,9 @@ void YampiDesert_CornerScorpion(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
                           ACTOR_ROOM5_KING_SCORPION);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveToFixed(px(232), -1, px(328), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 328, 1);
   Actor_MoveToAndWait(ACTOR_ROOM5_KING_SCORPION, 232, 328);
-  FieldCamera_MoveWithinMapBounds(px(232), -1, px(200), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 200, 1);
   Actor_MoveToAndWait(ACTOR_ROOM5_KING_SCORPION, 232, 280);
   Actor_MoveToAndWaitById(ACTOR_ROOM5_KING_SCORPION, 232, 168);
   Task_Remove(YampiDesert_PlayScorpionRumble);
@@ -957,12 +957,12 @@ loop_3:
   wait(1);
   if (0x3332 < OBJ(gYampiDesert_SandRipple)->scaleX)
     goto loop_3;
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_SAND_RIPPLE, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM5_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(20);
-  FieldCamera_MoveToFixed(px(232), -1, px(196), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 196, 1);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 232, 164);
   FieldEvent_Wait(20);
   angle = FACING_SOUTH;
@@ -976,7 +976,7 @@ loop_3:
   Actor_SetSpritePriority(ACTOR_ROOM5_KING_SCORPION, 2);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_ROOM5_KING_SCORPION), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROOM5_KING_SCORPION), 1);
-  Actor_SetSpeedFixed(ACTOR_ROOM5_KING_SCORPION, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_ROOM5_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_ROOM5_KING_SCORPION, 216, 184);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, angle, 0);
   Actor_FaceDirectionAndRefreshById(21, FACING_EAST);
@@ -1018,7 +1018,7 @@ step_5:
   i++;
   if (i <= 5)
     goto step_5;
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_KING_SCORPION, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM5_KING_SCORPION, 0, 0);
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1100,7 +1100,7 @@ void YampiDesert_HideRockHint(void) {
   s32 row = leader->z.fixed >> 20;
 
   if (Actor_GetById(64) != NULL)
-    Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
+    Actor_SetPosition(64, 0, 0);
   MapGrid_CopyCellPictureIndicesRect(82, 89, 15, 40, 5, 6);
   MapGrid_CopyCellAttributes(82, 89, 5, 6, 15, 40);
   MapGrid_CopyCellPictureIndicesRect(88, 89, 36, 25, 5, 5);
@@ -1127,15 +1127,14 @@ void YampiDesert_RevealMedalSpot(void) {
     Actor_SetPosition(64, 288, 240);
     if ((leader->x.fixed + px(8)) >> 20 == (object->x.fixed + px(8)) >> 20 &&
         (leader->z.fixed + px(8)) >> 20 == (object->z.fixed + px(8)) >> 20)
-      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
-                                             px(288), px(256));
+      Actor_SetPosition(gMainRoutineWork.leaderActorId, 288, 256);
   }
 }
 
 /// As Reveal fades, the ninth room's hidden spot is covered again.
 void YampiDesert_HideMedalSpot(void) {
   if (Actor_GetById(64))
-    Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
+    Actor_SetPosition(64, 0, 0);
 }
 
 /// Opens the sand pit over the ladder in the second room.
@@ -1237,8 +1236,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   FieldActor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(*owner, FACING_WEST, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
-  FieldCamera_SetSpeedFixed(0x19999, 0x3333);
-  FieldCamera_MoveToFixed(0xd40000, 0, 0xd40000, 1);
+  FieldCamera_SetSpeed(1.6);
+  FieldCamera_MoveTo(212, 0, 212, 1);
   FieldCamera_WaitForArrival();
   // "How did those guys get up there?"
   Event_ShowMessageAndWait(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0);
@@ -1256,10 +1255,10 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_WatchAndSetScript(ACTOR_PARCHED_TRAVELER, 14);
   Actor_WatchAndSetScript(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 14);
   Actor_WatchAndSetScript(ACTOR_ELDER, 14);
-  Actor_SetSpeedFixed(ACTOR_ELDER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_ELDER, 1);
   Actor_SetMovementTypeById(ACTOR_MAYOR, (s32)gYampiDesert_FinderRunsAhead);
-  FieldCamera_SetSpeedFixed(0xcccc, 0x1999);
-  FieldCamera_MoveToFixed(0xf00000, -1, 0x1040000, 1);
+  FieldCamera_SetSpeed(0.8);
+  FieldCamera_MoveTo(240, CAMERA_KEEP, 260, 1);
   FieldCamera_WaitForArrival();
   Actor_Stop(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES);
   Actor_Stop(ACTOR_TRAVELER_SEEKING_EVIDENCE);
@@ -1267,8 +1266,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_Stop(ACTOR_PARCHED_TRAVELER);
   Actor_Stop(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK);
   Actor_Stop(ACTOR_ELDER);
-  FieldCamera_SetSpeedFixed(0x26666, 0x4ccc);
-  FieldCamera_MoveToFixed(0xd40000, -1, 0xd40000, 1);
+  FieldCamera_SetSpeed(2.4);
+  FieldCamera_MoveTo(212, CAMERA_KEEP, 212, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
@@ -1305,12 +1304,12 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetAnimationById(ACTOR_PARCHED_TRAVELER, 3);
   Actor_SetAnimationById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 3);
   Actor_SetAnimationAndWait(ACTOR_ELDER, 3);
-  Actor_SetSpeedFixed(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0x19999, 0xcccc);
-  Actor_SetSpeedFixed(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0x19999, 0xcccc);
-  Actor_SetSpeedFixed(ACTOR_DIZZY_TRAVELER, 0x19999, 0xcccc);
-  Actor_SetSpeedFixed(ACTOR_PARCHED_TRAVELER, 0x19999, 0xcccc);
-  Actor_SetSpeedFixed(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0x19999, 0xcccc);
-  Actor_SetSpeedFixed(ACTOR_ELDER, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 1.6);
+  Actor_SetSpeed(ACTOR_TRAVELER_SEEKING_EVIDENCE, 1.6);
+  Actor_SetSpeed(ACTOR_DIZZY_TRAVELER, 1.6);
+  Actor_SetSpeed(ACTOR_PARCHED_TRAVELER, 1.6);
+  Actor_SetSpeed(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 1.6);
+  Actor_SetSpeed(ACTOR_ELDER, 1.6);
   Actor_WatchAndSetScript(*owner, 13);
   {
     s32 path = (s32)gYampiDesert_TravelersFollow;
@@ -1318,8 +1317,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
     Actor_SetMovementTypeById(ACTOR_ELDER, path);
     FieldEvent_Wait(10);
     Actor_SetMovementTypeById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, path);
-    FieldCamera_SetSpeedFixed(0x6666, 0xccc);
-    FieldCamera_MoveToFixed(0xf00000, -1, 0x1180000, 1);
+    FieldCamera_SetSpeed(0.4);
+    FieldCamera_MoveTo(240, CAMERA_KEEP, 280, 1);
     Actor_SetMovementTypeById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, path);
     FieldEvent_Wait(10);
     Actor_SetMovementTypeById(ACTOR_TRAVELER_SEEKING_EVIDENCE, path);
@@ -1333,15 +1332,13 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   }
   Actor_Stop(*owner);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
-                                         0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_DIZZY_TRAVELER, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PARCHED_TRAVELER, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0,
-                                         0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ELDER, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_MAYOR, 0, 0);
+  Actor_SetPosition(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0, 0);
+  Actor_SetPosition(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0, 0);
+  Actor_SetPosition(ACTOR_DIZZY_TRAVELER, 0, 0);
+  Actor_SetPosition(ACTOR_PARCHED_TRAVELER, 0, 0);
+  Actor_SetPosition(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0, 0);
+  Actor_SetPosition(ACTOR_ELDER, 0, 0);
+  Actor_SetPosition(ACTOR_MAYOR, 0, 0);
   angle = FACING_NORTH_NORTHWEST;
   Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8,
         0x2080000, 0xf20000, angle);
@@ -1724,7 +1721,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
 
   switch (*state) {
   case 0:
-    FieldActor_SetMoveTargetFixed((s32)object, px(280), 0, px(200));
+    FieldActor_SetMoveTarget((s32)object, 280, 0, 200);
     *state = 1;
     break;
   case 1:
@@ -1732,7 +1729,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 2;
     break;
   case 2:
-    FieldActor_SetMoveTargetFixed((s32)object, px(280), 0, px(264));
+    FieldActor_SetMoveTarget((s32)object, 280, 0, 264);
     *state = 3;
     break;
   case 3:
@@ -1740,7 +1737,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 4;
     break;
   case 4:
-    FieldActor_SetMoveTargetFixed((s32)object, px(184), 0, px(264));
+    FieldActor_SetMoveTarget((s32)object, 184, 0, 264);
     *state = 5;
     break;
   case 5:
@@ -1748,7 +1745,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
       *state = 6;
     break;
   case 6:
-    FieldActor_SetMoveTargetFixed((s32)object, px(184), 0, px(248));
+    FieldActor_SetMoveTarget((s32)object, 184, 0, 248);
     *state = 7;
     break;
   case 7:
@@ -1762,7 +1759,7 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
     }
     break;
   case 8:
-    FieldActor_SetMoveTargetFixed((s32)object, px(184), 0, px(200));
+    FieldActor_SetMoveTarget((s32)object, 184, 0, 200);
     *state = 9;
     break;
   case 9:
@@ -1789,7 +1786,7 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
   Actor_DisableById(ACTOR_ROOM4_SAND_RIPPLE);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_ROOM4_SAND_RIPPLE, 3);
-  Actor_SetSpeedFixed(ACTOR_ROOM4_KING_SCORPION, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_ROOM4_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_ROOM4_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_ROOM4_KING_SCORPION);
@@ -1859,7 +1856,7 @@ void YampiDesert_ScorpionRoamsRoom5(struct Actor *object) {
     ARRIVE(19, 0)
   case 32:
     YampiDesert_ClearRaisedEvent();
-    FieldActor_SetMoveTargetFixed((s32)object, px(296), 0, px(744));
+    FieldActor_SetMoveTarget((s32)object, 296, 0, 744);
     *state = 33;
     break;
     ARRIVE(33, 34)
@@ -1890,7 +1887,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   Actor_DisableById(ACTOR_ROOM5_SAND_RIPPLE);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_ROOM5_SAND_RIPPLE, 3);
-  Actor_SetSpeedFixed(ACTOR_ROOM5_KING_SCORPION, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_ROOM5_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_ROOM5_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_ROOM5_KING_SCORPION);
@@ -2006,7 +2003,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   Actor_DisableById(ACTOR_ROOM5_SAND_RIPPLE);
   Actor_SetSpritePriority(ACTOR_ROOM5_SAND_RIPPLE, 3);
   (*followed)->motionFlags = 3;
-  Actor_SetSpeedFixed(ACTOR_ROOM5_KING_SCORPION, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_ROOM5_KING_SCORPION, 1.6);
   Actor_SetSpriteColor((struct Actor *)leader, 15);
   Actor_SetSpritePriority(ACTOR_ROOM5_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_ROOM5_KING_SCORPION);
@@ -2150,8 +2147,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
-  FieldCamera_MoveToFixed(px(232), -1, px(184), 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 184, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
@@ -2198,7 +2195,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   FieldEvent_Wait(20);
   actor8->velocityY = Q16_ONE * 8;
   actor8->gravity = 0xe666;
-  Actor_SetSpeedFixed(ACTOR_KING_SCORPION, 0x19999, 0xcccc);
+  Actor_SetSpeed(ACTOR_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_YAMPI_DESERT_10, 2);
@@ -2260,16 +2257,13 @@ void YampiDesert_SetUpRoom2(void) {
   s32 angle;
 
   if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED)) {
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
-                                           0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0,
-                                           0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_DIZZY_TRAVELER, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_PARCHED_TRAVELER, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
-                                           0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_ELDER, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_MAYOR, 0, 0);
+    Actor_SetPosition(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0, 0);
+    Actor_SetPosition(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0, 0);
+    Actor_SetPosition(ACTOR_DIZZY_TRAVELER, 0, 0);
+    Actor_SetPosition(ACTOR_PARCHED_TRAVELER, 0, 0);
+    Actor_SetPosition(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0, 0);
+    Actor_SetPosition(ACTOR_ELDER, 0, 0);
+    Actor_SetPosition(ACTOR_MAYOR, 0, 0);
   } else if (GameFlag_Get(FLAG_YAMPI_DESERT_TRAVELERS_MET)) {
     angleA = FACING_NORTH_NORTHWEST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
@@ -2330,7 +2324,7 @@ void YampiDesert_SetUpRoom4(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4) {
     if (Scene_FlagTest(FLAG_YAMPI_DESERT_SCORPION_STIRRED))
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM4_KING_SCORPION, 0, 0);
+      Actor_SetPosition(ACTOR_ROOM4_KING_SCORPION, 0, 0);
     else
       YampiDesert_SetUpRoom4Scorpion();
   }
@@ -2376,7 +2370,7 @@ void YampiDesert_SetUpRoom5(void) {
     Actor_SetPosition(STAKE(9), 344, 312);
     Actor_SetPosition(STAKE(10), 312, 360);
     Actor_SetPosition(STAKE(11), 280, 376);
-    Actor_SetHorizontalPositionWithTerrain(STAKE(12), px(328), px(392));
+    Actor_SetPosition(STAKE(12), 328, 392);
     if (GameFlag_Get(FLAG_KING_SCORPION_BEATEN)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP)) {
         MapGrid_CopyCellPictureIndicesRect(68, 77, 13, 9, 3, 3);
@@ -2421,7 +2415,7 @@ void YampiDesert_SetUpRoom8(void) {
   YampiDesert_PlaceRope(0, FLAG_YAMPI_DESERT_ROPE_TIED, ACTOR_ROPE_POLE,
                         ACTOR_ROPE_OTHER_POLE);
   if (object != NULL)
-    Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
+    Actor_SetPosition(64, 0, 0);
   object = Actor_GetById(ACTOR_SIGNPOST);
   object->scaleX = 0xb333;
   object->scaleY = 0xb333;
@@ -2455,7 +2449,7 @@ void YampiDesert_SetUpRoom8(void) {
 /// Sets up the ninth room, and the way in it was entered by.
 void YampiDesert_SetUpRoom9(void) {
   if (Actor_GetById(64) != 0)
-    Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
+    Actor_SetPosition(64, 0, 0);
   if (gMainRoutineWork.entrance == 2) {
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_FIRST_ROOM);
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_EIGHTH_ROOM);

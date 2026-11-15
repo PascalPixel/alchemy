@@ -409,11 +409,11 @@ u32 gSceneExits[] = {
 /// The chicken and the sheep pace back and forth, squashing as they turn.
 s32 gMikasalla_ChickenPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x9999),                                                    
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.6),                                                    
       SC_LABEL(1),                                                             
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(120), 0, px(648)),                                      
+      SC_MOVE(120, 0, 648),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -455,7 +455,7 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(72), 0, px(648)),                                      
+      SC_MOVE(72, 0, 648),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -503,11 +503,11 @@ s32 gMikasalla_ChickenPaces[] = {
 /// The sheep's script: it wanders its pen.
 s32 gMikasalla_SheepPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x4ccc),                                                    
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.3),                                                    
       SC_LABEL(1),                                                             
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(88), 0, px(680)),                                      
+      SC_MOVE(88, 0, 680),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
@@ -549,7 +549,7 @@ s32 gMikasalla_SheepPaces[] = {
       SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(120), 0, px(680)),                                      
+      SC_MOVE(120, 0, 680),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 

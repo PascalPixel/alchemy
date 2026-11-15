@@ -469,7 +469,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     if (spot == 4 && Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
       Event_PlaySound(SE_MAP_TRANSITION);
     Actor_Stop(gMainRoutineWork.leaderActorId);
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+    Actor_SetPosition(id, 0, 0);
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
         !Event_GetFlag(FLAG_FIRST_CONE_SUNK))
       return;
@@ -637,7 +637,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  FieldVector_AddPolarOffset(px(16), facing, position);
+  FieldVector_AddPolarOffset(16, facing, position);
   x = position[0] >> 20;
   z = position[2] >> 20;
   if (first->y.fixed == 0 && x == first->x.fixed >> 20 &&

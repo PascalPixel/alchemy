@@ -745,7 +745,7 @@ void LemurianShipDeck_EmitSparkle(void) {
   struct Actor *object;
 
   SET_VECTOR(position, px(360), px(64), px(424));
-  FieldVector_AddPolarOffset(px(32), Random16(), position);
+  FieldVector_AddPolarOffset(32, Random16(), position);
   object = FieldActor_Create(0x2a2, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
@@ -1190,18 +1190,18 @@ s16 gLemurianShipDeck_Puddles[] = {
 
 u32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(263), 0, px(176)),
+    SC_MOVE(263, 0, 176),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(368), 0, px(448)),
+    SC_MOVE(368, 0, 448),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),

@@ -1056,7 +1056,7 @@ void Contigo_ScoopForSalt(void) {
 
     Event_Start();
     Event_ResolvePendingActions(1);
-    Actor_SetHorizontalPositionWithTerrain(16, px(664), px(952));
+    Actor_SetPosition(16, 664, 952);
     wait(1);
     Actor_FaceActorById(16, gMainRoutineWork.leaderActorId, 0);
     work->raisedTrigger = 200;
@@ -1086,7 +1086,7 @@ void Contigo_ForceFreesDjinni(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(17, px(56), px(698));
+  Actor_SetPosition(17, 56, 698);
   wait(1);
   options.priority = 2;
   Sound_Play(SE_THUMP);
@@ -1114,7 +1114,7 @@ void Contigo_ForceFreesDjinni(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
   }
-  MapGrid_SetScreenShake(0, 0, 0);
+  MapGrid_SetShake(0, 0, 0);
   Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 17, 0);
   Event_Wait(10);
   GameFlag_Set(2535);
@@ -1482,7 +1482,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
+  FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   Actor_WalkToAndWait(9, 172, 342);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1825,9 +1825,9 @@ void Contigo_TheReunion(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   Actor_WalkToAndWait(8, 160, 466);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetPosition(8, 0, 0);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveWithinMapBounds(px(148), -1, px(368), 1);
+  FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1907,7 +1907,7 @@ void Contigo_ReturnToNewHome(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveWithinMapBounds(px(160), -1, px(368), 1);
+    FieldCamera_MoveTo(160, CAMERA_KEEP, 368, 1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 158, 394);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
@@ -2220,8 +2220,8 @@ void Contigo_InitializeRoom1(void) {
   *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9b2) == 0) {
     Actor_Stop(15);
-    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetPosition(15, 0, 0);
+    Actor_SetPosition(13, 0, 0);
     Contigo_OpenGamesRooms();
   } else {
     object = Actor_GetById(15);
@@ -2262,32 +2262,32 @@ void Contigo_InitializeRoom4(void) {
   Contigo_ShrinkActor(18);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
-    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(29, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(30, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(31, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetPosition(19, 0, 0);
+    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(21, 0, 0);
+    Actor_SetPosition(22, 0, 0);
+    Actor_SetPosition(23, 0, 0);
+    Actor_SetPosition(24, 0, 0);
+    Actor_SetPosition(25, 0, 0);
+    Actor_SetPosition(26, 0, 0);
+    Actor_SetPosition(27, 0, 0);
+    Actor_SetPosition(28, 0, 0);
+    Actor_SetPosition(29, 0, 0);
+    Actor_SetPosition(30, 0, 0);
+    Actor_SetPosition(31, 0, 0);
+    Actor_SetPosition(32, 0, 0);
+    Actor_SetPosition(33, 0, 0);
+    Actor_SetPosition(8, 0, 0);
+    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(12, 0, 0);
+    Actor_SetPosition(13, 0, 0);
     if (GameFlag_Get(0x9b2) == 0) {
-      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+      Actor_SetPosition(10, 0, 0);
+      Actor_SetPosition(14, 0, 0);
+      Actor_SetPosition(15, 0, 0);
+      Actor_SetPosition(16, 0, 0);
+      Actor_SetPosition(17, 0, 0);
     } else {
       Actor_GetById(10)->facing = FACING_NORTH_NORTHEAST;
       wait(1);
@@ -2316,10 +2316,10 @@ void Contigo_InitializeRoom2(void) {
     if (GameFlag_Get(0x9b2) != 0)
       Actor_SetMovementTypeById(11, gContigo_Room2WatcherScript);
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) != 0) {
-      Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-      Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+      Actor_SetPosition(24, 0, 0);
+      Actor_SetPosition(25, 0, 0);
+      Actor_SetPosition(26, 0, 0);
+      Actor_SetPosition(27, 0, 0);
     }
   }
 }
@@ -2751,7 +2751,7 @@ u32 gContigo_PacerScript[] = {
 
 u32 gContigo_JennaReunionScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(164), 0, px(360)),
+    SC_MOVE(164, 0, 360),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2764,7 +2764,7 @@ u32 gContigo_JennaReunionScript[] = {
 
 u32 gContigo_PiersReunionScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(190), 0, px(352)),
+    SC_MOVE(190, 0, 352),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2775,7 +2775,7 @@ u32 gContigo_PiersReunionScript[] = {
 
 u32 gContigo_ShebaReunionScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(190), 0, px(390)),
+    SC_MOVE(190, 0, 390),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2786,7 +2786,7 @@ u32 gContigo_ShebaReunionScript[] = {
 
 u32 gContigo_KradenReunionScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(182), 0, px(368)),
+    SC_MOVE(182, 0, 368),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2797,11 +2797,11 @@ u32 gContigo_KradenReunionScript[] = {
 
 u32 gContigo_IsaacLeavesScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(160), 0, px(382)),
+    SC_MOVE(160, 0, 382),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
     SC_ANIMATION(2),
@@ -2829,9 +2829,9 @@ s32 gContigo_Room2WatcherScript[] = {
 
 u32 gContigo_LeaderVisitsScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(128), 0, px(378)),
+    SC_MOVE(128, 0, 378),
     SC_SYNC,
-    SC_MOVE(px(132), 0, px(360)),
+    SC_MOVE(132, 0, 360),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(10),
@@ -2842,11 +2842,11 @@ u32 gContigo_LeaderVisitsScript[] = {
 
 u32 gContigo_HostScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(132), 0, px(359)),
+    SC_MOVE(132, 0, 359),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };

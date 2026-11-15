@@ -457,7 +457,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   position.x = object->x.fixed;
   position.y = object->y.fixed;
   position.z = object->z.fixed;
-  FieldVector_AddPolarOffset(px(16), angle, &position);
+  FieldVector_AddPolarOffset(16, angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
     i = 0;

@@ -258,7 +258,7 @@ void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
   SET_VECTOR(position, (actor->centerX + 16) << 16, px(16),
              actor->centerZ << 16);
   turn = gGabombaStatue_CogDirection * 0x3000 + angle;
-  FieldVector_AddPolarOffset(px(13), turn + 0x8000, position);
+  FieldVector_AddPolarOffset(13, turn + 0x8000, position);
   *x = position[0];
   *z = position[2];
 }
@@ -273,7 +273,7 @@ s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
   actor->flags23 = 0;
   SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
                actor->centerZ << 16);
-  FieldVector_AddPolarOffset(px(13), angle + 0x8000, &actor->x);
+  FieldVector_AddPolarOffset(13, angle + 0x8000, &actor->x);
   next = *phase + gGabombaStatue_CogDirection;
   if (next < 0)
     next = 179;
@@ -316,7 +316,7 @@ s32 GabombaStatue_CircleOwner(struct Actor *object) {
     object->y.fixed = owner->y.fixed + px(16);
     object->z.fixed = owner->z.fixed;
     object->facing = *phase << 8;
-    FieldVector_AddPolarOffset(px(6), *phase << 8, &object->x.fixed);
+    FieldVector_AddPolarOffset(6, *phase << 8, &object->x.fixed);
     *phase += 16;
   }
   return 1;
@@ -436,7 +436,7 @@ GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
   position[2] = origin->z;
   /* FAKEMATCH(temporary): the facing read into a local before the call. */
   facing = origin->facing;
-  FieldVector_AddPolarOffset(px(16), facing, position);
+  FieldVector_AddPolarOffset(16, facing, position);
   for (i = 8; i < 64; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
@@ -937,7 +937,7 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   FieldActor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
-  FieldActor_SetMoveTargetFixed(object, x << 16, px(-12), z << 16);
+  FieldActor_SetMoveTarget(object, x, -12, z);
   FieldActor_WaitForMove(object);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
   Event_PlaySound(SE_MAP_EXIT);
@@ -3648,23 +3648,23 @@ LATE_DATA s32 gGabombaStatue_CogDirection = 0;
 
 LATE_DATA u32 gGabombaStatue_LeaderFocusScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(472), 0, px(184)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(472, 0, 184), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 LATE_DATA u32 gGabombaStatue_JennaFocusScript[] = {                                                               
-      SC_ANIMATION(2),  SC_MOVE(px(488), 0, px(176)), SC_SYNC,    SC_ANIMATION(1),  
+      SC_ANIMATION(2),  SC_MOVE(488, 0, 176), SC_SYNC,    SC_ANIMATION(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gGabombaStatue_PiersFocusScript[] = {                                                               
-      SC_ANIMATION(2),  SC_MOVE(px(456), 0, px(176)), SC_SYNC,    SC_ANIMATION(1),  
+      SC_ANIMATION(2),  SC_MOVE(456, 0, 176), SC_SYNC,    SC_ANIMATION(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gGabombaStatue_KradenFocusScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(464), 0, px(208)),
+    SC_MOVE(464, 0, 208),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -3675,9 +3675,9 @@ LATE_DATA u32 gGabombaStatue_KradenFocusScript[] = {
 
 LATE_DATA u32 gGabombaStatue_KradenPointsScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(432), 0, px(286)),
+    SC_MOVE(432, 0, 286),
     SC_SYNC,
-    SC_MOVE(px(432), 0, px(312)),
+    SC_MOVE(432, 0, 312),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -3702,9 +3702,9 @@ LATE_DATA s32 gGabombaStatue_GirlsStepBackScript[] = {
 
 LATE_DATA u32 gGabombaStatue_JennaWatchesScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(472), 0, px(308)),
+    SC_MOVE(472, 0, 308),
     SC_SYNC,
-    SC_MOVE(px(440), 0, px(312)),
+    SC_MOVE(440, 0, 312),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -3715,9 +3715,9 @@ LATE_DATA u32 gGabombaStatue_JennaWatchesScript[] = {
 
 LATE_DATA u32 gGabombaStatue_ShebaWatchesScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(472), 0, px(308)),
+    SC_MOVE(472, 0, 308),
     SC_SYNC,
-    SC_MOVE(px(460), 0, px(312)),
+    SC_MOVE(460, 0, 312),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -4098,7 +4098,7 @@ LATE_DATA u32 gGabombaStatue_TileRiseScript[] = {
     SC_POSITION(0, 0, 0),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_BYTE_63, 0),
+    SC_SET(SW_RISE_ENABLED, 0),
     SC_WAIT(1),
     SC_END,
 };
@@ -4115,7 +4115,7 @@ LATE_DATA s32 gGabombaStatue_TileFallScript[] = {
     SC_POSITION(0, 0, 0),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_SET(SW_BYTE_63, 0),
+    SC_SET(SW_RISE_ENABLED, 0),
     SC_WAIT(1),
     SC_END,
 };

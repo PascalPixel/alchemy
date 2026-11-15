@@ -395,10 +395,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_1) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
         gMainRoutineWork.entrance == 99) {
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_DISAPPOINTED_TRAVELERS_BED,
-                                             0, 0);
-      Actor_SetHorizontalPositionWithTerrain(ACTOR_STUBBORN_TRAVELERS_BED, 0,
-                                             0);
+      Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
+      Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
     } else {
       {

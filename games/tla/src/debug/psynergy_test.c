@@ -553,7 +553,7 @@ void PsynergyTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPositionFixed(id, x << 16, z << 16);
+    Actor_SetPosition(id, x, z);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -577,7 +577,7 @@ void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 2) {
-    Actor_SetPositionFixed(id, px(x), px(z));
+    Actor_SetPosition(id, x, z);
     object->y.fixed = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;

@@ -668,7 +668,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetAnimationById(22, 3);
     Actor_WalkToAndWait(22, 56, 584);
     Actor_WalkToAndWait(22, 88, 648);
-    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetPosition(22, 0, 0);
   } else {
     Actor_WalkToAndWait(21, 200, 648);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
@@ -721,7 +721,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetAnimationById(22, 3);
     Actor_WalkToAndWait(22, 232, 584);
     Actor_WalkToAndWait(22, 200, 648);
-    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetPosition(22, 0, 0);
   }
   person = Actor_GetById(21);
   {
@@ -1099,28 +1099,28 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetAnimationById(23, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
     Actor_SetDestinationById(23, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(23);
-  Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
+  Actor_SetPosition(23, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
   GameFlag_Set(FLAG_AREA_TEMP_50);
   Event_End();
@@ -1582,9 +1582,9 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
     SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, 0x1999),
-    SC_SET(SW_SPEED, 0x6666),
+    SC_SPEED(0.4),
     SC_ANIMATION(0),
     SC_LABEL(1),
     SC_SET(SW_Y, px(4)),

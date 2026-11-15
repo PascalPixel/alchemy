@@ -289,7 +289,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[0] = object->x.fixed;
   out[1] = object->y.fixed;
   out[2] = object->z.fixed;
-  FieldVector_AddPolarOffset(px(16), object->facing, out);
+  FieldVector_AddPolarOffset(16, object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     gFieldWork->fieldMenu = 1;
   } else {

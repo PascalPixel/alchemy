@@ -402,7 +402,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_ShowItemIconById(17, ITEM_BONE);
     if (GameFlag_Get(FLAG_KIBOMBO_OVERGROWTH_CLEARED))
-      Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+      Actor_SetPosition(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = Q16_ONE * 5 / 4;
   } else if (scene == SCENE_KIBOMBO_MOUNTAINS_2) {
@@ -778,8 +778,8 @@ struct ActorPlacement gKibomboMountains_Placements[] = {
 };
 
 u32 gKibomboMountains_PatrolScript[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x1999),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.1),
     SC_SET(SW_COLLISION, 129),
     SC_ANIMATION(1),
     SC_WAIT(30),
@@ -795,11 +795,11 @@ u32 gKibomboMountains_PatrolScript[] = {
 };
 
 u32 gKibomboMountains_LowerGuardPatrolScript[] = {                                                               
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(856), 0, px(584)),                                      
+      SC_MOVE(856, 0, 584),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
@@ -808,7 +808,7 @@ u32 gKibomboMountains_LowerGuardPatrolScript[] = {
       SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(792), 0, px(584)),                                      
+      SC_MOVE(792, 0, 584),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
@@ -825,49 +825,49 @@ s32 gKibomboMountains_BobScript[] = {
 };
 
 u32 gKibomboMountains_DogPatrolScript[] = {
-    SC_SET(SW_SPEED, 0x14000),
-    SC_SET(SW_ACCEL, 0x4000),
+    SC_SPEED(1.25),
+    SC_ACCELERATION(0.25),
     SC_SET(SW_COLLISION, 129),
     SC_ANIMATION(3),
     SC_SET(SW_VELOCITY_Y, px(3)),
-    SC_MOVE(px(760), 0, px(488)),
+    SC_MOVE(760, 0, 488),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(764), 0, px(472)),
+    SC_MOVE(764, 0, 472),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(760), 0, px(456)),
+    SC_MOVE(760, 0, 456),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(764), 0, px(440)),
+    SC_MOVE(764, 0, 440),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(760), 0, px(424)),
+    SC_MOVE(760, 0, 424),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(764), 0, px(408)),
+    SC_MOVE(764, 0, 408),
     SC_SYNC,
-    SC_MOVE(px(760), 0, px(392)),
+    SC_MOVE(760, 0, 392),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(3)),
-    SC_MOVE(px(764), 0, px(408)),
+    SC_MOVE(764, 0, 408),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(760), 0, px(424)),
+    SC_MOVE(760, 0, 424),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(764), 0, px(440)),
+    SC_MOVE(764, 0, 440),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(760), 0, px(456)),
+    SC_MOVE(760, 0, 456),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(764), 0, px(472)),
+    SC_MOVE(764, 0, 472),
     SC_SYNC,
     SC_SET(SW_VELOCITY_Y, px(2)),
-    SC_MOVE(px(760), 0, px(488)),
+    SC_MOVE(760, 0, 488),
     SC_SYNC,
-    SC_MOVE(px(764), 0, px(504)),
+    SC_MOVE(764, 0, 504),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -889,11 +889,11 @@ struct ActorPlacement gKibomboMountains_Room1Placements[] = {
 };
 
 u32 gKibomboMountains_FirstLookoutScript[] = {                                                               
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(184), 0, px(296)),                                      
+      SC_MOVE(184, 0, 296),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
@@ -902,7 +902,7 @@ u32 gKibomboMountains_FirstLookoutScript[] = {
       SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(248), 0, px(296)),                                      
+      SC_MOVE(248, 0, 296),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
@@ -914,11 +914,11 @@ u32 gKibomboMountains_FirstLookoutScript[] = {
   };
 
 u32 gKibomboMountains_SecondLookoutScript[] = {                                                               
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x1999),                                                
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(248), 0, px(448)),                                      
+      SC_MOVE(248, 0, 448),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
@@ -927,7 +927,7 @@ u32 gKibomboMountains_SecondLookoutScript[] = {
       SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(264), 0, px(448)),                                      
+      SC_MOVE(264, 0, 448),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              

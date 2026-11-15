@@ -423,7 +423,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
-      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+      Actor_SetPosition(8, 0, 0);
       GameFlag_Set(0x9cf);
     }
   } else if (scene == SCENE_ISLET_CAVE_SERAC) {
@@ -431,7 +431,7 @@ s32 Scene_Initialize(void) {
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
     } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+      Actor_SetPosition(9, 0, 0);
       Actor_SetMovementTypeById(8, gIsletCave_TremorTargetScript);
     }
   } else {
@@ -465,7 +465,7 @@ void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
 
   if (object != NULL) {
     if (GameFlag_Get(flag))
-      Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+      Actor_SetPosition(id, x, z);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
     MapGrid_CopyCellAttributes(a, b, 3, 1, (object->x.fixed >> 20) - 1,
@@ -481,7 +481,7 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
   if (Actor_GetById(id) != 0) {
     Actor_SetSpritePriority(id, 3);
     if (GameFlag_Get(flag))
-      Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+      Actor_SetPosition(id, x, z);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
     MapGrid_CopyCellAttributes(a, bArg, 1, 3, object->x.fixed >> 20,

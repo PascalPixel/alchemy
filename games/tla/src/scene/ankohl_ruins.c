@@ -504,8 +504,8 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   FieldEvent_Wait(15);
   Event_PlaySound(SE_FLAME_FLARE);
   MapGrid_CopyCells(29, 70, 3, 1, 12, 71);
-  FieldCamera_MoveToFixed(px(216), -1, px(120), 1);
-  MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
+  MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_575);
   MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
@@ -520,7 +520,7 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   MapGrid_CopyCells(35, 6, 7, 5, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 5, 10, 71);
   AnkohlRuins_PourSand(3, 10, 184, -40, 172, 5);
-  MapGrid_SetShakeFixed(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_CopyCells(35, 6, 7, 6, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 6, 10, 71);
   FieldEvent_Wait(15);
@@ -611,7 +611,7 @@ void AnkohlRuins_PushedOffLedge(void) {
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SE_DUST_PUFF);
   AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, 188);
   object->steeringFlags = 1;
@@ -827,7 +827,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
   m = work->level >> 19;
   leader->motionFlags = 0;
-  MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_556);
   MapGrid_CopyCells(22, 66, 3, 1, 7, 66);
@@ -853,7 +853,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
     if (m == 1 && i == 15)
       MapGrid_CopyCellsLayered(18, 73, 1, 1, 11, 68);
   }
-  MapGrid_SetShakeFixed(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
@@ -909,7 +909,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
   level = work->level >> 19;
   leader->motionFlags = 0;
-  MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(5, 5, 1);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_556);
   MapGrid_CopyCells(22, 66, 3, 1, 7, 84);
@@ -935,7 +935,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
     if (level == 1 && i == 15)
       MapGrid_CopyCellsLayered(18, 73, 1, 1, 4, 86);
   }
-  MapGrid_SetShakeFixed(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
@@ -984,7 +984,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
-    MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     FieldEvent_Wait(15);
     gAnkohlRuins_SandStepDelay = 7;
     gAnkohlRuins_SandTimer = done;
@@ -1025,7 +1025,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 84);
-    MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(2, 2, 1);
     FieldEvent_Wait(15);
     gAnkohlRuins_SandStepDelay = 3;
     gAnkohlRuins_SandTimer = done;
@@ -1085,7 +1085,7 @@ void AnkohlRuins_RideRaftDown(void) {
   }
   if (row > 41) {
     FieldTask_Remove(AnkohlRuins_RideRaftDown);
-    MapGrid_SetShakeFixed(-1, -1, 0xe666);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_CopyCellAttributes(41, 48, 3, 2, 13, 41);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(FLAG_NO_PLACE_TO_SAVE);
@@ -1104,7 +1104,7 @@ void AnkohlRuins_BoardRaft(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Event_PlaySound(SE_RUSH);
-      MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+      MapGrid_SetShake(2, 2, 1);
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
@@ -1128,7 +1128,7 @@ void AnkohlRuins_BoardRaftAgain(void) {
     void (*func)(void) = AnkohlRuins_RideRaftDown;
 
     if (Task_Find(func) == -1) {
-      MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+      MapGrid_SetShake(2, 2, 1);
       Task_AddFrame(func, TASK_PASS_VBLANK);
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);

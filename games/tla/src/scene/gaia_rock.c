@@ -359,7 +359,7 @@ loop:
     position[1] = source->y + i * 0xcccc + 0x40000;
     position[2] = source->z;
     radius = Random16();
-    FieldVector_AddPolarOffset(radius * 5 + 0x30000, Random16(), position);
+    FieldVector_AddPolarOffsetFixed(radius * 5 + 0x30000, Random16(), position);
     effect = (struct OrbitEffect *)Value4(
         (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {

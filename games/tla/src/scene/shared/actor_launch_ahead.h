@@ -10,7 +10,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   position[0] = self->x.fixed;
   position[1] = self->y.fixed - px(12);
   position[2] = self->z.fixed;
-  FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
+  FieldVector_AddPolarOffset(32, angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],

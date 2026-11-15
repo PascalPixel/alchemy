@@ -464,7 +464,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = px(8);
   shadow->acceleration = px(1);

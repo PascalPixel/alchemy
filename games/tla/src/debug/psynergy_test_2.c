@@ -69,9 +69,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Douse on actor 8 takes it off the map.
-void PsynergyTest2_DouseTarget(void) {
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-}
+void PsynergyTest2_DouseTarget(void) { Actor_SetPosition(8, 0, 0); }
 
 /// So does Pound, as it acts.
 void PsynergyTest2_PoundTarget(s32 mode) {
@@ -218,12 +216,12 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
     rock->x = x;
     rock->y = y;
     rock->z = z;
-    FieldVector_AddPolarOffset((Random16() << 3) + px(8), angle, &rock->x);
+    FieldVector_AddPolarOffsetFixed((Random16() << 3) + px(8), angle, &rock->x);
     rock->velocityX = 0;
     rock->velocityY = px(5);
     rock->velocityZ = 0;
-    FieldVector_AddPolarOffset((Random16() << 1) + px(2), angle,
-                               &rock->velocityX);
+    FieldVector_AddPolarOffsetFixed((Random16() << 1) + px(2), angle,
+                                    &rock->velocityX);
     work->next++;
     work->next &= 63;
     i--;
@@ -289,7 +287,7 @@ UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 1) {
-    Actor_SetPositionFixed(id, x << 16, z << 16);
+    Actor_SetPosition(id, x, z);
     object->scaleX = 0;
     object->scaleY = 0;
   }
@@ -312,7 +310,7 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 
   object = Actor_Get(id);
   if (mode == 2) {
-    Actor_SetPositionFixed(id, px(x), px(z));
+    Actor_SetPosition(id, x, z);
     object->y.fixed = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;

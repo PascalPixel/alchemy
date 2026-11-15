@@ -333,8 +333,8 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
 
   object->timer += object->userValue;
   SET_ACTOR_POSITION(object, object->bounce, object->gravity, px(152));
-  FieldVector_AddPolarOffset(object->riseBaseY, object->timer,
-                             &object->x.fixed);
+  FieldVector_AddPolarOffsetFixed(object->riseBaseY, object->timer,
+                                  &object->x.fixed);
   radius = object->riseBaseY - 0x10000;
   object->riseBaseY = radius;
   if (radius)
@@ -366,14 +366,15 @@ s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
+  FieldVector_AddPolarOffsetFixed(mover->radius, *(s16 *)&mover->angle,
+                                  &mover->x);
   AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->angle += mover->spin >> 1;
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  FieldVector_AddPolarOffset(mover->radius, mover->angle, &mover->x);
+  FieldVector_AddPolarOffsetFixed(mover->radius, mover->angle, &mover->x);
   AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->height -= mover->fall;
@@ -471,7 +472,7 @@ void AnemosInnerSanctum_SendSpark(struct Vector3 *from, struct Vector3 *to,
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 7);
   Actor_SetSpriteFlags(actor, 0);
-  FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
+  FieldVector_AddPolarOffsetFixed(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gAnemosInnerSanctum_SparkScript);
   AnemosInnerSanctum_SpiralMover(actor);
 }
@@ -485,7 +486,7 @@ void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
     struct Actor *object = (FieldActor_Create(0x2a0, x, y, px(152)));
     s32 angle = i << 12;
 
-    FieldVector_AddPolarOffset(px(32), angle, &object->x.fixed);
+    FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
     object->timer = angle;
     object->userValue = a3;
     BYTE_AT(object, 98) = i;
@@ -1104,7 +1105,7 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   }
   if (ahead[2] >> 16 > 248)
     return;
-  FieldVector_AddPolarOffset(px(7), 0x8000 - leader->facing, ahead);
+  FieldVector_AddPolarOffset(7, 0x8000 - leader->facing, ahead);
   if (FieldMapGrid_GetCellBehaviorAt(self->layer, ahead[0], ahead[2]) == 255)
     return;
   {

@@ -464,13 +464,13 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   position[0] = object->x.fixed;
   position[1] = (object->y.fixed + px(4)) & 0xfff80000;
   position[2] = object->z.fixed;
-  FieldVector_AddPolarOffset(px(16), angle, position);
+  FieldVector_AddPolarOffset(16, angle, position);
   object = Actor_FindAtCell(position, 1);
   if (object != NULL) {
     position[0] = object->x.fixed;
     position[1] = object->y.fixed;
     position[2] = object->z.fixed;
-    FieldVector_AddPolarOffset(px(16), angle, position);
+    FieldVector_AddPolarOffset(16, angle, position);
     if (Actor_FindAtCell(position, 1) != NULL)
       return;
   }
@@ -946,7 +946,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
 
       SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + px(8),
                  leader->y.fixed, (leader->z.fixed & 0xfff00000) + px(8));
-      FieldVector_AddPolarOffset(px(16), angle, position);
+      FieldVector_AddPolarOffset(16, angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
       cells = Ram_MapCellBuffer;
@@ -2390,7 +2390,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     position.x = actor->x.fixed;
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
-    FieldVector_AddPolarOffset(px(8), actor->facing, &position);
+    FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
       actor->targetZ = 0x80000000;
@@ -2510,7 +2510,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   position[0] = self->x.fixed;
   position[1] = self->y.fixed - px(12);
   position[2] = self->z.fixed;
-  FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
+  FieldVector_AddPolarOffset(32, angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
@@ -3075,12 +3075,12 @@ s32 gMarsLighthouseRoomF_StatueScript[] = {
 u32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(px(680), 0, px(304)),                                     
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.03125),                                                 
+      SC_MOVE(680, 0, 304),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(px(760), 0, px(304)),                                     
+      SC_MOVE(760, 0, 304),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -3089,12 +3089,12 @@ u32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {
 u32 gMarsLighthouseRoomF_VenusWestFlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(px(584), 0, px(304)),                                     
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.03125),                                                 
+      SC_MOVE(584, 0, 304),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(px(664), 0, px(304)),                                     
+      SC_MOVE(664, 0, 304),                                     
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -3105,21 +3105,21 @@ u32 gMarsLighthouseRoomF_ButtonFlameThrowerRoute[] = {
     SC_SET(SW_MOTION, 2),
     SC_SET(SW_Y, px(48)),
     SC_SET(SW_GROUND, px(48)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
     SC_LABEL(1),
     SC_WAIT(1),
     SC_FLAG_CHECK(FLAG_BUTTON_PRESSED),
     SC_IFNOT(SC_TO(1)),
     SC_LABEL(2),
-    SC_MOVE(px(176), 0, px(576)),
+    SC_MOVE(176, 0, 576),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(576)),
+    SC_MOVE(248, 0, 576),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(176), 0, px(576)),
+    SC_MOVE(176, 0, 576),
     SC_SYNC,
-    SC_MOVE(px(104), 0, px(576)),
+    SC_MOVE(104, 0, 576),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(2)),
@@ -3130,16 +3130,16 @@ u32 gMarsLighthouseRoomF_JupiterWestFlameThrowerRoute[] = {
     SC_SET(SW_MOTION, 2),
     SC_SET(SW_Y, px(32)),
     SC_SET(SW_GROUND, px(32)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(px(88), 0, px(112)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(88, 0, 112),
     SC_SYNC,
     SC_WAIT(20),
     SC_LABEL(1),
-    SC_MOVE(px(168), 0, px(112)),
+    SC_MOVE(168, 0, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(88), 0, px(112)),
+    SC_MOVE(88, 0, 112),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3150,25 +3150,25 @@ u32 gMarsLighthouseRoomF_JupiterEastFlameThrowerRoute[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_Y, px(32)),
     SC_SET(SW_GROUND, px(32)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
     SC_LABEL(1),
-    SC_MOVE(px(264), px(32), px(112)),
+    SC_MOVE(264, 32, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(264), px(80), px(112)),
+    SC_MOVE(264, 80, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(232), px(80), px(112)),
+    SC_MOVE(232, 80, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(264), px(80), px(112)),
+    SC_MOVE(264, 80, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(264), px(32), px(112)),
+    SC_MOVE(264, 32, 112),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(360), px(32), px(112)),
+    SC_MOVE(360, 32, 112),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3179,8 +3179,8 @@ u32 gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp[] = {
       SC_SET(SW_MOTION, 2),                                                   
       SC_SET(SW_Y, px(32)),                                                
       SC_SET(SW_GROUND, px(32)),                                           
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x800),                                                 
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.03125),                                                 
       SC_END,                                                                  
   };
 
@@ -3189,20 +3189,20 @@ u32 gMarsLighthouseRoomF_JupiterFarFlameThrowerRoute[] = {
     SC_SET(SW_MOTION, 2),
     SC_SET(SW_Y, px(48)),
     SC_SET(SW_GROUND, px(48)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(px(968), 0, px(80)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(968, 0, 80),
     SC_SYNC,
     SC_WAIT(20),
     SC_LABEL(1),
-    SC_MOVE(px(872), 0, px(80)),
+    SC_MOVE(872, 0, 80),
     SC_SYNC,
-    SC_MOVE(px(776), 0, px(80)),
+    SC_MOVE(776, 0, 80),
     SC_SYNC,
     SC_WAIT(20),
-    SC_MOVE(px(872), 0, px(80)),
+    SC_MOVE(872, 0, 80),
     SC_SYNC,
-    SC_MOVE(px(968), 0, px(80)),
+    SC_MOVE(968, 0, 80),
     SC_SYNC,
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -3294,9 +3294,9 @@ s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {
   };
 
 s32 gMarsLighthouseRoomF_FireballDrop[] = {                                                               
-      SC_CALL(Actor_PopUp), SC_MOVE(px(872), px(32), px(128)),             
-      SC_SYNC,        SC_MOVE(px(872), px(22), px(128)),             
-      SC_SYNC,        SC_MOVE(px(872), px(22), px(144)),             
+      SC_CALL(Actor_PopUp), SC_MOVE(872, 32, 128),             
+      SC_SYNC,        SC_MOVE(872, 22, 128),             
+      SC_SYNC,        SC_MOVE(872, 22, 144),             
       SC_SYNC,        SC_CALL(Actor_Park),                                          
       SC_END,                                                                  
   };
@@ -3516,12 +3516,12 @@ LATE_DATA u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[] = {
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_Y, px(80)),                                                
       SC_SET(SW_GROUND, px(80)),                                           
-      SC_SET(SW_SPEED, 0x8000),                                                
-      SC_SET(SW_ACCEL, 0x800),                                                 
-      SC_MOVE(px(216), 0, px(512)),                                      
+      SC_SPEED(0.5),                                                
+      SC_ACCELERATION(0.03125),                                                 
+      SC_MOVE(216, 0, 512),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
-      SC_MOVE(px(152), 0, px(512)),                                      
+      SC_MOVE(152, 0, 512),                                      
       SC_SYNC,                                                                 
       SC_WAIT(20),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             

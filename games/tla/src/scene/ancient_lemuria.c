@@ -181,7 +181,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Hop(16, 0);
   Hop(16, 0);
   Hop(16, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_RIME, 0, 0);
+  Actor_SetPosition(ACTOR_RIME, 0, 0);
   Actor_GetById(ACTOR_HIDING_RIME)->update = AncientLemuria_ShakeTheStatue;
   Actor_GetById(ACTOR_HIDING_RIME)->timer = 0;
 }
@@ -270,7 +270,7 @@ void AncientLemuria_HeadForTheDock(void) {
       Actor_SetDestinationById(11, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(11);
-    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetPosition(11, 0, 0);
     Actor_WalkToAndWait(ACTOR_FELIX, 168, 832);
     Event_End();
   }
@@ -322,8 +322,8 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(0x961)) {
     Actor_SetPosition(8, 136, 584);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(10, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
     Actor_SetPosition(ACTOR_RIME, 312, 184);
@@ -392,7 +392,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetSpeed(ACTOR_FELIX, 1);
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
   Event_Wait(10);
-  FieldCamera_MoveWithinMapBounds(px(168), -1, px(536), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_SetSpeed(9, 0.8);
@@ -624,7 +624,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  FieldCamera_MoveWithinMapBounds(px(168), -1, px(512), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 512, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -752,11 +752,11 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkBy(9, 0, -32);
   Actor_WaitForMoveById(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Actor_SetPosition(10, 0, 0);
   Actor_WaitForMoveById(9);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetPosition(9, 0, 0);
   Event_Wait(30);
-  FieldCamera_MoveWithinMapBounds(px(168), -1, px(536), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_WalkByAndWait(11, 0, -10);
@@ -818,7 +818,7 @@ void AncientLemuria_MeetTheLemurians(void) {
     Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(11, 1.2);
   Actor_SetAnimationById(11, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -826,7 +826,7 @@ void AncientLemuria_MeetTheLemurians(void) {
     Actor_SetDestinationById(11, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(11);
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetPosition(11, 0, 0);
   Event_End();
 }
 

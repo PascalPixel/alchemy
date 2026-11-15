@@ -1567,11 +1567,11 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   state->x = x;
   state->y = y;
   state->z = z;
-  FieldVector_AddPolarOffset(Random16() * 2 + 0x20000, angle, &state->x);
+  FieldVector_AddPolarOffsetFixed(Random16() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
   state->velocityY = (Random16() >> 1) + 0xc000;
   state->velocityZ = 0;
-  FieldVector_AddPolarOffset(Random16() >> 2, angle, &state->velocityX);
+  FieldVector_AddPolarOffsetFixed(Random16() >> 2, angle, &state->velocityX);
   *next = *next + 1;
   *next = *next % 96;
 }

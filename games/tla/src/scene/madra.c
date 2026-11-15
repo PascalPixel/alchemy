@@ -837,13 +837,13 @@ void Madra_GrantPassageToOsenia(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(px(124), -1, px(420), 1);
+  FieldCamera_MoveTo(124, CAMERA_KEEP, 420, 1);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(ACTOR_LADY, 0.8);
   Actor_SetSpeed(ACTOR_LADYS_GUARD, 0.8);
   Event_StartScreenTransition();
   Actor_SetPosition(ACTOR_LADY, 172, 332);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_LADYS_GUARD, px(172), px(324));
+  Actor_SetPosition(ACTOR_LADYS_GUARD, 172, 324);
   Event_SetMessageId(MsgHasEscaped2);
   Event_WaitTransitionFrames();
   // "Has Piers escaped!?"
@@ -999,7 +999,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   // "You may all continue your journey and cross into Osenia."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_LADYS_GUARD, 0, 0);
+  Actor_SetPosition(ACTOR_LADYS_GUARD, 0, 0);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_LADY, ANIM_NOD);
@@ -1008,7 +1008,7 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_WalkByAndWaitById(ACTOR_LADY, 30, 0);
   Actor_WalkToAndWait(ACTOR_LADY, 164, 316);
   Event_Wait(20);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_LADY, 0, 0);
+  Actor_SetPosition(ACTOR_LADY, 0, 0);
   Event_Wait(20);
   Event_End();
 }
@@ -1319,7 +1319,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_NORTH);
   Actor_WalkToAndWait(ACTOR_MAYOR, 153, 259);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_MAYOR, 0, 0);
+  Actor_SetPosition(ACTOR_MAYOR, 0, 0);
   SET_MODE(32, 4);
   Event_Wait(33);
   Event_Wait(20);
@@ -1550,7 +1550,7 @@ void Madra_MeetKarst(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_WalkByAndWaitById(ACTOR_KARST, 24, 24);
   Actor_WalkByAndWaitById(ACTOR_KARST, 132, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_KARST, 0, 0);
+  Actor_SetPosition(ACTOR_KARST, 0, 0);
   Scene_PlayMusic();
   FieldCamera_FollowActor(ACTOR_FELIX, 1);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1694,7 +1694,7 @@ void Madra_MeetKarst(void) {
     Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
                              object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_KRADEN);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_KRADEN, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   SET_MODE(5, 2);
   object = Actor_GetById(ACTOR_FELIX);
@@ -1702,7 +1702,7 @@ void Madra_MeetKarst(void) {
     Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].pixel,
                              object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   SET_MODE(6, 2);
   object = Actor_GetById(ACTOR_FELIX);
@@ -1710,7 +1710,7 @@ void Madra_MeetKarst(void) {
     Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
                              object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   SET_MODE(7, 2);
   object = Actor_GetById(ACTOR_FELIX);
@@ -1718,7 +1718,7 @@ void Madra_MeetKarst(void) {
     Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].pixel,
                              object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   GameFlag_Set(0x980);
   GameFlag_Set(FLAG_MADRA_KARST_MET);
   Event_End();

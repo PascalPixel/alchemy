@@ -161,7 +161,7 @@ const s32 gActor_KeyCheckScript[] = {
 
 /// Climbing by the keys (Actor_MoveByKeys).
 const s32 gActor_KeysScript[] = {
-    SC_CMD_1B,
+    SC_KEYS,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -267,7 +267,7 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
     ActorScript_WaitForArrival,               // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION
-    ActorScript_ResetToOrigin,                // 0x03 SC_CMD_03
+    ActorScript_ResetToOrigin,                // 0x03 SC_POSITION_ORIGIN
     ActorScript_ApplyAbsolutePosition,        // 0x04 SC_MOVE
     ActorScript_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
     ActorScript_StoreAngleToWatchedActor,     // 0x06 SC_FACE_WATCHED
@@ -320,7 +320,7 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_End,                          // 0x35
 };
 
-/// The handler of each work value (enum ScriptWork in actor_script.h).
+/// The handler of each work value (enum ActorScriptValue in actor_script.h).
 const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareScriptAddress,     // 0x00 SW_SCRIPT
     ActorScript_SetOrCompareCursor,            // 0x01 SW_CURSOR
@@ -338,7 +338,7 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareVelocityY,         // 0x0d SW_VELOCITY_Y
     ActorScript_SetOrCompareVelocityZ,         // 0x0e SW_VELOCITY_Z
     ActorScript_SetOrCompareSpeedLimit,        // 0x0f SW_SPEED
-    ActorScript_SetOrCompareAcceleration,      // 0x10 SW_ACCEL
+    ActorScript_SetOrCompareAcceleration,      // 0x10 SW_ACCELERATION
     ActorScript_SetOrCompareTargetX,           // 0x11 SW_TARGET_X
     ActorScript_SetOrCompareTargetY,           // 0x12 SW_TARGET_Y
     ActorScript_SetOrCompareTargetZ,           // 0x13 SW_TARGET_Z
@@ -357,12 +357,12 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrComparePaused,            // 0x20 SW_PAUSED
     ActorScript_SetOrCompareRepeatCount,       // 0x21 SW_REPEAT
     ActorScript_SetOrCompareWait,              // 0x22 SW_WAIT
-    ActorScript_SetOrCompareTimer,             // 0x23
-    ActorScript_SetOrCompareUserValue,         // 0x24
+    ActorScript_SetOrCompareTimer,             // 0x23 SW_TIMER
+    ActorScript_SetOrCompareUserValue,         // 0x24 SW_USER_VALUE
     ActorScript_SetOrCompareWatchedActor,      // 0x25
     ActorScript_SetOrCompareUpdateAddress,     // 0x26 SW_HOOK
-    ActorScript_SetOrCompareRiseCounter,       // 0x27
-    ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_BYTE_63
+    ActorScript_SetOrCompareRiseCounter,       // 0x27 SW_RISE_COUNTER
+    ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_RISE_ENABLED
 };
 
 // Each map's resources, as offsets from ResourceId_Map000, by map: its BG

@@ -619,11 +619,11 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
 // clang-format off
 u32 gAlhafraInteriors_TravelersWalkOffScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(520), 0, px(328)),
+    SC_MOVE(520, 0, 328),
     SC_SYNC,
-    SC_MOVE(px(520), 0, px(312)),
+    SC_MOVE(520, 0, 312),
     SC_SYNC,
-    SC_MOVE(px(552), 0, px(312)),
+    SC_MOVE(552, 0, 312),
     SC_SYNC,
     SC_END,
 };

@@ -235,7 +235,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
   switch (gJupiterLighthouse_BeaconStage) {
   case 0:
     Event_PlayCue(220);
-    MapGrid_SetShakeFixed(0x60000, 0x60000, 0x10000);
+    MapGrid_SetShake(6, 6, 1);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -244,7 +244,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    MapGrid_SetShakeFixed(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
     center->x.fixed = 152 << 17;
@@ -515,7 +515,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         created->bounce = 0xcccc;
         created->velocityY = px(8);
         FieldActor_SetMoveTarget(created, 512, 128, 294);
-        FieldActor_SetMoveTargetFixed(actor37, px(512), -1, px(294));
+        FieldActor_SetMoveTarget(actor37, 512, -0.00002, 294);
         Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
         System_Wait(1);
         Actor_SetSpeed(ACTOR_PIERS, 0.8);
@@ -534,7 +534,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         FieldEvent_Wait(90);
         *flags = 0;
         FieldActor_SetMoveTarget(created, 512, 128, 264);
-        FieldActor_SetMoveTargetFixed(actor37, px(512), -1, px(264));
+        FieldActor_SetMoveTarget(actor37, 512, -0.00002, 264);
         *flags = state;
         FieldEvent_Wait(60);
         *flags = 0;
@@ -698,10 +698,10 @@ void JupiterLighthouse_BeaconIsLit(void) {
   t2 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t2, s32, 428) = 0x100;
   FIELD_AT(t2, s32, 436) = 120;
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   t4 = JupiterLighthouse_GetCamera();
   FIELD_AT(t4, u8, 85) = 0;
-  FieldCamera_MoveToFixed(0x2000000, 0x600000, 0xf00000, 0);
+  FieldCamera_MoveTo(512, 96, 240, 0);
   wait_(1);
   MapGrid_CenterOnFollowedPoint();
   wait_(1);
@@ -709,18 +709,18 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_SetPositionAndFacing(ACTOR_FELIX, px(508), px(278), facing = 0xc000);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(532), px(278), facing);
   JupiterLighthouse_PlaySound(141);
-  MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(4, 4, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  MapGrid_SetShakeFixed(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(3, 3, 1);
   FieldEvent_Wait_(60);
-  MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait_(60);
   JupiterLighthouse_PlaySound(0x186);
-  MapGrid_SetShakeFixed(-1, -1, 0xe666);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  FieldCamera_SetSpeedFixed(0x6666, 0xccc);
-  FieldCamera_MoveToFixed(0x2000000, 0x600000, 0x1280000, 1);
+  FieldCamera_SetSpeed(0.4);
+  FieldCamera_MoveTo(512, 96, 296, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait_(20);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 20);
@@ -2523,7 +2523,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = EventCamera_GetActor();
   shadow->speedLimit = px(8);
   shadow->acceleration = px(1);
@@ -2645,10 +2645,10 @@ void JupiterLighthouse_EnergizeAngels(void) {
   struct Actor *rider = Actor_GetById(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPositionFixed(24, px(512), px(248));
-  Actor_SetPositionFixed(23, px(512), px(248));
-  Actor_SetPositionFixed(9, px(472), px(256));
-  Actor_SetPositionFixed(10, px(552), px(256));
+  Actor_SetPosition(24, 512, 248);
+  Actor_SetPosition(23, 512, 248);
+  Actor_SetPosition(9, 472, 256);
+  Actor_SetPosition(10, 552, 256);
   Actor_GetById(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;
@@ -2889,18 +2889,18 @@ LATE_DATA u32 gJupiterLighthouse_IvanLeavesScript[] = {
 };
 
 LATE_DATA u32 gJupiterLighthouse_AgatioRetreatsScript[] = {
-    SC_SET(SW_SPEED, 0x10000),
-    SC_SET(SW_ACCEL, 0x10000),
+    SC_SPEED(1),
+    SC_ACCELERATION(1),
     SC_ANIMATION(2),
-    SC_MOVE(px(480), px(72), px(360)),
+    SC_MOVE(480, 72, 360),
     SC_SYNC,
-    SC_MOVE(px(456), px(72), px(360)),
+    SC_MOVE(456, 72, 360),
     SC_SYNC,
-    SC_MOVE(px(440), px(72), px(256)),
+    SC_MOVE(440, 72, 256),
     SC_SYNC,
-    SC_MOVE(px(408), px(72), px(256)),
+    SC_MOVE(408, 72, 256),
     SC_SYNC,
-    SC_MOVE(px(409), px(32), px(312)),
+    SC_MOVE(409, 32, 312),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -2908,19 +2908,19 @@ LATE_DATA u32 gJupiterLighthouse_AgatioRetreatsScript[] = {
 
 LATE_DATA s32 gJupiterLighthouse_KarstRetreatsScript[] = {                                                               
       SC_ANIMATION(2),                                                               
-      SC_SET(SW_SPEED, 0x38000),                                               
-      SC_SET(SW_ACCEL, 0x10000),                                               
-      SC_MOVE(px(409), px(32), px(312)),                            
+      SC_SPEED(3.5),                                               
+      SC_ACCELERATION(1),                                               
+      SC_MOVE(409, 32, 312),                            
       SC_SYNC,                                                                 
       SC_WAIT(10),                                                             
-      SC_MOVE(px(376), px(32), px(312)),                            
+      SC_MOVE(376, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(344), px(32), px(312)),                            
+      SC_MOVE(344, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_WAIT(10),                                                             
@@ -2928,14 +2928,14 @@ LATE_DATA s32 gJupiterLighthouse_KarstRetreatsScript[] = {
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(312), px(32), px(312)),                            
+      SC_MOVE(312, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(312), px(32), px(278)),                             
+      SC_MOVE(312, 32, 278),                             
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
@@ -2947,19 +2947,19 @@ LATE_DATA s32 gJupiterLighthouse_KarstRetreatsScript[] = {
 
 LATE_DATA s32 gJupiterLighthouse_AgatioFliesScript[] = {                                                               
       SC_ANIMATION(2),                                                               
-      SC_SET(SW_SPEED, 0x38000),                                               
-      SC_SET(SW_ACCEL, 0x10000),                                               
-      SC_MOVE(px(616), px(32), px(312)),                            
+      SC_SPEED(3.5),                                               
+      SC_ACCELERATION(1),                                               
+      SC_MOVE(616, 32, 312),                            
       SC_SYNC,                                                                 
       SC_WAIT(10),                                                             
-      SC_MOVE(px(648), px(32), px(312)),                            
+      SC_MOVE(648, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(681), px(32), px(312)),                            
+      SC_MOVE(681, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_WAIT(10),                                                             
@@ -2967,14 +2967,14 @@ LATE_DATA s32 gJupiterLighthouse_AgatioFliesScript[] = {
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(712), px(32), px(312)),                            
+      SC_MOVE(712, 32, 312),                            
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
       SC_WAIT(20),                                                             
-      SC_MOVE(px(712), px(32), px(264)),                             
+      SC_MOVE(712, 32, 264),                             
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_VELOCITY_Y, px(5)),                                        
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  

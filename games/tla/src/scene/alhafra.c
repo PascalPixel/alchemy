@@ -323,7 +323,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra74);
-  FieldCamera_MoveWithinMapBounds(px(560), -1, px(496), 1);
+  FieldCamera_MoveTo(560, CAMERA_KEEP, 496, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDER, 2);
@@ -501,7 +501,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
       Actor_SetPosition(14, 536, 760);
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
-      Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
+      Actor_SetPosition(25, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
     Actor_SetMovementType(Actor_GetById(26), 9);
     Actor_SetMovementType(Actor_GetById(27), 9);
@@ -1009,7 +1009,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetPosition(ACTOR_SECOND_MADRAN_SOLDIER, 0, 0);
   Actor_SetPosition(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 0);
   Actor_SetPosition(ACTOR_WEARY_MADRAN, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PARCHED_MADRAN, 0, 0);
+  Actor_SetPosition(ACTOR_PARCHED_MADRAN, 0, 0);
   Event_Wait(15);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -1089,7 +1089,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 0, 32);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 150, 0);
   }
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_LOOKOUT, 0, 0);
+  Actor_SetPosition(ACTOR_LOOKOUT, 0, 0);
   Event_End();
 }
 
@@ -1532,9 +1532,9 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
 
 s32 gAlhafra_OfficialStepsBackScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, -px(8)),
+    SC_MOVE_BY(0, 0, -8),
     SC_SYNC,
-    SC_MOVE_BY(px(32), 0, -px(32)),
+    SC_MOVE_BY(32, 0, -32),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -1545,9 +1545,9 @@ s32 gAlhafra_OfficialStepsBackScript[] = {
 
 u32 gAlhafra_PasserbyWalksOffScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(552), 0, px(808)),
+    SC_MOVE(552, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(536), 0, px(760)),
+    SC_MOVE(536, 0, 760),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1577,11 +1577,11 @@ u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(408), 0, px(760)),
+    SC_MOVE(408, 0, 760),
     SC_SYNC,
-    SC_MOVE(px(408), 0, px(680)),
+    SC_MOVE(408, 0, 680),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(680)),
+    SC_MOVE(264, 0, 680),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1595,19 +1595,19 @@ u32 gAlhafra_ElderFollowsFromCell21Script[] = {
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(16), 0, 0),
+    SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
-    SC_MOVE(px(408), 0, px(760)),
+    SC_MOVE(408, 0, 760),
     SC_SYNC,
-    SC_MOVE(px(408), 0, px(760)),
+    SC_MOVE(408, 0, 760),
     SC_SYNC,
-    SC_MOVE(px(408), 0, px(680)),
+    SC_MOVE(408, 0, 680),
     SC_SYNC,
-    SC_MOVE(px(280), 0, px(680)),
+    SC_MOVE(280, 0, 680),
     SC_SYNC,
-    SC_MOVE(px(280), 0, px(696)),
+    SC_MOVE(280, 0, 696),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1622,15 +1622,15 @@ u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, -px(16)),
+    SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
-    SC_MOVE_BY(-px(16), 0, 0),
+    SC_MOVE_BY(-16, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(-px(16), 0, px(16)),
+    SC_MOVE_BY(-16, 0, 16),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(808)),
+    SC_MOVE(248, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(632)),
+    SC_MOVE(248, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1639,11 +1639,11 @@ s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
 
 u32 gAlhafra_MayorFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(808)),
+    SC_MOVE(248, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(664)),
+    SC_MOVE(248, 0, 664),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1652,11 +1652,11 @@ u32 gAlhafra_MayorFollowsFromCell20Script[] = {
 
 u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(808)),
+    SC_MOVE(264, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(664)),
+    SC_MOVE(264, 0, 664),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1665,11 +1665,11 @@ u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
 
 u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(808)),
+    SC_MOVE(248, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(680)),
+    SC_MOVE(248, 0, 680),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1678,13 +1678,13 @@ u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
 
 u32 gAlhafra_ElderFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(16)),
+    SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(808)),
+    SC_MOVE(248, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(248), 0, px(696)),
+    SC_MOVE(248, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1693,13 +1693,13 @@ u32 gAlhafra_ElderFollowsFromCell20Script[] = {
 
 u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(16)),
+    SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(808)),
+    SC_MOVE(264, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(680)),
+    SC_MOVE(264, 0, 680),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1708,13 +1708,13 @@ u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
 
 u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(32)),
+    SC_MOVE_BY(0, 0, 32),
     SC_SYNC,
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(808)),
+    SC_MOVE(264, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(264), 0, px(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -1723,13 +1723,13 @@ u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
 
 s32 gAlhafra_SecondMadranFollowsFromCell20Script[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(-px(20), 0, px(32)),
+    SC_MOVE_BY(-20, 0, 32),
     SC_SYNC,
-    SC_MOVE(px(328), 0, px(808)),
+    SC_MOVE(328, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(256), 0, px(808)),
+    SC_MOVE(256, 0, 808),
     SC_SYNC,
-    SC_MOVE(px(256), 0, px(712)),
+    SC_MOVE(256, 0, 712),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),

@@ -439,7 +439,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
     Actor_SetDestinationById(9, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(9);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetPosition(9, 0, 0);
   Actor_WaitForMoveById(9);
   GameFlag_Set(0x9ce);
   Scene_PlayMusic();
@@ -561,7 +561,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 // clang-format off
 u32 gGabombaCatacombs_SprayScript[] = {
     SC_WAIT(15),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };

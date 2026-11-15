@@ -304,7 +304,7 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   SET_VECTOR(position, object->x.fixed, object->y.fixed + px(2),
              object->z.fixed);
   angle = Random16();
-  FieldVector_AddPolarOffset(angle * 20, Random16(), position);
+  FieldVector_AddPolarOffsetFixed(angle * 20, Random16(), position);
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->groundHeight = object->groundHeight;

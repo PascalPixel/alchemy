@@ -271,7 +271,7 @@ static inline void Actor_JoinLeader(s32 actor) {
     Actor_SetDestinationById(actor, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(actor);
-  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
+  Actor_SetPosition(actor, 0, 0);
 }
 
 /// Alex waits for the party in the street, says the mayor sent him to look for
@@ -289,7 +289,7 @@ void Daila_MeetAlex(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Event_SetMessageId(msg);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, px(472), px(264));
+  Actor_SetPosition(ACTOR_ALEX, 472, 264);
   Event_Wait(30);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 504, 296);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
@@ -420,7 +420,7 @@ void Daila_MeetAlex(void) {
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_ALEX, 0);
   Event_Wait(60);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ALEX, 0, 0);
+  Actor_SetPosition(ACTOR_ALEX, 0, 0);
   Event_Wait(120);
   Actor_Jump(ACTOR_JENNA, 4, 20);
   Actor_Jump(ACTOR_JENNA, 4, 20);
@@ -458,7 +458,7 @@ void Daila_MeetAlex(void) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     MapGrid_CopyCellAttributes(fromX, y, 1, 1, toX, y);                        \
-    Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);                       \
+    Actor_SetPosition(actor, 0, 0);                                            \
     GameFlag_Set(flag);                                                        \
     Event_End();                                                               \
   }
@@ -579,9 +579,9 @@ s32 gDaila_FallenOldManScript[] = {
 
 u32 gDaila_PuddleChildScript[] = {
     SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_ACCEL, Q16(0.2)),
+    SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, 6553),
-    SC_SET(SW_SPEED, Q16(0.4)),
+    SC_SPEED(0.4),
     SC_ANIMATION(0),
     SC_LABEL(1),
     SC_SET(SW_Y, px(4)),

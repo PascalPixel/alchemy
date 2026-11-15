@@ -800,9 +800,9 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveWithinMapBounds(px(248), -px(32), px(760), 1);
+  FieldCamera_MoveTo(248, -32, 760, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
+  Actor_SetPosition(15, 264, 792);
   Actor_SetSpriteFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;
@@ -946,7 +946,7 @@ void AquaRock_MoaiStepAside(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId, 0, 0);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_POP_UP);
@@ -1115,7 +1115,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0xa69)) {
         AquaRock_SetCellMarkerAnchor(8);
         AquaRock_SetSparkleAnchor(8);
-        Actor_SetHorizontalPositionWithTerrain(15, px(264), px(792));
+        Actor_SetPosition(15, 264, 792);
         Actor_SetSpriteFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;

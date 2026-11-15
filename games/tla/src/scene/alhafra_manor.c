@@ -262,8 +262,8 @@ s32 Scene_Initialize(void) {
   }
   if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) &&
       GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+    Actor_SetPosition(18, 0, 0);
+    Actor_SetPosition(19, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
     FieldCamera_MoveWithinMapBounds(px(304), cameraY, cameraZ, 0);
@@ -297,7 +297,7 @@ void AlhafraManor_CountAnswer(void);
       Actor_SetDestinationById((id), leader_->x.part[0].pixel,                 \
                                leader_->z.part[0].pixel);                      \
     Actor_WaitForMoveById((id));                                               \
-    Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
+    Actor_SetPosition((id), 0, 0);                                             \
   }
 
 /// The night at the mayor's manor: the party thanks the mayor for his
@@ -562,9 +562,9 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_WalkByAndWait(11, -16, 16);
   Actor_WalkByById(11, 0, 24);
   Actor_WaitForMoveById(12);
-  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetPosition(12, 0, 0);
   Actor_WaitForMoveById(11);
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetPosition(11, 0, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(9, 4);
   Event_Wait(10);
@@ -637,9 +637,9 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_WalkByAndWait(8, -16, 16);
   Actor_WalkByById(8, 0, 24);
   Actor_WaitForMoveById(9);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetPosition(9, 0, 0);
   Actor_WaitForMoveById(8);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetPosition(8, 0, 0);
   Event_Wait(30);
   Scene_PlayMusic();
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);

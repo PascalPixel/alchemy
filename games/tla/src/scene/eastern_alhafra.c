@@ -2772,13 +2772,13 @@ u8 gEasternAlhafra_WaveTableIndex[] = {
 
 s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(8)),
+    SC_MOVE_BY(0, 0, 8),
     SC_SYNC,
-    SC_MOVE_BY(px(16), 0, px(16)),
+    SC_MOVE_BY(16, 0, 16),
     SC_SYNC,
-    SC_MOVE_BY(px(16), 0, -px(16)),
+    SC_MOVE_BY(16, 0, -16),
     SC_SYNC,
-    SC_MOVE_BY(0, 0, -px(16)),
+    SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -2788,11 +2788,11 @@ s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
 
 s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(32), 0, px(32)),
+    SC_MOVE_BY(32, 0, 32),
     SC_SYNC,
-    SC_MOVE_BY(px(16), 0, -px(16)),
+    SC_MOVE_BY(16, 0, -16),
     SC_SYNC,
-    SC_MOVE_BY(px(2), 0, -px(6)),
+    SC_MOVE_BY(2, 0, -6),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -2802,9 +2802,9 @@ s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
 
 u32 gEasternAlhafra_FirstWorkerRunScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(48), 0, 0),
+    SC_MOVE_BY(48, 0, 0),
     SC_SYNC,
-    SC_MOVE(px(168), 0, px(584)),
+    SC_MOVE(168, 0, 584),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
@@ -2814,9 +2814,9 @@ u32 gEasternAlhafra_FirstWorkerRunScript[] = {
 
 u32 gEasternAlhafra_SecondWorkerRunScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(48), 0, 0),
+    SC_MOVE_BY(48, 0, 0),
     SC_SYNC,
-    SC_MOVE(px(184), 0, px(584)),
+    SC_MOVE(184, 0, 584),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
@@ -2826,13 +2826,13 @@ u32 gEasternAlhafra_SecondWorkerRunScript[] = {
 
 s32 gEasternAlhafra_RunOffScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(152), 0, px(640)),
+    SC_MOVE(152, 0, 640),
     SC_SYNC,
-    SC_MOVE_BY(-px(80), 0, 0),
+    SC_MOVE_BY(-80, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(-px(32), 0, -px(32)),
+    SC_MOVE_BY(-32, 0, -32),
     SC_SYNC,
-    SC_MOVE_BY(-px(24), 0, 0),
+    SC_MOVE_BY(-24, 0, 0),
     SC_SYNC,
     SC_WAIT(1),
     SC_END,

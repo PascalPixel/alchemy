@@ -387,12 +387,12 @@ blend:
   FieldCamera_SetSpeed(1);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove. */
-  FieldCamera_MoveToFixed(px(360), -1, px(328), 1);
+  FieldCamera_MoveTo(360, CAMERA_KEEP, 328, 1);
   Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveToFixed(px(440), -1, px(376), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 376, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_MoveToFixed(px(472), -1, px(408), 1);
+  FieldCamera_MoveTo(472, CAMERA_KEEP, 408, 1);
   Import_EventSetExitRequest(77);
 }
 
@@ -438,7 +438,7 @@ void ApojiiIslands_ClearFirstBush(void) {
                                                                                \
     ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
     if (Event_GetFlag(n5) == 0) {                                              \
-      Actor_SetPositionFixed(n6, px(n7), px(n8));                              \
+      Actor_SetPosition(n6, n7, n8);                                           \
       if (leader->x.fixed >> 20 == n9 && leader->z.fixed >> 20 == n10) {       \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
@@ -1054,22 +1054,22 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gApojiiIslands_PaceScript[] = {
     SC_SET(SW_COLLISION, PACE_SCRIPT_THIRD_WORD),
-    SC_SET(SW_ACCEL, Q16(0.2)),
-    SC_SET(SW_SPEED, Q16(0.6)),
+    SC_ACCELERATION(0.2),
+    SC_SPEED(0.6),
     SC_LABEL(1),
     SC_ANIMATION(2),
-    SC_MOVE(px(296), 0, px(136)),
+    SC_MOVE(296, 0, 136),
     SC_SYNC,
-    SC_MOVE(px(296), 0, px(104)),
+    SC_MOVE(296, 0, 104),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),
     SC_WAIT(10),
     SC_WAIT(60),
     SC_ANIMATION(2),
-    SC_MOVE(px(296), 0, px(136)),
+    SC_MOVE(296, 0, 136),
     SC_SYNC,
-    SC_MOVE(px(280), 0, px(136)),
+    SC_MOVE(280, 0, 136),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),

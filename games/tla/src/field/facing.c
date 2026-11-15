@@ -137,10 +137,10 @@ const s32 gWorldMap_KeyYaws[16] = {
 /// Set the work byte at 0x63 to 15 and lower it by one every 5 frames, then
 /// clear the horizontal scale and release the object.
 const s32 gActor_WakeScript[] = {
-    SC_SET(SW_BYTE_63, 15),
+    SC_SET(SW_RISE_ENABLED, 15),
     SC_LABEL(1),
     SC_WAIT(5),
-    SC_ADD(SW_BYTE_63, -1),
+    SC_ADD(SW_RISE_ENABLED, -1),
     SC_LOOP(13, SC_TO(1)),
     SC_SET(SW_SCALE_X, 0),
     SC_WAIT(1),

@@ -3523,7 +3523,7 @@ u32 gAirsRockInside_OrbitSparkScript[] = {
 };
 
 u32 gAirsRockInside_RisingSparkScript[] = {
-    SC_MOVE_BY(0, px(160), 0),
+    SC_MOVE_BY(0, 160, 0),
     SC_SYNC,
     SC_RELEASE,
     SC_END,
@@ -3541,14 +3541,14 @@ s32 gAirsRockInside_SeekingSparkScript[] = {
   };
 
 u32 gAirsRockInside_TabletRiseScript[] = {
-    SC_MOVE_BY(0, px(24), 0),
+    SC_MOVE_BY(0, 24, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 4),
     SC_END,
 };
 
 u32 gAirsRockInside_ShebaRiseScript[] = {
-    SC_MOVE_BY(0, px(16), 0),
+    SC_MOVE_BY(0, 16, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 4),
     SC_END,
@@ -3556,7 +3556,7 @@ u32 gAirsRockInside_ShebaRiseScript[] = {
 
 s32 gAirsRockInside_TabletSettleScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -px(24), 0),
+    SC_MOVE_BY(0, -24, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 0),
     SC_END,
@@ -3564,7 +3564,7 @@ s32 gAirsRockInside_TabletSettleScript[] = {
 
 s32 gAirsRockInside_ShebaSettleScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -px(16), 0),
+    SC_MOVE_BY(0, -16, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 3),
     SC_END,

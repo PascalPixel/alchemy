@@ -2,111 +2,199 @@
 #define ALCHEMY_ACTOR_SCRIPT_H
 
 /// @file
-/// Field object scripts: one s32 command word, then its operands, as the
-/// command table in field/map_grid_data.c runs them. Each macro
-/// expands to the words of one command. An unknown command keeps its number
-/// as its name.
-// The Lost Age numbers its commands as The Broken Seal does, with SC_CMD_03
-// added before SC_MOVE, eleven more commands after SC_PLAYER, SC_SE_IN_VIEW
-// after SC_SE and SC_MOVE_XZ after SC_CAMERA_IN_BOUNDS.
+/// Actor scripts: one s32 command word, then its operands, as
+/// gActorScript_CommandTable runs them. Each macro expands to the words of
+/// one command. The script stores positions and speeds in 16.16 fixed point;
+/// its macros take plain pixels and decimal speeds and convert them.
+// The Lost Age numbers its commands as The Broken Seal does, with
+// SC_POSITION_ORIGIN added before SC_MOVE, the field's ways of moving after
+// SC_KEYS, SC_SE_IN_VIEW after SC_SE and SC_MOVE_XZ last.
 
+#include "fixed_math.h"
 #include "types.h"
 
-#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< a jump target
-#define SC_TO(n) (s32)(0xc0000000 | (n) << 16)    ///< jump to label n
-#define SC_TOP 0                                  ///< jump to the first word
+/// The script commands, numbered by their place in
+/// gActorScript_CommandTable; the SC_ macros below write each with its
+/// operands.
+enum ActorScriptCommand {
+  SCRIPT_CMD_WAIT = 0,
+  SCRIPT_CMD_SYNC = 1,
+  SCRIPT_CMD_POSITION = 2,
+  SCRIPT_CMD_POSITION_ORIGIN = 3,
+  SCRIPT_CMD_MOVE = 4,
+  SCRIPT_CMD_MOVE_BY = 5,
+  SCRIPT_CMD_FACE_WATCHED = 6,
+  SCRIPT_CMD_MOVE_TO_WATCHED = 7,
+  SCRIPT_CMD_MOVE_LOCAL = 8,
+  SCRIPT_CMD_WANDER = 9,
+  SCRIPT_CMD_WANDER_HOME = 10,
+  SCRIPT_CMD_APPROACH_WATCHED = 11,
+  SCRIPT_CMD_CAMERA = 12,
+  SCRIPT_CMD_LOOP = 13,
+  SCRIPT_CMD_JUMP = 14,
+  SCRIPT_CMD_IF = 15,
+  SCRIPT_CMD_IFNOT = 16,
+  SCRIPT_CMD_END = 17,
+  SCRIPT_CMD_FLAG_CHECK = 18,
+  SCRIPT_CMD_FLAG_ON = 19,
+  SCRIPT_CMD_FLAG_OFF = 20,
+  SCRIPT_CMD_FLAG_REV = 21,
+  SCRIPT_CMD_SET = 22,
+  SCRIPT_CMD_ADD = 23,
+  SCRIPT_CMD_CMP = 24,
+  SCRIPT_CMD_PLAYER = 25,
+  SCRIPT_CMD_WORLD = 26,
+  SCRIPT_CMD_KEYS = 27,
+  SCRIPT_CMD_ROPE = 28,
+  SCRIPT_CMD_TIGHTROPE = 29,
+  SCRIPT_CMD_SAND = 30,
+  SCRIPT_CMD_SAIL = 31,
+  SCRIPT_CMD_WORLD_SAIL = 32,
+  SCRIPT_CMD_WORLD_FLY = 33,
+  SCRIPT_CMD_WORLD_SAND = 34,
+  SCRIPT_CMD_HOVER = 35,
+  SCRIPT_CMD_WALK = 36,
+  SCRIPT_CMD_KEY_COUNT = 37,
+  SCRIPT_CMD_RELEASE = 38,
+  SCRIPT_CMD_ANIMATION = 39,
+  SCRIPT_CMD_NOP = 40,
+  SCRIPT_CMD_SE = 41,
+  SCRIPT_CMD_SE_IN_VIEW = 42,
+  SCRIPT_CMD_GOTO = 43,
+  SCRIPT_CMD_HIDE_SPRITES = 44,
+  SCRIPT_CMD_SHOW_SPRITE = 45,
+  SCRIPT_CMD_CALL = 46,
+  SCRIPT_CMD_CAMERA_IN_BOUNDS = 47,
+  SCRIPT_CMD_MOVE_XZ = 48,
+  SCRIPT_CMD_COUNT = 49
+};
+
+#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
+/// A jump's operand: the label SC_LABEL(n), which ActorScript_FindLabel
+/// matches without bit 30.
+#define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
+#define SC_TOP 0          ///< Script start
 #define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
 
-#define SC_WAIT(n) 0x00, (n)                     ///< wait n frames
-#define SC_SYNC 0x01                             ///< wait to arrive
-#define SC_POSITION(x, y, z) 0x02, (x), (y), (z) ///< place at a position
-#define SC_CMD_03 0x03
-#define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    ///< move to a target
-#define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) ///< move by an offset
-#define SC_FACE_WATCHED 0x06                    ///< face the watched object
-#define SC_MOVE_TO_WATCHED 0x07                 ///< move to the watched object
+#define SC_WAIT(n) SCRIPT_CMD_WAIT, (n) ///< Wait n frames.
+#define SC_SYNC SCRIPT_CMD_SYNC         ///< Wait for arrival.
+/// Set position.
+#define SC_POSITION(x, y, z) SCRIPT_CMD_POSITION, Q16(x), Q16(y), Q16(z)
+/// Set position at x and z 0, keeping the height.
+#define SC_POSITION_ORIGIN SCRIPT_CMD_POSITION_ORIGIN
+/// Move toward the target.
+#define SC_MOVE(x, y, z) SCRIPT_CMD_MOVE, Q16(x), Q16(y), Q16(z)
+/// Move by an offset.
+#define SC_MOVE_BY(x, y, z) SCRIPT_CMD_MOVE_BY, Q16(x), Q16(y), Q16(z)
+#define SC_FACE_WATCHED SCRIPT_CMD_FACE_WATCHED ///< Face the watched actor.
+/// Move to the watched actor.
+#define SC_MOVE_TO_WATCHED SCRIPT_CMD_MOVE_TO_WATCHED
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
-#define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
-#define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
-#define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)
-#define SC_APPROACH_WATCHED 0x0b ///< Follow the watched actor to 16 pixels.
-#define SC_CAMERA 0x0c           ///< follow the leader
-#define SC_LOOP(n, to) 0x0d, (n), (to) ///< repeat up to n times
-#define SC_JUMP(to) 0x0e, (to)         ///< Jump to label to.
-#define SC_IF(to) 0x0f, (to)           ///< if the result is true
-#define SC_IFNOT(to) 0x10, (to)        ///< if the result is false
-#define SC_END 0x11                    ///< return to the main script
-#define SC_FLAG_CHECK(f) 0x12, (f)
-#define SC_FLAG_ON(f) 0x13, (f)
-#define SC_FLAG_OFF(f) 0x14, (f)
-#define SC_FLAG_REV(f) 0x15, (f)
-#define SC_SET(w, v) 0x16, (w), (v) ///< write a work value
+#define SC_MOVE_LOCAL(a, b) SCRIPT_CMD_MOVE_LOCAL, (a), (b)
+// Wander to random points base to base + range pixels away, within limit
+// pixels of home; SC_WANDER_HOME heads home when outside it.
+#define SC_WANDER(base, range, limit)                                          \
+  SCRIPT_CMD_WANDER, Q16(base), Q16(range), Q16(limit)
+#define SC_WANDER_HOME(base, range, limit)                                     \
+  SCRIPT_CMD_WANDER_HOME, Q16(base), Q16(range), Q16(limit)
+/// Follow the watched actor to 16 pixels.
+#define SC_APPROACH_WATCHED SCRIPT_CMD_APPROACH_WATCHED
+#define SC_CAMERA SCRIPT_CMD_CAMERA ///< Follow the leader.
+/// Jump to label to n - 1 times, so what lies between runs n times; loops
+/// do not nest.
+#define SC_LOOP(n, to) SCRIPT_CMD_LOOP, (n), (to)
+#define SC_JUMP(to) SCRIPT_CMD_JUMP, (to)   ///< Jump to label to.
+#define SC_IF(to) SCRIPT_CMD_IF, (to)       ///< Branch if the result is true.
+#define SC_IFNOT(to) SCRIPT_CMD_IFNOT, (to) ///< Branch if the result is false.
+#define SC_END SCRIPT_CMD_END               ///< Return to the main script.
+// Test game flag f for SC_IF; ON, OFF and REV then set, clear or flip it.
+#define SC_FLAG_CHECK(f) SCRIPT_CMD_FLAG_CHECK, (f)
+#define SC_FLAG_ON(f) SCRIPT_CMD_FLAG_ON, (f)
+#define SC_FLAG_OFF(f) SCRIPT_CMD_FLAG_OFF, (f)
+#define SC_FLAG_REV(f) SCRIPT_CMD_FLAG_REV, (f)
+#define SC_SET(w, v) SCRIPT_CMD_SET, (w), (v) ///< Write a work value.
+#define SC_ADD(w, v) SCRIPT_CMD_ADD, (w), (v) ///< Add to a work value.
+/// Test whether work value w equals v.
+#define SC_CMP(w, v) SCRIPT_CMD_CMP, (w), (v)
 /// Set the speed limit, in pixels a frame: SC_SPEED(0.8).
 #define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
-/// Set the acceleration, in pixels a frame each frame.
-#define SC_ACCELERATION(acceleration) SC_SET(SW_ACCEL, Q16(acceleration))
-#define SC_ADD(w, v) 0x17, (w), (v) ///< Add to a work value.
-#define SC_CMP(w, v) 0x18, (w), (v) ///< Test whether work value w equals v.
-#define SC_PLAYER 0x19              ///< key control
-#define SC_WORLD 0x1a               ///< World map control
-#define SC_CMD_1B 0x1b
-#define SC_ROPE 0x1c
-#define SC_TIGHTROPE 0x1d
-#define SC_SAND 0x1e
-#define SC_SAIL 0x1f
-#define SC_WORLD_SAIL 0x20
-#define SC_WORLD_FLY 0x21
-#define SC_WORLD_SAND 0x22
-#define SC_HOVER 0x23
-#define SC_WALK 0x24
-#define SC_KEY_COUNT 0x25 ///< Check the configured keys.
-#define SC_RELEASE 0x26   ///< release the object
-#define SC_ANIMATION(v) 0x27, (v)
-#define SC_NOP(v) 0x28, (v)        ///< Skip its operand.
-#define SC_SE(n) 0x29, (n)         ///< a sound effect
-#define SC_SE_IN_VIEW(n) 0x2a, (n) ///< sound n, if the actor is in view
-#define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
-#define SC_HIDE_SPRITES 0x2c ///< Hide the sprites (ACTOR_SPRITE_NONE).
-#define SC_SHOW_SPRITE 0x2d  ///< Show one sprite (ACTOR_SPRITE_ONE).
+/// Set the acceleration, in pixels a frame per frame.
+#define SC_ACCELERATION(acceleration) SC_SET(SW_ACCELERATION, Q16(acceleration))
+#define SC_PLAYER SCRIPT_CMD_PLAYER ///< Player input control
+#define SC_WORLD SCRIPT_CMD_WORLD   ///< World map control
+/// Move 8 pixels at a time by the direction pad
+#define SC_KEYS SCRIPT_CMD_KEYS
+#define SC_ROPE SCRIPT_CMD_ROPE             ///< Cross a rope.
+#define SC_TIGHTROPE SCRIPT_CMD_TIGHTROPE   ///< Cross a tightrope.
+#define SC_SAND SCRIPT_CMD_SAND             ///< Move as sand (Sand).
+#define SC_SAIL SCRIPT_CMD_SAIL             ///< Sail in a room.
+#define SC_WORLD_SAIL SCRIPT_CMD_WORLD_SAIL ///< Sail on the World Map.
+#define SC_WORLD_FLY SCRIPT_CMD_WORLD_FLY   ///< Fly on the World Map.
+/// Move as sand on the World Map.
+#define SC_WORLD_SAND SCRIPT_CMD_WORLD_SAND
+#define SC_HOVER SCRIPT_CMD_HOVER         ///< Hover control (Hover).
+#define SC_WALK SCRIPT_CMD_WALK           ///< Walking control
+#define SC_KEY_COUNT SCRIPT_CMD_KEY_COUNT ///< Check the configured keys.
+#define SC_RELEASE SCRIPT_CMD_RELEASE
+/// Switch the sprites to animation v.
+#define SC_ANIMATION(v) SCRIPT_CMD_ANIMATION, (v)
+#define SC_NOP(v) SCRIPT_CMD_NOP, (v) ///< Skip its operand.
+#define SC_SE(n) SCRIPT_CMD_SE, (n)   ///< Play sound n
+/// Play sound n, if the actor is in the camera's view.
+#define SC_SE_IN_VIEW(n) SCRIPT_CMD_SE_IN_VIEW, (n)
+/// Continue in another script.
+#define SC_GOTO(script) SCRIPT_CMD_GOTO, (s32)(script)
+/// Hide the sprites (ACTOR_SPRITE_NONE).
+#define SC_HIDE_SPRITES SCRIPT_CMD_HIDE_SPRITES
+/// Show one sprite (ACTOR_SPRITE_ONE).
+#define SC_SHOW_SPRITE SCRIPT_CMD_SHOW_SPRITE
 /// Call fn with the actor each frame until it returns zero.
-#define SC_CALL(fn) 0x2e, (s32)(fn)
-#define SC_CAMERA_IN_BOUNDS 0x2f
-#define SC_MOVE_XZ(x, z) 0x30, (x), (z) ///< move to (x, z) at the same height
+#define SC_CALL(fn) SCRIPT_CMD_CALL, (s32)(fn)
+/// Follow the watched actor, keeping the view in the room's bounds.
+#define SC_CAMERA_IN_BOUNDS SCRIPT_CMD_CAMERA_IN_BOUNDS
+/// Move toward (x, z) at the same height.
+#define SC_MOVE_XZ(x, z) SCRIPT_CMD_MOVE_XZ, Q16(x), Q16(z)
 
 /// Script work values for SC_SET, SC_ADD and SC_CMP
-enum ScriptWork {
-  SW_SCRIPT = 0x00,
-  SW_CURSOR = 0x01,
-  SW_FACING = 0x03,
-  SW_X = 0x05,
-  SW_Y = 0x06,
-  SW_Z = 0x07,
-  SW_RADIUS = 0x08,
-  SW_SCALE_X = 0x09,
-  SW_SCALE_Y = 0x0a,
-  SW_VELOCITY_X = 0x0c,
-  SW_VELOCITY_Y = 0x0d,
-  SW_VELOCITY_Z = 0x0e,
-  SW_SPEED = 0x0f,
-  SW_ACCEL = 0x10,
-  SW_TARGET_X = 0x11,
-  SW_TARGET_Y = 0x12,
-  SW_TARGET_Z = 0x13,
-  SW_BOUNCE = 0x14,
-  SW_GRAVITY = 0x15,
-  SW_GROUND = 0x16,
-  SW_MOTION = 0x1a,
-  SW_ARRIVAL = 0x1b,
-  SW_RESULT = 0x1c,
-  SW_SNAP = 0x1d,
-  SW_COLLISION = 0x1e,
-  SW_STEERING = 0x1f,
-  SW_PAUSED = 0x20,
-  SW_REPEAT = 0x21,
-  SW_WAIT = 0x22,
-  SW_HOOK = 0x26,
-  SW_BYTE_63 = 0x28
+enum ActorScriptValue {
+  SW_SCRIPT = 0,
+  SW_CURSOR = 1,
+  SW_FACING = 3,
+  SW_X = 5,
+  SW_Y = 6,
+  SW_Z = 7,
+  SW_RADIUS = 8,
+  SW_SCALE_X = 9,
+  SW_SCALE_Y = 10,
+  SW_VELOCITY_X = 12,
+  SW_VELOCITY_Y = 13,
+  SW_VELOCITY_Z = 14,
+  SW_SPEED = 15,
+  SW_ACCELERATION = 16,
+  SW_TARGET_X = 17,
+  SW_TARGET_Y = 18,
+  SW_TARGET_Z = 19,
+  SW_BOUNCE = 20,
+  SW_GRAVITY = 21,
+  SW_GROUND = 22,
+  SW_MOTION = 26,
+  SW_ARRIVAL = 27,
+  SW_RESULT = 28,
+  SW_SNAP = 29,
+  SW_COLLISION = 30,
+  SW_STEERING = 31,
+  SW_PAUSED = 32,
+  SW_REPEAT = 33,
+  SW_WAIT = 34,
+  /// Actor.timer, the parameter an actor script reads.
+  SW_TIMER = 35,
+  /// Actor.userValue, scene scratch: an event sets it for the scene code
+  /// that reads or waits on it.
+  SW_USER_VALUE = 36,
+  SW_HOOK = 38,
+  SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
+  SW_RISE_ENABLED = 40  ///< Actor's byte 0x63, scene code's own byte
 };
 
 #endif

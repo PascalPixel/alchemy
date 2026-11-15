@@ -624,8 +624,8 @@ s16 gIzumo_MovableStones[] = {
 // clang-format off
 u32 gIzumo_FirstSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_SOUTH),                                         
       SC_LABEL(1),                                                             
@@ -653,8 +653,8 @@ u32 gIzumo_FirstSpinnerScript[] = {
 
 u32 gIzumo_SecondSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_EAST),                                          
       SC_LABEL(1),                                                             
@@ -682,8 +682,8 @@ u32 gIzumo_SecondSpinnerScript[] = {
 
 u32 gIzumo_ThirdSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                    
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.2),                                                    
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_NORTH),                                         
       SC_LABEL(1),                                                             
@@ -711,8 +711,8 @@ u32 gIzumo_ThirdSpinnerScript[] = {
 
 u32 gIzumo_FourthSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_SOUTH),                                         
       SC_LABEL(1),                                                             
@@ -740,8 +740,8 @@ u32 gIzumo_FourthSpinnerScript[] = {
 
 u32 gIzumo_FifthSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x3333),                                                
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.2),                                                
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_EAST),                                          
       SC_LABEL(1),                                                             
@@ -769,8 +769,8 @@ u32 gIzumo_FifthSpinnerScript[] = {
 
 u32 gIzumo_SixthSpinnerScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
-      SC_SET(SW_ACCEL, 0x4ccc),                                                    
-      SC_SET(SW_SPEED, 0x9999),                                                
+      SC_ACCELERATION(0.3),                                                    
+      SC_SPEED(0.6),                                                
       SC_SET(SW_STEERING, 2),                                                  
       SC_SET(SW_FACING, FACING_NORTH),                                         
       SC_LABEL(1),                                                             

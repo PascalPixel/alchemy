@@ -457,7 +457,7 @@ void Kibombo_MeetPiers(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveWithinMapBounds(px(88), -1, px(392), 1);
+  FieldCamera_MoveTo(88, CAMERA_KEEP, 392, 1);
   Kibombo_ObjSpeed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.leaderActorId, 72, 392);
   Kibombo_ObjWalk(gMainRoutineWork.leaderActorId, 88, 392);
@@ -611,7 +611,7 @@ void Kibombo_PiersThanksParty(void) {
   Event_ResolvePendingActions(0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveWithinMapBounds(px(280), -1, px(88), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 88, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
@@ -627,7 +627,7 @@ void Kibombo_PiersThanksParty(void) {
     Actor_SetDestinationById(ACTOR_PIERS, *(s16 *)((u8 *)leader + 10),
                              *(s16 *)((u8 *)leader + 18));
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   GameFlag_Clear(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
   GameFlag_Set(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   Event_AddPartyMember(7, 0);
@@ -663,7 +663,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), px(265), px(24), px(344));
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveWithinMapBounds(px(264), -1, px(340), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 340, 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
   Kibombo_TaskAdd(Kibombo_CarryBlackCrystal, 0x480);
@@ -689,7 +689,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Event_ShowMessageThenWait(17, 0, 20);
   Task_Remove(Kibombo_CarryBlackCrystal);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
+  Actor_SetPosition(27, 0, 0);
   Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
   if (gKibombo_BlackCrystal != 0) {
     if (gKibombo_BlackCrystal->y.fixed > px(36)) {
@@ -704,7 +704,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(17, 0);
   FieldCamera_SetSpeed(4.8);
-  FieldCamera_MoveWithinMapBounds(px(264), px(16), px(420), 1);
+  FieldCamera_MoveTo(264, 16, 420, 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
   Actor_WalkToAndWaitById(17, 264, 392);
   Event_Wait(20);
@@ -713,7 +713,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Sound_Play(MUS_KIBOMBO);
   Kibombo_CrowdBows();
   Event_Wait(80);
-  FieldCamera_MoveWithinMapBounds(px(88), px(32), px(392), 1);
+  FieldCamera_MoveTo(88, 32, 392, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
@@ -741,7 +741,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_WalkToById(26, 104, 368);
   Event_Wait(20);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveWithinMapBounds(px(111), -1, px(356), 1);
+  FieldCamera_MoveTo(111, CAMERA_KEEP, 356, 1);
   Actor_WaitForMoveById(26);
   Actor_SetAnimationById(26, 1);
   Kibombo_ObjArm(26, FACING_NORTH_NORTHEAST, 40);
@@ -788,7 +788,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   Actor_GetById(ACTOR_PIERS)->priorityFlags |= 1;
   Kibombo_ObjWalk(7, 56, 420);
   Kibombo_ObjWalk(7, 40, 344);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Kibombo_ObjPlace(gMainRoutineWork.leaderActorId, 80, 510);
   Event_Wait(10);
   Import_EventSetExitRequest(5);
@@ -844,7 +844,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetPosition(26, 56, 372);
   Actor_SetPosition(ACTOR_JENNA, 56, 372);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, px(56), px(372));
+  Actor_SetPosition(ACTOR_SHEBA, 56, 372);
   wait(1);
   Actor_SetMovementTypeById(26, gKibombo_KradenJoinsPiersScript);
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaJoinsPiersScript);
@@ -1210,7 +1210,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 40);
   // "Hmm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 26, 0);
-  FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
+  FieldCamera_MoveTo(268, CAMERA_KEEP, 188, 1);
   Actor_WalkToAndWaitById(26, 218, 156);
   Actor_FaceDirectionById(26, FACING_EAST, 40);
   Actor_Stop(gMainRoutineWork.leaderActorId);
@@ -1373,7 +1373,7 @@ ask:
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessageAndWait(26, 0);
-  FieldCamera_MoveWithinMapBounds(px(268), -1, px(188), 1);
+  FieldCamera_MoveTo(268, CAMERA_KEEP, 188, 1);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
@@ -1557,7 +1557,7 @@ void Kibombo_SetRoofByLeaderHeight(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (leader->y.fixed > px(16)) {
-    Actor_SetHorizontalPositionWithTerrain(29, 0, 0);
+    Actor_SetPosition(29, 0, 0);
     Actor_SetSpritePriority(30, 2);
   } else {
     Kibombo_ObjSetPos(Actor_GetById(29), px(120), 0, px(168));
@@ -1971,8 +1971,8 @@ void Kibombo_SetStatueMouth(s32 open, s32 hide) {
     }
   } else {
     Kibombo_MapCopy(45, 37, 79, 15, 3, 2);
-    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetPosition(12, 0, 0);
+    Actor_SetPosition(13, 0, 0);
   }
 }
 
@@ -1986,7 +1986,7 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
                                       px(308));
     switch (mode) {
     case 0:
-      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+      Actor_SetPosition(14, 0, 0);
       break;
     case 1:
       Actor_SetAnimationById(14, 0);
@@ -2012,7 +2012,7 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
   } else {
     MapGrid_CopyCellPictureIndicesRect(45, 38, 79, 16, 3, 3);
     Kibombo_BlendStart(17, 22, 1, 1, 16, 22);
-    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetPosition(14, 0, 0);
   }
 }
 
@@ -2131,7 +2131,7 @@ void Kibombo_DropIntoHole(s32 x, s32 z) {
                                     FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
-  Actor_SetMoveTarget(leader, x << 16, px(-12), z << 16);
+  FieldActor_SetMoveTarget(leader, x, -12, z);
   Actor_WaitForMove(leader);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -2247,7 +2247,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  FieldCamera_MoveWithinMapBounds(px(248), -1, px(536), 0);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 536, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   PaletteFade_SetTarget(0x10000, 0);
@@ -2276,7 +2276,7 @@ void Kibombo_CeremonyBegins(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Kibombo_ObjSpeed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.leaderActorId, 86, 455);
-  Actor_SetHorizontalPositionWithTerrain(26, px(86), px(455));
+  Actor_SetPosition(26, 86, 455);
   wait(1);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Kibombo_ObjWalk(26, 72, 455);
@@ -2325,11 +2325,11 @@ void Kibombo_CeremonyBegins(void) {
   Kibombo_CrowdBows();
   Event_Wait(40);
   FieldCamera_SetSpeed(0.2);
-  FieldCamera_MoveWithinMapBounds(px(264), 0, px(400), 1);
+  FieldCamera_MoveTo(264, 0, 400, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(200);
   FieldCamera_SetSpeed(4.8);
-  FieldCamera_MoveWithinMapBounds(px(111), px(32), px(456), 1);
+  FieldCamera_MoveTo(111, 32, 456, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionById(26, FACING_EAST, 0);
   // "It looks like the initiation ceremony is beginning."
@@ -2347,7 +2347,7 @@ void Kibombo_CeremonyBegins(void) {
     Actor_SetDestinationById(26, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(26);
-  Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
+  Actor_SetPosition(26, 0, 0);
   GameFlag_Set(FLAG_KIBOMBO_CEREMONY_BEGUN);
 }
 
@@ -2376,7 +2376,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), px(265), px(24), px(344));
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveWithinMapBounds(px(264), -1, px(340), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 340, 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Actor_WalkToAndWaitById(17, 264, 374);
   wait(1);
@@ -2738,7 +2738,7 @@ void Kibombo_GabombaRespondsToGift(void) {
       wait(1);
     }
   }
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetPosition(14, 0, 0);
   Kibombo_SetStatueTongue(0, 0);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(10);
@@ -2765,7 +2765,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjSpeed(17, 0xcccc, 0x6666);
   Kibombo_ObjWalk(17, 264, 320);
-  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  Actor_SetPosition(17, 0, 0);
   gFieldWork->transition = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2780,7 +2780,7 @@ void Kibombo_CeremonyEnds(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  FieldCamera_MoveWithinMapBounds(px(384), -1, px(601), 0);
+  FieldCamera_MoveTo(384, CAMERA_KEEP, 601, 0);
   wait(1);
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineWork.leaderActorId, px(370), px(636), FACING_NORTH);
@@ -2861,7 +2861,7 @@ void Kibombo_CeremonyEnds(void) {
     Actor_SetDestinationById(10, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(10);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Actor_SetPosition(10, 0, 0);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 16;
   work->transition = 0x209;
@@ -2903,7 +2903,7 @@ void Kibombo_InitializeVillage(void) {
 }
 
 void Kibombo_InitializeRoom1(void) {
-  Actor_SetHorizontalPositionWithTerrain(11, px(88), px(314));
+  Actor_SetPosition(11, 88, 314);
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = Q16_ONE / 2;
   Kibombo_InitializeVillage();
@@ -3005,9 +3005,9 @@ void Kibombo_InitializeRoom4(void) {
   Actor_Hide(29);
   Actor_SetSpritePriority(30, 3);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
-    Actor_SetHorizontalPositionWithTerrain(26, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
-    Actor_SetHorizontalPositionWithTerrain(28, 0, 0);
+    Actor_SetPosition(26, 0, 0);
+    Actor_SetPosition(27, 0, 0);
+    Actor_SetPosition(28, 0, 0);
     Actor_SetPosition(21, 302, 172);
   }
   GameFlag_Set(0x86b);
@@ -3137,7 +3137,7 @@ void Kibombo_InitializeRoom5(void) {
   Actor_SetSpritePriority(ACTOR_JENNA, 2);
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
   if (GameFlag_Get(FLAG_KIBOMBO_PIERS_WITH_PARTY))
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
+    Actor_SetPosition(ACTOR_PIERS, 0, 0);
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
     s32 angle = FACING_SOUTHEAST;
 
@@ -3145,7 +3145,7 @@ void Kibombo_InitializeRoom5(void) {
   }
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Kibombo_SetStatueTongue(1, 6);
-    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetPosition(17, 0, 0);
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -3220,7 +3220,7 @@ void Kibombo_InitializeRoom3(void) {
   Kibombo_HideRoom3Pair();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
-      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+      Actor_SetPosition(10, 0, 0);
       if (GameFlag_Get(0x8ee)) {
         s32 angle = FACING_NORTH_NORTHWEST;
 
@@ -3284,7 +3284,7 @@ u32 gKibombo_EmberScript[] = {
     SC_WAIT(28),
     SC_SET(SW_HOOK, 0),
     SC_WAIT(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };
@@ -3300,20 +3300,20 @@ s32 gKibombo_EnterDoorScript[] = {
   };
 
 u32 gKibombo_KradenMeetsPiersScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(98), 0, px(408)),                         
+      SC_ANIMATION(2),   SC_MOVE(98, 0, 408),                         
       SC_SYNC,     SC_ANIMATION(1),                                                  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),              
       SC_WAIT(1), SC_END,                                                     
   };
 
 u32 gKibombo_JennaMeetsPiersScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(80), 0, px(376)), SC_SYNC,     SC_ANIMATION(1), 
+      SC_ANIMATION(2),   SC_MOVE(80, 0, 376), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(68), 0, px(392)),
+    SC_MOVE(68, 0, 392),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(1),
@@ -3336,23 +3336,23 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
 
 u32 gKibombo_PartyGathersScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(88), 0, px(392)),
+    SC_MOVE(88, 0, 392),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gKibombo_LeaderStepsUpScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(72), 0, px(296)),
+    SC_MOVE(72, 0, 296),
     SC_SYNC,
-    SC_MOVE(px(40), 0, px(340)),
+    SC_MOVE(40, 0, 340),
     SC_SYNC,
-    SC_MOVE(px(40), 0, px(356)),
+    SC_MOVE(40, 0, 356),
     SC_SYNC,
-    SC_MOVE(px(56), 0, px(372)),
+    SC_MOVE(56, 0, 372),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3360,38 +3360,38 @@ u32 gKibombo_LeaderStepsUpScript[] = {
 
 u32 gKibombo_PiersStepsUpScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(88), 0, px(372)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(88, 0, 372), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gKibombo_KradenJoinsPiersScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(48), 0, px(384)), SC_SYNC,     SC_ANIMATION(1), 
+      SC_ANIMATION(2),   SC_MOVE(48, 0, 384), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gKibombo_JennaJoinsPiersScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(48), 0, px(360)), SC_SYNC,     SC_ANIMATION(1), 
+      SC_ANIMATION(2),   SC_MOVE(48, 0, 360), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gKibombo_ShebaJoinsPiersScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(36), 0, px(372)), SC_SYNC,     SC_ANIMATION(1), 
+      SC_ANIMATION(2),   SC_MOVE(36, 0, 372), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gKibombo_PartyFollowsScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(56), 0, px(372)),
+    SC_MOVE(56, 0, 372),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gKibombo_JennaAtDeadEndScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(298), 0, px(200)),                     
+          SC_ANIMATION(2),   SC_MOVE(298, 0, 200),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3399,7 +3399,7 @@ u32 gKibombo_JennaAtDeadEndScript[] =
 
 u32 gKibombo_ShebaAtDeadEndScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(308), 0, px(188)),                     
+          SC_ANIMATION(2),   SC_MOVE(308, 0, 188),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3407,7 +3407,7 @@ u32 gKibombo_ShebaAtDeadEndScript[] =
 
 u32 gKibombo_KradenAtDeadEndScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(298), 0, px(176)),                     
+          SC_ANIMATION(2),   SC_MOVE(298, 0, 176),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(1), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(1), SC_END,                                                 
@@ -3415,16 +3415,16 @@ u32 gKibombo_KradenAtDeadEndScript[] =
 
 u32 gKibombo_PiersAtDeadEndScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(222), 0, px(184)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(222, 0, 184), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gKibombo_PartyLeavesDeadEndScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(284), 0, px(188)),
+    SC_MOVE(284, 0, 188),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };

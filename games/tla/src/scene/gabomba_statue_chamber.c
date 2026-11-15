@@ -184,7 +184,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   object->facing = OBJECT(10)->facing;
   wait(1);
   Actor_MoveToObject(14, 10);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Actor_SetPosition(10, 0, 0);
   Sound_Play(SE_CHIME);
   Actor_SetAnimationById(14, 5);
   Event_Wait(60);
@@ -213,7 +213,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 14,
                            0);
   Actor_WalkToAndWait(14, 392, 220);
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetPosition(14, 0, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(9, FACING_EAST, 0);
   OBJECT(12)->motionFlags = 0;
@@ -303,7 +303,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PaletteFade_StartInterpolation(40);
   wait(40);
   GabombaStatueChamber_OpenTheLap();
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetPosition(13, 0, 0);
   Event_Wait(1);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_SetTarget(0x403108, 1);
@@ -419,7 +419,7 @@ void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
                            gMainRoutineWork.leaderActorId)),
                        0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
-  Actor_SetMoveTarget(object, x << 16, px(-12), z << 16);
+  FieldActor_SetMoveTarget(object, x, -12, z);
   Actor_WaitForMove(object);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -553,7 +553,7 @@ void GabombaStatueChamber_StepOffLift(void) {
 void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(px(392), -1, px(120), 1);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
@@ -727,7 +727,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_Stop(ACTOR_PIERS);
   Actor_Stop(11);
   wait(1);
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetPosition(13, 0, 0);
   Event_Wait(20);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(40);
@@ -777,7 +777,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveWithinMapBounds(px(392), -1, px(200), 1);
+  FieldCamera_MoveTo(392, CAMERA_KEEP, 200, 1);
   Actor_SetSpeed(12, 1.2);
   Actor_WalkToAndWait(12, 404, 220);
   Actor_Jump(12, 4, 10);
@@ -1073,7 +1073,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
   Actor_GetById(8)->y.fixed = 0;
   if (GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     GabombaStatueChamber_OpenTheLap();
-    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    Actor_SetPosition(10, 0, 0);
   } else {
     GabombaStatueChamber_ShowBlackCrystal();
   }
@@ -1107,19 +1107,19 @@ void GabombaStatueChamber_AkafubuReachesChamber(void);
 // clang-format off
 u32 gGabombaStatueChamber_WalkOffScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(428), 0, px(234)),
+    SC_MOVE(428, 0, 234),
     SC_SYNC,
-    SC_MOVE(px(488), 0, px(234)),
+    SC_MOVE(488, 0, 234),
     SC_SYNC,
     SC_END,
 };
 
 u32 gGabombaStatueChamber_AkafubuPath[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(360), 0, px(216)),
+    SC_MOVE(360, 0, 216),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_END,
 };
 
@@ -1131,7 +1131,7 @@ u32 gGabombaStatueChamber_SpiritRisesScript[] = {
 };
 
 s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
-    SC_POSITION(px(392), px(64), px(124)),
+    SC_POSITION(392, 64, 124),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(-1)),
@@ -1145,13 +1145,13 @@ u32 gGabombaStatueChamber_AkafubuLeavesScript[] = {
     SC_ADD(SW_Y, px(2)),
     SC_WAIT(1),
     SC_LOOP(80, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_END,
 };
 
 u32 gGabombaStatueChamber_PartyLeavesScript[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(px(392), 0, px(148)),                           
-      SC_SYNC,   SC_MOVE(px(392), 0, px(236)),                           
+      SC_ANIMATION(2), SC_MOVE(392, 0, 148),                           
+      SC_SYNC,   SC_MOVE(392, 0, 236),                           
       SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };

@@ -254,7 +254,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     marker->y.fixed = y + rise;
     marker->z.fixed = z;
     radius = rise;
-    FieldVector_AddPolarOffset(radius, *angle, &marker->x);
+    FieldVector_AddPolarOffsetFixed(radius, *angle, &marker->x);
     marker->facing = *angle + 0x4000;
     *angle += 0x400;
   }
@@ -661,7 +661,7 @@ void WorldMap_GazeIntoPond(void) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
-    FieldVector_AddPolarOffset(px(16), leader->facing, position);
+    FieldVector_AddPolarOffset(16, leader->facing, position);
     object = Actor_Get(79);
     x = position[0];
     if (object == NULL) {

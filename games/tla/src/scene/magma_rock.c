@@ -2277,12 +2277,12 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       entry->x = x;
       entry->y = y;
       entry->z = z;
-      FieldVector_AddPolarOffset(Random16() * 8 + 0x80000, angle, entry);
+      FieldVector_AddPolarOffsetFixed(Random16() * 8 + 0x80000, angle, entry);
       entry->velocityX = 0;
       entry->velocityY = px(5);
       entry->velocityZ = 0;
-      FieldVector_AddPolarOffset(Random16() * 2 + 0x20000, angle,
-                                 &entry->velocityX);
+      FieldVector_AddPolarOffsetFixed(Random16() * 2 + 0x20000, angle,
+                                      &entry->velocityX);
       {
         s32 mask = 63;
 
@@ -2407,7 +2407,7 @@ s32 gPushLeaderSteps[] = {
 u32 gMagmaRock_EmberScript[] = {
     SC_ANIMATION(2),
     SC_WAIT(18),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
     SC_END,
@@ -2416,7 +2416,7 @@ u32 gMagmaRock_EmberScript[] = {
 u32 gMagmaRock_FlameEmberScript[] = {
     SC_ANIMATION(3),
     SC_WAIT(23),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
     SC_END,

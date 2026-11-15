@@ -1346,18 +1346,18 @@ void MadraInteriors_AskToStayLonger(void) {
 /// after them, as they fetch the Djinni for the Healing Fungus.
 u32 gMadraInteriors_WifeWalksToBackRoom[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(356), px(72)),
+    SC_MOVE_XZ(356, 72),
     SC_SYNC,
-    SC_MOVE(px(324), 0, px(73)),
+    SC_MOVE(324, 0, 73),
     SC_SYNC,
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_END,
 };
 
 /// The leader's script as the old man passes: one step aside.
 u32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(339), px(111)),
+    SC_MOVE_XZ(339, 111),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),
@@ -1369,22 +1369,22 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
 /// The mushroom lover's script off to the back room to fetch Char.
 u32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(356), px(72)),
+    SC_MOVE_XZ(356, 72),
     SC_SYNC,
-    SC_MOVE(px(324), 0, px(73)),
+    SC_MOVE(324, 0, 73),
     SC_SYNC,
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_END,
 };
 
 /// The mushroom cook's script back to her place.
 u32 gMadraInteriors_WifeComesBack[] = {                                                               
       SC_ANIMATION(2),                                                               
-      SC_POSITION(px(327), 0, px(71)),                                 
+      SC_POSITION(327, 0, 71),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(px(352), 0, px(72)),                                     
+      SC_MOVE(352, 0, 72),                                     
       SC_SYNC,                                                                 
-      SC_MOVE_XZ(px(373), px(109)),                                     
+      SC_MOVE_XZ(373, 109),                                     
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
@@ -1399,11 +1399,11 @@ u32 gMadraInteriors_WifeComesBack[] = {
 /// The mushroom lover's script back from the back room with Char.
 u32 gMadraInteriors_OldManComesBack[] = {                                                               
       SC_ANIMATION(2),                                                               
-      SC_POSITION(px(327), 0, px(71)),                                 
+      SC_POSITION(327, 0, 71),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(px(352), 0, px(72)),                                     
+      SC_MOVE(352, 0, 72),                                     
       SC_SYNC,                                                                 
-      SC_MOVE_XZ(px(373), px(97)),                                     
+      SC_MOVE_XZ(373, 97),                                     
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
@@ -1419,11 +1419,11 @@ u32 gMadraInteriors_OldManComesBack[] = {
 /// leader.
 u32 gMadraInteriors_CharFollows[] = {
     SC_ANIMATION(2),
-    SC_POSITION(px(327), px(24), px(71)),
+    SC_POSITION(327, 24, 71),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_MOVE(px(352), 0, px(72)),
+    SC_MOVE(352, 0, 72),
     SC_SYNC,
-    SC_MOVE_XZ(px(373), px(97)),
+    SC_MOVE_XZ(373, 97),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
@@ -1811,9 +1811,9 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
 
 /// The interrogators walk out of the jail once Piers has been questioned.
 u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(px(408), 0, px(872)),                           
-      SC_SYNC,   SC_MOVE(px(408), 0, px(904)),                           
-      SC_SYNC,   SC_MOVE(px(408), 0, px(920)),                           
+      SC_ANIMATION(2), SC_MOVE(408, 0, 872),                           
+      SC_SYNC,   SC_MOVE(408, 0, 904),                           
+      SC_SYNC,   SC_MOVE(408, 0, 920),                           
       SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };

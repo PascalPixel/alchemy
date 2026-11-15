@@ -1027,7 +1027,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveWithinMapBounds(px(658), -1, px(164), 1);
+  FieldCamera_MoveTo(658, CAMERA_KEEP, 164, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM2_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1054,7 +1054,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
 void DehkanPlateau_CannonFleesEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(px(980), -1, px(168), 1);
+  FieldCamera_MoveTo(980, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM2_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1065,7 +1065,7 @@ void DehkanPlateau_CannonFleesEast(void) {
   Actor_WalkToAndWait(ACTOR_ROOM2_CANNON, 940, 168);
   Actor_WalkToAndWait(ACTOR_ROOM2_CANNON, 984, 152);
   Actor_WalkToAndWait(ACTOR_ROOM2_CANNON, 1040, 152);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM2_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM2_CANNON, 0, 0);
   Event_Wait(20);
   GameFlag_Set(FLAG_CANNON_FLED_EAST);
   Event_End();
@@ -1075,7 +1075,7 @@ void DehkanPlateau_CannonFleesEast(void) {
 void DehkanPlateau_CannonLeapsAway(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveWithinMapBounds(px(144), -1, px(107), 1);
+  FieldCamera_MoveTo(144, CAMERA_KEEP, 107, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM3_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1105,7 +1105,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM3_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
-  FieldCamera_MoveWithinMapBounds(px(424), -1, px(152), 1);
+  FieldCamera_MoveTo(424, CAMERA_KEEP, 152, 1);
   Actor_SetSpeed(ACTOR_ROOM3_CANNON, 1.6);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 424, 152);
   Actor_FaceDirectionById(ACTOR_ROOM3_CANNON, FACING_EAST, 20);
@@ -1254,7 +1254,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_SetSpeed(ACTOR_ROOM3_CANNON, 1.6);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 712, 280);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveWithinMapBounds(px(712), -1, px(136), 1);
+  FieldCamera_MoveTo(712, CAMERA_KEEP, 136, 1);
   MapGrid_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(ACTOR_ROOM3_CANNON, 1);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 712, 200);
@@ -1282,7 +1282,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(ACTOR_ROOM3_CANNON, 6, 16);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM3_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM3_CANNON, 0, 0);
   Event_Wait(20);
   GameFlag_Set(FLAG_CANNON_CRUMBLED_PILLARS);
   Event_End();
@@ -1433,7 +1433,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Actor_FaceDirectionById(ACTOR_ROOM5_CANNON, FACING_WEST, 60);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 104);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 80);
-  Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_CANNON, 0, 0);
+  Actor_SetPosition(ACTOR_ROOM5_CANNON, 0, 0);
   Event_Wait(20);
   if (gDehkanPlateau_PoundCube != NULL) {
     gDehkanPlateau_PoundCube->motionFlags = 0;
@@ -1454,7 +1454,7 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 16);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveWithinMapBounds(px(760), px(32), px(204), 1);
+  FieldCamera_MoveTo(760, 32, 204, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
@@ -1631,7 +1631,7 @@ void DehkanPlateau_InitializeRoom2(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_47);
   }
   if (GameFlag_Get(FLAG_CANNON_FLED_EAST) != 0)
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM2_CANNON, 0, 0);
+    Actor_SetPosition(ACTOR_ROOM2_CANNON, 0, 0);
   DehkanPlateau_HideRoom2Actors();
 }
 
@@ -1728,7 +1728,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   if (GameFlag_Get(FLAG_CANNON_CRUMBLED_PILLARS) != 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_10);
     GameFlag_Set(FLAG_SCENE_TEMP_16);
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM3_CANNON, 0, 0);
+    Actor_SetPosition(ACTOR_ROOM3_CANNON, 0, 0);
   }
   CrumblingPillars_Place(gDehkanPlateau_Room3CrumblingPillars);
   DehkanPlateau_SetRoom3StandingPillarCells();
@@ -1919,7 +1919,7 @@ void DehkanPlateau_InitializeRoom5(void) {
     GameFlag_Set(entrance + FLAG_FELL_THROUGH_FIRST - FIRST_LANDING_ENTRANCE);
   }
   if (Flag_Test(FLAG_CANNON_DROPPED_POUND_CUBE) != 0)
-    Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_CANNON, 0, 0);
+    Actor_SetPosition(ACTOR_ROOM5_CANNON, 0, 0);
   DehkanPlateau_DrawRoom5FallLanding();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance > 16) {
@@ -2037,7 +2037,7 @@ u32 gFieldEffect_LongScript[] = {
 u32 gDehkanPlateau_DustScript[] = {
     SC_WAIT(33),
     SC_SET(SW_HOOK, 0),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };

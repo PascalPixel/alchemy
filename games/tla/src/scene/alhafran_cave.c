@@ -582,7 +582,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   effect->watchedActor = actor15;
   position[1] = actor15->y.fixed + px(16);
   position[2] = actor15->z.fixed;
-  FieldVector_AddPolarOffset(px(16), 0xc000, position);
+  FieldVector_AddPolarOffset(16, 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
@@ -834,11 +834,11 @@ s16 gAlhafranCave_Puddles[] = {
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(16), 0, 0),
+    SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(0, 0, -px(60)),
+    SC_MOVE_BY(0, 0, -60),
     SC_SYNC,
-    SC_MOVE_BY(-px(4), 0, 0),
+    SC_MOVE_BY(-4, 0, 0),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -848,15 +848,15 @@ s32 gAlhafranCave_GuardStepsAsideScript[] = {
 
 u32 gAlhafranCave_VisitorsLeaveScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(780), 0, px(288)),
+    SC_MOVE(780, 0, 288),
     SC_SYNC,
-    SC_MOVE_BY(0, 0, px(12)),
+    SC_MOVE_BY(0, 0, 12),
     SC_SYNC,
-    SC_MOVE_BY(px(64), 0, 0),
+    SC_MOVE_BY(64, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(px(32), 0, px(32)),
+    SC_MOVE_BY(32, 0, 32),
     SC_SYNC,
-    SC_MOVE_BY(0, 0, px(54)),
+    SC_MOVE_BY(0, 0, 54),
     SC_SYNC,
     SC_END,
 };

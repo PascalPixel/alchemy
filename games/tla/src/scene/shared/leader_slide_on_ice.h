@@ -50,7 +50,7 @@ top:
     heading = (s16)ArcTan2(z - actor->z.fixed, x - actor->x.fixed);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  FieldVector_AddPolarOffset(px(16), heading, &probe);
+  FieldVector_AddPolarOffset(16, heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
@@ -110,7 +110,7 @@ test:
     struct Vector3 *step;
 
     step = &probe;
-    FieldVector_AddPolarOffset(px(16), heading, step);
+    FieldVector_AddPolarOffset(16, heading, step);
     /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
      * address. */
     step = NULL;

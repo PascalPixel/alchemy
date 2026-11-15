@@ -163,7 +163,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     SET_VECTOR(position, px(200), px(-32), px(164));
     radius = Random16();
     angle = Random16();
-    FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
+    FieldVector_AddPolarOffsetFixed((radius << 5) + 0x80000, angle, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
   }
   object->userValue = object->timer;

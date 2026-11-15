@@ -56,7 +56,7 @@ retry:
     angle = ArcTan2(targetZ - object->z.fixed, targetX - object->x.fixed);
     angle = (angle + 0x2000) & 0xc000;
   }
-  FieldVector_AddPolarOffset(px(16), angle, position);
+  FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y.fixed > px(8)) {
@@ -132,7 +132,7 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address. */
   __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(px(16), angle, position);
+  FieldVector_AddPolarOffset(16, angle, position);
   q = position;
   cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
   if (cell != 255)

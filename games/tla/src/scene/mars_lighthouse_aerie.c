@@ -3329,31 +3329,31 @@ s32 gMarsLighthouseAerie_BeaconFireScript[] = {
 
 u32 gMarsLighthouseAerie_JennaApproachScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(496), 0, px(328)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(496, 0, 328), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_ShebaApproachScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(480), 0, px(328)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(480, 0, 328), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_PiersApproachScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(488), 0, px(320)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(488, 0, 320), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_IvanApproachScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(528), 0, px(328)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(528, 0, 328), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_KradenApproachScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(512), 0, px(328)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(512, 0, 328), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
@@ -3362,7 +3362,7 @@ s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(64, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -3378,7 +3378,7 @@ u32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
 
 u32 gMarsLighthouseAerie_LeaderReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(500), 0, px(306)),                     
+          SC_ANIMATION(2),   SC_MOVE(500, 0, 306),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3386,7 +3386,7 @@ u32 gMarsLighthouseAerie_LeaderReadyScript[] =
 
 u32 gMarsLighthouseAerie_IsaacReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(524), 0, px(306)),                     
+          SC_ANIMATION(2),   SC_MOVE(524, 0, 306),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3394,7 +3394,7 @@ u32 gMarsLighthouseAerie_IsaacReadyScript[] =
 
 u32 gMarsLighthouseAerie_JennaReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(488), 0, px(320)),                     
+          SC_ANIMATION(2),   SC_MOVE(488, 0, 320),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3402,20 +3402,20 @@ u32 gMarsLighthouseAerie_JennaReadyScript[] =
 
 u32 gMarsLighthouseAerie_ShebaReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(472), 0, px(304)),                     
+          SC_ANIMATION(2),   SC_MOVE(472, 0, 304),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),                    
           SC_WAIT(10), SC_END,                                                 
   };
 
 u32 gMarsLighthouseAerie_PiersReadyScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(px(464), 0, px(280)), SC_SYNC,     SC_ANIMATION(1), 
+      SC_ANIMATION(2),   SC_MOVE(464, 0, 280), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(10), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(10), SC_END,    
   };
 
 u32 gMarsLighthouseAerie_IvanReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(538), 0, px(320)),                     
+          SC_ANIMATION(2),   SC_MOVE(538, 0, 320),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3423,7 +3423,7 @@ u32 gMarsLighthouseAerie_IvanReadyScript[] =
 
 u32 gMarsLighthouseAerie_MiaReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(552), 0, px(304)),                     
+          SC_ANIMATION(2),   SC_MOVE(552, 0, 304),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3431,7 +3431,7 @@ u32 gMarsLighthouseAerie_MiaReadyScript[] =
 
 u32 gMarsLighthouseAerie_GaretReadyScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(560), 0, px(280)),                   
+          SC_ANIMATION(2),   SC_MOVE(560, 0, 280),                   
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_WEST),                         
           SC_WAIT(10), SC_END,                                                 
@@ -3451,7 +3451,7 @@ u32 gMarsLighthouseAerie_JennaToBodiesScript[] = {
 
 u32 gMarsLighthouseAerie_JennaTurnScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(486), 0, px(286)),                     
+          SC_ANIMATION(2),   SC_MOVE(486, 0, 286),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3459,19 +3459,19 @@ u32 gMarsLighthouseAerie_JennaTurnScript[] =
 
 u32 gMarsLighthouseAerie_LeaderTurnScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(504), 0, px(300)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(504, 0, 300), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_IsaacTurnScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2), SC_MOVE(px(528), 0, px(292)), SC_SYNC, SC_ANIMATION(1),   
+          SC_ANIMATION(2), SC_MOVE(528, 0, 292), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gMarsLighthouseAerie_GaretTurnScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(560), 0, px(280)),                   
+          SC_ANIMATION(2),   SC_MOVE(560, 0, 280),                   
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_WEST),                         
           SC_WAIT(10), SC_END,                                                 
@@ -3479,7 +3479,7 @@ u32 gMarsLighthouseAerie_GaretTurnScript[] =
 
 u32 gMarsLighthouseAerie_MiaTurnScript[] =                                                                 
       {                                                                        
-          SC_ANIMATION(2),   SC_MOVE(px(548), 0, px(292)),                     
+          SC_ANIMATION(2),   SC_MOVE(548, 0, 292),                     
           SC_SYNC,     SC_ANIMATION(1),                                              
           SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),                    
           SC_WAIT(10), SC_END,                                                 
@@ -3507,7 +3507,7 @@ u32 gMarsLighthouseAerie_BeamShootUpScript[] = {
     SC_ADD(SW_Y, px(4)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -3516,7 +3516,7 @@ u32 gMarsLighthouseAerie_BeamRiseScript[] = {
     SC_ADD(SW_Y, px(2)),
     SC_WAIT(1),
     SC_LOOP(160, SC_TOP),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
@@ -3529,7 +3529,7 @@ s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
     SC_ADD(SW_Y, -px(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_RELEASE,
 };

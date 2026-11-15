@@ -1056,7 +1056,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
    * sets r2 from r8 before the second push reads it. */
   angle = &orbiter->angle;
@@ -1070,7 +1070,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, *angle, &orbiter->x);
   AquaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
@@ -1195,7 +1195,8 @@ spiral:
   Actor_SelectAnimation(spark, 7);
   Actor_SetSpriteFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
-  FieldVector_AddPolarOffset(spark->riseBaseY, spark->timer, &spark->x.fixed);
+  FieldVector_AddPolarOffsetFixed(spark->riseBaseY, spark->timer,
+                                  &spark->x.fixed);
   Actor_StartScript(spark, gAquaRockInside_RisingSparkScript);
   if (i == 3) {
     Actor_SetSpriteColorById(secondId, 256);
@@ -2367,8 +2368,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
         if (turn != 8) {
           // The unsigned % 4: as & 3 the mask narrows to a halfword and pools.
           stream->direction = (u32)(stream->direction + turn) % 4;
-          FieldVector_AddPolarOffset(px(16), stream->direction << 14,
-                                     &stream->x);
+          FieldVector_AddPolarOffset(16, stream->direction << 14, &stream->x);
         }
       } while (again != 0);
       state->count = count;
@@ -2568,7 +2568,7 @@ u32 gAquaRockInside_SparkScript[] = {
 };
 
 u32 gAquaRockInside_TabletGlowScript[] = {
-    SC_MOVE_BY(0, px(160), 0),
+    SC_MOVE_BY(0, 160, 0),
     SC_SYNC,
     SC_RELEASE,
     SC_END,
@@ -2586,14 +2586,14 @@ s32 gAquaRockInside_RiserScript[] = {
   };
 
 u32 gAquaRockInside_TabletRiseScript[] = {
-    SC_MOVE_BY(0, px(24), 0),
+    SC_MOVE_BY(0, 24, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 4),
     SC_END,
 };
 
 u32 gAquaRockInside_PiersRiseScript[] = {
-    SC_MOVE_BY(0, px(16), 0),
+    SC_MOVE_BY(0, 16, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 4),
     SC_END,
@@ -2601,7 +2601,7 @@ u32 gAquaRockInside_PiersRiseScript[] = {
 
 s32 gAquaRockInside_TabletSettleScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -px(24), 0),
+    SC_MOVE_BY(0, -24, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 0),
     SC_END,
@@ -2609,7 +2609,7 @@ s32 gAquaRockInside_TabletSettleScript[] = {
 
 s32 gAquaRockInside_PiersSettleScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -px(16), 0),
+    SC_MOVE_BY(0, -16, 0),
     SC_SYNC,
     SC_SET(SW_MOTION, 3),
     SC_END,

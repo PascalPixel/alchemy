@@ -804,21 +804,21 @@ s32 Scene_PrepareMap(void) {
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(539), px(327)),
+    SC_MOVE_XZ(539, 327),
     SC_SYNC,
-    SC_MOVE_XZ(px(583), px(327)),
+    SC_MOVE_XZ(583, 327),
     SC_SYNC,
-    SC_MOVE_XZ(px(583), px(300)),
+    SC_MOVE_XZ(583, 300),
     SC_SYNC,
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(150),
     SC_SET(SW_MOTION, 1),
-    SC_POSITION(px(582), 0, px(266)),
-    SC_MOVE(px(582), 0, px(248)),
+    SC_POSITION(582, 0, 266),
+    SC_MOVE(582, 0, 248),
     SC_SYNC,
-    SC_MOVE_XZ(px(570), px(248)),
+    SC_MOVE_XZ(570, 248),
     SC_SYNC,
-    SC_MOVE_XZ(px(570), px(278)),
+    SC_MOVE_XZ(570, 278),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
@@ -828,7 +828,7 @@ u32 gLoho_FirstMinerGoesToWall[] = {
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
     SC_ANIMATION(2),
-    SC_MOVE_BY(px(4), 0, px(-40)),
+    SC_MOVE_BY(4, 0, -40),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -837,9 +837,9 @@ s32 gLoho_SecondMinerStepsUp[] = {
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
     SC_ANIMATION(2),
-    SC_MOVE_BY(0, 0, px(-40)),
+    SC_MOVE_BY(0, 0, -40),
     SC_SYNC,
-    SC_MOVE_XZ(px(512), px(303)),
+    SC_MOVE_XZ(512, 303),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -847,24 +847,24 @@ s32 gLoho_ThirdMinerStepsUp[] = {
 
 u32 gLoho_FirstMinerWalksBack[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(570), 0, px(248)),
+    SC_MOVE(570, 0, 248),
     SC_SYNC,
-    SC_MOVE(px(583), 0, px(248)),
+    SC_MOVE(583, 0, 248),
     SC_SYNC,
-    SC_MOVE(px(582), 0, px(266)),
+    SC_MOVE(582, 0, 266),
     SC_SYNC,
-    SC_CMD_03,
+    SC_POSITION_ORIGIN,
     SC_WAIT(20),
     SC_END,
 };
 
 u32 gLoho_FirstMinerFetchesCannon[] = {
-    SC_POSITION(px(583), 0, px(327)),
+    SC_POSITION(583, 0, 327),
     SC_SET(SW_MOTION, 0),
-    SC_POSITION(px(583), 0, px(300)),
-    SC_MOVE_XZ(px(583), px(327)),
+    SC_POSITION(583, 0, 300),
+    SC_MOVE_XZ(583, 327),
     SC_SYNC,
-    SC_MOVE_XZ(px(554), px(332)),
+    SC_MOVE_XZ(554, 332),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -872,16 +872,16 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
 
 u32 gLoho_FirstMinerReturns[] = {
     SC_ANIMATION(2),
-    SC_MOVE_XZ(px(472), px(331)),
+    SC_MOVE_XZ(472, 331),
     SC_SYNC,
-    SC_MOVE_XZ(px(472), px(361)),
+    SC_MOVE_XZ(472, 361),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gLoho_ForemanComes[] = {
-    SC_MOVE_BY(0, px(2), 0),
+    SC_MOVE_BY(0, 2, 0),
     SC_SYNC,
     SC_END,
     SC_ANIMATION(5),
@@ -909,7 +909,7 @@ u32 gLoho_VillagerPaces[] = {
 
 u32 gLoho_VillagerReturns[] = {
     SC_ANIMATION(2),
-    SC_MOVE(px(128), 0, px(120)),
+    SC_MOVE(128, 0, 120),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_LABEL(1),
@@ -926,18 +926,18 @@ u32 gLoho_VillagerReturns[] = {
 };
 
 u32 gLoho_VillagerMovesWest[] = {                                                               
-      SC_SET(SW_SPEED, 0xe666),                                                
+      SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(128), 0, px(144)),                                      
+      SC_MOVE(128, 0, 144),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_END,                                                                  
   };
 
 u32 gLoho_VillagerMovesNorth[] = {                                                               
-      SC_SET(SW_SPEED, 0xe666),                                                
+      SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
-      SC_MOVE(px(159), 0, px(128)),                                      
+      SC_MOVE(159, 0, 128),                                      
       SC_SYNC,                                                                 
       SC_ANIMATION(1),                                                               
       SC_END,                                                                  

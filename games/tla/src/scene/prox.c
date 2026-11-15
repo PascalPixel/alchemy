@@ -426,16 +426,11 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
     u32 facing = object->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      /* FAKEMATCH(temporary): the count and movementState's address held in
-       * locals before the test. */
-      s16 count = gFieldWork->blockedSteps;
-      u8 *movementState = &object->paused;
-
-      if (count > 120) {
-        *movementState = 0;
+      if (gFieldWork->blockedSteps > 120) {
+        object->paused = 0;
         Actor_SelectAnimation(object, 2);
       } else {
-        *movementState = 1;
+        object->paused = 1;
         Actor_SelectAnimation(object, 1);
         result = 1;
       }

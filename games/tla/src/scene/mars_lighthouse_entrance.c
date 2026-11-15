@@ -2178,8 +2178,6 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
 
   mask = 64;
   x = FIELD_CELL(object->x.fixed);
-  do {
-  } while (0);
   x |= (s16)(event->x & mask);
   z = FIELD_CELL(object->z.fixed);
   z |= (s16)(event->z & mask);
@@ -2201,8 +2199,6 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
 
     REG_WINOUT = winout;
   }
-  do {
-  } while (0);
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   event->busy = 1;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
@@ -2215,9 +2211,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     object->y.fixed -= 0x9999;
     System_Wait(1);
   }
-  do {
-    Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  } while (0);
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   event->busy = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();

@@ -2336,8 +2336,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
   s16 y;
   u8 *flags;
 
-  do {
-  } while (0);
   object = arg;
   owner = Actor_Get(party->leaderActorId);
   ownerY = FIELD_PIXEL(owner->y.fixed);

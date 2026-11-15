@@ -1166,7 +1166,8 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
   z += px(460);
   object = ObjectCreate_(SPARK_SPRITE, x, px(32), z);
   if (object != NULL) {
-    /* FAKEMATCH(barrier): an empty asm clobbering r0. */
+    /* FAKEMATCH(barrier): the form kept; as without the asm, 1 of 91
+     * instructions differ in tla-en. */
     asm("" : : : "r0");
     object->retainSpriteCache = 2;
     object->motionFlags = 0;

@@ -2328,9 +2328,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->acceleration = px(1) / 8;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
-  do {
-    actor->scaleY = 0;
-  } while (0);
+  actor->scaleY = 0;
   actor->timer = 0;
   actor->watchedActor = self->watchedActor;
   Event_PlaySound(SE_104);

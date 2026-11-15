@@ -134,8 +134,8 @@ extern s16 gLemuriaPalace_GlowColors[];
 /// Every sixth frame rotates colours 1-14 of background palette 12 by one
 /// place; every frame sets its colour 15 from a twelve-step glow.
 void LemuriaPalace_CycleGlowColors(void) {
-  /* FAKEMATCH(temporary): one colour local for the rotated colour and the
-   * glow's. */
+  /* FAKEMATCH(temporary): the form kept; as saved and color apart, 8 of 35
+   * instructions differ in tla-en. */
   s32 color;
 
   if (gFrameCount % 6 == 0) {

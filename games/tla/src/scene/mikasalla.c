@@ -215,15 +215,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
-  struct Actor *object;
-  u8 flags;
 
-  object = Actor_GetById(ACTOR_CHICKEN);
-  flags = object->priorityFlags & ~1;
-  do {
-    party = &gMainRoutineWork;
-  } while (0);
-  object->priorityFlags = flags;
+  Actor_GetById(ACTOR_CHICKEN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (party->next == SCENE_MIKASALLA_NORTH) {

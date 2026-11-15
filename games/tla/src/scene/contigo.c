@@ -39,7 +39,7 @@ enum ContigoDiceHallEntrance {
 /// The village's people and Djinn (gContigo_VillagePlacements).
 enum ContigoVillageActorId {
   /// "The Anemos blood in our veins often brings about strange..."
-  ACTOR_CHILD_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
+  ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
   /// "Everyone's been going on about how amazing it was to watch the ship
   /// fly..."; once the beacon is lit, "The beacon within Jupiter Lighthouse
   /// will soon be lit."
@@ -79,7 +79,7 @@ enum ContigoShopsActorId {
   ACTOR_OLD_WOMAN_FEELING_THE_COLD,
   ACTOR_ITEM_MERCHANT,
   /// "Soon, the siblings with the power of the Anemos will return."
-  ACTOR_CHILD_ON_THE_SIBLINGS,
+  ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
   /// "The power of the Anemos is all but gone in Contigo."
   ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
   /// The baby whose furrowed brow brings the wind (Contigo_BabyThinks).
@@ -829,20 +829,20 @@ void Contigo_BabyThinks(void) {
   // "Babu bawaba bibaw."
   Event_ShowMessageAndWait(ACTOR_BABY, 0);
   Actor_SetAnimationById(ACTOR_BABY, 1);
-  FieldActor_ShowEmote(ACTOR_CHILD_ON_THE_SIBLINGS,
+  FieldActor_ShowEmote(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_FaceDirection(ACTOR_CHILD_ON_THE_SIBLINGS, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FACING_WEST, 20);
   // "It sure is drafty in this shabby old house."
-  Event_ShowMessageAndWait(ACTOR_CHILD_ON_THE_SIBLINGS, 0);
+  Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
                                     FACING_EAST);
   // "When the Wings of Anemos are complete, let's fix the house!"
   Event_ShowMessageAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 0);
-  Actor_SetAnimationById(ACTOR_CHILD_ON_THE_SIBLINGS, 3);
+  Actor_SetAnimationById(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 3);
   Actor_SetAnimationAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 3);
   Actor_FaceDirection(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_NORTH_NORTHEAST,
                       0);
-  Actor_FaceDirectionAndWait(ACTOR_CHILD_ON_THE_SIBLINGS,
+  Actor_FaceDirectionAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
                              FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
@@ -3141,12 +3141,12 @@ struct Trigger gContigo_VillageTriggers[] = {
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SHINE, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
     {TRIGGER_TALK, ACTOR_SHINE, IF_FLAG_SET(FLAG_SHINE_FREED), EVENT(Contigo_FreedDjinniJoinsParty)},
-    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
-    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAreYouLookingForIsaac)},
-    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAreYouLookingForIsaac)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
     {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheBeaconWithinJupiterLighthouse)},
     {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEveryonesLeftTownForThe)},
     {TRIGGER_TALK, ACTOR_WOMAN_FORESEEING_THE_BEACON, CONDITION_ALWAYS, MSGNO(MsgContigoEveryonesBeenGoingOnAbout)},
@@ -3261,10 +3261,10 @@ struct Trigger gContigo_ShopsTriggers[] = {
     {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOhHowIWantTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatTheWingsAreDone)},
-    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
-    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIJustKnowIvanBecame)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoIvanHasThePowerOf)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIJustKnowIvanBecame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, CONDITION_ALWAYS, MSGNO(MsgContigoIvanHasThePowerOf)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePowerOfTheAnemos)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_ANEMOS_POWER, CONDITION_ALWAYS, MSGNO(MsgContigoItsUpToThePeople)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoATerribleMisfortuneFellOn)},

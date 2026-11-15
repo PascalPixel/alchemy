@@ -894,7 +894,7 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSixthBush)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13,
      IF_FLAG_SET(0x96e), EVENT(AncientLemuria_StartTremorOnTheStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, IF_FLAG_SET(0x96e),
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_RIMES_STATUE, IF_FLAG_SET(0x96e),
      EVENT(AncientLemuria_TremorShakesOutRime)},
     {TRIGGER_TABLE_END},
 };

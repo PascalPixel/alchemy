@@ -675,7 +675,7 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
     {STEP_TRIGGER_WALKING, 77, CONDITION_ALWAYS,
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_00,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STATUE, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_00,
      EVENT(AnemosInnerSanctumEntrance_MoveStatue)},

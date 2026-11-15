@@ -115,26 +115,18 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
-  s32 leader;
-  s32 jump;
-
   GameFlag_Set(FLAG_BREAD_SHAKEN_DOWN);
-  /* FAKEMATCH(temporary): the leader's id read through its address kept as a
-   * number, so that it stays in a register. */
-  leader = (s32)&gMainRoutineWork;
-  leader += offsetof(struct MainRoutineWork, leaderActorId);
-  jump = px(6);
-  Actor_GetById(*(s32 *)leader)->velocityY = jump;
-  Actor_SetSpeed(*(s32 *)leader, 2);
-  Actor_WalkTo(*(s32 *)leader, 136, 488);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->velocityY = px(6);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 136, 488);
   Event_Wait(10);
   Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
   Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
-  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = jump;
+  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = px(6);
   Sound_Play(SE_POUND);
-  Actor_WaitForMoveById(*(s32 *)leader);
-  Actor_SetAnimationById(*(s32 *)leader, 1);
-  Actor_FaceDirectionById(*(s32 *)leader, FACING_NORTH, 0);
+  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 1);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_LARGE_BREAD);
   Sound_Play(SE_DOOR_CLOSE);

@@ -174,7 +174,7 @@ struct TalkActor {
   u8 unk63; ///< Func_020006d0 reads it
 };
 
-/* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
+/// One id of a list ended by 0xffff, as Pillars_Raise reads it.
 struct ListedActor {
   u16 id;
 };

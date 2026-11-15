@@ -60,14 +60,9 @@ void MagmaRockInside_PushBlockOnto(void) {
   FieldActor_WaitForMove(next);
   Event_NoOp();
   next->x.fixed = dst.x;
-  {
-    /* FAKEMATCH(temporary): z read ahead of velocityX's store. */
-    s32 z = dst.z;
-
-    next->velocityX = 0;
-    next->z.fixed = z;
-    next->velocityZ = 0;
-  }
+  next->z.fixed = dst.z;
+  next->velocityX = 0;
+  next->velocityZ = 0;
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;

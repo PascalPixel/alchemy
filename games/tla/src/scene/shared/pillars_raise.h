@@ -4,6 +4,8 @@ void Pillars_Raise(u16 *list) {
   struct Actor *leader;
   s32 height;
 
+  /* FAKEMATCH(signature): the list's terminator read through a one-field struct
+   * view, and the shape stored through another. */
   while (((struct ListedActor *)list)->id != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
     u8 *layer = &object->layer;

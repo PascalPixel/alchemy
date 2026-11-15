@@ -33,6 +33,8 @@ enum SoundId {
   MUS_IZUMO_CELEBRATION,
   /// The field music of Izumo and the Izumo Ruins.
   MUS_IZUMO,
+  /// Plays as the party learns who the Doom Dragon was, at Mars Lighthouse's
+  /// aerie (MarsLighthouseAerie_FindWhoTheDragonWas).
   MUS_008,
   /// The field music of the Kandorean Temple's first seven rooms.
   MUS_KANDOREAN_TEMPLE,
@@ -51,6 +53,9 @@ enum SoundId {
   MUS_GAROH,
   /// The field music of Yallam and a Mikasalla house.
   MUS_YALLAM,
+  /// Plays as Yallam's children start their song game ("If you want to go to
+  /// the stars..."), and as Echo is met on the World Map once flag 0x175 is
+  /// set.
   MUS_017,
   MUS_018,
   /// The field music of Air's Rock.
@@ -79,12 +84,23 @@ enum SoundId {
   MUS_TAOPO_SWAMP,
   /// The field music of the Ankohl Ruins.
   MUS_ANKOHL_RUINS,
+  /// Plays as Karst and Agatio face the party at Jupiter Lighthouse, and as
+  /// Agatio wakes in the Mars Star room.
   MUS_034 = 34,
+  /// Plays as Briggs steals the ship in Eastern Alhafra, and as Echo is met on
+  /// the World Map before flag 0x175 is set.
   MUS_035,
+  /// Plays as a foe confronts the party: Karst in Madra, the challenger before
+  /// the Avimander in the Champa cliff caves, the Jupiter Star cast at the
+  /// beacon, and the Doom Dragon.
   MUS_036,
   /// The field music of Shaman Village and Loho.
   MUS_SHAMAN_VILLAGE,
+  /// Plays on the World Map as Sheba tells what she hoped to learn at Jupiter
+  /// Lighthouse.
   MUS_038,
+  /// Plays as Alex appears: in Champa, at Jupiter Lighthouse's beacon and
+  /// fight, and before the Doom Dragon.
   MUS_039,
   /// The title intro's music at power-on, when a save file exists, and before
   /// a new game's intro (the title's Scene_Initialize), as The Broken Seal's
@@ -105,9 +121,15 @@ enum SoundId {
   /// The battle music: the usual one, and with Felix in the front row.
   MUS_BATTLE,
   MUS_051,
+  /// Plays as the Aqua Hydra rises before the Lemurian Ship
+  /// (LemurianShip_FightAquaHydra).
   MUS_052,
+  /// Plays as Karst and Agatio wake as the Flame Dragons in the Mars Star room.
   MUS_053,
   MUS_054,
+  /// The Broken Seal's MUS_BOULDER_CHASE, note for note: after a link battle's
+  /// own music (Battle_Run), and at Super Lucky Dice's results past the second
+  /// kind (SuperLuckyDice_Run).
   MUS_055,
   /// The battle music at sea, while the Lemurian Ship is the actor events move
   /// (ownerOverride) and it does not fly.
@@ -117,23 +139,33 @@ enum SoundId {
   MUS_VICTORY,
   /// The party falls in battle.
   MUS_DEFEAT,
-  MUS_060,
+  /// The Broken Seal's MUS_IVAN, note for note.
+  MUS_IVAN,
+  /// Plays as the ship drifts north of the continent on the World Map
+  /// (WorldMap_DriftNorthOfContinent).
   MUS_061,
   /// The field music of Prox.
   MUS_PROX,
+  /// Plays as the Jupiter Star lights Jupiter Lighthouse's beacon, and as the
+  /// Golden Sun rises at Mars Lighthouse's aerie.
   MUS_063,
-  MUS_064,
+  /// Unused: The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, note for note.
+  MUS_UNUSED_TITLE_AFTER_PROLOGUE,
   /// The field music of the Sea of Time.
   MUS_SEA_OF_TIME,
+  /// The Epilogue's music after its first lines.
   MUS_067 = 67,
   /// The staff credits' music (the title's entrance 8, Credits_Run), as The
   /// Broken Seal's MUS_ENDING.
   MUS_ENDING,
-  MUS_070 = 70,
+  /// Unused: The Broken Seal's MUS_TITLE, note for note.
+  MUS_UNUSED_TITLE = 70,
+  /// Plays as a password is entered in the Clear scene (Clear_EnterPassword).
   MUS_071,
   /// The field music of the Mercury Lighthouse scene and one way into the Mars
   /// Lighthouse aerie.
   MUS_MERCURY_LIGHTHOUSE,
+  /// Plays in the Epilogue as the villagers' picture shows.
   MUS_073,
   /// The music of the Clear scene, area "(Clear data)", where data is
   /// transferred.
@@ -200,6 +232,8 @@ enum SoundId {
   SE_119,
   SE_120,
   SE_SCUFFLE,
+  /// Gasp fleeing the party on the Trial Road (TrialRoad_GaspFlees), after
+  /// SE_ENEMY_CRY.
   SE_122,
   SE_MAP_EXIT,
   SE_CHEST_OPEN,
@@ -219,6 +253,10 @@ enum SoundId {
   /// too, as rain starts and in Air's Rock.
   SE_KIRIN,
   SE_ITEM_BREAK,
+  /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the
+  /// party walks (Field_UpdateWalking), as The Broken Seal's row 139; also the
+  /// summon tablets' runes, Champa's embers and the Serac, Eclipse, Cruel Ruin
+  /// and other battle effects.
   SE_139,
   SE_SPIN,
   SE_RUMBLE,
@@ -242,6 +280,9 @@ enum SoundId {
   SE_DOOR_CLOSE,
   SE_160,
   SE_RATTLE,
+  /// The Mercury, Judgment and Neptune battle effects, as The Broken Seal's row
+  /// 162; also Charon and Meteor Blow, the Aquarius Stone in Aqua Rock and the
+  /// Kandorean Temple's steam vents and lifts.
   SE_162,
   SE_163,
   SE_SCATTER,
@@ -251,7 +292,12 @@ enum SoundId {
   SE_MAP_TRANSITION,
   /// Played three times as the Ruin Key opens the Madra Catacombs.
   SE_UNLOCK,
-  SE_169,
+  /// The Broken Seal's row 169, SE_AMBIENT_WIND, beside SE_AMBIENT_WATER;
+  /// nothing plays it here.
+  SE_AMBIENT_WIND,
+  /// The steam vents and waterfalls: Taopo Swamp's and Aqua Rock's vents, the
+  /// settlements' waterfall, the Kandorean Temple and the Apojii Islands, as
+  /// The Broken Seal's row 170.
   SE_170,
   SE_THUNDER,
   SE_THUNDER_LOUD,
@@ -276,8 +322,15 @@ enum SoundId {
   SE_WARP,
   SE_191,
   SE_192,
+  /// A doll placed on one of Gaia Rock's altars ("Felix placed a doll on the
+  /// altar.").
   SE_193,
+  /// A Psynergy Stone's tablet rising in Air's, Aqua, Gaia and Magma Rock as
+  /// Reveal, Parch, Sand and Blaze are learned; also Obaba forging the Trident
+  /// in the Champa cliff caves.
   SE_194,
+  /// The sparks that circle the leader as Reveal, Parch, Sand and Blaze are
+  /// learned, and the Anemos Inner Sanctum's pillar sparks.
   SE_195,
   SE_WISE_ONE_QUEST,
   SE_197,
@@ -315,6 +368,8 @@ enum SoundId {
   SE_TOPPLE,
   SE_SPARKLING_PASSAGE,
   SE_SPLASH,
+  /// The Broken Seal's SE_WATER_DRAIN, note for note: in the Judgment battle
+  /// effect.
   SE_230,
   SE_WATER_LEVEL,
   SE_CRUNCH,
@@ -329,11 +384,14 @@ enum SoundId {
   SE_LOG_FALL,
   SE_WATER_MOVE,
   SE_242,
+  /// A lift of the Lemurian Ship stepped on (LemurianShip_StepOnLift).
   SE_243,
   SE_SANDSTORM,
   SE_245,
   SE_GLITTER,
   SE_COLOSSO_LETTERING,
+  /// An arrow of the Gabomba Statue raised or lowered once its statues are
+  /// ready.
   SE_248,
   SE_249,
   SE_250,
@@ -341,41 +399,41 @@ enum SoundId {
   SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
-  /// The first voice blip of a message: an actor's voice is SE_VOICE_FIRST plus
-  /// four times its voice, plus the letter's low two bits, as in The Broken
-  /// Seal.
-  SE_VOICE_FIRST = 256,
+  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus
+  /// four times its voice, and the letters typed play it plus the letter's low
+  /// two bits, so a voice is four blips, _A to _D, as in The Broken Seal.
+  SE_VOICE_ANIMAL_A = 256,
   SE_VOICE_ANIMAL_2,
   SE_VOICE_ANIMAL_3,
-  SE_VOICE_ANIMAL_4,
-  SE_VOICE_GIRL_1,
-  SE_VOICE_GIRL_2,
+  SE_VOICE_ANIMAL_D,
+  SE_VOICE_GIRL_A,
+  SE_VOICE_GIRL_B,
   SE_VOICE_GIRL_3,
-  SE_VOICE_GIRL_4,
-  SE_VOICE_BOY_1,
-  SE_VOICE_BOY_2,
-  SE_VOICE_BOY_3,
-  SE_VOICE_BOY_4,
-  SE_VOICE_YOUNG_WOMAN_1,
-  SE_VOICE_YOUNG_WOMAN_2,
-  SE_VOICE_YOUNG_WOMAN_3,
-  SE_VOICE_YOUNG_WOMAN_4,
-  SE_VOICE_YOUNG_MAN_1,
-  SE_VOICE_YOUNG_MAN_2,
-  SE_VOICE_YOUNG_MAN_3,
-  SE_VOICE_YOUNG_MAN_4,
-  SE_VOICE_WOMAN_1,
-  SE_VOICE_WOMAN_2,
-  SE_VOICE_WOMAN_3,
-  SE_VOICE_WOMAN_4,
-  SE_VOICE_OLD_MAN_1,
-  SE_VOICE_OLD_MAN_2,
-  SE_VOICE_OLD_MAN_3,
-  SE_VOICE_OLD_MAN_4,
-  SE_VOICE_MAN_1,
-  SE_VOICE_MAN_2,
-  SE_VOICE_MAN_3,
-  SE_VOICE_MAN_4,
+  SE_VOICE_GIRL_D,
+  SE_VOICE_BOY_A,
+  SE_VOICE_BOY_B,
+  SE_VOICE_BOY_C,
+  SE_VOICE_BOY_D,
+  SE_VOICE_YOUNG_WOMAN_A,
+  SE_VOICE_YOUNG_WOMAN_B,
+  SE_VOICE_YOUNG_WOMAN_C,
+  SE_VOICE_YOUNG_WOMAN_D,
+  SE_VOICE_YOUNG_MAN_A,
+  SE_VOICE_YOUNG_MAN_B,
+  SE_VOICE_YOUNG_MAN_C,
+  SE_VOICE_YOUNG_MAN_D,
+  SE_VOICE_WOMAN_A,
+  SE_VOICE_WOMAN_B,
+  SE_VOICE_WOMAN_C,
+  SE_VOICE_WOMAN_D,
+  SE_VOICE_OLD_MAN_A,
+  SE_VOICE_OLD_MAN_B,
+  SE_VOICE_OLD_MAN_C,
+  SE_VOICE_OLD_MAN_D,
+  SE_VOICE_MAN_A,
+  SE_VOICE_MAN_B,
+  SE_VOICE_MAN_C,
+  SE_VOICE_MAN_D,
   SE_STOP_ACTION_SE,
   SE_290 = 290,
   /// Played as an actor takes flight.
@@ -393,6 +451,8 @@ enum SoundId {
   SE_LUCKY_WHEELS_STOP,
   SE_MATERIALIZE,
   SE_STAR_BOUNCE,
+  /// The leader dropping down a ledge or through a hole, a block or flower
+  /// knocked off a ledge, and Jupiter Lighthouse's floor opening.
   SE_310,
   SE_311,
   /// Not a sound: fades out what MUSIC_PLAYER_ACTION_SE and MUSIC_PLAYER_SE5
@@ -404,6 +464,8 @@ enum SoundId {
   SE_LASH = 512,
   SE_520 = 520,
   SE_521,
+  /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
+  /// energized.
   SE_522,
   SE_523,
   SE_524,
@@ -413,18 +475,22 @@ enum SoundId {
   SE_527,
   SE_528,
   SE_529,
+  /// The Sea of Time opening a way (SeaOfTime_Open).
   SE_530,
   SE_531,
   SE_532,
   SE_533,
   SE_534,
+  /// The Madra Catacombs' chest sliding with its bookshelf.
   SE_535,
   SE_536,
   SE_538 = 538,
+  /// The leader emerging as Sand ends (FieldPsynergy_EndSand).
   SE_539,
   /// The field Psynergy Parch.
   SE_PARCH = 542,
   SE_543,
+  /// The sand mound sinking away as Sand ends (FieldPsynergy_EndSand).
   SE_544,
   SE_545,
   SE_546,
@@ -442,6 +508,8 @@ enum SoundId {
   SE_557,
   SE_558,
   SE_559,
+  /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
+  /// stepped toward.
   SE_560,
   SE_561,
   SE_562,
@@ -456,16 +524,21 @@ enum SoundId {
   SE_569,
   SE_570,
   SE_571,
+  /// A rolling block crumbling (Actor_RollAndCrumble), Mars Lighthouse's ice
+  /// ground away, and the Doom Dragon faced.
   SE_572,
   /// Played as Mars Lighthouse's ice sheets crack.
   SE_ICE_CRACK,
   SE_574,
+  /// A face piece or pillar set in place in the Ankohl Ruins.
   SE_575,
   SE_576,
+  /// The Great Gabomba's jaws opening as it sees Kibombo's jewel.
   SE_577,
   SE_578,
   SE_579,
   SE_580,
+  /// The leader jumping down a hole of the Gabomba Statue.
   SE_581,
   SE_582,
   SE_583,
@@ -473,6 +546,7 @@ enum SoundId {
   /// Ankohl Ruins and the Anemos Inner Sanctum.
   SE_BUTTON_PRESS,
   SE_585,
+  /// The Gabomba Statue's cogs turning back.
   SE_586,
   SE_587,
   SE_588,
@@ -483,10 +557,16 @@ enum SoundId {
   SE_592,
   SE_593,
   SE_594,
+  /// The Doom Dragon flickering into the people it was, at Mars Lighthouse's
+  /// aerie.
   SE_595,
+  /// The leader moving as sand (Actor_MoveAsSand), and the scorpion rumbling
+  /// under the Yampi Desert.
   SE_596,
   /// Played as the ship rides the Sea of Time's current.
   SE_CURRENT,
+  /// Rings of light rising: Contigo's sparkle, Mars Lighthouse's aerie, and the
+  /// Psynergy test room.
   SE_598,
   SE_610 = 610,
   SE_611,
@@ -504,32 +584,42 @@ enum SoundId {
   SE_622,
   /// Played as an actor wades through water.
   SE_WADE,
-  MUS_700 = 700,
+  /// The Broken Seal's MUS_VALE, note for note.
+  MUS_VALE = 700,
   /// The field music of Gondowan Settlement.
   MUS_GONDOWAN_SETTLEMENT,
-  MUS_702,
+  /// The Broken Seal's MUS_TOWN_IN_TROUBLE, note for note.
+  MUS_TOWN_IN_TROUBLE,
   /// The field music of Lemuria's palace scene.
   MUS_LEMURIA_PALACE,
-  MUS_704,
+  /// The Broken Seal's MUS_TRET_TREE, note for note.
+  MUS_TRET_TREE,
   /// The reunion of the two parties in Contigo (Contigo_TheReunion).
   MUS_REUNION,
-  MUS_706,
-  MUS_707,
-  MUS_708,
+  /// The Broken Seal's MUS_KALAY, note for note.
+  MUS_KALAY,
+  /// The Broken Seal's MUS_COLOSSO_INTRO, note for note.
+  MUS_COLOSSO_INTRO,
+  /// The Broken Seal's MUS_COLOSSO, note for note.
+  MUS_COLOSSO,
   /// The field music of Lemuria's spring scene and the Link Lobby.
   MUS_LEMURIA_SPRING,
-  MUS_710,
+  /// The Broken Seal's MUS_TOLBI, note for note.
+  MUS_TOLBI,
   /// The field music of the Anemos Inner Sanctum.
   MUS_ANEMOS_INNER_SANCTUM = 720,
   /// The field music of Contigo, the Anemos Sanctum and the Trial Road.
   MUS_CONTIGO,
+  /// The Broken Seal's MUS_ELEMENTAL_STARS, note for note; Mt. Aleph's summit
+  /// plays it.
   MUS_722,
   MUS_723,
   /// The field music of Suhalla Gate and the Yampi Desert Cave.
   MUS_SUHALLA_GATE,
   /// The field music of the Yampi Desert.
   MUS_YAMPI_DESERT,
-  MUS_726,
+  /// The Broken Seal's MUS_SUHALLA, note for note.
+  MUS_SUHALLA,
   /// The field music of the Venus Lighthouse entrance scene, where the game
   /// opens.
   MUS_VENUS_LIGHTHOUSE_ENTRANCE,
@@ -537,8 +627,10 @@ enum SoundId {
   MUS_DEHKAN_PLATEAU,
   /// The field music of the Gabomba Catacombs.
   MUS_GABOMBA_CATACOMBS,
-  MUS_730,
-  MUS_741 = 741,
+  /// The Broken Seal's MUS_BABI, note for note.
+  MUS_BABI,
+  /// The Broken Seal's MUS_TOLBI_BOUND_SHIP, note for note.
+  MUS_TOLBI_BOUND_SHIP = 741,
   /// The field music of Idejima, and of the World Map from one entrance.
   MUS_IDEJIMA,
   /// The field music of Venus Lighthouse.
@@ -546,10 +638,14 @@ enum SoundId {
   /// The battle music when Isaac is in the front row and Felix is not.
   MUS_ISAAC_BATTLE = 750,
   MUS_751,
-  MUS_752,
+  /// The Broken Seal's MUS_BOSS_BATTLE, note for note.
+  MUS_BOSS_BATTLE,
   MUS_753,
   MUS_754,
   MUS_ENDING_LOGO
 };
+
+/// The first voice: the first blip of the animals'.
+#define SE_VOICE_FIRST SE_VOICE_ANIMAL_A
 
 #endif

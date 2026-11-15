@@ -18,12 +18,14 @@ range says which one it is:
 
 A few numbers are not sounds but controls: fade the music out, keep
 whatever is playing, or fade out the effects of one or two players. Every
-number has a name in [sounds.h](../../include/sounds.h), one for each row
-of the song table: a sound whose notes are The Broken Seal's own takes that
-game's name (the message voices, `SE_BELL`, `MUS_ENDING_LOGO`), a tune is
-named for the place it is the music of (`MUS_MADRA`) or the moment it marks
-(`MUS_INN`), and the rest keep their number in theirs, `SE_139` or
-`MUS_700`, until something names them. The one routine that takes them all is `Sound_Play`.
+sound has a name in [sounds.h](../../include/sounds.h), one for each row
+of the song table; a row of the empty song, which plays nothing, has none.
+A sound whose notes are The Broken Seal's own takes that game's name (the
+message voices, `SE_BELL`, `MUS_VALE`), a tune is named for the place it
+is the music of (`MUS_MADRA`) or the moment it marks (`MUS_INN`), an effect
+for what it plays with (`SE_DOLL_PLACED`), and the rest keep their number,
+`SE_104`, until something names them. The one routine that takes them all
+is `Sound_Play`.
 
 Every sound played is also marked as heard, one bit for each number. In
 the link lobby the player can ask for a tune by number, and only the ones

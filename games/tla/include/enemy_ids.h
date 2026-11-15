@@ -16,72 +16,138 @@
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 
 /// Enemy ids, one for each row of enemy_table.c in order, each named from the
-/// English release (MsgEnemyName plus the row). Rows that share a name take
-/// _2 onwards in row order, as the game itself numbers some of them
-/// ("Serpent 6"); a row whose name is ? keeps its row number as its
-/// placeholder.
+/// English release (MsgEnemyName plus the row): an enemy id is the row plus
+/// ENEMY_ID_FIRST. The rows the text names "?" are unused and have no names
+/// here. Where several rows share a name, each takes what tells its battle
+/// apart, as The Broken Seal's do: the one place it is fought, or the Djinni a
+/// Djinni battle is with; rows the game's own text numbers ("Serpent 6",
+/// "Ruffian 2") keep those numbers.
 enum EnemyId {
-  ENEMY_000 = ENEMY_ID_FIRST,
-  ENEMY_VENUS_DJINNI,
-  ENEMY_VENUS_DJINNI_2,
-  ENEMY_VENUS_DJINNI_3,
-  ENEMY_VENUS_DJINNI_4,
-  ENEMY_VENUS_DJINNI_5,
-  ENEMY_VENUS_DJINNI_6,
-  ENEMY_VENUS_DJINNI_7,
-  ENEMY_VENUS_DJINNI_8,
-  ENEMY_VENUS_DJINNI_9,
-  ENEMY_VENUS_DJINNI_10,
-  ENEMY_VENUS_DJINNI_11,
-  ENEMY_VENUS_DJINNI_12,
-  ENEMY_VENUS_DJINNI_13,
-  ENEMY_VENUS_DJINNI_14,
-  ENEMY_MERCURY_DJINNI,
-  ENEMY_MERCURY_DJINNI_2,
-  ENEMY_MERCURY_DJINNI_3,
-  ENEMY_MERCURY_DJINNI_4,
-  ENEMY_MERCURY_DJINNI_5,
-  ENEMY_MERCURY_DJINNI_6,
-  ENEMY_MERCURY_DJINNI_7,
-  ENEMY_MERCURY_DJINNI_8,
-  ENEMY_MERCURY_DJINNI_9,
-  ENEMY_MERCURY_DJINNI_10,
-  ENEMY_MERCURY_DJINNI_11,
-  ENEMY_MERCURY_DJINNI_12,
-  ENEMY_MERCURY_DJINNI_13,
-  ENEMY_MERCURY_DJINNI_14,
-  ENEMY_MERCURY_DJINNI_15,
-  ENEMY_MARS_DJINNI,
-  ENEMY_MARS_DJINNI_2,
-  ENEMY_MARS_DJINNI_3,
-  ENEMY_MARS_DJINNI_4,
-  ENEMY_MARS_DJINNI_5,
-  ENEMY_MARS_DJINNI_6,
-  ENEMY_MARS_DJINNI_7,
-  ENEMY_MARS_DJINNI_8,
-  ENEMY_MARS_DJINNI_9,
-  ENEMY_MARS_DJINNI_10,
-  ENEMY_MARS_DJINNI_11,
-  ENEMY_MARS_DJINNI_12,
-  ENEMY_MARS_DJINNI_13,
-  ENEMY_MARS_DJINNI_14,
-  ENEMY_JUPITER_DJINNI,
-  ENEMY_JUPITER_DJINNI_2,
-  ENEMY_JUPITER_DJINNI_3,
-  ENEMY_JUPITER_DJINNI_4,
-  ENEMY_JUPITER_DJINNI_5,
-  ENEMY_JUPITER_DJINNI_6,
-  ENEMY_JUPITER_DJINNI_7,
-  ENEMY_JUPITER_DJINNI_8,
-  ENEMY_JUPITER_DJINNI_9,
-  ENEMY_JUPITER_DJINNI_10,
-  ENEMY_JUPITER_DJINNI_11,
-  ENEMY_JUPITER_DJINNI_12,
-  ENEMY_JUPITER_DJINNI_13,
-  ENEMY_JUPITER_DJINNI_14,
-  ENEMY_JUPITER_DJINNI_15,
-  ENEMY_059,
-  ENEMY_RUFFIAN,
+  /// Row 0: "???", in no formation; a formation's empty places list it.
+  ENEMY_NONE = ENEMY_ID_FIRST,
+  /// The Djinn the party fights, each element's in the order of their
+  /// numbers, The Broken Seal's rows first; BattleUnit_Set puts them on the
+  /// party's side. A Djinni's battle is a slot of its element's zone, which
+  /// two Djinn share (Encounter_GetDjinnFormation); each row is named for
+  /// the one Djinni whose scene starts its battle (Field_RequestDjinnBattle).
+  /// Unused: The Broken Seal's row for Quartz, level 12, in no formation here.
+  ENEMY_VENUS_DJINNI_UNUSED_QUARTZ,
+  /// Unused: The Broken Seal's row for Vine, level 15.
+  ENEMY_VENUS_DJINNI_UNUSED_VINE,
+  /// Unused: The Broken Seal's row for Bane, level 23.
+  ENEMY_VENUS_DJINNI_UNUSED_BANE,
+  /// Unused: level 3, the battle of Echo's slot, but Echo joins on the World
+  /// Map without a fight.
+  ENEMY_VENUS_DJINNI_UNUSED_ECHO,
+  /// Level 9, on the World Map.
+  ENEMY_VENUS_DJINNI_IRON,
+  /// Level 19, in the Gabomba Statue.
+  ENEMY_VENUS_DJINNI_STEEL,
+  /// Level 20, in the Gabomba Catacombs.
+  ENEMY_VENUS_DJINNI_MUD,
+  /// Level 23, in Taopo Swamp.
+  ENEMY_VENUS_DJINNI_FLOWER,
+  /// Level 27, in the Islet Cave.
+  ENEMY_VENUS_DJINNI_MELD,
+  /// Level 31, on the World Map.
+  ENEMY_VENUS_DJINNI_PETRA,
+  /// Unused: level 3; Salt joins without a fight.
+  ENEMY_VENUS_DJINNI_UNUSED_SALT,
+  /// Unused: level 3; Geode joins without a fight.
+  ENEMY_VENUS_DJINNI_UNUSED_GEODE,
+  /// Unused: level 3; Mold joins without a fight.
+  ENEMY_VENUS_DJINNI_UNUSED_MOLD,
+  /// Level 36, in the Yampi Desert Cave.
+  ENEMY_VENUS_DJINNI_CRYSTAL,
+  /// Unused: The Broken Seal's row for Sleet, level 10.
+  ENEMY_MERCURY_DJINNI_UNUSED_SLEET,
+  /// Unused: The Broken Seal's row for Spritz, level 13.
+  ENEMY_MERCURY_DJINNI_UNUSED_SPRITZ,
+  /// Unused: The Broken Seal's row for Hail, level 18.
+  ENEMY_MERCURY_DJINNI_UNUSED_HAIL,
+  /// Unused: The Broken Seal's row for Dew, level 24.
+  ENEMY_MERCURY_DJINNI_UNUSED_DEW,
+  /// Level 6, in the Kandorean Temple.
+  ENEMY_MERCURY_DJINNI_FOG,
+  /// Level 12, on the World Map.
+  ENEMY_MERCURY_DJINNI_SOUR,
+  /// Unused: level 3; Spring joins without a fight.
+  ENEMY_MERCURY_DJINNI_UNUSED_SPRING,
+  /// Unused: level 3; Shade joins without a fight.
+  ENEMY_MERCURY_DJINNI_UNUSED_SHADE,
+  /// Level 17, on the World Map.
+  ENEMY_MERCURY_DJINNI_CHILL,
+  /// Level 24, in Aqua Rock.
+  ENEMY_MERCURY_DJINNI_STEAM,
+  /// Unused: level 3; Rime joins without a fight.
+  ENEMY_MERCURY_DJINNI_UNUSED_RIME,
+  /// Unused: level 3; Gel joins without a fight.
+  ENEMY_MERCURY_DJINNI_UNUSED_GEL,
+  /// Level 32, in the Shaman Village Cave.
+  ENEMY_MERCURY_DJINNI_EDDY,
+  /// Level 35, at Mars Lighthouse's entrance.
+  ENEMY_MERCURY_DJINNI_BALM,
+  /// Level 34, in the Islet Cave.
+  ENEMY_MERCURY_DJINNI_SERAC,
+  /// Unused: The Broken Seal's row for Forge, level 5.
+  ENEMY_MARS_DJINNI_UNUSED_FORGE,
+  /// Unused: The Broken Seal's row for Corona, level 13.
+  ENEMY_MARS_DJINNI_UNUSED_CORONA,
+  /// Unused: The Broken Seal's row for Flash, level 22.
+  ENEMY_MARS_DJINNI_UNUSED_FLASH,
+  /// Level 8, on the Dehkan Plateau.
+  ENEMY_MARS_DJINNI_CANNON,
+  /// Unused: level 3; Spark joins without a fight.
+  ENEMY_MARS_DJINNI_UNUSED_SPARK,
+  /// Level 16, on the Gondowan Cliffs.
+  ENEMY_MARS_DJINNI_KINDLE,
+  /// Unused: level 3; Char joins without a fight.
+  ENEMY_MARS_DJINNI_UNUSED_CHAR,
+  /// Unused: level 3; Coal joins without a fight.
+  ENEMY_MARS_DJINNI_UNUSED_COAL,
+  /// Level 28, in Tundaria Tower.
+  ENEMY_MARS_DJINNI_REFLUX,
+  /// Level 31, on the World Map.
+  ENEMY_MARS_DJINNI_CORE,
+  /// Unused: level 3; Tinder joins without a fight.
+  ENEMY_MARS_DJINNI_UNUSED_TINDER,
+  /// Unused: level 3; Shine joins without a fight.
+  ENEMY_MARS_DJINNI_UNUSED_SHINE,
+  /// Level 33, in Magma Rock.
+  ENEMY_MARS_DJINNI_FURY,
+  /// Level 35, at Mars Lighthouse's entrance.
+  ENEMY_MARS_DJINNI_FUGUE,
+  /// Unused: The Broken Seal's row for Breeze, level 8.
+  ENEMY_JUPITER_DJINNI_UNUSED_BREEZE,
+  /// Unused: The Broken Seal's row for Zephyr, level 11.
+  ENEMY_JUPITER_DJINNI_UNUSED_ZEPHYR,
+  /// Unused: The Broken Seal's row for Squall, level 18.
+  ENEMY_JUPITER_DJINNI_UNUSED_SQUALL,
+  /// Unused: The Broken Seal's row for Luff, level 25.
+  ENEMY_JUPITER_DJINNI_UNUSED_LUFF,
+  /// Level 7, in the Shrine of the Sea God.
+  ENEMY_JUPITER_DJINNI_BREATH,
+  /// Level 11, in the Yampi Desert.
+  ENEMY_JUPITER_DJINNI_BLITZ,
+  /// Unused: level 3; Ether joins without a fight.
+  ENEMY_JUPITER_DJINNI_UNUSED_ETHER,
+  /// Level 18, in the Kibombo Mountains.
+  ENEMY_JUPITER_DJINNI_WAFT,
+  /// Unused: level 3; Haze joins without a fight.
+  ENEMY_JUPITER_DJINNI_UNUSED_HAZE,
+  /// Level 28, on the World Map.
+  ENEMY_JUPITER_DJINNI_WHEEZE,
+  /// Unused: level 3; Aroma joins without a fight.
+  ENEMY_JUPITER_DJINNI_UNUSED_AROMA,
+  /// Level 32, in Jupiter Lighthouse.
+  ENEMY_JUPITER_DJINNI_WHORL,
+  /// Level 32, on the Trial Road.
+  ENEMY_JUPITER_DJINNI_GASP,
+  /// Unused: level 3; Lull joins without a fight.
+  ENEMY_JUPITER_DJINNI_UNUSED_LULL,
+  /// Level 36, on Treasure Isle.
+  ENEMY_JUPITER_DJINNI_GALE,
+  ENEMY_RUFFIAN = ENEMY_ID_FIRST + 60,
   ENEMY_RUFFIAN_2,
   ENEMY_RUFFIAN_3,
   ENEMY_PUNCH_ANT,
@@ -129,8 +195,7 @@ enum EnemyId {
   ENEMY_KARST,
   ENEMY_KARST_2,
   ENEMY_KARST_3,
-  ENEMY_108,
-  ENEMY_WILD_WOLF,
+  ENEMY_WILD_WOLF = ENEMY_ID_FIRST + 109,
   ENEMY_DIRE_WOLF,
   ENEMY_WHITE_WOLF,
   ENEMY_ANGLE_WORM,
@@ -145,11 +210,17 @@ enum EnemyId {
   ENEMY_KOBOLD,
   ENEMY_WARGOLD,
   ENEMY_KOBOLD_KING,
-  ENEMY_MAD_PLANT,
-  ENEMY_MAD_PLANT_2,
-  ENEMY_MAD_PLANT_3,
-  ENEMY_MAD_PLANT_4,
-  ENEMY_MAD_PLANT_5,
+  /// The Mad Plant of the Gabomba Catacombs (ENCOUNTER_TABLE_MAD_PLANTS, slot
+  /// 0); each Mad Plant row is the one fought in one place.
+  ENEMY_MAD_PLANT_GABOMBA_CATACOMBS,
+  /// The Mad Plant of Taopo Swamp (slot 1).
+  ENEMY_MAD_PLANT_TAOPO_SWAMP,
+  /// The Mad Plant of Gaia Rock (slot 2).
+  ENEMY_MAD_PLANT_GAIA_ROCK,
+  /// The Mad Plant of Jupiter Lighthouse's basement (slot 3).
+  ENEMY_MAD_PLANT_JUPITER_LIGHTHOUSE,
+  /// The Mad Plant of the Trial Road (slot 4).
+  ENEMY_MAD_PLANT_TRIAL_ROAD,
   ENEMY_EMU,
   ENEMY_TALON_RUNNER,
   ENEMY_WINGED_RUNNER,
@@ -395,9 +466,12 @@ enum EnemyId {
   ENEMY_THUNDER_BALL,
   ENEMY_ANGER_BALL,
   ENEMY_GUARDIAN_BALL,
-  ENEMY_AZART_3,
-  ENEMY_SATRAGE_3,
-  ENEMY_NAVAMPA_3,
+  /// Fought with ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE and
+  /// ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE in the Shaman Village Cave (encounter
+  /// zone 102, slot 2).
+  ENEMY_AZART_SHAMAN_VILLAGE_CAVE,
+  ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE,
+  ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE,
   ENEMY_BANDIT_2,
   ENEMY_THIEF_2,
   ENEMY_NOTHING,

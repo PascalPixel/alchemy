@@ -9,38 +9,55 @@
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
-  /// Actor's script, cursor and facing; not named by this view.
-  u8 unk00[8];
-  s32 x;       ///< 16.16 fixed-point pixels
-  s32 y;       ///< 16.16 fixed-point pixels
-  s32 z;       ///< 16.16 fixed-point pixels
-  u8 unk14[4]; ///< Actor's terrainHeight; not named by this view
-  s32 scaleX;  ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;  ///< 16.16 fixed point, 0x10000 full size
-  u8 unk20[3]; ///< not named by this view
+  /// Actor's script pointer, cursor and facing; not named by this view.
+  ///@{
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
+  ///@}
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< Actor's; not named by this view
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;       ///< Actor's; not named by this view
+  u8 layer;         ///< Actor's; not named by this view
   /// The spawner clears bit 0 when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.
   u8 priorityFlags;
   /// Actor's velocityX to velocityZ; effects move by velocity instead.
-  u8 unk24[0x0c];
+  struct Vector3 objectVelocity;
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  u8 unk38[0x0c]; ///< Actor's targetX to targetZ; not named by this view
+  /// Actor's targetX to targetZ; not named by this view.
+  ///@{
+  s32 targetX;
+  s32 targetY;
+  s32 targetZ;
+  ///@}
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
   /// pixels per frame.
   struct Vector3 velocity;
   struct FieldSprite *sprite; ///< the sprite spin turns
-  u8 unk54;                   ///< Actor's animationKind; not named by this view
+  u8 spriteStorageKind;       ///< Actor's; not named by this view
   u8 motionFlags;             ///< zeroed by the spawner
-  u8 unk56[3];                ///< Actor's unk56; not named by this view
+  /// Actor's arrival axis, last flag test and snap flag; not named by this
+  /// view.
+  ///@{
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  ///@}
   u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
-  u8 unk5a[0x0a];    ///< Actor's unk5a; not named by this view
+  /// Actor's steeringFlags to blockMarked; not named by this view.
+  u8 unk5a[0x0a];
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;
-  u8 unk66[2];   ///< not named by this view
+  s16 userValue; ///< Actor's; not named by this view
   s32 countdown; ///< no TLA code names it
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.

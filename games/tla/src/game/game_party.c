@@ -88,8 +88,8 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->side = BATTLE_UNIT_ENEMY;
   // The Djinn fought, and the Doom Dragon's nine rows, are put on the party's
   // side.
-  if ((u16)(unit->enemyId - ENEMY_VENUS_DJINNI) <=
-      ENEMY_JUPITER_DJINNI_15 - ENEMY_VENUS_DJINNI)
+  if ((u16)(unit->enemyId - ENEMY_VENUS_DJINNI_UNUSED_QUARTZ) <=
+      ENEMY_JUPITER_DJINNI_GALE - ENEMY_VENUS_DJINNI_UNUSED_QUARTZ)
     unit->side = BATTLE_UNIT_PARTY;
   if ((u16)(unit->enemyId - ENEMY_DOOM_DRAGON) <=
       ENEMY_DOOM_DRAGON_9 - ENEMY_DOOM_DRAGON)

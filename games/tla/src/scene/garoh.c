@@ -66,7 +66,6 @@ void Garoh_PuffAround(s32 id);
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-struct SpawnObject;
 extern struct ActorPlacement gGaroh_VillageDayActorPlacements[];
 extern struct Trigger gGaroh_BlocksTriggers[];
 void Garoh_WerewolvesRevealThemselves(void);
@@ -947,8 +946,6 @@ void Garoh_PuffAround(s32 objectId) {
 
 extern u32 gGaroh_PuffScript[];
 
-void Actor_StartScript(struct SpawnObject *object, const void *script);
-
 void Garoh_LashRope(void) {
   Rope_Lash(1, 10, 11);
   Flag_Set(FLAG_ROPE_LASHED);
@@ -959,24 +956,23 @@ s32 Garoh_MetWerewolves(void) {
     return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
 }
 
-/// Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
+/// Spawns a puff at (x, y, z), its picture turned by rotation, that waits
+/// timer frames: the shape of Eastern Alhafra's notes.
 void Garoh_SpawnPuff(x, y, z, rotation, timer) s32 x, y, z;
 s16 rotation;
 s32 timer;
 {
-  struct SpawnObject *object;
-  struct FieldSprite *sprite;
+  struct Actor *object;
+  struct Sprite *sprite;
 
-  object = (struct SpawnObject *)FieldActor_Create(SPRITE_EMOTE, x, y, z);
-  if (object != 0) {
+  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
+  if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gGaroh_PuffScript);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__ volatile("");
-    object->unk5e = timer;
-    sprite->nextFrame = 0;
+    object->wait = timer;
+    sprite->flags = 0;
     sprite->rotation = rotation;
   }
 }

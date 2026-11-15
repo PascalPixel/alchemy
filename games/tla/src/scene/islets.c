@@ -1253,22 +1253,16 @@ void Islets_StartWaveDma(void) {
 }
 
 void Islets_FillWaveLines(void) {
-  s16 *layer = (s16 *)&Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   s32 v[2];
   s32 *count = &v[1];
-  s32 value;
   s32 sine;
 
   for (*count = 0; *count != 160; (*count)++) {
-    /* FAKEMATCH(dead): the sine's call and store in a once-only block. */
-    do {
-      sine = Math_Sin((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
-      v[0] = sine;
-    } while (0);
-    value = layer[1] + (sine >> 15);
-    value += *count % 3;
-    *lines++ = value - 1;
+    sine = Math_Sin((*count + (u8)gFrameCount + (layer->y >> 16)) << 9);
+    v[0] = sine;
+    *lines++ = (layer->x >> 16) + (sine >> 15) + *count % 3 - 1;
   }
   gIslets_WaveTableIndex ^= 1;
 }

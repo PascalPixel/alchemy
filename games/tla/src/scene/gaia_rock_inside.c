@@ -1078,7 +1078,6 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   struct Actor *b = Actor_GetById(idB);
   s32 i;
   s16 *angle;
-  s32 kind = SPRITE_PARTICLE;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
@@ -1102,11 +1101,9 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Actor_ConfigureSpriteColor(idA, 0x100);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  i = 0;
-first:
-  {
+  for (i = 0; i != 16; i++) {
     struct Actor *spark =
-        Import_ActorCreate(kind, a->x.fixed, a->y.fixed, a->z.fixed);
+        Import_ActorCreate(SPRITE_PARTICLE, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);
     spark->x.fixed += px((Random16() & 31) - 16);
     spark->y.fixed += px((Random16() & 15) - 8);
@@ -1128,16 +1125,11 @@ first:
     REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
   }
-  i++;
-  if (i != 16)
-    goto first;
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
-  i = 0;
-second:
-  {
+  for (i = 0; i != 16; i++) {
     struct Actor *spark =
-        Import_ActorCreate(kind, b->x.fixed, b->y.fixed, b->z.fixed);
+        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
     angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + 0x8000;
@@ -1158,23 +1150,16 @@ second:
       b->motionFlags = 0;
       b->acceleration = px(1) / 5;
       b->speedLimit = px(1) / 5;
-      /* FAKEMATCH(barrier): references to idA rank it over idB and hold idB in
-       * r0 before the script load. */
-      asm("" : : "r"(idA));
       Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixRiseScript);
     }
     wait(8);
   }
-  i++;
-  if (i != 16)
-    goto second;
   Sound_Play(SE_SHIMMER);
   wait(16);
-  i = 2;
-third:
-  {
-    struct Actor *spark = Import_ActorCreate(
-        kind, b->x.fixed, px(i) + b->y.fixed - px(8), b->z.fixed);
+  for (i = 2; i != 32; i += 2) {
+    struct Actor *spark =
+        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
+                          b->y.fixed + i * Q16_ONE - px(8), b->z.fixed);
     spark->timer = Random16();
     spark->userValue = 0x800;
     spark->riseCounter = i;
@@ -1191,9 +1176,6 @@ third:
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gGaiaRockInside_FallingSparkScript);
   }
-  i += 2;
-  if (i != 32)
-    goto third;
   Sound_Play(SE_SHIMMER);
   wait(50);
   PaletteFade_SetTarget(0x7fff, 0);

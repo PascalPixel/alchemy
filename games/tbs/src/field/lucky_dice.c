@@ -286,8 +286,8 @@ void LuckyDice_Run(void) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED s32 unused[8];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
-   * with ldrh. */
+  // DEAD: the matrix passes through four halfwords on the stack, which nothing
+  // here needs; the ROM keeps their four strh and four ldrh.
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;

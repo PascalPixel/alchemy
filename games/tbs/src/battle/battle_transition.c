@@ -20,8 +20,8 @@
 /// Fades the screen to black over sixteen frames as every background's mosaic
 /// grows, then shows no layer.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again. */
+  // DEAD: the four saved BGxCNT values live in halfwords on the stack, which
+  // nothing here needs; the ROM keeps their four strh and four ldrh.
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;

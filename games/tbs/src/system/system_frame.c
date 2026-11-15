@@ -108,7 +108,8 @@ void wait(s32 frames) {
       // CPU load: the scanline the frame's work ended on, counted from the
       // last VBlank, plus 256 for each VBlank it overran; the peak is held
       // for 30 frames
-      /* FAKEMATCH(volatile): the line read without volatile. */
+      // The meter reads the line through a plain pointer, where
+      // ScreenTransition_UpdateScanline reads the volatile register.
       line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;

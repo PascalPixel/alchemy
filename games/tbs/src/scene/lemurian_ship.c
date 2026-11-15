@@ -197,7 +197,8 @@ static void OrbGlow_Fade(void) {
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack. */
+  // DEAD: the blend passes through a halfword on the stack, which nothing
+  // here needs; the ROM keeps its strh and ldrh.
   volatile u16 blend;
   struct Point sprayPosition;
   struct MapGridScrollWork *grid;
@@ -583,8 +584,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
-   */
+  // DEAD: each control passes through a halfword on the stack, which nothing
+  // here needs; the ROM keeps the three strh.
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -638,9 +639,12 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < toFIXED(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG3CNT = cnt;
+  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt;
+  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG1CNT = cnt;
   gOrbGlowActive = 0;
   Sound_Play(SE_STOP_ACTION_SE);
   wait(1);
@@ -671,8 +675,8 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Sets the Lemurian ship's map up.
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
-   */
+  // DEAD: each control passes through a halfword on the stack, which nothing
+  // here needs; the ROM keeps the three strh.
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -718,9 +722,12 @@ s32 Scene_Initialize(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG3CNT = cnt;
+  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt;
+  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt;
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
              &REG_BLDCNT);

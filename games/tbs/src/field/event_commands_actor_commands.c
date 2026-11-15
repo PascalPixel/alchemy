@@ -334,8 +334,8 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
-  /* FAKEMATCH(volatile): saved kept on the stack, stored once and loaded again
-   * for each compare. */
+  // DEAD: saved lives in a word on the stack, which nothing here needs; the
+  // ROM keeps its str and the ldr of each compare.
   volatile s32 saved;
   s32 elapsedFrames;
 

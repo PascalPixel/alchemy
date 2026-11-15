@@ -91,8 +91,8 @@ s32 Field_UsePsynergy(u32 code) {
                                       group, selector);
   if (pending != NULL) {
     target = -1;
-    if (selector != -1 && (selector & 0x100))
-      target = selector & 0xff;
+    if (selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
+      target = selector & PSYNERGY_TARGET_ID;
     Field_RunPsynergyEvent(pending, userId, target);
   }
   if (code & ACT_PACKED)
@@ -136,10 +136,10 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_Clear(FLAG_PSYNERGY_TARGET);
   target = -1;
   if (before != NULL || after != NULL || during != NULL) {
-    if (selector != -1 && (selector & 0x100))
-      target = selector & 0xff;
+    if (selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
+      target = selector & PSYNERGY_TARGET_ID;
     GameFlag_Set(FLAG_PSYNERGY_TARGET);
-    if (after != NULL && (after->flags & 0x400)) {
+    if (after != NULL && (after->flags & TRIGGER_SUBJECT_OWN_EFFECT)) {
       GameFlag_Clear(FLAG_PLAY_PSYNERGY_CAST);
       GameFlag_Clear(FLAG_PSYNERGY_TARGET);
     }

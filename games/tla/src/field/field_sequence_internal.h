@@ -41,6 +41,12 @@
 /// No user named: Field_UsePsynergy takes the first party member, and
 /// Field_UseItem whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15
+/// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
+/// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
+#define PSYNERGY_TARGET_ACTOR 0x100
+#define PSYNERGY_TARGET_ANYWHERE 0x200
+#define PSYNERGY_TARGET_KIND 0xff00 ///< which of the three
+#define PSYNERGY_TARGET_ID 0xff     ///< the cell behavior or actor
 #include "field/map_grid.h"
 #include "field/field_sprite.h"
 #include "system/dma.h"

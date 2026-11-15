@@ -236,8 +236,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// Scene_FindPsynergyTrigger: among the scene's Psynergy triggers for that
 /// kind whose condition holds (and whose direction, if any, the leader faces),
 /// the cell the leader faces, or for Teleport the cell under it; else the
-/// nearest target in reach (its number with 0x100 set); else 0x200 for a
-/// trigger that applies anywhere, or -1.
+/// nearest target in reach (with PSYNERGY_TARGET_ACTOR); else
+/// PSYNERGY_TARGET_ANYWHERE for a trigger that applies anywhere, or -1.
 s32 Scene_SelectPsynergyTarget(s32 kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->triggers;
@@ -254,13 +254,13 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 
   flags = event->control;
   while (flags != -1) {
-    s32 high = event->trigger & 0xf000;
-    s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
-    s32 target = (u16)event->trigger & 0xff;
+    s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
+    s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
     s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
 
-    if ((event->control & 15) == 5 && eventKind == kind &&
-        GameFlag_IsConditionActive(event->condition)) {
+    if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
+        eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
       if (hasFacing) {
         s32 distance = (s16)(high - facing);
 
@@ -269,14 +269,14 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
         if (distance > 0x17ff)
           goto next;
       }
-      if (event->control & 0x80) {
-        fallback = 0x200;
-      } else if (event->control & 0x10) {
+      if (event->control & TRIGGER_PSYNERGY_ANYWHERE) {
+        fallback = PSYNERGY_TARGET_ANYWHERE;
+      } else if (event->control & TRIGGER_PSYNERGY_ON_ACTOR) {
         s32 distance =
             Field_MeasurePsynergyReach(kind, Party_GetLeaderActor(), target);
 
         if (distance != -1 && best > distance) {
-          nearby = target | 0x100;
+          nearby = target | PSYNERGY_TARGET_ACTOR;
           best = distance;
         }
       } else if (kind == FIELD_PSYNERGY_TELEPORT) {
@@ -304,11 +304,11 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   return result;
 }
 
-/// Returns the scene's first Psynergy trigger (kind 5) for a field Psynergy
-/// kind whose condition holds, whose facing (when it has one) the leader
-/// faces, whose stage matches filter (PSYNERGY_TRIGGER_ANY takes any) and whose
-/// target is what selector names (Scene_SelectPsynergyTarget: a cell, an actor,
-/// or anything); NULL when there is none.
+/// Returns the scene's first Psynergy trigger (TRIGGER_PSYNERGY) for a field
+/// Psynergy kind whose condition holds, whose facing (when it has one) the
+/// leader faces, whose stage matches filter (PSYNERGY_TRIGGER_ANY takes any)
+/// and whose target is what selector names (Scene_SelectPsynergyTarget: a cell,
+/// an actor, or anything); NULL when there is none.
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -320,13 +320,13 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
     return NULL;
   flags = event->control;
   while (flags != -1) {
-    s32 high = event->trigger & 0xf000;
-    s16 hasFacing = (u16)event->trigger & TRIG_TURN / 32;
-    s32 target = (u16)event->trigger & 0xff;
+    s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
+    s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
     s32 eventKind = Ability_Get((u16)flags >> 8)->fieldEffect;
 
-    if ((event->control & 15) == 5 && eventKind == kind &&
-        GameFlag_IsConditionActive(event->condition)) {
+    if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
+        eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
       if (hasFacing) {
         s32 distance = (s16)(high - facing);
 
@@ -336,17 +336,20 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
           goto next;
       }
       if (filter != PSYNERGY_TRIGGER_ANY &&
-          (event->control & 0xf000000f) != filter)
+          (event->control & (PSYNERGY_PHASE_MASK | TRIGGER_KIND_MASK)) !=
+              filter)
         goto next;
       flags = event->control;
       {
-        if (flags & 0x80) {
-          if ((selector & 0xff00) == 0x200)
+        if (flags & TRIGGER_PSYNERGY_ANYWHERE) {
+          if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ANYWHERE)
             return event;
-        } else if (flags & 0x10) {
-          if ((selector & 0xff00) == 0x100 && (selector & 0xff) == target)
+        } else if (flags & TRIGGER_PSYNERGY_ON_ACTOR) {
+          if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ACTOR &&
+              (selector & PSYNERGY_TARGET_ID) == target)
             return event;
-        } else if ((selector & 0xff00) == 0 && (selector & 0xff) == target) {
+        } else if ((selector & PSYNERGY_TARGET_KIND) == 0 &&
+                   (selector & PSYNERGY_TARGET_ID) == target) {
           return event;
         }
       }
@@ -368,8 +371,8 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;
 
-  action = packed & 0x3ff;
-  mode = (packed >> 10) & 15;
+  action = ABILITY_ID(packed);
+  mode = ACT_UNIT(packed);
   kind = Ability_Get(action)->fieldEffect;
   selector = Scene_SelectPsynergyTarget(kind);
   first = (struct PendingEvent *)Scene_FindPsynergyTrigger(
@@ -378,8 +381,8 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), kind, selector);
   target = -1;
   if (first != NULL || second != NULL) {
-    if (selector != -1 && (selector & 0x100))
-      target = selector & 255;
+    if (selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
+      target = selector & PSYNERGY_TARGET_ID;
   }
   FieldPsynergy_LoadResources(action, 0);
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);

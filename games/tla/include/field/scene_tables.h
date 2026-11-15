@@ -351,6 +351,8 @@ enum PsynergyPhase {
 /// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
 /// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
 /// | 3..0 kind).
+/// A Psynergy trigger's phase bits, 31..28.
+#define PSYNERGY_PHASE_MASK (15u << 28)
 #define PSYNERGY_TRIGGER(phase) ((u32)(phase) << 28 | TRIGGER_PSYNERGY)
 #define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)
 

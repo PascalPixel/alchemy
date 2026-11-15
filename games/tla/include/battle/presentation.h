@@ -52,18 +52,6 @@ struct BattlePresentationWork;
 
 typedef void (*ModelDecoder)(const void *source, void *destination);
 
-struct ActionRunBattleWork {
-  u8 unk000[0x44];
-  u8 twoSided;
-  u8 unk045[0x58 - 0x45];
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-  u8 unk074[0x862 - 0x74];
-  u16 summonedMask;
-  u8 unk864;
-  u8 summonCount;
-};
-
 struct DjinnRecoveryEntryDraft {
   u8 element;
   u8 index;
@@ -74,15 +62,6 @@ struct DjinnRecoveryEntryDraft {
 struct DjinnRecoveryListDraft {
   struct DjinnRecoveryEntryDraft entries[72];
   s32 count;
-};
-
-// The parts of the battle work the backdrop uses.
-struct BattleBackdropWork {
-  u8 unk000[0x56c];
-  u16 palette[128];
-  s32 brightness;
-  u8 unk670[0x1f7];
-  u8 keepBackdropPalette;
 };
 
 struct SavedBattleObj {
@@ -166,17 +145,6 @@ struct BattleActorDefinition {
   u8 unavailable;
   u8 unk12a[0x20];
   u16 classId;
-};
-
-struct FormationBattleWork {
-  u8 unk00[0x3c];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 unk40;
-  u8 unk41;
-  u8 battleType;
-  u8 unk43[0x825];
-  u8 forceField;
 };
 
 struct AnimationRecord {
@@ -287,18 +255,6 @@ struct AIState {
 struct AIEnemyRest {
   u8 unk00[0x2c];
   u16 abilities[8];
-};
-
-struct AIBattleWork {
-  u8 unk000[0x564];
-  u16 queuedSummons[2];
-  u8 queuedCharges[2];
-  s8 queueHead;
-  s8 queueCount;
-  u8 unk56c[0x869 - 0x56c];
-  u8 unk869;
-  u8 unk86a[2];
-  u32 aiStates[4];
 };
 
 struct BattleGroupOrder {

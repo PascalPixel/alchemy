@@ -20,8 +20,8 @@ gDebugShortcut_Abilities:
 	.2byte 0x8c, 0x8f, 0x93, 0x94, 0x8e, 0x00, 0x95, 0x90, 0x00
 	.2byte 0x96, 0x92, 0x91, 0x4e, 0x0c, 0x21, 0x5d, 0x18, 0x8d
 @ The digits 0 to 8 the party status draws
-	.global Data_080aa1b8
-Data_080aa1b8:
+	.global gPartyStatus_DigitTiles
+gPartyStatus_DigitTiles:
 	.incbin "games/tla/src/window/digits.4bpp"
 @ The name entry keyboards, ☀️'s
 	.global gNameEntry_KeyboardTilemap

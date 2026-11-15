@@ -334,7 +334,8 @@ void PartyStatus_Draw(s32 flags) {
     Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
-      Dma_Set(Data_080aa1b8, (void *)0x06003400, DMA_COPY_WORDS(72), REG_DMA3);
+      Dma_Set(gPartyStatus_DigitTiles, (void *)0x06003400, DMA_COPY_WORDS(72),
+              REG_DMA3);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row,
                            0);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[1]), 3, row,

@@ -2293,7 +2293,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
   return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
 }
 
-#define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
+#define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
 
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// action strategy, with an item instead where its item mask says so, and a
@@ -2315,7 +2315,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   s32 opponentTarget;
   s32 allyIsParty;
   s32 opponentIsParty;
-  struct AIBattleWork *battle;
+  struct BattleWork *battle;
   struct ItemDefinition *item;
   s32 useItem;
   s8 strategyKind;
@@ -2363,7 +2363,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (unit->enemyId == ENEMY_POSEIDON) {
     selectionMemory =
-        (struct AIState *)&((struct AIBattleWork *)Ram_HeapSlots->battleWork)
+        (struct AIState *)&((struct BattleWork *)Ram_HeapSlots->battleWork)
             ->aiStates[request->unk0e];
     if (request->unk0e == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_2);
@@ -2371,15 +2371,15 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
     switch (request->unk0e) {
     case 1:
-      AI_BATTLE->unk869 = 6;
+      AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_3);
       break;
     case 2:
-      AI_BATTLE->unk869 = 3;
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_2);
       break;
     case 3:
-      AI_BATTLE->unk869 = 7;
+      AI_BATTLE->actingAnimation = 7;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_4);
       break;
     }
@@ -2387,18 +2387,18 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
     switch (request->unk0e) {
     case 1:
-      AI_BATTLE->unk869 = 6;
+      AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_7);
       break;
     case 2:
-      AI_BATTLE->unk869 = 3;
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_6);
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_8) {
     selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
     if (request->unk0e == 1) {
-      AI_BATTLE->unk869 = 3;
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_9);
     }
   } else if (unit->enemyId == ENEMY_DULLAHAN) {
@@ -2602,7 +2602,7 @@ select_again:
                                    ? ENEMY_REFRESH_BALL
                                    : ENEMY_SEA_FIGHTER))
         break;
-      battle = (struct AIBattleWork *)Ram_HeapSlots->battleWork;
+      battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
         if (battle->queueCount == 0)
           break;

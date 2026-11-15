@@ -247,7 +247,7 @@ extern const u8 gWindow_PairBobOffsets[];
 
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
-extern const u8 Data_080aa1b8[];
+extern const u8 gPartyStatus_DigitTiles[];
 
 extern const u8 gWindow_ProgressBarRows[];
 

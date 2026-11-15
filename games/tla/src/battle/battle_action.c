@@ -97,8 +97,7 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
   struct Unit *actor = Unit_Get(request->unitId);
-  struct ActionRunBattleWork *battle =
-      (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
   s32 abilityId;
 
@@ -539,13 +538,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
     summon = SummonDefinition_Get(request->parameter);
     BattleDjinn_CountStandby(
-        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
+        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink
             ? request->unitId
             : 0,
         counts);
     side = 0;
     if ((u16)request->unitId > ALLY_MAX &&
-        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided)
+        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink)
       side = 1;
     list = (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(
                                                  side) +
@@ -577,8 +576,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     if (abilityId == ABILITY_DAEDALUS) {
       if ((u16)request->unitId > ALLY_MAX)
-        battle->summonedMask |= 1 << battle->summonCount;
-      battle->summonCount++;
+        battle->nextDaedalusFromEnemies |= 1 << battle->nextDaedalusStrikes;
+      battle->nextDaedalusStrikes++;
     }
   } break;
   }

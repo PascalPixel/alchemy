@@ -414,7 +414,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 /// slots hold them, laid out as the formation says.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
-  struct FormationBattleWork *battle;
+  struct BattleWork *battle;
   struct BattleFormationRecord *record;
   s32 freeSpriteSlots;
   s32 enemyCount;
@@ -433,10 +433,10 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u32 memberOrEnemyIndex;
   s32 memberIndex;
 
-  battle = (struct FormationBattleWork *)Ram_HeapSlots->battleWork;
+  battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   levelAdjustment = 0;
   // Through a byte pointer, which keeps the level adjustment stored first.
-  *(u8 *)&battle->unk40 = 0;
+  *(u8 *)&battle->enemyKindCount = 0;
   enemyClasses = listBuffer;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
@@ -505,8 +505,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     }
   } while (changed);
 
-  battle->battleType = record->unk14[0];
-  switch (battle->battleType) {
+  battle->layout = record->unk14[0];
+  switch (battle->layout) {
   case 0:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;

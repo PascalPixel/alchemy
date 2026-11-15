@@ -136,8 +136,7 @@ void BattleBackground_Free(void) {
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
-  struct BattleBackdropWork *session =
-      (struct BattleBackdropWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *session = (struct BattleWork *)Ram_HeapSlots->battleWork;
   ModelDecoder decode;
   u16 *palette;
 

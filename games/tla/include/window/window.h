@@ -70,18 +70,17 @@ struct WindowWork {
   struct WindowSprite outputs[UI_OUTPUT_COUNT];
   struct WindowSpriteList freeOutputs; ///< the outputs not in any window
   u8 textTileState[0x100];             ///< per text tile
-  u16 lineSpacing;             ///< the current channel's, copied in to draw
-  u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                 ///< the current channel's, copied in to draw
-  u16 colour;                  ///< the current channel's, copied in to draw
+  u16 lineSpacing;            ///< the current channel's, copied in to draw
+  u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
+  u16 outline;                ///< the current channel's, copied in to draw
+  u16 colour;                 ///< the current channel's, copied in to draw
   u16 textBuffer[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
-  u16 glyphSpacing;     ///< 9 with the text style, as ☀️'s letterSpacing
-  u16 textBufferEnd;    ///< where the next code goes in textBuffer
-  u16 lastMessageStart; ///< where the last decoded message began in textBuffer
-  u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;       ///< first sprite tile of the glyph sheet (picture 95)
-  u8 unknownBeforeValues[2]; ///< not named by ⚓️ code
-  u32 argumentValues[8];     ///< message argument values (MessageArgument_Push)
+  u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
+  u16 textBufferEnd;     ///< where the next code goes in textBuffer
+  u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
+  u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
+  u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
+  u32 argumentValues[8]; ///< message argument values (MessageArgument_Push)
   u16 argumentKinds[8];  ///< the MESSAGE_ARGUMENT_ kind of each; 0 when free
   u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
   u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
@@ -94,7 +93,6 @@ struct WindowWork {
   /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
   /// glyphs by y / 320 (UiChannelSlot.unk26).
   s8 textMode;
-  u8 unk138d[3]; ///< not named by ⚓️ code
 };
 
 STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);

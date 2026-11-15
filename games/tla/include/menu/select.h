@@ -86,19 +86,21 @@ struct SelectionScreen {
   u16 bases[16];
   u16 count;
   ///@}
-  u16 baseX;       ///< screen pixels
-  u16 baseY;       ///< screen pixels
-  u16 unk39a;      ///< cleared with the list; not read by name in ⚓️
-  u16 top;         ///< the first listed entry shown
-  u16 cursorIndex; ///< the entry under the hand, from top
-  u16 verticalScroll;
-  u16 status; ///< 1 shown, 33 while scrolling
-  u16 pathTop[5];
-  u16 pathCursor[5];
+  u16 baseX;  ///< screen pixels
+  u16 baseY;  ///< screen pixels
+  u16 unread; ///< cleared with the list and on each step down; nothing reads it
+  u16 top;    ///< the first listed entry shown
+  /// The entry under the hand, from top; SELECTION_CURSOR_RESET asks the next
+  /// list to start again from its first entry.
+  u16 cursorIndex;
+  u16 verticalScroll; ///< pixels added to the icons' y
+  u16 status;         ///< 1 shown, 33 while scrolling
+  u16 pathTop[5];     ///< top, kept for each icon chosen on the path
+  u16 pathCursor[5];  ///< cursorIndex, kept for each icon chosen on the path
   /// 1 from Menu_RunSelectionForValue, 999 once the window opens. While 0,
   /// a mode 6 window opens at the top of the screen.
   u16 locked;
-  u8 unk3ba[42]; ///< not named by ⚓️ code
+  u8 unused[42]; ///< no code names it
 };
 
 /// SelectionScreen.status: the cursor stepping, or the row shown.

@@ -47,7 +47,7 @@ void SelectionMenu_Create(void) {
   screen->head = (struct SelectionNode *)(u32)clear;
   screen->path = (struct SelectionNode *)(u32)clear;
   screen->window = (struct Window *)(u32)clear;
-  screen->unk39a = clear;
+  screen->unread = clear;
   screen->top = clear;
   // Bit 7: the first list starts from its first entry.
   screen->cursorIndex = 128;
@@ -100,7 +100,7 @@ void SelectionMenu_Clear(void) {
 
   screen = Ram_HeapSlots->selectionMenu;
   screen->head = NULL;
-  screen->unk39a = 0;
+  screen->unread = 0;
   if (screen->cursorIndex & SELECTION_CURSOR_RESET) {
     screen->top = 0;
     screen->cursorIndex = 0;
@@ -1237,7 +1237,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->pathTop[cnt] = screen->top;
   screen->pathCursor[cnt] = screen->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
-  screen->unk39a = 0;
+  screen->unread = 0;
   screen->cursorIndex |= SELECTION_CURSOR_RESET;
   wait(2);
   other =

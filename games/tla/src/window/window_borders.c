@@ -275,7 +275,7 @@ void Text_ResetStyle(void) {
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->glyphSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
-  state->unknownAfterLineSpacing = 1;
+  state->unusedAfterLineSpacing = 1;
 }
 
 void WindowSystem_Update(void);

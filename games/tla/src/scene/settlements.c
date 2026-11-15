@@ -232,7 +232,7 @@ void Settlements_LiftBoulder(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern s32 gSettlements_BobScript[];
-extern u32 gSettlements_CrateBobScript[];
+extern s32 gSettlements_CrateBobScript[];
 
 /// The apple's sprite as Kalt Island sets it up: the high bytes of its OAM
 /// attributes 0 and 2, its VRAM block and its state, laid out as struct
@@ -1047,7 +1047,7 @@ void Settlements_BlockCrate(void) {
   Settlements_DropCrate();
 }
 
-extern u32 gSettlements_SmokeScript[];
+extern s32 gSettlements_SmokeScript[];
 
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -1061,7 +1061,7 @@ void Settlements_SplashCrate(s32 id) {
   spawn.startScaleY = Q16_ONE * 4 / 5;
   spawn.targetScaleX = Q16_ONE;
   spawn.targetScaleY = Q16_ONE;
-  spawn.script = (const s32 *)gSettlements_SmokeScript;
+  spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
@@ -1211,12 +1211,12 @@ s32 gSettlements_BobScript[] = {
     SC_END,
 };
 
-u32 gSettlements_SmokeScript[] = {
+s32 gSettlements_SmokeScript[] = {
     SC_ANIMATION(2),
     SC_END,
 };
 
-u32 gSettlements_CrateBobScript[] = {
+s32 gSettlements_CrateBobScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -1299,7 +1299,7 @@ struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[] = {
 struct ActorPlacement gSettlements_HesperiaSettlementPlacements[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };

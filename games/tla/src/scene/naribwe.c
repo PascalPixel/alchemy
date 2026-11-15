@@ -351,10 +351,10 @@ void Naribwe_BlowAwayIvy(void);
 
 void Naribwe_RevealStone(void);
 
-extern u32 gNaribwe_BrazierBurns[];
-extern u32 gNaribwe_FlameRises[];
+extern s32 gNaribwe_BrazierBurns[];
+extern s32 gNaribwe_FlameRises[];
 
-extern u32 gNaribwe_IvyAnimation[];
+extern s32 gNaribwe_IvyAnimation[];
 extern s16 gNaribwe_DoorOpening[];
 
 void Naribwe_HideStone(void);
@@ -365,13 +365,13 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS,                    \
                       MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH,          \
                       TALK_FACING_PARTY, 0),                                   \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(316), 0, px(132), \
+      {304, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(316), 0, px(132),      \
        FACING_SOUTH, 0, 0},                                                    \
-      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, px(372), 0, px(132), \
+      {304, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(372), 0, px(132),      \
        FACING_SOUTH, 0, 0},                                                    \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(316), 0, px(132),   \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(316), 0, px(132),        \
        FACING_SOUTH, 0, 0},                                                    \
-      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, px(372), 0, px(132),   \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(372), 0, px(132),        \
        FACING_SOUTH, 0, 0},                                                    \
       ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
                       MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
@@ -396,7 +396,7 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
                       MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
-      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
+      {307, CONDITION_ALWAYS, gNaribwe_IvyAnimation, px(40), 0, px(168),       \
        FACING_SOUTH, 2, 0},                                                    \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
                       MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \
@@ -419,19 +419,19 @@ s16 gNaribwe_UnusedList[] = {
 };
 
 /// The braziers burn, the fire's flames rising above them.
-u32 gNaribwe_BrazierBurns[] = {
+s32 gNaribwe_BrazierBurns[] = {
     SC_ANIMATION(2),
     SC_END,
 };
 
-u32 gNaribwe_FlameRises[] = {
+s32 gNaribwe_FlameRises[] = {
     SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(24)),
     SC_END,
 };
 
-u32 gNaribwe_IvyAnimation[] = {
+s32 gNaribwe_IvyAnimation[] = {
     SC_ANIMATION(3),
     SC_END,
 };

@@ -133,7 +133,7 @@ void MadraCatacombs_SetUpTabletRoom(void);
 extern s16 gMadraCatacombs_PushedPillar[];
 extern s16 gMadraCatacombs_Puddles[];
 
-extern u32 gMadraCatacombs_FlameFlaresUp[];
+extern s32 gMadraCatacombs_FlameFlaresUp[];
 
 extern s32 gMadraCatacombs_GreatFlameFlaresUp[];
 extern s16 gMadraCatacombs_ClimbablePillar[];
@@ -712,7 +712,7 @@ s32 gMadraCatacombs_WalkIntoDoorway[] = {
       SC_END,                                                                  
   };
 
-u32 gMadraCatacombs_FlameFlaresUp[] = {
+s32 gMadraCatacombs_FlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, 0x1000),
     SC_SET(SW_SCALE_Y, 0x1000),
     SC_WAIT(1),

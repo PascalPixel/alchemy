@@ -83,8 +83,8 @@ void Shop_Run();
 
 void Scene_FadeInAndClearFlag(void);
 
-extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
-extern u32 gMikasallaInteriors_ClimbersWifePaces[];
+extern s32 gMikasallaInteriors_ExplorersWidowPaces[];
+extern s32 gMikasallaInteriors_ClimbersWifePaces[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -362,7 +362,7 @@ void MikasallaInteriors_MeetGalahad(void) {
 // clang-format off
 /// Two women pace the inn: the explorer's widow, whose father-in-law and husband
 /// explored, and the wife of the man who keeps trying to climb Air's Rock.
-u32 gMikasallaInteriors_ExplorersWidowPaces[] = {                                                               
+s32 gMikasallaInteriors_ExplorersWidowPaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.1),                                                
       SC_SPEED(0.3),                                                
@@ -386,7 +386,7 @@ u32 gMikasallaInteriors_ExplorersWidowPaces[] = {
   };
 
 /// The climber's wife's script: she paces her house.
-u32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
+s32 gMikasallaInteriors_ClimbersWifePaces[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.1),                                                
       SC_SPEED(0.3),                                                
@@ -431,10 +431,10 @@ u32 gSceneExits[] = {
 /// Mikasalla's houses and inn (enum MikasallaInteriorsActorId).
 struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, gMikasallaInteriors_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 136, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 120, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, (s32)gMikasallaInteriors_ClimbersWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, gMikasallaInteriors_ClimbersWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),

@@ -196,11 +196,11 @@ void LemurianShipDeck_BobDeck(void) {
 
 struct Actor;
 
-extern u32 gLemurianShipDeck_FirstCrewLooksAround[];
+extern s32 gLemurianShipDeck_FirstCrewLooksAround[];
 
-extern u32 gLemurianShipDeck_SecondCrewLooksAround[];
+extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
 
-extern u32 gLemurianShipDeck_ThirdCrewLooksAround[];
+extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
 void LemurianShipDeck_RotateColors12To15(void);
 
@@ -221,11 +221,11 @@ void LemurianShipDeck_ShowArrival(void);
 void FlagBlock_ApplyFlags(const void *data);
 
 extern u32 gLemurianShipDeck_SparkleFades[];
-extern u32 gLemurianShipDeck_ReturnToShipScript[];
+extern s32 gLemurianShipDeck_ReturnToShipScript[];
 
 void Actor_Release(struct Actor *object);
 
-extern u32 gLemurianShipDeck_ReachPiersShipScript[];
+extern s32 gLemurianShipDeck_ReachPiersShipScript[];
 extern u32 gLemurianShipDeck_SmokePuff[];
 
 void LemurianShipDeck_EnterCabin(void);
@@ -1183,7 +1183,7 @@ s16 gLemurianShipDeck_Puddles[] = {
     8, 512, -1, 0,
 };
 
-u32 gLemurianShipDeck_ReachPiersShipScript[] = {
+s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(263, 0, 176),
     SC_SYNC,
@@ -1194,7 +1194,7 @@ u32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_END,
 };
 
-u32 gLemurianShipDeck_ReturnToShipScript[] = {
+s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(368, 0, 448),
     SC_SYNC,
@@ -1209,7 +1209,7 @@ u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-u32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
+s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
       SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(10),                        
@@ -1217,7 +1217,7 @@ u32 gLemurianShipDeck_FirstCrewLooksAround[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
+s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
@@ -1225,7 +1225,7 @@ u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
+s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),

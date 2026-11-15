@@ -142,11 +142,11 @@ void MadraInteriors_SayGoodbyeAgain(void);
 
 void MadraInteriors_AskToStayLonger(void);
 
-extern u32 gMadraInteriors_OldManWalksToBackRoom[];
-extern u32 gMadraInteriors_WifeComesBack[];
-extern u32 gMadraInteriors_OldManComesBack[];
+extern s32 gMadraInteriors_OldManWalksToBackRoom[];
+extern s32 gMadraInteriors_WifeComesBack[];
+extern s32 gMadraInteriors_OldManComesBack[];
 
-extern u32 gMadraInteriors_CharFollows[];
+extern s32 gMadraInteriors_CharFollows[];
 
 void MadraInteriors_CountAnswer();
 
@@ -478,7 +478,7 @@ void MadraInteriors_SetUpJail(void) {
   }
 }
 
-extern u32 gMadraInteriors_InterrogatorsLeave[];
+extern s32 gMadraInteriors_InterrogatorsLeave[];
 void FieldCamera_WaitForArrival();
 void FieldPsynergy_LoadResources();
 void FieldPsynergy_SetupActorPair();
@@ -857,8 +857,8 @@ UNUSED void MadraInteriors_PiersUsesPsynergy(void) {
   return;
 }
 
-extern u32 gMadraInteriors_WifeWalksToBackRoom[];
-extern u32 gMadraInteriors_LeaderStepsAside[];
+extern s32 gMadraInteriors_WifeWalksToBackRoom[];
+extern s32 gMadraInteriors_LeaderStepsAside[];
 
 /// The couple are given the Healing Fungus from the Gondowan Cliffs, his
 /// favourite, and trade the party Char the Mars Djinni for it.
@@ -925,19 +925,17 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetSpeed(ACTOR_MUSHROOM_LOVER, 0.5);
   Actor_SetSpeed(ACTOR_MUSHROOM_COOK, 0.5);
   Actor_SetSpeed(ACTOR_CHAR, 0.5);
-  Actor_SetScript(ACTOR_MUSHROOM_COOK,
-                  (s32)gMadraInteriors_WifeWalksToBackRoom);
-  Actor_SetScript(ACTOR_FELIX, (s32)gMadraInteriors_LeaderStepsAside);
+  Actor_SetScript(ACTOR_MUSHROOM_COOK, gMadraInteriors_WifeWalksToBackRoom);
+  Actor_SetScript(ACTOR_FELIX, gMadraInteriors_LeaderStepsAside);
   FieldEvent_Wait(60);
-  Actor_SetScript(ACTOR_MUSHROOM_LOVER,
-                  (s32)gMadraInteriors_OldManWalksToBackRoom);
+  Actor_SetScript(ACTOR_MUSHROOM_LOVER, gMadraInteriors_OldManWalksToBackRoom);
   FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
   FieldEvent_Wait(120);
-  Actor_SetScript(ACTOR_MUSHROOM_COOK, (s32)gMadraInteriors_WifeComesBack);
+  Actor_SetScript(ACTOR_MUSHROOM_COOK, gMadraInteriors_WifeComesBack);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MUSHROOM_COOK);
   FieldEvent_Wait(60);
-  Actor_SetScript(ACTOR_MUSHROOM_LOVER, (s32)gMadraInteriors_OldManComesBack);
-  Actor_SetScript(ACTOR_CHAR, (s32)gMadraInteriors_CharFollows);
+  Actor_SetScript(ACTOR_MUSHROOM_LOVER, gMadraInteriors_OldManComesBack);
+  Actor_SetScript(ACTOR_CHAR, gMadraInteriors_CharFollows);
   FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
   FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_COOK);
   FieldActor_WaitForScriptEndById(ACTOR_CHAR);
@@ -1319,7 +1317,7 @@ void MadraInteriors_AskToStayLonger(void) {
 // clang-format off
 /// The old couple's walks into their back room and out again, Char hopping
 /// after them, as they fetch the Djinni for the Healing Fungus.
-u32 gMadraInteriors_WifeWalksToBackRoom[] = {
+s32 gMadraInteriors_WifeWalksToBackRoom[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(356, 72),
     SC_SYNC,
@@ -1330,7 +1328,7 @@ u32 gMadraInteriors_WifeWalksToBackRoom[] = {
 };
 
 /// The leader's script as the old man passes: one step aside.
-u32 gMadraInteriors_LeaderStepsAside[] = {
+s32 gMadraInteriors_LeaderStepsAside[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(339, 111),
     SC_SYNC,
@@ -1342,7 +1340,7 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
 };
 
 /// The mushroom lover's script off to the back room to fetch Char.
-u32 gMadraInteriors_OldManWalksToBackRoom[] = {
+s32 gMadraInteriors_OldManWalksToBackRoom[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(356, 72),
     SC_SYNC,
@@ -1353,7 +1351,7 @@ u32 gMadraInteriors_OldManWalksToBackRoom[] = {
 };
 
 /// The mushroom cook's script back to her place.
-u32 gMadraInteriors_WifeComesBack[] = {                                                               
+s32 gMadraInteriors_WifeComesBack[] = {                                                               
       SC_ANIMATION(2),                                                               
       SC_POSITION(327, 0, 71),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
@@ -1372,7 +1370,7 @@ u32 gMadraInteriors_WifeComesBack[] = {
   };
 
 /// The mushroom lover's script back from the back room with Char.
-u32 gMadraInteriors_OldManComesBack[] = {                                                               
+s32 gMadraInteriors_OldManComesBack[] = {                                                               
       SC_ANIMATION(2),                                                               
       SC_POSITION(327, 0, 71),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
@@ -1392,7 +1390,7 @@ u32 gMadraInteriors_OldManComesBack[] = {
 
 /// Char's script once the old man gives him to the party: he follows the
 /// leader.
-u32 gMadraInteriors_CharFollows[] = {
+s32 gMadraInteriors_CharFollows[] = {
     SC_ANIMATION(2),
     SC_POSITION(327, 24, 71),
     SC_SET(SW_FACING, FACING_EAST),
@@ -1785,7 +1783,7 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
 };
 
 /// The interrogators walk out of the jail once Piers has been questioned.
-u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
+s32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
       SC_ANIMATION(2), SC_MOVE(408, 0, 872),                           
       SC_SYNC,   SC_MOVE(408, 0, 904),                           
       SC_SYNC,   SC_MOVE(408, 0, 920),                           

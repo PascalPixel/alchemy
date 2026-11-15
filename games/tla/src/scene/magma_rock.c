@@ -443,7 +443,7 @@ void MagmaRock_PlayBurst(s16 value) {
   FieldPsynergy_End();
 }
 
-extern u32 gMagmaRock_FlameEmberScript[];
+extern s32 gMagmaRock_FlameEmberScript[];
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedActor;
@@ -459,7 +459,7 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
 
       params.type = 403;
       params.priority = 1;
-      params.script = (const s32 *)gMagmaRock_FlameEmberScript;
+      params.script = gMagmaRock_FlameEmberScript;
       {
         s32 mask = 15;
 
@@ -514,7 +514,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
 
     config.type = 403;
     config.priority = 2;
-    config.script = (const s32 *)gMagmaRock_EmberScript;
+    config.script = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(FLAG_SCENE_TEMP_60))
       Actor_PlaySoundInView(object, SE_WHOOSH);
     dz = ((Random16() & 15) - 8) << 15;
@@ -820,7 +820,7 @@ stop:
       options.type = 403;
       options.priority = 1;
       options.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
-      options.script = (const s32 *)gMagmaRock_EmberScript;
+      options.script = gMagmaRock_EmberScript;
       dx = Random16() & 31;
       dz = Random16() & 31;
       FieldEffect_Spawn(position[0], position[1], position[2], (dx - 16) << 13,
@@ -988,7 +988,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
     config.palette = 10;
     config.priority = 2;
     config.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
-    config.script = (const s32 *)gMagmaRock_EmberScript;
+    config.script = gMagmaRock_EmberScript;
     FieldEffect_Spawn(object->effect.x + px(1), object->effect.y - px(4),
                       object->effect.z, ((Random16() & mask) - 3) << 14,
                       -0x20000, step,
@@ -1049,7 +1049,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       config.palette = 10;
       config.priority = 2;
       config.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
-      config.script = (const s32 *)gMagmaRock_EmberScript;
+      config.script = gMagmaRock_EmberScript;
       dx = Random16() & 15;
       dz = Random16() & 15;
       FieldEffect_Spawn(object->x.fixed + px(1), object->y.fixed + px(24),
@@ -1400,7 +1400,7 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   config.startScaleY = Q16_ONE * 2;
   config.type = 403;
   kind = 1; // Holds one constant: the native loads 1 before the data address.
-  config.script = (const s32 *)gMagmaRock_EmberScript;
+  config.script = gMagmaRock_EmberScript;
   config.priority = kind;
   i = 0;
 loop:
@@ -2440,7 +2440,7 @@ u32 gMagmaRock_EmberScript[] = {
     SC_END,
 };
 
-u32 gMagmaRock_FlameEmberScript[] = {
+s32 gMagmaRock_FlameEmberScript[] = {
     SC_ANIMATION(3),
     SC_WAIT(23),
     SC_POSITION_ORIGIN,

@@ -194,7 +194,7 @@ void LemurianShip_SetUpPuddle(s32 id);
 void LemurianShip_SetUpLowPuddle(s32 id);
 
 extern s32 gLemurianShip_JellyMelts[];
-extern u32 gLemurianShip_PuddleSpreads[];
+extern s32 gLemurianShip_PuddleSpreads[];
 extern s32 gLemurianShip_HydraSwells[];
 extern s16 gLemurianShip_Crate[];
 extern s16 gLemurianShip_TwoJellyRoomPuddles[];
@@ -1733,7 +1733,7 @@ s32 gLemurianShip_JellyMelts[] = {
     0, 1, 17,
 };
 
-u32 gLemurianShip_PuddleSpreads[] = {
+s32 gLemurianShip_PuddleSpreads[] = {
     SC_ADD(SW_SCALE_X, 0x400),
     SC_ADD(SW_SCALE_Y, 0x400),
     SC_WAIT(1),

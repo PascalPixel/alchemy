@@ -385,7 +385,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-extern u32 gMarsLighthouseAerie_BeaconFlameScript[];
+extern s32 gMarsLighthouseAerie_BeaconFlameScript[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object);
@@ -468,12 +468,12 @@ extern u32 gMarsLighthouseAerie_PiersApproachScript[];
 extern u32 gMarsLighthouseAerie_IvanApproachScript[];
 extern u32 gMarsLighthouseAerie_KradenApproachScript[];
 extern s32 gMarsLighthouseAerie_VoiceFadeScript[];
-extern u32 gMarsLighthouseAerie_DoomDragonRiseScript[];
+extern s32 gMarsLighthouseAerie_DoomDragonRiseScript[];
 extern u32 gMarsLighthouseAerie_LeaderReadyScript[];
 extern u32 gMarsLighthouseAerie_IsaacReadyScript[];
 extern u32 gMarsLighthouseAerie_JennaReadyScript[];
 extern u32 gMarsLighthouseAerie_ShebaReadyScript[];
-extern u32 gMarsLighthouseAerie_PiersReadyScript[];
+extern s32 gMarsLighthouseAerie_PiersReadyScript[];
 extern u32 gMarsLighthouseAerie_IvanReadyScript[];
 extern u32 gMarsLighthouseAerie_MiaReadyScript[];
 extern u32 gMarsLighthouseAerie_GaretReadyScript[];
@@ -1094,7 +1094,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   dispcnt = (u16 *)&REG_DISPCNT;
   Event_PlaySound(MUS_ALEX);
   Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
-                         (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
+                         gMarsLighthouseAerie_DoomDragonRiseScript);
   *dispcnt = *dispcnt & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
@@ -1192,7 +1192,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetSpeed(ACTOR_IVAN, 1.6);
   Actor_SetSpeed(ACTOR_MIA, 1.6);
-  Actor_SetScript(ACTOR_PIERS, (s32)gMarsLighthouseAerie_PiersReadyScript);
+  Actor_SetScript(ACTOR_PIERS, gMarsLighthouseAerie_PiersReadyScript);
   Actor_SetScript(work->leaderActorId,
                   (s32)gMarsLighthouseAerie_LeaderReadyScript);
   Actor_SetScript(ACTOR_ISAAC, (s32)gMarsLighthouseAerie_IsaacReadyScript);
@@ -3228,7 +3228,7 @@ s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
     SC_END,
 };
 
-u32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
+s32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
     SC_ADD(SW_SCALE_X, Q16_ONE / 128),
     SC_ADD(SW_SCALE_Y, Q16_ONE / 128),
     SC_ADD(SW_Y, 0x2000),
@@ -3269,7 +3269,7 @@ u32 gMarsLighthouseAerie_ShebaReadyScript[] =
           SC_WAIT(10), SC_END,                                                 
   };
 
-u32 gMarsLighthouseAerie_PiersReadyScript[] = {                                                               
+s32 gMarsLighthouseAerie_PiersReadyScript[] = {                                                               
       SC_ANIMATION(2),   SC_MOVE(464, 0, 280), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(10), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(10), SC_END,    
   };
@@ -3532,7 +3532,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gMarsLighthouseAerie_BeaconFlameScript[] = {
+s32 gMarsLighthouseAerie_BeaconFlameScript[] = {
     SC_SET(SW_SCALE_Y, 0x16666),
     SC_SET(SW_SCALE_X, 0x16666),
     SC_ANIMATION(4),

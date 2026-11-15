@@ -328,9 +328,9 @@ extern struct Trigger gProx_MoldTriggers[];
 extern struct Trigger gProx_CaveHomesTriggers[];
 extern struct Trigger gProx_CavesTriggers[];
 
-extern u32 gProx_KradenStepsUpToPuelle[];
+extern s32 gProx_KradenStepsUpToPuelle[];
 
-extern u32 gProx_StepBackFromPuelle[];
+extern s32 gProx_StepBackFromPuelle[];
 extern s32 gProx_EnterDoorScript[];
 
 /// The lower village: after the ending its three children play tag.
@@ -348,14 +348,14 @@ extern u32 gProx_SecondChildRuns[];
 extern u32 gProx_ThirdChildRuns[];
 /// The leader comes down the stairs into a basement.
 void Prox_ComeDownStairs(s32 value);
-extern u32 gProx_KradenStepsForward[];
-extern u32 gProx_SecondParentWalksSouth[];
-extern u32 gProx_ThirdParentWalksSouth[];
-extern u32 gProx_LeftFileWalksSouth[];
-extern u32 gProx_JennaWalksSouth[];
-extern u32 gProx_LeaderWalksSouth[];
-extern u32 gProx_KradenWalksSouth[];
-extern u32 gProx_JennaRunsAhead[];
+extern s32 gProx_KradenStepsForward[];
+extern s32 gProx_SecondParentWalksSouth[];
+extern s32 gProx_ThirdParentWalksSouth[];
+extern s32 gProx_LeftFileWalksSouth[];
+extern s32 gProx_JennaWalksSouth[];
+extern s32 gProx_LeaderWalksSouth[];
+extern s32 gProx_KradenWalksSouth[];
+extern s32 gProx_JennaRunsAhead[];
 void Leader_StopIfPending(void);
 void Particles_UpdateFalling(void);
 
@@ -926,7 +926,7 @@ void Prox_DecideToGoToLighthouse(void) {
 }
 
 s32 Actor_MoveToObject();
-extern u32 gProx_IsaacStepsUpToPuelle[];
+extern s32 gProx_IsaacStepsUpToPuelle[];
 
 void Prox_MeetPuelle(void) {
   u32 i;
@@ -958,8 +958,8 @@ void Prox_MeetPuelle(void) {
                       0);
   Actor_SetSpeed(ACTOR_MOLD_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_ISAAC, 0.8);
-  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsUpToPuelle);
-  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, (s32)gProx_KradenStepsUpToPuelle);
+  Actor_SetScript(ACTOR_ISAAC, gProx_IsaacStepsUpToPuelle);
+  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, gProx_KradenStepsUpToPuelle);
   Actor_FaceDirection(ACTOR_ELDER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "It seems he has brought some allies with him."
@@ -1153,8 +1153,8 @@ test_wait:
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetScript(ACTOR_ISAAC, (s32)gProx_StepBackFromPuelle);
-  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, (s32)gProx_StepBackFromPuelle);
+  Actor_SetScript(ACTOR_ISAAC, gProx_StepBackFromPuelle);
+  Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, gProx_StepBackFromPuelle);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 154);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Actor_RunRepeatedMotion(ACTOR_PUELLE, 1);
@@ -1935,11 +1935,11 @@ void Prox_InitializeCaveHomes(void) {
 }
 
 s32 Actor_MoveToObject();
-extern u32 gProx_IsaacStepsForward[];
-extern u32 gProx_RightFileWalksSouth[];
-extern u32 gProx_GaretWalksSouth[];
-extern u32 gProx_IsaacWalksSouth[];
-extern u32 gProx_GaretRunsAhead[];
+extern s32 gProx_IsaacStepsForward[];
+extern s32 gProx_RightFileWalksSouth[];
+extern s32 gProx_GaretWalksSouth[];
+extern s32 gProx_IsaacWalksSouth[];
+extern s32 gProx_GaretRunsAhead[];
 
 void Prox_SayFarewell(void) {
   u32 i;
@@ -1968,9 +1968,8 @@ void Prox_SayFarewell(void) {
     System_Wait(1);
     Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);
-    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacStepsForward);
-    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN,
-                           (s32)gProx_KradenStepsForward);
+    Actor_SetScript(ACTOR_ISAAC, gProx_IsaacStepsForward);
+    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, gProx_KradenStepsForward);
     Actor_SetAnimationAndWait(ACTOR_JENNAS_FATHER, 3);
     // "Don't worry about us, Felix... Puelle and the others took good care..."
     Event_ShowMessage(ACTOR_JENNAS_FATHER, 0);
@@ -2104,26 +2103,24 @@ void Prox_SayFarewell(void) {
     FieldActor_SetSpritePriority(ACTOR_GARET, 2);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
-    Actor_SetScript(ACTOR_JENNAS_FATHER, (s32)gProx_SecondParentWalksSouth);
-    Actor_SetScript(ACTOR_JENNAS_MOTHER, (s32)gProx_ThirdParentWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_FATHER, gProx_SecondParentWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_MOTHER, gProx_ThirdParentWalksSouth);
     FieldEvent_Wait(10);
-    Actor_SetScript(ACTOR_KYLE, (s32)gProx_LeftFileWalksSouth);
-    Actor_SetScript(ACTOR_MIA, (s32)gProx_RightFileWalksSouth);
+    Actor_SetScript(ACTOR_KYLE, gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_MIA, gProx_RightFileWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(ACTOR_SHEBA, gProx_LeftFileWalksSouth);
-    Actor_SetScript(ACTOR_PIERS, (s32)gProx_LeftFileWalksSouth);
+    Actor_SetScript(ACTOR_PIERS, gProx_LeftFileWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(ACTOR_IVAN, gProx_RightFileWalksSouth);
-    Actor_SetScript(ACTOR_GARET, (s32)gProx_GaretWalksSouth);
+    Actor_SetScript(ACTOR_GARET, gProx_GaretWalksSouth);
     FieldEvent_Wait(30);
-    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaWalksSouth);
+    Actor_SetScript(ACTOR_JENNA, gProx_JennaWalksSouth);
     FieldEvent_Wait(20);
-    Actor_SetScript(ACTOR_ISAAC, (s32)gProx_IsaacWalksSouth);
-    Actor_SetScript(gMainRoutineWork.leaderActorId,
-                    (s32)gProx_LeaderWalksSouth);
+    Actor_SetScript(ACTOR_ISAAC, gProx_IsaacWalksSouth);
+    Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_LeaderWalksSouth);
     FieldEvent_Wait(10);
-    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN,
-                           (s32)gProx_KradenWalksSouth);
+    Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, gProx_KradenWalksSouth);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION,
                     20);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST, 0);
@@ -2242,8 +2239,8 @@ void Prox_SayFarewell(void) {
     FieldEvent_Wait(10);
     Actor_SetSpeed(ACTOR_JENNA, 1.6);
     Actor_SetSpeed(ACTOR_GARET, 1.6);
-    Actor_SetScript(ACTOR_JENNA, (s32)gProx_JennaRunsAhead);
-    Actor_RunScriptAndWait(ACTOR_GARET, (s32)gProx_GaretRunsAhead);
+    Actor_SetScript(ACTOR_JENNA, gProx_JennaRunsAhead);
+    Actor_RunScriptAndWait(ACTOR_GARET, gProx_GaretRunsAhead);
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
@@ -2536,9 +2533,9 @@ s16 gSlideOnIce_SteerAngles[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -1638
 s16 gSlideOnIce_AnglesByKey[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 u32 gProx_FirstChildRuns[] = {                                                               
@@ -2559,7 +2556,7 @@ u32 gProx_ThirdChildRuns[] = {
       0,  0x17c0000, 1,  39, 2,       4,  0x2340000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
   };
 
-u32 gProx_KradenStepsUpToPuelle[] = {
+s32 gProx_KradenStepsUpToPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(176, 0, 154),
     SC_SYNC,
@@ -2570,7 +2567,7 @@ u32 gProx_KradenStepsUpToPuelle[] = {
     SC_END,
 };
 
-u32 gProx_IsaacStepsUpToPuelle[] = {
+s32 gProx_IsaacStepsUpToPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(160, 0, 154),
     SC_SYNC,
@@ -2581,7 +2578,7 @@ u32 gProx_IsaacStepsUpToPuelle[] = {
     SC_END,
 };
 
-u32 gProx_StepBackFromPuelle[] = {
+s32 gProx_StepBackFromPuelle[] = {
     SC_ANIMATION(2),
     SC_MOVE(144, 0, 154),
     SC_SYNC,
@@ -3005,7 +3002,7 @@ struct Trigger gProx_CavesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gProx_IsaacStepsForward[] = {
+s32 gProx_IsaacStepsForward[] = {
     SC_ANIMATION(2),
     SC_MOVE(120, 0, 196),
     SC_SYNC,
@@ -3016,7 +3013,7 @@ u32 gProx_IsaacStepsForward[] = {
     SC_END,
 };
 
-u32 gProx_KradenStepsForward[] = {
+s32 gProx_KradenStepsForward[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 196),
     SC_SYNC,
@@ -3027,7 +3024,7 @@ u32 gProx_KradenStepsForward[] = {
     SC_END,
 };
 
-u32 gProx_SecondParentWalksSouth[] = {
+s32 gProx_SecondParentWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(136, 0, 348),
     SC_SYNC,
@@ -3038,7 +3035,7 @@ u32 gProx_SecondParentWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_ThirdParentWalksSouth[] = {
+s32 gProx_ThirdParentWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),
     SC_SYNC,
@@ -3049,7 +3046,7 @@ u32 gProx_ThirdParentWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_LeftFileWalksSouth[] = {
+s32 gProx_LeftFileWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(136, 0, 248),
     SC_SYNC,
@@ -3062,7 +3059,7 @@ u32 gProx_LeftFileWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_RightFileWalksSouth[] = {
+s32 gProx_RightFileWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 248),
     SC_SYNC,
@@ -3075,7 +3072,7 @@ u32 gProx_RightFileWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_GaretWalksSouth[] = {
+s32 gProx_GaretWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 248),
     SC_SYNC,
@@ -3086,7 +3083,7 @@ u32 gProx_GaretWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_JennaWalksSouth[] = {
+s32 gProx_JennaWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(168, 0, 272),
     SC_SYNC,
@@ -3095,7 +3092,7 @@ u32 gProx_JennaWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_IsaacWalksSouth[] = {
+s32 gProx_IsaacWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(120, 0, 220),
     SC_SYNC,
@@ -3112,7 +3109,7 @@ u32 gProx_IsaacWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_LeaderWalksSouth[] = {
+s32 gProx_LeaderWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(140, 0, 220),
     SC_SYNC,
@@ -3129,7 +3126,7 @@ u32 gProx_LeaderWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_KradenWalksSouth[] = {
+s32 gProx_KradenWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 240),
     SC_SYNC,
@@ -3138,7 +3135,7 @@ u32 gProx_KradenWalksSouth[] = {
     SC_END,
 };
 
-u32 gProx_JennaRunsAhead[] = {
+s32 gProx_JennaRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(168, 0, 348),
     SC_SYNC,
@@ -3149,7 +3146,7 @@ u32 gProx_JennaRunsAhead[] = {
     SC_END,
 };
 
-u32 gProx_GaretRunsAhead[] = {
+s32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),
     SC_SYNC,

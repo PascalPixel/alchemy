@@ -30,7 +30,7 @@ extern struct MapCell gMapGridCellBuffer[];
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
-extern u32 gMagmaRockInside_FlameScript[];
+extern s32 gMagmaRockInside_FlameScript[];
 
 extern s32 gMagmaRockInside_LastStepCell;
 
@@ -309,9 +309,9 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void MagmaRockInside_SpawnRubble(s32 spread);
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b);
 void MagmaRockInside_SpawnDustRing(void);
-extern u32 gMagmaRockInside_RubbleScript[];
+extern s32 gMagmaRockInside_RubbleScript[];
 
-extern u32 gMagmaRockInside_DustScript[];
+extern s32 gMagmaRockInside_DustScript[];
 
 void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
 void MagmaRockInside_InitRockSprite(struct RockSprite *sprite, s32 width,
@@ -701,7 +701,7 @@ void MagmaRockInside_PlayBurst(s16 value) {
   FieldPsynergy_End();
 }
 
-extern u32 gMagmaRockInside_EmberScript[];
+extern s32 gMagmaRockInside_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -825,7 +825,7 @@ void MagmaRockInside_DriftAndSlow(struct Actor *object) {
   object->riseBaseY = dz;
 }
 
-extern u32 gMagmaRockInside_EmberScript[];
+extern s32 gMagmaRockInside_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1044,7 +1044,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   Event_End();
 }
 
-extern u32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRockInside_FlameEmberScript[];
 
 /// A statue's fire Burst into a lava fall: the fall bursts into flame and
 /// pours, the lava rises over the room's floor, and the room is flooded.
@@ -1441,7 +1441,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
     config.type = 403;
     config.priority = 2;
     config.palette = 10;
-    config.script = (const s32 *)gMagmaRockInside_EmberScript;
+    config.script = gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
                       0x1000, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
@@ -1450,7 +1450,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
   }
 }
 
-extern u32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRockInside_FlameEmberScript[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetPosition(id, 776, 248);
@@ -2000,10 +2000,10 @@ union ActorView {
   } bytes;
 };
 
-extern u32 gMagmaRockInside_BlazeCasterScript[];
-extern u32 gMagmaRockInside_TorchScript[];
+extern s32 gMagmaRockInside_BlazeCasterScript[];
+extern s32 gMagmaRockInside_TorchScript[];
 extern s32 gMagmaRockInside_SparkScript[];
-extern u32 gMagmaRockInside_BlazeWatcherScript[];
+extern s32 gMagmaRockInside_BlazeWatcherScript[];
 extern s32 gMagmaRockInside_OrbitScript[];
 extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
 /* VIEW(magma_rock_inside): variable gMagmaRockInside_BlazeWatcherReturnScript
@@ -2397,9 +2397,9 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 void Tightrope_Initialize(void);
 
 extern s16 gMagmaRockInside_PlatformPathA[];
-extern u32 gMagmaRockInside_PlatformPathB[];
+extern s32 gMagmaRockInside_PlatformPathB[];
 extern u16 gMagmaRockInside_PlatformPathC[];
-extern u32 gMagmaRockInside_PlatformPathD[];
+extern s32 gMagmaRockInside_PlatformPathD[];
 extern s16 gMagmaRockInside_PlatformPathE[];
 extern s16 gMagmaRockInside_PlatformPathJ[];
 extern s16 gMagmaRockInside_PlatformPathK[];
@@ -3073,7 +3073,7 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
-u32 gMagmaRockInside_EmberScript[] = {
+s32 gMagmaRockInside_EmberScript[] = {
     SC_ANIMATION(2),
     SC_WAIT(18),
     SC_POSITION_ORIGIN,
@@ -3082,7 +3082,7 @@ u32 gMagmaRockInside_EmberScript[] = {
     SC_END,
 };
 
-u32 gMagmaRockInside_FlameEmberScript[] = {
+s32 gMagmaRockInside_FlameEmberScript[] = {
     SC_ANIMATION(3),
     SC_WAIT(23),
     SC_POSITION_ORIGIN,
@@ -3097,7 +3097,7 @@ s16 gMagmaRockInside_PlatformPathA[] = {
       0, 776, 0, 16, 0, 632, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
-u32 gMagmaRockInside_PlatformPathB[] = {                                                               
+s32 gMagmaRockInside_PlatformPathB[] = {                                                               
       SC_MOVE(216, 16, 568),                             
       SC_SYNC,                                                                 
       SC_MOVE(216, 16, 584),                             
@@ -3120,7 +3120,7 @@ u16 gMagmaRockInside_PlatformPathC[] = {
     1, 0, 17, 0,
 };
 
-u32 gMagmaRockInside_PlatformPathD[] = {                                                               
+s32 gMagmaRockInside_PlatformPathD[] = {                                                               
       SC_MOVE(184, 16, 232),                             
       SC_SYNC,                                                                 
       SC_MOVE(280, 16, 232),                             
@@ -3213,13 +3213,13 @@ s16 gMagmaRockInside_EmberStonePillars[] = {
     ACTOR_LEDGE_PILLAR, -1, 0,
 };
 
-u32 gMagmaRockInside_FlameScript[] = {
+s32 gMagmaRockInside_FlameScript[] = {
     SC_WAIT(6),
     SC_RELEASE,
     SC_END,
 };
 
-u32 gMagmaRockInside_TorchScript[] = {                                                               
+s32 gMagmaRockInside_TorchScript[] = {                                                               
       SC_MOVE_BY(0, 160, 0),                                           
       SC_SYNC,                                                                 
       SC_RELEASE,                                                                 
@@ -3238,14 +3238,14 @@ s32 gMagmaRockInside_OrbitScript[] = {
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
-u32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
+s32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
       SC_MOVE_BY(0, 24, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
-u32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
+s32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
       SC_MOVE_BY(0, 16, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
@@ -3268,12 +3268,12 @@ s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {
       SC_END,                                                                  
   };
 
-u32 gMagmaRockInside_RubbleScript[] = {                                                               
+s32 gMagmaRockInside_RubbleScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
 
-u32 gMagmaRockInside_DustScript[] = {                                                               
+s32 gMagmaRockInside_DustScript[] = {                                                               
       SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };

@@ -1215,7 +1215,7 @@ extern u8 gInventorySnapshot[];
 
 #include "shared/ride_update_carried.h"
 
-extern u32 gScriptedPart_Script[];
+extern s32 gScriptedPart_Script[];
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
@@ -1299,7 +1299,7 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 
 #include "shared/ride_update_drift.h"
 
-extern u32 gScriptedPart_Script[];
+extern s32 gScriptedPart_Script[];
 
 #include "shared/actor_setup_scripted.h"
 
@@ -2339,7 +2339,7 @@ s32 gMarsLighthouseStarRoom_EastFireballRoute[] = {
     17,
 };
 
-u32 gScriptedPart_Script[] = {                                                               
+s32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
@@ -2526,7 +2526,7 @@ struct Trigger gSceneEvents[] = {
 };
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gFieldEffect_ShortScript,
-    (s32)gFieldEffect_MediumScript,
-    (s32)gFieldEffect_LongScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };

@@ -270,7 +270,7 @@ void Actor_ResetScripted(struct Actor *object);
 void Actor_SetupScriptedPart(struct Actor *object, s32 layer);
 void Flame_UpdateLanding(struct Actor *object);
 
-extern u32 gScriptedPart_Script[];
+extern s32 gScriptedPart_Script[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
@@ -286,7 +286,7 @@ extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
 extern s32 gMarsLighthouseRoomM_RubbleBounceScript[];
-extern u32 gMarsLighthouseRoomM_RubbleFallScript[];
+extern s32 gMarsLighthouseRoomM_RubbleFallScript[];
 
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
@@ -1939,7 +1939,7 @@ s32 gMarsLighthouseRoomM_StatueScript[] = {
 };
 
 // clang-format off
-u32 gScriptedPart_Script[] = {                                                               
+s32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
@@ -2117,7 +2117,7 @@ s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
     SC_RELEASE,
 };
 
-u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
+s32 gMarsLighthouseRoomM_RubbleFallScript[] = {
     SC_WAIT(20),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),

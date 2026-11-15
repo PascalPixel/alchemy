@@ -76,29 +76,29 @@ enum LohoInteriorsActorId {
 /// The Golem Core under the rock, dug up.
 #define FLAG_GOLEM_CORE_DUG 0xff7
 
-extern u32 gLoho_VillagerMovesNorth[];
-extern u32 gLoho_VillagerMovesWest[];
+extern s32 gLoho_VillagerMovesNorth[];
+extern s32 gLoho_VillagerMovesWest[];
 
-extern u32 gLoho_VillagerReturns[];
+extern s32 gLoho_VillagerReturns[];
 
 void Loho_ClimbDownLadder(void);
 extern u32 gLoho_Regions[];
 extern struct ActorPlacement gLoho_TownPlacements[];
 extern struct ActorPlacement gLoho_InteriorsPlacements[];
-extern u32 gLoho_FirstMinerGoesToWall[];
+extern s32 gLoho_FirstMinerGoesToWall[];
 extern s32 gLoho_SecondMinerStepsUp[];
 
 extern s32 gLoho_ThirdMinerStepsUp[];
 
-extern u32 gLoho_FirstMinerWalksBack[];
-extern u32 gLoho_FirstMinerFetchesCannon[];
-extern u32 gLoho_FirstMinerReturns[];
+extern s32 gLoho_FirstMinerWalksBack[];
+extern s32 gLoho_FirstMinerFetchesCannon[];
+extern s32 gLoho_FirstMinerReturns[];
 extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
 extern struct Trigger gLoho_InteriorsTriggers[];
 extern struct LohoPicture gLoho_HouseDoor;
-extern u32 gLoho_VillagerPaces[];
+extern s32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
 
@@ -476,7 +476,7 @@ nextSpark:
   t147 = Actor_GetById(ACTOR_MINER_BY_THE_CANNON);
   t147->motionFlags = zero;
   Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1.5);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerGoesToWall);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerGoesToWall);
   Actor_SetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.5);
   Actor_SetScript(ACTOR_MINER_PUZZLED_BY_THE_CANNON,
                   (s32)gLoho_SecondMinerStepsUp);
@@ -513,7 +513,7 @@ askCannon:
   Event_Wait(30);
   Actor_FaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
   Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerWalksBack);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerWalksBack);
   FieldCamera_SetSpeed(1.8);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
@@ -545,8 +545,7 @@ crewLeaves:
   Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH_NORTHEAST,
                       0);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON,
-                  (s32)gLoho_FirstMinerFetchesCannon);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerFetchesCannon);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
   Actor_FaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
@@ -559,7 +558,7 @@ crewLeaves:
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MINER_BY_THE_CANNON);
   Actor_WalkTo(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 504, 370);
   Actor_WalkTo(ACTOR_MAN_KEEPING_THE_CANNON, 504, 352);
-  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, (s32)gLoho_FirstMinerReturns);
+  Actor_SetScript(ACTOR_MINER_BY_THE_CANNON, gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
   Actor_WaitForMoveById(ACTOR_MINER_PUZZLED_BY_THE_CANNON);
   Actor_WaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
@@ -870,7 +869,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // clang-format off
-u32 gLoho_FirstMinerGoesToWall[] = {
+s32 gLoho_FirstMinerGoesToWall[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(539, 327),
     SC_SYNC,
@@ -913,7 +912,7 @@ s32 gLoho_ThirdMinerStepsUp[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerWalksBack[] = {
+s32 gLoho_FirstMinerWalksBack[] = {
     SC_ANIMATION(2),
     SC_MOVE(570, 0, 248),
     SC_SYNC,
@@ -926,7 +925,7 @@ u32 gLoho_FirstMinerWalksBack[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerFetchesCannon[] = {
+s32 gLoho_FirstMinerFetchesCannon[] = {
     SC_POSITION(583, 0, 327),
     SC_SET(SW_MOTION, 0),
     SC_POSITION(583, 0, 300),
@@ -938,7 +937,7 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
     SC_END,
 };
 
-u32 gLoho_FirstMinerReturns[] = {
+s32 gLoho_FirstMinerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(472, 331),
     SC_SYNC,
@@ -961,7 +960,7 @@ s32 gLoho_ForemanComes[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerPaces[] = {
+s32 gLoho_VillagerPaces[] = {
     SC_LABEL(1),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_WEST),
@@ -975,7 +974,7 @@ u32 gLoho_VillagerPaces[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerReturns[] = {
+s32 gLoho_VillagerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE(128, 0, 120),
     SC_SYNC,
@@ -993,7 +992,7 @@ u32 gLoho_VillagerReturns[] = {
     SC_END,
 };
 
-u32 gLoho_VillagerMovesWest[] = {                                                               
+s32 gLoho_VillagerMovesWest[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
       SC_MOVE(128, 0, 144),                                      
@@ -1002,7 +1001,7 @@ u32 gLoho_VillagerMovesWest[] = {
       SC_END,                                                                  
   };
 
-u32 gLoho_VillagerMovesNorth[] = {                                                               
+s32 gLoho_VillagerMovesNorth[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
       SC_MOVE(159, 0, 128),                                      
@@ -1066,7 +1065,7 @@ struct ActorPlacement gLoho_TownPlacements[] = {
 };
 
 struct ActorPlacement gLoho_InteriorsPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},

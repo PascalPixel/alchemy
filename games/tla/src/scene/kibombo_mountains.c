@@ -146,12 +146,12 @@ void KibomboMountains_StepBeforeUpperGuardAgain(void);
 void KibomboMountains_StepBeforeLowerGuardAgain(void);
 void KibomboMountains_StepSouthOfDog(void);
 
-extern u32 gKibomboMountains_RaisedPillarScript[];
-extern u32 gKibomboMountains_CrateScript[];
-extern u32 gKibomboMountains_PatrolScript[];
-extern u32 gKibomboMountains_LowerGuardPatrolScript[];
-extern u32 gKibomboMountains_DogPatrolScript[];
-extern u32 gKibomboMountains_SecondLookoutScript[];
+extern s32 gKibomboMountains_RaisedPillarScript[];
+extern s32 gKibomboMountains_CrateScript[];
+extern s32 gKibomboMountains_PatrolScript[];
+extern s32 gKibomboMountains_LowerGuardPatrolScript[];
+extern s32 gKibomboMountains_DogPatrolScript[];
+extern s32 gKibomboMountains_SecondLookoutScript[];
 
 void KibomboMountains_StepBeforeLowerGuard(void);
 
@@ -799,10 +799,10 @@ void KibomboMountains_GrowVine(void);
 void KibomboMountains_WhirlwindClearsOvergrowth(void);
 void KibomboMountains_StepNorthOfDog(void);
 
-extern u32 gKibomboMountains_FirstLookoutScript[];
+extern s32 gKibomboMountains_FirstLookoutScript[];
 
 // clang-format off
-u32 gKibomboMountains_RaisedPillarScript[] = {
+s32 gKibomboMountains_RaisedPillarScript[] = {
     SC_ANIMATION(2),
     SC_END,
     SC_ANIMATION(0),
@@ -837,7 +837,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gKibomboMountains_CrateScript[] = {
+s32 gKibomboMountains_CrateScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -846,7 +846,7 @@ struct ActorPlacement gKibomboMountains_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gKibomboMountains_PatrolScript[] = {
+s32 gKibomboMountains_PatrolScript[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.1),
     SC_SET(SW_COLLISION, 129),
@@ -863,7 +863,7 @@ u32 gKibomboMountains_PatrolScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gKibomboMountains_LowerGuardPatrolScript[] = {                                                               
+s32 gKibomboMountains_LowerGuardPatrolScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
@@ -893,7 +893,7 @@ s32 gKibomboMountains_BobScript[] = {
     SC_END,
 };
 
-u32 gKibomboMountains_DogPatrolScript[] = {
+s32 gKibomboMountains_DogPatrolScript[] = {
     SC_SPEED(1.25),
     SC_ACCELERATION(0.25),
     SC_SET(SW_COLLISION, 129),
@@ -942,14 +942,14 @@ u32 gKibomboMountains_DogPatrolScript[] = {
 };
 
 struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_DogPatrolScript, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_DOG, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_DogPatrolScript, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 520, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 712, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 888, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 712, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 888, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_WAFT), MOVEMENT_TYPE_STAND, 440, 0, 472, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -957,7 +957,7 @@ struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gKibomboMountains_FirstLookoutScript[] = {                                                               
+s32 gKibomboMountains_FirstLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
@@ -982,7 +982,7 @@ u32 gKibomboMountains_FirstLookoutScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gKibomboMountains_SecondLookoutScript[] = {                                                               
+s32 gKibomboMountains_SecondLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
       SC_SET(SW_COLLISION, 129),                                               
@@ -1010,25 +1010,25 @@ u32 gKibomboMountains_SecondLookoutScript[] = {
 struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_FirstLookoutScript, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_SecondLookoutScript, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_PatrolScript, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(250, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_FirstLookoutScript, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_SecondLookoutScript, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(250, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 88, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, (s32)gKibomboMountains_RaisedPillarScript, 232, 0, 536, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, (s32)gKibomboMountains_RaisedPillarScript, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_PatrolScript, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_PatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_PatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 88, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, gKibomboMountains_RaisedPillarScript, 232, 0, 536, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, gKibomboMountains_RaisedPillarScript, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

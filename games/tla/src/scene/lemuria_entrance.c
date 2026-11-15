@@ -26,7 +26,7 @@
 #include "graphics/uiflow.h"
 #include "field/actor_script.h"
 
-extern u32 gLemuriaEntrance_ShipSailsOut[];
+extern s32 gLemuriaEntrance_ShipSailsOut[];
 /// The way in's actors, by the rows of gActorPlacements.
 enum {
   /// The party's ship, placed blank; it sails out of the harbour
@@ -276,7 +276,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
 
 // clang-format off
 /// The ship's course out of the harbour.
-u32 gLemuriaEntrance_ShipSailsOut[] = {
+s32 gLemuriaEntrance_ShipSailsOut[] = {
     SC_MOVE(728, 0, 160),
     SC_SYNC,
     SC_MOVE(608, 0, 152),

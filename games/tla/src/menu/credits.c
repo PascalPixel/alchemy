@@ -104,6 +104,15 @@ extern u8 gDebugTextEnabled;
 #define CREDITS_BORDER_SPRITES 24
 /// The whole OAM: the borders, 96 text sprites and 8 parked off screen.
 #define CREDITS_OAM_ENTRIES 128
+/// The border sprites' one 32x16 picture, solid in colour 1, after the ring.
+#define CREDITS_BORDER_TILE_BYTES (8 * TILE_SIZE_4BPP)
+/// One ring line's tiles: the top or bottom half of a drawn line.
+#define CREDITS_LINE_BYTES (CREDITS_LINE_TILES * TILE_SIZE_4BPP)
+/// The line table's page mark, how far Credits_InitTextSpritesAtPage counts
+/// for one, and the frames the credits run on after their end mark.
+#define CREDITS_PAGE_MARK ((const u8 *)255)
+#define CREDITS_MAX_LINES 500
+#define CREDITS_FRAMES_AFTER_END 375
 /// The ring line a scroll line is drawn into, sixteen rows below the top.
 #define CREDITS_RING_LINE(line)                                                \
   ((((line) + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *               \
@@ -124,6 +133,23 @@ extern u8 gDebugTextEnabled;
   ((offset) & (ENDING_PICTURE_SCREEN_BYTES - 1))
 /// The fade-in's frames, four to each blend step.
 #define ENDING_PICTURE_FADE_FRAMES (BLEND_WEIGHT_MAX * 4)
+/// The map offset of the row of eight pixels a 16.16 scroll stands at.
+#define ENDING_PICTURE_ROW_OFFSET(scroll)                                      \
+  (((scroll) >> 19) * ENDING_PICTURE_ROW_BYTES)
+/// The map buffer: every column's strip.
+#define ENDING_PICTURE_MAP_BYTES                                               \
+  (ENDING_PICTURE_COLUMNS * ENDING_PICTURE_STRIP_BYTES)
+/// EndingPicture_WaitForScroll gives up after five seconds.
+#define ENDING_PICTURE_SCROLL_TIMEOUT (5 * FRAMES_PER_SECOND)
+/// The picture's border strips: eight sprites across at y 120, 136 and 152.
+#define ENDING_PICTURE_STRIP_SPRITES 24
+
+/// A backdrop or picture resource begins with its 128 colours, the palette
+/// half it takes; its packed tiles follow.
+#define BACKDROP_COLORS 128
+#define BACKDROP_PALETTE_BYTES (BACKDROP_COLORS * 2)
+/// A battle backdrop's 480 tiles of 256 colours, 256 by 120 pixels.
+#define BACKDROP_TILE_BYTES (480 * 64)
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.
@@ -148,8 +174,10 @@ void Credits_ClearBuffer(s32 alternate) {
     tileDestination = (u32)BG_CHAR_BLOCK(2);
     paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
-  Dma_Fill32Cell(dmaFill, fillColor, (void *)tileDestination, 30720);
-  Dma_Fill32Cell(dmaFill, 0, (void *)paletteDestination, 256);
+  Dma_Fill32Cell(dmaFill, fillColor, (void *)tileDestination,
+                 BACKDROP_TILE_BYTES);
+  Dma_Fill32Cell(dmaFill, 0, (void *)paletteDestination,
+                 BACKDROP_PALETTE_BYTES);
 }
 
 /* VIEW(credits): variable gWaitForFlashWrite as u16 gWaitForFlashWrite[];
@@ -189,10 +217,11 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
   RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
-  decoder(resourceData + 256, tileDestination, paletteOffset);
+  decoder(resourceData + BACKDROP_PALETTE_BYTES, tileDestination,
+          paletteOffset);
   Heap_Release(decoder);
 
-  for (i = 0; i < 128; i++) {
+  for (i = 0; i < BACKDROP_COLORS; i++) {
     u16 color = *(const s16 *)resourceData;
     s32 blue = RGB_BLUE(color);
     s32 green = RGB_GREEN(color);
@@ -206,28 +235,30 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     gWaitForFlashWrite__credits[i] = blue << 10 | green << 5 | red;
   }
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite__credits,
-                      DMA_COPY_WORDS(64));
+                      DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
 }
 
-/// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
-/// 48 more of 0x01ff01ff and 192 zeros.
-void Credits_BuildBackgroundTilemap(u32 *table) {
+/// Builds the 512 tilemap words surrounding a sliding credits picture, as The
+/// Broken Seal does: blank margins, 240 consecutive tile pairs, then a
+/// zero-filled tail.
+void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 i;
-  u32 value;
-  u32 step;
+  u32 blankTiles;
+  u32 tilePair;
 
-  value = 0x01FF01FF;
-  step = 0x10000;
+  blankTiles = 0x01FF01FF;
+  tilePair = 0x10000;
+  // Pad above and below the picture so vertical wrapping stays blank.
   for (i = 0; i < 32; i++)
-    *table++ = value;
+    *destination++ = blankTiles;
   for (i = 0; i < 240; i++) {
-    *table++ = step;
-    step += 0x20002;
+    *destination++ = tilePair;
+    tilePair += 0x20002;
   }
   for (i = 0; i < 48; i++)
-    *table++ = value;
+    *destination++ = blankTiles;
   for (i = 0; i < 192; i++)
-    *table++ = 0;
+    *destination++ = 0;
 }
 
 /// A VBlank task of the credits: drifts both pictures together, keeping their
@@ -285,6 +316,8 @@ s32 Credits_Run(s32 mode) {
                              (slide & 1) ^ 1);
       for (step = 1; step <= BLEND_WEIGHT_MAX; step++) {
         if (slide & 1) {
+          /* FAKEMATCH(temporary): the weights kept in locals; as one
+           * expression they load in another order. */
           s32 t = BLEND_WEIGHT_MAX;
           s32 hi = step << 8;
           s32 r = t - step;
@@ -311,7 +344,7 @@ s32 Credits_Run(s32 mode) {
     }
   } else {
     Credits_InitTextSpritesAtPage(mode - 2);
-    while (gDisplayScroll_Busy <= 375)
+    while (gDisplayScroll_Busy <= CREDITS_FRAMES_AFTER_END)
       wait(1);
     Credits_StopTextSprites();
   }
@@ -342,7 +375,7 @@ void Credits_UpdateCrawlSprites(void) {
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       *words++ =
-          (row * 8 + 16 - fine) | ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
+          (row * 8 + 16 - fine) | OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
       *words++ = tile;
       tile += 4;
       if (tile == CREDITS_RING_TILES)
@@ -408,7 +441,9 @@ void Credits_InitCrawlSprites(void) {
           REG_DMA3);
   fill = PIXELS_4BPP(1);
   Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              (CREDITS_BORDER_TILE_BYTES / 4),
+          REG_DMA3);
 
   entry = *(u32 **)cell;
   {
@@ -446,7 +481,7 @@ void Credits_InitCrawlSprites(void) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | OBJ_SIZE_32X8;
+      *q++ = (i * 8 + 16) | OBJ_X(j * 32 + 24) | OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -491,23 +526,24 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   busy = Text_DrawMessageToCanvasFar(message, canvas, align);
   dst = canvas;
   src = canvas;
-  for (j = 0; j < 0x600; j++) {
+  for (j = 0; j < 2 * CREDITS_LINE_BYTES; j++) {
     u8 low = *src++;
     *dst++ = low | (*src++ << 4);
   }
-  for (i = 0; i <= 23; i++) {
+  for (i = 0; i < CREDITS_LINE_TILES; i++) {
     u32 *column = (u32 *)canvas + i;
 
-    tiles = (u32 *)((slot + i) * 32 + OBJ_VRAM0);
+    tiles = (u32 *)((slot + i) * TILE_SIZE_4BPP + OBJ_VRAM0);
     for (row = 0; row < 8; row++) {
-      *tiles++ = column[row * 24];
+      *tiles++ = column[row * CREDITS_LINE_TILES];
     }
   }
-  for (offset = slot * 32, top = (u32 *)(canvas + 0x300), j = 0; j <= 23;
-       j++, offset += 32, top++) {
-    tiles = (u32 *)(offset + OBJ_VRAM0 + 0x300);
+  for (offset = slot * TILE_SIZE_4BPP,
+      top = (u32 *)(canvas + CREDITS_LINE_BYTES), j = 0;
+       j < CREDITS_LINE_TILES; j++, offset += TILE_SIZE_4BPP, top++) {
+    tiles = (u32 *)(offset + OBJ_VRAM0 + CREDITS_LINE_BYTES);
     for (row = 0; row < 8; row++) {
-      *tiles++ = top[row * 24];
+      *tiles++ = top[row * CREDITS_LINE_TILES];
     }
   }
   Heap_Release(canvas);
@@ -529,7 +565,7 @@ void Credits_UpdateTextSprites(void) {
     for (col = 0; col < CREDITS_COLUMNS; col++) {
       u32 *q = entry;
 
-      *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | OBJ_SIZE_32X8;
+      *q++ = (row * 8 + 16 - fine) | OBJ_X(col * 32 + 24) | OBJ_SIZE_32X8;
       entry += 2;
       *q = tile;
       tile += 4;
@@ -561,7 +597,7 @@ void Credits_DrawEnteringLine(void) {
   } else if (position / 8 != gDisplayScroll_LastPosition / 8) {
     gDisplayScroll_LastPosition = current;
     text = gDisplayScroll_LineTable[line];
-    if (text == (const u8 *)255) {
+    if (text == CREDITS_PAGE_MARK) {
       gDisplayScroll_Busy = 1;
       Credits_DrawLine(gDisplayScroll_LineTable[0], CREDITS_RING_LINE(line), 1);
     } else {
@@ -587,10 +623,10 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   i = 0;
   if (page != 0 && gDisplayScroll_LineTable[0] != 0) {
     do {
-      if ((u32)gDisplayScroll_LineTable[i] == 255)
+      if (gDisplayScroll_LineTable[i] == CREDITS_PAGE_MARK)
         marks++;
       i++;
-      if (i == 500 || marks == page)
+      if (i == CREDITS_MAX_LINES || marks == page)
         break;
     } while (gDisplayScroll_LineTable[i] != 0);
   }
@@ -609,7 +645,9 @@ void Credits_InitTextSpritesAtPage(s32 page) {
             REG_DMA3);
     fill = PIXELS_4BPP(1);
     Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+                (CREDITS_BORDER_TILE_BYTES / 4),
+            REG_DMA3);
     entry = *(u32 **)cell;
   }
   {
@@ -650,7 +688,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | OBJ_SIZE_32X8;
+      *q++ = (i * 8 + 16) | OBJ_X(j * 32 + 24) | OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -819,7 +857,7 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
   u32 offset;
   u32 from;
 
-  start = (gEndingPicture_MapScroll >> 19) << 6;
+  start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
   gScrollTarget = gEndingPicture_Row = position;
   {
     volatile s32 *word = &gEndingPicture_Scroll;
@@ -827,11 +865,11 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
     *word = position << 16;
   }
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
-    from = (position / 8) << 6;
+    from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
     offset = ENDING_PICTURE_WRAP(start);
     for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
-      Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
-              REG_DMA3);
+      Dma_Set(source + from, destination + offset,
+              DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
       from += ENDING_PICTURE_ROW_BYTES;
       offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
     }
@@ -902,27 +940,27 @@ void EndingPicture_Scroll(void) {
   if ((gEndingPicture_Scroll ^ old) & px(8)) {
     source = gEndingPicture_Map;
     destination = (u8 *)BG_CHAR_BLOCK(0);
-    start = (gEndingPicture_MapScroll >> 19) << 6;
+    start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
     if (gEndingPicture_Block != 0)
       destination = (u8 *)BG_CHAR_BLOCK(2);
     scroll = gEndingPicture_Scroll;
     if (scroll > old) {
-      from = (((u32)scroll >> 19) << 6) +
+      from = ENDING_PICTURE_ROW_OFFSET((u32)scroll) +
              (ENDING_PICTURE_ROWS - 1) * ENDING_PICTURE_ROW_BYTES;
       offset = ENDING_PICTURE_WRAP(start + (ENDING_PICTURE_ROWS - 1) *
                                                ENDING_PICTURE_ROW_BYTES);
       for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
-        Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
-                REG_DMA3);
+        Dma_Set(source + from, destination + offset,
+                DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
         source += ENDING_PICTURE_STRIP_BYTES;
         destination += ENDING_PICTURE_SCREEN_BYTES;
       }
     } else {
-      from = ((u32)gEndingPicture_Scroll >> 19) << 6;
+      from = ENDING_PICTURE_ROW_OFFSET((u32)gEndingPicture_Scroll);
       offset = ENDING_PICTURE_WRAP(start);
       for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
-        Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
-                REG_DMA3);
+        Dma_Set(source + from, destination + offset,
+                DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
         source += ENDING_PICTURE_STRIP_BYTES;
         destination += ENDING_PICTURE_SCREEN_BYTES;
       }
@@ -979,16 +1017,17 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
   u32 offset;
   u32 from;
 
-  start = (gEndingPicture_MapScroll >> 19) << 6;
+  start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
   gScrollTarget = gEndingPicture_Row = position;
   gEndingPicture_Scroll = position << 16;
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     u8 *to = destination + column * ENDING_PICTURE_SCREEN_BYTES;
     const u8 *strip = source + column * ENDING_PICTURE_STRIP_BYTES;
-    from = (position / 8) << 6;
+    from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
     offset = ENDING_PICTURE_WRAP(start);
     for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
-      Dma_Set(strip + from, to + offset, DMA_COPY_WORDS(16), REG_DMA3);
+      Dma_Set(strip + from, to + offset,
+              DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
       from += ENDING_PICTURE_ROW_BYTES;
       offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
     }
@@ -1000,7 +1039,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// the palette half; otherwise it clears the block's first 2 KB, expands
 /// resource's map into the buffer with BattleEffect_Expand2Code copied to the
 /// heap (the fill word marks the second block's tiles), and queues the
-/// resource's 64-colour palette. Then it copies the map at position into the
+/// resource's 128-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
   volatile u32 cell;
@@ -1021,8 +1060,8 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
       tiles = (u8 *)BG_CHAR_BLOCK(2);
       palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     }
-    Dma_Fill32Cell(cell, word, map, 0xf000);
-    Dma_Fill32Cell(cell, 0, palette, 0x100);
+    Dma_Fill32Cell(cell, word, map, ENDING_PICTURE_MAP_BYTES);
+    Dma_Fill32Cell(cell, 0, palette, BACKDROP_PALETTE_BYTES);
   } else {
     if (gEndingPicture_Block != 0) {
       tiles = (u8 *)BG_CHAR_BLOCK(0);
@@ -1035,9 +1074,10 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
     Dma_Fill32Cell(cell, 0, tiles, ENDING_PICTURE_SCREEN_BYTES);
     data = Resource_GetTableEntry(resource);
     RamCode_Load(code, BattleEffect_Expand2Code, BattleEffect_Expand2CodeSize);
-    code(data + 0x100, map, fill);
+    code(data + BACKDROP_PALETTE_BYTES, map, fill);
     Heap_Release(code);
-    IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data, DMA_COPY_WORDS(64));
+    IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data,
+                        DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
   }
   gEndingPicture_Map = map;
   CopyScrollMap(map, tiles, position);
@@ -1053,7 +1093,7 @@ void EndingPicture_WaitForScroll(void) {
     do {
       wait(1);
       frames++;
-      if (frames > 299)
+      if (frames >= ENDING_PICTURE_SCROLL_TIMEOUT)
         break;
     } while (gEndingPicture_Scroll != gEndingPicture_Row << 16);
   }
@@ -1065,7 +1105,7 @@ void EndingPicture_DrawStrips(void) {
   struct QueuedSprite *entry = gEndingPicture_Strips;
   s32 i;
 
-  for (i = 0; i < 24; i++)
+  for (i = 0; i < ENDING_PICTURE_STRIP_SPRITES; i++)
     Oam_AddSpriteAtDepthClamped(entry++, 0);
 }
 
@@ -1081,25 +1121,27 @@ void EndingPicture_InitStrips(void) {
   u32 i;
 
   /* FAKEMATCH(temporary): the allocation kept in entries. */
-  entries = Heap_AllocEwram(0x120);
+  entries = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
+                            sizeof(struct QueuedSprite));
   gEndingPicture_Strips = entries;
   tile = VramCache_Load(slot, 0x200, 0);
-  Dma_Fill32(0x11111111, (void *)(OBJ_VRAM0 + tile * 32), 0x200);
+  Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP),
+             0x200);
   words = (u32 *)gEndingPicture_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | 0x80004078;
+    *words++ = (i << 21) | OBJ_SIZE_32X16 | 120;
     *words++ = tile;
   }
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | 0x80004088;
-    *words++ = tile | 0x800;
+    *words++ = (i << 21) | OBJ_SIZE_32X16 | 136;
+    *words++ = tile | OBJ_PRIORITY(2);
   }
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | 0x40004098;
-    *words++ = tile | 0x800;
+    *words++ = (i << 21) | OBJ_SIZE_32X8 | 152;
+    *words++ = tile | OBJ_PRIORITY(2);
   }
   Task_Add(EndingPicture_DrawStrips, TASK_PASS_VBLANK);
 }

@@ -137,7 +137,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       BLITTER_MAX);
   rectangleB = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 angle;
     s32 magnitude;
 

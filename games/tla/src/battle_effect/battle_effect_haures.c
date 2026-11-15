@@ -520,7 +520,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                      work->sheet, 1, 0);
           Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+              SHEET_PALETTE_BYTES);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
         }
         verts = Heap_AllocEwram(32);

@@ -77,7 +77,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_STRONGER)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+        SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 

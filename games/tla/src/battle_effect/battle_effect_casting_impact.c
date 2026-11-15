@@ -559,9 +559,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectScaledBattler(action->targets[0], target);
   EffectPosition_ProjectScaledBattler(action->user, base);

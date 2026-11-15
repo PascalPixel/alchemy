@@ -627,7 +627,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     } else {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
+          SHEET_PALETTE_BYTES);
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                  work->sheet + 0x22, 1, 0);
     }

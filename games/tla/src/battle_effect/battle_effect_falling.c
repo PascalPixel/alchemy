@@ -119,9 +119,9 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGER)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
@@ -285,7 +285,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Line the drops up above the screen along the slant, each the variant's
   // spacing higher than the one before.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 x;
     s32 y;
 

@@ -692,7 +692,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
       if (frame == DRAGON_FIRE_BREATH_FRAME)
-        work->transferValue = 50;
+        work->transferValue = CANVAS_FADE_HALF;
       if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(

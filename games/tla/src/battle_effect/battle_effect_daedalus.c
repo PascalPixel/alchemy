@@ -513,7 +513,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
     Iwram_CopyWords(
         (void *)BG_PLTT,
-        (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
+        (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
+        SHEET_PALETTE_BYTES);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -610,7 +611,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         Iwram_CopyWords(
             (void *)BG_PLTT,
             (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
-            128);
+            SHEET_PALETTE_BYTES);
         work->particles[20].variant = 1;
       }
       if (frame == 288)
@@ -1436,7 +1437,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame == 56) {
       Sound_PlayFar(SE_SPIN);

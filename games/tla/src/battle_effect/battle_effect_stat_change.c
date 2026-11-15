@@ -200,15 +200,18 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     if (mode == STAT_BOOST_GRANITE)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
+          SHEET_PALETTE_BYTES);
     else if (mode == STAT_BOOST_FLASH)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+          SHEET_PALETTE_BYTES);
     else
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
+          SHEET_PALETTE_BYTES);
   } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
@@ -280,7 +283,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
-  work->transferValue = 50; // to 1/2
+  work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (args->side == EFFECT_SIDE_PARTY)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;

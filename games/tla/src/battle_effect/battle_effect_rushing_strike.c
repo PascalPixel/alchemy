@@ -73,7 +73,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
-  work->transferValue = 50;
+  work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != STAR_MINE_FRAMES; frame++) {
@@ -326,7 +326,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
@@ -363,7 +364,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame == 166) {
       camera->yaw = savedYaw;

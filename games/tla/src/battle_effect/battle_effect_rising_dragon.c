@@ -85,7 +85,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                                1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+        SHEET_PALETTE_BYTES);
     REG_BG2PA = Q_8_8(0.5);
     Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 

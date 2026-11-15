@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "enemy_ids.h"
 #include "sounds.h"
 
 // Flora's summon.
@@ -802,9 +803,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
-/// four enemies, the actor steps 15 pixels further from x = 0 on its
-/// anchor's side, its y velocity growing by 0x28000 while y is under 10.
+/// BattleEffect_StartActorMotion with fixed values: unless the unit is the
+/// Fusion Dragon or one of three of the Doom Dragon's forms, the actor steps
+/// 15 pixels further from x = 0 on its anchor's side, its y velocity growing
+/// by 0x28000 while y is under 10.
 void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
@@ -814,7 +816,8 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = Unit_Get(id)->enemyId;
-  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+  if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
+      enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     object->acceleration = px(2);
     object->speedLimit = px(8);
     if (object->y < px(10))
@@ -1101,7 +1104,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     if (frame == STAR_BURST_FRAME) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
+          SHEET_PALETTE_BYTES);
       casterObject->z = targetObject->z;
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;

@@ -111,7 +111,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
@@ -180,7 +180,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                TASK_PASS_FRAME + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_WORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_HALFWORD);
     }
     if (frame == 18) {

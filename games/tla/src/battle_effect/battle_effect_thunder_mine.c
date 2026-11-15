@@ -452,7 +452,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     if (frame == 64) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
 
     // The whirl of flame, and smoke.

@@ -290,7 +290,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;

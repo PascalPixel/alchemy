@@ -1778,15 +1778,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 513) <= 209) {
       s16 shade = 723 - frame;
 
-      if (shade < 0 || shade > 63)
-        shade = 63;
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(0, 127, frame - 512, shade);
     }
     if ((u32)(frame - 522) <= 209) {
       s16 shade = 732 - frame;
 
-      if (shade < 0 || shade > 63)
-        shade = 63;
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
           0,
           Q_16_16_TO_INT(Iwram_MulQ16((frame - 521) * 0x10000, 0x400) +
@@ -1797,8 +1797,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s32 x = px(4);
       s16 shade = 741 - frame;
 
-      if (shade < 0 || shade > 63)
-        shade = 63;
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
       x -= Iwram_MulQ16((frame - 530) * px(1), 0x400);
       BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 530,
                                           shade);
@@ -1806,8 +1806,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 535) <= 209) {
       s16 shade = 745 - frame;
 
-      if (shade < 0 || shade > 63)
-        shade = 63;
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
           0,
           Q_16_16_TO_INT(Iwram_MulQ16((frame - 534) * 0x10000, 0x600) +
@@ -1818,8 +1818,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s32 x = px(6);
       s16 shade = 764 - frame;
 
-      if (shade < 0 || shade > 63)
-        shade = 63;
+      if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
+        shade = CANVAS_LEVEL_BRIGHTEST;
       x -= Iwram_MulQ16((frame - 553) * px(1), 0x600);
       BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 553,
                                           shade);

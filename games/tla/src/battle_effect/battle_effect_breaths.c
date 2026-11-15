@@ -70,9 +70,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (args->variant == EFFECT_VARIANT_BASIC)
           shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
         else
-          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * 63)) - i * 4;
-        if (shade > 63)
-          shade = 63;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * CANVAS_LEVEL_BRIGHTEST)) -
+                  i * 4;
+        if (shade > CANVAS_LEVEL_BRIGHTEST)
+          shade = CANVAS_LEVEL_BRIGHTEST;
         if (shade < 0)
           shade = 0;
         for (k = 0; k != 32; k++)
@@ -521,7 +522,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+        SHEET_PALETTE_BYTES);
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {

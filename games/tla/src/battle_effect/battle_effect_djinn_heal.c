@@ -370,7 +370,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                                  1);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     gProjection.centerX -= work->scrollStepX;

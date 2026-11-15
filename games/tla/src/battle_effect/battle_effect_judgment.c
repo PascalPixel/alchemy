@@ -447,7 +447,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = JUDGMENT_SWEEP_BEACH;
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
@@ -467,7 +467,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == JUDGMENT_SWEEP_EXPLOSION) {
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,

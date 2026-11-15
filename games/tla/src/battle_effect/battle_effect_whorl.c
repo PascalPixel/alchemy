@@ -90,7 +90,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       }
       Iwram_CopyWordsEntry(
           palette, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-          128);
+          SHEET_PALETTE_BYTES);
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
@@ -132,11 +132,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   if (mode == WATER_COLUMN_POISON_FLOW) {
     Iwram_CopyWordsEntry(
-        palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+        palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+        SHEET_PALETTE_BYTES);
   }
   if (mode == WATER_COLUMN_RAGING_FLOOD || mode == WATER_COLUMN_LETHE_ALBION) {
     Iwram_CopyWordsEntry(
-        palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
+        palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
+        SHEET_PALETTE_BYTES);
   }
   columns =
       (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD)

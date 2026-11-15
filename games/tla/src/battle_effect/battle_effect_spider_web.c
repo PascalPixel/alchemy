@@ -75,11 +75,12 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
     s32 shade;
     s32 col;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
+                           CANVAS_LEVEL_BRIGHTEST);
     shade = shade * scale / (Q16_ONE);
 
-    if (shade > 63)
-      shade = 63;
+    if (shade > CANVAS_LEVEL_BRIGHTEST)
+      shade = CANVAS_LEVEL_BRIGHTEST;
     while (x >= y) {
       col = center - x / 2;
       map[half * (last - y) + col] = shade;
@@ -109,10 +110,11 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     s32 col;
     s32 row;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
+                           CANVAS_LEVEL_BRIGHTEST);
     shade = shade * scale / (Q16_ONE);
-    if (shade > 63)
-      shade = 63;
+    if (shade > CANVAS_LEVEL_BRIGHTEST)
+      shade = CANVAS_LEVEL_BRIGHTEST;
     while (x >= y) {
       col = center - x / 2;
       row = last - y;
@@ -345,7 +347,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                           CANVAS_FADE_THREE_QUARTERS);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+          SHEET_PALETTE_BYTES);
       for (i = 0; i != 9; i++) {
         p = &work->particles[i];
         p->variant = -2 * i;

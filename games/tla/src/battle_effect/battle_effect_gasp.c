@@ -212,8 +212,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     for (i = 0, p = work->sheet; i != 0x1b00; i++, p++) {
       *p <<= 1;
-      if (*p > 63)
-        *p = 63;
+      if (*p > CANVAS_LEVEL_BRIGHTEST)
+        *p = CANVAS_LEVEL_BRIGHTEST;
     }
     if (args->variant == EFFECT_VARIANT_STRONGEST) {
       LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
@@ -717,9 +717,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         struct ScreenPoint pos;
 
         if (t <= 23)
-          work->transferValue = 75;
+          work->transferValue = CANVAS_FADE_THREE_QUARTERS;
         else
-          work->transferValue = 50;
+          work->transferValue = CANVAS_FADE_HALF;
         texture.logWidth = 6;
         texture.logHeight = 6;
         model->mesh = gBattleEffect_SquareMesh;
@@ -1087,7 +1087,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == GASP_MODE_DEMON_EYE) {
       struct ScreenPoint pos;
 
-      work->transferValue = 50;
+      work->transferValue = CANVAS_FADE_HALF;
       texture.logWidth = 7;
       texture.logHeight = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;

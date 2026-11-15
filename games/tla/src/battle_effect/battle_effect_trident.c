@@ -529,9 +529,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == LEAPING_STRIKE_PLANET_DIVER)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   for (i = 0; i != 256; i++)
     SPARKS[i].variant = 0;

@@ -48,8 +48,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF), 128);
-    work->transferValue = 50;
+        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
+        SHEET_PALETTE_BYTES);
+    work->transferValue = CANVAS_FADE_HALF;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {

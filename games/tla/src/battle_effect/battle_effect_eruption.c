@@ -59,7 +59,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   } else {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet), 128);
+        Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
+        SHEET_PALETTE_BYTES);
     variant = args->variant;
   }
 

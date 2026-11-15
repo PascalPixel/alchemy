@@ -561,7 +561,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     if (frame == 20)
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
+          SHEET_PALETTE_BYTES);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
         draw[1](canvas, work->sheet, 146 - frame * 4, diveY, SMALL_DJINNI_WIDTH,

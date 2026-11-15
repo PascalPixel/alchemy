@@ -213,7 +213,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
     }
     if (frame > 128) {

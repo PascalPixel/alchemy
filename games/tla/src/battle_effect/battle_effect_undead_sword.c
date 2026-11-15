@@ -197,7 +197,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
                              work->sheet + PLUME_EDGE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
-      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
+      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
+      SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
@@ -213,7 +214,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
     // Frame 0: 64 flashes fan out upward from the target, one more each
     // frame, and the target turns white and stops bouncing.
     if (frame == 0) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         s32 speed = (Random16() & 0x3ff) + 32;
         s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 

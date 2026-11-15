@@ -324,7 +324,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       }
       work->transferMode =
           CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
-      work->transferValue = 50; // leaving a trail
+      work->transferValue = CANVAS_FADE_HALF; // leaving a trail
     }
 
     // The flashes start i/4 frames late and rise, a picture every 4 frames.
@@ -1604,8 +1604,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     s32 v = i / 2;
     u8 *c;
 
-    if (v > 63) {
-      v = 63;
+    if (v > CANVAS_LEVEL_BRIGHTEST) {
+      v = CANVAS_LEVEL_BRIGHTEST;
     }
     for (j = 0, c = (u8 *)(i + (s32)work + 1792); j != 120; j++) {
       *c = v;

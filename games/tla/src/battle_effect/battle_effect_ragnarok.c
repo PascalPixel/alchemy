@@ -384,7 +384,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+            SHEET_PALETTE_BYTES);
         Palette_MirrorBgColors();
       }
     }

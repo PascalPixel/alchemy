@@ -240,7 +240,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if (frame == 0) {
       REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
-      for (i = 3; i != 64; i++) {
+      for (i = 3; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
     }
@@ -564,7 +564,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         work->particles[i].variant = 0;
       }
     }
-    for (j = 3; j != 64; j++) {
+    for (j = 3; j != ARRAY_COUNT(work->particles); j++) {
       p = &work->particles[j];
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
@@ -1001,7 +1001,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
           Iwram_CopyWords(
               (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF), 128);
+              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
+              SHEET_PALETTE_BYTES);
         }
         if (rise <= 0xfffff) {
           rise += px(1);

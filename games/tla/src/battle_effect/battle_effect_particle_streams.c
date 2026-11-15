@@ -4,6 +4,7 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "enemy_ids.h"
 #include "sounds.h"
 
 /// The particle streams' modes (BattleEffect_RunParticleStreams).
@@ -14,8 +15,9 @@ enum ParticleStreamsMode {
 };
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
-/// unless the unit is one of four enemies, the actor leaps back to 130-193% of
-/// its anchor's x, then takes mode 5.
+/// unless the unit is the Fusion Dragon or one of three of the Doom Dragon's
+/// forms, the actor leaps back to 130-193% of its anchor's x, then takes
+/// mode 5.
 void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
@@ -24,7 +26,8 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = Unit_Get(id)->enemyId;
-  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+  if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
+      enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     s32 percent = (Random16() & 63) + 130;
 
     object->acceleration = px(8);

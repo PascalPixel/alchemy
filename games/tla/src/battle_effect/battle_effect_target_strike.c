@@ -332,9 +332,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   else
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Aim at the middle of the first target.
@@ -929,7 +929,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   }
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer leaves 3/4 of the old picture,
-  work->transferValue = 75; // a trail
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS; // a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

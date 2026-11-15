@@ -442,8 +442,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
 
-    if (v > 63) {
-      v = 63;
+    if (v > CANVAS_LEVEL_BRIGHTEST) {
+      v = CANVAS_LEVEL_BRIGHTEST;
     }
     for (j = 0; j != 120; j++) {
       work->sheet[j * 120 + i] = v;
@@ -822,11 +822,13 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       if (kind == KIND_LEFT)
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+            SHEET_PALETTE_BYTES);
       else
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC), 128);
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC),
+            SHEET_PALETTE_BYTES);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
     }

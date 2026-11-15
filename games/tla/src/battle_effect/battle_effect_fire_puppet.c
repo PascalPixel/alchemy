@@ -90,7 +90,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                              work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
-      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
+      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
+      SHEET_PALETTE_BYTES);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 

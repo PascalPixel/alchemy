@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "enemy_ids.h"
 #include "sounds.h"
 
 /// Projects a unit onto the screen, raised by half its height, from the battle
@@ -546,8 +547,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
 /// Starts a unit moving away from the centre with its own force, acceleration,
 /// top speed, hop and reach in percent, as BattleMotion_ApplyKnockback does
-/// from its tables; four enemies (ids 357, 369, 373 and 376) are not moved,
-/// only posed.
+/// from its tables; the Fusion Dragon and three of the Doom Dragon's
+/// forms are not moved, only posed.
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {
   struct BattleObject *slot;
@@ -557,7 +558,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
   slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = Unit_Get(id)->enemyId;
-  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+  if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
+      enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     object->acceleration = acceleration;
     object->speedLimit = speedLimit;
     if (force != 0 || object->velocityY != 0)

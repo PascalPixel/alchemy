@@ -139,6 +139,8 @@ struct FieldEffectWork;
 /// frames later it swarms to points within 4 pixels of one 20 pixels over the
 /// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
+  // The leader through its typed sprite: as struct Actor's untyped one, the
+  // sprite's load waits on the stores before it.
   struct EffectOwner *owner;
   struct Vector3 position;
   s32 state;
@@ -146,7 +148,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
-  if (state == 0) {
+  if (state == MARS_SPARK_AIM) {
     effect->x = effect->originX;
     effect->z = effect->originZ;
     position.x = effect->x;
@@ -168,14 +170,14 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
       Sound_PlayFar(SE_HEAVY_IMPACT);
-  } else if (state == 1) {
+  } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
       ((struct Sprite *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 2) {
+  } else if (state == MARS_SPARK_STOPPING) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
@@ -185,7 +187,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       effect->state++;
       effect->callbackDelay = 40;
     }
-  } else if (state == 3) {
+  } else if (state == MARS_SPARK_AIM_LEADER) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
@@ -198,10 +200,10 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->state++;
     if ((gVBlankCount & 1) != 0)
       Sound_PlayFar(SE_CRASH);
-  } else if (state == 4) {
+  } else if (state == MARS_SPARK_SWARMING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 5) {
+  } else if (state == MARS_SPARK_LEAVING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }

@@ -12,60 +12,55 @@
 #include "system/system.h"
 #include "system/task.h"
 
-/// Runs each of the player's animation channels on to its next stop (a
-/// wait, end or jump: 0xef, 0xf1, 0xfd or 0xfe), taking the frames and
+/// Runs each of the player's animation channels on to its next stop (an
+/// end, hold, jump or play command), taking the frames and
 /// settings on the way, and leaves the stop to run next; marks the player and
 /// each channel changed. The battle's motion calls it before it releases a
 /// borrowed sprite buffer.
-void Animation_SkipToStop(struct ScriptPlayer *player) {
+void Animation_SkipToStop(struct Sprite *player) {
   s32 i;
 
-  for (i = 0; i < player->channelCount; i++) {
-    struct ScriptChannel *channel = player->channels[i];
+  for (i = 0; i < player->count; i++) {
+    struct SpriteAnimation *channel = player->entries[i];
     u8 command;
     u8 argument;
 
     if (channel == 0 || channel->script == 0)
       continue;
     for (;;) {
-      command = channel->script[channel->position++];
-      argument = channel->script[channel->position++];
+      command = channel->script[channel->scriptOffset++];
+      argument = channel->script[channel->scriptOffset++];
       switch (command) {
-      case 0xf0:
-        channel->unk04 = argument;
+      case ANIMCMD_SET_KIND:
+        channel->kind = argument;
         continue;
-      case 0xf3:
-        player->unk16 = argument;
+      case ANIMCMD_OFFSET_X:
+        player->offsetX = argument;
         continue;
-      case 0xf2:
-        player->unk17 = argument;
+      case ANIMCMD_OFFSET_Y:
+        player->offsetY = argument;
         continue;
-      case 0xff:
-        channel->unk17 = 0xff;
+      case ANIMCMD_BLANK:
+        channel->pictureBase = SPRITE_PICTURE_NONE;
         continue;
-      case 0xf4:
-      case 0xf5:
-      case 0xf6:
-      case 0xf7:
-      case 0xf8:
-      case 0xf9:
-      case 0xfa:
-      case 0xfc:
+      case 244:
+      case ANIMCMD_WAIT ... 250:
+      case ANIMCMD_SOUND:
         continue;
       default:
-        channel->unk17 = command;
+        channel->pictureBase = command;
         continue;
-      case 0xef:
-      case 0xf1:
-      case 0xfd:
-      case 0xfe:
+      case ANIMCMD_END:
+      case ANIMCMD_HOLD:
+      case ANIMCMD_JUMP:
+      case ANIMCMD_PLAY:
         break;
       }
       break;
     }
-    channel->position -= 2;
-    player->unk19 = 1;
-    channel->unk02 = 1;
+    channel->scriptOffset -= 2;
+    player->dirty = 1;
+    channel->timer = 1;
   }
 }
 
@@ -115,46 +110,44 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       picture = layer->script[layer->scriptOffset++];
       arg = layer->script[layer->scriptOffset++];
       switch (picture) {
-      case 254:
+      case ANIMCMD_PLAY:
         SpriteAnimation_Start(layer, arg);
         obj->lastNo = arg;
         break;
-      case 253:
+      case ANIMCMD_JUMP:
         layer->scriptOffset = arg;
         break;
-      case 252:
+      case ANIMCMD_SOUND:
         Sound_PlayFar(arg);
         break;
-      case 241:
+      case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
         picture = layer->pictureBase;
         goto select_direction;
-      case 240:
+      case ANIMCMD_SET_KIND:
         layer->kind = arg;
         break;
-      case 243:
+      case ANIMCMD_OFFSET_X:
         obj->offsetX = arg;
         break;
-      case 242:
+      case ANIMCMD_OFFSET_Y:
         obj->offsetY = arg;
         break;
-      case 255:
-        layer->pictureBase = 255;
-      case 245:
+      case ANIMCMD_BLANK:
+        layer->pictureBase = SPRITE_PICTURE_NONE;
+        // Falls through: its time counts as ANIMCMD_WAIT's does.
+      case ANIMCMD_WAIT:
         layer->timer += arg << 4;
         break;
-      case 239:
-        layer->pictureBase = 255;
+      case ANIMCMD_END:
+        layer->pictureBase = SPRITE_PICTURE_NONE;
         layer->script = NULL;
         obj->count--;
-        picture = 255;
+        picture = SPRITE_PICTURE_NONE;
         goto select_direction;
+      // Unused commands, skipped. 251 is not among them: it shows as a picture.
       case 244:
-      case 246:
-      case 247:
-      case 248:
-      case 249:
-      case 250:
+      case ANIMCMD_WAIT + 1 ... 250:
         break;
       default:
         layer->pictureBase = picture;

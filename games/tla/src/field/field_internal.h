@@ -241,7 +241,10 @@ enum AnimationCommand {
   ANIMCMD_END = 239,      ///< blank the layer and stop its script
   ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
   ANIMCMD_HOLD = 241,     ///< stay on this command and frame for good
+  ANIMCMD_OFFSET_Y = 242, ///< set the sprite's offsetY to `arg`
+  ANIMCMD_OFFSET_X = 243, ///< set the sprite's offsetX to `arg`
   ANIMCMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
+  ANIMCMD_SOUND = 252,    ///< play sound `arg`
   ANIMCMD_JUMP = 253,     ///< continue at script position `arg`
   ANIMCMD_PLAY = 254,     ///< switch to animation `arg`
   ANIMCMD_BLANK = 255     ///< show nothing for `arg`

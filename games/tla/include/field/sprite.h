@@ -32,6 +32,9 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// SpriteAnimation.picture and pictureBase when no picture is shown.
+#define SPRITE_PICTURE_NONE 0xff
+
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct SpriteAnimation {

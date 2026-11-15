@@ -105,10 +105,10 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
 void Actor_FallOverById(u32 id, u32 angle) {
   s32 position[3];
   struct Actor *object = Actor_GetById(id);
-  struct ObjectSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL) {
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SelectAnimationFar(object, ANIM_STILL);
     angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     position[0] = object->x.fixed;
     position[2] = object->z.fixed;
@@ -116,24 +116,24 @@ void Actor_FallOverById(u32 id, u32 angle) {
     Vector_AddPolarOffset(px(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     switch (angle) {
-    case 0:
+    case FACING_EAST:
       sprite->offsetX -= 3;
       sprite->offsetY += 5;
       break;
-    case 0x8000:
+    case FACING_WEST:
       sprite->offsetX += 2;
       sprite->offsetY += 4;
       break;
-    case 0xc000:
+    case FACING_NORTH:
       sprite->offsetY += 1;
       break;
-    case 0x4000:
+    case FACING_SOUTH:
       sprite->offsetY += 5;
       break;
     }
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
-    sprite->nextFrame = 0;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    sprite->flags = 0;
     sprite->rotation = angle + TRIG_TURN / 4;
   }
 }

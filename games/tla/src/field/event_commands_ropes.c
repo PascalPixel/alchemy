@@ -1528,7 +1528,7 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
 /// five cells it hangs over, starting the vines first if they are not running;
 /// with grow set, the vine drops into place over 28 frames.
 void HangingVine_Hang(s32 objectId, s32 grow) {
-  struct ChainObject *object;
+  struct Actor *object;
   struct MapWork *map;
   struct HangingVineSlot *slot;
   struct HangingVineLink *link;
@@ -1550,8 +1550,9 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   kind = 372;
   map = Ram_HeapSlots->mapGrid;
   if (running == 0) {
-    if (object->sprite != 0 && object->sprite->entries[0] != 0)
-      kind = *object->sprite->entries[0];
+    if (object->sprite != 0 &&
+        ((struct Sprite *)object->sprite)->entries[0] != 0)
+      kind = ((struct Sprite *)object->sprite)->entries[0]->animationId;
     HangingVine_Initialize(kind);
   }
   if (HangingVine_FindSlot(objectId) != 0)
@@ -1561,8 +1562,8 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     return;
 
   // Clear the collision codes of the five cells above the object.
-  x = FIELD_CELL(object->x);
-  z = FIELD_CELL(object->z - object->y);
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed - object->y.fixed);
   cells = map->layers[2].cells;
   for (i = 0; i < 5; i++) {
     z++;
@@ -1571,15 +1572,15 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     cell->collisionCode = 0;
   }
 
-  x = (object->x & CELL_MASK) + px(8);
-  y = object->y & CELL_MASK;
+  x = (object->x.fixed & CELL_MASK) + px(8);
+  y = object->y.fixed & CELL_MASK;
   top = y + px(8);
-  z = (object->z & CELL_MASK) + px(16);
+  z = (object->z.fixed & CELL_MASK) + px(16);
   Actor_SelectAnimationFar((struct Actor *)object, 0);
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->z += px(16);
-  object->y -= px(64);
+  object->z.fixed += px(16);
+  object->y.fixed -= px(64);
   Actor_SetSpriteFlagsFar(object, 0);
 
   // Hang the links.
@@ -1634,7 +1635,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 void HangingVine_Swing(s32 id) {
   s32 rootX, rootY;
   s32 motionFlags;
-  struct Unk_080db0b0Sprite *heldSprite;
+  struct Sprite *heldSprite;
   s32 side = 0;
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   struct Actor *anchor = Actor_GetById(id);
@@ -1642,7 +1643,7 @@ void HangingVine_Swing(s32 id) {
   union {
     struct HangingVineSlot s;
   } *slot;
-  struct Unk_080db0b0Sprite *sprite;
+  struct Sprite *sprite;
   s32 swing;
   s32 start;
   s32 dir;
@@ -1697,7 +1698,7 @@ void HangingVine_Swing(s32 id) {
     case 16:
       slot->s.swing = 1568;
       slot->s.spacing = Q16_ONE * 29 / 2;
-      sprite->unk12 = dir << 10;
+      sprite->rotation = dir << 10;
       break;
     case 1:
     case 2:
@@ -1705,7 +1706,7 @@ void HangingVine_Swing(s32 id) {
     case 18:
       slot->s.swing += 16;
       slot->s.spacing += Q16_ONE / 4;
-      sprite->unk12 += dir << 9;
+      sprite->rotation += dir << 9;
       break;
     default:
       if (slot->s.swing > 1536)
@@ -1714,12 +1715,12 @@ void HangingVine_Swing(s32 id) {
         slot->s.swing = 1536;
       if (slot->s.spacing > Q16_ONE * 14)
         slot->s.spacing -= Q16_ONE / 32;
-      if (sprite->unk12 != 0)
-        sprite->unk12 -= dir << 7;
+      if (sprite->rotation != 0)
+        sprite->rotation -= dir << 7;
       break;
     }
     if (gInput.pressed & letGo) {
-      sprite->unk12 = 0;
+      sprite->rotation = 0;
       slot->s.active = 1;
       return;
     }
@@ -1728,7 +1729,7 @@ void HangingVine_Swing(s32 id) {
     wait(1);
   }
 
-  sprite->unk12 = 0;
+  sprite->rotation = 0;
   slot->s.active = 0;
   Actor_SelectAnimationFar(leader, 6);
   wait(6);
@@ -1763,7 +1764,7 @@ void HangingVine_Swing(s32 id) {
     leader->y.fixed = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
     leader->targetX = leader->x.fixed;
     leader->targetY = leader->y.fixed;
-    heldSprite->unk12 = angle;
+    heldSprite->rotation = angle;
     wait(1);
   }
   slot->s.active = 1;
@@ -1775,7 +1776,7 @@ void HangingVine_Swing(s32 id) {
     wait(1);
   }
   slot->s.spacing = Q16_ONE * 14;
-  heldSprite->unk12 = 0;
+  heldSprite->rotation = 0;
   Actor_SelectAnimationFar(leader, 6);
   Actor_SetSpriteFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;

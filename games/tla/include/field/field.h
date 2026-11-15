@@ -238,29 +238,6 @@ struct DiceCamera {
   s32 focus[3];
 };
 
-struct ScriptChannel {
-  u8 unused[2]; ///< no code names it
-  u16 unk02;
-  u8 unk04;
-  u8 unusedB[11]; ///< no code names it
-  u8 *script;
-  u8 position;
-  u8 unusedAfterPosition[2]; ///< no code names it
-  u8 unk17;
-};
-
-struct ScriptPlayer {
-  u8 unused[22]; ///< no code names it
-  u8 unk16;
-  u8 unk17;
-  u8 unk18;
-  u8 unk19;
-  u8 unk1a;
-  u8 channelCount;
-  u8 unusedAfterChannelCount[12]; ///< no code names it
-  struct ScriptChannel *channels[1];
-};
-
 struct ObjectSystemColours {
   u16 used;
   u8 unusedAfterUsed[4]; ///< no code names it
@@ -370,33 +347,6 @@ enum TerrainKind {
   TERRAIN_KIND_COUNT = 16
 };
 
-struct ObjectSprite {
-  u8 unused[4]; ///< no code names it
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u8 unusedAfterShape[2]; ///< no code names it
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unusedAfterPalette[6]; ///< no code names it
-  u8 vramBlock;
-  u8 unk11;
-  u16 rotation;
-  u8 unk14[2];
-  s8 offsetX;
-  s8 offsetY;
-  u8 frame;
-  u8 frameTimer;
-  u8 nextFrame;
-  u8 unk1b;
-  u8 unusedB[0xc]; ///< no code names it
-  void *record;
-};
-
 struct ActorDescriptor {
   s16 action;
   s16 scene;
@@ -447,27 +397,6 @@ struct TightropeWork {
 };
 
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
-
-struct ChainObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x3c];
-  struct {
-    u8 unused[0x28]; ///< no code names it
-    s16 *entries[4];
-  } *sprite;
-  u8 unusedB; ///< no code names it
-  u8 motionFlags;
-  u8 unusedAfterMotionFlags[3]; ///< no code names it
-  u8 collisionFlags;
-};
-
-struct Unk_080db0b0Sprite {
-  u8 unused[18]; ///< no code names it
-  u16 unk12;
-};
 
 /// unk26a from main_routine_work.h.
 struct PartyPauseView {
@@ -534,10 +463,12 @@ struct RisingParticleWork {
   struct RisingParticle particles[64];
 };
 
+/// An actor (struct Actor) as the Mars Djinni's sparks read the leader: its
+/// position and its sprite, typed.
 struct EffectOwner {
   u8 unused[8]; ///< no code names it
   struct Vector3 position;
-  u8 unk14[0x3c];
+  u8 unusedAfterPosition[0x3c]; ///< no code names it
   struct Sprite *sprite;
 };
 

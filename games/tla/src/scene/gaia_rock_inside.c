@@ -328,14 +328,9 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #include "../field/field_effect_advance_motion.c"
 #endif
 
-/* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * scene/scene.h has void Event_End(void); two events return its value, which
- * the bytes need; not tried: Event_End's bound declaration was not found. */
-extern s32 Event_EndWithResult(void) __asm__("Event_End");
-
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
-s32 GaiaRockInside_RaiseDust(void) {
+void GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
@@ -392,7 +387,7 @@ s32 GaiaRockInside_RaiseDust(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  return Event_EndWithResult();
+  Event_End();
 }
 #endif
 
@@ -1203,7 +1198,7 @@ void BlendScript_Resume(void);
 /// Talking to the slate: Kraden urges Felix to touch it, the ground shakes and
 /// the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and Kraden
 /// walks back into the party.
-s32 GaiaRockInside_ReadSandTablet(void) {
+void GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   /* FAKEMATCH(volatile): the blend level rereads through its slot. */
   volatile u16 level;
@@ -1279,7 +1274,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   FieldEvent_Wait(20);
-  return Event_EndWithResult();
+  Event_End();
 }
 
 void Effect_AdvanceMotionLocal(union FieldObject *object) {

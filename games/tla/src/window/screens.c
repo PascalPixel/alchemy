@@ -23,7 +23,7 @@
 #include "game/character_ids.h"
 #include "field/scene_tables.h"
 
-extern u16 gWindowSprite_BounceScales[];
+extern const u16 gWindowSprite_BounceScales[];
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 

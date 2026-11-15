@@ -466,7 +466,7 @@ struct OutputSprite {
   u16 otherX : 2;
   u16 tile;
 };
-extern u16 gWindowSprite_BounceScales[];
+extern const u16 gWindowSprite_BounceScales[];
 
 /// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.

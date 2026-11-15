@@ -50,11 +50,6 @@ struct RenderInput *DebugSoundTest_Open(void) {
   return window;
 }
 
-/// The sound test's four values: music, jingle, sound effect and sound preset.
-struct SoundTestValues {
-  s32 values[4];
-};
-
 extern const struct SoundTestValues gDebugSoundTest_StartValues;
 extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
     SoundTest_SeString[], SoundTest_FxString[];

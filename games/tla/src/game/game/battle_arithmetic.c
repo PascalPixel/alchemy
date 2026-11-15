@@ -210,21 +210,21 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_REVIVE_80:
     fixedChance = 90;
     break;
-  case 73:
+  case ABILITY_EFFECT_REVIVE_60:
     fixedChance = 70;
     break;
   case ABILITY_EFFECT_ATTACK_DOWN_2:
   case ABILITY_EFFECT_ATTACK_DOWN:
   case ABILITY_EFFECT_CURSE:
   case ABILITY_EFFECT_DRAIN_PP:
-  case 80:
+  case ABILITY_EFFECT_CURSE_THREE_ROLLS:
     return 60;
   case ABILITY_EFFECT_HALVE_DEFENSE:
-  case 83:
+  case ABILITY_EFFECT_GROUND_2:
     return 50;
   case ABILITY_EFFECT_STUN:
-  case 82:
-  case 85:
+  case ABILITY_EFFECT_BLOW_AWAY:
+  case ABILITY_EFFECT_STUN_THREE_ROLLS:
     return 40;
   default:
     fixedChance = 100;
@@ -378,12 +378,12 @@ restore_checked:
     case ABILITY_EFFECT_INSTANT_DEATH:
     case ABILITY_EFFECT_CURSE:
     case ABILITY_EFFECT_LEAVE_ONE_HP:
-    case 80:
-    case 82:
+    case ABILITY_EFFECT_CURSE_THREE_ROLLS:
+    case ABILITY_EFFECT_BLOW_AWAY:
       return 0;
     }
   }
-  if (unit->classId != 0 && effectId == 82)
+  if (unit->classId != 0 && effectId == ABILITY_EFFECT_BLOW_AWAY)
     return 0;
 
   score = Battle_GetEffectBaseSuccessRate(effectId);

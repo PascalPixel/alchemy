@@ -273,7 +273,7 @@ s32 Clear_CanRetreat(void) {
   if (FIELD_AT(party, s16, 0x25e) == 2)
     return 0;
   mode = party->next ^ SCENE_WORLD_MAP;
-  return -((u32)(-mode | mode) >> 31);
+  return -NONZERO(mode);
 }
 
 #include "text/msg_ids.h"

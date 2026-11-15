@@ -195,7 +195,7 @@ void FieldPsynergy_Pound(void) {
     // As x != -1 this splits the -1 and loses the mvns.
     spot =
         ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
-    inReach = (u32)(-spot | spot) >> 31;
+    inReach = NONZERO(spot);
     if (inReach == 1) {
       for (j = 0; j < 80; j++) {
         object = event->actors[j];

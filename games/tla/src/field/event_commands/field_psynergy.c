@@ -88,11 +88,11 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
     s32 code = MapGrid_GetCellAt(column, z, 2)->collisionCode;
 
     code ^= 232;
-    column = (u32)(-code | code) >> 31;
+    column = NONZERO(code);
     column = 1 - column;
   }
   if (event->sceneAttributeHigh != 0)
-    column = 1 - ((u32)(-column | column) >> 31);
+    column = 1 - NONZERO(column);
   return column;
 }
 

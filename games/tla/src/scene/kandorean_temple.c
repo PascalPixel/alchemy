@@ -332,7 +332,7 @@ u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
   s32 left;
 
   left = --*(s16 *)&object->userValue;
-  return (u32)(-left | left) >> 31;
+  return NONZERO(left);
 }
 
 /// A meditating student's update: now and then, every four to eight seconds, an

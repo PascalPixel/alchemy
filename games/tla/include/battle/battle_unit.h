@@ -141,9 +141,11 @@ enum AbilityEffect {
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
+  ABILITY_EFFECT_SIDESTEP = 48,           ///< Sidestep
   ABILITY_EFFECT_FLEE = 49,               ///< Flee
   ABILITY_EFFECT_CALL_ALLY = 50,          ///< Ally Search, Speed Surge
   ABILITY_EFFECT_CALL_HELP = 51,          ///< Search for Help
+  ABILITY_EFFECT_CRAZY_VOICE = 52,        ///< Crazy Voice
   ABILITY_EFFECT_GROUND = 53,             ///< Ground: the target's turn lost
   ABILITY_EFFECT_CHALLENGE = 54,          ///< no ability has it
   ABILITY_EFFECT_SELF_DESTRUCT = 55,      ///< Dynamite, Mortal Blow

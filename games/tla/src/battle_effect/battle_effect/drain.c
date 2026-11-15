@@ -133,7 +133,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   s32 variant = args->variant;
 
   // 1 for any variant past the basic one, as the sign of -variant | variant.
-  BattleEffect_RunDrainMotes(args, (u32)(-variant | variant) >> 31);
+  BattleEffect_RunDrainMotes(args, NONZERO(variant));
 }
 
 /// Motes of light burst from each target in turn and are pulled into the user,

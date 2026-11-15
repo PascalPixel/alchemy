@@ -1066,7 +1066,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 s32 ScreenTransition_IsScanlineActive(void) {
   s32 other = (s32)gIrqHandlers[1] ^ (s32)ScreenTransition_UpdateScanline;
 
-  return 1 - ((u32)(-other | other) >> 31);
+  return 1 - NONZERO(other);
 }
 
 /* FAKEMATCH(volatile): the layer flags read through a volatile pointer. */

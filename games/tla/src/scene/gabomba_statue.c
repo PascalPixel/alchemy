@@ -2306,7 +2306,7 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
       return 1;
     code = cell[0];
     code ^= 10;
-    return 1 - ((u32)(-code | code) >> 31);
+    return 1 - NONZERO(code);
   }
 }
 s32 GabombaStatue_HasTakenNeighbour(s32 x, s32 z) {
@@ -2317,7 +2317,7 @@ s32 GabombaStatue_HasTakenNeighbour(s32 x, s32 z) {
       GabombaStatue_IsCellTaken(x - 1, z))
     return 1;
   found = GabombaStatue_IsCellTaken(x + 1, z);
-  return (u32)(-found | found) >> 31;
+  return NONZERO(found);
 }
 
 void GabombaStatue_ClearGrid(void) {

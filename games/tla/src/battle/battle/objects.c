@@ -153,7 +153,7 @@ void BattleObject_UpdatePose(s32 id) {
       value = (state->side != 1) * 4;
   } else {
     s32 changed = state->side ^ value;
-    value = (u32)(-changed | changed) >> 31;
+    value = NONZERO(changed);
     value = 5 - value;
   }
 

@@ -2828,9 +2828,11 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *memberWork,
   row = 0;
   do {
     if (row == state->row) {
-      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1, 14);
+      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                                HIGHLIGHT_PALETTE);
     } else {
-      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1, 15);
+      Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
+                                WINDOW_PALETTE);
     }
     row++;
   } while (row <= 4);

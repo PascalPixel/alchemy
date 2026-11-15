@@ -288,7 +288,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
          visibleRow++, i++) {
       ability = Ability_Get(changedAbilities[i]);
       if (ability->element != 4)
-        Window_SetTilemapEntry(window, 0x5001 + ability->element, 15,
+        Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ability->element, 15,
                                visibleRow * 2, 0);
       rangePattern = ability->range;
       if (rangePattern == 255)

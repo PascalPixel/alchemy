@@ -33,6 +33,12 @@
 #define BLEND_WEIGHT_MAX 16
 /// A sprite's x, 0 to 511, in the high half of its attribute word.
 #define OBJ_X(x) ((x) << 16)
+/// How a sprite is drawn (OBJ_MODE).
+enum ObjMode {
+  OBJ_MODE_NORMAL = 0,
+  OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
+  OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
+};
 /// The frames the game runs each second, one each VBlank.
 #define FRAMES_PER_SECOND 60
 /// The brightest colour, every channel at its highest level.
@@ -157,6 +163,9 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// copies the work block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
+/// The sprite palette of portrait slot 0; slot 1 uses the next.
+#define PORTRAIT_PALETTE 14
+
 /// The BG palette of the windows and their text, the UI palette.
 #define WINDOW_PALETTE 15
 
@@ -187,6 +196,10 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
   ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
+
+/// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
+/// the four elements follow it in order (enum Element).
+#define ELEMENT_ICON_TILE (BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1)
 
 /// The command icons (ResourceId_CommandIcons), each drawn with the command
 /// name of the same number (MsgCommandName + icon).

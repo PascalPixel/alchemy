@@ -819,7 +819,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
-        if (Ability_Get(unit->psynergy[i].encodedAction & 0x3fff)
+        if (Ability_Get(unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK)
                 ->fieldEffect != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
@@ -829,7 +829,8 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   } else {
     for (i = 0; i < 32; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
-        ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
+        ability = Ability_Get(unit->psynergy[i].encodedAction &
+                              PSYNERGY_ABILITY_MASK);
         if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
@@ -839,7 +840,8 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
     if (mode != 2) {
       for (i = 0; i < 32; i++) {
         if (unit->psynergy[i].encodedAction != 0) {
-          ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
+          ability = Ability_Get(unit->psynergy[i].encodedAction &
+                                PSYNERGY_ABILITY_MASK);
           if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
             actions[count] = unit->psynergy[i].encodedAction;
             count++;
@@ -937,10 +939,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   do {
     if (row == state->row) {
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                14);
+                                HIGHLIGHT_PALETTE);
     } else {
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                15);
+                                WINDOW_PALETTE);
     }
     row++;
   } while (row <= 4);

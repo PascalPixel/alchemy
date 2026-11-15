@@ -11,6 +11,7 @@
 #include "window/window.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "djinn_ids.h"
 
 #define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
 
@@ -80,10 +81,6 @@ enum DjinnSelectMode {
   DJINN_SELECT_DJINNI = 0, ///< a Djinni in any party member's column
   DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
 };
-
-/// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
-/// the four elements follow it in order.
-#define DJINN_ELEMENT_TILE 0x5001
 
 /// The tile of BG character block 1 the Djinn backdrop's border tile is copied
 /// to (menu_djinn.c); the preview screens blink it (menu_djinn_preview.c).

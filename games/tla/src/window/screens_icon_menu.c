@@ -124,7 +124,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   void Battle_DrawPartyPanelsWithEmptyList(void) {
     u16 data[2];
 
-    data[0] = 255;
+    data[0] = BATTLE_UNIT_LIST_END;
     PartyStatus_HighlightMembers(data);
     BattleHighlight_SetModesFar(data, HIGHLIGHT_SELECTED);
   }
@@ -138,7 +138,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 272);
+  state =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
@@ -152,7 +153,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     s32 k;
 
     for (k = 0; k < 8; k++)
-      state->chosenDjinn[k] = 0x80000000;
+      state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
     for (k = 0; k < 3; k++)
       state->iconShown[k] = 0;
     state->targetViewOffset = 0;
@@ -228,7 +229,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (commandCount >= 0)
       mode = BattleCommandRow_Run(0, commandCount);
     else
-      mode = 14;
+      mode = COMMAND_ICON_FIGHT;
 
     // B on the party's row: undo the last reserve swap.
     if (mode == -1) {
@@ -258,7 +259,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Command 49: choose a party place, then the reserve member for it.
-    if (mode == 49) {
+    if (mode == COMMAND_ICON_SWITCH) {
       Sound_PlayFar(SE_MENU_CONFIRM);
     choose_place:
       mode = BattleTarget_RunSelection(0, 2, 1, 8);
@@ -273,7 +274,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     // Status: the summary screens of the party and the reserve, or in the
     // debug build with Start held the enemies'.
-    if (mode == 7) {
+    if (mode == COMMAND_ICON_STATUS) {
       u16 *block = Heap_Alloc(18);
       s32 side;
       s32 count;
@@ -291,7 +292,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Flee: one command 99 for the party, first in the round.
-    if (mode == 4) {
+    if (mode == COMMAND_ICON_FLEE) {
       s32 refused = Battle_RefuseFlee();
 
       if (refused != 0)
@@ -301,12 +302,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       command->unitId = actors[0];
       forcedCount = refused;
       command->priority = 0x7ffe;
-      command->command = 99;
+      command->command = COMMAND_FLEE;
       command->parameter = refused;
       command->target = 256;
       break;
     }
-    if (mode != 14)
+    if (mode != COMMAND_ICON_FIGHT)
       break;
     Sound_PlayFar(SE_CAST);
     commandIndex = 0;
@@ -338,12 +339,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         navigation->commandActor = actorId;
         navigation->commandSelection[1] = 0;
         iconSprite = &navigation->icons[2];
-        iconSprite->oam.word.attr01 = 0x80000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.tile = Portrait_Load(unit->enemyId, smallIconSlot);
         iconSprite->oam.f.x = ACTOR_ICON_X;
-        iconSprite->oam.f.y = 0x80;
-        iconSprite->oam.f.palette = 14;
+        iconSprite->oam.f.y = 128;
+        iconSprite->oam.f.palette = PORTRAIT_PALETTE;
         state->iconShown[2] = 1;
       }
 
@@ -353,10 +355,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         struct BattleMenuWork *navigation = NAVIGATION;
 
         navigation->iconShown[0] = 0;
-        navigation->chosenDjinn[commandIndex] = 0x80000000;
+        navigation->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       }
       signatureHeader[0] = actorId;
-      signatureHeader[1] = 255;
+      signatureHeader[1] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_SELECTED);
       PartyStatus_HighlightMembers(signatureHeader);
       wait(1);
@@ -385,12 +387,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         struct MenuSprite *iconSprite = &navigation->icons[0];
 
         if (navigation->timer == 0)
-          mode = 3;
+          mode = COMMAND_ICON_DEFEND;
         iconSprite->oam.word.attr23 = 0;
-        iconSprite->oam.word.attr01 = 0x80002400;
+        iconSprite->oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS |
+                                      OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.f.tile =
             Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
-        if (mode == 15)
+        if (mode == COMMAND_ICON_DJINN)
           iconSprite->oam.f.x = 128;
         else
           iconSprite->oam.f.x = 96;
@@ -399,7 +402,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       switch (mode) {
-      case 0:
+      case COMMAND_ICON_ATTACK:
         commandWindow = Window_Create(11, 17, 11, 3, 6);
         Text_DrawMessageAsTiles((s32)MsgCommandName, commandWindow,
                                 ATTACK_NAME_X, 0);
@@ -414,7 +417,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = 1;
         break;
 
-      case 1: {
+      case COMMAND_ICON_PSYNERGY: {
         s32 k;
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
@@ -435,7 +438,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
         cnt = 0;
         k = 0;
-        entryValue = unit->psynergy[k].encodedAction & 0x3fff;
+        entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
         if (entryValue != 0) {
           do {
             if (Ability_Get(entryValue)->flags & 0x80) {
@@ -446,7 +449,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             k++;
             if (k == 32)
               break;
-            entryValue = unit->psynergy[k].encodedAction & 0x3fff;
+            entryValue =
+                unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
           } while (entryValue != 0);
         }
         pick[cnt] = 0;
@@ -454,7 +458,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattlePsynergyMenu_Run(actorId, list, cnt);
         if (mode == -1)
           goto mark_visible;
-        parameter = unit->psynergy[pick[mode]].encodedAction & 0x3fff;
+        parameter =
+            unit->psynergy[pick[mode]].encodedAction & PSYNERGY_ABILITY_MASK;
         ability = Ability_Get(parameter);
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -462,7 +467,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         work = (struct WindowWork *)Ram_HeapSlots->windowWork;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = 40;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -485,8 +491,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
         if (ability->element != 4)
-          Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
-                                 0, 0);
+          Window_SetTilemapEntry(
+              commandWindow, ability->element + ELEMENT_ICON_TILE, 15, 0, 0);
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
@@ -501,7 +507,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 16: {
+      case COMMAND_ICON_SUMMON: {
         const struct SummonDefinition *summon;
         struct BattleAct *ability;
         struct MenuSprite *iconSprite;
@@ -534,7 +540,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
-        ((u32 *)&iconSprite->oam)[0] = 0x40000400;
+        ((u32 *)&iconSprite->oam)[0] =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
@@ -550,7 +557,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            Window_SetTilemapEntry(commandWindow, j + 0x5001,
+            Window_SetTilemapEntry(commandWindow, j + ELEMENT_ICON_TILE,
                                    n * 2 + SUMMON_COST_X, 0, 0);
             Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
                             n * 2 + SUMMON_COST_X + 1, 0, 0);
@@ -581,7 +588,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 15: {
+      case COMMAND_ICON_DJINN: {
         struct BattleAct *ability;
         s32 cost;
         s32 element;
@@ -591,7 +598,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
-        NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
+        NAVIGATION->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(actorId, 1);
         command->range = 0;
         if (mode == -1)
@@ -606,8 +613,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           cost = ability->range;
           commandWindow = Window_Create(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
-          Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-          Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
+          Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0,
+                                 0, 0);
+          Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                      (s32)MsgDjinnName,
                                   commandWindow, 16, 0);
           command->range = cost;
           wait(1);
@@ -633,8 +642,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
         Text_SetColor(TEXT_COLOR_RED);
-        Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-        Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
+        Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0, 0,
+                               0);
+        Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                    (s32)MsgDjinnName,
                                 commandWindow, 16, 0);
         Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
@@ -648,7 +659,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 2: {
+      case COMMAND_ICON_ITEM: {
         s32 k;
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
@@ -711,7 +722,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = VramCache_AllocEntry(128);
         commandWindow = Window_Create(9, 17, ITEM_WINDOW_WIDTH, 3, 6);
         COMMAND_ICON_X(state) = 48;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
@@ -738,7 +750,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 3:
+      case COMMAND_ICON_DEFEND:
         commandKind = 3;
         break;
       }

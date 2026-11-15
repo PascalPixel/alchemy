@@ -152,7 +152,7 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
       u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
       s32 x;
 
-      Iwram_FillWordsEntry(tile, 64, 0x44444444);
+      Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
       for (x = 1; x <= 7; x++) {
         s32 mi = n;
 

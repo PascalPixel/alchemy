@@ -587,8 +587,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       j = -1;
       WindowSprite_RedrawSavedRect(statusWindow);
       shownRow = j;
-      for (index = 0; index != 32 &&
-                      (id = unit->psynergy[index].encodedAction & 0x3fff) != 0;
+      for (index = 0; index != 32 && (id = unit->psynergy[index].encodedAction &
+                                           PSYNERGY_ABILITY_MASK) != 0;
            index++) {
         if (Ability_Get(id)->flags & 0x80)
           entries[count++] = id;
@@ -640,8 +640,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Text_SetColor(TEXT_COLOR_WHITE);
             work->textPalette = 15;
             if (ability->element != 4)
-              Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
-                                     15, j * 2 + 8, tileFlags);
+              Window_SetTilemapEntry(statusWindow,
+                                     ELEMENT_ICON_TILE + ability->element, 15,
+                                     j * 2 + 8, tileFlags);
             range = ability->range;
             if (range == 255)
               range = 11;
@@ -744,7 +745,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           tileRow = j % 3 * 2 + 9;
           if (shown == 0x80000000)
             break;
-          Window_SetTilemapEntry(statusWindow, ((shown & 0xf00) >> 8) + 0x5001,
+          Window_SetTilemapEntry(statusWindow,
+                                 ((shown & 0xf00) >> 8) + ELEMENT_ICON_TILE,
                                  column, tileRow, 0);
           if (shown & 0x3e0000)
             Text_SetColor(TEXT_COLOR_YELLOW);
@@ -854,8 +856,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
           if (hasDjinn != 0)
             pal = 0;
-          Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
-                                 0);
+          Window_SetTilemapEntry(statusWindow, ELEMENT_ICON_TILE + j, 7 + j * 4,
+                                 pal + 8, 0);
           if (hasDjinn != 0) {
             Text_DrawNumberInWindow(unit->djinnActiveCounts[j], 1, statusWindow,
                                     40 + j * 32, 72);

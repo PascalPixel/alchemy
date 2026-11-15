@@ -12,6 +12,7 @@
 
 #include "battle/battle.h"
 #include "debug/debug.h"
+#include "djinn_ids.h"
 #include "enemy_ids.h"
 #include "field/field.h"
 #include "game/game.h"

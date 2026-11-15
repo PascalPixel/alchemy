@@ -266,7 +266,8 @@ s32 BattleDjinnMenu_Run(s32 member) {
              (encodedDjinn = djinnEntries[listEntry]) != DJINN_ENTRY_END;
              listEntry++) {
           Window_SetTilemapEntry(
-              listWindow, ((encodedDjinn & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
+              listWindow, ((encodedDjinn & 0xf00) >> 8) + ELEMENT_ICON_TILE, 0,
+              j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)

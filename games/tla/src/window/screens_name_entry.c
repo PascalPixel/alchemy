@@ -373,9 +373,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyRow == NAME_FINISH_ROW)
         width = 3;
     }
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
+    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                              HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
+    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                              WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
@@ -657,9 +659,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyRow == 5)
         width = NAME_FINISH_WIDTH;
     }
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
+    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                              HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
+    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                              WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,

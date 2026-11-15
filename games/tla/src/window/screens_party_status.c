@@ -152,7 +152,8 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   if (canvas->battleMode == 0) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
-    BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   x += (s16)window->x;
   y += (s16)window->y;

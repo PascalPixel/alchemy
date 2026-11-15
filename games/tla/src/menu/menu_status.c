@@ -102,11 +102,13 @@ s32 StatusScreen_Run(void) {
   Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
+  Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   Text_UseExtraTilesFar(1);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
@@ -284,8 +286,9 @@ void DjinnMenu_ShowCurrentList(void) {
       PagedList_DrawPageNumbers(window, pages, 1, page, 28);
       for (element = 0; element < 4; element++) {
         for (row = 0; row <= 8; row++) {
-          djinn = element * 20 + (row + (page * 8 + page) + 7) % 18;
-          if (GameFlag_Get(djinn + 48)) {
+          djinn =
+              element * DJINN_PER_ELEMENT + (row + (page * 8 + page) + 7) % 18;
+          if (GameFlag_Get(FLAG_DJINNI(djinn))) {
             Window_SetTilemapEntryFar(window, element + 0x1001, element * 7 + 1,
                                       row + 1, 0);
             Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
@@ -356,11 +359,13 @@ s32 PartyMemberChooser_RunRearrange(void) {
   }
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
-  Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
+  Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
           REG_DMA3);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
@@ -1106,7 +1111,7 @@ void Menu_BuildPatternTiles(void) {
       u32 *tile = (u32 *)BG_SCREEN_BLOCK(12) + set * 0x60 + n * 0x10;
       s32 x;
 
-      Iwram_FillWordsEntry(tile, 64, 0x44444444);
+      Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
       for (x = 1; x <= 7; x++) {
         s32 mi = n;
 
@@ -1261,12 +1266,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, 0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
-                                  14);
+                                  HIGHLIGHT_PALETTE);
         Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
-                                  14);
+                                  HIGHLIGHT_PALETTE);
       } else {
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
-                                  14);
+                                  HIGHLIGHT_PALETTE);
       }
     } else {
       ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
@@ -1274,12 +1279,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, 4);
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
-                                  15);
+                                  WINDOW_PALETTE);
         Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
-                                  15);
+                                  WINDOW_PALETTE);
       } else {
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 19, 1,
-                                  15);
+                                  WINDOW_PALETTE);
       }
     }
   }
@@ -1579,9 +1584,11 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       if (item->element != 4) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   0);
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 14);
+        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
+                                  HIGHLIGHT_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 14);
+        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1,
+                                  HIGHLIGHT_PALETTE);
       }
     } else {
       entry = menu->items[base + row];
@@ -1591,16 +1598,18 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       if (item->element != 4) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
                                   4);
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1, 15);
+        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
+                                  WINDOW_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1, 15);
+        Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 14, 1,
+                                  WINDOW_PALETTE);
       }
     }
   }
 
   for (row = 0; row <= 3; row++)
     Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, row * 2 + 1,
-                              EQUIP_SLOT_WIDTH, 1, 15);
+                              EQUIP_SLOT_WIDTH, 1, WINDOW_PALETTE);
 
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] &
@@ -1608,19 +1617,19 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
     switch (item->type) {
     case 1:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case 4:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case 3:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     case 2:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7,
-                                EQUIP_SLOT_WIDTH, 1, 14);
+                                EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
     }
   }

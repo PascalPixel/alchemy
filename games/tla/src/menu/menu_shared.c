@@ -997,10 +997,10 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 green;
   u32 blue;
 
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
-          REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY_WORDS(8), REG_DMA3);
   blue = palette[4] >> 10;
   green = (palette[4] >> 5) & 31;
   red = palette[4] & 31;
@@ -1094,7 +1094,8 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 

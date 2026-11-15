@@ -184,7 +184,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0, 0);
+            Window_SetTilemapEntry(counts, element + ELEMENT_ICON_TILE,
+                                   element * 2, 0, 0);
             if (standby[element] > 9)
               tile = standby[element] + 0xf196;
             else
@@ -218,7 +219,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                                     window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                Window_SetTilemapEntry(window, element + 0x5001,
+                Window_SetTilemapEntry(window, element + ELEMENT_ICON_TILE,
                                        col * 2 + SUMMON_COST_X, y, 0);
                 Window_PutGlyph(window, summon->djinnRequired[element] + '0',
                                 col * 2 + SUMMON_COST_X + 1, y, 0);

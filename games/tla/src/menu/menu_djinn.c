@@ -488,12 +488,13 @@ void Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
   Dma_Set(Palette_GetBasicSpriteColors(), (void *)&BG_PLTT_COLOR(5, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
-  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
-  Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
+  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   DjinnMenu_BuildLists(backdrop);
 
   window = menu->statusWindow;
@@ -610,14 +611,14 @@ s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 /// index in 0-4, bit 15 set): 2 when the djinni is neither ready nor active,
 /// otherwise whether bit 15 is set. DjinnMenu_DrawPage colours each name by it.
 s32 DjinnMenu_GetEntryState(u32 entry) {
-  s32 owner = (entry & 0xf00) >> 8;
-  s32 element = (entry & 0xe0) >> 5;
-  s32 index = entry & 31;
+  s32 owner = DJINN_MEMBER(entry);
+  s32 element = DJINN_ELEMENT(entry);
+  s32 index = DJINN_NUMBER(entry);
   s32 state;
 
   if (Djinn_CanSetFar(owner, element, index) ||
       Djinn_IsSetFar(owner, element, index)) {
-    u32 set = entry & 0x8000;
+    u32 set = entry & DJINN_ENTRY_IS_SET;
 
     state = ((0u - set) | set) >> 31;
   } else {
@@ -630,11 +631,13 @@ s32 DjinnMenu_GetEntryState(u32 entry) {
 /// and its element's icon tile at the tile under (x, y), then resets the text
 /// colour. The names run 20 to an element.
 void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
-  s32 element = (entry & 0xe0) / 32;
+  s32 element = (entry & DJINN_ENTRY_ELEMENT) / 32;
 
-  Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * 20 + (entry & 31),
+  Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * DJINN_PER_ELEMENT +
+                                 (entry & 31),
                              window, x + 8, y);
-  Window_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
+  Window_SetTilemapEntryFar(window, element + ELEMENT_ICON_TILE, x / 8, y / 8,
+                            0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
@@ -666,7 +669,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
     if (menu->memberSprites[column] != NULL) {
       for (element = 0; element <= 3; element++) {
         for (i = 0; i < backdrop->counts[page + column]; i++) {
-          if (element == (entries[i] & 0xe0) >> 5) {
+          if (element == DJINN_ELEMENT(entries[i])) {
             switch (DjinnMenu_GetEntryState(entries[i])) {
             case 0:
               Text_SetColorFar(TEXT_COLOR_RED);
@@ -939,10 +942,6 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 void DjinnRecovery_CountDownFar(void);
 s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
 
-#define DJINN_OWNER(entry) (((entry) & 0xf00) >> 8)
-#define DJINN_ELEMENT(entry) (((entry) & 0xe0) >> 5)
-#define DJINN_NUMBER(entry) ((entry) & 31)
-
 // Shows one tutorial message and waits for its text to finish.
 #define DJINN_TUTORIAL_MESSAGE(window, offset)                                 \
   do {                                                                         \
@@ -1073,7 +1072,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 1);
       if (selectedRow != -1)
         djinn = backdrop->ids[memberColumn][selectedRow];
-      owner = DJINN_OWNER(djinn);
+      owner = DJINN_MEMBER(djinn);
       element = DJINN_ELEMENT(djinn);
       number = DJINN_NUMBER(djinn);
       state = DjinnMenu_GetEntryState(djinn);
@@ -1147,7 +1146,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (mode == 1) {
 #if TRADE_HELP_DJINNI_FIRST
         Window_SetTilemapEntryFar(
-            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 0, 0, 0);
+            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + ELEMENT_ICON_TILE,
+            0, 0, 0);
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
@@ -1160,7 +1160,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 MESSAGE_ARGUMENT_ABILITY);
         Window_SetTilemapEntryFar(
-            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6, 0, 0);
+            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + ELEMENT_ICON_TILE,
+            6, 0, 0);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel + 1, helpWindow, 56,
                                    0);
 #endif
@@ -1444,7 +1445,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         for (i = 0; i < menu->memberCount; i++) {
           for (j = 0; j < backdrop->counts[i]; j++) {
             u32 entry = backdrop->ids[i][j];
-            s32 entryOwner = DJINN_OWNER(entry);
+            s32 entryOwner = DJINN_MEMBER(entry);
             s32 entryElement = DJINN_ELEMENT(entry);
             s32 entryNumber = DJINN_NUMBER(entry);
 
@@ -1564,7 +1565,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     entry = (u16)id;
     menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
-    menu->pairMember[mode] = DJINN_OWNER(entry);
+    menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
   DjinnFigures_SetSlotDepth(mode, 0x4000);
@@ -1849,7 +1850,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
         column += 5;
       for (i = firstElement; i < 4; i++) {
         s32 tileColumn;
-        s32 tile = DJINN_ELEMENT_TILE + i;
+        s32 tile = ELEMENT_ICON_TILE + i;
 
         tileColumn = column + i * 2;
         Window_SetTilemapEntryFar(window, tile, tileColumn, y + 5, 0);

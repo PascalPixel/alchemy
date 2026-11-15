@@ -235,9 +235,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                              pageTile, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              pageTile, 0);
-      do {
-        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
-      } while (0);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
     for (i = 0; i < iconCount; i++) {

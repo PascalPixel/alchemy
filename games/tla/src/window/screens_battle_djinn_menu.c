@@ -37,12 +37,6 @@
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
-// Marks a window's tilemap row for upload, on a signed row.
-#define DJINN_MENU_MARK_ROW(render, y)                                         \
-  do {                                                                         \
-    (render)->dirty |= 2 << ((y) >> 2);                                        \
-  } while (0)
-
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
@@ -337,7 +331,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
-      work->dirty |= 2 << ((u32)((s16)listWindow->y - 1) >> 2);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)listWindow->y - 1));
     }
 
     pressed = gInput.pressed;
@@ -426,7 +420,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  0);
           Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
-          DJINN_MENU_MARK_ROW(work, (s16)previewWindow->y);
+          WINDOW_MARK_TILEMAP_ROW(work, (s16)previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != NULL)
@@ -555,7 +549,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 #undef DJINN_MESSAGE_CAPACITY
 #undef DJINN_TURNS_X
 #undef DJINN_MESSAGE_COPY
-#undef DJINN_MENU_MARK_ROW
 #undef DJINN_ENTRY_STANDBY
 #undef DJINN_ENTRY_RECOVERY_MASK
 #undef DJINN_ENTRY_RECOVERY_SHIFT

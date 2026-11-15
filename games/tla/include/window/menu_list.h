@@ -149,4 +149,12 @@ enum { BATTLE_LIST_ROWS = 5 };
     BATTLE_MENU_WORK->preferredRow = (preferred_);                             \
   } while (0)
 
+/// Marks the 4-row band of the window tilemap that holds `row` for upload
+/// (WindowWork.dirty): the battle lists mark their top border's
+/// row so, and the Djinn list its preview's; the name is ours.
+#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
+  do {                                                                         \
+    (work)->dirty |= 2 << ((row) >> 2);                                        \
+  } while (0)
+
 #endif

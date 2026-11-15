@@ -101,6 +101,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
+  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block,
+   * 226 of 984 instructions differ in tla-en. */
   do {
     s32 i;
 
@@ -288,9 +290,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      do {
-        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
-      } while (0);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);

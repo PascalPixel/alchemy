@@ -38,12 +38,6 @@
 #define RANGE_COLUMN 15
 #endif
 
-// Marks a window's tilemap row for upload.
-#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
-  do {                                                                         \
-    (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
-  } while (0)
-
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element
 /// and range icon, in TEXT_COLOR_YELLOW when not usable in battle,
@@ -213,7 +207,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                              pageTile, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              pageTile, 0);
-      WINDOW_MARK_TILEMAP_ROW(work, (s16)window->y - 1);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
     for (i = 0; i < iconCount; i++)
@@ -320,4 +314,3 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 #undef COST_COLUMN
 #undef COST_X
 #undef RANGE_COLUMN
-#undef WINDOW_MARK_TILEMAP_ROW

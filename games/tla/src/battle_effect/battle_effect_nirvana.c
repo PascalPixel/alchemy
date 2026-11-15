@@ -197,7 +197,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
         scroll += scrollSpeed;
       else
         scroll -= scrollSpeed;
-      scrollSpeed += 0x8000;
+      scrollSpeed += toFIXED(1) / 2;
       scrollSpeed = scrollSpeed * 60 / DAMPING_SCALE;
     }
     scrollX = FIXEDtoINT(scroll);

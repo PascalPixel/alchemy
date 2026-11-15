@@ -2027,10 +2027,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       place[2] = 0;
       Matrix_TranslateVector(place);
       Matrix_RotateZ(TRIG_TURN * 19 / 32);
-      grow[0] = 0x10000;
+      grow[0] = FIXED_ONE;
       grow[1] = (frame - 758) << 10;
-      if (grow[1] > 0x10000)
-        grow[1] = 0x10000;
+      if (grow[1] > FIXED_ONE)
+        grow[1] = FIXED_ONE;
       grow[2] = 0;
       Matrix_ScaleVector(grow);
       model->kind = MODEL_TEXTURED_MAX;

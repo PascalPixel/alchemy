@@ -351,7 +351,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       } while (0);
       model->mesh = strip;
       {
-        s32 half = 0x8000;
+        s32 half = FIXED_ONE / 2;
 
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
@@ -485,7 +485,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s = (t << 14) + 0x4000;
+          s = (t << 14) + FIXED_ONE / 4;
           model->shade = shade;
           Matrix_Initialize();
           if (i <= 1) {
@@ -518,8 +518,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (s > 0x10000) {
-          s = 0x10000;
+        if (s > FIXED_ONE) {
+          s = FIXED_ONE;
         }
         if (t > 47) {
           s = s - (t << 12) + 0x30000;

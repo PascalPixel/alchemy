@@ -376,8 +376,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       z += speed;
       size += 512;
-    } else if (size > 0x10000) {
-      size = 0x10000;
+    } else if (size > FIXED_ONE) {
+      size = FIXED_ONE;
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -442,7 +442,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame <= 33) {
       summonScale = gMeteorBlow_DoubleScale;
       summonPlace[3] = 0;
-      summonPlace[1] = 0xff0000;
+      summonPlace[1] = toFIXED(255);
       summonPlace[0] = INTtoFIXED(hx);
       summonPlace[2] = INTtoFIXED(hz);
       if (frame <= 15) {

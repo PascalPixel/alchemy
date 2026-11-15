@@ -221,7 +221,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     depth += zoom;
     if (frame <= 47) {
-      zoom -= 0x4000;
+      zoom -= FIXED_ONE / 4;
     }
     if (frame > 32) {
       zoom = zoom * 60 / DAMPING_SCALE;
@@ -854,7 +854,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           }
           scale[1] = scale[0];
           drift[0] = p->x;
-          drift[1] = 0xff0000;
+          drift[1] = toFIXED(255);
           drift[2] = p->y + toFIXED(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;

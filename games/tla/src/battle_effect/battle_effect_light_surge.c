@@ -290,7 +290,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         if (frame <= 47) {
           growth = Trig_Sin((frame << 9) - DEGtoANG(45));
         } else {
-          growth = 0x10000;
+          growth = FIXED_ONE;
         }
         scale = (u32)(gLightSurge_PillarSizes[i] * growth) >> 16;
         if (frame > 63) {

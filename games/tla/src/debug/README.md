@@ -52,7 +52,9 @@ event a talk runs, and four events of one line each.
 **Increase item and level** (`level.c`) is The Broken Seal's room again,
 where the party can be given any item and any level. Through four of its
 entrances it is instead a room of people in rows, each of whom says their
-name when talked to.
+name when talked to. In every edition it is the room as the Japanese
+Broken Seal has it, without the testers The Broken Seal's international
+editions added ([How the two games relate](../../sequel.md)).
 
 The other three are rooms of people who each run one test.
 `psynergy_test.c` and `shop_test.c` have the shops, an inn, a Sanctum and

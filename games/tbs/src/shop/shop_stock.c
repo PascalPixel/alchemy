@@ -331,22 +331,20 @@ void ShopStock_AddArtifacts(s32 stockRow) {
 /// after, and returns how many.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
-  s32 copying = 1;
   s16 *dst;
   s32 count;
+  u32 item;
 
   count = 0;
   if (sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
     dst = output;
     src = sStockTable[stockRow];
     do {
-      /* FAKEMATCH(dead): the copy under a test of copying, always 1. */
-      if (copying) {
-        *dst = *src;
-        count++;
-        src++;
-        dst++;
-      }
+      item = (u16)*src;
+      *dst = item;
+      count++;
+      src++;
+      dst++;
       if (count > SHOP_STOCK_ITEM_COUNT - 1)
         break;
     } while (*src != 0);

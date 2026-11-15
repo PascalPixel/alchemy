@@ -286,12 +286,6 @@ void LuckyDice_Run(void) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED s32 unused[8];
-  // DEAD: the matrix passes through four halfwords on the stack, which nothing
-  // here needs; the ROM keeps their four strh and four ldrh.
-  volatile u16 affineA;
-  volatile u16 affineB;
-  volatile u16 affineC;
-  volatile u16 affineD;
   s32 spinRate[DICE_COUNT];
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
@@ -987,11 +981,18 @@ void LuckyDice_Run(void) {
     // OAM keeps affine matrix n in the fourth halfwords of entries 4n to
     // 4n + 3, which attr2's high half covers here.
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
+      // The sprite's matrix, each element stored through its address: the four
+      // stay in the frame and are read back from it.
+      u16 affineA;
+      u16 affineB;
+      u16 affineC;
+      u16 affineD;
+
       affineScale = spriteDepth[index] / 2 + 128;
-      affineA = affineScale;
-      affineB = 0;
-      affineC = 0;
-      affineD = affineScale;
+      *&affineA = affineScale;
+      *&affineB = 0;
+      *&affineC = 0;
+      *&affineD = affineScale;
       sprites->oam[index * 4 + 0].attr2 |= affineA << 16;
       sprites->oam[index * 4 + 1].attr2 |= affineB << 16;
       sprites->oam[index * 4 + 2].attr2 |= affineC << 16;

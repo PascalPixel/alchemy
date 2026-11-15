@@ -591,12 +591,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                              work->sheet + STREAK_SHEET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
-    const void *lightning =
-        Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, lightning, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_LightningBoltSheet);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {

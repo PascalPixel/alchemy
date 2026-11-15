@@ -97,6 +97,15 @@ static inline s32 Iwram_CopyWords(volatile void *destination,
   return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 
+/// Iwram_CopyWords as a statement of its own, the call in a once-only block:
+/// the link code copies the Djinn recovery table into its send buffer so, in
+/// the battle and in the arena, as The Lost Age does there and in its twelve
+/// IWRAM_FILL_WORDS fills. The name is ours, The Lost Age's.
+#define IWRAM_COPY_WORDS(destination, source, size)                            \
+  do {                                                                         \
+    Iwram_CopyWords(destination, source, size);                                \
+  } while (0)
+
 #ifdef MODERN
 /// Calls an IWRAM routine that returns through ip instead of lr, with left and
 /// right in r0 and r1, and returns its r0.

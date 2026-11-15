@@ -37,10 +37,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   u16 *palette = screen->palette;
   volatile u32 ime;
 
-  /* FAKEMATCH(dead): the lock in a once-only block. */
-  do {
-    Irq_Lock(&ime);
-  } while (0);
+  IRQ_LOCK(ime);
 
   if (level == 0) {
     Dma_Set(palette, (void *)BATTLE_BG_PALETTE,

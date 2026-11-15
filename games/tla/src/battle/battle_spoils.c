@@ -141,12 +141,13 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     spoils->queueCount++;
   classSlot = 0;
   classIndex = 0;
-  if (((struct BattleKindsView *)battle)->enemyKinds[0] != unit->enemyId) {
+  // UB: the search runs to a sixth kind, one past enemyKinds: it reads
+  // kindsEnd, the halfword after them.
+  if (battle->enemyKinds[0] != unit->enemyId) {
     do {
       if (++classIndex > (ENEMY_BATTLE_SIZE - 1))
         break;
-    } while (((struct BattleKindsView *)battle)->enemyKinds[classIndex] !=
-             unit->enemyId);
+    } while (battle->enemyKinds[classIndex] != unit->enemyId);
   }
   if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;

@@ -1650,7 +1650,8 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
 
   if (work->flame == NULL)
     return;
-  // A once-only loop: one object per call.
+  // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
+  // decrement and test.
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;

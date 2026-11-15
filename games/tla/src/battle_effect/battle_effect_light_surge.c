@@ -70,9 +70,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_VioletPaletteF);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
@@ -292,7 +290,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         if (frame <= 47) {
           growth = Trig_Sin((frame << 9) - DEGtoANG(45));
         } else {
-          growth = 0x10000;
+          growth = FIXED_ONE;
         }
         scale = (u32)(gLightSurge_PillarSizes[i] * growth) >> 16;
         if (frame > 63) {

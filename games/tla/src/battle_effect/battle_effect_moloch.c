@@ -654,16 +654,6 @@ extern const struct FourSpans gIris_RightStripSpans;
   (((struct IrisPoint *)IRIS_STREAK_POINTS)[(i) * IRIS_STREAK_LENGTH + (j)])
 #define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
 
-#define Iwram_FillWords(dest, size, value)                                     \
-  do {                                                                         \
-    Iwram_FillWords(dest, size, value);                                        \
-  } while (0)
-
-#define DECOMPRESS_IN_BLOCK(src, dest)                                         \
-  do {                                                                         \
-    Decompress_TaggedLz(src, dest);                                            \
-  } while (0)
-
 /// A splash where a drop lands: rings spread from (x, y) for twice the
 /// splash's duration, then a smaller pair of rings and a column of spray
 /// rises while the screen shakes; the drop itself is drawn last.
@@ -1035,7 +1025,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
-  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control &
          (DMA_ENABLE << 16)) {
   }
@@ -1080,8 +1070,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = EFFECT_BLEND_ADD;
-        Iwram_FillWords(canvas, CANVAS_BYTES,
-                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_PRESENT_CANVAS(work);
         if (frame <= 386) {
           for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
@@ -1235,9 +1225,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame == 175) {
         REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                      BGCNT_SCREEN_BASE(7);
-        Iwram_FillWords(canvas, CANVAS_BYTES,
-                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        Iwram_FillWords(FADE_PLTT, 0x100, COLOR_PAIR(RGB_WHITE));
+        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+        IWRAM_FILL_WORDS(FADE_PLTT, 0x100, COLOR_PAIR(RGB_WHITE));
       }
     }
 
@@ -1267,9 +1257,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                 REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32, -1);
+      IWRAM_FILL_WORDS((void *)&OBJ_PLTT_COLOR(15, 0), 32, -1);
       colors += 32;
-      DECOMPRESS_IN_BLOCK(colors, work->sheet);
+      Decompress_TaggedLz(colors, work->sheet);
       table = gVramCacheEntries;
       for (i = 0; i != IRIS_PETAL_FRAMES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
@@ -1702,7 +1692,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(work->sheet + off, n, FIXED_ONE);
         off += n * w;
       }
-      Iwram_FillWords(work->sheet + IRIS_TEXTURES, 2 * IRIS_TEXTURE_BYTES, 0);
+      IWRAM_FILL_WORDS(work->sheet + IRIS_TEXTURES, 2 * IRIS_TEXTURE_BYTES, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
                                                IRIS_TEXTURE_BYTES,
                                            16, IRIS_TEXTURE_HEIGHT, FIXED_ONE);
@@ -1946,8 +1936,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 755) <= 2 || frame == 781)
-      Iwram_FillWords(canvas, CANVAS_BYTES,
-                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (frame == 754) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
@@ -2037,10 +2027,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       place[2] = 0;
       Matrix_TranslateVector(place);
       Matrix_RotateZ(TRIG_TURN * 19 / 32);
-      grow[0] = 0x10000;
+      grow[0] = FIXED_ONE;
       grow[1] = (frame - 758) << 10;
-      if (grow[1] > 0x10000)
-        grow[1] = 0x10000;
+      if (grow[1] > FIXED_ONE)
+        grow[1] = FIXED_ONE;
       grow[2] = 0;
       Matrix_ScaleVector(grow);
       model->kind = MODEL_TEXTURED_MAX;
@@ -2123,7 +2113,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   camera[27] = savedYaw;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
-  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control &
          (DMA_ENABLE << 16)) {
   }
@@ -2477,9 +2467,10 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           xB += dxB;
           uA += duA;
           vA += dvA;
-          /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
-           * them again; without them, 165 of 966 instructions differ in
-           * tla-en. */
+          /* LEFTOVER(template): edge B's steps, as Render_FillMesh's lower
+           * half steps both its edges and this routine's upper half steps
+           * all six values, idle here; as the loop without them, 4 of 966
+           * instructions differ in tla-en. */
           uB += duB;
           vB += dvB;
         }

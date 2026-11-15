@@ -197,10 +197,6 @@ static void OrbGlow_Fade(void) {
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
 static void Ship_UpdateSwell(void) {
-  // DEAD: the blend passes through a halfword on the stack, which nothing
-  // here needs; the ROM keeps its strh and ldrh.
-  volatile u16 blend;
-  struct Point sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
   FIXED swell;
@@ -208,8 +204,12 @@ static void Ship_UpdateSwell(void) {
 
   grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
+    // The blend is stored through its address, so it stays in the frame and
+    // is read back from it.
+    u16 blend;
+
     swell = Iwram_MulFX(Trig_Sin(gOrbGlowPhase << 9), 3);
-    blend = gOrbGlowStrength + ((swell + 8) << 8);
+    *&blend = gOrbGlowStrength + ((swell + 8) << 8);
     Io_Write16(blend, &REG_BLDALPHA);
     gOrbGlowPhase++;
   }
@@ -244,6 +244,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
+    struct Point sprayPosition;
+
     x = grid->view[0] & FIELD_PIXEL_MASK;
     z = grid->view[1] & FIELD_PIXEL_MASK;
     x += Random_Next() * DISPLAY_WIDTH;
@@ -585,9 +587,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   FIXED risen;
-  // DEAD: each control passes through a halfword on the stack, which nothing
-  // here needs; the ROM keeps the three strh.
-  volatile u16 cnt;
+  // Each control is stored through its address, so it stays in the frame.
+  u16 cnt;
 
   grid = gMapGridWork[0];
 
@@ -640,11 +641,11 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < toFIXED(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  *&cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG3CNT = cnt;
-  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  *&cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG2CNT = cnt;
-  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  *&cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   REG_BG1CNT = cnt;
   gOrbGlowActive = 0;
   Sound_Play(SE_STOP_ACTION_SE);
@@ -676,9 +677,8 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Sets the Lemurian ship's map up.
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
-  // DEAD: each control passes through a halfword on the stack, which nothing
-  // here needs; the ROM keeps the three strh.
-  volatile u16 cnt;
+  // Each control is stored through its address, so it stays in the frame.
+  u16 cnt;
 
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
@@ -723,11 +723,11 @@ s32 Scene_Initialize(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  *&cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   REG_BG3CNT = cnt;
-  cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  *&cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG2CNT = cnt;
-  cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  *&cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt;
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,

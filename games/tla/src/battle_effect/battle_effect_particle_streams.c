@@ -737,9 +737,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
-  /* FAKEMATCH(temporary): mode tested through its copy in direction. */
   direction = mode;
-  if (direction == 1) {
+  if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     user->velocityY = toFIXED(10);

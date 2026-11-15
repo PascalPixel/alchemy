@@ -7,8 +7,6 @@
 #include "window/window_tile.h"
 #include "window/screens.h"
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-
 // How much of the description under the cursor is copied: more outside
 // Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -39,34 +37,6 @@
 #define COST_X 104
 #define RANGE_COLUMN 15
 #endif
-
-// Sets a menu sprite's attribute words.
-#define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
-  do {                                                                         \
-    (sprite).oam.word.attr01 = (shape);                                        \
-    (sprite).oam.word.attr23 = 0;                                              \
-  } while (0)
-
-// Reads and sets the menu's page, row and preferred row.
-#define MENU_GET_CURSOR(page_, row_, preferred)                                \
-  do {                                                                         \
-    (page_) = NAVIGATION->page;                                                \
-    (row_) = NAVIGATION->row;                                                  \
-    (preferred) = NAVIGATION->preferredRow;                                    \
-  } while (0)
-
-#define MENU_SET_CURSOR(page_, row_, preferred)                                \
-  do {                                                                         \
-    NAVIGATION->page = (page_);                                                \
-    NAVIGATION->row = (row_);                                                  \
-    NAVIGATION->preferredRow = (preferred);                                    \
-  } while (0)
-
-// Marks a window's tilemap row for upload.
-#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
-  do {                                                                         \
-    (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
-  } while (0)
 
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element
@@ -116,7 +86,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = BATTLE_LIST_ROWS;
-  MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH,
                          BATTLE_LIST_ROWS * 2 + 1, 6);
 
@@ -237,7 +207,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                              pageTile, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              pageTile, 0);
-      WINDOW_MARK_TILEMAP_ROW(work, (s16)window->y - 1);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
     for (i = 0; i < iconCount; i++)
@@ -251,8 +221,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     if (count != 0)
       Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW + 2);
 
-    MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = NAVIGATION;
+    BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
+    navigation = BATTLE_MENU_WORK;
     if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;
@@ -337,7 +307,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   return result;
 }
 
-#undef NAVIGATION
 #undef CURSOR_TEXT_LENGTH
 #undef CURSOR_TEXT_COPY
 #undef LIST_WINDOW_X
@@ -345,7 +314,3 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 #undef COST_COLUMN
 #undef COST_X
 #undef RANGE_COLUMN
-#undef MENU_SPRITE_INITIALIZE
-#undef MENU_GET_CURSOR
-#undef MENU_SET_CURSOR
-#undef WINDOW_MARK_TILEMAP_ROW

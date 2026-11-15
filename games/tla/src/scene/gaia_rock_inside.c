@@ -2115,16 +2115,8 @@ void Event_WaitTransitionFrames(void);
 /// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
 /// in the first room.
 s32 Scene_Initialize(void) {
-#if !TLA_PATCH_1
   struct MainRoutineWork *room;
-#else
-  s32 message;
-#endif
   struct MainRoutineWork *work;
-#if TLA_PATCH_1
-  /* FAKEMATCH(pin): room in r8, which leaves r7 to the owner pointer. */
-  register struct MainRoutineWork *room asm("r8");
-#endif
   s16 *entrance;
   s16 *early;
 
@@ -2594,17 +2586,15 @@ s32 Scene_Initialize(void) {
       }
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-#if !TLA_PATCH_1
       Event_SetMessageId((s32)MsgFieldYouYouCannotFightThe);
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       Event_SetDestination((s16)room->restartScene, (s16)room->restartEntrance);
-      Event_End();
-#else
-      message = (s32)MsgFieldYouYouCannotFightThe;
-      goto leave;
+#if TLA_PATCH_1
+      WorldMap_SetReturnLeavingScene(room->next, *entrance);
 #endif
+      Event_End();
     } else if (*entrance == ENTRANCE_BEATEN_HOLDING_IDOL) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -2617,13 +2607,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(30);
       Value2((s32 (*)())Actor_StartRepeatedMotion, ACTOR_SUSA, 2);
       Event_Wait(30);
-#if !TLA_PATCH_1
       Event_SetMessageId((s32)MsgFieldLikeISaidTheSerpent);
-#else
-      message = (s32)MsgFieldLikeISaidTheSerpent;
-    leave:
-      Event_SetMessageId(message);
-#endif
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();

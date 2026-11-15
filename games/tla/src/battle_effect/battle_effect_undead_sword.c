@@ -447,13 +447,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         }
       }
     }
-    {
-      const void *palette =
-          Resource_GetTableEntry((s32)&ResourceId_CrystalSheet);
-      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-
-      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
-    }
+    LOAD_BG_PALETTE(ResourceId_CrystalSheet);
   }
 
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for

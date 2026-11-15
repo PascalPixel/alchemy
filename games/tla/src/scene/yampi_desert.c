@@ -597,10 +597,7 @@ void YampiDesert_StepOffStakeTops(void) {
     list = gYampiDesertKingScorpionStakes;
   if (list == NULL)
     return;
-  if (*list == STAKE_LIST_END)
-    goto done;
-next:
-  {
+  while (*list != STAKE_LIST_END) {
     struct Actor *object = Actor_GetById(*list);
     s32 set;
 
@@ -617,19 +614,16 @@ next:
           MapGrid_GetTerrainKind(layer, object->x.fixed, object->z.fixed);
       s32 height =
           Map_GetTerrainHeight(layer, object->x.fixed, object->z.fixed);
-      struct MapCell *cell = cells + index;
 
+      cells += index;
+      shapes += index;
       object->motionFlags = set;
-      cell->collisionCode = CELL_WALL;
-      cell->attributeB &= 127;
-      shapes[index] =
-          MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
+      cells->collisionCode = CELL_WALL;
+      cells->attributeB &= 127;
+      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
     }
+    list++;
   }
-  list++;
-  if (*list != STAKE_LIST_END)
-    goto next;
-done:
   GameFlag_Clear(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
 }
 

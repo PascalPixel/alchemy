@@ -50,11 +50,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
-    void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_VioletPaletteB);
   }
 
   // Every spark starts at rest.
@@ -242,19 +238,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   if (kind == SPARK_GROUPS_DYNAMITE) {
-    const void *palette =
-        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   } else if (kind == SPARK_GROUPS_RISING) {
-    const void *palette =
-        Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_LightningBoltSheet);
   }
 
   sparks = gMapGridCellBuffer;

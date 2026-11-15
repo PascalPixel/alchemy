@@ -181,12 +181,10 @@ void Credits_ClearBuffer(s32 alternate) {
                  BACKDROP_PALETTE_BYTES);
 }
 
-/* VIEW(credits): variable gWaitForFlashWrite as u16 gWaitForFlashWrite[];
- * lucky_wheels_lzpack.h has struct LzPackWork *gWaitForFlashWrite; tried as the
- * rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/menu/credits.c:162: `gWaitForFlashWrite' undeclared (first use
- * in this function). */
-extern u16 gWaitForFlashWrite__credits[] __asm__("gWaitForFlashWrite");
+/// The credits have no buffer of their own for the grey colours: they borrow
+/// the flash library's cells, which IdentifyFlash sets again before the flash
+/// code reads them, as the Lucky Wheels packer does.
+extern u16 gWaitForFlashWrite[];
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
@@ -234,9 +232,9 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     blue = (sum + blue * 5) / 16;
     green = (sum + green * 5) / 16;
     red = (sum + red * 5) / 16;
-    gWaitForFlashWrite__credits[i] = blue << 10 | green << 5 | red;
+    gWaitForFlashWrite[i] = blue << 10 | green << 5 | red;
   }
-  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite__credits,
+  IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite,
                       DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
 }
 

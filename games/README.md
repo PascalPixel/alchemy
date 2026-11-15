@@ -36,7 +36,8 @@ Each of the four links on to guides one step closer to the code, and
 [The Lost Age](tla/README.md) has a guide of its own, in exactly the same
 shape. Most of its code works as The Broken Seal's does, so each of its pages
 says plainly what the sequel adds: a party of eight, the ship, the forge, and a
-third game of chance.
+third game of chance. [How the two games relate](tla/sequel.md) reads the
+two side by side.
 
 There is more to wander through in The Broken Seal.
 [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every

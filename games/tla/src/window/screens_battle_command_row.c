@@ -26,7 +26,6 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 /// The command window's top tile row: it runs along the bottom three rows.
@@ -73,7 +72,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
   tradeCount = 0;
-  battleMenu = NAVIGATION;
+  battleMenu = BATTLE_MENU_WORK;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   for (i = 255; i >= 0; i--)
     selectionUi->paletteSlots[i] = 255;
@@ -94,11 +93,11 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
-    selectionUi->selectedIndex = NAVIGATION->commandSelection[0];
+    selectionUi->selectedIndex = BATTLE_MENU_WORK->commandSelection[0];
   } else {
     s32 memberCount;
 
-    selectionUi->selectedIndex = NAVIGATION->commandSelection[1];
+    selectionUi->selectedIndex = BATTLE_MENU_WORK->commandSelection[1];
     memberCount = 0;
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
@@ -243,7 +242,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
     keys = gInput.pressed;
     repeat = gInput.repeat;
-    navigation = NAVIGATION;
+    navigation = BATTLE_MENU_WORK;
     if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
@@ -319,7 +318,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
-    } else if (NAVIGATION->timer == 0) {
+    } else if (BATTLE_MENU_WORK->timer == 0) {
       command = selectionUi->commandKinds[0];
       break;
     }
@@ -330,9 +329,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     wait(1);
   }
   if (mode != COMMAND_ROW_PARTY)
-    NAVIGATION->commandSelection[1] = selectionUi->selectedIndex;
+    BATTLE_MENU_WORK->commandSelection[1] = selectionUi->selectedIndex;
   else
-    NAVIGATION->commandSelection[0] = selectionUi->selectedIndex;
+    BATTLE_MENU_WORK->commandSelection[0] = selectionUi->selectedIndex;
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
@@ -441,5 +440,4 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
 }
 
 #undef WINDOW_X
-#undef NAVIGATION
 #undef WINDOW_WORK

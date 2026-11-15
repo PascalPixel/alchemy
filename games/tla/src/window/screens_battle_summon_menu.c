@@ -25,7 +25,6 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define SUMMON_END 32
 
 /// The battle summon list: the summons the party holds enough Djinn for
@@ -78,11 +77,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                                   WINDOW_FLAG_BORDERED_CANVAS);
   counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
-  do {
-    firstEntry = NAVIGATION->page;
-    selectedRow = NAVIGATION->row;
-    preferredRow = NAVIGATION->preferredRow;
-  } while (0);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window =
       Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
 
@@ -91,12 +86,9 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     u32 t = 0;
 
     y = index * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row. */
-    do {
-    } while (0);
     sprite = &sprites[index];
-    sprites[index].oam.word.attr01 = OBJ_SIZE_16X16;
-    sprites[index].oam.word.attr23 = t;
+    Io_Write32(OBJ_SIZE_16X16, &sprite->oam.word.attr01);
+    sprite->oam.word.attr23 = t;
     sprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;
     sprite->oam.f.y = (y + t) * 8 + 4;
@@ -109,6 +101,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
+  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block,
+   * 226 of 984 instructions differ in tla-en. */
   do {
     s32 i;
 
@@ -296,17 +290,11 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                              window->width - (count + 3) / 4 - 3, -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      do {
-        work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
-      } while (0);
+      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
-    do {
-      NAVIGATION->page = firstEntry;
-      NAVIGATION->row = selectedRow;
-      NAVIGATION->preferredRow = preferredRow;
-    } while (0);
-    navigation = NAVIGATION;
+    BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
+    navigation = BATTLE_MENU_WORK;
     pressed = gInput.pressed;
     repeated = gInput.repeat;
     if (navigation->tutorialStep != 0) {
@@ -324,7 +312,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (NAVIGATION->timer == 0 || (pressed & KEY_B)) {
+    if (BATTLE_MENU_WORK->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -397,5 +385,4 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 #undef SUMMON_COST_X
 #undef BATTLE_MENU_MESSAGE_CAPACITY
 #undef BATTLE_MENU_MESSAGE_COPY
-#undef NAVIGATION
 #undef SUMMON_END

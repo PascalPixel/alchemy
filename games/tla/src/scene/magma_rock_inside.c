@@ -578,8 +578,6 @@ void MagmaRockInside_UnblockMovedPillar(void) {
 
 void MagmaRockInside_BlockMovedPillar(void) {
   struct Actor *object = gFieldWork->movedBlock;
-  /* FAKEMATCH(pin): copy in r5. */
-  register struct Actor *copy asm("r5");
   s32 scene;
   s32 x;
   s32 z;
@@ -596,6 +594,8 @@ void MagmaRockInside_BlockMovedPillar(void) {
       object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
       if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
+        struct Actor *copy;
+
         object->gravity = toFIXED(1) / 16;
         object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -620,6 +620,8 @@ void MagmaRockInside_BlockMovedPillar(void) {
     MagmaRockInside_MarkBlockCells(gMagmaRockInside_EmberStonePillars);
     if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
         object->y.fixed) {
+      struct Actor *copy;
+
       object->layer = 2;
       object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
@@ -1261,11 +1263,10 @@ void MagmaRockInside_DrainLava(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  j = (u32)position;
-  ((s32 *)j)[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  ((s32 *)j)[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, ((s32 *)j)[0] >> 16,
-                      ((s32 *)j)[2] >> 16);
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, position[0] >> 16,
+                      position[2] >> 16);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_BUTTON_PRESS);
   flags = &leader->priorityFlags;
@@ -1280,8 +1281,8 @@ void MagmaRockInside_DrainLava(void) {
     dstX = 84;
     dstZ = 26;
     baseX = toFIXED(320);
-    ((s32 *)j)[1] = 0;
-    ((s32 *)j)[2] = toFIXED(424);
+    position[1] = 0;
+    position[2] = toFIXED(424);
     if (Event_GetFlag(FLAG_ENTRANCE_FLOODED))
       open = 212;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
@@ -1296,8 +1297,8 @@ void MagmaRockInside_DrainLava(void) {
     dstX = 92;
     dstZ = 21;
     baseX = toFIXED(448);
-    ((s32 *)j)[1] = 0;
-    ((s32 *)j)[2] = toFIXED(344);
+    position[1] = 0;
+    position[2] = toFIXED(344);
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = 212;
     Event_ClearFlag(FLAG_FURY_FLOODED);
@@ -1308,15 +1309,12 @@ void MagmaRockInside_DrainLava(void) {
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
     if (gMainRoutineWork.entrance <= 8) {
       srcX = 49;
-      /* FAKEMATCH(dead): j set again to the position's address, which it
-       * already holds. */
-      j = (u32)position;
       i = 75;
       dstX = 113;
       dstZ = 13;
       baseX = toFIXED(792);
-      ((s32 *)j)[1] = 0;
-      ((s32 *)j)[2] = toFIXED(216);
+      position[1] = 0;
+      position[2] = toFIXED(216);
       if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED))
         open = 212;
       Event_ClearFlag(FLAG_LOWER_ROOMS_FLOODED);
@@ -1326,8 +1324,8 @@ void MagmaRockInside_DrainLava(void) {
       dstX = 115;
       dstZ = 42;
       baseX = toFIXED(824);
-      ((s32 *)j)[1] = 0;
-      ((s32 *)j)[2] = toFIXED(680);
+      position[1] = 0;
+      position[2] = toFIXED(680);
       if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED))
         open = 212;
       Event_ClearFlag(FLAG_LOWER_ROOMS_FLOODED);

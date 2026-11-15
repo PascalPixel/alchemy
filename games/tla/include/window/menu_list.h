@@ -129,4 +129,32 @@ enum { BATTLE_LIST_ROWS = 5 };
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+/// The battle menus' shared work, in its heap slot.
+#define BATTLE_MENU_WORK                                                       \
+  ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
+
+/// Restores the previous selection: page, row and return row.
+#define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
+  do {                                                                         \
+    (page_) = BATTLE_MENU_WORK->page;                                          \
+    (row_) = BATTLE_MENU_WORK->row;                                            \
+    (preferred_) = BATTLE_MENU_WORK->preferredRow;                             \
+  } while (0)
+
+/// Saves the selection: page, row and return row.
+#define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
+  do {                                                                         \
+    BATTLE_MENU_WORK->page = (page_);                                          \
+    BATTLE_MENU_WORK->row = (row_);                                            \
+    BATTLE_MENU_WORK->preferredRow = (preferred_);                             \
+  } while (0)
+
+/// Marks the 4-row band of the window tilemap that holds `row` for upload
+/// (WindowWork.dirty): the battle lists mark their top border's
+/// row so, and the Djinn list its preview's; the name is ours.
+#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
+  do {                                                                         \
+    (work)->dirty |= 2 << ((row) >> 2);                                        \
+  } while (0)
+
 #endif

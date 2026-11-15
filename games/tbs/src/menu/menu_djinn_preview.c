@@ -5,6 +5,13 @@
 
 #include "menu_internal.h"
 
+/// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
+/// four stores of its two message steps, in both games. The name is ours.
+#define DjinnTutorial_SetCursor(menu, value)                                   \
+  do {                                                                         \
+    (menu)->cursor->motion = (value);                                          \
+  } while (0)
+
 /// Previews a give, trade, set or standby change without committing it. It
 /// saves and restores the units before polling for confirmation.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
@@ -261,24 +268,20 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor, message and step in a once-only block.
-           */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-            MenuCursor_Slide(2, 96);
-            gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
-            while (Message_AllTypedFar() == 0) {
-              wait(1);
-            }
-            Window_CloseFar(window, 1);
-            Iwram_CopyWords(work, saved, size);
-            Window_MarkVisibleTextTilesFar();
-            work->dirty = 1;
-            redraw = 1;
-            backdrop->tutorialTimer = 0;
-            backdrop->tutorialStep = 11;
-          } while (0);
-          menu->cursor->motion = ICON_HIDDEN;
+          DjinnTutorial_SetCursor(menu, ICON_SHOWN);
+          MenuCursor_Slide(2, 96);
+          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
+          while (Message_AllTypedFar() == 0) {
+            wait(1);
+          }
+          Window_CloseFar(window, 1);
+          Iwram_CopyWords(work, saved, size);
+          Window_MarkVisibleTextTilesFar();
+          work->dirty = 1;
+          redraw = 1;
+          backdrop->tutorialTimer = 0;
+          backdrop->tutorialStep = 11;
+          DjinnTutorial_SetCursor(menu, ICON_HIDDEN);
         }
         break;
       case 11:
@@ -288,25 +291,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work, size);
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-          /* FAKEMATCH(dead): as in step 10, a once-only block round the cursor,
-           * message and step. */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-            MenuCursor_Slide(106, 56);
-            gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
-            while (Message_AllTypedFar() == 0) {
-              wait(1);
-            }
-            Window_CloseFar(window, 1);
-            Iwram_CopyWords(work, saved, size);
-            Window_MarkVisibleTextTilesFar();
-            work->dirty = 1;
+          DjinnTutorial_SetCursor(menu, ICON_SHOWN);
+          MenuCursor_Slide(106, 56);
+          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
+          while (Message_AllTypedFar() == 0) {
             wait(1);
-            redraw = 1;
-            backdrop->tutorialTimer = 0;
-            backdrop->tutorialStep = 12;
-          } while (0);
-          menu->cursor->motion = ICON_HIDDEN;
+          }
+          Window_CloseFar(window, 1);
+          Iwram_CopyWords(work, saved, size);
+          Window_MarkVisibleTextTilesFar();
+          work->dirty = 1;
+          wait(1);
+          redraw = 1;
+          backdrop->tutorialTimer = 0;
+          backdrop->tutorialStep = 12;
+          DjinnTutorial_SetCursor(menu, ICON_HIDDEN);
         }
         break;
       default:

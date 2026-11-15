@@ -684,10 +684,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   // Then the recovery table.
   size = LOBBY_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block. */
-  do {
-    Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0), size);
-  } while (0);
+  IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(0), size);
   {
     s32 timeout;
     s32 tries;

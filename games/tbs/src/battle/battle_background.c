@@ -36,17 +36,9 @@
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
-  u32 ime;
-  /* FAKEMATCH(temporary): a pointer to ime. */
-  u32 *savedInterruptEnable = &ime;
+  volatile u32 ime;
 
-  /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge that the
-   * pointer is the stack slot's address. */
-  if (palette) {
-    savedInterruptEnable++;
-    savedInterruptEnable--;
-  }
-  IRQ_LOCK(*savedInterruptEnable);
+  Irq_Lock(&ime);
 
   if (level == 0) {
     Dma_Set(palette, BATTLE_BG_PALETTE,
@@ -57,7 +49,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
                                     FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
   }
-  Io_Write16(*savedInterruptEnable, &REG_IME);
+  Irq_Unlock(&ime);
 }
 
 /// Switches the background's display mode, optionally fades its palette by

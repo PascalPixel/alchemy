@@ -382,18 +382,6 @@ void ApojiiIslands_StopFlashing(struct Actor *object) {
 
 #include "shared/actor_flicker_child.h"
 
-/* VIEW(s07a4): routine PaletteFade_SetTarget as s32 PaletteFade_SetTarget(s32
- * a, s32 b); event.h has void PaletteFade_SetTarget(s32 value, s32 mode); tried
- * as the definition's void PaletteFade_SetTarget(s32 value, s32 mode), which
- * the object already declares, ApojiiIslands_DouseAquaStone moves: 1 of 188
- * instructions in tla-ja (apojii_islands.c). */
-extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__(
-    "PaletteFade_SetTarget");
-
-static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
-  BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
-}
-
 /// An Apojii Islands scene inside an event: the actor takes Actor_FlickerChild
 /// as its update, cues 78 and 21 play, a sparkle setup
 /// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
@@ -415,14 +403,11 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
-  /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
-  /* FAKEMATCH(signature): PaletteFade_SetTarget declared
-   * returning s32, though its target returns nothing. */
 flash:
-  ApojiiIslands_Flash(Random16() & 0x7fff, 0);
+  Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
   PaletteFade_StartInterpolation(15);
   wait(10);
-  ApojiiIslands_Flash(0x10000, 0);
+  Value2((s32 (*)())PaletteFade_SetTarget, 0x10000, 0);
   PaletteFade_StartInterpolation(10);
   i--;
   wait(10);

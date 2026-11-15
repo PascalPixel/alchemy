@@ -3,8 +3,8 @@ void Actor_LaunchAhead(struct Actor *self) {
   struct Actor *actor = Actor_Get(self->riseCounter);
   s32 angle = (s16)self->userValue;
   struct FieldSprite *sprite = actor->sprite;
-  /* volatile: the call reads position[0] before [1] and [2] (as a plain */
-  /* array, 2 of 86 differ in tla-en). */
+  /* FAKEMATCH(volatile): the form kept; as a plain s32 position[3], 2 of 86
+   * instructions differ in tla-en. */
   volatile s32 position[3];
 
   position[0] = self->x.fixed;
@@ -21,11 +21,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->acceleration = toFIXED(1) / 8;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
-  /* A once-only block: its end holds the order around it (as the plain */
-  /* statement, 4 of 86 differ in tla-en). */
-  do {
-    actor->scaleY = 0;
-  } while (0);
+  actor->scaleY = 0;
   actor->timer = 0;
   actor->watchedActor = self->watchedActor;
   Event_PlaySound(SE_LAUNCH);

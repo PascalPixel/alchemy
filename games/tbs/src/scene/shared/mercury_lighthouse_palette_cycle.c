@@ -8,20 +8,20 @@
 /// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 /// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  // DEAD: the red level below passes through a halfword on the stack, which
-  // nothing here needs; the ROM keeps its strh and ldrh.
-  volatile u16 below;
+  // The red level below is stored through its address, so it stays in the
+  // frame and is read back from it.
+  u16 below;
   u32 i;
   s32 red;
   s32 greenAndBlue;
   volatile u16 *color;
 
-  below = 0;
+  *&below = 0;
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & RGB_LEVEL_MAX;
   for (i = 0; i < 6; i++) {
-    below = RGB_RED(BG_PLTT_COLOR(6, 14 - i));
+    *&below = RGB_RED(BG_PLTT_COLOR(6, 14 - i));
     red = below;
     if (i <= 2)
       red -= red * 4 / 10;

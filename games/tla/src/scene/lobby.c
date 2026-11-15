@@ -50,13 +50,12 @@ static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
 }
 
 void LinkLobby_InitializeSerial(void) {
-  volatile u16 *ime = &REG_IME;
-  u32 saved = *ime;
+  u32 saved;
 
-  *ime = (u16)(u32)ime;
+  IRQ_LOCK(saved);
   Serial_RemoveIrqHandlers();
   Serial_Initialize();
-  *ime = saved;
+  IRQ_UNLOCK(saved);
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }

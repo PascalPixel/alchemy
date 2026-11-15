@@ -183,7 +183,6 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /// made after the arguments and after the call before it.
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
-#define Iwram_Clear Iwram_ClearWordsEntry
 
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
@@ -483,8 +482,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     void *pixels;
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    Iwram_Clear(dest, 0x3c00);
-    Iwram_Clear((void *)BG_CHAR_BLOCK(1), 0x4000);
+    Iwram_ClearWordsEntry(dest, 0x3c00);
+    Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
     REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     REG_BG2PA = Q_8_8(0.5);
@@ -1653,7 +1652,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 #undef MIRROR_HALF
 #undef SYSTEM
 #undef IWRAM_COPY_WORDS_LINKED
-#undef Iwram_Clear
 #undef DECODE_BUFFER
 #undef DAEDALUS_FRAMES
 #undef DAEDALUS_SPARKS

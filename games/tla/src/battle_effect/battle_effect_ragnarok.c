@@ -648,10 +648,3 @@ extern const struct Scale gJudgment_UnitScale;
     }                                                                          \
     IRQ_UNLOCK(saved);                                                         \
   }
-
-/// Hands back the buffer it is given.
-static inline u8 *PassBuffer(u8 *buffer) {
-  /* FAKEMATCH(wrapper): the second queue's source base passed through this
-   * inline. */
-  return buffer;
-}

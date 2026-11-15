@@ -329,34 +329,26 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
-/// The window work as Text_UseExtraTiles reads it: whether text may take the
-/// second range of tiles, and the state of each text tile.
-struct WindowTileWork {
-  u8 unk000[2];
-  u8 alt;
-  u8 unk003[0xe35];
-  u8 table[256];
-};
-
 /// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
 /// to 639), and with alt set lets text tiles take that range too; the first
 /// range's tiles keep their state.
 void Text_UseExtraTiles(s32 alt) {
-  struct WindowTileWork *work =
-      (struct WindowTileWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 i;
   s32 fill;
   u8 *p;
 
   if (alt) {
-    work->alt = 1;
-    for (i = 128; i < 256; i++)
-      work->table[i] = 0;
+    work->extraTextTiles = 1;
+    for (i = TEXT_TILES; i < 2 * TEXT_TILES; i++)
+      work->textTileState[i] = 0;
   } else {
-    work->alt = 0;
+    work->extraTextTiles = 0;
+    /* FAKEMATCH(temporary): the zero kept in a local; as a literal the
+     * store takes another register. */
     fill = 0;
-    p = work->table + TEXT_TILES;
-    for (i = 0; i < 128; i++)
+    p = work->textTileState + TEXT_TILES;
+    for (i = 0; i < TEXT_TILES; i++)
       *p++ = fill;
   }
 }

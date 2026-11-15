@@ -543,10 +543,10 @@ struct AnimOutput {
   u8 active;
   u16 x;
   u16 y;
-  u16 unk0a;
-  u16 animStep;
+  u16 unused;
+  u16 animationStep;
   u8 index;
-  u8 sentinel;
+  u8 depth;
   struct AnimSprite attr;
 };
 
@@ -556,7 +556,7 @@ struct PopTransform {
   u32 scaleX : 16;
   u32 scaleY : 16;
   u32 angle : 16;
-  u32 unk06 : 16;
+  u32 padding : 16;
 };
 
 extern const u8 gWindowSprite_PageArrowTiles[];
@@ -613,7 +613,7 @@ void WindowSprite_UpdateAll(void) {
         }
         break;
       case WINDOW_SPRITE_MOTION_POP:
-        if (output->animStep != 0) {
+        if (output->animationStep != 0) {
           effect.packed.scaleX = Q_8_8(2);
           effect.packed.scaleY = Q_8_8(2);
           effect.packed.angle = 0;
@@ -621,7 +621,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->affine = 3;
           sprite->x = output->x - 5;
           sprite->y = output->y - 5;
-          output->animStep--;
+          output->animationStep--;
         } else {
           sprite->affineIndex = 0;
           sprite->affine = 0;
@@ -632,8 +632,8 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_SPIN:
         effect.plain.scaleX = Q_8_8(1);
         effect.plain.scaleY = Q_8_8(1);
-        output->animStep += 768;
-        effect.plain.angle = output->animStep;
+        output->animationStep += 768;
+        effect.plain.angle = output->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
         sprite->affine = 1;
         sprite->x = output->x -
@@ -645,32 +645,32 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         if (gVBlankCount & 1)
-          output->animStep++;
+          output->animationStep++;
         sprite->x =
-            output->x + gWindowSprite_WobbleOffsets[output->animStep % 20][0];
+            output->x + gWindowSprite_WobbleOffsets[output->animationStep % 20][0];
         sprite->y = output->y +
-                    gWindowSprite_WobbleOffsets[output->animStep % 20][1] - 2;
+                    gWindowSprite_WobbleOffsets[output->animationStep % 20][1] - 2;
         break;
       case WINDOW_SPRITE_MOTION_HOP_UP:
-        output->animStep++;
-        sprite->y = output->y - gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->y = output->y - gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
-        output->animStep++;
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->y = output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_LEFT:
-        output->animStep++;
-        sprite->x = output->x - gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->x = output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_RIGHT:
-        output->animStep++;
-        sprite->x = output->x + gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->x = output->x + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
-        output->animStep++;
-        sprite->x = output->x - gUiSprite_BounceOffsets[output->animStep & 15];
-        sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
+        output->animationStep++;
+        sprite->x = output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+        sprite->y = output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_SWELL:
       case WINDOW_SPRITE_MOTION_SWELL_HALF:
@@ -687,9 +687,9 @@ void WindowSprite_UpdateAll(void) {
         s32 y = (s16)output->y;
 
         if ((u32)(x + 64) < 304 && (u32)(y + 64) < 224)
-          Oam_AddSpriteAtDepth(sprite, output->sentinel);
+          Oam_AddSpriteAtDepth(sprite, output->depth);
       } else if (output->active != WINDOW_SPRITE_MOTION_HIDDEN) {
-        Oam_AddSpriteAtDepth(sprite, output->sentinel);
+        Oam_AddSpriteAtDepth(sprite, output->depth);
       }
       output = output->next;
     }

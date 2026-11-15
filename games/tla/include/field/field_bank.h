@@ -467,28 +467,6 @@ struct RisingParticleWork {
   struct RisingParticle particles[64];
 };
 
-struct MoteParticle {
-  u8 unused[4]; ///< no code names it
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 attr3[2];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-};
-
 struct EffectOwner {
   u8 unused[8]; ///< no code names it
   struct EffectVector position;
@@ -658,71 +636,6 @@ struct RopeWork {
 };
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
-
-union MoteWord {
-  u32 value;
-  void *link;
-};
-
-/// One floating mote: its sprite's attribute words and its world position.
-struct Mote {
-  union MoteWord link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-/// One of Weather_UpdateRain's particles: its sprite's attribute words, its
-/// world position and its frames left.
-struct SparkParticle {
-  u32 sprite[3];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 unusedAfterPosZ[4]; ///< no code names it
-  u16 timer;
-  u8 unusedAfterTimer[2]; ///< no code names it
-};
-
-/// Heap slot 0x74 while the particles run.
-struct SparkParticleWork {
-  s32 vramEntry;
-  s32 tile;
-  struct SparkParticle particles[64];
-};
-
-struct Sparkle {
-  u8 padding00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 padding0a[2];
-  s32 posX;
-  s32 height;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 padding1e[2];
-};
-
-union DustWord {
-  u32 value;
-  void *link;
-};
 
 struct LinkedEffectVisual {
   u8 unused[9]; ///< no code names it

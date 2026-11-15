@@ -44,4 +44,16 @@ struct GroundParticle {
   u8 unusedAfterTimer[2]; ///< no code names it
 };
 
+/// The heap slot weather while the ground particles run: their tiles' VRAM
+/// cache entry and first tile, and 64 particles.
+struct WeatherWork {
+  s32 entry; ///< the VRAM cache entry holding the particles' tiles
+  // long, not s32: its own alias set lets Weather_UpdateRain's sprite stores
+  // pass its load.
+  long tileBase; ///< their first tile in VRAM
+  struct GroundParticle particles[64];
+  u8 unused[8]; ///< no code reads them
+  s32 stopped;  ///< nonzero stops new sparkle bursts
+};
+
 #endif

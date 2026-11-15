@@ -7,27 +7,16 @@
 #include "field/event_commands.h"
 #include "field/field_bank.h"
 #include "field/object.h"
+#include "field/ground_mask.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
-/// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; event_commands.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/field/event_commands_motes.c:31:
- * structure has no member named `motes'. */
-struct MoteWork__motes {
-  s32 vramEntry;
-  s32 tileBase;
-  struct Mote motes[64];
-  u8 pad808[12];
-};
-
 /// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
-  struct MoteWork__motes *work;
-  struct Mote *mote;
+  struct WeatherWork *work;
+  struct GroundParticle *mote;
   u8 *tiles;
   u32 i;
   u32 size;
@@ -37,9 +26,9 @@ void FieldMotes_Start(void) {
   /* FAKEMATCH(pin): clear held in r6. */
   register s32 clear asm("r6");
 
-  size = sizeof(struct MoteWork__motes);
+  size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  mote = work->motes;
+  mote = work->particles;
   // size is reused for the fill's zero; a zero of its own differs.
   size = 0;
   zero = size;
@@ -47,8 +36,8 @@ void FieldMotes_Start(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
+  work->entry = VramCache_FindFreeEntry();
+  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
@@ -102,9 +91,9 @@ void FieldMotes_Start(void) {
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
 /// update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
-  struct SparkParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 0x814);
-  struct SparkParticle *particle = work->particles;
+  struct WeatherWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
+  struct GroundParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH(pin): the fill's zero held in r1, built after the copy of work.
    */
@@ -116,11 +105,11 @@ void Weather_StartRain(s32 withCue) {
   register s32 clear asm("r6");
 
   zero = 0;
-  Dma_Fill32Cell(fill, zero, work, 0x814);
+  Dma_Fill32Cell(fill, zero, work, sizeof(struct WeatherWork));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_StreakTiles, tiles);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
+  work->entry = VramCache_FindFreeEntry();
+  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
@@ -159,26 +148,16 @@ void Weather_StartRain(s32 withCue) {
 /// Weather_StopRainFar.
 void Weather_StopRain(void) { Task_Remove(Weather_UpdateRain); }
 
-/// The work of the sparkles (heap slot battleEffect): their tiles, 64
-/// sparkles and whether they have stopped.
-struct SparkleWork {
-  u8 padding00[4];
-  s32 tileBase;
-  struct Sparkle sparkles[64];
-  u8 padding808[8];
-  s32 stopped;
-};
-
 /// Task: the sparkles.
 void FieldEffect_UpdateSparkles(void) {
-  struct SparkleWork *work;
+  struct WeatherWork *work;
   u32 spawned;
   u32 i;
   struct MapWork *map;
   s32 *camera;
   s32 spawnX;
   s32 spawnZ;
-  struct Sparkle *sparkle;
+  struct GroundParticle *sparkle;
   const u16 *frame;
   s32 *leader;
   s32 cameraX;
@@ -198,7 +177,7 @@ void FieldEffect_UpdateSparkles(void) {
   spawnX = 0;
   spawnZ = 0;
   i = 0;
-  sparkle = work->sparkles;
+  sparkle = work->particles;
   delay = 0;
   sx = 0;
   sy = 0;
@@ -213,7 +192,7 @@ void FieldEffect_UpdateSparkles(void) {
       b = Random16();
       x = ((sparkle->posX - cameraX) >> 16) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->posZ - sparkle->height - cameraZ) / Q16_ONE +
+      sy = (sparkle->posZ - sparkle->posY - cameraZ) / Q16_ONE +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
@@ -228,7 +207,7 @@ void FieldEffect_UpdateSparkles(void) {
         frames = *(unsigned long *)&gFrameCount;
 #endif
         sparkle->y = sy;
-        sparkle->matrix = ((frames >> 1) & 1) << 3;
+        sparkle->affineIndex = ((frames >> 1) & 1) << 3;
         Oam_AddSpriteAtDepthClamped(sparkle, 240);
       }
       sparkle->timer--;
@@ -237,7 +216,7 @@ void FieldEffect_UpdateSparkles(void) {
       if (delay != 0) {
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = MapGrid_GetTerrainHeightFar(0, sx, sy);
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -248,7 +227,7 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - 0x800000;
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = MapGrid_GetTerrainHeightFar(0, sx, sy);
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -263,33 +242,12 @@ void FieldEffect_UpdateSparkles(void) {
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
-struct DustParticle {
-  union DustWord link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-/// The work of the dust (heap slot battleEffect): its VRAM entry, tiles and
-/// 64 particles.
-struct DustWork {
-  s32 vramEntry;
-  s32 tileBase;
-  struct DustParticle particles[64];
-  u8 pad808[12];
-};
-
 /// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
 void FieldEffect_InitializeSparkles(void) {
-  u32 size = sizeof(struct DustWork);
-  struct DustWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
-  struct DustParticle *p = work->particles;
+  u32 size = sizeof(struct WeatherWork);
+  struct WeatherWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
+  struct GroundParticle *p = work->particles;
   u8 *buf;
   u32 i;
   s32 clear;
@@ -301,12 +259,12 @@ void FieldEffect_InitializeSparkles(void) {
   zero = size;
   Dma_Set(&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              (sizeof(struct DustWork) / 4),
+              (sizeof(struct WeatherWork) / 4),
           REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_SparkleTiles, buf);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->vramEntry, 0x200, buf);
+  work->entry = VramCache_FindFreeEntry();
+  work->tileBase = VramCache_Load(work->entry, 0x200, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 
   i = 0;
@@ -321,10 +279,10 @@ void FieldEffect_InitializeSparkles(void) {
 
     attr = (u32)p;
     *(u32 *)attr = clear;
-    attr += sizeof(union DustWord);
+    attr += sizeof(u32);
     leader = view->origin;
     *(u32 *)attr = 0x40000400;
-    attr += sizeof(union DustWord);
+    attr += sizeof(u32);
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];

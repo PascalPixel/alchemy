@@ -48,6 +48,54 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
+/// The actors every stage room places first, numbering the rows of each
+/// stage's table: Moapa, the four blue chests (two on the left path, two on
+/// the right, inner and outer) and Moapa's two guards. A stage's own puzzle
+/// pieces follow from ACTOR_FIRST_STAGE_PIECE.
+enum TrialRoadStageActorId {
+  ACTOR_MOAPA = ACTOR_FIRST_PLACED,
+  ACTOR_LEFT_INNER_CHEST,
+  ACTOR_LEFT_OUTER_CHEST,
+  ACTOR_RIGHT_INNER_CHEST,
+  ACTOR_RIGHT_OUTER_CHEST,
+  ACTOR_WEST_GUARD,
+  ACTOR_EAST_GUARD,
+  ACTOR_FIRST_STAGE_PIECE
+};
+
+/// The log stage's three logs (gTrialRoad_LogStagePlacements): two rolling
+/// east and west, upper and lower, and one rolling north and south east of
+/// them. Kraden, at the summit (gTrialRoad_Room2Placements), after Moapa.
+#define ACTOR_KRADEN (ACTOR_MOAPA + 1)
+
+enum TrialRoadLogStageActorId {
+  ACTOR_UPPER_LOG = ACTOR_FIRST_STAGE_PIECE + 1,
+  ACTOR_LOWER_LOG,
+  ACTOR_EAST_LOG
+};
+
+/// The Pound stage's four pillars (gTrialRoad_PoundStagePlacements), west to
+/// east, in two seesaw pairs: pounding one raises its partner.
+enum TrialRoadPoundStageActorId {
+  ACTOR_WEST_PILLAR = ACTOR_FIRST_STAGE_PIECE + 3,
+  ACTOR_INNER_WEST_PILLAR,
+  ACTOR_INNER_EAST_PILLAR,
+  ACTOR_EAST_PILLAR
+};
+
+/// The crumbling stage's two pillars (gTrialRoad_CrumblingStagePlacements).
+enum TrialRoadCrumblingStageActorId {
+  ACTOR_WEST_CRUMBLING_PILLAR = ACTOR_FIRST_STAGE_PIECE,
+  ACTOR_EAST_CRUMBLING_PILLAR
+};
+
+/// The fountain stage's three spouts (gTrialRoad_FountainStagePlacements).
+enum TrialRoadFountainStageActorId {
+  ACTOR_WEST_SPOUT = ACTOR_FIRST_STAGE_PIECE + 1,
+  ACTOR_MIDDLE_SPOUT,
+  ACTOR_EAST_SPOUT
+};
+
 void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -245,31 +293,31 @@ void TrialRoad_JumpAcrossGap(void);
 
 void TrialRoad_JumpMeltedPuddle(void);
 
-void TrialRoad_StepOnPillar18(void);
+void TrialRoad_StepOnWestPillar(void);
 
-void TrialRoad_StepOnPillar19(void);
+void TrialRoad_StepOnInnerWestPillar(void);
 
-void TrialRoad_StepOnPillar20(void);
+void TrialRoad_StepOnInnerEastPillar(void);
 
-void TrialRoad_StepOnPillar21(void);
+void TrialRoad_StepOnEastPillar(void);
 
 void TrialRoad_LandOnPillar(void);
 
 void TrialRoad_CheckCrumblingPillars(void);
 
-void TrialRoad_PushLog16West(void);
+void TrialRoad_PushUpperLogWest(void);
 
-void TrialRoad_PushLog16East(void);
+void TrialRoad_PushUpperLogEast(void);
 
-void TrialRoad_PushLog17West(void);
+void TrialRoad_PushLowerLogWest(void);
 
-void TrialRoad_PushLog17East(void);
+void TrialRoad_PushLowerLogEast(void);
 
-void TrialRoad_PushLog18North(void);
+void TrialRoad_PushEastLogNorth(void);
 
-void TrialRoad_PushLog18South(void);
+void TrialRoad_PushEastLogSouth(void);
 
-void TrialRoad_PushLog18SouthFromRow52(void);
+void TrialRoad_PushEastLogSouthOrClimbDown(void);
 
 void TrialRoad_StartSand(void);
 
@@ -487,17 +535,17 @@ void TrialRoad_OpenChests(void) {
     Event_SetFlag(state->stage[0] + 897);
   Event_PlaySound(SE_CHEST_OPEN);
   if (state->mirrored == 0) {
-    Actor_SetAnimation(9, 6);
+    Actor_SetAnimation(ACTOR_LEFT_INNER_CHEST, 6);
     Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
-      Actor_SetAnimation(10, 6);
+      Actor_SetAnimation(ACTOR_LEFT_OUTER_CHEST, 6);
       Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   } else {
-    Actor_SetAnimation(11, 6);
+    Actor_SetAnimation(ACTOR_RIGHT_INNER_CHEST, 6);
     Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
-      Actor_SetAnimation(12, 6);
+      Actor_SetAnimation(ACTOR_RIGHT_OUTER_CHEST, 6);
       Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   }
@@ -788,7 +836,8 @@ next:
     s32 x = object->x.fixed >> 20;
     s32 z = object->z.fixed >> 20;
     u8 *covered = &OBJECT_BYTE(
-        Actor_GetById(gTrialRoad_PoundPartners[(id - 18) & 3]), 99);
+        Actor_GetById(gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3]),
+        99);
     s32 other;
 
     other = 15;
@@ -855,13 +904,21 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     partner->scaleY = Q16_ONE;
 }
 
-void TrialRoad_PoundPillar18(s32 a, s32 b) { TrialRoad_PoundPillar(18, a, b); }
+void TrialRoad_PoundWestPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_WEST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar19(s32 a, s32 b) { TrialRoad_PoundPillar(19, a, b); }
+void TrialRoad_PoundInnerWestPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_INNER_WEST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar20(s32 a, s32 b) { TrialRoad_PoundPillar(20, a, b); }
+void TrialRoad_PoundInnerEastPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_INNER_EAST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar21(s32 a, s32 b) { TrialRoad_PoundPillar(21, a, b); }
+void TrialRoad_PoundEastPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_EAST_PILLAR, a, b);
+}
 
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *object = Actor_GetById(id);
@@ -894,20 +951,24 @@ grow:
   Event_End();
 }
 
-void TrialRoad_StepOnPillar18(void) {
-  TrialRoad_StepOnSeesawPillar(18, 19, 0x335, 1);
+void TrialRoad_StepOnWestPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_WEST_PILLAR, ACTOR_INNER_WEST_PILLAR,
+                               0x335, 1);
 }
 
-void TrialRoad_StepOnPillar19(void) {
-  TrialRoad_StepOnSeesawPillar(19, 18, 0x335, 0);
+void TrialRoad_StepOnInnerWestPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_INNER_WEST_PILLAR, ACTOR_WEST_PILLAR,
+                               0x335, 0);
 }
 
-void TrialRoad_StepOnPillar20(void) {
-  TrialRoad_StepOnSeesawPillar(20, 21, 0x337, 1);
+void TrialRoad_StepOnInnerEastPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_INNER_EAST_PILLAR, ACTOR_EAST_PILLAR,
+                               0x337, 1);
 }
 
-void TrialRoad_StepOnPillar21(void) {
-  TrialRoad_StepOnSeesawPillar(21, 20, 0x337, 0);
+void TrialRoad_StepOnEastPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_EAST_PILLAR, ACTOR_INNER_EAST_PILLAR,
+                               0x337, 0);
 }
 
 void TrialRoad_LandOnPillar(void) {
@@ -925,14 +986,16 @@ void TrialRoad_CheckCrumblingPillars(void) {
   MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
-void TrialRoad_CrumblePillar15(s32 phase) {
+void TrialRoad_CrumbleWestPillar(s32 phase) {
   if (phase == 3)
-    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 15);
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
+                            ACTOR_WEST_CRUMBLING_PILLAR);
 }
 
-void TrialRoad_CrumblePillar16(s32 phase) {
+void TrialRoad_CrumbleEastPillar(s32 phase) {
   if (phase == 3)
-    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 16);
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
+                            ACTOR_EAST_CRUMBLING_PILLAR);
 }
 
 // Blocks the three cells through an object's cell on layers 0 and 2 (collision
@@ -1086,25 +1149,37 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   TrialRoad_BlockLogs();
 }
 
-void TrialRoad_PushLog16West(void) { TrialRoad_PushLog(16, -1, 0, 0); }
+void TrialRoad_PushUpperLogWest(void) {
+  TrialRoad_PushLog(ACTOR_UPPER_LOG, -1, 0, 0);
+}
 
-void TrialRoad_PushLog16East(void) { TrialRoad_PushLog(16, 1, 0, 0); }
+void TrialRoad_PushUpperLogEast(void) {
+  TrialRoad_PushLog(ACTOR_UPPER_LOG, 1, 0, 0);
+}
 
-void TrialRoad_PushLog17West(void) { TrialRoad_PushLog(17, -1, 0, 0); }
+void TrialRoad_PushLowerLogWest(void) {
+  TrialRoad_PushLog(ACTOR_LOWER_LOG, -1, 0, 0);
+}
 
-void TrialRoad_PushLog17East(void) { TrialRoad_PushLog(17, 1, 0, 0); }
+void TrialRoad_PushLowerLogEast(void) {
+  TrialRoad_PushLog(ACTOR_LOWER_LOG, 1, 0, 0);
+}
 
-void TrialRoad_PushLog18North(void) { TrialRoad_PushLog(18, 0, -1, 1); }
+void TrialRoad_PushEastLogNorth(void) {
+  TrialRoad_PushLog(ACTOR_EAST_LOG, 0, -1, 1);
+}
 
-void TrialRoad_PushLog18South(void) { TrialRoad_PushLog(18, 0, 1, 1); }
+void TrialRoad_PushEastLogSouth(void) {
+  TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
+}
 
-void TrialRoad_PushLog18SouthFromRow52(void) {
+void TrialRoad_PushEastLogSouthOrClimbDown(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode == 2)
     Field_ClimbDown();
   else
-    TrialRoad_PushLog(18, 0, 1, 1);
+    TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
 
 void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
@@ -1122,16 +1197,16 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
   }
 }
 
-void TrialRoad_UncoverSpout16(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(16, a, b);
+void TrialRoad_UncoverWestSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_WEST_SPOUT, a, b);
 }
 
-void TrialRoad_UncoverSpout17(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(17, a, b);
+void TrialRoad_UncoverMiddleSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_MIDDLE_SPOUT, a, b);
 }
 
-void TrialRoad_UncoverSpout18(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(18, a, b);
+void TrialRoad_UncoverEastSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_EAST_SPOUT, a, b);
 }
 
 void TrialRoad_StandOnBlock(void) {
@@ -1338,7 +1413,7 @@ void TrialRoad_ChallengeMoapa(void) {
   } while (0);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_SUMMIT, 4);
   Event_SetDefeatDestination(SCENE_TRIAL_ROAD_SUMMIT, 5);
-  Field_RequestBattleFromEncounterTable(13, 4 - count);
+  Field_RequestBattleFromEncounterTable(ACTOR_WEST_GUARD, 4 - count);
 }
 
 /// When the object stands in column 8, sets flag 0x9fc, stops its motion and
@@ -1447,10 +1522,10 @@ void TrialRoad_SetUpBushPillarStage(void) {
 }
 
 void TrialRoad_SetUpPoundStage(void) {
-  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(19), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(20), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(21), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_INNER_WEST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_INNER_EAST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_EAST_PILLAR), 98) = 1;
   if (!Event_GetFlag(FLAG_AREA_TEMP_39))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
@@ -1491,16 +1566,16 @@ void TrialRoad_SetUpCrumblingStage(void) {
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
-  OBJECT_BYTE(Actor_GetById(16), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(17), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_UPPER_LOG), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_LOWER_LOG), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_EAST_LOG), 98) = 1;
   {
     /* FAKEMATCH(pin): the zero pinned to r6. */
     register s32 clear asm("r6") = 0;
 
-    Actor_GetById(16)->collisionFlags = clear;
-    Actor_GetById(17)->collisionFlags = clear;
-    Actor_GetById(18)->collisionFlags = clear;
+    Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = clear;
+    Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = clear;
+    Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = clear;
   }
   TrialRoad_BlockLogs();
   TrialRoad_AddPillarTop(15);
@@ -1565,15 +1640,15 @@ void TrialRoad_SetUpFountainStage(void) {
   fountain->riseAt = 120;
   fountain->fallAt = 150;
   if (!Event_GetFlag(FLAG_AREA_TEMP_63))
-    Actor_SetPosition(16, 0, 0);
+    Actor_SetPosition(ACTOR_WEST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(16);
   if (!Event_GetFlag(FLAG_AREA_TEMP_64))
-    Actor_SetPosition(17, 0, 0);
+    Actor_SetPosition(ACTOR_MIDDLE_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(17);
   if (!Event_GetFlag(FLAG_AREA_TEMP_65))
-    Actor_SetPosition(18, 0, 0);
+    Actor_SetPosition(ACTOR_EAST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(18);
   ((struct MapWorkByte23 *)Ram_HeapSlots->mapGrid)->bits2 = 1;
@@ -1844,16 +1919,16 @@ void TrialRoad_UpdateRival(void) {
             state->order[state->stage[1] * 2 + (s16)(state->mirrored ^ 1)];
 
         TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
-        Actor_GetById(8)->groundHeight = 0;
-        Actor_GetById(8)->y.fixed = 0;
+        Actor_GetById(ACTOR_MOAPA)->groundHeight = 0;
+        Actor_GetById(ACTOR_MOAPA)->y.fixed = 0;
       } else {
-        Actor_SetPosition(8, 0, 0);
+        Actor_SetPosition(ACTOR_MOAPA, 0, 0);
       }
       state->rivalTimer = 0;
     }
   }
   {
-    u8 *kind = &Actor_GetById(8)->spriteStorageKind;
+    u8 *kind = &Actor_GetById(ACTOR_MOAPA)->spriteStorageKind;
 
     if (state->stage[0] == state->stage[1])
       *kind = 1;
@@ -1870,33 +1945,33 @@ void TrialRoad_UpdateRival(void) {
     case 601:
       Sound_Play(SE_CHEST_OPEN);
       if (state->mirrored != 0) {
-        Actor_SetAnimationById(9, 6);
+        Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
         if (state->rivalTimer > 600)
-          Actor_SetAnimationById(10, 6);
+          Actor_SetAnimationById(ACTOR_LEFT_OUTER_CHEST, 6);
       } else {
-        Actor_SetAnimationById(11, 6);
+        Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
         if (state->rivalTimer > 600)
-          Actor_SetAnimationById(12, 6);
+          Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
       }
       break;
     case 655:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetAnimationById(10, 5);
+        Actor_SetAnimationById(ACTOR_LEFT_OUTER_CHEST, 5);
       else
-        Actor_SetAnimationById(12, 5);
+        Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 5);
       break;
     case 653:
     case 708:
-      Actor_GetById(8)->facing = FACING_NORTH;
+      Actor_GetById(ACTOR_MOAPA)->facing = FACING_NORTH;
       break;
     case 50:
     case 710:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetAnimationById(9, 5);
+        Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
       else
-        Actor_SetAnimationById(11, 5);
+        Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 5);
       break;
     case 70:
     case 730:
@@ -2022,10 +2097,10 @@ s32 Scene_PrepareMap(void) {
         SET_LAYER(34, x1);
         layer = &map->layers[2];
         SET_LAYER(68, x2);
-        Actor_SetSpriteColor(Actor_GetById(9), 3);
-        Actor_SetSpriteColor(Actor_GetById(10), 3);
-        Actor_SetSpriteColor(Actor_GetById(11), 3);
-        Actor_SetSpriteColor(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
         Map_CopyRawCellsRect(0, 12, 1, 21, 0, 13);
         Map_CopyRawCellsRect(x1, 12, 1, 21, x1, 13);
         Map_CopyRawCellsRect(x2, 12, 1, 21, x2, 13);
@@ -2077,15 +2152,15 @@ s32 Scene_PrepareMap(void) {
           Map_CopyRawCellsRect(24, 33, 10, 10, 24, 34);
           Map_CopyRawCellsRect(58, 33, 10, 10, 58, 34);
           Map_CopyRawCellsRect(92, 33, 10, 10, 92, 34);
-          Actor_SetPosition(9, 40, 152);
-          Actor_SetPosition(10, 24, 152);
-          Actor_SetPosition(11, 184, 152);
-          Actor_SetPosition(12, 200, 152);
+          Actor_SetPosition(ACTOR_LEFT_INNER_CHEST, 40, 152);
+          Actor_SetPosition(ACTOR_LEFT_OUTER_CHEST, 24, 152);
+          Actor_SetPosition(ACTOR_RIGHT_INNER_CHEST, 184, 152);
+          Actor_SetPosition(ACTOR_RIGHT_OUTER_CHEST, 200, 152);
         }
-        Actor_SetSpriteColor(Actor_GetById(9), 3);
-        Actor_SetSpriteColor(Actor_GetById(10), 3);
-        Actor_SetSpriteColor(Actor_GetById(11), 3);
-        Actor_SetSpriteColor(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
         destinationY = 13;
         value = state->pattern;
         px = gTrialRoad_StageMapCells[value][0];
@@ -2267,7 +2342,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_PlaySound(SE_ITEM_BREAK);
   wait(20);
   TrialRoad_PlaceActor(8, 344, 296, 0xc000);
-  object = Actor_GetById(8);
+  object = Actor_GetById(ACTOR_MOAPA);
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
@@ -2299,30 +2374,30 @@ void TrialRoad_ReachPeakFirst(void) {
                       px(264));
   FieldActor_WaitForMove(object);
   wait(6);
-  Actor_MoveToObject(13, 8);
-  Actor_MoveToObject(14, 8);
-  Actor_SetSpeed(8, 1);
-  Actor_SetSpeed(13, 1);
-  Actor_SetSpeed(14, 1);
-  Actor_WalkTo(8, TrialRoad_MirrorCellX(36), 264);
-  Actor_WalkTo(13, TrialRoad_MirrorCellX(37), 248);
-  Actor_WalkTo(14, TrialRoad_MirrorCellX(37), 280);
-  Actor_WaitForMoveById(8);
-  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_WaitForMoveById(13);
-  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_WaitForMoveById(14);
-  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_MoveToObject(ACTOR_WEST_GUARD, 8);
+  Actor_MoveToObject(ACTOR_EAST_GUARD, 8);
+  Actor_SetSpeed(ACTOR_MOAPA, 1);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
+  Actor_WalkTo(ACTOR_MOAPA, TrialRoad_MirrorCellX(36), 264);
+  Actor_WalkTo(ACTOR_WEST_GUARD, TrialRoad_MirrorCellX(37), 248);
+  Actor_WalkTo(ACTOR_EAST_GUARD, TrialRoad_MirrorCellX(37), 280);
+  Actor_WaitForMoveById(ACTOR_MOAPA);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_WaitForMoveById(ACTOR_WEST_GUARD);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_WaitForMoveById(ACTOR_EAST_GUARD);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You were quite swift! You may prove a challenge yet!"
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "However, just because you're fast doesn't mean you're strong...."
-  Event_ShowMessage(8, 0);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "Let the battle begin!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2332,17 +2407,17 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.9);
   Actor_SetSpeed(ACTOR_SHEBA, 1.7);
   Actor_SetSpeed(ACTOR_PIERS, 1.8);
-  Actor_SetSpeed(8, 2);
-  Actor_SetSpeed(13, 1.9);
-  Actor_SetSpeed(14, 1.7);
+  Actor_SetSpeed(ACTOR_MOAPA, 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1.9);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1.7);
   Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_MOAPA, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_WEST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_EAST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
@@ -2375,15 +2450,15 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You may have been slow, but you made it through Trial Road to the..."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "Well, then... The time is nigh for us to decide who is stronger!"
-  Event_ShowMessage(8, 0);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "Let the battle begin!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2393,17 +2468,17 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.9);
   Actor_SetSpeed(ACTOR_SHEBA, 1.7);
   Actor_SetSpeed(ACTOR_PIERS, 1.8);
-  Actor_SetSpeed(8, 2);
-  Actor_SetSpeed(13, 1.9);
-  Actor_SetSpeed(14, 1.7);
+  Actor_SetSpeed(ACTOR_MOAPA, 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1.9);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1.7);
   Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_MOAPA, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_WEST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_EAST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
@@ -2424,45 +2499,45 @@ void TrialRoad_BeatMoapa(void) {
   TrialRoad_PlaceActor(8, 272, 264, 0x4000);
   TrialRoad_PlaceActor(13, 288, 248, 0x4000);
   TrialRoad_PlaceActor(14, 288, 280, 0x4000);
-  Actor_SetAnimation(8, 6);
-  Actor_SetAnimation(13, 6);
-  Actor_SetAnimation(14, 6);
+  Actor_SetAnimation(ACTOR_MOAPA, 6);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 6);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 6);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadHeroesProven);
-  Actor_StartRepeatedMotion(13, 2);
+  Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   wait(4);
-  Actor_StartRepeatedMotion(14, 2);
+  Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
   wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "All right, all right. You've proven your strength, and you are..."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimation(8, 7);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimation(ACTOR_MOAPA, 7);
   Event_Wait(15);
-  Actor_SetAnimation(13, 7);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 7);
   Event_Wait(10);
-  Actor_SetAnimation(14, 7);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 7);
   Event_Wait(5);
-  Actor_SetAnimation(8, 1);
+  Actor_SetAnimation(ACTOR_MOAPA, 1);
   Event_Wait(15);
-  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_SetAnimation(13, 1);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
-  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_SetAnimation(14, 1);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 1);
   Event_Wait(5);
-  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(0x8000), 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "As we promised, you will receive the Hover Jade, and we will take..."
-  Event_ShowMessage(8, 0);
-  Actor_SetSpeed(8, 1);
-  Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
-  Actor_FaceEachOther(9, ACTOR_PIERS, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetSpeed(ACTOR_MOAPA, 1);
+  Actor_WalkTo(ACTOR_MOAPA, TrialRoad_MirrorCellX(32), 264);
+  Actor_FaceEachOther(ACTOR_KRADEN, ACTOR_PIERS, 0);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
-  Actor_WaitForMoveById(8);
-  Actor_FaceActor(9, ACTOR_FELIX, 0);
+  Actor_WaitForMoveById(ACTOR_MOAPA);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_FELIX, 0);
@@ -2470,30 +2545,30 @@ void TrialRoad_BeatMoapa(void) {
   PartyInventory_Discard(65);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
   Actor_FaceActor(ACTOR_FELIX, 8, 0);
-  OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
-  Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
+  OBJECT_BYTE(Actor_GetById(ACTOR_MOAPA), 0x5a) &= ~1;
+  Actor_WalkToAndWait(ACTOR_MOAPA, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
   /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field. */
-  ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+  ((struct ActorSolid *)Actor_GetById(ACTOR_MOAPA))->solid |= 1;
   Event_Wait(20);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   // "After many years, the vow that Hoabna made to Yegelos has at last..."
-  Event_ShowMessage(8, 0);
-  Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
-  Actor_FaceActor(13, 8, 0);
-  Actor_FaceActor(14, 8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MOAPA, TrialRoad_MirrorAngle(0));
+  Actor_FaceActor(ACTOR_WEST_GUARD, 8, 0);
+  Actor_FaceActor(ACTOR_EAST_GUARD, 8, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "I'm tired now. I'll be back in the Shaman Village resting."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimation(13, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 3);
   wait(3);
-  Actor_SetAnimationAndWait(14, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Actor_FaceActor(ACTOR_FELIX, 9, 0);
   Actor_FaceActor(ACTOR_PIERS, 9, 0);
   Actor_FaceActor(ACTOR_JENNA, 9, 0);
   Actor_FaceActor(ACTOR_SHEBA, 9, 0);
   // "I'm sure you must be exhausted as well. Let's go back to the village..."
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   wait(2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2527,9 +2602,9 @@ void TrialRoad_LoseToMoapa(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadLeaveVillage);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "You've lost. Now leave Shaman village."
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   wait(1);
   Actor_StartRepeatedMotion(ACTOR_SHEBA, 2);
@@ -2549,7 +2624,7 @@ void TrialRoad_ShowTraps(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
-  Actor_SetPosition(8, 1016, 1016);
+  Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
 
@@ -2557,8 +2632,10 @@ void TrialRoad_ShowTraps(void) {
       object->x.fixed -= px(144);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightEntersScript);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightEntersScript);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightEntersScript);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightEntersScript);
   Event_StartScreenTransition();
   Event_Wait(20);
   FieldCamera_SetSpeed(2);
@@ -2571,114 +2648,118 @@ void TrialRoad_ShowTraps(void) {
   FieldCamera_MoveTo(120, CAMERA_KEEP, 120, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
   // "The room is filled with traps and snares. Use the power of Contigo..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "This road has four doors. To open them, you will need to place items..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   // "Why?"
   Event_ShowMessageAndWait(ACTOR_FELIX, 0);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
-  Actor_WaitForScriptEndById(13);
-  Actor_SetAnimationById(13, 1);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightToChestScript);
+  Actor_WaitForScriptEndById(ACTOR_WEST_GUARD);
+  Actor_SetAnimationById(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
-  Actor_SetSpeed(13, 0.25);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_WalkByAndWaitById(13, 0, 8);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0.25);
+  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) &= ~1;
+  Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 8);
   Event_Wait(1);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) |= 1;
   Event_Wait(20);
-  Actor_SetSpeed(13, 2);
-  Actor_SetAnimationById(13, 5);
-  Actor_SetDestinationOffset(13, 0, -40);
-  Actor_WaitForMoveById(13);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 2);
+  Actor_SetAnimationById(ACTOR_WEST_GUARD, 5);
+  Actor_SetDestinationOffset(ACTOR_WEST_GUARD, 0, -40);
+  Actor_WaitForMoveById(ACTOR_WEST_GUARD);
   Sound_Play(SE_CURSE);
   MapGrid_SetShake(2, 4, 1);
-  Actor_GetById(13)->velocityY = px(4);
+  Actor_GetById(ACTOR_WEST_GUARD)->velocityY = px(4);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_WalkByAndWaitById(13, 0, 16);
+  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) &= ~1;
+  Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 16);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
+  ((struct ActorSolid *)Actor_GetById(ACTOR_WEST_GUARD))->solid |= 1;
   Event_Wait(60);
-  Actor_FaceDirectionById(13, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(13, 4);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 4);
   // "The door is triggered only when the treasure chests are filled to..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST, 0);
-  Actor_SetAnimationAndWait(13, 3);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHWEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
   Event_Wait(10);
-  Actor_SetSpeed(13, 1);
-  Actor_WalkByAndWait(13, -16, -16);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
+  Actor_WalkByAndWait(ACTOR_WEST_GUARD, -16, -16);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_WEST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetAnimationById(9, 6);
+  Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
   Event_Wait(30);
   // "Try putting heavier items, like weapons and tools, into the chests..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_WalkToAndWaitById(13, 200, 168);
-  Actor_FaceDirection(13, FACING_NORTH, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_WalkToAndWaitById(ACTOR_WEST_GUARD, 200, 168);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(9, 5);
+  Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
-  Actor_WaitForScriptEndById(13);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightLeavesScript);
+  Actor_WaitForScriptEndById(ACTOR_WEST_GUARD);
   Sound_Play(SE_MAP_EXIT);
   // "If you reach the door after your opponents do, you will be at a..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "You see, it will take twice the weight to open the doors."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   // "Stand on the switch, and the number of chests you need to fill will..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_FaceDirection(14, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(14, 3);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Event_Wait(10);
-  Actor_SetSpeed(14, 1);
-  Actor_WalkByAndWait(14, 16, -16);
-  Actor_FaceDirectionById(14, FACING_EAST, 0);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
+  Actor_WalkByAndWait(ACTOR_EAST_GUARD, 16, -16);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_EAST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetAnimationById(11, 6);
-  Actor_SetAnimationById(12, 6);
+  Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
+  Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
   Event_Wait(30);
-  Actor_WalkToAndWait(14, 350, 168);
-  Actor_FaceDirection(14, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_EAST_GUARD, 350, 168);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(11, 5);
+  Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 5);
   Event_Wait(40);
-  Actor_WalkToAndWait(14, 364, 168);
-  Actor_FaceDirectionById(14, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_EAST_GUARD, 364, 168);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(12, 5);
+  Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
-  Actor_FaceDirectionById(14, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_NORTHWEST, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(14, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "If Trial Road proves too much for you, press this button."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
-  Actor_WaitForScriptEndById(14);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightLeavesScript);
+  Actor_WaitForScriptEndById(ACTOR_EAST_GUARD);
   // "This ends the battle, though. A true hero would not surrender so easily."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   Import_EventSetExitRequest(10);
 }
 
@@ -3021,7 +3102,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  partner = Actor_GetById(8);
+  partner = Actor_GetById(ACTOR_MOAPA);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -3041,15 +3122,15 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       TrialRoad_TakePlaceOf(partner, trap);
       wait(1);
       Sound_Play(SE_CHEST_CLOSE);
-      Actor_SetSpriteColor(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
       wait(2);
       Actor_SelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
-      Actor_SetSpriteColor(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
       wait(2);
-      Actor_SetSpriteColor(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
       wait(4);
-      Actor_SetSpriteColor(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
       MagmaRockInside_SpawnRubble(0);
       TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
@@ -4243,19 +4324,19 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {STEP_TRIGGER_WALKING, 51, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 52, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 53, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnPillar18)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnPillar19)},
-    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnPillar20)},
-    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnPillar21)},
+    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnWestPillar)},
+    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnInnerWestPillar)},
+    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnInnerEastPillar)},
+    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnEastPillar)},
     {STEP_TRIGGER_WALKING, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x339), EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(TrialRoad_BlowBushOffPoundPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundPillar18)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundPillar19)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundPillar20)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundPillar21)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundInnerWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundInnerEastPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4302,9 +4383,9 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS,
      EVENT(TrialRoad_CheckCrumblingPillars)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x343,
-     EVENT(TrialRoad_CrumblePillar15)},
+     EVENT(TrialRoad_CrumbleWestPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51, 0x345,
-     EVENT(TrialRoad_CrumblePillar16)},
+     EVENT(TrialRoad_CrumbleEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4336,29 +4417,29 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS,
      EVENT(TrialRoad_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog16West)},
+     EVENT(TrialRoad_PushUpperLogWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog16East)},
+     EVENT(TrialRoad_PushUpperLogEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog17West)},
+     EVENT(TrialRoad_PushLowerLogWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog17East)},
+     EVENT(TrialRoad_PushLowerLogEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18SouthFromRow52)},
+     EVENT(TrialRoad_PushEastLogSouthOrClimbDown)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
      CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
@@ -4401,11 +4482,11 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
      EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x363,
-     EVENT(TrialRoad_UncoverSpout16)},
+     EVENT(TrialRoad_UncoverWestSpout)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x364,
-     EVENT(TrialRoad_UncoverSpout17)},
+     EVENT(TrialRoad_UncoverMiddleSpout)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52, 0x365,
-     EVENT(TrialRoad_UncoverSpout18)},
+     EVENT(TrialRoad_UncoverEastSpout)},
     {TRIGGER_TABLE_END},
 };
 

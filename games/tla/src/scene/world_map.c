@@ -1445,7 +1445,6 @@ void WorldMap_MeetEcho(void) {
     wait(16);
     flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey));
-    i = 15;
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(FIXED_ONE * 12 / 10, 6);
@@ -1457,14 +1456,11 @@ void WorldMap_MeetEcho(void) {
     djinni->acceleration = toFIXED(1);
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni. */
-    asm("" : "+m"(*djinni));
     FieldActor_SetMoveTarget(djinni, 10120, 0, 8356);
-    while (i >= 0) {
+    for (i = 0; i < 16; i++) {
       djinni->scaleX += FIXED_ONE / 32;
       djinni->scaleY += FIXED_ONE / 32;
       wait(1);
-      i--;
     }
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);

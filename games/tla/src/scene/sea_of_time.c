@@ -212,6 +212,40 @@ enum {
   FLAG_LAST_ROCK_CLEARED
 };
 
+/// While the waves run (SeaOfTime_StartWaves), the channels and the lap cells
+/// do not answer.
+#define FLAG_WAVES_RUNNING FLAG_SCENE_TEMP_00
+/// Set the first time the sea sweeps the ship back, which then leaves by exit 4
+/// rather than 1, and on crossing to Lemuria.
+#define FLAG_SWEPT_BACK_ONCE 0x8dd
+
+/// The cell behaviors the Sea of Time's triggers answer: currents that carry
+/// the ship one way (eight headings), the swirl (which way it turns), the
+/// whirlpool, the channels (four headings), the cell that sweeps the ship back,
+/// and the cells around the whirlpool that count its laps.
+enum SeaOfTimeCellBehavior {
+  CELL_BEHAVIOR_CURRENT_NORTH = 30,
+  CELL_BEHAVIOR_CURRENT_NORTHWEST,
+  CELL_BEHAVIOR_CURRENT_WEST,
+  CELL_BEHAVIOR_CURRENT_SOUTHWEST,
+  CELL_BEHAVIOR_CURRENT_SOUTH,
+  CELL_BEHAVIOR_CURRENT_SOUTHEAST,
+  CELL_BEHAVIOR_CURRENT_EAST,
+  CELL_BEHAVIOR_CURRENT_NORTHEAST,
+  CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE = 40,
+  CELL_BEHAVIOR_SWIRL_CLOCKWISE,
+  CELL_BEHAVIOR_WHIRLPOOL = 44,
+  CELL_BEHAVIOR_CHANNEL_EAST,
+  CELL_BEHAVIOR_CHANNEL_SOUTH,
+  CELL_BEHAVIOR_CHANNEL_WEST,
+  CELL_BEHAVIOR_CHANNEL_NORTH,
+  CELL_BEHAVIOR_SWEPT_BACK,
+  CELL_BEHAVIOR_LAP_FIRST
+};
+
+/// The raised triggers of the waves: the laps counted, and the waves ended.
+enum SeaOfTimeRaisedTrigger { RAISED_START_WAVES = 200, RAISED_STOP_WAVES };
+
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_Room2Placements;
@@ -244,7 +278,7 @@ void SeaOfTime_CircleSwirl(void) {
     if (SeaOfTime_GetCellCode(1, FIELD_CELL(center[0]),
                               FIELD_CELL(center[2])) >>
             8 ==
-        40) {
+        CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
       turn[0] = SeaOfTime_Cos(-0x200);
       sine = Trig_Sin(-0x200);
     } else {
@@ -288,35 +322,35 @@ void SeaOfTime_RideCurrent(void) {
   s32 pz;
 
   switch (work->stepTrigger) {
-  case 30:
+  case CELL_BEHAVIOR_CURRENT_NORTH:
     center.x = 0;
     center.z = -1;
     break;
-  case 32:
+  case CELL_BEHAVIOR_CURRENT_WEST:
     center.x = -1;
     center.z = 0;
     break;
-  case 34:
+  case CELL_BEHAVIOR_CURRENT_SOUTH:
     center.x = 0;
     center.z = 1;
     break;
-  case 36:
+  case CELL_BEHAVIOR_CURRENT_EAST:
     center.x = 1;
     center.z = 0;
     break;
-  case 31:
+  case CELL_BEHAVIOR_CURRENT_NORTHWEST:
     center.x = -1;
     center.z = -1;
     break;
-  case 33:
+  case CELL_BEHAVIOR_CURRENT_SOUTHWEST:
     center.x = -1;
     center.z = 1;
     break;
-  case 35:
+  case CELL_BEHAVIOR_CURRENT_SOUTHEAST:
     center.x = 1;
     center.z = 1;
     break;
-  case 37:
+  case CELL_BEHAVIOR_CURRENT_NORTHEAST:
     center.x = 1;
     center.z = -1;
     break;
@@ -336,7 +370,7 @@ void SeaOfTime_RideCurrent(void) {
   }
   if (SeaOfTime_GetCellCode(1, FIELD_CELL(center.x), FIELD_CELL(center.z)) >>
           8 ==
-      40) {
+      CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
     turn[0] = SeaOfTime_Cos(-0x200);
     s = Trig_Sin(-0x200);
   } else {
@@ -425,7 +459,7 @@ void SeaOfTime_FollowChannel(void) {
 
   work = Ram_HeapSlots->fieldWork;
   actor = Actor_GetById(ACTOR_SHIP);
-  angle = (work->stepTrigger - 45) << 14;
+  angle = (work->stepTrigger - CELL_BEHAVIOR_CHANNEL_EAST) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
   x = FIELD_CELL(actor->x.fixed);
@@ -597,7 +631,7 @@ void SeaOfTime_CountLaps(void) {
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
     s32 zero = 0;
 
-    work->raisedTrigger = 200;
+    work->raisedTrigger = RAISED_START_WAVES;
     gSeaOfTime_LapCount = zero;
     gSeaOfTime_LapTurn = zero;
   }
@@ -607,7 +641,7 @@ void SeaOfTime_TrackWaves(void) {
   u32 *state = gSceneState;
 
   if (gFrameCount - gSeaOfTime_WaveStartFrame > 120)
-    gFieldWork->raisedTrigger = 201;
+    gFieldWork->raisedTrigger = RAISED_STOP_WAVES;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
   *state = gFrameCount;
@@ -632,16 +666,16 @@ s32 SeaOfTime_StartWaves(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_WAVES_RUNNING);
   Event_PlaySound(SE_557);
   do {
     wait(10);
     changed = 0;
     for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 14; i++, palette++) {
       u16 color = *palette;
-      u16 r = color & 31;
-      u16 g = (color >> 5) & 31;
-      u16 b = (color >> 10) & 31;
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
 
       if (r < 11) {
         r++;
@@ -703,12 +737,12 @@ fade:
   for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
-    u16 r = color & 31;
-    u16 g = (color >> 5) & 31;
-    u16 b = (color >> 10) & 31;
-    u16 tr = target & 31;
-    u16 tg = (target >> 5) & 31;
-    u16 tb = (target >> 10) & 31;
+    u16 r = RGB_RED(color);
+    u16 g = RGB_GREEN(color);
+    u16 b = RGB_BLUE(color);
+    u16 tr = RGB_RED(target);
+    u16 tg = RGB_GREEN(target);
+    u16 tb = RGB_BLUE(target);
 
     if (r < tr) {
       r++;
@@ -739,7 +773,7 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  GameFlag_Clear(FLAG_WAVES_RUNNING);
   /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
    * its target Event_End returns nothing. */
   return Event_EndWithResult();
@@ -820,9 +854,9 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
 void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (!Event_GetFlag(0x8dd)) {
+  if (!Event_GetFlag(FLAG_SWEPT_BACK_ONCE)) {
     Import_EventSetExitRequest(4);
-    Event_SetFlag(0x8dd);
+    Event_SetFlag(FLAG_SWEPT_BACK_ONCE);
   } else {
     Import_EventSetExitRequest(1);
   }
@@ -862,7 +896,7 @@ void SeaOfTime_CrossToLemuria(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_Set(0x8dd);
+  GameFlag_Set(FLAG_SWEPT_BACK_ONCE);
   Actor_SetSpeed(ACTOR_SHIP, 1);
   Actor_GetById(ACTOR_SHIP)->facing = FACING_NORTH;
   Actor_WalkTo(ACTOR_SHIP, 352, 264);
@@ -888,12 +922,12 @@ fade:
   for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
     u16 color = palette[i];
     u16 target = saved->colors[j];
-    u16 r = color & 31;
-    u16 g = (color >> 5) & 31;
-    u16 b = (color >> 10) & 31;
-    u16 tr = target & 31;
-    u16 tg = (target >> 5) & 31;
-    u16 tb = (target >> 10) & 31;
+    u16 r = RGB_RED(color);
+    u16 g = RGB_GREEN(color);
+    u16 b = RGB_BLUE(color);
+    u16 tr = RGB_RED(target);
+    u16 tg = RGB_GREEN(target);
+    u16 tb = RGB_BLUE(target);
 
     if (r < tr) {
       r++;
@@ -1086,9 +1120,9 @@ void SeaOfTime_AnimateSea(void) {
 
     if ((gFrameCount & 3) == 0) {
       u16 color = BG_PLTT[15];
-      s32 red = color & 31;
-      s32 green = (color >> 5) & 31;
-      s32 blue = (color >> 10) & 31;
+      s32 red = RGB_RED(color);
+      s32 green = RGB_GREEN(color);
+      s32 blue = RGB_BLUE(color);
       s32 flag = GameFlag_Get(FLAG_SCENE_TEMP_00);
       /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
       u32 greenBits = green << 16;
@@ -1107,7 +1141,7 @@ void SeaOfTime_AnimateSea(void) {
           gSeaOfTime_RedPulseStep[0] = -1;
         }
       } else {
-        if (gFieldWork->raisedTrigger == 200) {
+        if (gFieldWork->raisedTrigger == RAISED_START_WAVES) {
           u16 current = redBits >> 16;
           if (current != 0)
             red = (s16)(u16)(current - 1);
@@ -1210,8 +1244,8 @@ void SeaOfTime_Open(void) {
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
-  gFieldWork->raisedTrigger = 200;
+  Event_SetFlag(FLAG_WAVES_RUNNING);
+  gFieldWork->raisedTrigger = RAISED_START_WAVES;
   Event_PlaySound(SE_SEA_OF_TIME_OPENS);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
@@ -1269,9 +1303,9 @@ void SeaOfTime_Open(void) {
     changed = 0;
     for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 14; i++, palette++) {
       u16 color = *palette;
-      u16 r = color & 31;
-      u16 g = (color >> 5) & 31;
-      u16 b = (color >> 10) & 31;
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
 
       if (r < 11) {
         r++;
@@ -1319,7 +1353,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
-    Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
+    Dma_Set((const void *)&BG_PLTT_COLOR(3, 1), gSeaOfTime_SavedColors.colors,
             DMA_COPY_HALFWORDS(14), REG_DMA3);
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       u32 *state = gSceneState;
@@ -1342,8 +1376,9 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
       if (!GameFlag_Get(0x940)) {
-        Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
-                DMA_COPY_HALFWORDS(14), REG_DMA3);
+        Dma_Set((const void *)&BG_PLTT_COLOR(3, 1),
+                gSeaOfTime_SavedColors.colors, DMA_COPY_HALFWORDS(14),
+                REG_DMA3);
       } else {
         if (!GameFlag_Get(FLAG_ROCK_A_CLEARED))
           SeaOfTime_PlaceRock(21, 23, ACTOR_ROCK_A);
@@ -1496,32 +1531,58 @@ u32 gSeaOfTime_WaveState = 0;
 struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(SeaOfTime_SweptBack)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(SeaOfTime_SinkIntoWhirlpool)},
-    {TRIGGER_STEP, 45, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 46, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 47, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 48, 0x200, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 51, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 52, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 53, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 54, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 55, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 56, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_STEP, 57, 0x200, EVENT(SeaOfTime_CountLaps)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(SeaOfTime_StartWaves)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(SeaOfTime_StopWaves)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWEPT_BACK, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_SweptBack)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WHIRLPOOL, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_SinkIntoWhirlpool)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_EAST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_SOUTH, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_WEST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 1, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 2, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 3, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 4, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 5, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 6, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LAP_FIRST + 7, FLAG_WAVES_RUNNING,
+     EVENT(SeaOfTime_CountLaps)},
+    {TRIGGER_RAISED, RAISED_START_WAVES, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_StartWaves)},
+    {TRIGGER_RAISED, RAISED_STOP_WAVES, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_StopWaves)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1530,16 +1591,26 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 5, 0x940, EVENT(SeaOfTime_CrossToLemuria)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_RideCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_CircleSwirl)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindFirstRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_B, CONDITION_ALWAYS,
@@ -1556,10 +1627,14 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
 struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit4)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(SeaOfTime_LeaveByExit5)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_EAST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_SOUTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_WEST, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_FollowChannel)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindLastRock)},
     {TRIGGER_TABLE_END},

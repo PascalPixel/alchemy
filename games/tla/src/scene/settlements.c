@@ -749,7 +749,7 @@ void Settlements_CycleWaterColors(void) {
     u16 *colors = gSettlements_WaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)0x5000060, 32);
+    copy(colors, (void *)&BG_PLTT_COLOR(3, 0), 32);
     copy(gSettlements_WaterColorsSaved, colors, 32);
     *frame = 0;
   }

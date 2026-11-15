@@ -291,7 +291,7 @@ seedSparks:
   p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
     goto seedSparks;
-  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0,
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)&OBJ_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.

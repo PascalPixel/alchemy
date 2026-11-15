@@ -1383,7 +1383,7 @@ void FlameThrowers_Puff(void) {
   s32 v;
   s32 i;
 
-  state = (State *)(gInventorySnapshot + 0x188);
+  state = (State *)RIDE_WORK;
   camera = IWRAM->camera;
   entry = state->entries;
   position = &camera->position;
@@ -1468,8 +1468,7 @@ struct RideAnimation {
 extern u8 gInventorySnapshot[];
 
 void Ride_Create(void) {
-  struct FlameHitWork *work =
-      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1489,9 +1488,7 @@ void Actor_Release(struct Actor *object);
 
 #include "shared/ride_release_handle.h"
 
-void Ride_SetMode(s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->value0e = value;
-}
+void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
  * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition; not
@@ -1510,7 +1507,7 @@ struct MarsLighthouseBeam__ride_handle {
 
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam__ride_handle *beam =
-      (struct MarsLighthouseBeam__ride_handle *)(gInventorySnapshot + 0x188);
+      (struct MarsLighthouseBeam__ride_handle *)RIDE_WORK;
   struct MarsLighthouseBeamTarget *target = beam->targets;
   s32 id;
   s32 i;
@@ -1564,28 +1561,25 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
 }
 
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->a;
 }
 
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->a = value;
 }
 
-s32 Ride_GetCounter(void) {
-  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->counter;
-}
+s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_advance_counter.h"
 
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c =
-      value;
+  RIDE_WORK->entries[index].c = value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
+  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->b;
 }
 
 #include "shared/ride_set_slot.h"
@@ -1618,7 +1612,7 @@ extern u8 gInventorySnapshot[];
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseStarRoom_KnockBackIfHit(void) {
-  if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active)
+  if (RIDE_WORK->active)
     Leader_KnockBack();
 }
 
@@ -1654,7 +1648,7 @@ s32 Fireball_CarryLeader(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  ride = RIDE_WORK;
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1687,9 +1681,7 @@ s32 Fireball_CarryLeader(void) {
 
 #include "shared/ride_if_active.h"
 
-s32 MarsLighthouseStarRoom_IsSliding(void) {
-  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
-}
+s32 MarsLighthouseStarRoom_IsSliding(void) { return RIDE_WORK->active; }
 
 struct SpriteView {
   u8 unk00[4];
@@ -1726,7 +1718,7 @@ struct Work {
 
 extern u32 gMarsLighthouseStarRoom_CrumbScript[];
 
-#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
+#define WORK ((struct Work *)RIDE_WORK)
 
 /// A crumb breaks from the rolling actor as it shrinks away.
 void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {

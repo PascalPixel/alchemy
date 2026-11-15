@@ -342,7 +342,7 @@ s32 Scene_Initialize(void) {
     i = 0;
   L3:
     c = *color;
-    r = c & 31;
+    r = RGB_RED(c);
     g = ((u16)c >> 5) & 31;
     b = ((u16)c >> 10) & 31;
     r += j;
@@ -393,7 +393,7 @@ s32 Scene_Initialize(void) {
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->paletteFade;
-    Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
+    Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 0), 0x1c0);
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
     FieldCamera_SetSpeed(1);
     Actor_SetAnimation(ACTOR_ALEX, 14);
@@ -437,7 +437,7 @@ s32 Scene_Initialize(void) {
     }
     if (j == 51) {
       Event_PlaySound(SE_TREMOR);
-      Iwram_CopyWordsEntry(buffer, (void *)0x5000000, 0x1c0);
+      Iwram_CopyWordsEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0), 0x1c0);
       Iwram_CopyWordsEntry(block + 0xf80, block + 0x1040, 96);
     }
     if (j >= 16 && j <= 28) {

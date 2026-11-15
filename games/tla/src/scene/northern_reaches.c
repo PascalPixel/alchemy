@@ -424,8 +424,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_Palette685, (void *)0x50003e0, DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+  Dma_Set(Field_Palette685, (void *)&OBJ_PLTT_COLOR(15, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
       Event_PlaySound(SE_CRASH);

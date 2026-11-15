@@ -1627,9 +1627,9 @@ void YampiDesert_TrackUpperLevel(void) {
 
   y = leader->y.fixed;
   if (y > 0x100000)
-    gMainRoutineWork.unk2c3 = 1;
+    gMainRoutineWork.onUpperLevel = 1;
   else
-    gMainRoutineWork.unk2c3 = 0;
+    gMainRoutineWork.onUpperLevel = 0;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_BLITZ) {
     Actor_SetSpritePriority(STAKE(10),
                             ((struct FieldSprite *)leader->sprite)->priority);
@@ -1639,9 +1639,9 @@ void YampiDesert_TrackUpperLevel(void) {
       if (z <= 0x1e80000)
         return;
       if (leader->y.fixed > (s32)0xfff00000)
-        gMainRoutineWork.unk2c3 = 1;
+        gMainRoutineWork.onUpperLevel = 1;
       else
-        gMainRoutineWork.unk2c3 = 0;
+        gMainRoutineWork.onUpperLevel = 0;
     }
   }
 }
@@ -1651,9 +1651,9 @@ void YampiDesert_TrackUpperLevelFromBelow(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (leader->y.fixed > -px(16))
-    gMainRoutineWork.unk2c3 = 1;
+    gMainRoutineWork.onUpperLevel = 1;
   else
-    gMainRoutineWork.unk2c3 = 0;
+    gMainRoutineWork.onUpperLevel = 0;
 }
 
 /// Notes, on the ramp's cells, how high the leader stands.
@@ -1668,12 +1668,12 @@ void YampiDesert_TrackUpperLevelOnRamp(void) {
   if (cell->collisionCode == 20) {
     y = leader->y.fixed;
     if (y > 0x100000) {
-      gMainRoutineWork.unk2c3 = 1;
+      gMainRoutineWork.onUpperLevel = 1;
       return;
     }
   }
   party = &gMainRoutineWork;
-  party->unk2c3 = 0;
+  party->onUpperLevel = 0;
 }
 
 /// Notes whether the leader stands by the pit, where opening a menu raises a

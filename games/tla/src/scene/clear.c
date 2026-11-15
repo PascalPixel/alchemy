@@ -471,7 +471,7 @@ top:
             WindowColor_Apply(party->windowHue, party->windowBrightness);
             RESTORE_CELLS()
             ClearData_Apply(MAP_CELL_BACKUP);
-            party->unk284[3] = 1;
+            party->difficulty = 1;
           }
           goto leave;
         }
@@ -482,7 +482,7 @@ top:
       Message_CloseFinishedWindows();
       if (i == 0) {
         Event_SetFlag(46);
-        gMainRoutineWork.unk284[3] = 2;
+        gMainRoutineWork.difficulty = 2;
         goto leave;
       }
       // "Play on Normal level? (Default difficulty)"

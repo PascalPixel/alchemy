@@ -39,7 +39,7 @@ void FieldPsynergy_WatchSandGround(void) {
   struct Actor *object = Actor_Lookup(party->leaderActorId);
   s32 reason = 0;
 
-  if ((s8)party->unk2c3 != 0)
+  if (party->onUpperLevel != 0)
     reason = 1;
   if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;

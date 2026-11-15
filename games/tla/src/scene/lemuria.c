@@ -326,7 +326,7 @@ void Lemuria_LeaveForAncientLemuria(void) {
   Event_SetDestination(SCENE_LEMURIA, 2);
   party = &gMainRoutineWork;
 
-  party->unk2c2 = 2;
+  party->teleportState = 2;
 }
 
 void Lemuria_GrowVine(void) {

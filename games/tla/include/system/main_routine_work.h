@@ -169,18 +169,28 @@ struct MainRoutineWork {
   s32 savedX;   ///< the world map leader's x, kept on leaving
   s32 savedZ;   ///< the world map leader's z, kept on leaving
   s32 unk280;   ///< cleared with savedX; not read by name in ⚓️
-  u8 unk284[8]; ///< not named by ⚓️ code
+  u8 unk284[3]; ///< not named by ⚓️ code; [2] is set from gData_02003860
+  /// The level chosen on starting again from a cleared game: 1 Easy, 2 Hard,
+  /// 0 Normal.
+  u8 difficulty;
+  u8 unusedAfterDifficulty[4]; ///< no code names it
   /// The Broken Seal's coins, kept from the data transfer (DataTransfer_Apply)
   /// until Isaac's party joins and Party_AddIsaacsParty adds them.
   s32 transferredCoins;
   u8 unk290[0x2c]; ///< not named by ⚓️ code
   u16 forgeItem;   ///< the item left at the forge (Forge_SetItem)
-  /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
-  /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.
-  u16 unk2be;
-  s16 worldPictureFlag; ///< the chosen place's flag; -1 after cancelling
-  u8 unk2c2;            ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes
-  u8 unk2c3;            ///< 0 or 1, set by a Yampi Desert scene
+  /// Teleport's destination: SCENE_WORLD_MAP once a place is chosen on the
+  /// world picture (WorldPicture_Show), -1 after cancelling.
+  s16 teleportScene;
+  /// The chosen place's flag, which the world map takes as its entrance; -1
+  /// after cancelling.
+  s16 teleportEntrance;
+  /// 1 once a place is chosen and 2 as the party arrives, when the scene it
+  /// lands in plays the arrival and clears it.
+  s8 teleportState;
+  /// Set while the leader stands on the upper level of the Alhafran Cave,
+  /// where Sand ends; cleared on entering a scene.
+  s8 onUpperLevel;
   /// The link lobby's tallies, as ☀️'s: 3 cleared on choosing a monster
   /// battle, 0 and 3 counted up together, 6 read by the lobby.
   u16 linkTallies[8];

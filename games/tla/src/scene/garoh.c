@@ -125,10 +125,10 @@ void Garoh_MatchLayerScroll(void) {
   struct MapLayer *to = &map->layers[1];
   struct MapLayer *from = &map->layers[0];
 
-  to->unk10 = from->unk10;
-  to->unk14 = from->unk14;
-  to->unk28 = from->unk28;
-  to->unk2a = from->unk2a;
+  to->scaleX = from->scaleX;
+  to->scaleY = from->scaleY;
+  to->maskX = from->maskX;
+  to->maskY = from->maskY;
 }
 
 /// By night room 2's second layer ripples: each line is offset by two sines of
@@ -149,7 +149,7 @@ void Garoh_WaveRoom2Layer(void) {
     s32 i;
     volatile u16 *dma;
 
-    *(s32 *)&layer->unk08[20] = 0;
+    layer->speedY = 0;
     frame = *(u8 *)&gFrameCount;
     i = 0;
     /* FAKEMATCH(barrier): asm("" : "+r"(i)) keeps the loop's top test. */

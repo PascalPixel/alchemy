@@ -41,8 +41,6 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
-#define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
-
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
 
 /// The field sequence: runs the current scene, which the party entered by
@@ -77,7 +75,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.afterBattleEntrance = -1;
   gMainRoutineWork.defeatScene = -1;
   gMainRoutineWork.defeatEntrance = -1;
-  gMainRoutineWork.unk2c3 = 0;
+  gMainRoutineWork.onUpperLevel = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
   if (gMainRoutineWork.mapId == SCENE_CLEAR) {
@@ -141,7 +139,7 @@ s32 FieldSequence_Run(void) {
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
 
-  if (ARRIVAL.state == 2) {
+  if (gMainRoutineWork.teleportState == 2) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
     Actor_SetSpriteFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
   }
@@ -158,14 +156,14 @@ s32 FieldSequence_Run(void) {
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
-      if (ARRIVAL.state == 1) {
+      if (gMainRoutineWork.teleportState == 1) {
         HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
-      if (ARRIVAL.state == 1) {
+      if (gMainRoutineWork.teleportState == 1) {
         HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -174,30 +172,32 @@ s32 FieldSequence_Run(void) {
       if (!Entrance_PlayArrival())
         wait((work->transitionFrames + 1) / 2);
     }
-    arrivalState = ARRIVAL.state;
+    arrivalState = gMainRoutineWork.teleportState;
     if (arrivalState == 1) {
-      // Through a pointer: stored as ARRIVAL.state, the byte is read and masked
+      // Through a pointer: stored as teleportState, the byte is read and masked
       // with a 0 made before the store, which then serves ownerOverride.
-      *(s8 *)&ARRIVAL.state = 2;
+      *(s8 *)&gMainRoutineWork.teleportState = 2;
       // Once-only: inside the block the 0's one use counts at loop depth, so
       // it stays in a register across Teleport_PlaySparksAndFade.
       do {
         s32 zero = 0;
 
         Teleport_PlaySparksAndFade();
-        if (ARRIVAL.scene != (s16)SCENE_WORLD_MAP)
+        if (gMainRoutineWork.teleportScene != (s16)SCENE_WORLD_MAP)
           goto clearOwner;
         /* FAKEMATCH(barrier): an empty asm clobbering r0. */
         asm("" : : : "r0");
-        if ((value = FlagEntries_GetValue(ARRIVAL.entrance)) & 16)
+        if ((value = FlagEntries_GetValue(gMainRoutineWork.teleportEntrance)) &
+            16)
         clearOwner:
           gMainRoutineWork.ownerOverride = zero;
         else if (value & 32)
           gMainRoutineWork.ownerOverride = 1;
       } while (0);
-      Event_SetDestination(ARRIVAL.scene, ARRIVAL.entrance);
+      Event_SetDestination(gMainRoutineWork.teleportScene,
+                           gMainRoutineWork.teleportEntrance);
     } else if (arrivalState == 2) {
-      ARRIVAL.state = 0;
+      gMainRoutineWork.teleportState = 0;
       Teleport_PlayWhirl();
     }
     if (GameFlag_Get(FLAG_SHOW_AREA_NAME)) {
@@ -287,8 +287,8 @@ s32 FieldSequence_Run(void) {
         } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
           WorldPicture_Show(1);
-          if (ARRIVAL.scene != -1)
-            ARRIVAL.state = 1;
+          if (gMainRoutineWork.teleportScene != -1)
+            gMainRoutineWork.teleportState = 1;
         } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
           Leader_StopMoving();
           value = 0;

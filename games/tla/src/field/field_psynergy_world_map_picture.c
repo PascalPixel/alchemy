@@ -920,14 +920,14 @@ s32 WorldPicture_Show(s32 mode) {
           continue;
         place = FlagEntries_GetTable();
         place += world->shown;
-        routine->unk2be = SCENE_WORLD_MAP;
+        routine->teleportScene = SCENE_WORLD_MAP;
         choice->flag = place->flag;
         WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;
       }
       if (input->repeat & KEY_B) {
         if (mode != 0) {
-          routine->unk2be = 0xffff;
+          routine->teleportScene = -1;
           {
             s32 none = -1;
 

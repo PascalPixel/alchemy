@@ -108,15 +108,15 @@ void TileMap_ConvertBuffer(void) {
 /// and copies its 224 colors to destination, keeping the current backdrop
 /// color in the first entry.
 void Map_CopyPalette(s32 map, void *destination) {
-  const u16 *entry;
+  const struct MapResources *entry;
   u16 *buffer;
   s16 backdrop;
 
-  entry = gMaps[map];
+  entry = &gMaps[map];
   buffer = Heap_Alloc(0x200);
   backdrop = *(s16 *)BG_PLTT;
   Decompress_TaggedLz(
-      Resource_GetTableEntry(entry[1] + (u32)&ResourceId_Map000), buffer);
+      Resource_GetTableEntry(entry->palette + (u32)&ResourceId_Map000), buffer);
   buffer[0] = backdrop;
   Dma_Set(buffer, destination, DMA_COPY_WORDS(112), REG_DMA3);
   Heap_Release(buffer);
@@ -592,7 +592,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   work->viewX = x;
   work->viewZ = y;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++) {
-    if (work->unk100[layerIndex + 4] != 0) {
+    if (work->enabled[layerIndex] != 0) {
       u32 maskX, maskY, originY;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
@@ -1041,7 +1041,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
 void Map_GetHeaderSize(s32 map, s32 *size) {
   u8 *header;
 
-  // Indexed as gMaps[map][0], the load reads [table, offset].
+  // Indexed as gMaps[map].header, the load reads [table, offset].
   header = Resource_GetTableEntry(*(const u16 *)(map * 12 + (u32)gMaps) +
                                   (u32)&ResourceId_Map000);
   size[0] = header[0];
@@ -1060,6 +1060,7 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
 /// then decodes its cell shapes into gMapShapeGrid.
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
+  // Through a pointer: indexed as the array, the table's address loads first.
   struct MapHeader *header = Resource_GetTableEntry(
       ((const struct MapResources *)gMaps)[gMainRoutineWork.mapId].header +
       (u32)&ResourceId_Map000);

@@ -265,9 +265,9 @@ void AlhafranCave_TrackLeadersLevel(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < 0x80000)
-    gMainRoutineWork.unk2c3 = 0;
+    gMainRoutineWork.onUpperLevel = 0;
   else
-    gMainRoutineWork.unk2c3 = 1;
+    gMainRoutineWork.onUpperLevel = 1;
 }
 
 /// The jail's task: draws the crate's sprite where the crate stands.

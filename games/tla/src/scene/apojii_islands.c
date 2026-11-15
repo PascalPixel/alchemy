@@ -871,8 +871,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
   struct MapLayer *second = &map->layers[1];
   struct MapLayer *layer = &map->layers[0];
   struct MapCell *cells = second->cells;
-  s32 left = *(s32 *)&layer->unk08[0] + map->minX;
-  s32 top = *(s32 *)&layer->unk08[4] + map->minZ;
+  s32 left = layer->offsetX + map->minX;
+  s32 top = layer->offsetY + map->minZ;
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;
   s32 width = (map->maxX - map->minX) >> 20;
   s32 height = (map->maxZ - map->minZ) >> 20;

@@ -31,20 +31,27 @@ struct MapCell {
   u8 attributeB;
 };
 
-/// One background layer's setup in a layout's header: its origin, its
-/// parallax and drift, and where it wraps.
+/// A row of gMaps: a layout's resources, each counted from ResourceId_Map000.
+struct MapResources {
+  u16 header;
+  u16 palette;
+  u16 tiles[3];       ///< for char blocks 1, 2 and 3
+  u16 animationTiles; ///< into gData_02028000
+};
+/// Every layout's resources, by map number (field/map_grid_data.c).
+extern const struct MapResources gMaps[];
+
+/// One background layer of the field map: its scroll position, origin,
+/// parallax against the view, drift and wrap, and its window of cells.
 struct MapLayer {
-  s32 x, y;
-  u8 unk08[8];
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  s32 unk1c;
-  u8 unk20[8];
-  u16 unk28;
-  u16 unk2a;
-  u8 unk2c[4];
-  struct MapCell *cells;
+  s32 x, y;              ///< 16.16 fixed-point pixels
+  s32 offsetX, offsetY;  ///< 16.16 fixed-point pixels
+  s32 scaleX, scaleY;    ///< 16.16 fixed point, Q16_ONE moves with the view
+  s32 speedX, speedY;    ///< 16.16 fixed-point pixels per frame
+  s32 phaseX, phaseY;    ///< 16.16 fixed-point pixels
+  u16 maskX, maskY;      ///< a drifting layer's wrap mask, in 8-pixel tiles
+  u16 originX, originY;  ///< the cell column and row of the layer's window
+  struct MapCell *cells; ///< the layer's first cell in the map cell buffer
   u8 *terrainIds;
 };
 
@@ -60,7 +67,9 @@ struct MapWork {
   u8 *script;
   u16 flags;
   u8 wideTiles;
-  u8 unk017;
+  /// The ground's marks: bits 1..0 footprints, 3..2 the kind of wading
+  /// (rooms with a second level set 1).
+  u8 groundEffects;
   struct MapAnimation anim[16];
   struct BlendScriptState blend;
   s32 viewX;
@@ -73,7 +82,14 @@ struct MapWork {
   /// pixels) that FieldCamera_FollowLeaderInBounds keeps the view out of;
   /// NULL for none.
   const s16 *cameraBoxes;
-  u8 unk100[7];
+  /// Set while a BG1 animation runs; the tileset animations are then neither
+  /// suspended nor resumed.
+  s8 animationActive;
+  /// The sprites' base priority; the scrolling camera draws one above it.
+  u8 basePriority;
+  u8 unusedAfterBasePriority[2];
+  /// Each layer's BG priority, written into its BGCNT; zero hides the layer.
+  u8 enabled[3];
   /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
   /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;

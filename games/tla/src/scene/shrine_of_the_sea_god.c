@@ -1003,9 +1003,9 @@ void ShrineOfTheSeaGod_TrackUpperLevel(void) {
 
   Actor_GetCellIndex();
   if (leader->y.fixed < px(16))
-    gMainRoutineWork.unk2c3 = 0;
+    gMainRoutineWork.onUpperLevel = 0;
   else
-    gMainRoutineWork.unk2c3 = 1;
+    gMainRoutineWork.onUpperLevel = 1;
 }
 
 /// The ledge room's task: the puddles are drawn behind or in front of the

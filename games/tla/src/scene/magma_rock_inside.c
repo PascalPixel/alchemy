@@ -1076,7 +1076,7 @@ rise:
         goto spark;
     }
     if (t == 0) {
-      *(s32 *)&layer->unk08[4] -= 0x200000;
+      layer->offsetY -= 0x200000;
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(1);
     } else if (t <= 63) {
@@ -1085,7 +1085,7 @@ rise:
     } else if (t == 64) {
       REG_BLDCNT = 0;
     } else if (t <= 127) {
-      *(s32 *)&layer->unk08[4] += 0x8000;
+      layer->offsetY += 0x8000;
       roomPosition = position;
       roomPosition[2] -= 0x8000;
       MapGrid_CopyCellsTo(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
@@ -1120,7 +1120,7 @@ last:
   FieldMapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   work = &gMainRoutineWork;
-  *(s32 *)&layer->unk08[4] = 0;
+  layer->offsetY = 0;
   closing = work->next;
   if (closing == SCENE_MAGMA_ROCK_INSIDE_2)
     MagmaRockInside_PressGateSwitch1();

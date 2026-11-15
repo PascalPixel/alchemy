@@ -35,7 +35,6 @@ s32 Party_GetPpRatioFar(void);
 extern char ResourceId_Map000;
 extern const u8 Transform_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
-extern const u16 gMaps[][6];
 s32 Actor_GetCellIndexFar(struct Actor *object);
 s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *object);
 s32 Actor_CheckBlockedFar(s32 arg);

@@ -1908,8 +1908,8 @@ turn:
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
   i = 239;
 scroll:
-  *(s32 *)(map->layers[0].unk08 + 4) += step;
-  *(s32 *)(map->layers[1].unk08 + 4) += 0x10000;
+  map->layers[0].offsetY += step;
+  map->layers[1].offsetY += 0x10000;
   Actor_GetById(22)->z.fixed -= step;
   i--;
   Actor_GetById(23)->z.fixed -= step;

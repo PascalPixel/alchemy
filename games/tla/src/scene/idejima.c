@@ -848,8 +848,8 @@ void Idejima_UseDriftPalette(void) {
 void DriftScene_Prepare(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
 
-  layer->unk18 = 0x4000;
-  layer->unk1c = 0x2000;
+  layer->speedX = 0x4000;
+  layer->speedY = 0x2000;
   MapGrid_CopyCellsTo(72, 10, 75, 8, 1, 1);
   Actor_SetAnimation(ACTOR_SHIP, 2);
 }

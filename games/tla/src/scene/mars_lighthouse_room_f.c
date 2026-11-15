@@ -2410,10 +2410,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileZ = actor->z.fixed >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
-    heightA = *(s32 *)&map->layers[1].unk08[4] >> 20;
-    widthB = *(s32 *)&map->layers[2].unk08[0] >> 20;
-    heightB = *(s32 *)&map->layers[2].unk08[4] >> 20;
+    widthA = map->layers[1].offsetX >> 20;
+    heightA = map->layers[1].offsetY >> 20;
+    widthB = map->layers[2].offsetX >> 20;
+    heightB = map->layers[2].offsetY >> 20;
 
     for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
         zA = tileZ + heightA - 1;

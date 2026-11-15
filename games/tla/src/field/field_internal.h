@@ -114,14 +114,6 @@ struct MapFlagsWork {
   u8 groundEffects; ///< bits: 3..2 the wading kind | 1..0 footprints
 };
 
-/// A row of gMaps: a layout's resources, each counted from ResourceId_Map000.
-struct MapResources {
-  u16 header;
-  u16 palette;
-  u16 tiles[3];       ///< for char blocks 1, 2 and 3
-  u16 animationTiles; ///< into gData_02028000
-};
-
 /// One background layer's setup in a layout's header: its origin, its
 /// parallax and drift, and where it wraps.
 struct MapHeaderLayer {

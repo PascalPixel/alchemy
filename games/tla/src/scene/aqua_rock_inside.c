@@ -2118,8 +2118,6 @@ void AquaRockInside_StartPillars(void) {
   FieldTask_AddFrame(AquaRockInside_DrawPillars, priority);
 }
 
-#define LAYER_S32(layer, off) (*(s32 *)((layer)->unk08 + (off) - 8))
-
 /// Adds a water spout on every map cell of the given layer whose spout kind
 /// lies in [first, first + 8), at the given heights, and marks those cells as
 /// spout cells (120).
@@ -2127,8 +2125,8 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = map->layers;
   struct MapCell *cells = layer->cells;
-  s32 originX = LAYER_S32(layer, 8) + map->minX;
-  s32 originZ = LAYER_S32(layer, 12) + map->minZ;
+  s32 originX = layer->offsetX + map->minX;
+  s32 originZ = layer->offsetY + map->minZ;
   struct PillarWork *work = &gAquaRockInside_Pillars;
   s32 width = (map->maxX - map->minX) >> 20;
   s32 depth = (map->maxZ - map->minZ) >> 20;
@@ -2405,7 +2403,6 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
 }
 #undef FIELD_AT
 #undef BG1_SET_PRIORITY_1
-#undef LAYER_S32
 
 #define VENT_TOUCHING Vent_IsTouching
 #define VENT_BOUNCE Vent_Bounce
@@ -2662,7 +2659,6 @@ u32 gWaterDropScript[] = {
 #undef FIELD_AT
 #undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
 #undef BG1_SET_PRIORITY_1
-#undef LAYER_S32
 #undef BYTE_AT
 
 void AquaRockInside_FightSteam(void);

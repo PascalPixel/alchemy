@@ -113,10 +113,10 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   x = (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
       20;
   z = (object->z.fixed + (i << 16)) >> 20;
-  i = *(s32 *)&map->layers[1].unk08[0] >> 20;
-  az = *(s32 *)&map->layers[1].unk08[4] >> 20;
-  bx = *(s32 *)&map->layers[2].unk08[0];
-  bz = *(s32 *)&map->layers[2].unk08[4];
+  i = map->layers[1].offsetX >> 20;
+  az = map->layers[1].offsetY >> 20;
+  bx = map->layers[2].offsetX;
+  bz = map->layers[2].offsetY;
   /* FAKEMATCH(temporary): the first call's last two arguments held in locals.
    */
   layer1X = (u16)i + x;
@@ -384,10 +384,10 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   rect.word[2] =
       (rect.word[2] + (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >>
       20;
-  ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
-  az = *(s32 *)&map->layers[1].unk08[4] >> 20;
-  bx = *(s32 *)&map->layers[2].unk08[0] >> 20;
-  bz = *(s32 *)&map->layers[2].unk08[4] >> 20;
+  ax = map->layers[1].offsetX >> 20;
+  az = map->layers[1].offsetY >> 20;
+  bx = map->layers[2].offsetX >> 20;
+  bz = map->layers[2].offsetY >> 20;
   MapGrid_CopyCellAttributes(rect.word[0], rect.word[2], w, h,
                              ax + rect.word[0], az + rect.word[2]);
   MapGrid_CopyCellAttributes(rect.word[0] + bx, rect.word[2] + bz, w, h,
@@ -463,7 +463,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
+  if (gMainRoutineWork.teleportState == 2)
     YampiDesertCave_ArriveByTeleport();
 }
 
@@ -555,7 +555,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->unk2c2 = 0;
+    party->teleportState = 0;
   }
   work->transition = saved;
 }

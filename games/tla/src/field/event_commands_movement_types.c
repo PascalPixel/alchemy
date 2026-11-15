@@ -442,7 +442,7 @@ again:
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
     map = Ram_HeapSlots->mapGrid;
-    attr = map->unk017;
+    attr = map->groundEffects;
     if (attr & 12) {
       s32 cellX = leader->x.fixed >> 20;
       s32 cellZ = leader->z.fixed >> 20;

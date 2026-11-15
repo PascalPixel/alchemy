@@ -123,13 +123,6 @@ struct TerrainRule {
   s16 zone;
 };
 
-struct ArrivalView {
-  u8 unk000[0x2be];
-  s16 scene;
-  s16 entrance;
-  s8 state;
-};
-
 union PolarOffsetPosition {
   struct EffectVector vector;
   s32 coordinates[3];

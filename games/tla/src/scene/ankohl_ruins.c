@@ -706,7 +706,7 @@ void AnkohlRuins_DrawSand(void) {
   {
     struct MapLayer *layer = &map->layers[1];
 
-    ((s32 *)layer->unk08)[1] = work->unk0c + work->level;
+    layer->offsetY = work->unk0c + work->level;
   }
 }
 
@@ -730,8 +730,8 @@ fill:
   *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);
   Heap_Release(tiles);
-  work->unk08 = ((s32 *)layer->unk08)[0];
-  work->unk0c = ((s32 *)layer->unk08)[1];
+  work->unk08 = layer->offsetX;
+  work->unk0c = layer->offsetY;
   /* FAKEMATCH(dead): the once-only block builds the value after the stores
    * before it. */
   do {

@@ -128,7 +128,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
+  if (gMainRoutineWork.teleportState == 2)
     IsletCave_TeleportIn();
 }
 
@@ -222,7 +222,7 @@ void IsletCave_TeleportIn(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->unk2c2 = 0;
+    party->teleportState = 0;
   }
   work->transition = saved;
 }
@@ -304,7 +304,7 @@ void IsletCave_FinishTeleport(void) {
   PaletteFade_StartInterpolation(16);
   wait(16);
 
-  gMainRoutineWork.unk2c2 = 0;
+  gMainRoutineWork.teleportState = 0;
   Actor_ConfigureSpriteColor(gMainRoutineWork.leaderActorId, 0);
   work->transition = effect;
 }
@@ -314,7 +314,7 @@ void IsletCave_FinishTeleport(void) {
     IsletCave_StartSlowPaletteCycle();                                         \
     Teleport_PlaySparks();                                                     \
                                                                                \
-    gMainRoutineWork.unk2c2 = 1;                                               \
+    gMainRoutineWork.teleportState = 1;                                        \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,     \
                                            px(n1), px(n2));                    \

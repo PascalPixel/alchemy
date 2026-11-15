@@ -195,7 +195,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
+  if (gMainRoutineWork.teleportState == 2)
     Contigo_TeleportIn();
 }
 
@@ -257,7 +257,7 @@ void Contigo_TeleportIn(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->unk2c2 = 0;
+    party->teleportState = 0;
   }
   work->transition = saved;
 }
@@ -976,7 +976,7 @@ void Contigo_TeleportOut(void) {
   Contigo_StartSlowPaletteCycle();
   Teleport_PlaySparks();
 
-  gMainRoutineWork.unk2c2 = 2;
+  gMainRoutineWork.teleportState = 2;
   Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_1, 99);
   Event_Wait(40);
   Contigo_StopPaletteCycle();

@@ -1093,7 +1093,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_ApplyTarget(0x10000, 0);
-  if ((s8)gMainRoutineWork.unk2c2 == 2)
+  if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
 
@@ -1204,7 +1204,7 @@ void Teleport_ArriveWhirling(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->unk2c2 = 0;
+    party->teleportState = 0;
   }
   work->transition = saved;
 }
@@ -1866,10 +1866,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileZ = actor->z.fixed >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
-    heightA = *(s32 *)&map->layers[1].unk08[4] >> 20;
-    widthB = *(s32 *)&map->layers[2].unk08[0] >> 20;
-    heightB = *(s32 *)&map->layers[2].unk08[4] >> 20;
+    widthA = map->layers[1].offsetX >> 20;
+    heightA = map->layers[1].offsetY >> 20;
+    widthB = map->layers[2].offsetX >> 20;
+    heightB = map->layers[2].offsetY >> 20;
 
     for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
         zA = tileZ + heightA - 1;

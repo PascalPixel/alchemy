@@ -252,12 +252,17 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// The children's song game: entered by entrance 15, left by exit 15 back to
+/// where the party joined it.
+enum { YALLAM_SONG_GAME = 15, YALLAM_EXIT_SONG_GAME = 15 };
+
 extern struct ActorPlacement gYallam_Placements[];
 extern struct ActorPlacement gYallam_CavePlacements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM &&
+      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGamePlacements;
   if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CavePlacements;
@@ -369,7 +374,8 @@ extern struct Trigger gYallam_CaveTriggers[];
 extern struct Trigger gYallam_SongGameTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM &&
+      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGameTriggers;
   if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CaveTriggers;
@@ -1562,7 +1568,7 @@ waitForLastVerse:
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_Wait(40);
-    FieldEvent_SetExitRequest(15);
+    FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
   }
 }
 
@@ -1649,7 +1655,7 @@ declined:
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
-  FieldEvent_SetExitRequest(15);
+  FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 done:
 }
 
@@ -1783,7 +1789,7 @@ waitFourthVerse:
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_Wait(40);
-  FieldEvent_SetExitRequest(15);
+  FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
 
 /// Once Force has pushed it (FLAG_AREA_TEMP_00), the log lies where it fell.
@@ -1795,7 +1801,7 @@ void Yallam_PlaceFallenPillar(void) {
 
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM) {
-    if (gMainRoutineWork.entrance == 15)
+    if (gMainRoutineWork.entrance == YALLAM_SONG_GAME)
       Yallam_StartWatchers();
     else
       Yallam_PlaceFallenPillar();
@@ -1994,9 +2000,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT(9, YallamCave, 6),
     SCENE_EXIT(10, WorldMap, 34),
     SCENE_EXIT(11, WorldMap, 33),
-    SCENE_EXIT(12, Yallam, 15),
+    SCENE_EXIT(12, Yallam, YALLAM_SONG_GAME),
     SCENE_EXIT(13, YallamCave, 7),
-    SCENE_EXIT(15, Yallam, 12),
+    SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, 12),
     SCENE_EXITS(YallamCave),
     SCENE_EXIT(6, Yallam, 9),
     SCENE_EXIT(7, Yallam, 13),

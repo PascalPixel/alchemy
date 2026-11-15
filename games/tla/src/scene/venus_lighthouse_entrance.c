@@ -1481,7 +1481,8 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-void BattleEffect_StepVector3(struct SparkState *state, s32 a, s32 b);
+void BattleEffect_StepVector3(struct SparkState *state, s32 damping,
+                              s32 gravity);
 
 void VenusLighthouseEntrance_UpdateDust(void) {
   struct DustPuffWork *work = Ram_HeapSlots->menuWork;

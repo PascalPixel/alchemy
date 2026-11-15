@@ -439,13 +439,6 @@ void ShamanVillageCave_FightGladiators(void) {
 
 void Event_SetDestination();
 
-#define EVENT_MESSAGE                                                          \
-  (((struct {                                                                  \
-      u8 unk000[0x1c4];                                                        \
-      s16 message;                                                             \
-    } *)Ram_HeapSlots->fieldWork)                                              \
-       ->message)
-
 void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = FACING_NORTHWEST;
 
@@ -475,10 +468,10 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   if (EventYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
     FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
-    EVENT_MESSAGE++;
+    gFieldWork->message++;
   } else {
     Message_CloseFinishedWindows();
-    EVENT_MESSAGE++;
+    gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
   }
   Actor_SetAnimationAndWait(ACTOR_NAVAMPA, 4);
@@ -497,11 +490,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   WorldMap_SetReturnLeavingScene(gMainRoutineWork.next,
                                  gMainRoutineWork.entrance);
 #endif
-  ((struct {
-     u8 unk000[0x1ac];
-     s32 value;
-   } *)Ram_HeapSlots->fieldWork)
-      ->value = 0;
+  gFieldWork->transition = 0;
 }
 
 void ShamanVillageCave_BeatColossoFans(void) {
@@ -545,9 +534,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   while (FieldEvent_AskYesNoWithActorAnimation(0, 0) != 0) {
     Actor_ShowEmote(ACTOR_SATRAGE, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_OpenMessage(ACTOR_AZART, 0);
-    EVENT_MESSAGE--;
+    gFieldWork->message--;
   }
-  EVENT_MESSAGE++;
+  gFieldWork->message++;
   FieldEvent_ShowMessageThenWait(ACTOR_AZART, 0, 5);
   Actor_SetAnimation(ACTOR_AZART, 1);
   Actor_SetAnimation(ACTOR_SATRAGE, 1);

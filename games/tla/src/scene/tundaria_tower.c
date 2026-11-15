@@ -790,7 +790,8 @@ extern u32 gTundariaTower_DustRingScript[];
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
-void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
+                              s32 gravity);
 
 void TundariaTower_ExamineCrystal(void);
 void TundariaTower_SlideOnIce(void);

@@ -61,11 +61,6 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 #define FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP FLAG_SCENE_TEMP_78
 /// Set once Valukar, the guardian of fire, has been beaten; he is gone.
 #define FLAG_VALUKAR_BEATEN 0x9cd
-/// Which of the desert's rooms the party came into the cave from, set by
-/// yampi_desert.c, for Retreat to return to it.
-#define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
-#define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
-#define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
 
 /// The Water of Life chest's room's actors
 /// (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of

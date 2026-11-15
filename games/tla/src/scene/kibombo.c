@@ -11,14 +11,6 @@
 
 #include "system/task.h"
 #include "flags.h"
-/// Set while the charges stick: the music rules play silence in Kibombo and the
-/// Gabomba Statue (sounds.h).
-#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
-/// Set as the scene leaves the ceremony below for the statue's inside; the
-/// arrows room clears it.
-#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
-/// Set once the party has met Piers at Kibombo (Kibombo_MeetPiers).
-#define FLAG_KIBOMBO_PIERS_MET 0x8f3
 #include "item_ids.h"
 #include "field/sprite.h"
 #include "types.h"

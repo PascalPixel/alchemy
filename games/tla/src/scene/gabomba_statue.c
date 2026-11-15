@@ -13,12 +13,6 @@
 #include "../field/field_effect_move.c"
 
 #include "flags.h"
-/// Set while the charges stick: the music rules play silence in Kibombo and the
-/// Gabomba Statue (sounds.h).
-#define FLAG_GABOMBA_MUSIC_SILENCED 0x8f7
-/// Set as the scene leaves the ceremony below for the statue's inside; the
-/// arrows room clears it.
-#define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
 #include "djinn_ids.h"
 
 /// Story flags: both cone pillars Pounded and the cogs turned back, each cone

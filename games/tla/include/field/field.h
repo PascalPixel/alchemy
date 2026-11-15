@@ -217,10 +217,6 @@ struct DiceWork {
   struct DiceParticle particles[4];
 };
 
-/// Attribute 2's 16-colour palette above its tile number, as The Broken Seal's
-/// io_reg.h writes it, for the field's minigames.
-#define OBJ_PALETTE(n) ((n) << 12)
-
 /// The dice game's work as its drawing reads it: 128 OAM entries and its
 /// coins, bet and help windows.
 struct DiceSprites {

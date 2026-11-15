@@ -33,8 +33,6 @@
 #include "field/scene_tables.h"
 #include "field/actor_script.h"
 #include "flags.h"
-/// Set once the party has met Piers at Kibombo (Kibombo_MeetPiers).
-#define FLAG_KIBOMBO_PIERS_MET 0x8f3
 #include "djinn_ids.h"
 #include "field/map_grid.h"
 #include "field/field_sequence_event.h"

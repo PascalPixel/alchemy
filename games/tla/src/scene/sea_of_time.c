@@ -1301,7 +1301,7 @@ void SeaOfTime_Open(void) {
   } while (changed);
   Task_Remove(SeaOfTime_AnimateSea);
   Scene_PlayMusic();
-  Event_SetFlag(0x940);
+  Event_SetFlag(FLAG_SEA_OF_TIME_OPENED);
   Event_End();
 }
 
@@ -1339,7 +1339,7 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
-      if (!GameFlag_Get(0x940)) {
+      if (!GameFlag_Get(FLAG_SEA_OF_TIME_OPENED)) {
         Dma_Set((const void *)&BG_PLTT_COLOR(3, 1),
                 gSeaOfTime_SavedColors.colors, DMA_COPY_HALFWORDS(14),
                 REG_DMA3);
@@ -1554,7 +1554,7 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 5, 0x940, EVENT(SeaOfTime_CrossToLemuria)},
+    {TRIGGER_STEP, 5, FLAG_SEA_OF_TIME_OPENED, EVENT(SeaOfTime_CrossToLemuria)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,

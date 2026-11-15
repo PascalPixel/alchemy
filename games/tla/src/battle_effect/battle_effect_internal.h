@@ -167,9 +167,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// timed command's frames run as written (The Broken Seal's sprite.h).
 #define ANIMATION_STEP_NORMAL 16
 
-/// Attribute 2's 16-colour palette, as The Broken Seal's io_reg.h has it.
-#define OBJ_PALETTE(n) ((n) << 12)
-
 /// The map cell buffer as BattleEffect_BuildWindowEdgeTable reads it: window
 /// 0's right edge, how far each of its lines is set in from that edge, and the
 /// right edge it builds for every screen line.
@@ -213,9 +210,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The bytes of a 32x32 sprite's tiles in 256 colours, and in 16.
 #define OBJ_32X32_8BPP_BYTES (32 * 32)
 #define OBJ_32X32_4BPP_BYTES (32 * 32 / 2)
-/// The bytes of the sprites' 256 colours, which a 256-colour sprite sheet
-/// opens with.
-#define OBJ_PLTT_SIZE 512
 /// The byte of the first pixel of canvas row y, y not negative.
 #define CANVAS_ROW_OFFSET(y) ((((y) & 7) << 3) + (((y) >> 3) << 10))
 /// The brightest canvas level: the additive blitters and
@@ -227,9 +221,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_VIEW_TOP 16
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
-
-/// BG2's map in screen block 7, where the canvas's tiles are laid out.
-#define BG_CANVAS_MAP ((volatile s16 *)BG_SCREEN_BLOCK(7))
 
 /// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \

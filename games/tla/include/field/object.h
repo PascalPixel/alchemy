@@ -146,9 +146,6 @@ extern const s32 gCamera_FixedViewMatrix[12];
 extern const s32 gActor_FootprintScript[];
 extern const s32 gWorldMap_KeyYaws[16];
 
-/// The direction pad's four keys (Up, Down, Left, Right) as an index of
-/// gWorldMap_KeyHeadings and gWorldMap_KeyYaws.
-#define DPAD_INDEX(keys) (((keys) >> 4) & 15)
 /// gWorldMap_KeyHeadings' entry when no direction is held, or only an
 /// opposite pair: no heading, since every real one is a multiple of an eighth
 /// turn.

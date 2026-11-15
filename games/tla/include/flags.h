@@ -962,9 +962,29 @@
 /// Lemuria: while it is set the Lemurian Ship blocks retreat and its first exit
 /// leads to Atteka Inlet rather than Lemuria's dock.
 #define FLAG_SHIP_AT_ATTEKA_INLET 0x9b4
-/// Set as the Sea of Time opens (SeaOfTime_Open); the way to Lemuria and the
-/// fortune-teller's later reading of the Trident follow it.
+/// Set as the Sea of Time calms after Poseidon is beaten (SeaOfTime_Open); the
+/// way to Lemuria follows it, and Naribwe's fortune teller then sees "None in
+/// the eastern world can stand against the power you possess."
 #define FLAG_SEA_OF_TIME_OPENED 0x940
+/// Set as Piers leaves the party to visit his mother's grave
+/// (LemuriaInteriors_LeavePiersToMourn); Lemuria reads it too.
+#define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
+/// Set once Sheba has told why Piers is not with the party
+/// (LemuriaInteriors_AskWherePiersIs); Lemuria reads it too.
+#define FLAG_TOLD_OF_PIERS_MOTHER 0x969
+/// Set as the guard takes Felix in to King Hydros and his council; Lemuria's
+/// palace door is then locked while the senate meets.
+#define FLAG_MET_KING_HYDROS 0x96a
+/// Set with FLAG_MET_KING_HYDROS; Lemuria's entrance clears it when Sheba asks
+/// Piers his age.
+#define FLAG_SHEBA_TO_ASK_PIERS_AGE 0x96b
+/// Which of its three ways in from the World Map the party last took into the
+/// Yampi Desert, by the first, eighth and ninth rooms (yampi_desert.c); from
+/// patch 1, Retreat from the cave below the Trainer's Whip chest's room leads
+/// back there.
+#define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
+#define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
+#define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
 /// Set in Madra as Karst comes in (Madra_MeetKarst) once flag 0x825 or 0x826
 /// is; the bandit and his two thieves then wait on the World Map, and their
 /// battle clears it.

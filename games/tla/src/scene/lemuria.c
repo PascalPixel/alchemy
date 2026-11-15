@@ -90,16 +90,9 @@ enum LemuriaActorId {
 /// Set once the Lemurian at the window has told the party the door is broken
 /// and to climb through ("The door's broken, I'm afraid.").
 #define FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN 0x968
-/// Piers away at his mother's grave, and Sheba having told why, both set in
-/// Lemuria's houses (lemuria_interiors.c).
-#define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
-#define FLAG_TOLD_OF_PIERS_MOTHER 0x969
 /// Set once the Lemurian has let a rope down from the window ("There! Is that
 /// better? Now climb up here.").
 #define FLAG_LEMURIA_ROPE_LET_DOWN 0x96f
-/// Set as Felix is taken in to King Hydros (lemuria_palace.c); the palace door
-/// is then locked while the senate meets.
-#define FLAG_MET_KING_HYDROS 0x96a
 
 void FieldCamera_WaitForArrival();
 

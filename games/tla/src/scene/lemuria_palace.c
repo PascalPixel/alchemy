@@ -2,6 +2,7 @@
 /// Lemuria's palace, where King Hydros and his council receive the party and
 /// show it two maps, the ancient world and the one Lunpa had.
 
+#include "flags.h"
 #include "shared/tables.h"
 #include "sprite_ids.h"
 #include "field/field_work.h"
@@ -59,11 +60,6 @@ enum LemuriaPalaceActorId {
   ACTOR_KRADEN
 };
 
-/// Set as the guard takes Felix in to King Hydros and his council; Lemuria's
-/// palace door is then locked while the senate meets.
-#define FLAG_MET_KING_HYDROS 0x96a
-/// Set with it; Lemuria's entrance clears it when Sheba asks Piers his age.
-#define FLAG_SHEBA_TO_ASK_PIERS_AGE 0x96b
 
 extern struct MapGridCellAnimation gLemuriaPalace_Doors[];
 extern struct MapGridCellAnimation gLemuriaPalace_InnerDoor;

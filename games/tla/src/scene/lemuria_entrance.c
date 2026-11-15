@@ -3,6 +3,7 @@
 /// the city, and the ship's harbour, where Sheba asks Piers his age as they
 /// sail out.
 
+#include "flags.h"
 #include "types.h"
 #include "field/field_sprite.h"
 #include "sprite_ids.h"
@@ -64,9 +65,6 @@ extern s32 gLemuriaEntrance_ShipAtRest[];
 
 /// Grind has broken up the rock in the way.
 #define FLAG_ROCK_GROUND_AWAY 0x909
-/// Set as Felix is taken in to King Hydros (lemuria_palace.c); cleared here as
-/// Sheba asks Piers his age.
-#define FLAG_SHEBA_TO_ASK_PIERS_AGE 0x96b
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);

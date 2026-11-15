@@ -174,8 +174,6 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// pillar: 16 standing, -16 lowered.
 #define PILLAR_TOP_HEIGHT(top)                                                 \
   OBJECT_BYTE(top, offsetof(struct Actor, riseEnabled))
-/// A sprite's 16-colour palette, OAM attribute 2's top four bits.
-#define OBJ_PALETTE(n) ((n) << 12)
 
 /// A map cell's collision code for a wall: nothing steps onto it.
 #define CELL_WALL 0xff

@@ -83,12 +83,6 @@
 #define FLAG_YAMPI_DESERT_ROPE_TIED FLAG_SCENE_TEMP_0C
 /// Set once Scoop has dug up the treasure pit's room's treasure pit.
 #define FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP FLAG_AREA_TEMP_02
-/// Which of its three ways in from the World Map the party last took into the
-/// desert, by the first, eighth and ninth rooms; from patch 1, Retreat from
-/// the cave below the Trainer's Whip chest's room leads back there.
-#define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
-#define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
-#define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
 
 extern u16 gYampiDesertGuardianRingChestStakes[];
 extern u16 gYampiDesertBlitzStakes[];

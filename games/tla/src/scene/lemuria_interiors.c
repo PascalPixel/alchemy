@@ -3,6 +3,7 @@
 /// wonder at the travelers from beyond the Sea of Time, and the musicians whose
 /// notes float up as they play.
 
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -28,15 +29,9 @@
 /// Set once Piers has come home to his uncle
 /// (LemuriaInteriors_PiersVisitsUncle).
 #define FLAG_PIERS_VISITED_UNCLE 0x965
-/// Set as Piers leaves the party to visit his mother's grave
-/// (LemuriaInteriors_LeavePiersToMourn); Lemuria reads it too.
-#define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
 /// Set once an old man of the houses has felt Mind Read: "Was that some form
 /// of Psynergy?"
 #define FLAG_MIND_READ_NOTICED 0x967
-/// Set once Sheba has told why Piers is not with the party
-/// (LemuriaInteriors_AskWherePiersIs); Lemuria reads it too.
-#define FLAG_TOLD_OF_PIERS_MOTHER 0x969
 
 /// Lemuria's houses, by the rows of gActorPlacements; the rows for Jenna,
 /// Sheba and Piers go to their party slots.

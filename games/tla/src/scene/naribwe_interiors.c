@@ -70,9 +70,6 @@ void NaribweInteriors_ReadWeapon(void);
 
 void NaribweInteriors_ReadArmor(void);
 
-/// Set once Poseidon is beaten: the fortune teller then sees "None in the
-/// eastern world can stand against the power you possess."
-#define FLAG_POSEIDON_DEFEATED 0x940
 
 /// "It costs 20 coins to hear what your future holds. Will you pay?"
 #define FORTUNE_PRICE 20
@@ -375,7 +372,7 @@ read:
     FieldEvent_SetMessageId(message + 29);
     // "That object you have placed before me... It is a fearsome weapon to..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-    if (!Event_GetFlag(FLAG_POSEIDON_DEFEATED)) {
+    if (!Event_GetFlag(FLAG_SEA_OF_TIME_OPENED)) {
       FieldEvent_SetMessageId(message + 30);
       // "If you wield this weapon, you can defeat the legendary beast!"
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -594,7 +591,7 @@ void NaribweInteriors_ReadProng(void) {
 s32 NaribweInteriors_FoeAhead(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return READING_SACRED_ICON;
-  return (Event_GetFlag(FLAG_POSEIDON_DEFEATED) != 0) +
+  return (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) != 0) +
          READING_FOE_IN_MISTY_SEA;
 }
 
@@ -622,7 +619,7 @@ s32 NaribweInteriors_NextPath(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return READING_SACRED_ICON;
   if (FieldPartyInventory_FindMember(ITEM_TRIDENT) == -1) {
-    if (Event_GetFlag(FLAG_POSEIDON_DEFEATED) == 0) {
+    if (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) == 0) {
       if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 ||
           FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 ||
           FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
@@ -630,7 +627,7 @@ s32 NaribweInteriors_NextPath(void) {
       return (Event_GetFlag(0x905) != 0) + READING_RAISE_COLUMN;
     }
   } else {
-    if (Event_GetFlag(FLAG_POSEIDON_DEFEATED) == 0)
+    if (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) == 0)
       return READING_SEA_BEAST;
   }
   return READING_WEST;

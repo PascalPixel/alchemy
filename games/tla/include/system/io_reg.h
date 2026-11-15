@@ -152,7 +152,7 @@ enum DisplayControl {
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
 /// tile.
-#define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
+#define BG_CANVAS_MAP ((volatile s16 *)BG_SCREEN_BLOCK(7))
 /// BG0HOFS as an address for a DMA: copies of gBgScroll over all four
 /// backgrounds' scroll registers start here, and Mind Read's HBlank DMA writes
 /// one halfword a line into it.
@@ -170,6 +170,7 @@ enum DisplayControl {
 
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 #define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
+#define OBJ_PLTT_SIZE 512 ///< bytes of sprite colours, 256 of them
 /// Colours in palette RAM: the background's, then the sprites'.
 #define PLTT_COLORS (2 * BG_PLTT_COLORS)
 
@@ -209,6 +210,7 @@ enum DisplayControl {
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
+#define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
 /// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
@@ -309,6 +311,9 @@ enum KeyMask {
 
 #define KEYS_MASK 0x3ff ///< the ten keys' bits; KEYINPUT reads 0 for a held key
 
+/// The direction pad's four keys (Up, Down, Left, Right) as an index 0 to 15.
+#define DPAD_INDEX(keys) (((keys) >> 4) & 15)
+
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)  ///< BG0's control (BGCNT_)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012) ///< BG0's vertical scroll
 /// Direct sound's mixing: volumes, speakers, timers and FIFO resets.
@@ -392,7 +397,6 @@ enum KeyMask {
 /// The screen's size in 8-pixel tiles.
 #define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
 #define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
-#define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
 #define RGB_GREEN(color) (((color) >> 5) & 0x1f)

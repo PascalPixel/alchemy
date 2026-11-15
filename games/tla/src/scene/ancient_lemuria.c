@@ -243,7 +243,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
 void AncientLemuria_HeadForTheDock(void) {
   struct Actor *object;
 
-  if (!GameFlag_Get(FLAG_BLUE_STATUE_MOVED) || GameFlag_Get(0x96a)) {
+  if (!GameFlag_Get(FLAG_BLUE_STATUE_MOVED) || GameFlag_Get(FLAG_MET_KING_HYDROS)) {
     Sound_Play(SE_MAP_EXIT);
     Import_EventSetExitRequest(2);
   } else {

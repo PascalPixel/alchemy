@@ -428,7 +428,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
       if (ItemMenu_ConfirmDrop(selection) == 0) {
         command = menu->sideMember[0];
-        // DEAD: the result is not used; the source keeps the call.
+        // DEAD: Unit_Get's result is not used; the ROM keeps the call.
         Unit_Get(command);
         for (work = 0; work < result + 1; work++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);

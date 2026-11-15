@@ -38,6 +38,8 @@
 #define FLAG_KIBOMBO_LETS_PARTY_PASS FLAG_GABOMBA_MESSAGE_CARRIED
 #define FLAG_KIBOMBO_GUARDS_REPORTED 0x880
 #define FLAG_KIBOMBO_OVERGROWTH_CLEARED 0x882
+/// Set once the party has lashed the rope between the posts.
+#define FLAG_KIBOMBO_ROPE_TIED 0x9e8
 #define FLAG_KIBOMBO_FIRST_PILLAR_DROPPED 0x8e7
 #define FLAG_KIBOMBO_SECOND_PILLAR_DROPPED 0x8e8
 /// For this visit: the lower guard knocked out by the crate, the dog shut in
@@ -156,7 +158,13 @@ extern s32 gKibomboMountains_SecondLookoutScript[];
 
 void KibomboMountains_StepBeforeLowerGuard(void);
 
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
+
+/// Rope_Place, from an event.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
+                                   s32 otherPost) {
+  Rope_Place(index, flag, post, otherPost);
+}
 
 void Field_TryJumpForward(void);
 
@@ -476,7 +484,8 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_ROPE_WEST_POST, 1);
     Actor_SetSpritePriority(ACTOR_ROPE_EAST_POST, 1);
     Rope_Initialize();
-    Rope_Place(0, 0x9e8, ACTOR_ROPE_WEST_POST, ACTOR_ROPE_EAST_POST);
+    FieldRope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_ROPE_WEST_POST,
+                    ACTOR_ROPE_EAST_POST);
     if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
     if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
@@ -1082,7 +1091,7 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_STEP, 36, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeThirdLookoutAgain)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_WEST_POST, 0x9e8, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_WEST_POST, FLAG_KIBOMBO_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_FIRST_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, 0},

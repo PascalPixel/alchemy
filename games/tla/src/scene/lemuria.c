@@ -8,6 +8,7 @@
 #include "shared/tables.h"
 #include "flags.h"
 #include "types.h"
+#include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
@@ -621,21 +622,16 @@ void Lemuria_CycleWaterColors(void) {
 /// Puts the per-line BG2 horizontal scroll on an HBlank DMA.
 void Lemuria_StartRippleDma(void) {
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer];
-  s32 first = lines[0];
-  volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH(barrier): the empty asm reading first. */
-  __asm__("" : : "r"(first));
-  scroll = &REG_BG2HOFS;
-  *scroll = first;
+  Io_Write16(lines[0], &REG_BG2HOFS);
   dma = REG_DMA0;
 
   dma[5] &= 0xc5ff; // Clear the start timing and repeat
   dma[5] &= 0x7fff; // Stop
   lines++;
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(lines, (void *)&REG_BG2HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }
 

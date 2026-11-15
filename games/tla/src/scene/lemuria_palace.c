@@ -262,8 +262,7 @@ extern s32 gLemuriaPalace_FirstMapVram;
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.
 void LemuriaPalace_LoadMaps(void) {
-  /* FAKEMATCH(wrapper): forwarded. */
-  void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x1000);
+  void *buffer = Heap_CallAlternatePool(Heap_Alloc, 0x1000);
   s32 *firstSlot;
   s32 *firstTile;
   s32 *secondSlot;

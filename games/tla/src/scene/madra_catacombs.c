@@ -155,7 +155,13 @@ void MadraCatacombs_RockChestWithBookshelf(void);
 
 void MadraCatacombs_LeaveBlockedVillage(void);
 
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
+
+/// Rope_Place, from an event.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
+                                   s32 otherPost) {
+  Rope_Place(index, flag, post, otherPost);
+}
 
 struct Actor *Leader_FindActorAhead(void);
 void Actor_PlaceMovedBlock(void);
@@ -610,18 +616,11 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void MadraCatacombs_SetUpVillage(void) {
-  s32 a;
-  s32 b;
-
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
   Rope_Initialize();
-  b = FLAG_VILLAGE_ROPE_TIED - 255;
-  a = 1;
-  /* FAKEMATCH(barrier): a and b held at an empty asm. */
-  __asm__("" : "+r"(a), "+r"(b));
-  Rope_Place(a, b + 255, ACTOR_VILLAGE_ROPE_LOW_POST,
-             ACTOR_VILLAGE_ROPE_HIGH_POST);
+  FieldRope_Place(1, FLAG_VILLAGE_ROPE_TIED, ACTOR_VILLAGE_ROPE_LOW_POST,
+                  ACTOR_VILLAGE_ROPE_HIGH_POST);
   Actor_DisableById(ACTOR_HOLE_PILLAR);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED) != 0) {
     MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, 13);
@@ -654,8 +653,8 @@ void MadraCatacombs_SetUpVillage(void) {
 
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
-  Rope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
-             ACTOR_TUNNEL_ROPE_WEST_POST);
+  FieldRope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
+                  ACTOR_TUNNEL_ROPE_WEST_POST);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     Actor_SetPosition(ACTOR_TUNNEL_EXPLORER, 0, 0);
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);

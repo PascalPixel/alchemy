@@ -557,13 +557,11 @@ s32 Settlements_CircleCentre(s32 *p) {
   return 0;
 }
 
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-static __inline__ void Settlements_PlaceRope(s32 index, s32 flag, s32 post,
-                                             s32 otherPost) {
-  /* FAKEMATCH(wrapper): the form kept; as Rope_Place(1, FLAG_KALT_ROPE_TIED,
-   * ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B) called directly, 2 of 143
-   * instructions differ in tla-en. */
+/// Rope_Place, from an event.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
+                                   s32 otherPost) {
   Rope_Place(index, flag, post, otherPost);
 }
 
@@ -581,8 +579,7 @@ void Settlements_SetUpKaltIsland(void) {
   }
   Rope_Initialize();
   Rope_Initialize();
-  Settlements_PlaceRope(1, FLAG_KALT_ROPE_TIED, ACTOR_ROPE_POST_A,
-                        ACTOR_ROPE_POST_B);
+  FieldRope_Place(1, FLAG_KALT_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   if (Event_GetFlag(FLAG_APPLE_TAKEN)) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;

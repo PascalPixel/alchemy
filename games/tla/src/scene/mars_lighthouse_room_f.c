@@ -2143,8 +2143,6 @@ s32 Fireball_CarryLeader(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  /* FAKEMATCH(wrapper): called through a cast to the int-returning two-argument
-   * type. */
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(7);

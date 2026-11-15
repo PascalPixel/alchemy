@@ -45,6 +45,11 @@ void Serial_Initialize(void);
 void Event_Start(void);
 void Event_End(void);
 void Sanctum_Run(s32 value);
+void GameFlag_SetByte(s32 flag, s32 value);
+
+static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
+  GameFlag_SetByte(flag, value);
+}
 
 void LinkLobby_InitializeSerial(void) {
   volatile u16 *ime = &REG_IME;
@@ -592,7 +597,7 @@ s32 LinkLobby_ExchangePartyRecords(void) {
     if (result < 0)
       goto fail;
   }
-  GameFlag_SetByte(FLAG_LINK_PARTY_COUNT, first);
+  FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, first);
   result = first;
 check:
   if (first < 0) {
@@ -619,8 +624,6 @@ s32 LinkLobby_EnterBattle(void) {
   u8 *src;
   u16 *table;
   u32 i;
-  s32 scene;
-  s32 set;
 
   failed = 0;
   window = 0;
@@ -715,16 +718,12 @@ s32 LinkLobby_EnterBattle(void) {
       Actor_SetSpeed(ACTOR_FELIX, 0.5);
       Actor_WaitForMoveById(ACTOR_FELIX);
     }
-    /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
-     * is loaded once for both branches. */
-    set = Event_GetFlag(FLAG_MONSTER_BATTLE);
-    scene = SCENE_LOBBY;
-    if (set) {
-      Event_SetAfterBattleDestination(scene, 8);
-      Event_SetDefeatDestination(scene, 9);
+    if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
+      Event_SetAfterBattleDestination(SCENE_LOBBY, 8);
+      Event_SetDefeatDestination(SCENE_LOBBY, 9);
     } else {
-      Event_SetAfterBattleDestination(scene, 10);
-      Event_SetDefeatDestination(scene, 11);
+      Event_SetAfterBattleDestination(SCENE_LOBBY, 10);
+      Event_SetDefeatDestination(SCENE_LOBBY, 11);
     }
     gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
@@ -776,7 +775,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
       if (answer == 0) {
-        GameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
+        FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
         Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
         Event_ClearFlag(FLAG_LINK_BATTLE);
@@ -1287,13 +1286,6 @@ void Sound_LoadReverbCode(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void GameFlag_SetByte(s32 flag, s32 value);
-
-static inline void Flag_SetByte(s32 flag, s32 value) {
-  /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline. */
-  GameFlag_SetByte(flag, value);
-}
-
 /// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
 /// up.
 s32 LinkLobby_Initialize(void) {
@@ -1347,11 +1339,11 @@ s32 LinkLobby_Initialize(void) {
       msg = 14;
     v = FieldGameFlag_GetByte(FLAG_AREA_TEMP_E8);
     if (v == 2) {
-      GameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
       wins++;
       msg++;
     } else {
-      Flag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
+      FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, v + 1);
     }
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId((s32)MsgLobbyNotBadWouldYouLike + msg);
@@ -1359,10 +1351,10 @@ s32 LinkLobby_Initialize(void) {
     if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       if (wins > 90)
         wins = 90;
-      GameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
-      GameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       // score holds the row's address, then the score read through it.
       score = (u32)&gMainRoutineWork.linkTallies[3];
       MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
@@ -1406,7 +1398,7 @@ s32 LinkLobby_Initialize(void) {
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
-    GameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(0);
     Event_End();
   } else if (gMainRoutineWork.entrance == 10) {
@@ -1460,7 +1452,7 @@ s32 LinkLobby_Initialize(void) {
   } else {
     Serial_Initialize();
     Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
-    GameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gMainRoutineWork.idleSleepEnabled != 0) {
       Event_Start();
       Event_ResolvePendingActions(0);

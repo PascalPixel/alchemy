@@ -33,7 +33,13 @@ extern u32 gOseniaCliffs_PaletteCycleStep[];
 void Rope_Tie(s32 a, s32 b, s32 c);
 #endif
 
-void Rope_Place(s32 a, s32 flag, s32 b, s32 c);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
+
+/// Rope_Place, from an event.
+static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
+                                   s32 otherPost) {
+  Rope_Place(index, flag, post, otherPost);
+}
 
 void OseniaCliffs_CyclePalette(void);
 
@@ -98,19 +104,11 @@ s32 Scene_Initialize(void) {
     *flags = bit | value;
   }
   Rope_Initialize();
-  Rope_Tie(0, 12, 11);
+  Rope_Tie(0, ACTOR_SECOND_ROPE_POST, ACTOR_FIRST_ROPE_POST);
   Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
   Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
-  {
-    s32 flag = 0x104;
-    s32 a0;
-
-    a0 = 1;
-    /* FAKEMATCH(barrier): the asm on the first argument keeps its load right
-     * after the first half of flag + 0xff, where without it it loads last. */
-    asm volatile("" : "+l"(a0));
-    Rope_Place(a0, flag + 0xff, 13, 14);
-  }
+  FieldRope_Place(1, FLAG_ROPE_LASHED, ACTOR_THIRD_ROPE_POST,
+                  ACTOR_FOURTH_ROPE_POST);
   return 0;
 }
 

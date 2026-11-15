@@ -348,7 +348,7 @@ void ObjectTable_Clear(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
-  for (i = 0; i < 80; i++)
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++)
     work->actors[i] = NULL;
 }
 

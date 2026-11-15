@@ -77,7 +77,7 @@ void FieldPsynergy_Blaze(void) {
     work->origin[1] = scene->y + px(16);
     work->origin[2] = scene->z;
     best = 9999;
-    for (i = 0; i < 80; i++) {
+    for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
       cursor.object = event->actors[i];
       id = ACTOR_FIRST_LAYER(cursor.object)->animationId;
       if (cursor.object != NULL && cursor.object->script != NULL &&
@@ -205,7 +205,7 @@ void FieldPsynergy_Blaze(void) {
   wait(1);
   work->emitting = 1;
   Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
-  for (k = 0; k < 80; k++) {
+  for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
     wait(1);
     if (work->hit != 0) {
       pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS),

@@ -114,10 +114,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
-  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
+  IWRAM_FILL_WORDS(map, 256 * 128, CANVAS_FILL_WORD(1));
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, BATTLE_BACKGROUND_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(1, 0x28a, 1);
+  BattleEffect_SpawnObjects(1, SPRITE_METEOR, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -314,12 +314,12 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       // DEAD: frame is at most 115 here, so the second arm never runs; the
       // source keeps both tests.
       if (frame <= 159) {
-        pitch = Q_16_16_TO_INT((pitch << 16) + (256 << 16));
+        pitch = Q_16_16_TO_INT(px(pitch) + px(256));
       } else if (frame <= 191) {
         pitch = Q_16_16_TO_INT(((u16)pitch - frame * 8 + 1216) << 16);
       }
       if (frame <= 47) {
-        yaw = Q_16_16_TO_INT((yaw << 16) + (256 << 16));
+        yaw = Q_16_16_TO_INT(px(yaw) + px(256));
       } else if (frame <= 111) {
         yaw = Q_16_16_TO_INT(((u16)yaw - frame * 4 + 448) << 16);
       }
@@ -412,7 +412,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   hz = 0;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BG2Y = -0x1000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

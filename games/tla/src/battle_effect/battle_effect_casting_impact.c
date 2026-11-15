@@ -2068,7 +2068,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             table = gPrism_ShardStarts;
             for (i = 0; i != 16; i++, p++) {
               p->x = px(*table++ + x - 40);
-              p->y = *table++ << 16;
+              p->y = px(*table++);
               p->velocityX = ((Random16() & 127) - 64) << 11;
               p->velocityY = -(Random16() & 127) << 11;
               p->z = 32;

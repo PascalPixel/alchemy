@@ -142,7 +142,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         s32 lineY;
 
         Iwram_FillWordsEntry(work->sheet, 128,
-                             0x28282828 - frame / 2 * 0x01010101);
+                             CANVAS_FILL_WORD(40) -
+                                 frame / 2 * CANVAS_FILL_WORD(1));
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
@@ -281,7 +282,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
+                           COLOR_PAIR(RGB_WHITE));
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       // Ten ever-fainter copies of one mote.
@@ -363,7 +365,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         Sprite_StartAnimationFar(work->sprites[i], i + 12);
       }
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
+                           COLOR_PAIR(RGB_WHITE));
       work->scrollStepX = -8;
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -384,7 +387,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       u16 *from = Resource_GetTableEntry(battle->background);
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, from++, to++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, from++, to++) {
         s32 b = RGB_BLUE(*to);
         s32 g = RGB_GREEN(*to);
         s32 r = RGB_RED(*to);
@@ -415,7 +418,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 64) <= 35) {
       velocity.x += px(1) / 2;
-      velocity.y += -(px(1) / 16);
+      velocity.y += -px(1) / 16;
     }
     if (frame > 177) {
       velocity.x += -px(2);
@@ -424,7 +427,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x += -40000;
       velocity.y += px(1) / 8;
     } else if (frame > 99) {
-      velocity.x += -(px(1) / 8);
+      velocity.x += -px(1) / 8;
       velocity.y += px(1) / 32;
     }
     if (frame == 156) {

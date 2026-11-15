@@ -72,7 +72,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -129,13 +129,17 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // Copy the picture at 0x06008000 aside, fill it with colour 1, and make
   // colours 6 to 13 white.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
+                  CANVAS_FILL_WORD(1));
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
+                      BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
+                          BGCNT_SCREEN_BASE(31),
+                      IO_WRITE_HALFWORD);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
@@ -162,13 +166,13 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       u16 *pal;
 
       pal = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != SHATTERING_OPENING_FRAMES; i++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
         s32 red = RGB_RED(*pal);
         s32 green = RGB_GREEN(*pal);
         s32 blue = RGB_BLUE(*pal);
-        s32 goalRed = battle->palette[i] & 0x1f;
-        s32 goalGreen = (battle->palette[i] >> 5) & 0x1f;
-        s32 goalBlue = (battle->palette[i] >> 10) & 0x1f;
+        s32 goalRed = RGB_RED(battle->palette[i]);
+        s32 goalGreen = RGB_GREEN(battle->palette[i]);
+        s32 goalBlue = RGB_BLUE(battle->palette[i]);
 
         if (red < goalRed)
           red++;
@@ -188,7 +192,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
     if (frame == 4)
       Iwram_FillWords((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
-                      0x02020202);
+                      CANVAS_FILL_WORD(2));
 
     // Frames 0 to 3: widen the circle by 32 pixels of radius, brightening
     // its grey.
@@ -272,7 +276,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           py++;
         }
       }
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer,
+                      BATTLE_BACKGROUND_BYTES);
     }
 
     // Up to frame 50, draw the pieces; from frame 4 they fall.
@@ -1226,7 +1231,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     {
       u8 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
 
-      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32, 0x7fff7fff);
+      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32,
+                      COLOR_PAIR(RGB_WHITE));
       Decompress_TaggedLz(e + 32, work->sheet);
     }
     {

@@ -339,7 +339,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 speed;
 
         spawned->x = px(source.x / 2);
-        spawned->y = 240 << 15;
+        spawned->y = px(120);
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 1023) + 32;
         spawned->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -371,7 +371,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       camera->yaw = savedYaw;
       victim->verticalMotionStrength = savedMode;
       victim->x = savedX;
-      victim->y = 200 << 15;
+      victim->y = px(100);
       victim->z = savedZ;
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -397,8 +397,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       // Into the sky: the red haze, its palette made grey-blue.
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_RedHazeBackdrop, 0);
-      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31; i != 128;
-           i++, color++) {
+      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31;
+           i != BATTLE_BACKGROUND_COLORS; i++, color++) {
         s32 entry = *color;
         s32 red;
         u16 green;
@@ -466,7 +466,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     victim->verticalMotionStrength = 0;
     if ((u32)(frame - 4) <= 55) {
-      victim->y = (frame * 9 << 16) - px(18);
+      victim->y = px(frame * 9) - px(18);
     } else if (frame > 59) {
       victim->x = 0;
       victim->y = px(294 - height);

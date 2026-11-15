@@ -230,7 +230,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           struct Particle *p = work->particles;
 
           for (i = 0; i != 4; i++, p++, particleX++) {
-            p->x = *particleX << 16;
+            p->x = px(*particleX);
             p->y = px(16);
             p->velocityX = 0;
             p->velocityY = 0;

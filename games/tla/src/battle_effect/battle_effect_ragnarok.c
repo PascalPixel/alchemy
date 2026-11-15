@@ -368,7 +368,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     speed &= Random16();
     angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = origin;
-    spark->y = 176 << 15;
+    spark->y = px(88);
     spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
     spark->velocityY = -(Trig_Cos(angle) * (speed + 32)) >> 6;
     spark->variant = (Random16() & 7) + 32;
@@ -444,7 +444,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -469,7 +469,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -573,7 +573,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                                                128 << 6);
           y = spark->y;
           spark->variant--;
-          if (y > (216 << 15)) {
+          if (y > px(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;

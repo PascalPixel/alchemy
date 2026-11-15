@@ -343,9 +343,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - (8 << 16);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - px(8);
         else
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + (8 << 16);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + px(8);
         spark->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
         spark->variant = (Random16() & 15) + 16;
       }

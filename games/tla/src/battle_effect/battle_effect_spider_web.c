@@ -240,7 +240,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   for (frame = 0, mask = 31; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++, c++) {
+    for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
       s32 v = *c;
       s32 r = mask & v;
       s32 g;
@@ -471,7 +471,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
       REG_BG2X = -(8 << 8);
-      REG_BG2Y = -0x1000;
+      REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
       REG_BG2PA = 0xcc;
       REG_BG2PD = Q_8_8(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -840,7 +840,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     u16 *src = battle->palette;
     volatile u16 *dst = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++, src++, dst++) {
+    for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, src++, dst++) {
       s32 v = *src;
       s32 r = RGB_LEVEL_MAX;
       s32 g;

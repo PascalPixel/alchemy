@@ -70,7 +70,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   void *verts;
   struct Particle *p;
   struct ScreenPoint pos;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s16 targetList[14];
   s32 place[4];
   s32 screen[3];

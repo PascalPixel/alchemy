@@ -124,7 +124,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       u16 *from = battle->palette;
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, from++, to++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, from++, to++) {
         s32 red = RGB_RED(*from);
         s32 green = RGB_GREEN(*from);
         s32 blue = RGB_BLUE(*from);

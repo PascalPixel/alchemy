@@ -1274,7 +1274,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 spin;
   s32 zero;
   u8 *coilMesh = Ram_MapCellBuffer + 0x4800;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 place[4];
   struct Scale req;
   struct ScreenPoint pos;
@@ -1312,7 +1312,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   skip = 0;
   Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x4400, coilMesh, 32);
-  list[0] = 255;
+  list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);

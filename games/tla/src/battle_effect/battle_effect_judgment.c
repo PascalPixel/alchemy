@@ -212,7 +212,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (frame > 75 && (i == 8 || i == 12 || i == 15)) {
         continue;
       }
-      place[0] = ((i % 4) << 21) + (152 << 15);
+      place[0] = ((i % 4) << 21) + px(76);
       place[2] = ((i / 4) << 21) + depth;
       Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                         0);
@@ -385,7 +385,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct Sprite *obj = Sprite_CreateFar(0x28d);
+    struct Sprite *obj = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = obj;
     if (obj) {
@@ -486,7 +486,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 66) {
       volatile u16 *c = &BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, c++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
         *c ^= RGB_WHITE;
       }
     }

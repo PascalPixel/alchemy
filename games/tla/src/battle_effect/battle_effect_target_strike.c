@@ -1047,7 +1047,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -1081,7 +1081,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
+                  CANVAS_FILL_WORD(1));
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

@@ -100,7 +100,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
           flame->y = px(72);
           flame->velocityX = 0;
-          flame->velocityY = -((Random16() & 3) + 2) << 16;
+          flame->velocityY = px(-((Random16() & 3) + 2));
           flame->velocityZ = 0;
           flame->variant = -i - (Random16() & 15);
         }
@@ -204,7 +204,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
               flame->y = px(72);
               flame->variant = 0;
-              flame->velocityY = -((Random16() & 3) + 2) << 16;
+              flame->velocityY = px(-((Random16() & 3) + 2));
               flame->velocityZ = 0;
               if ((u32)(frame - 97) <= 42)
                 flame->velocityZ = 1;
@@ -353,7 +353,7 @@ void Iris_ChangeBackdrop(void) {
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->battleBackground;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   u16 *palette;
   s32 i;
 
@@ -372,13 +372,13 @@ void Iris_ChangeBackdrop(void) {
   }
 
   // No actor objects over the new backdrop.
-  list[0] = 0xff;
+  list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   palette = (u16 *)&BG_PLTT_COLOR(6, 0);
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
     s32 color = *palette;
     s32 blue = RGB_BLUE((u16)color);
     s32 green = RGB_GREEN((u16)color);
@@ -1236,7 +1236,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                      BGCNT_SCREEN_BASE(7);
         Iwram_FillWords(canvas, CANVAS_BYTES,
                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
+        Iwram_FillWords(FADE_PLTT, 0x100, COLOR_PAIR(RGB_WHITE));
       }
     }
 
@@ -1292,27 +1292,27 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         objects[i]->image.tile = petals->tiles[petals->frames[i]];
       }
       for (i = 0; i != IRIS_PETALS / 2; i++) {
-        petals->x[i] = (Random16() % 15 << 16) + px(57);
-        petals->y[i] = (Random16() % 15 << 16) + px(79);
+        petals->x[i] = px(Random16() % 15) + px(57);
+        petals->y[i] = px(Random16() % 15) + px(79);
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       for (; i != IRIS_PETALS; i++) {
-        petals->x[i] = (Random16() % 15 << 16) + px(169);
-        petals->y[i] = (Random16() % 15 << 16) + px(79);
+        petals->x[i] = px(Random16() % 15) + px(169);
+        petals->y[i] = px(Random16() % 15) + px(79);
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       for (i = 0; i != 6; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + px(33);
-        work->particles[i].y = (Random16() % 15 << 16) + px(57);
+        work->particles[i].x = px(Random16() % 15) + px(33);
+        work->particles[i].y = px(Random16() % 15) + px(57);
         work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
       for (; i != 12; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + px(81);
-        work->particles[i].y = (Random16() % 15 << 16) + px(57);
+        work->particles[i].x = px(Random16() % 15) + px(81);
+        work->particles[i].y = px(Random16() % 15) + px(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
@@ -2103,7 +2103,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       {
         u16 *fade = FADE_PLTT;
 
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
           s32 c = *fade;
           s32 b = RGB_BLUE((u16)c);
           s32 g = RGB_GREEN((u16)c);
@@ -2222,12 +2222,12 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
     facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
     if (facing >= 0) {
       color = faces[i].color;
-      *ax += 64 << 16;
-      *ay += 64 << 16;
-      *bx += 64 << 16;
-      *by += 64 << 16;
-      *cx += 64 << 16;
-      *cy += 64 << 16;
+      *ax += px(64);
+      *ay += px(64);
+      *bx += px(64);
+      *by += px(64);
+      *cx += px(64);
+      *cy += px(64);
 
       if (*ay > *by) {
         XOR_SWAP(*ax, *bx);
@@ -2385,12 +2385,12 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
         0) {
       work = Ram_HeapSlots->battleEffect;
       Dma_Set(uvs[i], uv, px(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
-      *ax += 64 << 16;
-      *ay += 64 << 16;
-      *bx += 64 << 16;
-      *by += 64 << 16;
-      *cx += 64 << 16;
-      *cy += 64 << 16;
+      *ax += px(64);
+      *ay += px(64);
+      *bx += px(64);
+      *by += px(64);
+      *cx += px(64);
+      *cy += px(64);
 
       // Sort the corners from top to bottom. bx[1] is *by and cx[1] is *cy.
       if (*ay > *by) {
@@ -2537,12 +2537,12 @@ void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
         Iwram_MulQ16(*x1 - *x0, *y2 - *y0) - Iwram_MulQ16(*x2 - *x0, *y1 - *y0);
     if (facing >= 0) {
       color = faces[i].color;
-      *x0 += 64 << 16;
-      *y0 += 64 << 16;
-      *x1 += 64 << 16;
-      *y1 += 64 << 16;
-      *x2 += 64 << 16;
-      *y2 += 64 << 16;
+      *x0 += px(64);
+      *y0 += px(64);
+      *x1 += px(64);
+      *y1 += px(64);
+      *x2 += px(64);
+      *y2 += px(64);
       BattleEffect_DrawClippedCanvasLine(
           Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
           Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1), color);

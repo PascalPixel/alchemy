@@ -545,10 +545,10 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             gBattleEffect_SparkleSizes[k], gBattleEffect_SparkleSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
-          p->velocityX += -(px(1) / 32);
+          p->velocityX += -px(1) / 32;
           p->velocityY += px(1) / 16;
         } else {
-          p->velocityX += -(px(1) / 16);
+          p->velocityX += -px(1) / 16;
           p->velocityY += px(1) / 32;
         }
         p->variant++;

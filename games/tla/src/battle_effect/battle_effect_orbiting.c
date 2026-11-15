@@ -41,7 +41,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   record[0] = 0;
-  record[1] = 160 << 15;
+  record[1] = px(80);
   record[2] = 0;
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     s32 *camera;
@@ -171,7 +171,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       record[0] = memberObject->x;
-      record[1] = 160 << 13;
+      record[1] = px(20);
       record[2] = memberObject->z;
       Transform_ApplyPosition(record);
       if (frame >= member * 8 && frame < member * 8 + 40) {

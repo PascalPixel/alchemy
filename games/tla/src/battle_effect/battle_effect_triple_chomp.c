@@ -95,7 +95,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            spark->velocityX += -(px(1) / 2);
+            spark->velocityX += -px(1) / 2;
           else
             spark->velocityX += px(1) / 2;
           BITE_ANCHOR(i)->x = position.x;

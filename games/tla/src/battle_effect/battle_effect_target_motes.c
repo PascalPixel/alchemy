@@ -247,7 +247,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
-      point[1] = 160 << 13;
+      point[1] = px(20);
       point[2] = object->z;
       Transform_ApplyPosition(point);
 
@@ -418,7 +418,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       record[0] = object->x;
-      record[1] = 160 << 14;
+      record[1] = px(40);
       record[2] = object->z;
       Transform_ApplyPosition(record);
       if (frame == member * 16 + 64)
@@ -612,7 +612,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   position[1] = 0;
   position[2] = actor->z;
   target[0] = goal->x;
-  target[1] = 180 << 15;
+  target[1] = px(90);
   target[2] = 0;
   delta[0] = (target[0] - position[0]) / 40;
   delta[1] = (target[1] - position[1]) / 40;
@@ -740,7 +740,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       position[0] = object->x;
-      position[1] = 160 << 14;
+      position[1] = px(40);
       position[2] = object->z;
       Transform_ApplyPosition(position);
       if (frame == start + 30)

@@ -79,7 +79,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct Particle *q;
   struct Sprite *obj;
   struct ModelTexture aerialTexture;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 place[4];
   struct ScreenPoint pos;
   struct Scale req;
@@ -113,7 +113,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  list[0] = 255;
+  list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -191,8 +191,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(12, 0), e, 32);
-    e += 32;
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(12, 0), e, PALETTE_BANK_BYTES);
+    e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SCALES_COUNT;
@@ -208,8 +208,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(13, 0), e, 32);
-    e += 32;
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(13, 0), e, PALETTE_BANK_BYTES);
+    e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_PURPLE_ARMOUR_COUNT;
@@ -225,8 +225,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), e, 32);
-    e += 32;
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), e, PALETTE_BANK_BYTES);
+    e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SPIKES_COUNT;
@@ -284,7 +284,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame <= 369) {
-      camZ = (frame * 334 / 379 << 16) + -0x11a0000;
+      camZ = px(frame * 334 / 379) + -0x11a0000;
     } else if ((u32)(d = frame - 370) <= 19) {
       camZ = Trig_Sin(d * 1638) * 9 + 0x2b0000;
     } else if ((u32)(frame - 390) <= 95) {
@@ -362,7 +362,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         u16 *dst = (u16 *)&BG_PLTT_COLOR(6, 0);
         backdropColor = battle->palette;
 
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
           s32 r = RGB_RED(*backdropColor);
           s32 g = RGB_GREEN(*backdropColor);
           s32 b = RGB_BLUE(*backdropColor) + level;
@@ -1069,7 +1069,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (frame == 80 || frame == 83) {
           u16 *c = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-          for (i = 0; i != 128; i++, c++) {
+          for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
             *c ^= 0x7fff;
           }
         }
@@ -1087,7 +1087,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
           work->shakeFrames = 16;
           c = (u16 *)&BG_PLTT_COLOR(6, 0);
-          for (i = 0; i != 128; i++, c++) {
+          for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
             *c ^= 0x7fff;
           }
         }

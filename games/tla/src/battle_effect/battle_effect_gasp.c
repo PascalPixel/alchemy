@@ -561,7 +561,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->y += p->velocityY;
           p->x += p->velocityX;
           Transform_ApplyTranslation(
-              (Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16), p->y, 0);
+              (Trig_Sin(p->x) << 4) + px(screen[0] / 2 - 64), p->y, 0);
           Transform_ApplyAxisScale(size >> 1, size, size >> 1);
           Transform_ApplyPitch(-TRIG_TURN / 4);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -782,7 +782,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             q->velocityX /= 2;
             q->velocityY /= 2;
           }
-          q->x = to.x / 2 << 16;
+          q->x = px(to.x / 2);
           q->y = px(to.y + 16);
           q->variant = (Random16() & 15) + 8;
         }
@@ -795,7 +795,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         twice = frame * 2;
         // Index first, as a plain integer sum: the add takes the offset first.
         p = (void *)((twice * 28) + (s32)work->particles);
-        p->x = from.x / 2 << 16;
+        p->x = px(from.x / 2);
         p->y = px(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
@@ -880,7 +880,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->velocityX = Trig_Sin(a) * s >> 7;
           p->velocityY = Trig_Cos(a) * s >> 6;
           p->velocityZ = px(1) / 64;
-          SET_POSITION(p, pos.x / 2 << 16, px(pos.y - (Random16() & 31) + 16),
+          SET_POSITION(p, px(pos.x / 2), px(pos.y - (Random16() & 31) + 16),
                        Random16());
         }
         Sound_PlayFar(SE_POWER_UP);
@@ -932,7 +932,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->velocityX = Trig_Sin(a) * s >> 6;
           p->velocityY = Trig_Cos(a) * s >> 6;
           p->velocityZ = px(1) / 64;
-          SET_POSITION(p, pos.x / 2 << 16, px(pos.y - (Random16() & 31) - 16),
+          SET_POSITION(p, px(pos.x / 2), px(pos.y - (Random16() & 31) - 16),
                        Random16());
         }
         Sound_PlayFar(SE_619);
@@ -1002,7 +1002,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             s += 32;
             q->velocityX = Trig_Sin(a) * s >> 7;
             q->velocityY = Trig_Cos(a) * s >> 6;
-            q->x = (pos.x / 2 << 16) + q->velocityX * 2;
+            q->x = px(pos.x / 2) + q->velocityX * 2;
             q->y = px(pos.y + 16) + q->velocityY * 2;
             q->variant = (Random16() & 15) + 16;
           }

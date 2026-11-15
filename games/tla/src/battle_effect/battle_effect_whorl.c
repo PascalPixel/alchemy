@@ -201,7 +201,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (frame > 39) {
           k = frame - 36;
         }
-        pos[1] = point[1] + (k << 16) - Trig_Cos(frame * 3304) * k;
+        pos[1] = point[1] + px(k) - Trig_Cos(frame * 3304) * k;
         if (frame > 27) {
           pos[1] = pos[1] + (frame << 18) - px(112);
         }

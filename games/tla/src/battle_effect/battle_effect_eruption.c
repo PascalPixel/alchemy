@@ -69,9 +69,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *puff = &work->particles[i];
 
     if (args->side == EFFECT_SIDE_PARTY)
-      puff->x = 200 << 14;
+      puff->x = px(50);
     else
-      puff->x = -(200 << 14);
+      puff->x = -px(50);
     puff->y = 0;
     puff->z = 0;
     puff->velocityX = ((Random16() & 63) - 32) << 13;
@@ -83,9 +83,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *mote = &MOTES[i];
 
     if (args->side == EFFECT_SIDE_PARTY)
-      mote->x = 200 << 14;
+      mote->x = px(50);
     else
-      mote->x = -(200 << 14);
+      mote->x = -px(50);
     mote->y = 0;
     mote->z = 0;
     mote->velocityX = ((Random16() & 63) - 32) << 13;

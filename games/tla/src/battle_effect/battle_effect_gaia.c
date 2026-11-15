@@ -131,7 +131,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct Sprite *object = Sprite_CreateFar(653);
+    struct Sprite *object = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = object;
     if (object != 0) {

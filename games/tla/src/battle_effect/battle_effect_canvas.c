@@ -58,7 +58,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 offset;
   u8 *cells;
   s32 fade;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 place[4];
   struct Scale req;
   struct ModelTexture texture;
@@ -84,7 +84,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *tiles;
 
-      list[0] = 0xff;
+      list[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(list, 0);
       VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
@@ -910,7 +910,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     }
 
     if (frame >= 0) {
-      s32 cx = center.x / 2 << 16;
+      s32 cx = px(center.x / 2);
       s32 cy = px(center.y);
       struct RenderModel *model;
       void *corners;
@@ -1304,7 +1304,7 @@ void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;

@@ -174,7 +174,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           work->particles[i].velocityY = (target.y - source.y) << 11;
           work->particles[i].z = zero;
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            work->particles[i].velocityZ = -(px(1) / 16);
+            work->particles[i].velocityZ = -px(1) / 16;
           } else {
             work->particles[i].velocityZ = px(1) / 16;
           }

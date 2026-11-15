@@ -199,7 +199,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     for (member = 0; member != 1; member++) {
       motion = BattleObject_GetFar(args->targets[member])->object;
@@ -337,7 +337,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     for (member = 0; member != 1; member++) {
       object = BattleObject_GetFar(args->targets[member])->object;

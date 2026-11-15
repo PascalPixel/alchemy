@@ -51,7 +51,7 @@ struct RenderModel__f190b74 {
 void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct ScreenPoint to;
   struct ScreenPoint from;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   DrawRectangle draw[2];
   struct ModelTexture texture;
   struct BattleEffectWork *work;
@@ -122,7 +122,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                                (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
         s32 entry = *palette;
         s32 red = RGB_LEVEL_MAX;
         u16 green;
@@ -540,7 +540,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
       break;
 
     if (frame == 0)
-      Iwram_FillWordsEntry((void *)BG_PLTT, 128, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)BG_PLTT, 128, COLOR_PAIR(RGB_WHITE));
     if (frame > 119)
       Palette_BrightenBgEntries(-1, -1, -1);
     else if ((frame & 3) == 1)

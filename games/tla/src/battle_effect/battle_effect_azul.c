@@ -516,7 +516,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         Render_TransformVertices(&verts[i * 4], vertices, 4);
         BattleEffectKernels_IntegrateVector3(p, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
-          p->velocityY += -(px(1) / 2);
+          p->velocityY += -px(1) / 2;
         }
         Render_DrawModelList(model);
       }

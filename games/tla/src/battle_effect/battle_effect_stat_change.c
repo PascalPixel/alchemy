@@ -645,7 +645,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->focus);
         point[0] = object->x;
-        point[1] = 160 << 13;
+        point[1] = px(20);
         point[2] = object->z;
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->focus);

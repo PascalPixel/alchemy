@@ -112,7 +112,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // The serpent starts low on the right, rising to the left.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   openStep = 1;
-  serpentX = 140 << 17;
+  serpentX = px(280);
   serpentY = px(200);
   serpentVX = -px(4);
   serpentVY = -px(8);
@@ -146,7 +146,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 a = Random16() & TRIG_ANGLE_MASK;
 
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
-    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
     PARTICLES[i].variant = 0;
@@ -213,8 +213,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       position[3] = 0;
       position[1] = 0;
       for (i = 0; i != 8; i++) {
-        position[0] = ((i & 3) * 48 << 16) + serpentX - px(32);
-        position[2] = ((i / 4) * 48 << 16) + serpentY - px(24);
+        position[0] = px((i & 3) * 48) + serpentX - px(32);
+        position[2] = px((i / 4) * 48) + serpentY - px(24);
         Render_ApplyProjectedPlacementFar(work->sprites[i], position, &scale.x,
                                           0);
       }
@@ -228,7 +228,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 a = Random16() & TRIG_ANGLE_MASK;
 
           PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
-          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
           PARTICLES[i].variant = 0;

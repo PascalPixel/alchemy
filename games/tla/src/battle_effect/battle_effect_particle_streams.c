@@ -166,8 +166,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            ember->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            ember->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            ember->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            ember->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             ember->velocityX = ((Random16() & 63) - 32) << 14;
             ember->velocityY = (-(Random16() & 63) - 8) << 13;
             ember->variant = 0;
@@ -183,8 +183,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            ember->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            ember->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            ember->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            ember->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             ember->velocityX = ((Random16() & 63) - 32) << 14;
             ember->velocityY = (-(Random16() & 63) - 8) << 13;
             ember->variant = 0;
@@ -251,7 +251,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
-            ember->velocityY += -(px(1) / 2);
+            ember->velocityY += -px(1) / 2;
           else
             ember->velocityY += gNereidCopy_Gravity[k & 3];
           ember->velocityX = ember->velocityX * 62 / DAMPING_SCALE;
@@ -565,7 +565,7 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
   s32 i;
 
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
     s32 blue = RGB_BLUE(*color);
     s32 green = RGB_GREEN(*color);
     s32 red = RGB_RED(*color);
@@ -597,7 +597,7 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
   u16 *source = Ram_HeapSlots->battleWork->palette;
   s32 i;
 
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
     s32 blue = RGB_BLUE(*source);
     s32 green = RGB_GREEN(*source);
     s32 red = RGB_RED(*source);
@@ -760,20 +760,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
-  // Mode 1's two flames, or mode 0's sun.
+  // The Fusion Dragon's two halves (Outer Space), or the Meteor.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct Sprite *flame = Sprite_CreateFar(638 + i * 0x2001);
+      struct Sprite *sprite = Sprite_CreateFar(638 + i * SPRITE_SECOND_PART);
 
-      work->sprites[i] = flame;
-      if (flame != 0) {
-        flame->flags = 0;
-        Sprite_StartAnimationFar(flame, 2);
+      work->sprites[i] = sprite;
+      if (sprite != 0) {
+        sprite->flags = 0;
+        Sprite_StartAnimationFar(sprite, 2);
         ((struct Sprite *)work->sprites[i])->image.priority = 3;
       }
     }
   } else {
-    BattleEffect_SpawnObjects(1, 650, 3);
+    BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
@@ -782,8 +782,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                     SHEET_PALETTE_BYTES);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
-  IWRAM_FILL_WORDS(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
+  IWRAM_FILL_WORDS(Ram_MapCellBuffer, 256 * 128, CANVAS_FILL_WORD(1));
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer,
+                  BATTLE_BACKGROUND_BYTES);
   wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);
@@ -987,8 +988,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
-          mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / Q16_ONE * size;
-          mote->y = (y << 16) - Trig_Cos(angle) * 30 / Q16_ONE * size;
+          mote->x = px(x + 96) + Trig_Sin(angle) * 30 / Q16_ONE * size;
+          mote->y = px(y) - Trig_Cos(angle) * 30 / Q16_ONE * size;
           break;
         }
       }
@@ -1063,7 +1064,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;

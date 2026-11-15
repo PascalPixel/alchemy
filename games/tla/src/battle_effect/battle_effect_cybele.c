@@ -307,7 +307,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
-          if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
+          if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
             chip->x = px(Random16() % 96);
             chip->y = px((Random16() & 7) + 88);
             chip->velocityX = ((Random16() & 255) - 128) << 11;

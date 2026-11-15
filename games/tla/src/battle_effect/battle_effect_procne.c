@@ -834,7 +834,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                   Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
-          spark->velocityY += -(px(1) / 64);
+          spark->velocityY += -px(1) / 64;
           spark->variant++;
           if (spark->variant == 48)
             spark->variant = -1;
@@ -858,11 +858,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             grain->y += grain->velocityY;
             if (frame > DRAGON_FIRE_BREATH_FRAME) {
               if (i & 1)
-                grain->velocityX += -(px(1) / 2);
+                grain->velocityX += -px(1) / 2;
               else
-                grain->velocityX += -(px(1) / 8);
+                grain->velocityX += -px(1) / 8;
             } else {
-              grain->velocityY += -(px(1) / 64);
+              grain->velocityY += -px(1) / 64;
             }
             grain->variant++;
             if (grain->variant == 256)

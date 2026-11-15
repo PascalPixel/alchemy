@@ -275,7 +275,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 ///
 /// Abilities: Daedalus.
 void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
-  s16 targets[14];
+  s16 targets[UNIT_MAX];
   struct SpritePlacement pos;
   struct SpritePlacement shipPlace;
   struct SpritePlacement particlePlace;
@@ -340,11 +340,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
       VramCache_FreeEntry(bank[21]);
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      targets[0] = 255;
+      targets[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0; i != 128; i++, col++) {
+      for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0;
+           i != BATTLE_BACKGROUND_COLORS; i++, col++) {
         s32 mid;
         s32 s;
 
@@ -398,8 +399,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, 32);
-      src += 32;
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, PALETTE_BANK_BYTES);
+      src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
@@ -445,8 +446,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, 32);
-      src += 32;
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, PALETTE_BANK_BYTES);
+      src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(14));
       obj->priority = 1;

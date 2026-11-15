@@ -105,8 +105,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e, 32);
-      e += 32;
+      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
+                           PALETTE_BANK_BYTES);
+      e += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
@@ -253,7 +254,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (u <= 7) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
-                               u * 0x01010101 * 8);
+                               u * CANVAS_FILL_WORD(1) * 8);
     }
     req = gFlora_UnitScale;
     dy = 0;
@@ -761,7 +762,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       p = (struct Particle *)source;
       for (i = 0; i != 128; i++, p++) {
         p->x = px((Random16() & 63) + 96);
-        p->y = -(Random16() & 63) << 16;
+        p->y = px(-(Random16() & 63));
         p->velocityX = -((Random16() & 255) + 128) << 7;
         p->velocityY = ((Random16() & 255) + 128) << 9;
         p->variant = Random16() & 31;
@@ -776,7 +777,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
-        p->velocityX += -(px(1) / 16);
+        p->velocityX += -px(1) / 16;
         p->variant++;
       }
     }

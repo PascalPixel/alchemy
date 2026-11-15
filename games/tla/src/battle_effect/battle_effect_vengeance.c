@@ -1245,6 +1245,8 @@ struct MeshVertex;
 #define BUBBLE_SHEET_BYTES 3000
 #define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
 
+#define COATLICUE_FRAMES 602 ///< frames of the summon after its opening
+
 /// Coatlicue: under water among rising bubbles a ring of light spins and
 /// crosses a second; they settle into a ripple and burst in a froth of
 /// bubbles, Coatlicue rises among them, and a wash of light heals the party.
@@ -1355,7 +1357,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  for (frame = 0; frame != 602; frame++) {
+  for (frame = 0; frame != COATLICUE_FRAMES; frame++) {
     spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {
       skip = 1;

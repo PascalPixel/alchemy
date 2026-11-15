@@ -103,7 +103,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     for (i = 0; i < 120; i++) {
       for (n = 0; n < 0x800; n += 64) {
         Iwram_CopyWordsEntry(
-            cells, (void *)(0x06008000 + ((i / 8 * 256 + (i & 7)) * 8 + n)), 8);
+            cells,
+            (void *)(BG_CHAR_BLOCK(2) + ((i / 8 * 256 + (i & 7)) * 8 + n)), 8);
         cells += 8;
       }
     }

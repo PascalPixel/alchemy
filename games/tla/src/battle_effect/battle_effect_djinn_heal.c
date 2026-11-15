@@ -226,6 +226,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
 #define ZAGAN_PARTS 12
 
+#define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the dust
+
 /// The screen slides over to a white field and petals blow across it; Zagan
 /// (twelve objects) gallops in from the right as the backdrop darkens, rears,
 /// and at frame 157 swings its axe across the targets, striking four times
@@ -323,7 +325,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   REG_BG2X = skip;
   REG_BG2PA = Q_8_8(0.5);
 
-  for (frame = 0; frame != 200; frame++) {
+  for (frame = 0; frame != ZAGAN_FRAMES; frame++) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }

@@ -68,7 +68,7 @@ enum SlashSheetPicture {
 
 #define ATALANTA_PIECES 11
 
-#define ATALANTA_FRAMES 88
+#define ATALANTA_FALL_FRAMES 88 ///< frames of the shafts' fall
 
 #define ATALANTA_SHAFTS 16 ///< shafts of light that gather over the field
 
@@ -334,7 +334,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     shaft->variant = -1;
   }
-  for (frame = 0; frame != ATALANTA_FRAMES; frame++) {
+  for (frame = 0; frame != ATALANTA_FALL_FRAMES; frame++) {
     for (i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
       struct Particle *shaft = &work->particles[i];
 

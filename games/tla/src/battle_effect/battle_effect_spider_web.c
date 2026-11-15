@@ -192,6 +192,8 @@ extern const struct Scale gUlysses_ShipScale;
 /// Where YellowOrbSheet is decoded in the effect's pictures.
 #define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
 
+#define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
+
 /// Ulysses: the field goes dark, a ring of red runes opens and the robed
 /// Ulysses steps out of it, violet and then red fire pours from it over the
 /// foes, and it flares and fades.
@@ -317,7 +319,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   wait(1);
-  for (frame = 0; frame != 326; frame++) {
+  for (frame = 0; frame != ULYSSES_FRAMES; frame++) {
     struct Particle *step;
     draw = 1;
     if (gInput.repeat & (KEY_A | KEY_B)) {

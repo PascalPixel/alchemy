@@ -90,8 +90,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   scroll = -80;
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *e;
 
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;

@@ -231,6 +231,12 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
+/// Three summons open alike (Eclipse, Daedalus and Flora): the battle flashes
+/// away over SUMMON_OPENING_FRAMES, and at SUMMON_OPENING_LOAD_FRAME
+/// their sky and their sprites load.
+#define SUMMON_OPENING_FRAMES 52
+#define SUMMON_OPENING_LOAD_FRAME 27
+
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                            \

@@ -80,8 +80,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   // The battle flashes away; at frame 27 the sky and the dragon's sprites load.
   scroll = -80;
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *tiles;
 
       list[0] = 0xff;

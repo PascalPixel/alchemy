@@ -28,7 +28,9 @@ struct SpawnList {
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
 #define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
-#define BG_VRAM_A900 ((u8 *)0x0600a900)
+/// The battle background's tiles from column 4 of row 5, where the rune seal
+/// is stamped.
+#define CHARON_SEAL_TILES (BG_CHAR_BLOCK(2) + (5 * 32 + 4) * 64)
 
 extern const struct Scale gCharon_SwarmScale;
 extern const struct Scale gCharon_PulseScale;
@@ -48,6 +50,9 @@ extern const struct Scale gCharon_FinaleScale;
 /// from, and GlowRingTexture made all bright.
 #define CHARON_BRIGHT_BLOCK 0x2000
 #define CHARON_GLOW_RING 0x3000
+
+#define CHARON_FRAMES                                                          \
+  394 ///< frames of the whole summon, unless A or B skips it
 
 /// Charon: over a red wasteland a violet whirlpool turns about a red dome that
 /// rises out of it; in a white flash among dark shards Charon appears and
@@ -206,7 +211,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   posX = 0;
   posZ = 0;
 
-  for (frame = 0; frame != 394 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
+  for (frame = 0; frame != CHARON_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
+       frame++) {
     u8 *order = REVEAL_BUFFER + (frame - 244) * 2;
 
     t = frame - 32;
@@ -1026,7 +1032,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         for (y = 0; y != RUNE_SEAL_HEIGHT; y++) {
           for (x = 0; x != RUNE_SEAL_WIDTH; x += 2) {
             u16 *dst =
-                (u16 *)(BG_VRAM_A900 +
+                (u16 *)(CHARON_SEAL_TILES +
                         ((((y / 8) * 32 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)));
             u8 hi = *dst >> 8;
             u8 lo = *dst;
@@ -1681,7 +1687,7 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 #undef OAM_BUFFER
 #undef REVEAL_BUFFER
 #undef OBJ_VRAM
-#undef BG_VRAM_A900
+#undef CHARON_SEAL_TILES
 #undef DROPS
 #undef MEMBERS
 #undef HOMES

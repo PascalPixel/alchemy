@@ -325,8 +325,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   savedY = gBgScroll[1].x;
   bgX = -80;
 
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u16 *col;
       s32 n;
       s32 w;

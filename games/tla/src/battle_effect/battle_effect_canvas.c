@@ -1253,15 +1253,15 @@ void Display_ApplyBg2Reference(void) {
 #define CANVAS_FADE_STEP 1092
 
 void Palette_StepFadeTransfer(void) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
   struct BattleWork *battle;
 
-  framesLeft = (s32 *)(work + 0x77b4);
+  framesLeft = &work->fadeFrames;
   battle = Ram_HeapSlots->battleWork;
 
   if (*framesLeft > 0) {
-    s32 *step = (s32 *)(work + 0x77b8);
+    s32 *step = &work->fadeStep;
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
@@ -1272,7 +1272,9 @@ void Palette_StepFadeTransfer(void) {
 
 /// Clears every target's flash timer.
 void BattleEffect_ClearActorTimers(void) {
-  Iwram_ClearWords(Ram_HeapSlots->battleEffect + 0x78dc, 8);
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+
+  Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
 
 /// Counts down each target's flash timer; when one runs out, the target gets

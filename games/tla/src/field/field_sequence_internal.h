@@ -71,16 +71,6 @@
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 
-/// How far a field Psynergy reaches from its caster, one row a kind in
-/// gData_080eff28, ended by -1: Field_MeasurePsynergyHeight and
-/// Field_MeasurePsynergyReach read it.
-struct FieldPsynergyReach {
-  s16 fieldPsynergy; ///< enum FieldPsynergy; -1 ends the table
-  s16 range;         ///< pixels over the ground
-  s16 height;        ///< pixels above or below the caster
-  s16 width;         ///< either side of the caster's facing, 1/65536 turns
-};
-
 extern const struct FieldPsynergyReach gData_080eff28[];
 
 // The object's functions its parts call before their definitions.

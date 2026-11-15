@@ -2031,8 +2031,8 @@ void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
   sprite->oam.objectMode = 1;
 }
 
-/// Finds the battle effect definition of id among the first 243 entries; when
-/// none matches it returns entry 243.
+/// Returns the speaker definition of sprite id from gSpeakerDefinitions, or its
+/// last entry (the 244th), the default, when there is none.
 struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
   struct BattleFxDefinition *entry = gSpeakerDefinitions;
   u32 index = 0;
@@ -2061,16 +2061,6 @@ s32 Speaker_GetActorSprite(u32 objectId) {
   return *object->animation->value28;
 }
 
-/* VIEW(definition_flags): routine Speaker_GetActorSprite as s32
- * Speaker_GetActorSprite(void); the definition has s32
- * Speaker_GetActorSprite(u32 objectId); tried as the definition's s32
- * Speaker_GetActorSprite(u32 objectId), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/field_sequence/screen_transition.c:2049: too few
- * arguments to function `Speaker_GetActorSprite'. */
-extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
-    "Speaker_GetActorSprite");
-
 /// Returns the voice sound of sprite id's messages, its definition's value
 /// plus 0x100, or 0 for none (0xff) or with option 3
 /// (gMainRoutineWork.speech) off. Message_OpenWindowFar takes it in
@@ -2084,10 +2074,11 @@ s32 Speaker_GetVoice(s32 id) {
   return value + 0x100;
 }
 
-u8 BattleEffect_GetFlags(void) {
-  return Speaker_FindDefinition(
-             BattleEffect_GetAnimationValue__definition_flags())
-      ->flags;
+/// Returns the halted lines of actor id's sprite: the pair of lines
+/// Scene_TalkToActor gives it while Halted, or 0xff when Halt passes it over
+/// (FieldPsynergy_FilterHaltTarget).
+s32 Speaker_GetHaltedLines(s32 id) {
+  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->flags;
 }
 
 extern const s32 gPairTable[];

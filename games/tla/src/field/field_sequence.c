@@ -28,7 +28,6 @@
 #include "field_sequence/treasure_spots.c"
 
 #undef PartyInventory_GiveItem
-#undef BattleEffect_GetFlags
 
 #include "field_sequence/screen_transition.c"
 

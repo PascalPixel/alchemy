@@ -471,21 +471,18 @@ void FieldPsynergy_ResumeHaltedActor(s32 id) {
   }
 }
 
-// Battle effects: filter the effect's target object.
+s32 Speaker_GetHaltedLines(s32 id);
 
-s32 BattleEffect_GetFlags();
-
-/// Returns no target (-1) when the current effect definition's flags are
-/// 0xff, else id.
-/// id: target object ID.
+/// Returns no target (-1) when Halt passes actor id over (its sprite has no
+/// halted lines, 0xff), else id.
 s32 FieldPsynergy_FilterHaltTarget(s32 id) {
-  if (BattleEffect_GetFlags() == 0xff)
+  if (Speaker_GetHaltedLines(id) == 0xff)
     return -1;
   return id;
 }
 
 /// Catch cast on a target: runs FieldPsynergy_Catch.
-void FieldPsynergy_CatchOnTarget(void) { FieldPsynergy_Catch(); }
+void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// The value step tenths of the way from from to to.
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {

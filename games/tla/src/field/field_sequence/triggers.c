@@ -158,16 +158,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   return event;
 }
 
-/* VIEW(field_sequence): routine BattleEffect_GetFlags as s32
- * BattleEffect_GetFlags(s32 id); field/object/screen_transition has u8
- * BattleEffect_GetFlags(void) {; tried as the definition's u8
- * BattleEffect_GetFlags(void), which the object already declares, it does not
- * compile in tla-ja (make modern):
- * games/tla/src/field/field_sequence/encounter.c:272:15: note: in expansion of
- * macro 'Scene_GetArea'. */
-s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
-    "BattleEffect_GetFlags");
-#define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
+s32 Speaker_GetHaltedLines(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
 /// Talks to actor id. A container (actors 64 and up, and the Scoop spot, actor
@@ -416,7 +407,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (talk == NULL)
         return result;
       if (talk->result >= 0x10000) {
-        Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
+        Event_RunMessage(id, Speaker_GetHaltedLines(id) * 2 +
                                  ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
         goto resume;
       }

@@ -108,6 +108,16 @@ s32 Message_OpenWindowFar(s32, s32, s32, s32);
 void AreaNameWindow_HideFar(void);
 s32 Window_IsClosedFar(s32);
 
+/// How far a field Psynergy reaches from its caster, one row a kind in
+/// gData_080eff28, ended by -1: Field_MeasurePsynergyHeight and
+/// Field_MeasurePsynergyReach read it.
+struct FieldPsynergyReach {
+  s16 fieldPsynergy; ///< enum FieldPsynergy; -1 ends the table
+  s16 range;         ///< pixels over the ground
+  s16 height;        ///< pixels above or below the caster
+  s16 width;         ///< either side of the caster's facing, 1/65536 turns
+};
+
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];

@@ -44,10 +44,10 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+    Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+    ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       screen->brightness =
                           Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BG_PALETTE_COLORS);
@@ -71,14 +71,12 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
-                        BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
-                            BGCNT_PRIORITY(3),
-                        IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
 
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     struct BattleWork *work;
@@ -86,7 +84,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     palette = work->palette;
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+    Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *work;
@@ -96,7 +94,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)&BG_PLTT_COLOR(6, 0);
+    destination = BATTLE_BG_PALETTE;
 
     for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
       s32 red = RGB_RED(source[i]);
@@ -164,21 +162,28 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   palette = session->palette;
   Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                      session->brightness = 0x10000 - level * 1092, 128);
+    ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
+                      session->brightness =
+                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                      BATTLE_BG_PALETTE_COLORS);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
-    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+    BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
-  Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
-  if (view->mode == 0)
+  BattleTransition_BuildTilemap(
+      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  // BG1's last row is left clear.
+  Iwram_ClearWordsEntry(
+      (void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64),
+      64);
+  if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   view->mode = mode;
-  if (mode == 1)
-    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  if (mode == BATTLE_BACKGROUND_FIXED)
+    REG_BG1CNT = BATTLE_BG1CNT;
 }
 
 /// Builds the zoomed background's next page for a zoom of scale about centerX
@@ -1003,7 +1008,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+        ColorBuffer_Scale(session->palette, BATTLE_BG_PALETTE,
                           *brightness = Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);

@@ -391,6 +391,9 @@ u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
+/// The battle background's colours: BG palettes 6 to 13, filled from
+/// BattleWork.palette, darkened or not.
+#define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 /// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
 #define BATTLE_BG_PALETTE_COLORS (8 * 16)
 
@@ -398,6 +401,10 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// BattleBackground_Load, the element glow): each level takes 1092 from the
 /// 16.16 brightness, so level 60 is almost black.
 #define BACKGROUND_LEVEL_STEP 1092
+
+/// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
+#define BATTLE_BG1CNT                                                          \
+  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
 /// BattleActionRecord.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions): as a place code, place 0 of the other side, the

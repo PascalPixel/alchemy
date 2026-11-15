@@ -553,7 +553,8 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
         s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
-        ColorBuffer_Scale(palette, (u32)&BG_PLTT_COLOR(6, 0), value, 128);
+        ColorBuffer_Scale(palette, (u32)BATTLE_BG_PALETTE, value,
+                          BATTLE_BG_PALETTE_COLORS);
       }
       wait(1);
       targetOrFadeIndex++;

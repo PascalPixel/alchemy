@@ -383,9 +383,9 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
-  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + px(8);
+  landingPosition[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + px(40);
+  landingPosition[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(40);
 #else
   landingPosition[0].fixed = leader->x.fixed;
   landingPosition[1].fixed = leader->y.fixed;

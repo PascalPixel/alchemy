@@ -1983,7 +1983,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
       Event_SetMessageId(MsgTolbiShipMadeFinallyLucky);
       break;
     case ROWER_REPLY_OTHERS_ALREADY:
-      TolbiShipDeck_Turn(actorId, 208 << 8);
+      TolbiShipDeck_Turn(actorId, FACING_NORTH_NORTHEAST);
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Event_SetMessageId(MsgTolbiShipOtherPassengersAlready);
       break;

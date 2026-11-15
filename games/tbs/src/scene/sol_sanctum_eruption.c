@@ -469,7 +469,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->steeringFlags = 254 & actor->steeringFlags;
+  actor->steeringFlags = (u8)~ACTOR_FACES_MOTION & actor->steeringFlags;
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 348);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Actor_Jump(ACTOR_JENNA, 4, 0);

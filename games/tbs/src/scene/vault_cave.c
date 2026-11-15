@@ -267,7 +267,8 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   struct FieldWork *work = gFieldWork;
   u32 actorSlot;
 
-  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
+  for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= ACTOR_LAST_ID;
+       actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
     // UB: map creation leaves unused actor slots NULL.

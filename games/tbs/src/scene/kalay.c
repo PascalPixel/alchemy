@@ -2339,7 +2339,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_MOVE(246, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
     SC_END,

@@ -694,7 +694,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   u16 facing;
 
   roundedFacing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & -0x4000;
+      FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);

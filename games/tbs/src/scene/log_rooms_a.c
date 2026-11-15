@@ -631,7 +631,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
   // Pushed from the north he runs on along his route, from the south back.
   facing = FACING_SIXTEENTH(suspect->facing);
-  if (facing >= TRIG_TURN * 5 / 16 && facing <= TRIG_TURN * 11 / 16) {
+  if (facing >= FACING_SOUTH_SOUTHWEST && facing <= FACING_NORTH_NORTHWEST) {
     if (suspect->timer <= 2) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
                       gLogRoomsA_StepActions[suspect->timer]);
@@ -3323,7 +3323,7 @@ s32 gLogRoomsA_FirstThiefEntryScript[] = {
     SC_MOVE(800, 0, 400),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(20),
     SC_END,
 };
@@ -3335,7 +3335,7 @@ s32 gLogRoomsA_SecondThiefEntryScript[] = {
     SC_MOVE(776, 0, 416),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(20),
     SC_END,
 };

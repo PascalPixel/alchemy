@@ -198,8 +198,8 @@ void MercuryLighthouse_ChargeLights(void) {
     Actor_SelectAnimation(pillar, 5 - step);
   }
   state->levels = 3;
-  state->targetX = (pillar->x.fixed & -0x100000) + px(8);
-  state->targetZ = (pillar->z.fixed & -0x100000) + px(8);
+  state->targetX = (pillar->x.fixed & FIELD_CELL_MASK) + px(8);
+  state->targetZ = (pillar->z.fixed & FIELD_CELL_MASK) + px(8);
   GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
   Event_End();
 }
@@ -266,9 +266,9 @@ void MercuryLighthouse_HopAcrossPool(void) {
   angle = gMercuryLighthouse_MoveAngles[(keys >> 4) & 15];
   if ((s16)gMercuryLighthouse_MoveAngles[(keys >> 4) & 15] == -1)
     return;
-  pos[0].fixed = (actor->x.fixed & -0x100000) + px(8);
+  pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   pos[1].fixed = actor->groundHeight;
-  pos[2].fixed = (actor->z.fixed & -0x100000) + px(8);
+  pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
   from = &MAPGRID_CELLS[(pos[2].fixed / px(16) << 7) + pos[0].fixed / px(16)];
   Vector_AddPolarOffset(px(32), angle, &pos[0].fixed);
   to = &MAPGRID_CELLS[(pos[2].fixed / px(16) << 7) + pos[0].fixed / px(16)];

@@ -635,8 +635,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   steps = 0;
   angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
   actorId = gMainRoutineWork.leaderActorId;
-  SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + px(8), rider->y.fixed,
-             (rider->z.fixed & -0x100000) + px(8));
+  SET_VECTOR(ahead, (rider->x.fixed & FIELD_CELL_MASK) + px(8), rider->y.fixed,
+             (rider->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), angle, ahead);
   x = log->x.fixed;
   z = log->z.fixed;

@@ -567,7 +567,7 @@ static void Imil_OpenDoorAndExit(void) {
 
   work = gFieldWork;
   Event_Start();
-  for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
+  for (i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_ID; i++) {
     actor = Actor_Get(i);
     if (actor != NULL) {
       actor->motionFlags = 0;
@@ -1607,7 +1607,7 @@ s32 gImil_LeaderStepAsideScript[] = {
     SC_MOVE(155, 0, 135),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
     SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
     SC_WAIT(2),

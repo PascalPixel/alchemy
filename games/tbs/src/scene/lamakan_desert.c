@@ -75,6 +75,7 @@
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -764,7 +765,7 @@ static void LamakanDesert_FallIntoPit(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // The leader turns his back on the pit.
   Actor_Get(ACTOR_PARTY_LEADER)->facing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2) & -0x1000;
+      FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);

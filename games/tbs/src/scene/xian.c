@@ -568,9 +568,9 @@ static void Xian_JumpOverSpilledWater(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) != 0) {
-    landingPosition.x = (leader->x.fixed & -0x100000) + px(8);
+    landingPosition.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     landingPosition.y = leader->y.fixed;
-    landingPosition.z = (leader->z.fixed & -0x100000) + px(8);
+    landingPosition.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     FieldVector_AddPolarOffset(32, FACING_NEAREST_CARDINAL(leader->facing),
                                &landingPosition);
     if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {

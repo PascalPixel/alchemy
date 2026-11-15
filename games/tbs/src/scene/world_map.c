@@ -2057,6 +2057,11 @@ u16 gWorldMapBlend;
   IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
                       DMA_COPY_WORDS(320))
 
+/// Where picture `size` of the ball of light lies in the unpacked buffer: 0 is
+/// the ball at its largest, 6 at its smallest, and 7 the picture shown before
+/// it swells and after it shrinks.
+#define WORLD_MAP_LIGHT_BALL(size) (0x1080 + (size) * 0x600)
+
 /// The ending, on the island Jenna and Kraden are adrift on.
 static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowHue,
@@ -2590,7 +2595,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
                       DMA_COPY_WORDS(1024));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
-  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
@@ -2598,31 +2603,31 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Sound_Play(SE_GLITTER);
 
   gWorldMapBlend = BLEND_ALPHA(0, 14);
-  WorldMap_ShowTransitionPicture(buffer, 0x3480, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
-  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WorldMap_ShowTransitionPicture(buffer, 0x2880, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionPicture(buffer, 0x2280, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionPicture(buffer, 0x1680, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 8);
-  WorldMap_ShowTransitionPicture(buffer, 0x1080, 140);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(0), 140);
 
-  WorldMap_ShowTransitionPicture(buffer, 0x1680, 4);
-  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 4);
-  WorldMap_ShowTransitionPicture(buffer, 0x2280, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionPicture(buffer, 0x2880, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionPicture(buffer, 0x3480, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
   WorldMap_LoadAreaGraphics();
   Task_AddFrame(WorldMap_JitterTransitionCamera, TASK_PASS_FRAME);
   Sound_Play(SE_RUMBLE);

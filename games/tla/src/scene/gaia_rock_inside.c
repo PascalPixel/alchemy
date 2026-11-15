@@ -875,7 +875,7 @@ void GaiaRockInside_RestoreSusa(void) {
   if (walker->script == gGaiaRockInside_CaskThrownScript ||
       walker->script == gGaiaRockInside_CaskPushedScript) {
     walker->paused = 0;
-    Actor_SetAnimationSpeed(walker, 16);
+    Actor_SetAnimationSpeed(walker, ANIMATION_STEP_NORMAL);
   }
   Iwram_CopyWordsEntry(object, &gGaiaRockInside_SavedSusa,
                        sizeof(struct Actor));
@@ -2287,8 +2287,8 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellPictureCellsRect(85, 74, 5, 2, width, height);
         susa->paused = 0;
         serpent->paused = 0;
-        Actor_SetAnimationSpeed(susa, 16);
-        Actor_SetAnimationSpeed(serpent, 16);
+        Actor_SetAnimationSpeed(susa, ANIMATION_STEP_NORMAL);
+        Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
         mask = 254;
         Actor_GetById(ACTOR_SUSA)->steeringFlags &= mask;
         Actor_WalkTo(ACTOR_SUSA, 456, 360);
@@ -2347,7 +2347,7 @@ s32 Scene_Initialize(void) {
         object->scaleX = Q16_ONE * 3 / 8;
         object->scaleY = Q16_ONE * 3 / 8;
         Event_Wait(10);
-        Actor_SetAnimationSpeed(serpent, 16);
+        Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
         Event_Wait(10);
         Sound_Play(SE_IMPACT);
         object->x.fixed = 0;
@@ -3322,7 +3322,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
-  Actor_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = px(4);
   System_Wait(20);
   gMainRoutineWork.movementMode = 0;

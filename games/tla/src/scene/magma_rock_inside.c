@@ -997,10 +997,10 @@ void MagmaRockInside_PushPillarIntoLava(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
-  Actor_SelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
   leader->speedLimit = px(3);
   leader->acceleration = px(2);
   leader->velocityY = px(24) / 5;
@@ -1020,7 +1020,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   leader->x.fixed = target->x.fixed;
   leader->y.fixed = leader->groundHeight = target->y.fixed + px(16);
   leader->z.fixed = target->z.fixed;
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   Actor_SetSpriteFlags(leader, 1);
   leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_End();

@@ -418,10 +418,10 @@ void Settlements_ClimbDownLadder(void) {
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
-  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 16);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetAnimation(ACTOR_FELIX, 10);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
   FieldEvent_Wait(10);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(next);

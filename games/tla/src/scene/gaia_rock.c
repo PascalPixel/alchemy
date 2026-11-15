@@ -656,7 +656,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
-  Actor_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = px(4);
   System_Wait(20);
   gMainRoutineWork.movementMode = 0;

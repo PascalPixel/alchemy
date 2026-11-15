@@ -475,7 +475,7 @@ void ShamanVillageCave_LoseToColossoFans(void) {
 
     Actor_SetPositionAndFacing(ACTOR_KRADEN, px(218), px(320), turn);
   }
-  Actor_SetAnimation(ACTOR_FELIX, 19);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_ISAAC, 39);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

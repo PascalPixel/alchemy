@@ -163,10 +163,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
 
-/// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it: a
-/// timed command's frames run as written (The Broken Seal's sprite.h).
-#define ANIMATION_STEP_NORMAL 16
-
 /// The map cell buffer as BattleEffect_BuildWindowEdgeTable reads it: window
 /// 0's right edge, how far each of its lines is set in from that edge, and the
 /// right edge it builds for every screen line.

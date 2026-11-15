@@ -426,7 +426,7 @@ void AirsRockInside_DriftMote(struct Actor *object) {
     TilesetAnim_SuspendAll();
     return;
   }
-  Actor_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
   TilesetAnim_ResumeAll();
   if (object->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)
@@ -686,10 +686,10 @@ void AirsRockInside_RideWhirlwind(void) {
                                   ride->z.fixed + dz);
     leader->y.fixed = height;
     leader->groundHeight = height;
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = px(2);
     leader->acceleration = px(1) / 2;
     leader->velocityY = px(4);
@@ -769,7 +769,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, 16);
+  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
   if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
@@ -887,7 +887,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, 16);
+  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
   if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
@@ -1025,7 +1025,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     Actor_SetAnimationSpeed(object, 0);
     return;
   }
-  Actor_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
   if (object->timer == 0) {
     if (object->x.fixed == 0) {
       Actor_Release(object);
@@ -2896,10 +2896,10 @@ void AirsRockInside_RiseOnLift(void) {
   height = Map_GetTerrainHeight(0, lift->x.fixed, lift->z.fixed - px(16));
   leader->y.fixed = height;
   leader->groundHeight = height;
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   wait(6);
   Sound_Play(SE_JUMP);
-  Actor_SelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
   leader->speedLimit = px(2);
   leader->acceleration = px(1) / 2;
   leader->velocityY = px(4);

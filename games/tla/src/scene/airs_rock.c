@@ -328,9 +328,9 @@ void AirsRock_ClimbLedge(void) {
   u32 i;
 
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   System_Wait(10);
-  Actor_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_STAND);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
   leader->velocityY = px(4);
@@ -917,10 +917,10 @@ void AirsRock_RideWhirlwind(void) {
                                   ride->z.fixed + dz);
     leader->y.fixed = height;
     leader->groundHeight = height;
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = px(2);
     leader->acceleration = px(1) / 2;
     leader->velocityY = px(4);
@@ -990,7 +990,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, 16);
+  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
   if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==

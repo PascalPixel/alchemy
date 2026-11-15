@@ -11,7 +11,7 @@ void Whirlwind_Update(struct Actor *self) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
-  Actor_SetAnimationSpeed(self, 16);
+  Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
   ((struct FieldSprite *)self->sprite)->priority =

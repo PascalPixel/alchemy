@@ -774,10 +774,10 @@ void Loho_ClimbDownLadder(void) {
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
-  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 16);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetAnimation(ACTOR_FELIX, 10);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
   Event_Wait(14);
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);

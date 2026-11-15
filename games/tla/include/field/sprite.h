@@ -174,6 +174,10 @@ struct PlacedSprite {
   u8 shadowPalette : 4;
 };
 
+/// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it:
+/// a timed command's frames run as written.
+#define ANIMATION_STEP_NORMAL 16
+
 /// Animation numbers of a person's sprite, for Actor_SetAnimation. A sprite
 /// that is not a person (a bird, a dragon, a pillar) numbers its own.
 enum ActorAnimation {
@@ -203,6 +207,12 @@ enum ActorAnimation {
   /// ANIM_LEADER_CLIMB_OVER_TOP played backwards: stepping from the top of a
   /// ladder onto its rungs.
   ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
+  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// Holding out a glowing hand, as the party's sprites cast Psynergy.
+  ANIM_CAST_PSYNERGY = 17,
+  /// Lying collapsed on the ground.
+  ANIM_COLLAPSE = 19,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the
   /// leader turning: an arrival grows from a small figure seen side-on to full
@@ -214,7 +224,11 @@ enum ActorAnimation {
   ANIM_LEADER_LEAVE_ALTERNATE = 25,
   ANIM_LEADER_LEAVE = 26,
   ///@}
-  ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
+  /// ANIM_WALK's six pictures in reverse order.
+  ANIM_LEADER_WALK_BACKWARDS = 27,
+  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// ANIM_LEADER_RUN again, on every party member's sheet.
+  ANIM_PARTY_RUN = 30
 };
 
 #endif

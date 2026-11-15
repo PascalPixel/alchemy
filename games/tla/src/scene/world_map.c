@@ -1106,7 +1106,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
                                FACING_NORTHWEST);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
     FieldEffect_ScheduleRatioTransition(Q16_ONE * 31 / 20, 1);
-    Actor_SetAnimation(ACTOR_FELIX, 19);
+    Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();

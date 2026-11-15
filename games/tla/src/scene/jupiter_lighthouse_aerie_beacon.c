@@ -1162,7 +1162,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetPositionAndFacing(ACTOR_KRADEN, px(592), px(392), FACING_EAST);
   Actor_SetAnimation(ACTOR_JENNA, 19);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
-  Actor_SetAnimation(ACTOR_FELIX, 19);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_PIERS, 13);
   actor = Actor_Get(ACTOR_FELIX);
   actor->scaleX = -actor->scaleX;
@@ -2435,7 +2435,7 @@ void Whirlwind_Update(struct WhirlwindActor *object) {
     Actor_SetAnimationSpeed(object, 0);
     return;
   }
-  Actor_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
   timer = object->timer + 1;
   object->timer = timer;
   if ((timer & 31) == 31)

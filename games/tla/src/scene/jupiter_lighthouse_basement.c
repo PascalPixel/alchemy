@@ -188,7 +188,7 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
     TilesetAnim_SuspendAll();
     return;
   }
-  Actor_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
   TilesetAnim_ResumeAll();
   if (object->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)

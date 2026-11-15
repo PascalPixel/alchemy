@@ -651,13 +651,13 @@ void AquaRock_RideStreamUp(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                           leader->z.fixed - px(8));
-      Actor_SelectAnimation(leader, 7);
+      Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       Actor_WaitForMove(leader);
       do
         wait(1);
       while (leader->y.fixed != leader->groundHeight);
       AquaRock_SpawnSplash(leader);
-      Actor_SelectAnimation(leader, 6);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       wait(3);
       return;
     }

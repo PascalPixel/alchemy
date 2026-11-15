@@ -900,7 +900,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   leader->update = NULL;
   FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_SelectAnimation(leader, 27);
+  Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
   Actor_SetAnimationSpeed(leader, 48);
   System_Wait(30);
   leader->facing = FACING_SOUTH;

@@ -360,7 +360,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   leader->timer = 3;
   System_Wait(1);
   leader->update = 0;
-  Actor_SetAnimationSpeed(leader, 16);
+  Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_PulseScript);
   Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_PulseScript);

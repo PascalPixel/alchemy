@@ -187,7 +187,8 @@ done:
 #define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
-// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
+/// The sprite of a glyph a window carries, as the glyph sprites read it: its
+/// render slot link, its OAM position and its tile.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -457,6 +458,8 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
+/// A window sprite's queued sprite as WindowSprite_UpdateScaleAnimation reads
+/// it.
 struct OutputSprite {
   u32 link;
   u8 y;
@@ -518,6 +521,8 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   }
 }
 
+/// A window sprite's queued OAM attributes, as WindowSprite_UpdateAll writes
+/// them.
 struct AnimSprite {
   struct AnimSprite *next;
   u8 y;
@@ -534,6 +539,8 @@ struct AnimSprite {
   u16 palette : 4;
 };
 
+/// A window sprite as WindowSprite_UpdateAll reads it, its kind and motion
+/// unsigned.
 struct AnimOutput {
   struct AnimOutput *next;
   u8 kind;
@@ -547,6 +554,8 @@ struct AnimOutput {
   struct AnimSprite attr;
 };
 
+/// A pop's affine transform as WindowSprite_UpdateAll packs it: x and y scale
+/// and the angle.
 struct PopTransform {
   u32 scaleX : 16;
   u32 scaleY : 16;

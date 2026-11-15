@@ -61,7 +61,6 @@
 #include "battle_work.h"
 #include "system/irq_lock.h"
 #include "battle/battle_side.h"
-#include "battle/b5_context.h"
 #include "system/save.h"
 #include "owner_state.h"
 #include "field_sprite.h"

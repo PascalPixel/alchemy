@@ -125,6 +125,7 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
  * games/tla/include/module/tla.h:98: redefinition of `struct EncounterWork'. */
+/// The battle work as Battle_Run reads it.
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;

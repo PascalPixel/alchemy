@@ -57,6 +57,8 @@ struct ArrowSprite__presentation {
   u16 affineParam;
 };
 
+/// The battle's playback as BattlePlayback_Run reads it: the queue, its phase,
+/// event and timer, the advance arrow, the unit acting, and the hit's sound.
 struct PlaybackEvents {
   struct BattleEventQueue queue;
   s32 phase;
@@ -70,6 +72,8 @@ struct PlaybackEvents {
   s32 flags;
 };
 
+/// The battle work as BattlePlayback_Run reads it: the advance arrow's tiles,
+/// the plan of the action being played and the playback.
 struct PlaybackBattleWork {
   u8 unk000[0x54];
   s32 arrowTiles;

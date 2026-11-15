@@ -104,7 +104,7 @@ Oam_AddSpriteAtDepth__menus(void *sprite,
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
-  struct TargetSprite cursorSprites[6];
+  struct SelectionSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
   struct TargetPoint actorPosition;
   u16 spreadActorIds[14];
@@ -113,7 +113,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 targetName[15];
   struct TargetPoint namePosition;
   struct TargetPoint markerPosition;
-  struct TargetAffine effect;
+  struct AffineTransform effect;
   struct BattleUnit *unit;
   struct BattleWork *battle;
   struct RenderInput *window;
@@ -143,8 +143,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 repeated;
   s32 result;
   struct TargetTrack *track;
-  struct TargetSprite *marker;
-  struct TargetSprite *firstSprite;
+  struct SelectionSprite *marker;
+  struct SelectionSprite *firstSprite;
   struct BattleUnit *target;
 
   battle = Ram_HeapSlots->battleWork;
@@ -155,30 +155,30 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   conditionWindow = (struct RenderInput *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
-  if (mode == 2 || mode == 4)
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     NAVIGATION->targetViewOffset = -2;
   else
     NAVIGATION->targetViewOffset = 16;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   targetIndex = -1;
-  if (mode == 2) {
-    for (i = 0; i <= 5 && battle->partyUnits[i] != 255; i++) {
+  if (mode == ABILITY_TARGET_ALLIES) {
+    for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
-  } else if (mode == 4) {
+  } else if (mode == ABILITY_TARGET_SELF) {
     candidateIds[0] = selection;
     targetCount = 1;
   } else {
-    for (i = 0; i <= 5 && battle->enemyIds[i] != 255; i++) {
+    for (i = 0; i <= 5 && battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->enemyIds[i];
       targetCount++;
     }
   }
   candidateIds[targetCount] = 255;
   candidateCount = targetCount;
-  if (mode == 2) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     if (spread != 255 && kind != 0) {
       found = 0;
       for (j = 0; j < targetCount; j++) {

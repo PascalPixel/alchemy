@@ -101,6 +101,7 @@ struct ParticleEffectObject {
   u8 padding[80];              ///< not named through this view
   struct ParticleChild *child; ///< the sprite, MotionObject's records
 };
+/// A point in the field, in 16.16 pixels.
 struct ParticlePosition {
   s32 x;
   s32 y;

@@ -19,6 +19,7 @@ struct DjinnMenuBackdrop {
   s32 tutorialStep;
 };
 
+/// A window as the Djinn menu's preview reads it: its width and its y.
 struct DjinnPreviewWindow {
   u8 unk00[8];
   u16 width;

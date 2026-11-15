@@ -8,6 +8,7 @@
 
 struct Window;
 
+/// A menu cursor's sprite: its render slot link and OAM attributes 0 to 2.
 struct CursorSprite {
   struct CursorSprite *next;
   u16 y : 8;
@@ -25,6 +26,7 @@ struct CursorSprite {
   u16 unk;
 };
 
+/// A point on the screen, in pixels.
 struct MenuPoint {
   s32 x;
   s32 y;
@@ -85,6 +87,7 @@ struct BattleMenuWork {
   s32 lastTarget;
 };
 
+/// The party status window and the rectangle it last drew.
 struct PartyStatusWindow {
   struct Window *window;
   u16 x;

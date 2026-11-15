@@ -126,6 +126,7 @@ struct OwnerStats__presentation {
   struct OwnerElementStats element[4];
 };
 
+/// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.
 struct OwnerState {
   u8 unk00[15];
   u8 level;

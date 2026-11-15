@@ -312,6 +312,8 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   return 0;
 }
 
+/// A window as Message_CloseFinishedWindows reads it: its state and flags, and
+/// its zoom stage and duration read as one word, nonzero while a zoom runs.
 struct UiWindowState {
   u8 unk00[0x14];
   u16 state;

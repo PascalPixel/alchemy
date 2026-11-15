@@ -75,7 +75,8 @@ s32 Text_DrawWideStringInWindow__screens() __asm__(
 s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #define Window_MapTextCanvasTiles Window_MapTextCanvasTiles__screens
 
-// The screens object's functions its parts call before their definitions.
+/// A sprite of the bobbing pair of the menu titles: its render slot link, its
+/// resting y and its y this frame.
 struct BobPairObject;
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
@@ -152,6 +153,7 @@ struct SummaryOam {
   } oam;
 };
 
+/// Where the Status screen's cursor points, in pixels.
 struct SummaryPoint {
   s32 x;
   s32 y;
@@ -190,6 +192,7 @@ struct BattleSummaryCursor {
   u8 unk03;
 };
 
+/// A VRAM cache entry as the Status screen reads its tile offset.
 struct SummaryResourceEntry {
   u16 unk00;
   u16 offset;
@@ -217,6 +220,8 @@ union NameCursor {
   struct NameCursorMotion cursor;
 };
 
+/// The first two words of gMainRoutineWork as the save writes them: the build
+/// stamp and the play time.
 struct SaveGameWords {
   u32 buildStamp;
   u32 playTime;
@@ -284,12 +289,15 @@ extern u8 Tile_BuildCellPicturesCode[];
 #undef Text_DrawWideStringInWindow
 #undef Window_MapTextCanvasTiles
 
+/// A unit's place projected onto the screen, as the target cursor reads it.
 struct TargetPoint {
   s32 x;
   s32 y;
   s32 z;
 };
 
+/// One of the target cursor's markers: where it stands, whether it shows and
+/// which listed unit it marks.
 struct TargetTrack {
   u8 x;
   u8 y;
@@ -297,36 +305,14 @@ struct TargetTrack {
   s8 index;
 };
 
-struct TargetSprite {
-  u8 unk00[4];
-  u8 y;
-  u8 affine : 2;
-  u8 mode : 2;
-  u8 high05 : 4;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 attr2high : 6;
-  u16 unk0a;
-};
-
-struct TargetAffine {
-  u16 scaleX;
-  u16 scaleY;
-  u16 angle;
-  u16 unk06;
-};
-
-struct TextObject {
-  u8 storage[12];
-};
-
+/// One line of a window's HDMA shape: its left edge and its span.
 struct WindowLine {
   u16 left;
   u16 span;
 };
 
+/// A page of the icon menu's window shape: one WindowLine for each of the
+/// screen's 160 lines.
 struct WindowBuffer {
   u8 unk000[4];
   struct WindowLine lines[160];

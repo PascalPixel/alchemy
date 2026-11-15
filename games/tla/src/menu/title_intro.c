@@ -28,12 +28,18 @@
 #include "graphics/palette_buffers.h"
 #include "actor.h"
 
+/// One step of the intro picture's scroll: how many frames it lasts, and for
+/// each of BG1's and BG2's y and x the pixels it moves a frame and the mask of
+/// frame counts it moves on (0 for every frame).
 struct TitleScrollStep {
   s32 frames;
   s32 speed[4];
   u32 mask[4];
 };
 
+/// The scroll down or up the intro's tall lighthouse picture: where it is and
+/// where it stops, the pixels a step, the picture's rows streamed into VRAM
+/// behind it and the frames each step waits.
 struct TitleScroll {
   s16 pos;
   s16 limit;
@@ -47,12 +53,7 @@ struct TitleScroll {
   u32 frames;
 };
 
-struct TitleFadeTimers {
-  u8 unk00[10];
-  s16 white;
-  s16 back;
-};
-
+/// An OAM entry's attributes 0 to 2, as the title's logo pieces are written.
 struct OamEntry {
   u32 y : 8;
   u32 affine : 2;
@@ -69,6 +70,9 @@ struct OamEntry {
   u16 unused;
 };
 
+/// The title intro's state (HEAP_SLOT_TITLE_INTRO): the logo's phase, frame,
+/// timer, step and delay, and the countdowns to the fade to white and back that
+/// the lighthouse scroll starts.
 struct TitleLogoState {
   s16 phase;
   s16 frame; ///< index into gData_081a8378 (5 halfwords a frame)
@@ -80,6 +84,8 @@ struct TitleLogoState {
   s16 back;
 };
 
+/// A sprite of the "Press Start" prompt, linked into a render slot each frame:
+/// OAM attributes 0 to 2 with the position split out.
 struct TitleSprite {
   u32 next; ///< the render slot link
   u8 y;
@@ -442,7 +448,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
 /// starts the fade to white or back when its countdown reaches 1. A key press
 /// cuts the scroll short.
 s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
-  struct TitleFadeTimers *timers = Ram_HeapSlots->titleIntro;
+  struct TitleLogoState *timers = Ram_HeapSlots->titleIntro;
   s32 i;
   s32 j;
   s32 step;

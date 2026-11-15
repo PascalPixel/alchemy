@@ -54,6 +54,7 @@ struct RenderInput *DebugSoundTest_Open(void) {
   return window;
 }
 
+/// The sound test's four values: music, jingle, sound effect and sound preset.
 struct SoundTestValues {
   s32 values[4];
 };

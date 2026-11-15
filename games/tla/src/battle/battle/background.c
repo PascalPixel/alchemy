@@ -437,6 +437,8 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #define DEBUG_VALUE_SELECT 544
 #endif
 
+/// The battle work as Battle_AdjustDebugValue reads it: the debug value at
+/// 0x854.
 struct DebugBattleWork {
   u8 unk000[0x854];
   s32 debugValue;
@@ -480,6 +482,8 @@ s32 Battle_AdjustDebugValue(s32 value) {
 
 // Battle presentation: toggle translucency on unit graphics.
 
+/// A part of a unit's sprite (its image, or its shadow at 0x1c) as the
+/// highlight reads its OBJ mode.
 struct ActorSpritePart {
   u8 unk00[4];
   u16 y : 8;
@@ -491,6 +495,7 @@ struct ActorSpritePart {
   u8 unk06[0x16];
 };
 
+/// A unit's sprite as the highlight reads it: its image and its shadow.
 struct ActorSpriteRecord {
   struct ActorSpritePart part[2];
 };
@@ -645,11 +650,15 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   }
 }
 
+/// A spark of the star field behind a summon: its position and velocity, 16.16,
+/// and the frames it has left.
 struct Spark {
   s32 pos[6]; // x, y, z and their velocities, 16.16
   s32 life;
 };
 
+/// A ring of the star field leaving its centre: its place, its speed and its
+/// age.
 struct Ring {
   s32 x;
   s32 y;
@@ -658,6 +667,8 @@ struct Ring {
   s32 age;
 };
 
+/// The star field's work: the canvas sheet, sixteen sparks, three rings, the
+/// frames counted, whether the canvas is ready, and its centre.
 struct SparkWork {
   u8 sheet[0x11c0];
   struct Spark sparks[16];

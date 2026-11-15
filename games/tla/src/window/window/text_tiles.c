@@ -327,6 +327,8 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
+/// The window work as Text_UseExtraTiles reads it: whether text may take the
+/// second range of tiles, and the state of each text tile.
 struct WindowTileWork {
   u8 unk000[2];
   u8 alt;

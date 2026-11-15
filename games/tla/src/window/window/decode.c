@@ -20,7 +20,7 @@
 #define ARTICLE_KIND_MASK 7
 #endif
 
-// The article strings by kind, copied whole (articles.c).
+/// The article strings of one language, by kind, copied whole (articles.c).
 struct ArticleTable {
   u8 *text[ARTICLE_KINDS];
 };
@@ -30,7 +30,7 @@ extern const struct ArticleTable gArticle_Table;
 extern const struct ArticleTable gText_IndefiniteArticles;
 #endif
 #if (LANGUAGE == LANGUAGE_FRENCH)
-// "de", elided and whole, copied whole (articles.c).
+/// The German "de" articles, elided and whole, copied whole (articles.c).
 struct DeArticles {
   u8 *text[2];
 };
@@ -303,6 +303,7 @@ extern const s8 gLocalizedWord_ItemPronoun[];
 #define POSSESSIVE_COUNT 4
 #endif
 
+/// The possessive endings, by kind, copied whole (articles.c).
 struct PossessiveTable {
   s8 *text[POSSESSIVE_COUNT];
 };

@@ -89,6 +89,8 @@ STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
 STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
 
+/// A unit's chosen action as the party's command menus write it: the
+/// BattleActionRecord, read with its fields unsigned.
 struct BattleAction {
   u16 unitId;
   u16 unk02;

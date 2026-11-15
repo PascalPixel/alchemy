@@ -1033,6 +1033,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 #define PAGE_ROWS 5
 #endif
 
+/// The menu work as PagedList_Build reads it: the party's count, the party, and
+/// which members are chosen.
 struct MenuOwnerWork {
   u8 unk000[0x214];
   u8 count;
@@ -1041,6 +1043,8 @@ struct MenuOwnerWork {
   s8 selected[8];
 };
 
+/// A paged list as PagedList_Build fills it: its owner, page, pages, row, count
+/// and the entry chosen.
 struct MenuPageResult {
   void *owner;
   s32 unk04;

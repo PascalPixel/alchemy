@@ -75,7 +75,6 @@
 #include "battle/range_falloff.h"
 #include "battle/battle_effect.h"
 #include "graphics/vram_tab.h"
-#include "battle/b5_context.h"
 #include "game/owner_value.h"
 #include "bg_scroll.h"
 #include "system/irq.h"

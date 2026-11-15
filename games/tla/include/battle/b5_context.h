@@ -5,6 +5,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// An effect's tint work as BattleEffect_TintBattler reads it.
 struct B5Context {
   void *object;
   u8 padding04[8];

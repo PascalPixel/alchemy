@@ -1357,7 +1357,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
 
     scale = effect->scaleX;
     if (scale > 0)
-      scale -= 0x51e;
+      scale -= Q16_ONE * 2 / 100;
     else
       scale = 0;
     effect->scaleX = scale;

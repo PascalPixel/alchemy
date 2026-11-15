@@ -1001,7 +1001,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
 
   if (y + object->velocityY < object->groundHeight) {
     spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, y, object->z.fixed);
-    scale = 0x8ccc;
+    scale = Q16_ONE * 55 / 100;
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;
@@ -1024,7 +1024,7 @@ void TaopoSwamp_DripAtRandom(void) {
     s32 z = 0xb00000 - (Random16() << 3);
     s32 y = px(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = 0x547a;
+    s32 scale = Q16_ONE * 33 / 100;
 
     if (object != NULL) {
       object->scaleX = scale;
@@ -1168,7 +1168,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
     }
     spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, object->y.fixed,
                                    object->z.fixed);
-    scale = 0x8ccc;
+    scale = Q16_ONE * 55 / 100;
     if (spark) {
       spark->scaleX = scale;
       spark->scaleY = scale;
@@ -1203,7 +1203,7 @@ void TaopoSwamp_DripFromCeiling(void) {
     s32 z = px(440);
     s32 y = px(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = 0x547a;
+    s32 scale = Q16_ONE * 33 / 100;
 
     if (object != NULL) {
       object->scaleX = scale;
@@ -1231,7 +1231,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
       s32 z = n2 - offset;                                                     \
       s32 y = px(160);                                                         \
       struct Actor *object = FieldActor_Create(0x12d, x, y, z);                \
-      s32 scale = 0x547a;                                                      \
+      s32 scale = Q16_ONE * 33 / 100;                                          \
                                                                                \
       if (object != NULL) {                                                    \
         object->scaleX = scale;                                                \

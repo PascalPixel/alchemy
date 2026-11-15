@@ -1052,8 +1052,8 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   MapGrid_SetShakeFixed(px(1), px(2), Q16_ONE);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 64 / 100;
+  options.startScaleY = Q16_ONE * 64 / 100;
   for (i = 0; i <= 16;) {
     s32 velocity[3];
 
@@ -1067,7 +1067,9 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
     velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed + px(-4),
                       leader->z.fixed, velocity[0], velocity[1], velocity[2],
-                      0x01090001, &options);
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
+                      &options);
   }
   leader->velocityY = px(4);
   wait(2);
@@ -2188,7 +2190,7 @@ void ShrineOfTheSeaGod_SetUpFlatProp(s32 id) {
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
   object->scaleX = Q16_ONE * 8 / 10;
-  object->scaleY = 0xe666;
+  object->scaleY = Q16_ONE * 9 / 10;
 }
 
 /// Nothing to prepare.

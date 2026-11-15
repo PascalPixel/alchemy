@@ -181,18 +181,27 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SE_POUND);
-  options.startScaleX = 0x13333;
-  options.startScaleY = 0x18000;
+  options.startScaleX = Q16_ONE * 12 / 10;
+  options.startScaleY = Q16_ONE * 3 / 2;
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
   FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0, (cell->z << 20) + px(20), 0,
-                    0, 0, 0x3a0000, &options);
-  options.startScaleX = 0x9999;
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
+  options.startScaleX = Q16_ONE * 6 / 10;
   FieldEffect_Spawn((cell->x << 20) - px(2), 0, FIELD_CELL_CENTER(cell->z), 0,
-                    0, 0, 0x3a0000, &options);
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
   FieldEffect_Spawn((cell->x << 20) + px(18), 0, FIELD_CELL_CENTER(cell->z), 0,
-                    0, 0, 0x3a0000, &options);
+                    0, 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                    &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);

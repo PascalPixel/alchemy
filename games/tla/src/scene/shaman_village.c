@@ -484,16 +484,16 @@ void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->z.fixed += *(s32 *)((u8 *)object + 76);
   if (FIELD_PIXEL(object->x.fixed) < 168) {
     object->bounce += Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX += 0xccc;
+    object->scaleY = object->scaleX += Q16_ONE * 5 / 100;
   } else {
     object->bounce -= Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX -= 0x51e;
+    object->scaleY = object->scaleX -= Q16_ONE * 2 / 100;
   }
   if (object->bounce > 0)
     Scene_SetActorSpritePriority(object, 1);
   else
     Scene_SetActorSpritePriority(object, 2);
-  ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
+  ((struct FieldSprite *)object->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 extern u32 gFieldEffect_MediumScript[];
@@ -641,7 +641,8 @@ frame:
       s32 x = ((Random16() & 127) << 16) + (208 << 15);
 
       FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
-                        v[2], 0x1020001, &options);
+                        v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                        &options);
     }
   }
   REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
@@ -1027,7 +1028,7 @@ void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD)) {
-    if (Event_GetFlag(0xa21))
+    if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgShamanFortuneAvoidNortheast);
     else
       Event_SetMessageId((s32)MsgShamanFortuneAvoidSouth);
@@ -1035,7 +1036,7 @@ void ShamanVillage_TellFortune(void) {
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   } else {
     Event_PlaySound(MUS_SILENCE);
-    if (Event_GetFlag(0xa21))
+    if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT))
       Event_SetMessageId((s32)MsgShamanFortuneOfferAfterTrial);
     else
       Event_SetMessageId((s32)MsgShamanFortuneOfferBeforeTrial);

@@ -3282,7 +3282,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript((struct Actor *)effect, gTrialRoad_RubbleScript);
-      effect->scaleY = effect->scaleX = 0xb333;
+      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);

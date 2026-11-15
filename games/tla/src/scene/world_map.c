@@ -1335,7 +1335,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_WalkBy(ACTOR_LOHO_WORKER_B, 10, 0);
   Actor_WalkBy(ACTOR_LOHO_WORKER_C, 10, 0);
   Event_WaitTransitionFrames();
-  FieldEffect_ScheduleRatioTransition(Q16_ONE * 6 / 5, 6);
+  FieldEffect_ScheduleRatioTransition(Q16_ONE * 12 / 10, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
   FieldActor_WaitForMoveById(ACTOR_LOHO_WORKER_A);
@@ -1438,7 +1438,7 @@ void WorldMap_MeetEcho(void) {
     i = 15;
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     WorldMap_ReloadPendingAreaGraphics();
-    FieldEffect_ScheduleRatioTransition(Q16_ONE * 6 / 5, 6);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 12 / 10, 6);
     Event_WaitForZoomTransition();
     WorldMap_Freeze();
     djinni->motionFlags = ACTOR_FALLS;
@@ -1451,8 +1451,8 @@ void WorldMap_MeetEcho(void) {
     asm("" : "+m"(*djinni));
     FieldActor_SetMoveTarget(djinni, 10120, 0, 8356);
     while (i >= 0) {
-      djinni->scaleX += 0x800;
-      djinni->scaleY += 0x800;
+      djinni->scaleX += Q16_ONE / 32;
+      djinni->scaleY += Q16_ONE / 32;
       wait(1);
       i--;
     }
@@ -1801,8 +1801,8 @@ void WorldMap_ShowIdejimaDrifting(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEffect_ScheduleRatioTransition(Q16_ONE * 3 / 5, 1);
-  actor->scaleX = 0x13333;
-  actor->scaleY = 0x13333;
+  actor->scaleX = Q16_ONE * 12 / 10;
+  actor->scaleY = Q16_ONE * 12 / 10;
   EventCamera_FollowActor(ACTOR_DRIFTING_IDEJIMA, 1);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
@@ -1835,8 +1835,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldWorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
   FieldWorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
-  boat->scaleX = 0x13333;
-  boat->scaleY = 0x13333;
+  boat->scaleX = Q16_ONE * 12 / 10;
+  boat->scaleY = Q16_ONE * 12 / 10;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
@@ -1881,7 +1881,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   for (i = 31; i >= 0; i--) {
     map->unk11e += 0xff80;
     map->unk11c += 128;
-    Actor_Get(ACTOR_IDEJIMA)->scaleY += -0x300;
+    Actor_Get(ACTOR_IDEJIMA)->scaleY += -(Q16_ONE * 3 / 256);
     System_Wait(1);
   }
   WorldMap_Freeze();

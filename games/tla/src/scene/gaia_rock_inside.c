@@ -1090,6 +1090,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 // Moves around in a circle.
 #include "shared/orbit_update.h"
 
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 #include "shared/actor_aim_at_watched.h"
 
@@ -1100,6 +1101,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 #include "shared/actor_emit_bubbles.h"
+#undef BYTE_AT
 
 #include "text/msg_ids.h"
 

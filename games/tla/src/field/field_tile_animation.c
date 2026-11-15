@@ -1132,10 +1132,9 @@ s32 MapGrid_IsWallAt(s32 *position) {
 }
 
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
- * gCellPictures[]; scene/shared.h has u32 gCellPictures[]; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:1189: request for member `unk2' in
- * something not a structure or union. */
+ * gCellPictures[] under a name of its own; system/ram_buffer.h has u32
+ * gCellPictures[]; read through it with a cast, the field object shares the
+ * address with the other reads and the block read moves (4 lines in tla-en). */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
 
 /// Byte 2 of the world map block under position (blocks 32 pixels square on a

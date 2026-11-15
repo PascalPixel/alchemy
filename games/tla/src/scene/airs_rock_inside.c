@@ -196,7 +196,6 @@ extern s32 gAirsRockInside_StampedZ;
 #include "field/field_event.h"
 #include "field/map_grid.h"
 #include "flags.h"
-#include "scene/shared.h"
 #include "field/field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -1232,7 +1231,7 @@ void AirsRockInside_SpiralGust(struct Actor *object);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
-#define TARGET(effect) ((effect)->target)
+#define TARGET(effect) ((effect)->child)
 
 /// The gust picks up an object it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
@@ -1258,8 +1257,7 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 /// leader, carrying what it meets.
 void AirsRockInside_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct EffectWork *effect =
-      (struct EffectWork *)Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *gust, *spark, *object;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
@@ -1280,7 +1278,7 @@ void AirsRockInside_BlowGust(void) {
   /* FAKEMATCH(signature): the target's word read as long, an alias set outside
    * struct Actor's. */
   ((struct FieldSprite *)gust->sprite)->priority =
-      ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
+      ((struct FieldSprite *)((struct Actor *)*(long *)&effect->child)->sprite)
           ->priority;
   Actor_SetMoveTarget(gust, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
                       TARGET(effect)->z.fixed - px(1));

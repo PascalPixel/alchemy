@@ -16,7 +16,6 @@
 #include "field/field.h"
 #include "field/object.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "types.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"

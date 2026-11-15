@@ -65,7 +65,7 @@ restart:
   ActorSystem_Initialize(2);
   SpritePictureCache_Load(0, gMapGridCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
-    SpritePictureCache_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
+    SpritePictureCache_Load(1, gActorSpriteSlots, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;

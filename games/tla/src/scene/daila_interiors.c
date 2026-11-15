@@ -33,7 +33,6 @@
 #include "field/field_sequence_event.h"
 #include "game/inventory.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "window/window.h"
 #include "game/item.h"
 #include "version.h"

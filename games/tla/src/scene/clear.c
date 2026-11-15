@@ -30,7 +30,6 @@
 #include "system/frame.h"
 #include "system/heap_slots.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "window/screens.h"
 #include "window/window.h"
 #include "system/serial.h"
@@ -48,6 +47,9 @@
 #include "game/owner_state.h"
 #include "macros.h"
 #include "system/system_call.h"
+#include "window/cursor.h"
+
+extern u16 gData_02003a74[];
 
 /// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeUnlocked;
@@ -233,10 +235,9 @@ s32 Clear_CanRetreat(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState;
- * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
- * declares it, Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
-extern u32 gData_02001000__clear __asm__("gSceneLocalState");
+// The play time the save kept in the scene's own state, which a sound save
+// matches.
+#define gClearSavedPlayTime (*(u32 *)gSceneLocalState)
 
 s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
@@ -463,7 +464,7 @@ top:
         }
         RETURN_TO_SAVED(party)
         Event_SetFlag(FLAG_SAVE_RESTARTED_AT_SANCTUM);
-      } else if (party->playTime != gData_02001000__clear) {
+      } else if (party->playTime != gClearSavedPlayTime) {
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
         FieldMessage_Show(recovery + 1, 13);

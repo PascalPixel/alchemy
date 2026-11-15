@@ -23,7 +23,6 @@
 #include "field/event_commands.h"
 #include "scene/dehkan_plateau.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
 #include "system/iwram_call.h"

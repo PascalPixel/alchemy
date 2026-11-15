@@ -38,7 +38,6 @@
 #include "field/field_sequence_event.h"
 #include "system/heap_release.h"
 #include "window/item_icon.h"
-#include "scene/shared.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "system/frame.h"

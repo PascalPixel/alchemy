@@ -6,7 +6,7 @@
 
 #include "static_assert.h"
 #include "types.h"
-#include "scene/shared.h"
+#include "window/cursor.h"
 
 struct WindowSprite;
 

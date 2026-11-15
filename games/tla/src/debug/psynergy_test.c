@@ -38,9 +38,10 @@
 #include "window/item_icon.h"
 #include "item_ids.h"
 #include "game/character_ids.h"
-#include "scene/shared.h"
 #include "window/window.h"
 #include "scene/sparkle.h"
+
+void Import_DebugMadPlantLeap(s32, s32, s32);
 
 // The room's flags: the four Scoop spots dug, the falling actor's item taken,
 // and which of his two spots the

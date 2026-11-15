@@ -112,4 +112,6 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_MulQ16Offset FIXED_OFFSET(0x11c, IwramMulQ16, IwramIrqMain)
 
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+
 #endif

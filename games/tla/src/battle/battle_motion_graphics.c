@@ -13,7 +13,6 @@
 #include "battle/presentation.h"
 #include "battle/presentation.h"
 #include "system/system.h"
-#include "scene/shared.h"
 #include "text/msg_ids.h"
 #include "macros.h"
 
@@ -195,7 +194,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   if (single)
     saved->buffer = Heap_AllocEwram(0x8000);
   else
-    saved->buffer = Data_02018000;
+    saved->buffer = gActorSpriteSlots;
   i = SpritePictureCache_LoadFar(7, saved->buffer,
                                  BattleSprite_GetSprite(saved->classId),
                                  BattleSprite_GetPalette(saved->classId));

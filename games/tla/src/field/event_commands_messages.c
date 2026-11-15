@@ -11,8 +11,6 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
-s32 Portrait_OpenWindowFar(s32 sprite, s32 zero, s32 x, s32 y);
-
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
 #define SPEAKER_WINDOW_ABOVE 0x4000
@@ -177,7 +175,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
     if (win[4] != 0)
-      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
+      portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!Message_AllTypedFar())

@@ -42,7 +42,6 @@
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
-#include "scene/shared.h"
 #include "scene_ids.h"
 #include "field/field_event.h"
 #include "system/field_effect.h"

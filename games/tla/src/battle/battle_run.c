@@ -123,13 +123,7 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-/* VIEW(battle): tag struct EncounterWork as struct EncounterWork__battle;
- * scene/shared.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/include/scene/shared.h:98: redefinition of `struct EncounterWork'.
- */
 /// The battle work as Battle_Run reads it.
-#define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;
   u8 unk004[0x0c];
@@ -169,12 +163,6 @@ struct EncounterWork {
   u8 unk866[0x16];
 };
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
-/* VIEW(battle): variable Data_02018000 as u8 Data_02018000[]; scene/shared.h
- * has u32 Data_02018000[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/battle/battle_run.c:255: `Data_02018000'
- * undeclared (first use in this function). */
-extern u8 Data_02018000__battle[] __asm__("Data_02018000");
-#define Data_02018000 Data_02018000__battle
 
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
@@ -254,7 +242,7 @@ s32 Battle_Run(s32 enemyGroup) {
     battle->linkSide = (*(volatile u32 *)0x04000128 << 26) >> 30;
     ownerStateDestination = Ram_HeapSlots->enemyUnits;
     for (copyIndex = 0; copyIndex < 0x7c8; copyIndex++)
-      *ownerStateDestination++ = Data_02018000[copyIndex];
+      *ownerStateDestination++ = gActorSpriteSlots[copyIndex];
     enemyCount = GameFlag_GetByte(0x3f0);
     BattleParty_AssignOpponentSlots();
     battle->battleType = 0;

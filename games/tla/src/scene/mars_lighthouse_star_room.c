@@ -23,7 +23,6 @@
 #include "field/field.h"
 #include "scene/mars_lighthouse_star_room.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

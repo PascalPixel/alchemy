@@ -5,7 +5,6 @@
 #include "field_internal.h"
 #include "fixed_math.h"
 #include "field/resource_slot.h"
-#include "scene/shared.h"
 #include "macros.h"
 
 /// Returns 1 when the actor has no movement target: none of its target

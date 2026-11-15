@@ -62,7 +62,6 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "field/object.h"
 #include "scene/scene.h"
 #include "scene/event_layer.h"
-#include "scene/shared.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
 #include "field/field_sprite.h"

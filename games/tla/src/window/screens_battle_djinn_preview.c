@@ -5,7 +5,6 @@
 #include "window_internal.h"
 #include "window/djinn_preview.h"
 #include "gamepak/far_call/game.h"
-#include "scene/shared.h"
 #include "window/screens.h"
 #include "window/window.h"
 

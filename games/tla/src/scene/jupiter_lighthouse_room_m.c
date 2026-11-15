@@ -36,7 +36,6 @@ void Leader_CenterInCell(void);
 #include "field/event_commands.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
 #include "version.h"

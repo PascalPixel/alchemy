@@ -15,6 +15,10 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "field/effect_sprite.h"
+#include "scene/falling_rocks.h"
+
+void TundariaTower_StartEffectScript(struct FieldEffect *effect,
+                                     const s32 *script);
 
 /// The Center Prong frozen in the crystal (SceneId_TundariaTowerCenterProng),
 /// an item icon (ITEM_CENTER_PRONG) until the crystal breaks.
@@ -71,7 +75,6 @@
 #include "system/frame.h"
 #include "field/event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/field_effect.h"
 #include "system/input.h"
 #include "version.h"

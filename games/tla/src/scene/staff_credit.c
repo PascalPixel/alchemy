@@ -31,7 +31,6 @@
 #include "scene/gabomba_statue.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
-#include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
 #include "field/field_sprite.h"

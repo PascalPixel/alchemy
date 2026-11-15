@@ -9,7 +9,6 @@
 #include "field/field.h"
 #include "field/resource_slot.h"
 #include "system/system.h"
-#include "scene/shared.h"
 #include "system/scene.h"
 #include "macros.h"
 #include "field/field_event.h"

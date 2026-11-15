@@ -295,4 +295,9 @@ void Save_ReleaseWork(void);
 
 void Serial_Initialize(void);
 
+extern u8 gDebugTextEnabled;
+extern s16 gSaveSlot;
+extern s16 gAnyFileCleared;
+extern u8 gSaveBuffer[];
+
 #endif

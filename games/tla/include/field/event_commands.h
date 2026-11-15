@@ -91,6 +91,9 @@ struct TouchCopies {
   s8 count;
 };
 
+/// The cells Psynergy moved, kept in the scene's own state (gSceneLocalState).
+#define gTouchCopies (*(struct TouchCopies *)gSceneLocalState)
+
 /// A particle of the particle burst (ParticleBurst_Start): its place, heading,
 /// speed, spin and the frames before it starts.
 struct BurstParticle {

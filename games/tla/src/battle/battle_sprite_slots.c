@@ -97,7 +97,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
       break;
 
     // The buffers' address held in a local, taken before the palette's call,
-    slotBuffers = (s32)Data_02018000;
+    slotBuffers = (s32)gActorSpriteSlots;
     {
       s32 flag = BattleSprite_GetPalette(actor->enemyId);
       s32 bufferAddr = (slot << 14) + slotBuffers;

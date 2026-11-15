@@ -21,7 +21,6 @@
 #include "field/field_sequence_event.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/object.h"
 #include "field/effect_sprite.h"
 #include "scene_ids.h"
@@ -54,6 +53,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/sparkle.h"
+#include "scene/orbit.h"
 
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
 /// fire burns at the aerie from then on.

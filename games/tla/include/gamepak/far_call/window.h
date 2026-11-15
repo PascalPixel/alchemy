@@ -85,4 +85,7 @@ s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);
 /// story crawl draws its lines.
 s32 Text_DrawMessageToCanvasFar(s32 message, u8 *canvas, s32 align);
 
+struct RenderInput *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y,
+                                           s32 mode);
+
 #endif

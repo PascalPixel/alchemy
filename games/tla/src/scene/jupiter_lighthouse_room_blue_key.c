@@ -30,7 +30,6 @@
 #include "field/field_event.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/map_grid.h"
 #include "field/call.h"
 #include "system/field_effect.h"

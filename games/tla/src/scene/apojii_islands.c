@@ -9,6 +9,7 @@
 #include "djinn_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "scene/dust.h"
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
@@ -126,7 +127,6 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
 #include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "scene/event_layer.h"
-#include "scene/shared.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "field/actor.h"

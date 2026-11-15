@@ -8,7 +8,6 @@
 #include "field/flag_call.h"
 #include "gamepak/far_call/battle.h"
 #include "window/item_icon.h"
-#include "scene/shared.h"
 #include "window/window.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window

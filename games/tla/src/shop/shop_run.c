@@ -11,7 +11,7 @@
 #include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/field_sequence.h"
-#include "scene/shared.h"
+#include "window/cursor.h"
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero, or of any type at a general store.

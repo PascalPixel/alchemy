@@ -4,10 +4,25 @@
 
 #include "window_internal.h"
 #include "system/io_write.h"
-#include "scene/shared.h"
 #include "window/screens.h"
 #include "resource_ids.h"
 #include "macros.h"
+
+// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
+struct Object {
+  u8 filler0[6];
+  u16 src6;
+  u8 src8;
+  u8 filler9[6];
+  u8 out15;
+  u8 filler16[4];
+  u8 out20;
+  u8 mode21 : 2;
+  u8 rest21 : 6;
+  u16 pos22 : 9;
+  u16 affine22 : 5;
+  u16 rest22 : 2;
+};
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 

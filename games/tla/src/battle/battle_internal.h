@@ -13,6 +13,7 @@
 #include "djinn_ids.h"
 #include "game/owner_state.h"
 #include "system/input.h"
+#include "system/heap_slots.h"
 #include "system/main_routine_work.h"
 #include "system/fixed_point_position.h"
 #include "system/iwram_call.h"

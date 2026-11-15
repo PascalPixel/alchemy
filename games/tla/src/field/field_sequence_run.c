@@ -14,7 +14,6 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "field/object.h"
-#include "scene/shared.h"
 #include "macros.h"
 
 extern u8 gMapGridCellBuffer[];

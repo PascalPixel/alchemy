@@ -34,7 +34,6 @@
 #include "field/event_commands.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "game/owner_state.h"
 #include "debug/debug.h"
 #include "shared/jupiter_lighthouse_aerie.h"

@@ -27,7 +27,6 @@
 #include "field/particle.h"
 
 #include "scene/kibombo.h"
-#include "scene/shared.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"

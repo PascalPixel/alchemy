@@ -58,15 +58,15 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
       MapGrid_GetCellAt(cx << 20, cz << 20, 2)->collisionCode = 0;
-      n = gSceneLocalState.count;
+      n = gTouchCopies.count;
       if (n < 64) {
-        gSceneLocalState.copies[n].toX = toX + dx;
-        gSceneLocalState.copies[n].toZ = toZ + dz;
-        gSceneLocalState.copies[n].fromX = x + dx;
-        gSceneLocalState.copies[n].fromZ = z + dz;
-        gSceneLocalState.copies[n].cellX = cell[i].x;
-        gSceneLocalState.copies[n].cellZ = cell[i].z;
-        gSceneLocalState.count++;
+        gTouchCopies.copies[n].toX = toX + dx;
+        gTouchCopies.copies[n].toZ = toZ + dz;
+        gTouchCopies.copies[n].fromX = x + dx;
+        gTouchCopies.copies[n].fromZ = z + dz;
+        gTouchCopies.copies[n].cellX = cell[i].x;
+        gTouchCopies.copies[n].cellZ = cell[i].z;
+        gTouchCopies.count++;
       }
     }
   }

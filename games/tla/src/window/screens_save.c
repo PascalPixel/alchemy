@@ -8,7 +8,6 @@
 #include "system/io_write.h"
 #include "gamepak/far_call/game.h"
 #include "system/system.h"
-#include "scene/shared.h"
 #include "window/screens.h"
 
 #define SAVE_FILE_COUNT 3
@@ -366,8 +365,6 @@ s32 Save_ScanFileSummaries(void) {
 }
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
-
-extern s8 gSceneLocalState[];
 
 // Builds the save header.
 /// Prepares the save buffer for writing: stamps the main routine's work with

@@ -169,7 +169,6 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 }
 
 #include "types.h"
-#include "scene/shared.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"

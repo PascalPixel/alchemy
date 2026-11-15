@@ -31,8 +31,6 @@
 
 // The views the parts above keep end here; the parts below see the names as
 // their headers declare them.
-#undef EncounterWork
-#undef Data_02018000
 #undef GameFlag_GetByte
 #undef Unit_CalculateFar
 

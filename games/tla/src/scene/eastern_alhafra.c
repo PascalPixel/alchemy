@@ -26,7 +26,6 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/particle.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
@@ -46,6 +45,7 @@
 #include "field/field_event.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "scene/falling_rocks.h"
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE

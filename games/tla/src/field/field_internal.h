@@ -10,6 +10,7 @@
 #include "types.h"
 #include "resource_ids.h"
 #include "system/scene.h"
+#include "system/heap_slots.h"
 #include "field/sprite.h"
 #include "field/perspective.h"
 #include "field/world_map_affine.h"

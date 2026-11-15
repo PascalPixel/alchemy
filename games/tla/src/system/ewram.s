@@ -694,8 +694,8 @@ Data_02017400:
 	.global Data_020176e8
 Data_020176e8:
 	.space 0x00000918
-	.global Data_02018000
-Data_02018000:
+	.global gActorSpriteSlots
+gActorSpriteSlots:
 	.space 0x00001600
 	.global Data_02019600
 Data_02019600:

@@ -13,8 +13,6 @@
 #include "resource_ids.h"
 #include "system/save.h"
 
-extern u16 gAnyFileCleared;
-
 extern s16 gSaveSlot;
 
 /// Starts a new game: clears the main routine's work and restarts at the
@@ -516,7 +514,6 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-extern s8 gSceneLocalState[];
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
 /// flags and the owners by DMA, builds the characters, sets the defaults (the
 /// button layout, Felix and Jenna in the party, their first Psynergy, 200

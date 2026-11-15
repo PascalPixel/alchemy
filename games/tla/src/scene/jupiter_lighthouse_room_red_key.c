@@ -31,7 +31,6 @@
 #include "field/event_commands.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
@@ -51,6 +50,8 @@
 #include "field/field_effect.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "scene/cycle_pictures.h"
+#include "scene/orbit.h"
 
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.

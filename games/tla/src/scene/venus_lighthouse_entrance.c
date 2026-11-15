@@ -32,7 +32,6 @@
 #include "window/item_icon.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "graphics/resource.h"
 #include "scene_ids.h"
 #include "system/ram_buffer.h"

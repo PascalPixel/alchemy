@@ -20,10 +20,10 @@
 #include "field/event_inline.h"
 #include "version.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/iwram_call.h"
 #include "field/field_event.h"
 #include "text/msg_ids.h"
+#include "scene/cycle_pictures.h"
 
 /// Set once Piers has come home to his uncle
 /// (LemuriaInteriors_PiersVisitsUncle).

@@ -1833,8 +1833,6 @@ void FieldPsynergy_RunTouchedEvents(void) {
   }
 }
 
-extern struct TouchCopies gSceneLocalState;
-
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
 /// Clears what Cyclone blew away: each cell of FieldWork.psynergyCells that
@@ -1866,26 +1864,24 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
       MapGrid_CopyCellPictureCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
                                           windowX + x, windowZ + z);
       MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->collisionCode = 0;
-      n = gSceneLocalState.count;
+      n = gTouchCopies.count;
       if (n < 64) {
-        gSceneLocalState.copies[n].toX = sourceX + x;
-        gSceneLocalState.copies[n].toZ = sourceZ + z;
-        gSceneLocalState.copies[n].fromX = windowX + x;
-        gSceneLocalState.copies[n].fromZ = windowZ + z;
-        gSceneLocalState.copies[n].cellX = cell[i].x;
-        gSceneLocalState.copies[n].cellZ = cell[i].z;
-        gSceneLocalState.count++;
+        gTouchCopies.copies[n].toX = sourceX + x;
+        gTouchCopies.copies[n].toZ = sourceZ + z;
+        gTouchCopies.copies[n].fromX = windowX + x;
+        gTouchCopies.copies[n].fromZ = windowZ + z;
+        gTouchCopies.copies[n].cellX = cell[i].x;
+        gTouchCopies.copies[n].cellZ = cell[i].z;
+        gTouchCopies.count++;
       }
     }
   }
 }
 #undef BOW_NEXT_PHASE
 
-/* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[];
- * f0e150c has extern struct TouchCopies gSceneLocalState; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1938: incompatible types
- * in initialization. */
+/* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[]
+ * under a name of its own; with the one declaration the restore's address is
+ * shared with the copies above and its loop moves (29 lines in tla-en). */
 extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
 
 /// For each entry of the event work's list at 0x174c, calls

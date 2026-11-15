@@ -35,7 +35,6 @@
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/call.h"
 #include "system/field_effect.h"
 #include "field/map_grid.h"

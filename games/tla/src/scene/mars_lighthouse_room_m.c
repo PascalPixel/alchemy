@@ -31,7 +31,6 @@
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
-#include "scene/shared.h"
 #include "scene_ids.h"
 #include "system/ram_buffer.h"
 #include "system/frame.h"

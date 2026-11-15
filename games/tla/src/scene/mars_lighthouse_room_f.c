@@ -39,7 +39,6 @@
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "scene/mars_lighthouse_star_room.h"
-#include "scene/shared.h"
 #include "scene_ids.h"
 #include "types.h"
 #include "system/system.h"

@@ -17,7 +17,6 @@
 #include "system/frame.h"
 #include "field/map_grid.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
@@ -461,8 +460,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// shrinks and rises away over 8 frames.
 void AirsRock_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct EffectWork *effect =
-      (struct EffectWork *)Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *gust, *spark;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
@@ -480,19 +478,19 @@ void AirsRock_BlowGust(void) {
   gust->scaleY = Q16_ONE / 5;
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->sprite)->priority =
-      ((struct FieldSprite *)effect->target->sprite)->priority;
-  Actor_SetMoveTarget(gust, effect->target->x.fixed, effect->target->y.fixed,
-                      effect->target->z.fixed - px(1));
+      ((struct FieldSprite *)effect->child->sprite)->priority;
+  Actor_SetMoveTarget(gust, effect->child->x.fixed, effect->child->y.fixed,
+                      effect->child->z.fixed - px(1));
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_WaitForMove(gust);
-  gust->z.fixed = effect->target->z.fixed - px(1);
+  gust->z.fixed = effect->child->z.fixed - px(1);
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(0x2a0, effect->target->x.fixed,
-                                                 0, effect->target->z.fixed);
+      spark = (struct Actor *)Import_ActorCreate(0x2a0, effect->child->x.fixed,
+                                                 0, effect->child->z.fixed);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -508,16 +506,16 @@ void AirsRock_BlowGust(void) {
     if (gFrameCount & 1) {
       gust->scaleX += 655;
       gust->scaleY += 655;
-      Actor_SetSpriteColor(effect->target, 15);
+      Actor_SetSpriteColor(effect->child, 15);
     } else {
-      Actor_SetSpriteColor(effect->target, 4);
+      Actor_SetSpriteColor(effect->child, 4);
     }
     Event_Wait(1);
   }
-  Actor_SetSpriteColor(effect->target, 0);
+  Actor_SetSpriteColor(effect->child, 0);
   Sound_Play(SE_WHOOSH);
-  cell.x = FIELD_CELL(effect->target->x.fixed);
-  cell.z = FIELD_CELL(effect->target->z.fixed);
+  cell.x = FIELD_CELL(effect->child->x.fixed);
+  cell.z = FIELD_CELL(effect->child->z.fixed);
   angle = (leader->facing + 0x2000) & 0xc000;
   delta.x = Trig_Cos(angle) >> 16;
   delta.z = Trig_Sin(angle) >> 16;
@@ -532,8 +530,8 @@ void AirsRock_BlowGust(void) {
   flag >>= 8;
   flag -= 1;
   steps -= 2;
-  newX = effect->target->x.part[0].pixel + ((steps * delta.x) << 3);
-  newZ = effect->target->z.part[0].pixel + ((steps * delta.z) << 3);
+  newX = effect->child->x.part[0].pixel + ((steps * delta.x) << 3);
+  newZ = effect->child->z.part[0].pixel + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
   cell.x = newX;
   cell.z = newZ;

@@ -31,7 +31,6 @@
 #include "field/object.h"
 #include "scene/scene.h"
 #include "flags.h"
-#include "scene/shared.h"
 #include "field/field_effect.h"
 #include "field/call.h"
 #include "system/iwram_call.h"

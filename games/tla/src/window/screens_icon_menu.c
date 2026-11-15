@@ -14,11 +14,12 @@
 #include "gamepak/far_call/game.h"
 #include "window/item_icon.h"
 #include "window/menu_list.h"
-#include "scene/shared.h"
 #include "gamepak/far_call/battle.h"
 #include "window/screens.h"
 #include "window/window.h"
 #include "resource_ids.h"
+
+extern u16 gData_02003a74[];
 
 // Where the Japanese layout differs: the summon window, the item window and
 // the summon's Djinn costs, in tiles; the x of the acting member's icon and of

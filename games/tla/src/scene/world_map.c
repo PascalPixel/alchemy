@@ -32,7 +32,6 @@
 #include "field/event_commands.h"
 #include "scene/scene.h"
 #include "scene/staff_credit.h"
-#include "scene/shared.h"
 #include "window/window.h"
 #include "scene_ids.h"
 #include "system/io_reg.h"

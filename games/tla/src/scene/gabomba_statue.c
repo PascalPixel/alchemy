@@ -45,7 +45,6 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 #include "window/item_icon.h"
 #include "scene/gabomba_statue.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "scene_ids.h"
 #include "system/system.h"
 #include "battle/battle.h"

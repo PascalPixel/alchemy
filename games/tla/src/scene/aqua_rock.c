@@ -8,6 +8,7 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "scene/dust.h"
 
 #include "../field/actor_prepare.c"
 
@@ -138,7 +139,6 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "field/event.h"
 #include "field/ground_mask.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/task.h"
 #include "field/actor.h"
 #include "system/iwram_call.h"

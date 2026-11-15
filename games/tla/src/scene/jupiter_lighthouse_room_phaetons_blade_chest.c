@@ -31,7 +31,6 @@
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/call.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"

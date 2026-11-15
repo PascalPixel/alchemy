@@ -23,11 +23,17 @@
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "scene/lemurian_ship.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
+
+struct SwingWork {
+  u32 unk00;
+  s32 arg;
+  struct SwingPoint points[16];
+  u16 values[4];
+};
 
 /// The mud room's actors (SceneId_TaopoSwampMud).
 enum TaopoSwampMudActorId {

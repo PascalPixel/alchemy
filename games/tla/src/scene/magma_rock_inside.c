@@ -7,6 +7,7 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "djinn_ids.h"
+#include "scene/falling_rocks.h"
 
 #include "../field/actor_prepare.c"
 
@@ -50,7 +51,6 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "field/object.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/scene.h"
 #include "system/ram_buffer.h"
 #include "field/map_grid.h"

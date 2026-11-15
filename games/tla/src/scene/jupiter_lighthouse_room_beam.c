@@ -24,7 +24,6 @@
 #include "field/event_commands.h"
 #include "field/cell_target.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/actor.h"

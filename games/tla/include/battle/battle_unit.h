@@ -443,4 +443,15 @@ extern struct Unit gCharacterUnits[];
 /// A unit's name buffer: 14 characters and the 0 that ends them.
 #define UNIT_NAME_SIZE 15
 
+struct UnitBaseStats {
+  s16 hp;
+  s16 pp;
+  s16 hpGauge;
+  s16 ppGauge;
+  u16 attack;
+  u16 defense;
+  u16 agility;
+  u8 luck;
+};
+
 #endif

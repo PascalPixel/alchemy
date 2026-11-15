@@ -33,7 +33,6 @@
 #include "field/event_commands.h"
 #include "scene/scene.h"
 #include "scene/mars_lighthouse_entrance.h"
-#include "scene/shared.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"

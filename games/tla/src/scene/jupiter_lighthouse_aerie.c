@@ -23,7 +23,6 @@
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
 #include "system/io_reg.h"

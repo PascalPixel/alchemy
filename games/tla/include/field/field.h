@@ -1120,4 +1120,10 @@ void Scene_ChooseMusic(void);
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant);
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
 
+struct WorldCamera {
+  u8 unk000[0x11c];
+  u16 unk11c;
+  u16 yaw;
+};
+
 #endif

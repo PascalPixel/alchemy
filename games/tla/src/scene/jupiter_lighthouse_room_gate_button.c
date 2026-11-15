@@ -31,7 +31,6 @@
 #include "debug/debug.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "system/irq.h"
 #include "field/field_sprite.h"
 #include "field/call.h"

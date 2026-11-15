@@ -33,6 +33,8 @@
 #include "system/input.h"
 #include "scene_ids.h"
 
+extern u16 gData_02003a74[];
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -990,7 +992,6 @@ UNUSED void LinkLobby_DoNothing(void) {}
 extern u8 MsgLobbyYouHaveSongRequest[];
 extern u8 MsgLobbyComeBackWhenYoureReady[];
 extern u16 gLinkLobby_RequestableSounds[];
-extern s16 gAnyFileCleared;
 
 void Event_Start(void);
 void Event_End(void);

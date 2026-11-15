@@ -10,7 +10,7 @@
 #include "shop/shop.h"
 #include "gamepak/far_call/menu.h"
 #include "system/system.h"
-#include "scene/shared.h"
+#include "window/cursor.h"
 
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member
 /// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a

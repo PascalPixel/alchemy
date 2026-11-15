@@ -7,7 +7,6 @@
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "system/system.h"
-#include "scene/shared.h"
 #include "resource_ids.h"
 
 // The whole effect work block: struct BattleEffectWork names only its first

@@ -187,4 +187,6 @@ s32 Party_AdjustCoins(s32 amount);
 void Party_SetLeaderJenna(void);
 void Party_SetLeaderFelix(void);
 
+extern u8 gInventorySnapshot[];
+
 #endif

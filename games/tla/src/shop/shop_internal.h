@@ -9,6 +9,7 @@
 /// no bytes.
 
 #include "types.h"
+#include "window/cursor.h"
 #include "stddef.h"
 #include "static_assert.h"
 #include "system/ram_buffer.h"
@@ -49,7 +50,6 @@
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/window.h"
 #include "shop/shop.h"
-#include "scene/shared.h"
 #include "window/item_icon.h"
 #include "field/field_particle.h"
 

@@ -12,7 +12,6 @@
 #include "field/object.h"
 #include "gamepak/far_call/field.h"
 #include "system/ram_buffer.h"
-#include "scene/shared.h"
 #include "macros.h"
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)

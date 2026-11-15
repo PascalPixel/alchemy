@@ -26,7 +26,6 @@
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "scene_ids.h"
 #include "graphics/resource.h"
 #include "field/actor_script.h"

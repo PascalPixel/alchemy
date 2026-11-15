@@ -172,8 +172,6 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Event_End();
 }
 
-extern s8 gSceneLocalState[];
-
 /// A Djinni joins. Djinni 19 means the one recorded for the element in the
 /// save (none: nothing happens). With flag 366 set it joins the current owner
 /// by its flag (48 + element * 20 + djinni), otherwise the least loaded owner;

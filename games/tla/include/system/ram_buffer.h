@@ -63,4 +63,7 @@ extern u32 gCellPictures[];
 
 extern void (*gVBlankCallback)(void);
 
+/// A scene's own state in EWRAM, which each scene lays out as it needs.
+extern s8 gSceneLocalState[];
+
 #endif

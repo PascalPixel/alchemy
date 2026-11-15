@@ -56,11 +56,6 @@ void Actor_PlaceBlocks(u16 *actors) {
     leader->y.fixed = leader->groundHeight = height;
 }
 
-/// Only so the shape store has an alias set of its own; the grid holds bytes.
-struct ShapeCell {
-  u8 shape;
-};
-
 struct Actor *Leader_FindActorAhead(void);
 
 /// Takes the block about to move out of the map: the field effect's target

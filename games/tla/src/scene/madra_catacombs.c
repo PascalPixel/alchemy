@@ -23,7 +23,6 @@
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
-#include "scene/shared.h"
 #include "field/actor_script.h"
 #include "battle/battle.h"
 #include "game/game.h"

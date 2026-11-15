@@ -743,7 +743,6 @@ void Prox_TalkToTrainingChild(void) {
 
 void Prox_SearchForParents(void) {
   s32 t0;
-  s32 t8;
 
   t0 = Event_GetFlag(FLAG_MARS_BEACON_LIT);
   if (t0 != 0) {
@@ -759,8 +758,7 @@ void Prox_SearchForParents(void) {
       Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, px(520),
                                  px(360), y << 6);
     }
-    t8 = ((s32)FieldCamera_GetActor());
-    FIELD_AT((t8 + 0x55), u8, 0) = t0;
+    FIELD_AT((((s32)FieldCamera_GetActor()) + 0x55), u8, 0) = t0;
     FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(552, CAMERA_KEEP, 388, 1);
     FieldEvent_Wait(10);
@@ -1442,7 +1440,6 @@ s32 Prox_EndEvent();
 
 void Prox_GiveThanksForBeacon(void) {
   s32 t144;
-  s32 t159;
   s32 t202;
   s32 t207;
   s32 angleC000;
@@ -1678,8 +1675,7 @@ void Prox_GiveThanksForBeacon(void) {
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   }
-  t159 = ((s32)FieldCamera_GetActor());
-  FIELD_AT((t159 + 0x55), u8, 0) = 0;
+  FIELD_AT((((s32)FieldCamera_GetActor()) + 0x55), u8, 0) = 0;
   FieldCamera_MoveTo(158, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(ACTOR_CHILD_SENT_OUTSIDE, 4, 10);

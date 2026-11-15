@@ -184,8 +184,6 @@ void LemuriaSpring_InitializeTossSimulation(void);
 /// 1 and flag 0x200 is set, it sets the blend's weights again.
 s32 Scene_Initialize(void) {
   s32 t0;
-  s32 t3;
-  s32 t4;
   s32 blend;
   s32 alpha;
 
@@ -200,10 +198,10 @@ s32 Scene_Initialize(void) {
   FIELD_AT(0x4000052, u16, 0) = alpha;
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS, 2);
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, 2);
-  t3 = (s32)Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS);
-  FIELD_AT((t3 + 0x23), u8, 0) = 2;
-  t4 = (s32)Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS);
-  FIELD_AT((t4 + 0x23), u8, 0) = 2;
+  FIELD_AT(((s32)Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS) + 0x23), u8,
+           0) = 2;
+  FIELD_AT(((s32)Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS) + 0x23), u8,
+           0) = 2;
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
     LemuriaSpring_InitializeTossSimulation();

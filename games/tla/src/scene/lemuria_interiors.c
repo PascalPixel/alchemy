@@ -1354,7 +1354,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
       ACTOR_FACES_MOTION;
   target->timer = 3;
   wait(1);
-  target->update = 0;
+  target->update = NULL;
   Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_MAN_ASKING_FOR_PIERS), 1);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);

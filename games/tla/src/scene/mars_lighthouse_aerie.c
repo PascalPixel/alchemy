@@ -2311,7 +2311,7 @@ L_0200bcea:
   FieldPsynergy_StopMindReadWave();
   MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
   Actor_FaceDirectionAndWait(24579, FACING_SOUTH);
-  ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = 0;
+  ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
   // Read as a word, so the store to the actor before it may alias.
   later =
       (struct AerieEventWork *)((struct HeapWords *)Ram_HeapSlots)->eventWord;

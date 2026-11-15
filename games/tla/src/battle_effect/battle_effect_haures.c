@@ -15,7 +15,7 @@ struct WingVertex {
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
 extern struct WingVertex gHaures_WingCorners[];
-extern const u16 gHaures_FeatherPoints[][2];
+extern const u16 gHaures_BodyPiecePoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
@@ -25,6 +25,17 @@ static __inline__ void PLACE(s32 x, s32 y) {
   Transform_ApplyTranslation(px(x), px(y), 0);
 }
 #define HAURES_FRAMES 92
+/// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
+/// flames (sprite 660) and two small dots (sprite 661), then the 64x64 stamp.
+#define HAURES_BODY_PIECES 11
+#define HAURES_FLAMES 12
+#define HAURES_FLAME_COUNT 4
+#define HAURES_DOTS 16
+#define HAURES_DOT_COUNT 2
+#define HAURES_STAMP 18
+/// The wings: a strip of 32 points, upper and lower edge each, so 31 quads.
+#define HAURES_WING_POINTS 32
+#define HAURES_WING_QUADS (HAURES_WING_POINTS - 1)
 
 /// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
 /// a violet glow and a rune flashes; the demon rears in a burning cave, then
@@ -86,28 +97,28 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   morphStep = 0;
   dived = 0;
   BattleEffect_SpawnObjects(2, SPRITE_HAURES, 2);
-  for (i = 0; i != 4; i++) {
+  for (i = 0; i != HAURES_FLAME_COUNT; i++) {
     sprite = Sprite_CreateFar(0x294);
-    work->sprites[12 + i] = sprite;
+    work->sprites[HAURES_FLAMES + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[12 + i];
+        struct FieldSprite *added = work->sprites[HAURES_FLAMES + i];
 
         added->priority = 1;
         added->blendMode = 1;
       }
     }
   }
-  for (i = 0; i != 2; i++) {
+  for (i = 0; i != HAURES_DOT_COUNT; i++) {
     sprite = Sprite_CreateFar(0x295);
-    work->sprites[16 + i] = sprite;
+    work->sprites[HAURES_DOTS + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[16 + i];
+        struct FieldSprite *added = work->sprites[HAURES_DOTS + i];
 
         added->priority = 1;
       }
@@ -115,7 +126,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   }
   sprite =
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
-  ((struct FieldSprite **)work->sprites)[18] = sprite;
+  ((struct FieldSprite **)work->sprites)[HAURES_STAMP] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + OBJ_VRAM0;
   {
@@ -143,7 +154,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       w[i] = (w[i] >> 1) & mask;
     }
   }
-  for (i = 0; i != 31; i++) {
+  for (i = 0; i != HAURES_WING_QUADS; i++) {
     gHaures_WingStrip[i * 8 + 0] = i * 2;
     gHaures_WingStrip[i * 8 + 1] = i * 2 + 1;
     gHaures_WingStrip[i * 8 + 2] = i * 2 + 2;
@@ -151,6 +162,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     gHaures_WingStrip[i * 8 + 5] = i * 2 + 3;
     gHaures_WingStrip[i * 8 + 6] = i * 2 + 2;
   }
+  // The strip ends with a face of no corners, cleared through the end's own
+  // name.
   Data_02010be0[0] = 0;
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;
@@ -202,7 +215,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       *dst = b << 10 | (i + 2) << 5 | r;
     }
   }
-  BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_MossCaveBackdrop, 0);
   frame = 0;
   if (!(gInput.repeat & (KEY_A | KEY_B))) {
     do {
@@ -219,7 +233,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         {
           u8 *q = shades;
 
-          for (i = 0; i != 31; i++, q += 2) {
+          for (i = 0; i != HAURES_WING_QUADS; i++, q += 2) {
             q[0] = 1;
             q[1] = 1;
           }
@@ -229,7 +243,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           struct Particle *p = work->particles;
 
           for (i = 0; i != 4; i++, p++, particleX++) {
-            p->x = *particleX << 16;
+            p->x = px(*particleX);
             p->y = px(16);
             p->velocityX = 0;
             p->velocityY = 0;
@@ -253,7 +267,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->y = px(112);
           p->variant = 0;
         }
-        for (i = 0; i != 32; i++) {
+        for (i = 0; i != HAURES_WING_POINTS; i++) {
           gHaures_WingCorners[i].upper.x =
               Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
           gHaures_WingCorners[i].upper.y =
@@ -308,9 +322,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                 if (p->variant == 0) {
                   wingPlace[0] = p->x;
                   wingPlace[2] = p->y;
-                  Render_ApplyProjectedPlacementFar(work->sprites[16 + (i & 1)],
-                                                    wingPlace,
-                                                    gHaures_UnitScale, 0);
+                  Render_ApplyProjectedPlacementFar(
+                      work->sprites[HAURES_DOTS + (i & 1)], wingPlace,
+                      gHaures_UnitScale, 0);
                   BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 8);
                   if (Q_16_16_UPPER_HALF(p->y) > 119) {
                     p->variant = 1;
@@ -318,11 +332,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                 } else if (p->variant <= 23) {
                   wingPlace[0] = p->x;
                   wingPlace[2] = p->y;
-                  Sprite_StartAnimationFar(work->sprites[12 + (i & 1)],
-                                           (p->variant / 6) & 3);
-                  Render_ApplyProjectedPlacementFar(work->sprites[12 + (i & 1)],
-                                                    wingPlace,
-                                                    gHaures_UnitScale, 0);
+                  Sprite_StartAnimationFar(
+                      work->sprites[HAURES_FLAMES + (i & 1)],
+                      (p->variant / 6) & 3);
+                  Render_ApplyProjectedPlacementFar(
+                      work->sprites[HAURES_FLAMES + (i & 1)], wingPlace,
+                      gHaures_UnitScale, 0);
                   p->variant++;
                 }
               }
@@ -347,7 +362,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           if (sh > 0) {
             sh = 0;
           }
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->shade = sh;
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
@@ -366,7 +381,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = work->sheet + 0x1000;
-          model->kind = 9;
+          model->kind = MODEL_SHADED;
           model->texture = &texture;
           model->mesh = gBattleEffect_SmallSquareMeshReversed;
           model->vertices = verts;
@@ -398,30 +413,31 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               morphStep = 0;
               morph = next;
             }
-            for (i = 0; i != 32; i++) {
-              wing[i].upper.y = -(gHaures_WingShapes[i + a * 32] +
-                                  n *
-                                      (gHaures_WingShapes[i + b * 32] -
-                                       gHaures_WingShapes[i + a * 32]) /
-                                      gHaures_WingMorphSteps[a]);
+            for (i = 0; i != HAURES_WING_POINTS; i++) {
+              wing[i].upper.y =
+                  -(gHaures_WingShapes[i + a * HAURES_WING_POINTS] +
+                    n *
+                        (gHaures_WingShapes[i + b * HAURES_WING_POINTS] -
+                         gHaures_WingShapes[i + a * HAURES_WING_POINTS]) /
+                        gHaures_WingMorphSteps[a]);
             }
-            for (i = 0; i != 32; i++) {
+            for (i = 0; i != HAURES_WING_POINTS; i++) {
               gHaures_WingCorners[i].upper.x = i * 4 - 64;
             }
           }
           model->flags = 0;
-          model->kind = 1;
+          model->kind = MODEL_SOLID;
           model->mesh = strip;
           model->vertices = buffer;
           if ((u32)(frame - 236) <= 31) {
             s32 v = frame - 235;
 
-            for (i = 0; i != 31; i++) {
+            for (i = 0; i != HAURES_WING_QUADS; i++) {
               gHaures_WingShades[i * 2] = v;
               gHaures_WingShades[i * 2 + 1] = v;
             }
           }
-          model->shade = (s32)shades;
+          model->shade = (long)shades;
           Render_TransformVertices(gHaures_WingCorners, buffer, 64);
           Render_DrawModelList(model);
           Heap_Release(model);
@@ -449,7 +465,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           for (i = 0; i != 2; i++) {
             bodyPlace[0] = position.x;
             bodyPlace[1] = px(272) - (position.y + i * px(32));
-            bodyPlace[2] = 0x1000000;
+            bodyPlace[2] = px(256);
             Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                               (s32 *)&req, 0);
           }
@@ -485,9 +501,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           }
           bodyPlace[0] = position.x;
           bodyPlace[1] = px(120) - position.y;
-          bodyPlace[2] = 0x800000;
-          Render_ApplyProjectedPlacementFar(work->sprites[18], bodyPlace,
-                                            (s32 *)&req, 0);
+          bodyPlace[2] = px(128);
+          Render_ApplyProjectedPlacementFar(work->sprites[HAURES_STAMP],
+                                            bodyPlace, (s32 *)&req, 0);
         }
       }
       if (frame == 267) {
@@ -519,7 +535,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                      work->sheet, 1, 0);
           Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+              SHEET_PALETTE_BYTES);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
         }
         verts = Heap_AllocEwram(32);
@@ -528,7 +545,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         burstTexture.logHeight = 7;
         burstTexture.pixels = SCRATCH;
         model->shade = 0;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &burstTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
@@ -580,19 +597,19 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           dived = 1;
           Sprite_DestroyFar(work->sprites[0]);
           Sprite_DestroyFar(work->sprites[1]);
-          for (i = 0; i != 4; i++) {
-            Sprite_DestroyFar(work->sprites[12 + i]);
+          for (i = 0; i != HAURES_FLAME_COUNT; i++) {
+            Sprite_DestroyFar(work->sprites[HAURES_FLAMES + i]);
           }
-          for (i = 0; i != 2; i++) {
-            Sprite_DestroyFar(work->sprites[16 + i]);
+          for (i = 0; i != HAURES_DOT_COUNT; i++) {
+            Sprite_DestroyFar(work->sprites[HAURES_DOTS + i]);
           }
-          Sprite_DestroyFar(work->sprites[18]);
+          Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
           BattleEffect_SpawnObjects(11, SPRITE_HAURES, 2);
           q = gHaures_PartPoints;
           {
             struct Particle *p = work->particles;
 
-            for (i = 0; i != 31; i++, q += 10, p++) {
+            for (i = 0; i != HAURES_WING_QUADS; i++, q += 10, p++) {
               s32 x = q[0] >> 1;
               s32 y = q[1];
 
@@ -624,14 +641,18 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           velocity.x -= (frame - 397) << 14;
           position.x += velocity.x;
           velocity.y -= (frame - 397) << 13;
-          position.y +=
-              velocity.x; // velocity.x, not velocity.y, as the ROM has it
+          // BUG: the fall adds the horizontal speed; velocity.y is never used.
+#ifdef BUGFIX
+          position.y += velocity.y;
+#else
+          position.y += velocity.x;
+#endif
         }
-        for (i = 0; i != 11; i++) {
-          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
+        for (i = 0; i != HAURES_BODY_PIECES; i++) {
+          bodyPlace[0] = px(gHaures_BodyPiecePoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
         }
@@ -643,7 +664,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           s32 none;
           s32 j;
 
-          for (j = 0, none = 0; j != 31; j++) {
+          for (j = 0, none = 0; j != HAURES_WING_QUADS; j++) {
             for (i = 0; i != 4; i++) {
               s8 *dst = (s8 *)cells + j * 16 + i * 4;
 
@@ -667,10 +688,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         wideTexture.logWidth = 8;
         wideTexture.logHeight = 7;
         wideTexture.pixels = buffer;
-        model->kind = 1;
+        model->kind = MODEL_SOLID;
         model->texture = &wideTexture;
         model->vertices = verts;
-        model->shade = (s32)shades;
+        model->shade = (long)shades;
         {
           /* FAKEMATCH(dead): a never-true test of the byte scroll. */
           s32 scroll = model->scrollU;
@@ -679,11 +700,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             i = 0;
           }
         }
-        for (i = 0; i != 31; i++) {
+        for (i = 0; i != HAURES_WING_QUADS; i++) {
           gHaures_WingShades[i] = 1;
         }
         {
-          for (i = 0; i != 31; i++) {
+          for (i = 0; i != HAURES_WING_QUADS; i++) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
@@ -732,15 +753,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   if (dived == 0) {
     Sprite_DestroyFar(work->sprites[0]);
     Sprite_DestroyFar(work->sprites[1]);
-    for (i = 0; i != 4; i++) {
-      Sprite_DestroyFar(work->sprites[12 + i]);
+    for (i = 0; i != HAURES_FLAME_COUNT; i++) {
+      Sprite_DestroyFar(work->sprites[HAURES_FLAMES + i]);
     }
-    for (i = 0; i != 2; i++) {
-      Sprite_DestroyFar(work->sprites[16 + i]);
+    for (i = 0; i != HAURES_DOT_COUNT; i++) {
+      Sprite_DestroyFar(work->sprites[HAURES_DOTS + i]);
     }
-    Sprite_DestroyFar(work->sprites[18]);
+    Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
   } else {
-    for (i = 0; i != 11; i++) {
+    for (i = 0; i != HAURES_BODY_PIECES; i++) {
       Sprite_DestroyFar(work->sprites[i]);
     }
   }
@@ -845,20 +866,20 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       t = frame - 20;
       if ((u32)t <= 19) {
         openingScale.x = -0x10001;
-        for (i = 0; i != 11; i++) {
-          bodyPlace[0] = position.x - px(gHaures_FeatherPoints[i][0]);
+        for (i = 0; i != HAURES_BODY_PIECES; i++) {
+          bodyPlace[0] = position.x - px(gHaures_BodyPiecePoints[i][0]);
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       } else {
-        for (i = 0; i != 11; i++) {
-          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
+        for (i = 0; i != HAURES_BODY_PIECES; i++) {
+          bodyPlace[0] = px(gHaures_BodyPiecePoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
-          bodyPlace[2] = 0x1000000;
+              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = px(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
@@ -914,7 +935,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     model->shade = -8;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &bandTexture;
     bandTexture.logWidth = 6;
     bandTexture.logHeight = 5;
@@ -950,7 +971,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     bandTexture.logWidth = 6;
     bandTexture.logHeight = 5;
     model->mesh = gHaures_BandMesh;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     if ((u32)(frame - 56) <= 31) {
       s32 sh = 0;
       s32 v;
@@ -988,7 +1009,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  for (i = 0; i != 11; i++) {
+  for (i = 0; i != HAURES_BODY_PIECES; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -1005,9 +1026,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 /// A mesh triangle: its three vertex numbers and their texture coordinates.
 struct MeshTriangle {
   u8 vertex[3];
-  u8 unk03;
+  u8 unusedA; ///< nothing reads or writes it
   u8 texCoord[3][2];
-  u8 unk0a[2];
+  u8 unusedB[2]; ///< nothing reads or writes them
 };
 
 /// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of

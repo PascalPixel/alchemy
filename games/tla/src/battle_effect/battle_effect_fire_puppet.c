@@ -7,34 +7,14 @@
 
 struct StripQuad;
 
-/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in
- * tla-ja. */
-struct RenderModel__f17bd88 {
-  long kind; // long: see the tag at the model's stores
-  s32 flags;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  long shade; // long: see the tag at the model's stores
-  u8 scrollU;
-  u8 scrollV;
-};
-
-/// The target's motion object, as the effect reads it.
-struct PuppetTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk14;
-  s32 unk18;
-  s32 unk1c;
-};
-
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
+/// The last particle keeps the target's position, and its scale in velocityX
+/// and velocityY.
+#define FIRE_PUPPET_SAVED_TARGET 63
+
+/// Where GhostSkullTexture is decoded in the effect's pictures.
+#define FIRE_PUPPET_GHOST_SKULL 0x4000
 
 /// From the caster rises a flaming arm (33 segments of two vertices each, a
 /// scrolling textured strip) that reaches up and over to 1424 units, with a
@@ -49,11 +29,11 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   u8 *sprites;
-  s32 *camera;
-  struct PuppetTarget *target;
+  struct BattleCamera *camera;
+  struct MotionObject *target;
   struct ScreenPoint pos;
   struct ModelTexture texture;
-  struct RenderModel__f17bd88 *model;
+  struct RenderModel *model;
   s32 endX;
   s32 endY;
   s32 i;
@@ -76,24 +56,25 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   // Default: set for real below, when j reaches 32.
   endX = 0;
   endY = 0;
-  work->particles[63].x = target->x;
-  work->particles[63].y = target->y;
-  work->particles[63].z = target->z;
-  work->particles[63].velocityX = target->unk18;
-  work->particles[63].velocityY = target->unk1c;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].x = target->x;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].y = target->y;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].z = target->z;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityX = target->scaleX;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityY = target->scaleY;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F2,
+                             work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
-      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
+      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
+      SHEET_PALETTE_BYTES);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame == 0) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_GREY, POSE_PARTY_HELD,
                                0, -1);
@@ -106,7 +87,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                                0, -1);
     }
     if (frame == 54) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_POWER_UP);
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
@@ -165,9 +147,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
-      /* FAKEMATCH(signature): RenderModel's kind and shade typed long, whose
-       * alias set. */
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->mesh = buffer;
       model->vertices = projected;
       model->shade = shade;
@@ -196,7 +176,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
-      texture.pixels = work->sheet + 0x4000;
+      texture.pixels = work->sheet + FIRE_PUPPET_GHOST_SKULL;
       model->shade = 0;
       Transform_ApplyTranslation(px(endX), px(endY), 0);
       Transform_ApplyRoll(22384 - (length << 5));
@@ -346,9 +326,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - (8 << 16);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - px(8);
         else
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + (8 << 16);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + px(8);
         spark->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
         spark->variant = (Random16() & 15) + 16;
       }

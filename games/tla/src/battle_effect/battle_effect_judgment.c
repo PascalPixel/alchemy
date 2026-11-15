@@ -46,6 +46,15 @@
 #define JUDGMENT_EXPLOSION_PICTURE_BYTES PICTURE_BYTES(JUDGMENT_EXPLOSION)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 
+/// Where FireRingTexture is decoded in the map cell buffer.
+#define JUDGMENT_FIRE_RING 0x4000
+
+/// The rings are drawn at JUDGMENT_RING_LEVEL into a square picture at the
+/// sheet's start, cleared each frame.
+#define JUDGMENT_RINGS_WIDTH 120
+#define JUDGMENT_RINGS_HEIGHT 120
+#define JUDGMENT_RING_LEVEL 20
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -89,19 +98,22 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-  Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-  pal += 512;
+  Iwram_CopyWords((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+  pal += OBJ_PLTT_SIZE;
   Decompress_TaggedLz(pal, cells);
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
     struct Sprite *obj = EffectSprite_CreateWithTiles(
         32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
     obj->image.priority = 2;
     work->sprites[i] = obj;
-    Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+    Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                         cells + i * OBJ_32X32_8BPP_BYTES,
+                         OBJ_32X32_8BPP_BYTES);
   }
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -116,7 +128,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                             Ram_MapCellBuffer + 0x4000, 0, 0);
+                             Ram_MapCellBuffer + JUDGMENT_FIRE_RING, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
@@ -136,14 +148,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         struct Sprite *obj = work->sprites[i];
 
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
-                             Ram_MapCellBuffer + i * 0x400, 0x400);
+                             Ram_MapCellBuffer + i * OBJ_32X32_8BPP_BYTES,
+                             OBJ_32X32_8BPP_BYTES);
       }
       depth = -px(64);
       zoom = Q16_ONE * 8;
@@ -202,8 +215,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (frame > 75 && (i == 8 || i == 12 || i == 15)) {
         continue;
       }
-      place[0] = ((i % 4) << 21) + (152 << 15);
-      place[2] = ((i / 4) << 21) + depth;
+      place[0] = px((i % 4) * 32) + px(76);
+      place[2] = px((i / 4) * 32) + depth;
       Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                         0);
     }
@@ -223,24 +236,29 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame == 72) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
+        /* FAKEMATCH(dead): the push with an empty once-only block before each
+         * of its three stores (QUEUE_PUSH_PARTED); as IO_WRITE_QUEUE_PUSH, 23
+         * of 2680 instructions differ in tla-en. */
         QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
-                          (u32)(cells + i * 0x400), 0x84000100);
+                          (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
+                          DMA_COPY_WORDS(0x100));
       }
     }
     if (frame == 76) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, 512);
-      pal += 512;
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
+      pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
                 (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
-            (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400), 0x84000100);
+            (u32)(PassBuffer(Ram_MapCellBuffer) + i * OBJ_32X32_8BPP_BYTES),
+            DMA_COPY_WORDS(0x100));
       }
     }
 
@@ -341,9 +359,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = Ram_MapCellBuffer + 0x4000;
+      texture.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       model->texture = &texture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       if (frame > 151) {
@@ -374,7 +392,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct Sprite *obj = Sprite_CreateFar(0x28d);
+    struct Sprite *obj = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = obj;
     if (obj) {
@@ -401,9 +419,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   }
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
-  REG_BG2X = -0x3c00;
+  REG_BG2X = -(60 << 8);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   cx = 60;
@@ -414,7 +433,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   sx = 8;
   rings = 2;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Iwram_FillWordsEntry(work->sheet, 0x3840, 0);
+  Iwram_FillWordsEntry(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
 
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != JUDGMENT_FRAMES; frame++) {
@@ -442,7 +461,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = JUDGMENT_SWEEP_BEACH;
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
@@ -454,14 +473,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 318) {
-      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == JUDGMENT_SWEEP_EXPLOSION) {
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
@@ -473,7 +493,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 66) {
       volatile u16 *c = &BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, c++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
         *c ^= RGB_WHITE;
       }
     }
@@ -482,7 +502,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 70) {
-      BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
+      BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                  (s32)&ResourceId_AerialViewBackdrop, 7);
     }
     if (frame == JUDGMENT_SWEEP_BEACH) {
       cx = 112;
@@ -490,16 +511,18 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       ring = 0;
       rings = 4;
       squash = 8;
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == JUDGMENT_SWEEP_FOREST) {
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct Particle *p = work->particles;
 
@@ -514,7 +537,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == JUDGMENT_SWEEP_RETURN) {
       BattleEffect_SetupBlendedDisplay();
-      IWRAM_FILL_WORDS(work->sheet, 0x3840, 0);
+      IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -630,9 +653,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x8f800;
       glare.logWidth = 7;
       glare.logHeight = 7;
-      glare.pixels = Ram_MapCellBuffer + 0x4000;
+      glare.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       shade = 0;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &glare;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
@@ -675,26 +698,34 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             top = cy - (slope * sx) / 8;
             if (top < 0)
               top = 0;
-            if (bottom > 119)
-              bottom = 119;
+            if (bottom > JUDGMENT_RINGS_HEIGHT - 1)
+              bottom = JUDGMENT_RINGS_HEIGHT - 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
             right = cx + half + 1;
             left = cx - half + 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
 
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
@@ -703,8 +734,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             if (dx > 1000)
               top = 0;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites;
+             * without it, 204 of 2680 instructions differ in tla-en. */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -712,26 +743,34 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             top = cy - (radius * sx) / 8;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
             if (top < 0)
               top = 0;
-            if (bottom > 119)
-              bottom = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (bottom > JUDGMENT_RINGS_HEIGHT - 1)
+              bottom = JUDGMENT_RINGS_HEIGHT - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
             right = cx + halfSlope + 1;
             left = cx - halfSlope + 1;
             if (left < 0)
               left = 0;
-            if (right > 119)
-              right = 119;
-            work->sheet[bottom * 120 + right] = 20;
-            work->sheet[top * 120 + right] = 20;
-            work->sheet[bottom * 120 + left] = 20;
-            work->sheet[top * 120 + left] = 20;
+            if (right > JUDGMENT_RINGS_WIDTH - 1)
+              right = JUDGMENT_RINGS_WIDTH - 1;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + right] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[bottom * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
+            work->sheet[top * JUDGMENT_RINGS_WIDTH + left] =
+                JUDGMENT_RING_LEVEL;
 
             err = err - slope * 2 - 1;
             if (err < 0) {

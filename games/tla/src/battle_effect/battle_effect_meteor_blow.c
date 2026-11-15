@@ -18,25 +18,16 @@ struct MeteorStar {
 
 extern const struct Scale gMeteorBlow_DoubleScale;
 
-/* VIEW(meteor_blow): tag struct RenderModel as struct RenderModel__meteor_blow;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
- * tla-en. */
-struct RenderModel__meteor_blow {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
 
 #define METEOR_BLOW_FRAMES 50
+
+/// Where BillowTexture is decoded in the effect's pictures.
+#define METEOR_BLOW_BILLOW 0x4000
+
+/// Where FlameBandTexture is decoded in the effect's pictures.
+#define METEOR_BLOW_FLAME_BAND 0x5000
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
@@ -108,10 +99,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
-  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
+  IWRAM_FILL_WORDS(map, 256 * 128, CANVAS_FILL_WORD(1));
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, BATTLE_BACKGROUND_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(1, 0x28a, 1);
+  BattleEffect_SpawnObjects(1, SPRITE_METEOR, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = Q_8_8(1);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
@@ -153,7 +144,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   mode = 3;
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  // DEAD: both fields are set again before anything reads them.
+  // DEAD: both fields are set again before anything reads them; the ROM keeps\n
+  // // the two stores.
   EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_FRAME + 126);
@@ -207,7 +199,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
     }
     if (frame > 128) {
@@ -220,7 +212,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       scale = Q16_ONE;
     }
-    // DEAD: frame never reaches 1600 here; the source keeps the test.
+    // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
+    // branch.
     if (frame <= 1599) {
       u16 *dst = (u16 *)((u8 *)work + 0x7640);
       s32 value = work->frame;
@@ -253,7 +246,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           g = RGB_LEVEL_MAX;
         *dst++ = RGB(g >> 1, g, b);
       }
-      for (; i != 160; i++) {
+      for (; i != DISPLAY_HEIGHT; i++) {
         *dst++ = 0;
       }
     }
@@ -272,7 +265,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 5;
       texture.pixels = work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->mesh = triangles;
       model->vertices = projected;
@@ -305,15 +298,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       Heap_Release(model);
     } else {
-      // DEAD: frame is at most 115 here, so the second arm never runs; the
-      // source keeps both tests.
+      // DEAD: frame is at most 115 here, so the second arm never runs; the ROM
+      // keeps both compares and the arm.
       if (frame <= 159) {
-        pitch = Q_16_16_TO_INT((pitch << 16) + (256 << 16));
+        pitch = Q_16_16_TO_INT(px(pitch) + px(256));
       } else if (frame <= 191) {
         pitch = Q_16_16_TO_INT(((u16)pitch - frame * 8 + 1216) << 16);
       }
       if (frame <= 47) {
-        yaw = Q_16_16_TO_INT((yaw << 16) + (256 << 16));
+        yaw = Q_16_16_TO_INT(px(yaw) + px(256));
       } else if (frame <= 111) {
         yaw = Q_16_16_TO_INT(((u16)yaw - frame * 4 + 448) << 16);
       }
@@ -401,12 +394,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
-  // DEAD: frame 0 sets hx and hz again before any read.
+  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both\n //
+  // moves.
   hx = 200;
   hz = 0;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BG2Y = -0x1000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -421,10 +415,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4000, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             work->sheet + METEOR_BLOW_BILLOW, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                             work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
@@ -439,7 +433,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
-    struct RenderModel__meteor_blow *model;
+    struct RenderModel *model;
     s32 angle;
     s32 back;
     s32 shade;
@@ -511,8 +505,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     model->shade = shade;
     waveTexture.logWidth = 6;
     waveTexture.logHeight = 6;
-    waveTexture.pixels = work->sheet + 0x4000;
-    model->kind = 7;
+    waveTexture.pixels = work->sheet + METEOR_BLOW_BILLOW;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_RingMesh;
     x0 = hx / 2 - 60;
     step = frame << 11;
@@ -547,7 +541,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
     }
     model->mesh = gBattleEffect_CylinderMesh;
-    waveTexture.pixels = work->sheet + 0x5000;
+    waveTexture.pixels = work->sheet + METEOR_BLOW_FLAME_BAND;
     waveTexture.logWidth = 7;
     waveTexture.logHeight = 7;
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;

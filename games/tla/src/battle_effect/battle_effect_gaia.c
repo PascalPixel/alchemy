@@ -5,11 +5,9 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#undef ROCK_COUNT
-
 /// The dust lives in the map cell buffer once the picture is laid out.
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
-#define ROCK_COUNT 11
+#define GAIA_ROCKS 11 ///< rock sprites tumbling up through the wall
 /// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
@@ -24,7 +22,15 @@
 /// The wall stands once it has risen, and sinks away a row every three
 /// frames.
 #define GAIA_WALL_STAND_FRAME 88
+/// The standing wall's top, stretched from a 48x32 row, and its foot.
+#define GAIA_WALL_TOP_WIDTH 48
+#define GAIA_WALL_TOP_HEIGHT 96
+#define GAIA_WALL_FOOT_WIDTH 48
 #define GAIA_WALL_FOOT_HEIGHT 21
+enum EarthWallSheetPicture {
+  GAIA_WALL_TOP = GAIA_ROW_HEIGHT * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
+  GAIA_WALL_FOOT = GAIA_WALL_TOP + PICTURE_BYTES(GAIA_WALL_TOP)
+};
 
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
@@ -76,8 +82,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   // The palette: BG colours 1-63 darkened eight steps in each channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
                              1, 0);
-  Iwram_CopyWordsEntry(
-      palette, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+  Iwram_CopyWordsEntry(palette,
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA),
+                       SHEET_PALETTE_BYTES);
   color = (u16 *)&BG_PLTT_COLOR(0, 1);
   for (i = 0; i != 63; i++) {
     s32 c = *color;
@@ -101,8 +108,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   // The picture, laid out again in the effect work:
   //   the growing wall: nine one-line rows, each stretched to 32 lines;
-  //   the top of the standing wall at 0x13c0: 48x32, stretched to 48x96;
-  //   its foot at 0x25c0: 48x21;
+  //   the top of the standing wall: 48x32, stretched to 48x96;
+  //   its foot: 48x21;
   //   the mound: three cels.
   source = Ram_MapCellBuffer;
   offset = 0;
@@ -120,7 +127,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
     source += 48;
   }
-  for (i = 0; i != 1008; i++)
+  for (i = 0; i != GAIA_WALL_FOOT_WIDTH * GAIA_WALL_FOOT_HEIGHT; i++)
     work->sheet[offset++] = *source++;
   for (i = 0; i != 3; i++) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
@@ -129,8 +136,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // The rocks: eleven animated objects, four of each size.
-  for (i = 0; i != ROCK_COUNT; i++) {
-    struct Sprite *object = Sprite_CreateFar(653);
+  for (i = 0; i != GAIA_ROCKS; i++) {
+    struct Sprite *object = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = object;
     if (object != 0) {
@@ -153,7 +160,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   // A rock's x is its column, y counts down from 128 by z, velocityX cycles
   // 1 to 12 as its animation step, and variant is its wait before it flies.
-  for (i = 0; i != ROCK_COUNT; i++) {
+  for (i = 0; i != GAIA_ROCKS; i++) {
     struct Particle *rock = &work->particles[FIRST_ROCK + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
@@ -217,12 +224,13 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                 wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
                 gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row],
+                GAIA_ROW_HEIGHT);
       }
     }
 
     // It sinks back the same way (frames 160-183).
-    if (frame >= GAIA_WALL_SINK_FRAME && frame <= 183) {
+    if (frame >= GAIA_WALL_SINK_FRAME && frame < GAIA_WALL_SINK_FRAME + 24) {
       s32 row = 7 - (frame - GAIA_WALL_SINK_FRAME) / 3;
 
       if (row < 0)
@@ -234,23 +242,28 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                 wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
                 gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row],
+                GAIA_ROW_HEIGHT);
       }
     }
 
-    // The standing wall: its top and its foot (frames 88-159).
-    if (frame >= GAIA_WALL_STAND_FRAME && frame <= 159) {
-      draw[0](canvas, &work->sheet[0x13c0], wallX + 16, 0, 48, 96);
-      draw[1](canvas, &work->sheet[0x13c0], wallX + 64, 0, 48, 96);
-      draw[0](canvas, &work->sheet[0x25c0], wallX + 16, 96, 48,
+    // The standing wall: its top and its foot.
+    if (frame >= GAIA_WALL_STAND_FRAME && frame < GAIA_WALL_SINK_FRAME) {
+      draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0,
+              GAIA_WALL_TOP_WIDTH, GAIA_WALL_TOP_HEIGHT);
+      draw[1](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 64, 0,
+              GAIA_WALL_TOP_WIDTH, GAIA_WALL_TOP_HEIGHT);
+      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 16,
+              GAIA_WALL_TOP_HEIGHT, GAIA_WALL_FOOT_WIDTH,
               GAIA_WALL_FOOT_HEIGHT);
-      draw[1](canvas, &work->sheet[0x25c0], wallX + 64, 96, 48,
+      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 64,
+              GAIA_WALL_TOP_HEIGHT, GAIA_WALL_FOOT_WIDTH,
               GAIA_WALL_FOOT_HEIGHT);
     }
 
     // The dust (from frame 88): what leaves the top goes back to the foot
-    // until frame 159.
-    if (frame > 87) {
+    // until the wall sinks.
+    if (frame >= GAIA_WALL_STAND_FRAME) {
       for (i = 0; i != 64; i++) {
         struct Particle *dust = &DUST[i];
 
@@ -274,7 +287,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       s32 rocks = 6;
 
       if (frame > 71)
-        rocks = ROCK_COUNT;
+        rocks = GAIA_ROCKS;
       for (k = 0; k != rocks; k++) {
         struct Particle *rock = &work->particles[FIRST_ROCK + k];
         s32 slot;
@@ -292,7 +305,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           position[0] = px(rock->x + rockX * 2);
           position[1] = px(512) - px(rock->y);
           position[2] = px(512);
-          slot = (frame / 2 + k) % ROCK_COUNT;
+          slot = (frame / 2 + k) % GAIA_ROCKS;
           if (slot != -1)
             Render_ApplyProjectedPlacementFar(work->sprites[slot], position,
                                               &scale, 0);
@@ -349,7 +362,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  for (i = 0; i != ROCK_COUNT; i++)
+  for (i = 0; i != GAIA_ROCKS; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
@@ -387,7 +400,8 @@ struct SpriteAnimation;
 /// A struct Sprite as Gaia searches and fills it: its OAM attributes and its
 /// shadow's written as words.
 struct SpriteWords {
-  s32 unk00;
+  s32 link; ///< the link to the next part at its depth, as
+            ///< AnimationSpritePart's
   s32 attributes;
   union {
     u32 word;
@@ -408,9 +422,10 @@ struct SpriteWords {
   u8 lastNoAndDirty[2];
   u8 flags;
   u8 count;
-  s32 unk1c;
-  s32 unk20;
-  s32 unk24;
+  /// The shadow's link, attributes 0 and 1, and attribute 2.
+  s32 shadowLink;
+  s32 shadowAttributes;
+  s32 shadowTile;
   struct SpriteAnimation *entry;
   u8 moreEntries[0x0c];
 };
@@ -451,13 +466,13 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
     *words = flags | tile | OBJ_PRIORITY(2);
   }
   {
-    s32 *p = &found->unk1c;
+    s32 *p = &found->shadowLink;
 
     *p = 0;
   }
-  found->unk20 = 0x6000;
+  found->shadowAttributes = 0x6000;
   entries = gVramCacheEntries;
-  found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
+  found->shadowTile = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->scale = Q16_ONE;
@@ -482,7 +497,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 #undef BLITTER
 #undef SPARKS
 #undef PUFF_COUNT
-#undef ROCK_COUNT
+#undef GAIA_ROCKS
 #undef MOTES
 #undef DUST
 #undef FIRST_ROCK

@@ -124,40 +124,10 @@ struct RuinObject {
   u8 resource;
 };
 
-/// A render job (the first of Render_AllocateModelList's entries).
-struct RenderJob {
-  s32 kind;
-  s32 next;
-  const void *faces;
-  void *vertices;
-  struct Texture *texture;
-  s32 fade;
-  s32 tail;
-};
-
 /// The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
   u16 lines[160];
   struct Particle splashes[512];
-};
-
-/// The star's texture, 64x64 pixels.
-struct StarTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-/// One model for the IWRAM renderer.
-struct ModelDraw {
-  s32 kind;
-  s32 next;
-  const void *model;
-  void *corners;
-  struct StarTexture *texture;
-  s32 unk14;
-  s32 tail;
 };
 
 extern const struct Scale gEclipse_Scales;
@@ -237,6 +207,17 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// by row, each tile 64 bytes row by row.
 #define CANVAS_PIXEL_OFFSET(x, y)                                              \
   ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+/// The bytes of one 8x8 tile of the canvas; a row of pixels steps from one tile
+/// to the next by CANVAS_TILE_BYTES - 8.
+#define CANVAS_TILE_BYTES (8 * 8)
+/// The bytes of a 32x32 sprite's tiles in 256 colours, and in 16.
+#define OBJ_32X32_8BPP_BYTES (32 * 32)
+#define OBJ_32X32_4BPP_BYTES (32 * 32 / 2)
+/// The bytes of the sprites' 256 colours, which a 256-colour sprite sheet
+/// opens with.
+#define OBJ_PLTT_SIZE 512
+/// The byte of the first pixel of canvas row y, y not negative.
+#define CANVAS_ROW_OFFSET(y) ((((y) & 7) << 3) + (((y) >> 3) << 10))
 /// The brightest canvas level: the additive blitters and
 /// CANVAS_COPY_AND_BRIGHTEN stop at it.
 #define CANVAS_LEVEL_BRIGHTEST 63
@@ -246,6 +227,34 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_VIEW_TOP 16
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+
+/// BG2's map in screen block 7, where the canvas's tiles are laid out.
+#define BG_CANVAS_MAP ((volatile s16 *)BG_SCREEN_BLOCK(7))
+
+/// Writes one row of BG2's map for the canvas, two tiles at a time.
+#define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \
+  for ((column) = 0; (column) != 8; (column)++, (offset) += 2) {               \
+    s32 tileIndex;                                                             \
+    s16 pair;                                                                  \
+                                                                               \
+    tileIndex = (row) * 16 + (column) * 2;                                     \
+    pair = ((tileIndex + 1) << 8) | tileIndex;                                 \
+    *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
+  }
+
+/// Three summons open alike (Eclipse, Daedalus and Flora): the battle flashes
+/// away over SUMMON_OPENING_FRAMES, and at SUMMON_OPENING_LOAD_FRAME
+/// their sky and their sprites load.
+#define SUMMON_OPENING_FRAMES 52
+#define SUMMON_OPENING_LOAD_FRAME 27
+
+/// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
+/// 135.
+#define EFFECT_SET_BATTLE_WINDOWS()                                            \
+  (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                 \
+   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 /// The canvas's first BATTLE_VIEW_HEIGHT lines, which the battle view shows:
 /// what most of this game's effects clear and fill, leaving the last 8.
 #define CANVAS_VIEW_BYTES (CANVAS_SIZE * BATTLE_VIEW_HEIGHT)
@@ -287,11 +296,42 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_BACKGROUND_HEIGHT 120
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS 128
+/// One step of the battle background's fade, about a sixtieth of the full
+/// colour.
+#define CANVAS_FADE_STEP 1092
+/// The bytes of one 16-colour palette.
+#define PALETTE_BANK_BYTES 32
+/// A word of two palette entries, both `color`, to fill a palette a word at a
+/// time.
+#define COLOR_PAIR(color) ((color) * 0x10001)
 
 /// A model's shade (RenderModel.shade) is added to each of its pixels' canvas
 /// levels: at this or below, nothing of the model is left to draw, and the
 /// effects skip it.
 #define MODEL_SHADE_INVISIBLE (-64)
+
+/// RenderModel.kind: the rasterizer kernel Render_DrawModelList copies into
+/// IWRAM to draw a model, and how it puts each pixel on the canvas. A solid
+/// model fills its faces with their colours; a textured one maps its texture;
+/// a shaded one adds the model's shade to each texel and skips those it leaves
+/// at 0 or below. The narrow kernels draw into a target half the canvas's
+/// width.
+enum ModelKind {
+  MODEL_END,            ///< ends the list
+  MODEL_SOLID,          ///< Render_SolidKernel: the colour replaces the canvas
+  MODEL_SOLID_MAX,      ///< the colour where it is brighter
+  MODEL_SOLID_ADDITIVE, ///< the colour added, up to the brightest level
+  MODEL_TEXTURED_MAX,   ///< the texel where it is brighter
+  MODEL_TEXTURED_ADDITIVE, ///< the texel added, up to the brightest level
+  MODEL_SHADED_MAX,        ///< the shaded texel where it is brighter
+  MODEL_SHADED_ADDITIVE,   ///< the shaded texel added, up to the brightest
+  MODEL_TEXTURED,          ///< the texel replaces the canvas
+  MODEL_SHADED,            ///< the shaded texel replaces the canvas
+  MODEL_TEXTURED_NARROW,   ///< MODEL_TEXTURED into a narrow target
+  MODEL_SOLID_NARROW       ///< MODEL_SOLID into a narrow target
+};
 
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
@@ -403,6 +443,10 @@ enum RedCrescentPicture {
 /// Each half of RuneSheet's rune, the second drawn mirrored.
 #define RUNE_HALF_WIDTH 24
 #define RUNE_HALF_HEIGHT 48
+/// The 64x64 texture Flash Force and Void Beam build: the rune's two halves
+/// side by side, the second mirrored, eight pixels in from the top left.
+#define RUNE_TEXTURE_SIZE 64
+#define RUNE_TEXTURE_RUNE (8 * RUNE_TEXTURE_SIZE + 8)
 
 /// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
 /// and its kind), and the one picture of the small sheets.
@@ -418,6 +462,9 @@ enum RedCrescentPicture {
 #define SMOKE_PUFF_HEIGHT 48
 #define FLASH_BURST_WIDTH 32
 #define FLASH_BURST_HEIGHT 64
+/// CloudPuffSheet (ResourceId_Data0CF): four 32x32 puffs of cloud.
+#define CLOUD_PUFF_WIDTH 32
+#define CLOUD_PUFF_HEIGHT 32
 #define SKULL_WIDTH 24
 #define SKULL_HEIGHT 24
 #define TORNADO_STRIP_WIDTH 40
@@ -453,6 +500,7 @@ enum RedCrescentPicture {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+#define MOTE_PICTURES 10
 
 /// Clips overflow on all four sides.
 /// The columns of gTargetStrike_Styles, one row a style.
@@ -988,8 +1036,8 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 // Routines of other banks the parts call.
 void Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
-void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
+void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
+void BattleBackground_SetModeFar(s32 mode, s32 resource, s32 speed);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// Turns the battle camera, over `frames` frames, to look at the point between
 /// two units.
@@ -1560,7 +1608,7 @@ extern const s8 gMegiddo_RayX[];
 extern const s8 gMegiddo_RayY[];
 extern const s16 gOdyssey_FlashPitches[];
 extern const s16 gOdyssey_FlashYaws[];
-extern const u8 gMoloch_RingStarts[];
+extern const u8 gMoloch_RingStarts[4];
 extern const u8 gMoloch_RingGrowth[];
 extern const s8 gMoloch_RingHeights[];
 extern s32 gIris_SplashRadii[];
@@ -1655,17 +1703,12 @@ extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
 // geode.c
 
 /// nirvana.c
-extern u8 Data_02012000[];
 extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
-extern u8 Data_02010020[];
-extern u8 Data_020100a0[];
-extern u8 Data_020102a0[];
-extern u16 Data_0201401e[];
 extern u16 gFlora_PetalTiles[];
 extern u16 gFlora_SpritePalettes[];
 
@@ -1710,36 +1753,36 @@ extern const u32 BattleEffect_AdditiveReverse[];
 extern const u32 BattleEffect_AdditiveForward[];
 extern const u32 BattleEffect_ColorReverse[];
 extern const u32 BattleEffect_ColorForward[];
-extern const u8 Data_081380ac[];
-extern u8 Data_081380acCodeSize[];
-extern const u8 Data_0813b9a0[];
-extern u8 Data_0813b9a0CodeSize[];
+extern const u8 Render_FillMeshKernel[];
+extern u8 Render_FillMeshKernelCodeSize[];
+extern const u8 Render_TransformKernel[];
+extern u8 Render_TransformKernelCodeSize[];
 /// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
 /// bytes and, for three of them, in DMA words.
-extern const u8 Data_08138fc8[];
-extern const u8 Data_081391c8[];
-extern const u8 Data_081393d8[];
-extern const u8 Data_081395f8[];
-extern const u8 Data_08139aac[];
-extern const u8 Data_08139f70[];
-extern const u8 Data_0813a444[];
-extern const u8 Data_0813a924[];
-extern const u8 Data_0813ae14[];
-extern const u8 Data_0813b2ec[];
-extern const u8 Data_0813b7a0[];
-extern u8 Data_08138fc8CodeSize[];
-extern u8 Data_081391c8CodeSize[];
-extern u8 Data_081393d8CodeSize[];
-extern u8 Data_081395f8CodeSize[];
-extern u8 Data_08139aacCodeSize[];
-extern u8 Data_08139f70CodeSize[];
-extern u8 Data_0813a444CodeSize[];
-extern u8 Data_0813a924CodeSize[];
-extern u8 Data_0813ae14CodeSize[];
-extern u8 Data_0813b2ecCodeSize[];
-extern u8 Data_0813b7a0CodeSize[];
-extern u8 Data_081395f8CodeWords[];
-extern u8 Data_0813ae14CodeWords[];
-extern u8 Data_0813b2ecCodeWords[];
+extern const u8 Render_SolidKernel[];
+extern const u8 Render_SolidMaxKernel[];
+extern const u8 Render_SolidAdditiveKernel[];
+extern const u8 Render_TexturedKernel[];
+extern const u8 Render_TexturedMaxKernel[];
+extern const u8 Render_TexturedAdditiveKernel[];
+extern const u8 Render_ShadedMaxKernel[];
+extern const u8 Render_ShadedAdditiveKernel[];
+extern const u8 Render_ShadedKernel[];
+extern const u8 Render_TexturedNarrowKernel[];
+extern const u8 Render_SolidNarrowKernel[];
+extern u8 Render_SolidKernelCodeSize[];
+extern u8 Render_SolidMaxKernelCodeSize[];
+extern u8 Render_SolidAdditiveKernelCodeSize[];
+extern u8 Render_TexturedKernelCodeSize[];
+extern u8 Render_TexturedMaxKernelCodeSize[];
+extern u8 Render_TexturedAdditiveKernelCodeSize[];
+extern u8 Render_ShadedMaxKernelCodeSize[];
+extern u8 Render_ShadedAdditiveKernelCodeSize[];
+extern u8 Render_ShadedKernelCodeSize[];
+extern u8 Render_TexturedNarrowKernelCodeSize[];
+extern u8 Render_SolidNarrowKernelCodeSize[];
+extern u8 Render_TexturedKernelCodeWords[];
+extern u8 Render_ShadedKernelCodeWords[];
+extern u8 Render_TexturedNarrowKernelCodeWords[];
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

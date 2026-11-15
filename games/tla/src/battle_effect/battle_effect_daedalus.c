@@ -25,19 +25,12 @@
     }                                                                          \
   }
 
-/// A burst cel's texture: log2 of its width and height in the first word
-/// (64x64 here), then its pixels.
-struct BurstTexture {
-  u32 size;
-  void *pixels;
-};
-
 /// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BurstTexture texture;
+  struct ModelTexture texture;
   struct ScreenPoint target;
-  struct RenderPrimitive *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 frame;
   s32 cel;
@@ -104,13 +97,13 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       if (frame < BURST_DRAW_FRAMES) {
         vertices = Heap_AllocEwram(32);
         quad = Render_AllocateModelList(1);
-        texture.size = (texture.size & ~0xff) | 6;
-        texture.size = (texture.size & ~0xff00) | 6 << 8;
+        texture.logWidth = 6;
+        texture.logHeight = 6;
         texture.pixels = work->sheet + cel * CEL_SIZE;
-        quad->kind = 6;
-        quad->faces = gBattleEffect_SquareMesh;
+        quad->kind = MODEL_SHADED_MAX;
+        quad->mesh = gBattleEffect_SquareMesh;
         quad->texture = &texture;
-        quad->unk14 = gMirroredWall_BurstShades[mode];
+        quad->shade = gMirroredWall_BurstShades[mode];
         quad->vertices = vertices;
         Transform_Reset();
         Transform_ApplyTranslation(0, px(target.y - 58), 0);
@@ -155,11 +148,12 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
 }
 
 typedef struct DaedalusSprite {
-  u8 unk00[8];
+  /// The part's link and its attributes 0 and 1, which the effect leaves alone.
+  u8 linkAndPosition[8];
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2];
   s32 scale;
   u8 slot;
   u8 cacheFlags;
@@ -169,45 +163,15 @@ typedef struct DaedalusSprite {
   u8 offsetY;
 } Sprite;
 
-/* VIEW(ability_effects): tag struct SpriteAttributes as struct
- * SpriteAttributes__ability_effects; battle_effect/cybele has another
- * definition; not tried: struct SpriteAttributes__ability_effects was not
- * found. */
+/// The effect work's sprite slot `i`, read as Daedalus's sprite.
+#define DAEDALUS_SPRITE(i) ((Sprite *)work->sprites[i])
+
 /// A sprite's first ten bytes, its attribute 2 fields after eight others.
 struct SpriteAttributes {
-  u8 unk00[8];
+  u8 linkAndPosition[8];
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-};
-
-typedef struct VramSlot {
-  u16 unk0;
-  u16 offset;
-} VramSlot;
-
-/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_daedalus.c:434: structure has no
- * member named `transferMode'. */
-struct SummonWork__f17e698 {
-  struct Particle particles[48];
-  u8 unk0540[0x1c0];
-  u8 frames[0x7080];
-  s32 transferMode;
-  s32 transferValue;
-  u8 unk_7788[8];
-  s32 scrollTimer;
-  s32 scrollInterval;
-  s32 scrollStepX;
-  s32 scrollStepY;
-  u8 unk77a0[8];
-  s32 shakeFrames;
-  u8 unk77ac[0x30];
-  Sprite *sprites[57];
-  u8 unk78c0[0x28];
-  s32 transferPending;
 };
 
 typedef void (*CopyFunc)(void *, const void *, s32);
@@ -227,13 +191,43 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define DAEDALUS_FLASH_BURST_PICTURES 0x6c0
 
+/// Where BirdFlockSheet is decoded in the effect's frames.
+#define DAEDALUS_BIRD_FLOCK 0x36c0
+
+/// Where RocketFlameSheet is decoded in the effect's frames.
+#define DAEDALUS_ROCKET_FLAMES 0x3000
+#define ROCKET_FLAME_WIDTH 12
+#define ROCKET_FLAME_HEIGHT 24
+
+/// Runs of DAEDALUS_PARTICLES in the first scene: each missile's trail of 32,
+/// the rocket's exhaust flames, the bursts where its shots land, and the
+/// birds that drift across.
+/// The first scene's sprites: two rows of the forest canopy, eight pictures
+/// and a copy of the first in each; the twenty-one 32x32 pieces of the flying
+/// machine (BronzeAutomatonTiles), among them its spinning blade, then the
+/// 32x64 rocket it launches; and the missile with fifteen copies.
+#define DAEDALUS_CANOPY_ROW 9
+#define DAEDALUS_MACHINE 18
+#define DAEDALUS_MACHINE_PIECES 21
+#define DAEDALUS_BLADE 38
+#define DAEDALUS_ROCKET 39
+#define DAEDALUS_MISSILE 41
+#define DAEDALUS_MISSILE_COPIES 15
+#define DAEDALUS_TRAIL_LENGTH 32
+#define DAEDALUS_EXHAUST 400
+#define DAEDALUS_EXHAUST_FLAMES 32
+#define DAEDALUS_BURSTS 432
+#define DAEDALUS_BURST_COUNT 32
+#define DAEDALUS_BIRDS 502
+#define DAEDALUS_BIRD_COUNT 10
+
 /// Daedalus: over a forest the great machine rises into the sky among birds,
 /// turns and fires its rockets, and they fall on the foes in bursts of fire;
 /// then the second scene (BattleEffect_RunDaedalusAlt) plays.
 ///
 /// Abilities: Daedalus.
 void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
-  s16 targets[14];
+  s16 targets[UNIT_MAX];
   struct SpritePlacement pos;
   struct SpritePlacement shipPlace;
   struct SpritePlacement particlePlace;
@@ -255,7 +249,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   s32 wavePhase;
   s32 savedY;
   s32 bgX;
-  struct SummonWork__f17e698 *work;
+  struct BattleEffectWork *work;
   s32 k;
   s32 i;
   s32 j;
@@ -265,7 +259,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   s32 radius;
 
   dest = Ram_HeapSlots->battleCanvas;
-  work = (struct SummonWork__f17e698 *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   map = Ram_HeapSlots->battleSheet;
   ctl = (s32 *)Ram_HeapSlots->battleBackground;
   bank = (s32 *)Ram_HeapSlots->battleWork;
@@ -283,8 +277,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   savedY = gBgScroll[1].x;
   bgX = -80;
 
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u16 *col;
       s32 n;
       s32 w;
@@ -298,10 +292,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
       VramCache_FreeEntry(bank[21]);
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      targets[0] = 255;
+      targets[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(targets, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0; i != 128; i++, col++) {
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_VioletSkyBackdrop, 0);
+      for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0;
+           i != BATTLE_BACKGROUND_COLORS; i++, col++) {
         s32 mid;
         s32 s;
 
@@ -330,8 +326,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       ctl[4] = 1;
-      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA,
-                                 work->frames, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
+                                 0, 0);
       off = 0x700;
       n = 3;
       for (j = 0; j != 10; j++) {
@@ -355,44 +351,46 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, 32);
-      src += 32;
-      Decompress_TaggedLz(src, work->frames);
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, PALETTE_BANK_BYTES);
+      src += PALETTE_BANK_BYTES;
+      Decompress_TaggedLz(src, work->sheet);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
           obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
                                              OBJ_PALETTE(15));
-          work->sprites[j * 9 + i] = obj;
+          work->sprites[j * DAEDALUS_CANOPY_ROW + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
               (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
-              &work->frames[(j << 12) + i * 0x200], 0x200);
+              &work->sheet[(j << 12) + i * 0x200], 0x200);
         }
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
-        work->sprites[j * 9 + 8] = obj;
-        Iwram_CopyWords(obj, work->sprites[j * 9], 24);
+        work->sprites[j * DAEDALUS_CANOPY_ROW + 8] = obj;
+        Iwram_CopyWords(obj, work->sprites[j * DAEDALUS_CANOPY_ROW], 24);
         for (i = 0; i != 8; i++)
-          work->particles[j * 9 + i].variant = work->sprites[j * 9 + i]->tile;
+          work->particles[j * DAEDALUS_CANOPY_ROW + i].variant =
+              DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile;
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_BronzeAutomatonTiles);
       Iwram_CopyWords((void *)OBJ_PLTT, src, 0x1c0);
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      for (i = 0; i != 21; i++) {
+      for (i = 0; i != DAEDALUS_MACHINE_PIECES; i++) {
         obj = EffectSprite_CreateWithTiles(32, 32,
                                            OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->priority = 3;
-        work->sprites[i + 18] = obj;
+        work->sprites[DAEDALUS_MACHINE + i] = obj;
         Iwram_CopyWords(
             (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
-            DECODE_BUFFER + i * 0x400, 0x400);
+            DECODE_BUFFER + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
       }
       obj = EffectSprite_CreateWithTiles(32, 64,
                                          OBJ_SIZE_32X64 | OBJ_256_COLORS, 0);
-      // Once-only: the store alone in its block.
+      /* FAKEMATCH(dead): the slot's store alone in a once-only block; as the
+       * plain store, 83 of 3921 instructions differ in tla-en. */
       do {
-        work->sprites[i + 18] = obj;
+        work->sprites[DAEDALUS_MACHINE + i] = obj;
       } while (0);
       obj->priority = 3;
       /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's
@@ -401,23 +399,25 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, 32);
-      src += 32;
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, PALETTE_BANK_BYTES);
+      src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(14));
       obj->priority = 1;
-      work->sprites[41] = obj;
+      work->sprites[DAEDALUS_MISSILE] = obj;
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
-      for (i = 0; i != 15; i++) {
-        work->sprites[42 + i] =
+      for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
+        work->sprites[DAEDALUS_MISSILE + 1 + i] =
             EffectSprite_Acquire(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(15));
-        Iwram_CopyWords(work->sprites[42 + i], work->sprites[41], 24);
-        work->sprites[42 + i]->tile = work->sprites[41]->tile;
+        Iwram_CopyWords(work->sprites[DAEDALUS_MISSILE + 1 + i],
+                        work->sprites[DAEDALUS_MISSILE], 24);
+        DAEDALUS_SPRITE(DAEDALUS_MISSILE + 1 + i)->tile =
+            DAEDALUS_SPRITE(DAEDALUS_MISSILE)->tile;
         if (i > 6)
-          work->sprites[42 + i]->priority = 2;
+          DAEDALUS_SPRITE(DAEDALUS_MISSILE + 1 + i)->priority = 2;
       }
     }
     if (frame > 27) {
@@ -437,20 +437,20 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 9; i++) {
-          Sprite *obj;
+          struct SpriteAttributes *obj;
           s32 v;
 
           posp = &pos;
           {
             s32 h;
 
-            k = (i << 21) + waveX;
+            k = px(i * 32) + waveX;
             h = (j << 5) + 103;
             posp->x = k;
             posp->y = px(h);
           }
           if (i == 8) {
-            obj = work->sprites[j * 9 + 8];
+            obj = work->sprites[j * DAEDALUS_CANOPY_ROW + 8];
             v = work->particles[j * 9 + (wavePhase + 71) % 8].variant;
           } else {
             row = j * 9;
@@ -459,11 +459,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             obj = work->sprites[k];
             v = work->particles[row + (wavePhase + 64 + i) % 8].variant;
           }
-          ((struct SpriteAttributes *)obj)->tile = v & 0x3ff;
+          obj->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= px(288);
-          Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos,
-                                            &scale, 0);
+          Render_ApplyProjectedPlacementFar(
+              work->sprites[j * DAEDALUS_CANOPY_ROW + i], &pos, &scale, 0);
         }
       }
     }
@@ -496,17 +496,18 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     work->scrollStepX = -1;
     work->scrollStepY = 0;
     ctl[4] = 1;
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               work->frames + DAEDALUS_FLASH_BURST_PICTURES, 1,
+                               work->sheet + DAEDALUS_FLASH_BURST_PICTURES, 1,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BB, work->frames + 0x36c0,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0BB,
+                               work->sheet + DAEDALUS_BIRD_FLOCK, 0, 0);
     pixels = DECODE_BUFFER;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
     Iwram_CopyWords(
         (void *)BG_PLTT,
-        (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
+        (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
+        SHEET_PALETTE_BYTES);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -526,9 +527,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         *pal = 0x190b;
         shipY = -px(29);
         camera = 0;
-        work->sprites[39]->rotation = TRIG_TURN * 3 / 4;
-        work->sprites[38]->rotation = 0;
-        work->sprites[31]->rotation = 0;
+        DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation = TRIG_TURN * 3 / 4;
+        DAEDALUS_SPRITE(DAEDALUS_BLADE)->rotation = 0;
+        DAEDALUS_SPRITE(31)->rotation = 0;
         work->particles[20].x = 0;
         work->particles[20].y = 0;
         work->particles[20].velocityX = -px(6);
@@ -553,8 +554,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           struct Particle *p;
 
           p = &work->particles[32 + i];
-          p->x = ((i / 3) << 18) + px(176);
-          p->y = ((i % 3) * 3 << 17) + px(74);
+          p->x = px((i / 3) * 4) + px(176);
+          p->y = px((i % 3) * 3 * 2) + px(74);
           p->velocityX = 0;
           p->velocityY = 0;
           p->variant = 0;
@@ -563,8 +564,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           struct Particle *p;
 
           p = &work->particles[40 + i];
-          p->x = ((i / 3) << 18) + px(112);
-          p->y = ((i % 3) * 3 << 17) + px(82);
+          p->x = px((i / 3) * 4) + px(112);
+          p->y = px((i % 3) * 3 * 2) + px(82);
           p->velocityX = 0;
           p->velocityY = 0;
           p->variant = 0;
@@ -603,7 +604,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         Iwram_CopyWords(
             (void *)BG_PLTT,
             (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
-            128);
+            SHEET_PALETTE_BYTES);
         work->particles[20].variant = 1;
       }
       if (frame == 288)
@@ -630,10 +631,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       if (frame == 0) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-        for (i = 0; i != 10; i++) {
+        for (i = 0; i != DAEDALUS_BIRD_COUNT; i++) {
           struct Particle *p;
 
-          p = &DAEDALUS_PARTICLES[502 + i];
+          p = &DAEDALUS_PARTICLES[DAEDALUS_BIRDS + i];
           p->x = px(gDaedalus_DriftStarts[i][0]);
           p->y = px(gDaedalus_DriftStarts[i][1]);
           p->velocityX = gDaedalus_DriftSpeeds[i][0];
@@ -641,16 +642,16 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->variant = Random16() & 127;
         }
       }
-      for (i = 0; i != 10; i++) {
+      for (i = 0; i != DAEDALUS_BIRD_COUNT; i++) {
         struct Particle *p;
 
-        p = &DAEDALUS_PARTICLES[502 + i];
+        p = &DAEDALUS_PARTICLES[DAEDALUS_BIRDS + i];
         if (frame >= gDaedalus_DriftFrames[i]) {
           ((BlitFunc)blit[0])(
               dest,
-              &work->frames[(gDaedalus_DriftPictures[(p->variant / 4) % 12]
-                             << 8) +
-                            0x36c0],
+              &work->sheet[(gDaedalus_DriftPictures[(p->variant / 4) % 12]
+                            << 8) +
+                           DAEDALUS_BIRD_FLOCK],
               Q_16_16_TO_INT(p->x), Q_16_16_TO_INT(p->y), 16, 16);
           p->x += p->velocityX;
           p->y += p->velocityY;
@@ -726,7 +727,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           }
           if (p->velocityX > -px(8))
             p->velocityX -= px(1) / 2;
-          q = &DAEDALUS_PARTICLES[i * 32 + (p->variant & 31)];
+          q = &DAEDALUS_PARTICLES[i * DAEDALUS_TRAIL_LENGTH +
+                                  (p->variant & 31)];
           q->variant = 0;
           q->x = p->x / 2;
           q->y = p->y - px(20);
@@ -781,13 +783,13 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->velocityY += px(1) / 8;
           p->velocityX = p->velocityX * 48 / DAMPING_SCALE;
           p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
-          work->sprites[38]->rotation += 0x200;
+          DAEDALUS_SPRITE(DAEDALUS_BLADE)->rotation += 0x200;
         }
         shipPlace.x = p->x - swayX + camera + px(120);
         shipPlace.y =
             px(99 - gDaedalus_ShakeOffsets[work->shakeFrames]) + swayY + p->y;
-        Render_ApplyProjectedPlacementFar(work->sprites[38], &shipPlace,
-                                          &shipScale, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[DAEDALUS_BLADE],
+                                          &shipPlace, &shipScale, 0);
       }
       {
         struct Particle *p;
@@ -829,29 +831,35 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->velocityY = -((Random16() & 31) + 8) << 12;
             q->variant = 0;
           }
-          for (i = 0; i != 32; i++)
-            DAEDALUS_PARTICLES[400 + i].variant = -1;
-          for (i = 0; i != 32; i++)
-            DAEDALUS_PARTICLES[432 + i].variant = -1;
+          for (i = 0; i != DAEDALUS_EXHAUST_FLAMES; i++)
+            DAEDALUS_PARTICLES[DAEDALUS_EXHAUST + i].variant = -1;
+          for (i = 0; i != DAEDALUS_BURST_COUNT; i++)
+            DAEDALUS_PARTICLES[DAEDALUS_BURSTS + i].variant = -1;
         }
         if (p->variant != 0) {
           if (p->variant > 9) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[400 + (p->variant & 31)];
+            q = &DAEDALUS_PARTICLES[DAEDALUS_EXHAUST + (p->variant & 31)];
             q->variant = 0;
-            q->velocityX = -(Trig_Sin(work->sprites[39]->rotation) * 2);
-            q->velocityY = Trig_Cos(work->sprites[39]->rotation) * 2;
-            q->x = (p->x + camera) / 2 -
-                   ((Trig_Sin(work->sprites[39]->rotation) * 27) >> 1);
-            q->y = p->y + Trig_Cos(work->sprites[39]->rotation) * 27 - px(12);
+            q->velocityX =
+                -(Trig_Sin(DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation) * 2);
+            q->velocityY =
+                Trig_Cos(DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation) * 2;
+            q->x =
+                (p->x + camera) / 2 -
+                ((Trig_Sin(DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation) * 27) >>
+                 1);
+            q->y = p->y +
+                   Trig_Cos(DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation) * 27 -
+                   px(12);
           }
           if (((p->variant >= 50 && p->variant < 60) ||
                (p->variant >= 113 && p->variant < 200)) &&
               (p->variant & 3) == 0) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[432 + (p->variant & 31)];
+            q = &DAEDALUS_PARTICLES[DAEDALUS_BURSTS + (p->variant & 31)];
             q->variant = 0;
             q->velocityX = ((Random16() & 31) + 16) << 12;
             q->velocityY = (-Random16() | ~15) << 14;
@@ -884,43 +892,47 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           if (p->variant >= 40 && p->variant < 68)
             p->velocityY -= px(1) / 16;
           if (p->variant >= 50 && p->variant < 60) {
-            work->sprites[39]->rotation = (p->variant << 7) - 0x5900;
+            DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation =
+                (p->variant << 7) - 0x5900;
             p->velocityY -= px(1) / 16;
           }
           if (p->variant >= 108 && p->variant < 140) {
             if (p->variant >= 120 && p->variant < 123)
-              work->sprites[39]->rotation -= 0x180;
+              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation -= 0x180;
             else
-              work->sprites[39]->rotation += 0x100;
+              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation += 0x100;
             p->velocityY -= px(1) / 16;
           }
           if (p->variant >= 140 && p->variant < 160)
             p->velocityY -= px(1) / 32;
           if (p->variant > 159)
             p->velocityY -= px(1) / 8;
-          for (i = 0; i != 32; i++) {
+          for (i = 0; i != DAEDALUS_EXHAUST_FLAMES; i++) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[400 + i];
+            q = &DAEDALUS_PARTICLES[DAEDALUS_EXHAUST + i];
             if ((u32)q->variant <= 5) {
-              ((BlitFunc)blits[1])(dest, &work->frames[q->variant * 288],
-                                   (Q_16_16_TO_INT(q->x)) - 2,
-                                   (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
-              BattleEffectKernels_IntegrateVector2(q, 64, 0);
+              ((BlitFunc)blits[1])(
+                  dest, &work->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
+                  (Q_16_16_TO_INT(q->x)) - 2, (Q_16_16_TO_INT(q->y)) - 12,
+                  ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
+              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
-          for (i = 0; i != 32; i++) {
+          for (i = 0; i != DAEDALUS_BURST_COUNT; i++) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[432 + i];
+            q = &DAEDALUS_PARTICLES[DAEDALUS_BURSTS + i];
             if ((u32)q->variant <= 23) {
               ((BlitFunc)blits[1])(
-                  dest, &work->frames[(q->variant / 4 << 11) + 0x6c0],
-                  (Q_16_16_TO_INT(q->x)) - 16, (Q_16_16_TO_INT(q->y)) - 32, 32,
-                  64);
+                  dest,
+                  &work->sheet[q->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
+                               DAEDALUS_FLASH_BURST_PICTURES],
+                  (Q_16_16_TO_INT(q->x)) - 16, (Q_16_16_TO_INT(q->y)) - 32,
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               q->velocityX += px(1) / 16;
-              BattleEffectKernels_IntegrateVector2(q, 64, 0);
+              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
@@ -936,11 +948,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           shipPlace.x = p->x + camera;
           shipPlace.y = p->y;
         }
-        Render_ApplyProjectedPlacementFar(work->sprites[39], &shipPlace,
-                                          &shipScale, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[DAEDALUS_ROCKET],
+                                          &shipPlace, &shipScale, 0);
       }
-      work->sprites[39]->offsetX = 0;
-      work->sprites[39]->offsetY = 32;
+      DAEDALUS_SPRITE(DAEDALUS_ROCKET)->offsetX = 0;
+      DAEDALUS_SPRITE(DAEDALUS_ROCKET)->offsetY = 32;
       if (frame >= 568) {
         s32 *beam;
         void *buffer;
@@ -997,7 +1009,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               v = (Q_16_16_TO_INT(Trig_Sin(i << 11) * radius / 2)) +
                   gDaedalus_RingX[j];
               ((BlitFunc)blit[0])(
-                  dest, &work->frames[n * 288], v - 6,
+                  dest, &work->sheet[n * 288], v - 6,
                   (Q_16_16_TO_INT(Trig_Cos(i << 11) * radius * 2)) + 60, 12,
                   24);
             }
@@ -1006,10 +1018,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       shipScale.x = Q16_ONE;
       shipScale.y = Q16_ONE;
-      work->sprites[21]->priority = 2;
-      work->sprites[22]->priority = 2;
-      work->sprites[23]->priority = 2;
-      work->sprites[24]->priority = 2;
+      DAEDALUS_SPRITE(21)->priority = 2;
+      DAEDALUS_SPRITE(22)->priority = 2;
+      DAEDALUS_SPRITE(23)->priority = 2;
+      DAEDALUS_SPRITE(24)->priority = 2;
       {
         s32 v;
 
@@ -1034,7 +1046,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             px(136 - gDaedalus_ShakeOffsets[work->shakeFrames]) + swayY + bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[24], &shipPlace,
                                           &shipScale, 0);
-        work->sprites[25]->priority = 2;
+        DAEDALUS_SPRITE(25)->priority = 2;
         shipPlace.x = v + px(128);
         shipPlace.y =
             px(104 - gDaedalus_ShakeOffsets[work->shakeFrames]) + swayY + bobY;
@@ -1048,7 +1060,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                         gDaedalus_ShakeOffsets[work->shakeFrames])
                        << 16) +
                       swayY + bobY + px(84);
-        work->sprites[26 + i]->priority = 2;
+        DAEDALUS_SPRITE(26 + i)->priority = 2;
         Render_ApplyProjectedPlacementFar(work->sprites[26 + i], &shipPlace,
                                           &shipScale, 0);
       }
@@ -1060,8 +1072,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           shipPlace.x = p->x + camera;
           shipPlace.y = p->y;
           if (p->variant != 0)
-            Render_ApplyProjectedPlacementFar(work->sprites[41 + i], &shipPlace,
-                                              &shipScale, 0);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[DAEDALUS_MISSILE + i], &shipPlace, &shipScale, 0);
         }
       }
       if (frame < 540) {
@@ -1076,12 +1088,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
         }
         for (i = 0; i != 4; i++) {
-          shipPlace.x = ((i & 1) << 21) + p->x + camera + px(128);
+          shipPlace.x = px((i & 1) * 32) + p->x + camera + px(128);
           shipPlace.y =
               ((((i / 2) << 5) - gDaedalus_ShakeOffsets[work->shakeFrames])
                << 16) +
               swayY + p->y + px(104);
-          work->sprites[34 + i]->priority = 1;
+          DAEDALUS_SPRITE(34 + i)->priority = 1;
           Render_ApplyProjectedPlacementFar(work->sprites[34 + i], &shipPlace,
                                             &shipScale, 0);
         }
@@ -1097,12 +1109,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->velocityY += px(1) / 8;
           p->velocityX = p->velocityX * 48 / DAMPING_SCALE;
           p->velocityY = p->velocityY * 63 / DAMPING_SCALE;
-          work->sprites[31]->rotation += 0x100;
+          DAEDALUS_SPRITE(31)->rotation += 0x100;
         }
         shipPlace.x = swayX + p->x + camera + px(184);
         shipPlace.y =
             px(92 - gDaedalus_ShakeOffsets[work->shakeFrames]) + swayY + p->y;
-        work->sprites[31]->priority = 1;
+        DAEDALUS_SPRITE(31)->priority = 1;
         Render_ApplyProjectedPlacementFar(work->sprites[31], &shipPlace,
                                           &shipScale, 0);
       }
@@ -1117,24 +1129,25 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             s32 v;
 
             wave = &shipPlace;
-            wave->x = (i << 21) + waveX;
+            wave->x = px(i * 32) + waveX;
             wave->y = px((j << 5) - gDaedalus_ShakeOffsets[work->shakeFrames]) +
                       shipY + px(132);
             if (i == 8) {
-              work->sprites[j * 9 + i]->tile =
+              DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile =
                   work->particles[j * 9 + (wavePhase + 71) % 8].variant & 0x3ff;
             } else {
               row = j * 9;
               k = row;
               k += i;
-              work->sprites[k]->tile =
+              DAEDALUS_SPRITE(k)->tile =
                   work->particles[row + (wavePhase + 64 + i) % 8].variant &
                   0x3ff;
             }
             if (shipPlace.x > 0xffffff)
               shipPlace.x -= px(288);
-            Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i],
-                                              &shipPlace, &shipScale, 0);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[j * DAEDALUS_CANOPY_ROW + i], &shipPlace,
+                &shipScale, 0);
           }
         }
       }
@@ -1147,7 +1160,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             n = (frame - (i * 2 + 490)) / 2;
             y = gDaedalus_SplashPoints[j][i][1] + (Q_16_16_TO_INT(swayY)) -
                 gDaedalus_ShakeOffsets[work->shakeFrames];
-            ((BlitFunc)blit[0])(dest, &work->frames[n * 288], x - 6, y - 12, 12,
+            ((BlitFunc)blit[0])(dest, &work->sheet[n * 288], x - 6, y - 12, 12,
                                 24);
           }
         }
@@ -1158,9 +1171,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           q = &DAEDALUS_PARTICLES[i * 32 + j];
           if ((u32)q->variant <= 5) {
-            ((BlitFunc)blit[0])(dest, &work->frames[q->variant * 288],
+            ((BlitFunc)blit[0])(dest, &work->sheet[q->variant * 288],
                                 (Q_16_16_TO_INT(q->x)) - 2,
-                                (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
+                                (Q_16_16_TO_INT(q->y)) - 12, ROCKET_FLAME_WIDTH,
+                                ROCKET_FLAME_HEIGHT);
             q->x += q->velocityX;
             q->y += q->velocityY;
             q->velocityY -= px(1) / 4;
@@ -1198,7 +1212,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     Palette_LoadBasicSpriteColors();
     Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
-    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+    BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BG2X = 0;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1212,13 +1226,13 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       work->sprites[1 + i] =
           EffectSprite_Acquire(32, 16, OBJ_SIZE_32X16 | OBJ_256_COLORS, 0);
       IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
-      work->sprites[1 + i]->offsetX = 32;
-      work->sprites[1 + i]->offsetY = 8;
+      DAEDALUS_SPRITE(1 + i)->offsetX = 32;
+      DAEDALUS_SPRITE(1 + i)->offsetY = 8;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames,
-                               1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames + 0x3000,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA,
+                               work->sheet + DAEDALUS_ROCKET_FLAMES, 0, 0);
     {
       const void *colors =
           (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
@@ -1235,7 +1249,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         i = 0;
         radius = 0;
         for (; i != 16; i++) {
-          /* FAKEMATCH(dead): a store nothing reads. */
+          /* FAKEMATCH(dead): k = 0 under a test that is never true, a store
+           * nothing reads; without it, 90 of 3921 instructions differ in
+           * tla-en. */
           if (work == NULL)
             k = 0;
           p = &work->particles[i];
@@ -1243,14 +1259,16 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->variant = radius;
           Random16();
           p->velocityZ = radius;
+          /* FAKEMATCH(volatile): velocityZ read back through a volatile view;
+           * as p->velocityZ, 167 of 3921 instructions differ in tla-en. */
           p->z = z - (*(volatile s32 *)&p->velocityZ * 40) - 0x800;
           p->velocityX = -Trig_Cos(p->z) * 8;
           p->velocityY = -Trig_Sin(p->z) * 8;
           p->x = px(Random16() % 80 + 80) - p->velocityX * 24;
           p->y = px((Random16() & 7) + 96) - p->velocityY * 24;
-          work->sprites[i]->rotation = p->z;
-          work->sprites[i]->offsetX = radius;
-          work->sprites[i]->offsetY = 8;
+          DAEDALUS_SPRITE(i)->rotation = p->z;
+          DAEDALUS_SPRITE(i)->offsetX = radius;
+          DAEDALUS_SPRITE(i)->offsetY = 8;
         }
         for (i = 0; i != 512; i++)
           DAEDALUS_PARTICLES[i].variant = -1;
@@ -1305,11 +1323,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->velocityY = 0;
             q->variant = 0;
           }
-          work->sprites[i]->rotation = p->z;
-          BattleEffectKernels_IntegrateVector3(p, 64, 0);
-          p->velocityX = -Trig_Cos(work->sprites[i]->rotation) * 8;
-          p->velocityY = -Trig_Sin(work->sprites[i]->rotation) * 8;
-          work->sprites[i]->tile = work->sprites[0]->tile;
+          DAEDALUS_SPRITE(i)->rotation = p->z;
+          BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
+          p->velocityX = -Trig_Cos(DAEDALUS_SPRITE(i)->rotation) * 8;
+          p->velocityY = -Trig_Sin(DAEDALUS_SPRITE(i)->rotation) * 8;
+          DAEDALUS_SPRITE(i)->tile = DAEDALUS_SPRITE(0)->tile;
         }
       }
       for (i = 0; i != 256; i++) {
@@ -1321,7 +1339,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           v = q->variant - 2;
           if (v >= 0)
-            ((BlitFunc)blits[1])(dest, &work->frames[v * 288 + 0x3000],
+            ((BlitFunc)blits[1])(dest,
+                                 &work->sheet[v * PICTURE_BYTES(ROCKET_FLAME) +
+                                              DAEDALUS_ROCKET_FLAMES],
                                  (Q_16_16_TO_INT(q->x)) - 6,
                                  (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
           q->variant++;
@@ -1335,7 +1355,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           s32 v;
 
           v = q->variant / 3;
-          ((BlitFunc)blits[i & 1])(dest, &work->frames[v << 11],
+          ((BlitFunc)blits[i & 1])(dest, &work->sheet[v << 11],
                                    (Q_16_16_TO_INT(q->x)) - 16,
                                    (Q_16_16_TO_INT(q->y)) - 48, 32, 64);
           BattleEffectKernels_IntegrateVector2(q, 56, -px(1) / 8);
@@ -1362,14 +1382,18 @@ extern const struct Scale gDaedalusAlt_SummonScale;
 #define DAEDALUS_FRAMES 108
 #define DAEDALUS_SPARKS 64
 
-/// The summoned object's display fields that the scene sets.
+/// The summoned object's display fields that the scene sets: a struct Sprite
+/// from its rotation on.
 struct SummonObject {
-  u8 unk00[18];
+  u8 imageScaleAndSlot[18]; ///< struct Sprite's fields before the rotation
   u16 rotation;
   u8 size[2];
   u8 offsetX;
   u8 offsetY;
 };
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define DAEDALUS_ALT_GLOW_BAND 0x4000
 
 /// The summoned object glides in from the right and down over 92 frames
 /// while, from frame 56, a shaded disc swells at the centre and six rings of
@@ -1425,7 +1449,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame == 56) {
       Sound_PlayFar(SE_SPIN);
@@ -1561,7 +1586,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
           delay -= 4;
         }
         Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
-                                   work->sheet + 0x4000, 0, 0);
+                                   work->sheet + DAEDALUS_ALT_GLOW_BAND, 0, 0);
       }
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -1569,8 +1594,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 2;
       model->vertices = vertices;
-      texture.pixels = work->sheet + 0x4000;
-      model->kind = 7;
+      texture.pixels = work->sheet + DAEDALUS_ALT_GLOW_BAND;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;
 
@@ -1583,7 +1608,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 
           Transform_Reset();
           k = i & 3;
-          Transform_ApplyTranslation((k << 17) + ringX + ringOffset,
+          Transform_ApplyTranslation(px(k * 2) + ringX + ringOffset,
                                      discY - px(k + 2) + ringOffset, 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(ring->x);

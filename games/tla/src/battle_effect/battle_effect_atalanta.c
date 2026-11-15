@@ -68,7 +68,7 @@ enum SlashSheetPicture {
 
 #define ATALANTA_PIECES 11
 
-#define ATALANTA_FRAMES 88
+#define ATALANTA_FALL_FRAMES 88 ///< frames of the shafts' fall
 
 #define ATALANTA_SHAFTS 16 ///< shafts of light that gather over the field
 
@@ -128,7 +128,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   // Atalanta: eleven sprite objects with their tiles.
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-  Iwram_CopyWords(OBJ_PLTT, picture, 512);
+  Iwram_CopyWords(OBJ_PLTT, picture, OBJ_PLTT_SIZE);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
   picture += 256;
@@ -140,7 +140,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     piece->image.priority = 1;
     work->sprites[i] = piece;
     Iwram_CopyWordsEntry(OBJ_VRAM + gVramCacheEntries[piece->slot].offset,
-                         tiles + i * 0x400, 0x400);
+                         tiles + i * OBJ_32X32_8BPP_BYTES,
+                         OBJ_32X32_8BPP_BYTES);
   }
 
   // The shafts, the sky and Atalanta's path.
@@ -156,7 +157,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   draw[1] = ALTERNATE_BLITTER_SLOT;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
   work->scrollStepX = -1;
@@ -308,8 +310,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != ATALANTA_PIECES; i++)
     Sprite_DestroyFar(work->sprites[i]);
@@ -333,7 +335,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     shaft->variant = -1;
   }
-  for (frame = 0; frame != ATALANTA_FRAMES; frame++) {
+  for (frame = 0; frame != ATALANTA_FALL_FRAMES; frame++) {
     for (i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
       struct Particle *shaft = &work->particles[i];
 

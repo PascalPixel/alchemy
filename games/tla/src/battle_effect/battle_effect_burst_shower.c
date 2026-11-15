@@ -908,13 +908,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       if (mode == BURST_SHOWER_MODE_AGING_GAS && frame > 15) {
         struct MotionObject *object;
         s32 half;
-        s32 *camera;
+        struct BattleCamera *camera;
 
         object = BattleObject_GetFar(args->user)->object;
         half = BattleUnit_GetEffectHeightFar(args->user) / 2;
         camera = Ram_HeapSlots->cameraWork;
         Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->focus);
         for (i = 0; i != 24; i++) {
           struct Particle *mote = &MOTES[i];
           s32 height = 12;

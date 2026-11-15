@@ -109,13 +109,13 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     store:
       tile = (tileY * 8 + tileX) * 2;
       entry = ((tile + 1) << 8) | tile;
-      *(volatile s16 *)(0x06003800 + i) = entry;
+      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;
     }
   }
-  REG_BG2Y = 0xffffd800;
-  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_BG2Y = -(40 << 8);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(40, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN1V = WIN_RANGE(40, 136);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -180,16 +180,16 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     if (frame <= 24) {
       REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        REG_WIN0H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
-        REG_WIN1H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
+        REG_WIN0H = WIN_RANGE(Q_16_16_TO_INT(backgroundX) + 120, DISPLAY_WIDTH);
+        REG_WIN1H = WIN_RANGE(Q_16_16_TO_INT(backgroundX) + 120, DISPLAY_WIDTH);
       } else {
-        REG_WIN0H = (Q_16_16_TO_INT(backgroundX)) + 240;
-        REG_WIN1H = (Q_16_16_TO_INT(backgroundX)) + 240;
+        REG_WIN0H = Q_16_16_TO_INT(backgroundX) + DISPLAY_WIDTH;
+        REG_WIN1H = Q_16_16_TO_INT(backgroundX) + DISPLAY_WIDTH;
       }
     } else {
       REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
-      REG_WIN0H = WIN_RANGE(0, 240);
-      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+      REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
     }
     backgroundX -= speed;
     speed = speed * 52 / DAMPING_SCALE;
@@ -328,8 +328,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     BattleCamera_Shake(1, 4);
     EFFECT_PRESENT_CANVAS(work);
   }
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
+  REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -533,7 +533,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       work->shakeFrames = 12;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
     timer = work->particles[0].variant;
@@ -548,7 +549,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       width = 7;
       if (scale > 0) {
         model->shade = zero;
-        model->kind = 9;
+        model->kind = MODEL_SHADED;
         model->vertices = vertices;
         model->texture = &texture;
         Transform_Reset();
@@ -595,7 +596,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         if (args->side == EFFECT_SIDE_PARTY) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = gBattleEffect_SmallSquareMeshReversed;
         texture.logWidth = 5;
         texture.logHeight = 5;
@@ -835,7 +836,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
           if (frame > 31)
             brightness = 224 - (frame << 3);
         }
-        column->kind = 7;
+        column->kind = MODEL_SHADED_ADDITIVE;
         column->shade = brightness;
         column->mesh = gGeyser_Mesh;
         column->texture = &texture;
@@ -988,7 +989,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       if (frame >= start + 4 && start < 44)
-        BattleEffectKernels_IntegrateVector3(point, 64, 0);
+        BattleEffectKernels_IntegrateVector3(point, PARTICLE_DAMPING_NONE, 0);
       Transform_ApplyPosition(&point->x);
 
       for (i = 0; i != starCount; i++) {
@@ -1059,13 +1060,13 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
 /// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
 /// the effect body BattleEffect_RunBubbleColumn.
 void BattleEffect_StartBubbleColumn(s32 arg) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  *(s32 *)(work + 0x77b4) = 24;
-  *(s32 *)(work + 0x77b8) = 0;
+  work->fadeFrames = 24;
+  work->fadeStep = 0;
   BattleEffect_RunBubbleColumn(arg);
 }
 
@@ -1199,7 +1200,7 @@ struct MeshVertex;
       c = RGB(r_, g_, b_);                                                     \
       *table++ = c;                                                            \
     }                                                                          \
-    for (; i != 160; i++) {                                                    \
+    for (; i != DISPLAY_HEIGHT; i++) {                                         \
       *table++ = 0;                                                            \
     }                                                                          \
   } while (0)
@@ -1222,7 +1223,7 @@ struct MeshVertex;
     s32 n_ = (p)->z;                                                           \
                                                                                \
     {                                                                          \
-      u8 *src_ = work->sheet + 0x4800 + gCoatlicue_Pictures[n_];               \
+      u8 *src_ = work->sheet + COATLICUE_BUBBLES + gCoatlicue_Pictures[n_];    \
       s32 x0_ = Q_16_16_UPPER_HALF((p)->x);                                    \
       u8 w_ = gCoatlicue_PictureWidths[n_];                                    \
       s32 x_ = x0_ - (w_ >> 1);                                                \
@@ -1236,6 +1237,15 @@ struct MeshVertex;
       (p)->variant = -1;                                                       \
     }                                                                          \
   } while (0)
+
+/// Where ScaleTexture is decoded in the effect's pictures.
+#define COATLICUE_SCALES 0x4000
+/// BubbleSheet's fifteen pictures, then a copy of them at half brightness.
+#define COATLICUE_BUBBLES 0x4800
+#define BUBBLE_SHEET_BYTES 3000
+#define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
+
+#define COATLICUE_FRAMES 602 ///< frames of the summon after its opening
 
 /// Coatlicue: under water among rising bubbles a ring of light spins and
 /// crosses a second; they settle into a ripple and burst in a froth of
@@ -1264,7 +1274,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 spin;
   s32 zero;
   u8 *coilMesh = Ram_MapCellBuffer + 0x4800;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 place[4];
   struct Scale req;
   struct ScreenPoint pos;
@@ -1302,12 +1312,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   skip = 0;
   Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x4400, coilMesh, 32);
-  list[0] = 255;
+  list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
 
-    Iwram_CopyWords((void *)OBJ_PLTT, e, 512);
+    Iwram_CopyWords((void *)OBJ_PLTT, e, OBJ_PLTT_SIZE);
     Decompress_TaggedLz(e + 512, cellBuffer);
     {
       u8 *cells;
@@ -1326,14 +1336,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
   Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC,
+                             work->sheet + COATLICUE_SCALES, 0, 0);
   {
-    u8 *src = work->sheet + 0x4800;
+    u8 *src = work->sheet + COATLICUE_BUBBLES;
 
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, src, 0, 0);
-    for (i = 0; i != 3000; i++) {
-      work->sheet[0x53b8 + i] = src[i] >> 1;
+    for (i = 0; i != BUBBLE_SHEET_BYTES; i++) {
+      work->sheet[COATLICUE_DIM_BUBBLES + i] = src[i] >> 1;
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cellBuffer, 0, 0);
@@ -1347,7 +1357,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  for (frame = 0; frame != 602; frame++) {
+  for (frame = 0; frame != COATLICUE_FRAMES; frame++) {
     spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {
       skip = 1;
@@ -1574,8 +1584,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         grid.y += px(16);
       }
       for (i = 0; i != 12; i++) {
-        place[0] = ((i % 3) << 21) + grid.x;
-        place[2] = ((i / 3) << 21) + grid.y;
+        place[0] = px((i % 3) * 32) + grid.x;
+        place[2] = px((i / 3) * 32) + grid.y;
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
@@ -1724,9 +1734,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             q->y = q->y - frame + 534;
           }
           if (p->variant <= 1) {
-            BLIT_CELL(0x4800, n, q->x, q->y);
+            BLIT_CELL(COATLICUE_BUBBLES, n, q->x, q->y);
           } else {
-            BLIT_CELL(0x53b8, n, q->x, q->y);
+            BLIT_CELL(COATLICUE_DIM_BUBBLES, n, q->x, q->y);
           }
           if (frame <= 453 || frame >= i / 16 + 540) {
             p->y += p->velocityY;
@@ -1752,7 +1762,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             n = 0;
           }
           {
-            u8 *src = work->sheet + 0x53b8 + gCoatlicue_Pictures[n];
+            u8 *src =
+                work->sheet + COATLICUE_DIM_BUBBLES + gCoatlicue_Pictures[n];
             u8 w = gCoatlicue_PictureWidths[n];
             s32 x0 = x - (w >> 1);
             s32 y0 = Q_16_16_TO_INT(top);
@@ -1760,7 +1771,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
             blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
           }
-          BattleEffectKernels_IntegrateVector3(step, 64, 0);
+          BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE, 0);
           if (step->z < 0) {
             step->z = zero;
           }
@@ -1790,7 +1801,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         ty = (frame * 3 << 13) - 0x4ec000;
         pitch = 4000;
         if (ty > 0x180000) {
-          ty = 0x180000;
+          ty = px(24);
         }
         s = frame * 611 - 111926;
         if (s > 55536) {
@@ -1799,7 +1810,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         if (frame > 273) {
           ty = (frame << 15) - 0x710000;
           if (ty > 0x200000) {
-            ty = 0x200000;
+            ty = px(32);
           }
           pitch = 21536 - (frame << 6);
           if (pitch <= 2999) {
@@ -1810,7 +1821,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s = 85536;
           }
         }
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         texture.pixels = work->sheet;
         sh = (frame << 3) - 1744;
         if (sh > 0) {
@@ -1849,7 +1860,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       if ((u32)(frame - 274) <= 27) {
         s = (frame << 11) - 0x85000;
         texture.pixels = cellBuffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         sh = 0;
         if (frame > 293) {
           sh = (294 - frame) << 3;
@@ -1873,12 +1884,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             texture.pixels = gMapGridCellBuffer;
             sh = -16;
             d = frame - st;
-            model->kind = 6;
+            model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Transform_Reset();
             s = d << 13;
             if (i > 1) {
-              s32 ty = -0x2c0000;
+              s32 ty = -px(44);
 
               if (frame > 539) {
                 ty += (frame - 539) << 20;
@@ -1906,7 +1917,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s32 d = frame - gCoatlicue_FlashFrames[i];
             s = 0x14000 - (d << 13);
             texture.pixels = cellBuffer;
-            model->kind = 7;
+            model->kind = MODEL_SHADED_ADDITIVE;
             sh = d * 16 - 56;
             if (sh > 0) {
               sh = 0;
@@ -1915,7 +1926,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Transform_Reset();
             Transform_ApplyTranslation(-px(4), -px(44), 0);
             Transform_ApplyAxisScale(s, s << 1, s);
-            Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+            Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
             Transform_ApplyPitch(-TRIG_TURN / 16);
             Transform_ApplyYaw(frame << 9);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
@@ -1929,14 +1940,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           s32 st = gCoatlicue_GlowFrames[i];
 
           if (frame > st && frame < st + 100) {
-            ty = -0x2c0000;
+            ty = -px(44);
             s = (frame - st) * 2978;
             if (s > 65535) {
               s = 0x10000;
             }
             texture.pixels = work->sheet;
             sh = -16;
-            model->kind = 6;
+            model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Transform_Reset();
             if (frame > 539) {
@@ -1954,8 +1965,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
       texture.logWidth = 7;
       texture.logHeight = 4;
-      texture.pixels = work->sheet + 0x4000;
-      model->kind = 7;
+      texture.pixels = work->sheet + COATLICUE_SCALES;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = coilMesh;
       model->vertices = verts;
       model->scrollU = zero;
@@ -2053,8 +2064,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
@@ -2064,7 +2075,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        SHEET_PALETTE_BYTES);
-  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+  Iwram_FillWords(canvas, CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {
@@ -2129,7 +2141,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     washTexture.logHeight = 7;
     washModel->mesh = gBattleEffect_LargeSquareMesh;
     washModel->vertices = washVertices;
-    washModel->kind = 6;
+    washModel->kind = MODEL_SHADED_MAX;
     washTexture.pixels = work->sheet;
     i = 0;
     lift = frame * 8 - 128;
@@ -2148,7 +2160,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           Transform_ApplyTranslation(0, px(112 - lift), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyUniformScale(s);
-          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyYaw(frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners,

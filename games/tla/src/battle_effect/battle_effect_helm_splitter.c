@@ -37,7 +37,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                                work->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   } else {
     // Lift every drawn pixel of the swirl into the upper half of the palette,
     // where the blue flame's colours go.
@@ -54,8 +54,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
                                work->sheet + 0x3e80, 1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
-    work->transferValue = 75;
+        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+        SHEET_PALETTE_BYTES);
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   }
   work->transferMode = CANVAS_COPY_AND_FADE;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -181,9 +182,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 /// 128 thrown up at the start and 128 shed by the head.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
-
-/// The pillar sheet's cell is 24 x 39; the faded copies follow it.
-#define PILLAR_CELL_SIZE 936
 
 // Returns the fixed IWRAM word copy entry, so the call loads its address before
 // its arguments.

@@ -182,7 +182,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 
 /// Spawns the battle objects of each unit in the list that has HP left.
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 count = 0;
   s32 i;
 
@@ -190,6 +190,6 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party) {
     if (Unit_Get(party->targets[i])->hp > 0)
       list[count++] = party->targets[i];
   }
-  list[count] = 0xff;
+  list[count] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
 }

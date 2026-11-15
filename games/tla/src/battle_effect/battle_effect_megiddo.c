@@ -7,25 +7,19 @@
 
 struct StripQuad;
 
-/* VIEW(megiddo): tag struct RenderModel as struct RenderModel__megiddo;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMegiddo moves: 1 of 1354 instructions in
- * tla-en. */
-struct RenderModel__megiddo {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  u8 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define MEGIDDO_DUST_BLOB_PICTURES 0x2400
 
 #define MEGIDDO_FRAMES 188
+
+/// Where FireRingTexture is decoded in the map cell buffer.
+#define MEGIDDO_FIRE_RING 0x4000
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define MEGIDDO_GLOW_BAND 0x800
+
+/// Where FireStripesTexture is decoded in the effect's pictures.
+#define MEGIDDO_FIRE_STRIPES 0x1000
 
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
@@ -53,15 +47,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 scale;
   u8 *transformed;
   u8 *strip;
-  u8 *scratchSheet;
+  u8 *fireRing;
   s32 i;
   s32 j;
   s32 m;
-  struct RenderModel__megiddo *model;
+  struct RenderModel *model;
   void *verts;
   struct Particle *p;
   struct ScreenPoint pos;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s16 targetList[14];
   s32 place[4];
   s32 screen[3];
@@ -78,7 +72,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   ring = gMapGridCellBuffer;
   transformed = Ram_MapCellBuffer + 0x1000;
   strip = Ram_MapCellBuffer + 0x2000;
-  scratchSheet = Ram_MapCellBuffer + 0x4000;
+  fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -138,12 +132,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
-                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                                 work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
                                  0);
@@ -182,7 +176,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       list[0] = args->user;
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
@@ -280,7 +275,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;
@@ -370,7 +366,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       // The texture's sizes go in as bytes (char stores), its pixels as a word.
       textureBytes[0] = 6;
       model->vertices = transformed;
@@ -386,7 +382,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       asm("" : "+m"(*t));
       /* FAKEMATCH(dead): a once-only block. */
       do {
-        t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
+        t->pixels =
+            work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 0x400;
       } while (0);
       model->mesh = strip;
       {
@@ -406,7 +403,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t->logWidth = 5;
       t->logHeight = 5;
       t->pixels = work->sheet + MEGIDDO_DUST_BLOB_PICTURES;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = meshB;
       tint = -24;
       model->flags = 3;
@@ -507,8 +504,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     model = Render_AllocateModelList(1);
     scratchTexture.logWidth = 7;
     scratchTexture.logHeight = 7;
-    scratchTexture.pixels = scratchSheet;
-    model->kind = 7;
+    scratchTexture.pixels = fireRing;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->texture = &scratchTexture;
     model->vertices = verts;
@@ -540,7 +537,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
     }
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     scratchTexture.logWidth = 5;
     scratchTexture.logHeight = 6;
     scratchTexture.pixels = work->sheet;
@@ -603,7 +600,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   transition[4] = 0;
   // The background id is the low halfword of the word at 0x670.
   BattleBackground_LoadFar(
-      1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
+      BATTLE_BACKGROUND_FIXED,
+      (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER

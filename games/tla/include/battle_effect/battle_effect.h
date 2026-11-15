@@ -73,7 +73,7 @@ typedef DrawRectangle BlitterPair[2];
 struct Texture {
   u8 logWidth;
   u8 logHeight;
-  u16 unk02;
+  u16 padding;
   void *pixels;
 };
 
@@ -182,8 +182,6 @@ void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-extern u8
-    Data_02012000[]; // the crystal texture and the flashes, after the map cells
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,

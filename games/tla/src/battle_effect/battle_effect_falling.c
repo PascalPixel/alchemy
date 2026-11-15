@@ -10,6 +10,8 @@
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
+enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
+
 // Shards of ice fall in a slanting column onto the targets' side. Each one
 // flies down at 8 pixels a frame until it reaches the ground line, then
 // flashes every target, shakes the screen and shatters: fourteen frames of
@@ -60,7 +62,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     s32 y;
     s32 slant;
 
-    for (i = 0, y = -128, slant = -16; i != 32; y -= 64, i++, slant -= 8) {
+    for (i = 0, y = -128, slant = -16; i != FALLING_SHARD_COUNT;
+         y -= 64, i++, slant -= 8) {
       s32 x;
 
       shard = &work->particles[i];
@@ -74,8 +77,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
       shard->y = y;
     }
   }
-  for (i = 0; i != 32; i++)
-    work->particles[32 + i].variant = -1;
+  for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
+    work->particles[FALLING_SHARD_COUNT + i].variant = -1;
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
@@ -96,7 +99,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   // shards' fall, then the targets' full width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = (0xf0 - i) | ((0x70 - i) << 8);
       else if (i <= 135)
@@ -106,7 +109,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     }
   } else {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 95)
         line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
       else if (i <= 135)
@@ -119,9 +122,9 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGER)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
@@ -170,8 +173,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
               ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
-          for (k = 0; k != 32; k++) {
-            puff = &work->particles[32 + k];
+          for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
+            puff = &work->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
               puff->variant = 18;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
@@ -187,8 +190,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
     // Each puff counts down from 18 through its nine pictures, two frames
     // apiece, centred on its point.
-    for (i = 0; i != 32; i++) {
-      puff = &work->particles[32 + i];
+    for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
+      puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
@@ -285,7 +288,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Line the drops up above the screen along the slant, each the variant's
   // spacing higher than the one before.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 x;
     s32 y;
 
@@ -305,7 +308,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // drops' fall, then the targets' width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
       else if (i <= 135)
@@ -315,7 +318,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     }
   } else {
     line = gMapGridCellBuffer;
-    for (i = 0; i != 160; i++) {
+    for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
       else if (i <= 135)

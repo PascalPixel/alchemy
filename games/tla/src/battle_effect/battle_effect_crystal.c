@@ -70,7 +70,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   }
   draw[0] = BLITTER;
   {
-    void *camera;
+    struct BattleCamera *camera;
     struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -99,7 +99,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         REG_BLDALPHA = BLEND_ALPHA(0xce - frame * 2, BLEND_WEIGHT_MAX);
       }
       Transform_Reset();
-      Transform_SetLookAt(camera, (u8 *)camera + 12);
+      Transform_SetLookAt(camera->eye, camera->focus);
 
       // The pillar of light.
       if (frame <= 19) {
@@ -163,7 +163,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         void *vertices = Heap_AllocEwram(32);
         struct RenderModel *model = Render_AllocateModelList(1);
 
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;

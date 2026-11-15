@@ -480,7 +480,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;
-            // A once-only block around the read of user->x.
+            /* FAKEMATCH(dead): the read of user->x in a once-only block; as the
+             * plain read, 43 of 589 instructions differ in tla-en. */
             do {
               userX = user->x;
             } while (0);
@@ -488,7 +489,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read. */
+             * read; as the bare tests, 37 of 589 instructions differ in
+             * tla-en. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))
               mote->variant = -1;
@@ -523,6 +525,9 @@ struct ProjectedPoint {
 #define SERAC_MERCURY_DJINN_PICTURES 0x4000
 
 #define SERAC_FRAMES 88
+
+/// Where CloudPuffSheet is decoded in the effect's pictures.
+#define SERAC_CLOUD_PUFFS 0x400
 
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
@@ -559,11 +564,11 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  mistSheet = gData_02014000;
+  mistSheet = Ram_MapCellBuffer + 0x4000;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CF,
+                             work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -725,10 +730,12 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
           BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 8);
-          x = point.x - 16;
-          y = point.y - 16;
-          blitters[0](canvas, work->sheet + 0x400 + (picture << 10), x, y, 32,
-                      32);
+          x = point.x - CLOUD_PUFF_WIDTH / 2;
+          y = point.y - CLOUD_PUFF_HEIGHT / 2;
+          blitters[0](canvas,
+                      work->sheet + SERAC_CLOUD_PUFFS +
+                          picture * PICTURE_BYTES(CLOUD_PUFF),
+                      x, y, CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
         }
       }
       // The Djinni falls.
@@ -803,7 +810,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 
       if (frame > 63) {
         if (frame == 64) {
-          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                               CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
             struct Particle *p = &work->particles[i];
             s32 angle = (i & 7) << 13;
@@ -823,7 +831,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             p->variant = (Random16() & 31) + 32;
           }
         } else {
-          model->kind = 2;
+          model->kind = MODEL_SOLID_MAX;
           model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
@@ -856,13 +864,13 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           // Set before the branch below and stored after it; the second value
           // stays apart from the 7 beside it.
           s32 spireShade;
-          const void *mesh = Data_02012000;
+          const void *mesh = Ram_MapCellBuffer + 0x2000;
 
           // The spire, then the mist inside it.
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = (const u8 *)work->sheet;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->flags = 3;
           model->vertices = vertices;
           model->scrollU = 0;
@@ -883,7 +891,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
           spireShade = -32;
           model->shade = (const void *)spireShade;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
           model->flags = 2;
@@ -894,7 +902,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logWidth = 7;
           texture.logHeight = 7;
           texture.pixels = mistSheet;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &texture;
           model->mesh = gBattleEffect_CylinderMesh;
           model->flags = 0;

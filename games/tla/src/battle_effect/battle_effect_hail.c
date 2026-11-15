@@ -190,7 +190,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
   BlitterPair draw;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct MotionObject *actor;
   s32 screen[3];
   s32 otherPoint[3];
@@ -277,7 +277,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       }
 
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != ROCK_COUNT; i++) {
         struct Particle *rock = &work->particles[i];
 

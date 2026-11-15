@@ -1,7 +1,7 @@
 @ Why assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ str r3, [pc, #-296] and the four like it rewrite the shifts of its
+@ str r3, [pc, #-248] and the four like it rewrite the shifts of its
 @ own loop's instructions, and DMA 3 copies that loop's body into the code
 @ slot after it, before the loop runs: stores into code.
 @ r11 (fp) as an ordinary register: it holds a word of its argument block
@@ -10,31 +10,31 @@
 @ is subs r2, r1, #0.
 .syntax unified
 	.thumb
-	.global Data_0813a924
-Data_0813a924:
-	.global Func_0813a924
+	.global Render_TexturedNarrowKernel
+Render_TexturedNarrowKernel:
+	.global Render_TexturedNarrowKernelEntry
 	.thumb_func
-Func_0813a924:
+Render_TexturedNarrowKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_0813a926:
+AlchemyUncredited_0813b2ee:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0813a926:
-	b	.L_0813ad2c
+AlchemyUncreditedEnd_0813b2ee:
+	b	.L_0813b6c4
 @ Two words of run-time state: stm r0, {r7, r8} writes them and
 @ ldm lr, {r6, ip} reads them back.
-AlchemyUncredited_0813a92c:
+AlchemyUncredited_0813b2f4:
 	.4byte	0
 	.4byte	0
-AlchemyUncreditedEnd_0813a92c:
-.L_0813a934:
+AlchemyUncreditedEnd_0813b2f4:
+.L_0813b2fc:
 	add	sp, sp, #64
 	pop	{r0, r1, fp}
-.L_0813a93c:
+.L_0813b304:
 	ldm	r0!, {r3, r9, sl}
 	lsls	r5, r3, #8
-	beq	.L_0813ae0c
+	beq	.L_0813b798
 	and	r5, r3, #255
 	ldr	r6, [r1, r5, lsl #3]
 	and	r5, r3, #0xff00
@@ -42,7 +42,7 @@ AlchemyUncreditedEnd_0813a92c:
 	and	r5, r3, #0xff0000
 	ldr	r8, [r1, r5, lsr #13]
 	tst	fp, #3
-	beq	.L_0813a9a4
+	beq	.L_0813b36c
 	asr	r5, r8, #16
 	sub	r5, r5, r6, asr #16
 	sub	r4, r7, r6
@@ -55,19 +55,19 @@ AlchemyUncreditedEnd_0813a92c:
 	lsl	r4, r4, #16
 	asr	r4, r4, #16
 	mlas	r3, r4, r5, r3
-	beq	.L_0813a93c
+	beq	.L_0813b304
 	eors	r3, r3, fp, lsl #31
-	bpl	.L_0813a93c
-.L_0813a9a4:
+	bpl	.L_0813b304
+.L_0813b36c:
 	cmp	r6, r7
 	eorgt	r6, r6, r7
 	eorgt	r7, r7, r6
 	eorgt	r6, r6, r7
 	rorgt	r9, r9, #16
 	tst	r7, r8
-	bmi	.L_0813a93c
+	bmi	.L_0813b304
 	cmp	r7, r8
-	ble	.L_0813a9f4
+	ble	.L_0813b3bc
 	eor	r7, r7, r8
 	eor	r8, r8, r7
 	eor	r7, r7, r8
@@ -79,12 +79,12 @@ AlchemyUncreditedEnd_0813a92c:
 	eorgt	r7, r7, r6
 	eorgt	r6, r6, r7
 	rorgt	r9, r9, #16
-.L_0813a9f4:
-	asrs	r3, r6, #23
-	bgt	.L_0813a93c
+.L_0813b3bc:
+	asrs	r3, r6, #22
+	bgt	.L_0813b304
 	asrs	r3, r6, #16
 	rsbs	r4, r3, r8, asr #16
-	beq	.L_0813a93c
+	beq	.L_0813b304
 	push	{r0, r1, fp}
 	sub	sp, sp, #64
 	sub	r0, pc, #236
@@ -92,7 +92,7 @@ AlchemyUncreditedEnd_0813a92c:
 	lsls	r6, r6, #16
 	rsbs	r0, r6, r8, lsl #16
 	rsbmi	r0, r0, #0
-	ldr	r5, [pc, #972]
+	ldr	r5, [pc, #912]
 	ldr	r1, [r5, r4, lsl #2]
 	umulls	r5, ip, r1, r0
 	moveq	ip, r0
@@ -114,7 +114,7 @@ AlchemyUncreditedEnd_0813a92c:
 	umullsne	r5, r2, r1, r2
 	lsls	r0, r0, #24
 	rsbmi	r2, r2, #0
-	ldr	r0, [pc, #900]
+	ldr	r0, [pc, #840]
 	add	sl, r9, r0
 	add	sl, sl, sl
 	add	sl, sl, #1
@@ -137,8 +137,8 @@ AlchemyUncreditedEnd_0813a92c:
 	mla	r1, ip, r0, r6
 	rsb	r1, r1, r7, lsl #16
 	asrs	r1, r1, #16
-	beq	.L_0813a934
-	ldr	r5, [pc, #788]
+	beq	.L_0813b2fc
+	ldr	r5, [pc, #728]
 	ldr	r2, [r5, r0, lsl #2]
 	rsbs	r0, r6, r7, lsl #16
 	rsbmi	r0, r0, #0
@@ -176,44 +176,44 @@ AlchemyUncreditedEnd_0813a92c:
 	movpl	r1, #1
 	lsls	r1, r1, #29
 	orrpl	r1, r1, #8
-.L_0813ab74:
+.L_0813b53c:
 	ldr	r4, [sp, #24]
 	asr	r4, r4, #16
-	cmp	r4, #128
-	movge	r4, #128
+	cmp	r4, #64
+	movge	r4, #64
 	str	r4, [sp, #24]
 	cmp	r3, r4
-	beq	.L_0813acdc
+	beq	.L_0813b674
 	ldm	sp, {r7, r8}
-.L_0813ab94:
+.L_0813b55c:
 	asrs	sl, r3, #3
-	bmi	.L_0813acb8
-	asrs	r0, r6, #23
+	bmi	.L_0813b650
+	asrs	r0, r6, #22
 	mvnmi	ip, #0
-	movpl	ip, #128
+	movpl	ip, #64
 	asreq	ip, r6, #16
 	asrs	r4, r5, #16
-	asrs	fp, r4, #7
-	beq	.L_0813abf0
-	bmi	.L_0813abd0
-	cmp	r6, #0x800000
-	bge	.L_0813acb8
-	sub	fp, r4, #127
-	mov	r4, #127
-	b	.L_0813abe0
-.L_0813abd0:
+	asrs	fp, r4, #6
+	beq	.L_0813b5b8
+	bmi	.L_0813b598
+	cmp	r6, #0x400000
+	bge	.L_0813b650
+	sub	fp, r4, #63
+	mov	r4, #63
+	b	.L_0813b5a8
+.L_0813b598:
 	movs	r6, r6
-	bmi	.L_0813acb8
+	bmi	.L_0813b650
 	rsb	fp, r4, #0
 	mov	r4, #0
-.L_0813abe0:
+.L_0813b5a8:
 	mul	fp, r9, fp
 	sub	r0, r4, r1, asr #29
 	cmp	r0, ip
-	beq	.L_0813acb8
-.L_0813abf0:
+	beq	.L_0813b650
+.L_0813b5b8:
 	subs	r0, r4, ip
-	beq	.L_0813acb8
+	beq	.L_0813b650
 	rsbmi	r0, r0, #0
 	and	r2, r5, #0xff00
 	rsbmi	r2, r2, #0x10000
@@ -225,40 +225,38 @@ AlchemyUncreditedEnd_0813a92c:
 	lsr	ip, r7, #16
 	add	ip, fp, ip, lsl #16
 	add	ip, ip, r8, lsr #16
-	add	r7, pc, #0x1d0
+	add	r7, pc, #0x194
 	ldm	r7, {r7, r8, fp}
 	and	r2, r3, #7
 	add	r2, r7, r2, lsl #3
-	add	r2, r2, sl, lsl #10
+	add	r2, r2, sl, lsl #9
 	bic	r7, r4, #7
 	orr	r7, r7, r4, lsl #29
 	tst	r0, #1
-	bne	.L_0813ac7c
-.L_0813ac48:
+	bne	.L_0813b62c
+.L_0813b610:
 	and	sl, fp, ip
 	orr	sl, sl, ip, lsr #32
 	add	ip, ip, r9
 	ldrb	sl, [r8, sl]
-	subs	sl, sl, #0
-	ble	.L_0813ac74
-	ldrb	lr, [r2, r7, ror #29]
-	add	lr, lr, sl
-	cmp	lr, #63
-	movge	lr, #63
-	strb	lr, [r2, r7, ror #29]
-.L_0813ac74:
+	strb	sl, [r2, r7, ror #29]
 	adds	r7, r7, r1
 	subcc	r7, r7, #8
-.L_0813ac7c:
-@ The code slot DMA 3 fills with a copy of the 13-instruction loop body
+.L_0813b62c:
+@ The code slot DMA 3 fills with a copy of the 7-instruction loop body
 @ before it.
-AlchemyUncredited_0813ac7c:
-	.4byte	0, 0, 0, 0, 0, 0, 0, 0
-	.4byte	0, 0, 0, 0, 0
-AlchemyUncreditedEnd_0813ac7c:
+AlchemyUncredited_0813b62c:
+	.4byte	0
+	.4byte	0
+	.4byte	0
+	.4byte	0
+	.4byte	0
+	.4byte	0
+	.4byte	0
+AlchemyUncreditedEnd_0813b62c:
 	subs	r0, r0, #2
-	bgt	.L_0813ac48
-.L_0813acb8:
+	bgt	.L_0813b610
+.L_0813b650:
 	ldm	sp, {r2, r4, r7, r8, sl, fp, ip}
 	add	r5, r5, r7
 	add	r6, r6, r8
@@ -267,19 +265,19 @@ AlchemyUncreditedEnd_0813ac7c:
 	stm	sp, {r7, r8}
 	adds	r3, r3, #1
 	cmp	r3, ip
-	blt	.L_0813ab94
-.L_0813acdc:
-	cmp	r3, #128
-	bge	.L_0813a934
-	sub	lr, pc, #0x3c0
+	blt	.L_0813b55c
+.L_0813b674:
+	cmp	r3, #64
+	bge	.L_0813b2fc
+	sub	lr, pc, #0x390
 	ldm	lr, {r6, ip}
 	rsbs	r4, r3, ip, asr #16
-	beq	.L_0813a934
+	beq	.L_0813b2fc
 	str	ip, [sp, #24]
 	lsl	r6, r6, #16
 	rsbs	r8, r6, ip, lsl #16
 	rsbmi	r8, r8, #0
-	ldr	fp, [pc, #236]
+	ldr	fp, [pc, #224]
 	ldr	r0, [fp, r4, lsl #2]
 	cmp	r0, #0
 	umullsne	lr, r8, r0, r8
@@ -288,70 +286,69 @@ AlchemyUncreditedEnd_0813ac7c:
 	str	r8, [sp, #12]
 	movs	r1, r1
 	submi	r6, r6, #0x10000
-	b	.L_0813ab74
-.L_0813ad2c:
+	b	.L_0813b53c
+.L_0813b6c4:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
-	ldr	fp, [pc, #192]
+	ldr	fp, [pc, #180]
 	bic	fp, fp, #1
-	str	fp, [pc, #184]
+	str	fp, [pc, #172]
 	mov	r3, #0x3000000
 	ldr	r3, [r3, #96]
 	ldr	fp, [r0, #4]
 	ldr	r2, [r0, #16]
 	ldr	r4, [r2, #4]
-	add	lr, pc, #164
+	add	lr, pc, #152
 	stm	lr, {r3, r4}
 	ldr	r1, [r0, #12]
 	ldrb	r4, [r2]
 	rsb	r5, r4, #32
-	ldr	r3, [pc, #-288]
+	ldr	r3, [pc, #-240]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-296]
+	str	r3, [pc, #-248]
 	rsb	r5, r4, #31
-	ldr	r3, [pc, #-752]
+	ldr	r3, [pc, #-704]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-760]
+	str	r3, [pc, #-712]
 	rsbs	r5, r4, #8
-	ldr	r3, [pc, #-760]
+	ldr	r3, [pc, #-712]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-768]
-	ldr	r3, [pc, #-584]
+	str	r3, [pc, #-720]
+	ldr	r3, [pc, #-536]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-592]
-	ldr	r3, [pc, #-348]
+	str	r3, [pc, #-544]
+	ldr	r3, [pc, #-300]
 	orr	r3, r3, r5, lsl #7
 	orrne	r3, r3, #32
-	str	r3, [pc, #-360]
+	str	r3, [pc, #-312]
 	ldrb	r6, [r2, #1]
 	mov	r5, #1
 	rsb	r5, r5, r5, lsl r6
 	lsl	r5, r5, r4
-	str	r5, [pc, #64]
-	ldr	r4, [r0, #20]
-	rsbs	r4, r4, #0
-	strb	r4, [pc, #-376]
+	str	r5, [pc, #52]
 	ldr	r3, [r0, #24]
 	str	r3, [pc, #48]
 	mov	r9, #0x4000000
 	add	r9, r9, #212
-	mov	r5, #13
+	mov	r5, #7
 	orr	r5, r5, #0x84000000
-	sub	r3, pc, #0x1a4
-	sub	r4, pc, #0x174
+	sub	r3, pc, #0x168
+	sub	r4, pc, #0x150
 	stm	r9, {r3, r4, r5}
 	ldr	r0, [r0, #8]
-	b	.L_0813a93c
+	b	.L_0813b304
 	.4byte	System_ReciprocalTable + 1
 @ Four words of run-time state: stm lr, {r3, r4} and the two str to pc
 @ write them, and ldm r7, {r7, r8, fp} reads three back.
-AlchemyUncredited_0813adfc:
+AlchemyUncredited_0813b788:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
-AlchemyUncreditedEnd_0813adfc:
-.L_0813ae0c:
+AlchemyUncreditedEnd_0813b788:
+.L_0813b798:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global Data_0813a924CodeSize
-	.set Data_0813a924CodeSize, . - Data_0813a924
+	.global Render_TexturedNarrowKernelCodeSize
+	.set Render_TexturedNarrowKernelCodeSize, . - Render_TexturedNarrowKernel
+	.global Render_TexturedNarrowKernelCodeWords
+	.set Render_TexturedNarrowKernelCodeWords, Render_TexturedNarrowKernelCodeSize / 4

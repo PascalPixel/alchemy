@@ -14,6 +14,9 @@
 
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define LIQUIFIER_GLOW_BAND 0x1000
+
 /// 111 frames. Sparks gather at the caster (frames 0-15)
 /// and burst from it toward the target (16-110); eight flat flashes turn about
 /// the caster; sixteen textured shards fly from the target (54-101), each
@@ -44,8 +47,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x1000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                             work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -123,7 +126,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(step->x) - half,
                   Q_16_16_UPPER_HALF(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
+                                                   0);
             }
           }
           step->variant++;
@@ -173,7 +177,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(step->x) - half,
                   Q_16_16_UPPER_HALF(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
+                                                   0);
             }
           }
           step->variant++;
@@ -188,7 +193,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // Eight flashes turn about the caster, each for 16 frames from its
       // start, swinging wider and back with a sine.
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->vertices = projected;
       texture.logWidth = 6;
@@ -219,9 +224,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       // The shards: each from frame 54 + 2i for 16 frames, shrinking.
       texture.logWidth = 5;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + 0x1000;
+      texture.pixels = work->sheet + LIQUIFIER_GLOW_BAND;
       model->mesh = gBattleEffect_SmallSquareMesh;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != 16; i++) {
         s32 zero = 0;
         struct Particle *step = &work->particles[32 + i];
@@ -247,7 +252,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = splash;
       model->mesh = gBattleEffect_LargeSquareMesh;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != 16; i++) {
         struct Particle *step = &work->particles[i + 32];
         s32 age = frame - 54 - i * 2;
@@ -677,7 +682,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
                         IO_WRITE_HALFWORD);
     REG_BLDCNT = 0;
     wait(1);
-    BattleBackground_SetModeFar(2, battle->background, 0);
+    BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background,
+                                0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                             DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |

@@ -48,8 +48,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF), 128);
-    work->transferValue = 50;
+        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
+        SHEET_PALETTE_BYTES);
+    work->transferValue = CANVAS_FADE_HALF;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   } else {
@@ -133,8 +134,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           s32 ry = (Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46) * 2)) -
                    frame + 100;
 
-          draw[0](canvas, work->sheet + (((frame - 56) / 2) << 11), rx - 16, ry,
-                  32, 64);
+          draw[0](canvas,
+                  work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+                  rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
         }
       }
     } else if (frame > 55) {
@@ -187,7 +190,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
           texture.logWidth = 7;
           texture.logHeight = 7;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->texture = &texture;
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = vertices;
@@ -226,7 +229,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);
-      // A once-only block: it keeps the shake after the sound.
+      /* FAKEMATCH(dead): the shake's store in a once-only block; as the plain
+       * store, 2 of 636 instructions differ in tla-en. */
       do {
         work->shakeFrames = 6;
       } while (0);

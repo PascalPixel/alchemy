@@ -247,7 +247,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
-      point[1] = 160 << 13;
+      point[1] = px(20);
       point[2] = object->z;
       Transform_ApplyPosition(point);
 
@@ -267,24 +267,27 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
             distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0 && mote->variant <= 23) {
-              s32 cel = mote->variant / 4;
+              s32 picture = mote->variant / 4;
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
               screen.x >>= 1;
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
-                        screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
+                draw[1](canvas, work->sheet + picture * PICTURE_BYTES(GLOW_ORB),
+                        screen.x - GLOW_ORB_WIDTH / 2,
+                        screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
+                        GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
-                draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
-                        screen.y - 12, 12, 24);
+                draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
+                        12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21,
-                        HEART_WIDTH, HEART_HEIGHT);
+                draw[1](canvas, work->sheet, screen.x - HEART_WIDTH / 2,
+                        screen.y - HEART_HEIGHT / 2, HEART_WIDTH, HEART_HEIGHT);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
-                                   screen.x - 12, screen.y - 24, 24,
-                                   VORTEX_HEIGHT);
+                draw[(i & 3) != 0](
+                    canvas, work->sheet + picture * PICTURE_BYTES(VORTEX),
+                    screen.x - VORTEX_WIDTH / 2, screen.y - VORTEX_HEIGHT / 2,
+                    VORTEX_WIDTH, VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
               if (DECAYS(mode)) {
@@ -418,7 +421,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       record[0] = object->x;
-      record[1] = 160 << 14;
+      record[1] = px(40);
       record[2] = object->z;
       Transform_ApplyPosition(record);
       if (frame == member * 16 + 64)
@@ -496,7 +499,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
@@ -612,7 +615,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   position[1] = 0;
   position[2] = actor->z;
   target[0] = goal->x;
-  target[1] = 180 << 15;
+  target[1] = px(90);
   target[2] = 0;
   delta[0] = (target[0] - position[0]) / 40;
   delta[1] = (target[1] - position[1]) / 40;
@@ -721,7 +724,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= args->targetCount * 8 + 40)
-      target[1] += 0x40000;
+      target[1] += px(4);
     point[0] = target[0];
     point[1] = target[1];
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;
@@ -740,7 +743,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       position[0] = object->x;
-      position[1] = 160 << 14;
+      position[1] = px(40);
       position[2] = object->z;
       Transform_ApplyPosition(position);
       if (frame == start + 30)
@@ -768,12 +771,11 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               EffectPosition_ProjectPoint((s32 *)spark, &view);
               view.x >>= 1;
-              if (view.depth < 314)
-                view.depth = 314;
-              if (view.depth > 634)
-                view.depth = 634;
-              // DEAD: BattleEffect_RunHealingMotes' size by depth, copied with
-              // its code; the next line sets cel for real.
+              /* LEFTOVER(template): the clamp and size by depth, idle here,
+               * shared with BattleEffect_RunHealingMotes, which uses the size,
+               * as the twin's Djinn Heal keeps it; as the clamp alone, 448 of
+               * 744 instructions differ in tla-en. */
+              CLAMP(view.depth, 314, 634);
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {

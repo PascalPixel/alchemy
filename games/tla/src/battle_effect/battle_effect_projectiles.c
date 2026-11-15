@@ -627,7 +627,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     } else {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
+          SHEET_PALETTE_BYTES);
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                  work->sheet + 0x22, 1, 0);
     }
@@ -1131,9 +1132,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 s32 left;
                 s32 width;
 
-                // The picture, x and rise are read in a once-only block, after
-                // the offset and before the width (otherwise 2 to 4 of 2278
-                // differ, 2026-11-10).
+                /* FAKEMATCH(dead): the picture, x and rise read in a once-only
+                 * block; as plain statements, 4 of 2278 instructions differ in
+                 * tla-en. */
                 do {
                   picture = work->sheet + offset + 0x128a;
                   left = flash->x;
@@ -1238,7 +1239,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 188, 7, 7, gProjectileVolley_GlintFlips[Random16() & 3] | CLIP,
                 0);
             do {
-              /* FAKEMATCH(dead): an empty once-only block before the glints. */
+              /* FAKEMATCH(dead): an empty once-only block before the glints;
+               * without it, 1895 of 2278 instructions differ in tla-en. */
             } while (0);
             DRAW_ALTERNATE(
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintPictures[glint],

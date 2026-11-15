@@ -24,7 +24,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   DrawRectangle draw;
   s32 member;
   u8 *sheet;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 point[3];
   struct ScreenPoint screen;
   s32 frame;
@@ -46,7 +46,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     SHARDS[i].variant = -1;
 
   Transform_Reset();
-  Transform_SetLookAt(camera, camera + 3);
+  Transform_SetLookAt(camera->eye, camera->focus);
 
   // Scatter each target's shards around the middle of its body.
   for (member = 0; member != args->targetCount; member++) {
@@ -74,8 +74,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
       radius = Random16() & 0xff;
       angle = Random16() & TRIG_ANGLE_MASK;
-      shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
-      shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
+      shard->x = ((Trig_Sin(angle) * radius) >> 7) + px(screen.x);
+      shard->y = ((Trig_Cos(angle) * radius) >> 3) + px(screen.y);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
       lift = Random16() & 0xff;
       shard->variant = 0;

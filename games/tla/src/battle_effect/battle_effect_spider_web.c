@@ -75,11 +75,12 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
     s32 shade;
     s32 col;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
+                           CANVAS_LEVEL_BRIGHTEST);
     shade = shade * scale / (Q16_ONE);
 
-    if (shade > 63)
-      shade = 63;
+    if (shade > CANVAS_LEVEL_BRIGHTEST)
+      shade = CANVAS_LEVEL_BRIGHTEST;
     while (x >= y) {
       col = center - x / 2;
       map[half * (last - y) + col] = shade;
@@ -109,10 +110,11 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     s32 col;
     s32 row;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) * 63);
+    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
+                           CANVAS_LEVEL_BRIGHTEST);
     shade = shade * scale / (Q16_ONE);
-    if (shade > 63)
-      shade = 63;
+    if (shade > CANVAS_LEVEL_BRIGHTEST)
+      shade = CANVAS_LEVEL_BRIGHTEST;
     while (x >= y) {
       col = center - x / 2;
       row = last - y;
@@ -156,6 +158,10 @@ void Palette_MirrorBgColors(void) {
 /// grows for 20 frames, then shrinks, and its sideways speed grows from frame
 /// 12), and steps the object's animation through cels 7 to 14, seven frames
 /// each.
+/// The particle Ulysses_MoveLastParticle moves: the work's last.
+#define ULYSSES_LAST_PARTICLE                                                  \
+  (work->particles[ARRAY_COUNT(work->particles) - 1])
+
 void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct SpriteScale scale = gUlysses_ParticleScale;
@@ -165,17 +171,17 @@ void Ulysses_MoveLastParticle(void) {
 
   place.height = 0;
 
-  place.x = work->particles[63].x;
-  place.y = work->particles[63].y;
+  place.x = ULYSSES_LAST_PARTICLE.x;
+  place.y = ULYSSES_LAST_PARTICLE.y;
   Render_ApplyProjectedPlacementFar(work->sprites[7], &place.x, &scale.x, 0);
-  work->particles[63].x += work->particles[63].velocityX;
-  work->particles[63].y += work->particles[63].velocityY;
+  ULYSSES_LAST_PARTICLE.x += ULYSSES_LAST_PARTICLE.velocityX;
+  ULYSSES_LAST_PARTICLE.y += ULYSSES_LAST_PARTICLE.velocityY;
   if (work->frame <= 19)
-    work->particles[63].velocityY += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY += px(1) / 16;
   else
-    work->particles[63].velocityY -= px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY -= px(1) / 16;
   if (work->frame > 11)
-    work->particles[63].velocityX += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityX += px(1) / 16;
   Animation_ApplyChildArgumentFar__f15b3b0(work->sprites[7],
                                            work->frame / 7 % 8 + 7);
   work->frame++;
@@ -185,10 +191,17 @@ struct StripQuad;
 
 extern const struct Scale gUlysses_ShipScale;
 
+/// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
+/// the effect's pictures, and the silhouette's size.
+#define ULYSSES_PICTURES 0x1781
+#define ULYSSES_SILHOUETTE_WIDTH 80
+#define ULYSSES_SILHOUETTE_HEIGHT 112
 /// Where RuneCircleSheet is decoded in the effect's pictures.
 #define ULYSSES_RUNE_CIRCLE_PICTURES 0x2781
 /// Where YellowOrbSheet is decoded in the effect's pictures.
 #define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
+
+#define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
 
 /// Ulysses: the field goes dark, a ring of red runes opens and the robed
 /// Ulysses steps out of it, violet and then red fire pours from it over the
@@ -231,7 +244,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   for (frame = 0, mask = 31; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++, c++) {
+    for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
       s32 v = *c;
       s32 r = mask & v;
       s32 g;
@@ -292,15 +305,16 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   blit = blits;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  cells = work->sheet + 0x1781;
+  cells = work->sheet + ULYSSES_PICTURES;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B1, cells, 0, 0);
-  for (i = 0; i != 0x2300; i++, cells++) {
+  for (i = 0; i != PICTURE_BYTES(ULYSSES_SILHOUETTE); i++, cells++) {
     if (*cells) {
       *cells += 128;
     }
   }
-  picture = work->sheet + 0x1781;
-  blits[0](canvas, picture, 24, 8, 80, 112);
+  picture = work->sheet + ULYSSES_PICTURES;
+  blits[0](canvas, picture, 24, 8, ULYSSES_SILHOUETTE_WIDTH,
+           ULYSSES_SILHOUETTE_HEIGHT);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
@@ -315,7 +329,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   wait(1);
-  for (frame = 0; frame != 326; frame++) {
+  for (frame = 0; frame != ULYSSES_FRAMES; frame++) {
     struct Particle *step;
     draw = 1;
     if (gInput.repeat & (KEY_A | KEY_B)) {
@@ -345,7 +359,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                           CANVAS_FADE_THREE_QUARTERS);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+          SHEET_PALETTE_BYTES);
       for (i = 0; i != 9; i++) {
         p = &work->particles[i];
         p->variant = -2 * i;
@@ -357,7 +372,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - (Q_16_16_TO_INT(Trig_Sin(frame * 860) << 3));
       s32 y = frame - 8;
-      u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
+      u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
       u8 w = gUlysses_PictureWidths[k];
       s32 left = x - (w >> 1);
       u8 h = gUlysses_PictureHeights[k];
@@ -397,6 +412,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         z = px(33) / 32;
       }
       q16 = 0x1000000 / z;
+      // DEAD: each scale is read before it is stored and the value dropped;
+      // the ROM keeps both loads.
       *(volatile u16 *)&work->bg2pa;
       *(volatile u16 *)&work->bg2pa = q16;
       *(volatile u16 *)&work->bg2pd;
@@ -459,8 +476,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-      REG_BG2X = -0x800;
-      REG_BG2Y = -0x1000;
+      REG_BG2X = -(8 << 8);
+      REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
       REG_BG2PA = 0xcc;
       REG_BG2PD = Q_8_8(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -525,7 +542,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->shade = shade;
       model->texture = &texture;
       model->mesh = gBattleEffect_SquareMesh;
@@ -560,7 +577,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
-          u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
+          u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
           s32 x = Q_16_16_TO_INT(step->x);
           u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);
@@ -684,7 +701,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       quadTexture.logHeight = 7;
       model->texture = &quadTexture;
       quadTexture.pixels = work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
       j = 0;
@@ -749,7 +766,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (frame == 266) {
         struct Particle *p;
 
-        REG_BG2X = -0x7000;
+        REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
         REG_BG2PA = Q_8_8(1);
         REG_BG2PD = Q_8_8(1);
         for (i = 0, p = work->particles; i != 32; i++, p++) {
@@ -773,10 +790,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame == 288) {
       Task_Add(Ulysses_MoveLastParticle, TASK_PASS_VBLANK);
-      work->particles[63].x = px(188);
-      work->particles[63].y = px(96);
-      work->particles[63].velocityX = 0;
-      work->particles[63].velocityY = 0;
+      ULYSSES_LAST_PARTICLE.x = px(188);
+      ULYSSES_LAST_PARTICLE.y = px(96);
+      ULYSSES_LAST_PARTICLE.velocityX = 0;
+      ULYSSES_LAST_PARTICLE.velocityY = 0;
       work->frame = 0;
       dmaArmed = 1;
     }
@@ -812,7 +829,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Iwram_ClearWords((void *)&BG_PLTT_COLOR(6, 0), 256);
   wait(1);
-  BattleBackground_LoadFar(2, battle->background, -1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_ZOOMED, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
@@ -829,7 +846,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     u16 *src = battle->palette;
     volatile u16 *dst = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++, src++, dst++) {
+    for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, src++, dst++) {
       s32 v = *src;
       s32 r = RGB_LEVEL_MAX;
       s32 g;
@@ -1039,9 +1056,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
     // The four quarters: the one picture as it is, mirrored, flipped, and
     // both. Each blitter is built, drawn with and released before the next
-    // is built; each once-only block holds a draw, its release and the next
-    // build (as one block per quarter, 12 differ); the last draw needs none.
+    // is built.
     LOAD_QUARTER(CLIP);
+    /* FAKEMATCH(dead): each draw, its release and the next build in a
+     * once-only block, three blocks; as plain statements, 164 of 228
+     * instructions differ in tla-en. */
     do {
       DRAW_QUARTER(33, 41);
       RELEASE_QUARTER();
@@ -1086,3 +1105,4 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 #undef RELEASE_QUARTER
 #undef BLITTER
 #undef CLIP
+#undef ULYSSES_LAST_PARTICLE

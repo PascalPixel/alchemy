@@ -60,9 +60,9 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGEST)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(SE_WHOOSH);
   frame = 0;

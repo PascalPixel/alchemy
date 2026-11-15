@@ -37,7 +37,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;
@@ -86,7 +86,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = target->x;
       point[1] = px(20);
       point[2] = target->z;
@@ -170,14 +170,14 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 
   // On the far side the background and the spirals move 112 pixels left.
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x6800;
+    REG_BG2X = -(104 << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
 
   for (frame = 0; frame != (args->targetCount * 16) + 48; frame++) {
-    s32 *camera;
+    struct BattleCamera *camera;
     s32 *row;
     s32 i;
 
@@ -203,7 +203,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     }
 
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     member = 0;
     if (args->targetCount != 0) {
       while (member != args->targetCount) {
@@ -295,7 +295,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   void *canvas;
   s32 frame;
   s32 k;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 palette;
   s32 i;
 
@@ -364,7 +364,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.

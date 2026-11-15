@@ -24,15 +24,14 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define FORMATION_THORN_VINES 645 ///< eight objects
-
 /// Runs the impact burst at (x, y) in a formation.
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
 
 /// Where BlastSheet is decoded in the effect's pictures.
-#define CYBELE_BLAST_PICTURES 0x1680
+#define CYBELE_BLAST_PICTURES                                                  \
+  5760 ///< the blast pictures, after the yellow ring
 
 #define CYBELE_FRAMES 366
 
@@ -83,7 +82,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   // picture is erased: eight shuffled runs of 0..127.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
+  BattleEffect_SpawnObjects(8, SPRITE_CYBELE, 1);
 
   order = Ram_MapCellBuffer;
   for (i = 0; i != 1024; i++)
@@ -115,7 +114,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  REG_BG2X = -0x2000;
+  REG_BG2X = -(32 << 8);
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
   for (i = 0; i != CYBELE_VINES; i++) {
@@ -307,7 +306,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
-          if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
+          if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
             chip->x = px(Random16() % 96);
             chip->y = px((Random16() & 7) + 88);
             chip->velocityX = ((Random16() & 255) - 128) << 11;
@@ -541,8 +540,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
-
-#define FORMATION_ICE_BLOCKS 643 ///< nine objects in a 3x3 block
 
 /// Rocks, spray and puffs live in the map cell buffer; the spray's trails
 /// follow the first 128 particles.

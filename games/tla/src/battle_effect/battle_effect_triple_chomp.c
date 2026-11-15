@@ -75,7 +75,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
     texture.logHeight = 7;
     texture.pixels = pixels;
     model->mesh = gBattleEffect_LargeSquareMesh;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->vertices = vertices;
 
@@ -95,7 +95,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            spark->velocityX += -(px(1) / 2);
+            spark->velocityX += -px(1) / 2;
           else
             spark->velocityX += px(1) / 2;
           BITE_ANCHOR(i)->x = position.x;
@@ -128,7 +128,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyTranslation(px(BITE_ANCHOR(i)->x - 128),
                                      px(BITE_ANCHOR(i)->y - 64), 0);
-          Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyUniformScale(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,

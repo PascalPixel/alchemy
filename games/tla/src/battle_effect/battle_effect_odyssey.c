@@ -8,30 +8,14 @@
 
 #define KIND125_FRAMES 114
 
-// A texture for the ARM model renderer: its size as powers of two and the
-// address of its pixels.
-
-// A model for the ARM renderer (Render_DrawModelList). A textured model (kind
-// 7) takes a shade; a flat one the address of its colour.
-/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect_odyssey.c:364: structure has no
- * member named `look'. */
-struct RenderModel__f190b74 {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  union {
-    s32 shade;
-    u8 *color;
-  } look;
-};
-
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
+
+/// Where FlameGradientTexture is decoded in the map cell buffer.
+#define ODYSSEY_FLAME_GRADIENT 0x4000
+
+/// Where GiantSwordBladeSheet is decoded in the effect's pictures.
+#define ODYSSEY_SWORD_BLADE 0xc80
 
 /// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
@@ -45,7 +29,7 @@ struct RenderModel__f190b74 {
 void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct ScreenPoint to;
   struct ScreenPoint from;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   DrawRectangle draw[2];
   struct ModelTexture texture;
   struct BattleEffectWork *work;
@@ -54,7 +38,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct MotionObject *caster;
   struct BattlePresentationTransition *transition;
   s32 savedScrollX;
-  struct RenderModel__f190b74 *model;
+  struct RenderModel *model;
   void *projected;
   struct Particle *step;
   s32 frame;
@@ -96,7 +80,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
+                                 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -111,10 +96,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       list[1] = args->targets[0];
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
         s32 entry = *palette;
         s32 red = RGB_LEVEL_MAX;
         u16 green;
@@ -149,7 +135,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     }
     if (frame == 86)
       Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordBladeSheet,
-                                 work->sheet + 0xc80, 1, 1);
+                                 work->sheet + ODYSSEY_SWORD_BLADE, 1, 1);
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
@@ -200,7 +186,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (x > 0)
           x = 0;
       }
-      draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
+      draw[0](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 8, 158, 56);
       if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
@@ -208,7 +194,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
+      draw[1](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 64, 158, 56);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
@@ -307,7 +293,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     texture.logHeight = 7;
     texture.pixels = pixels;
     model->mesh = gBattleEffect_LargeSquareMesh;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->vertices = projected;
     for (i = 0; i != 2; i++) {
@@ -326,7 +312,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
-          model->look.shade = shade;
+          model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
           Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -352,7 +338,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 11) {
         s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
-        model->look.shade = 0;
+        model->shade = 0;
         Transform_Reset();
         Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
         Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -373,7 +359,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > MODEL_SHADE_INVISIBLE) {
           s32 scale = (age << 14) + Q16_ONE / 4;
 
-          model->look.shade = shade;
+          model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(to.x / 2 - 64), 0, 0);
           Transform_ApplyAxisScale(scale, scale * 2, scale);
@@ -403,7 +389,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
       for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
         color[0] = (i & 7) + 32;
-        model->look.color = color;
+        model->shade = (long)color;
         Transform_Reset();
         x = step->x;
         y = step->y;
@@ -430,8 +416,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   BattleObject_PutFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
-  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
-                           24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork), 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
@@ -532,7 +518,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
       break;
 
     if (frame == 0)
-      Iwram_FillWordsEntry((void *)BG_PLTT, 128, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)BG_PLTT, 128, COLOR_PAIR(RGB_WHITE));
     if (frame > 119)
       Palette_BrightenBgEntries(-1, -1, -1);
     else if ((frame & 3) == 1)
@@ -618,7 +604,8 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
     ramp[i] = RGB(level, level, level);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp, 0x8000003f);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp,
+                      DMA_COPY_HALFWORDS(63));
 
   REG_BG2X = scrollX << 8;
   // x, done with the band, now counts the slide's frames.
@@ -763,7 +750,7 @@ void Iris_RestoreBattle(void) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
 }
 #undef KIND125_FRAMES
 #undef SWIRL_MAX_FRAMES

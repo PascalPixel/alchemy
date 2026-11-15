@@ -132,7 +132,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     model = Render_AllocateModelList(1);
     texture.logWidth = 6;
     texture.logHeight = 6;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->texture = &texture;
     model->mesh = gBattleEffect_SquareMesh;
     model->vertices = vertices;

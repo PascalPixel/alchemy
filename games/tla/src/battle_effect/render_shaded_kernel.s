@@ -1,7 +1,7 @@
 @ Why assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ str r3, [pc, #-280] and the four like it rewrite the shifts of its
+@ str r3, [pc, #-272] and the four like it rewrite the shifts of its
 @ own loop's instructions, and DMA 3 copies that loop's body into the code
 @ slot after it, before the loop runs: stores into code.
 @ r11 (fp) as an ordinary register: it holds a word of its argument block
@@ -10,31 +10,31 @@
 @ is subs r2, r1, #0.
 .syntax unified
 	.thumb
-	.global Data_08139f70
-Data_08139f70:
-	.global Func_08139f70
+	.global Render_ShadedKernel
+Render_ShadedKernel:
+	.global Render_ShadedKernelEntry
 	.thumb_func
-Func_08139f70:
+Render_ShadedKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_08139f72:
+AlchemyUncredited_0813ae16:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08139f72:
-	b	.L_0813a368
+AlchemyUncreditedEnd_0813ae16:
+	b	.L_0813b204
 @ Two words of run-time state: stm r0, {r7, r8} writes them and
 @ ldm lr, {r6, ip} reads them back.
-AlchemyUncredited_08139f78:
+AlchemyUncredited_0813ae1c:
 	.4byte	0
 	.4byte	0
-AlchemyUncreditedEnd_08139f78:
-.L_08139f80:
+AlchemyUncreditedEnd_0813ae1c:
+.L_0813ae24:
 	add	sp, sp, #64
 	pop	{r0, r1, fp}
-.L_08139f88:
+.L_0813ae2c:
 	ldm	r0!, {r3, r9, sl}
 	lsls	r5, r3, #8
-	beq	.L_0813a43c
+	beq	.L_0813b2e4
 	and	r5, r3, #255
 	ldr	r6, [r1, r5, lsl #3]
 	and	r5, r3, #0xff00
@@ -42,7 +42,7 @@ AlchemyUncreditedEnd_08139f78:
 	and	r5, r3, #0xff0000
 	ldr	r8, [r1, r5, lsr #13]
 	tst	fp, #3
-	beq	.L_08139ff0
+	beq	.L_0813ae94
 	asr	r5, r8, #16
 	sub	r5, r5, r6, asr #16
 	sub	r4, r7, r6
@@ -55,19 +55,19 @@ AlchemyUncreditedEnd_08139f78:
 	lsl	r4, r4, #16
 	asr	r4, r4, #16
 	mlas	r3, r4, r5, r3
-	beq	.L_08139f88
+	beq	.L_0813ae2c
 	eors	r3, r3, fp, lsl #31
-	bpl	.L_08139f88
-.L_08139ff0:
+	bpl	.L_0813ae2c
+.L_0813ae94:
 	cmp	r6, r7
 	eorgt	r6, r6, r7
 	eorgt	r7, r7, r6
 	eorgt	r6, r6, r7
 	rorgt	r9, r9, #16
 	tst	r7, r8
-	bmi	.L_08139f88
+	bmi	.L_0813ae2c
 	cmp	r7, r8
-	ble	.L_0813a040
+	ble	.L_0813aee4
 	eor	r7, r7, r8
 	eor	r8, r8, r7
 	eor	r7, r7, r8
@@ -79,12 +79,12 @@ AlchemyUncreditedEnd_08139f78:
 	eorgt	r7, r7, r6
 	eorgt	r6, r6, r7
 	rorgt	r9, r9, #16
-.L_0813a040:
+.L_0813aee4:
 	asrs	r3, r6, #23
-	bgt	.L_08139f88
+	bgt	.L_0813ae2c
 	asrs	r3, r6, #16
 	rsbs	r4, r3, r8, asr #16
-	beq	.L_08139f88
+	beq	.L_0813ae2c
 	push	{r0, r1, fp}
 	sub	sp, sp, #64
 	sub	r0, pc, #236
@@ -92,7 +92,7 @@ AlchemyUncreditedEnd_08139f78:
 	lsls	r6, r6, #16
 	rsbs	r0, r6, r8, lsl #16
 	rsbmi	r0, r0, #0
-	ldr	r5, [pc, #944]
+	ldr	r5, [pc, #948]
 	ldr	r1, [r5, r4, lsl #2]
 	umulls	r5, ip, r1, r0
 	moveq	ip, r0
@@ -114,7 +114,7 @@ AlchemyUncreditedEnd_08139f78:
 	umullsne	r5, r2, r1, r2
 	lsls	r0, r0, #24
 	rsbmi	r2, r2, #0
-	ldr	r0, [pc, #872]
+	ldr	r0, [pc, #876]
 	add	sl, r9, r0
 	add	sl, sl, sl
 	add	sl, sl, #1
@@ -137,8 +137,8 @@ AlchemyUncreditedEnd_08139f78:
 	mla	r1, ip, r0, r6
 	rsb	r1, r1, r7, lsl #16
 	asrs	r1, r1, #16
-	beq	.L_08139f80
-	ldr	r5, [pc, #760]
+	beq	.L_0813ae24
+	ldr	r5, [pc, #764]
 	ldr	r2, [r5, r0, lsl #2]
 	rsbs	r0, r6, r7, lsl #16
 	rsbmi	r0, r0, #0
@@ -176,44 +176,44 @@ AlchemyUncreditedEnd_08139f78:
 	movpl	r1, #1
 	lsls	r1, r1, #29
 	orrpl	r1, r1, #8
-.L_0813a1c0:
+.L_0813b064:
 	ldr	r4, [sp, #24]
 	asr	r4, r4, #16
 	cmp	r4, #128
 	movge	r4, #128
 	str	r4, [sp, #24]
 	cmp	r3, r4
-	beq	.L_0813a318
+	beq	.L_0813b1b4
 	ldm	sp, {r7, r8}
-.L_0813a1e0:
+.L_0813b084:
 	asrs	sl, r3, #3
-	bmi	.L_0813a2f4
+	bmi	.L_0813b190
 	asrs	r0, r6, #23
 	mvnmi	ip, #0
 	movpl	ip, #128
 	asreq	ip, r6, #16
 	asrs	r4, r5, #16
 	asrs	fp, r4, #7
-	beq	.L_0813a23c
-	bmi	.L_0813a21c
+	beq	.L_0813b0e0
+	bmi	.L_0813b0c0
 	cmp	r6, #0x800000
-	bge	.L_0813a2f4
+	bge	.L_0813b190
 	sub	fp, r4, #127
 	mov	r4, #127
-	b	.L_0813a22c
-.L_0813a21c:
+	b	.L_0813b0d0
+.L_0813b0c0:
 	movs	r6, r6
-	bmi	.L_0813a2f4
+	bmi	.L_0813b190
 	rsb	fp, r4, #0
 	mov	r4, #0
-.L_0813a22c:
+.L_0813b0d0:
 	mul	fp, r9, fp
 	sub	r0, r4, r1, asr #29
 	cmp	r0, ip
-	beq	.L_0813a2f4
-.L_0813a23c:
+	beq	.L_0813b190
+.L_0813b0e0:
 	subs	r0, r4, ip
-	beq	.L_0813a2f4
+	beq	.L_0813b190
 	rsbmi	r0, r0, #0
 	and	r2, r5, #0xff00
 	rsbmi	r2, r2, #0x10000
@@ -225,7 +225,7 @@ AlchemyUncreditedEnd_08139f78:
 	lsr	ip, r7, #16
 	add	ip, fp, ip, lsl #16
 	add	ip, ip, r8, lsr #16
-	add	r7, pc, #0x1b4
+	add	r7, pc, #0x1b8
 	ldm	r7, {r7, r8, fp}
 	and	r2, r3, #7
 	add	r2, r7, r2, lsl #3
@@ -233,29 +233,29 @@ AlchemyUncreditedEnd_08139f78:
 	bic	r7, r4, #7
 	orr	r7, r7, r4, lsl #29
 	tst	r0, #1
-	bne	.L_0813a2c0
-.L_0813a294:
+	bne	.L_0813b160
+.L_0813b138:
 	and	sl, fp, ip
 	orr	sl, sl, ip, lsr #32
 	add	ip, ip, r9
 	ldrb	sl, [r8, sl]
-	ldrb	lr, [r2, r7, ror #29]
-	add	lr, lr, sl
-	cmp	lr, #63
-	movge	lr, #63
-	strb	lr, [r2, r7, ror #29]
+	subs	sl, sl, #0
+	ble	.L_0813b158
+	cmp	sl, #0
+	strbne	sl, [r2, r7, ror #29]
+.L_0813b158:
 	adds	r7, r7, r1
 	subcc	r7, r7, #8
-.L_0813a2c0:
-@ The code slot DMA 3 fills with a copy of the 11-instruction loop body
+.L_0813b160:
+@ The code slot DMA 3 fills with a copy of the 10-instruction loop body
 @ before it.
-AlchemyUncredited_0813a2c0:
+AlchemyUncredited_0813b160:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
-	.4byte	0, 0, 0
-AlchemyUncreditedEnd_0813a2c0:
+	.4byte	0, 0
+AlchemyUncreditedEnd_0813b160:
 	subs	r0, r0, #2
-	bgt	.L_0813a294
-.L_0813a2f4:
+	bgt	.L_0813b138
+.L_0813b190:
 	ldm	sp, {r2, r4, r7, r8, sl, fp, ip}
 	add	r5, r5, r7
 	add	r6, r6, r8
@@ -264,19 +264,19 @@ AlchemyUncreditedEnd_0813a2c0:
 	stm	sp, {r7, r8}
 	adds	r3, r3, #1
 	cmp	r3, ip
-	blt	.L_0813a1e0
-.L_0813a318:
+	blt	.L_0813b084
+.L_0813b1b4:
 	cmp	r3, #128
-	bge	.L_08139f80
-	sub	lr, pc, #0x3b0
+	bge	.L_0813ae24
+	sub	lr, pc, #0x3a8
 	ldm	lr, {r6, ip}
 	rsbs	r4, r3, ip, asr #16
-	beq	.L_08139f80
+	beq	.L_0813ae24
 	str	ip, [sp, #24]
 	lsl	r6, r6, #16
 	rsbs	r8, r6, ip, lsl #16
 	rsbmi	r8, r8, #0
-	ldr	fp, [pc, #224]
+	ldr	fp, [pc, #236]
 	ldr	r0, [fp, r4, lsl #2]
 	cmp	r0, #0
 	umullsne	lr, r8, r0, r8
@@ -285,67 +285,72 @@ AlchemyUncreditedEnd_0813a2c0:
 	str	r8, [sp, #12]
 	movs	r1, r1
 	submi	r6, r6, #0x10000
-	b	.L_0813a1c0
-.L_0813a368:
+	b	.L_0813b064
+.L_0813b204:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
-	ldr	fp, [pc, #180]
+	ldr	fp, [pc, #192]
 	bic	fp, fp, #1
-	str	fp, [pc, #172]
+	str	fp, [pc, #184]
 	mov	r3, #0x3000000
 	ldr	r3, [r3, #96]
 	ldr	fp, [r0, #4]
 	ldr	r2, [r0, #16]
 	ldr	r4, [r2, #4]
-	add	lr, pc, #152
+	add	lr, pc, #164
 	stm	lr, {r3, r4}
 	ldr	r1, [r0, #12]
 	ldrb	r4, [r2]
 	rsb	r5, r4, #32
-	ldr	r3, [pc, #-272]
+	ldr	r3, [pc, #-264]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-280]
+	str	r3, [pc, #-272]
 	rsb	r5, r4, #31
+	ldr	r3, [pc, #-728]
+	orr	r3, r3, r5, lsl #7
+	str	r3, [pc, #-736]
+	rsbs	r5, r4, #8
 	ldr	r3, [pc, #-736]
 	orr	r3, r3, r5, lsl #7
 	str	r3, [pc, #-744]
-	rsbs	r5, r4, #8
-	ldr	r3, [pc, #-744]
+	ldr	r3, [pc, #-560]
 	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-752]
-	ldr	r3, [pc, #-568]
-	orr	r3, r3, r5, lsl #7
-	str	r3, [pc, #-576]
-	ldr	r3, [pc, #-332]
+	str	r3, [pc, #-568]
+	ldr	r3, [pc, #-324]
 	orr	r3, r3, r5, lsl #7
 	orrne	r3, r3, #32
-	str	r3, [pc, #-344]
+	str	r3, [pc, #-336]
 	ldrb	r6, [r2, #1]
 	mov	r5, #1
 	rsb	r5, r5, r5, lsl r6
 	lsl	r5, r5, r4
-	str	r5, [pc, #52]
+	str	r5, [pc, #64]
+	ldr	r4, [r0, #20]
+	rsbs	r4, r4, #0
+	strb	r4, [pc, #-352]
 	ldr	r3, [r0, #24]
 	str	r3, [pc, #48]
 	mov	r9, #0x4000000
 	add	r9, r9, #212
-	mov	r5, #11
+	mov	r5, #10
 	orr	r5, r5, #0x84000000
-	sub	r3, pc, #0x188
-	sub	r4, pc, #0x160
+	sub	r3, pc, #0x18c
+	sub	r4, pc, #0x168
 	stm	r9, {r3, r4, r5}
 	ldr	r0, [r0, #8]
-	b	.L_08139f88
+	b	.L_0813ae2c
 	.4byte	System_ReciprocalTable + 1
 @ Four words of run-time state: stm lr, {r3, r4} and the two str to pc
 @ write them, and ldm r7, {r7, r8, fp} reads three back.
-AlchemyUncredited_0813a42c:
+AlchemyUncredited_0813b2d4:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
-AlchemyUncreditedEnd_0813a42c:
-.L_0813a43c:
+AlchemyUncreditedEnd_0813b2d4:
+.L_0813b2e4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global Data_08139f70CodeSize
-	.set Data_08139f70CodeSize, . - Data_08139f70
+	.global Render_ShadedKernelCodeSize
+	.set Render_ShadedKernelCodeSize, . - Render_ShadedKernel
+	.global Render_ShadedKernelCodeWords
+	.set Render_ShadedKernelCodeWords, Render_ShadedKernelCodeSize / 4

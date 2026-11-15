@@ -27,7 +27,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
-  s32 *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
   struct RenderModel *quad;
@@ -136,7 +136,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     texture.pixels = work->sheet;
     quad->texture = &texture;
     quad->mesh = gBattleEffect_TallMesh;
-    quad->kind = 6;
+    quad->kind = MODEL_SHADED_MAX;
     quad->vertices = vertices;
     quad->shade = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
@@ -168,7 +168,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = flashPixels;
-      quad->kind = 7;
+      quad->kind = MODEL_SHADED_ADDITIVE;
       quad->mesh = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -199,10 +199,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *spark;
 
       Transform_Reset();
+      Transform_SetLookAt(camera->eye, camera->focus);
       spark = Ram_MapCellBuffer + 0x4000;
-      /* FAKEMATCH(barrier): an empty asm on spark. */
-      __asm__("" : "=r"(spark) : "0"(spark));
-      Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 

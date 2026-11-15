@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "enemy_ids.h"
 #include "sounds.h"
 
 // Flora's summon.
@@ -15,7 +16,7 @@ struct StripQuad;
 struct FloraWork {
   u16 tiles[15];
   u16 phase[32];
-  u16 unk5e;
+  u16 padding;
   s32 x[32];
   s32 y[32];
   s32 vx[32];
@@ -89,13 +90,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   scroll = -80;
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *e;
 
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -3;
@@ -103,8 +105,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e, 32);
-      e += 32;
+      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
+                           PALETTE_BANK_BYTES);
+      e += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
@@ -122,7 +125,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
       }
       i = 0;
-      phase = Data_0201401e;
+      phase = (u16 *)(Ram_MapCellBuffer + 0x401e);
       for (; i != 32; i++, phase++) {
         *phase = (Random16() % 15) << 8;
         ((struct Sprite *)work->sprites[12 + i])->image.tile =
@@ -137,7 +140,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
         work->sprites[i] = obj;
-        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                             cells + i * OBJ_32X32_8BPP_BYTES,
+                             OBJ_32X32_8BPP_BYTES);
       }
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet, 0, 0);
     }
@@ -198,7 +203,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
       REG_BG2PA = Q_8_8(1);
       Graphics_LoadGreyRamp();
-      REG_BG2X = -0x3c00;
+      REG_BG2X = -(60 << 8);
     }
     if (frame > 285) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
@@ -210,10 +215,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 108) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
+      // The four petals (gFlora_PetalPictures), each a shaded circle half as
+      // wide as it is tall, packed one after another.
       BattleEffect_DrawShadedCircles(source, 8, Q16_ONE);
-      BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
-      BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
-      BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8, 16,
+                                     Q16_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(
+          Ram_MapCellBuffer + 8 / 2 * 8 + 16 / 2 * 16, 32, Q16_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8 +
+                                         16 / 2 * 16 + 32 / 2 * 32,
+                                     48, Q16_ONE * 3 / 4);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;
@@ -250,7 +261,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     if (u <= 7) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                           CANVAS_FILL_WORD(63) - u * 0x01010101 * 8);
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
+                               u * CANVAS_FILL_WORD(1) * 8);
     }
     req = gFlora_UnitScale;
     dy = 0;
@@ -501,7 +513,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = work->sheet;
-    model->kind = 7;
+    model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->vertices = verts;
@@ -694,9 +706,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
-  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = 0;
@@ -758,7 +770,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       p = (struct Particle *)source;
       for (i = 0; i != 128; i++, p++) {
         p->x = px((Random16() & 63) + 96);
-        p->y = -(Random16() & 63) << 16;
+        p->y = px(-(Random16() & 63));
         p->velocityX = -((Random16() & 255) + 128) << 7;
         p->velocityY = ((Random16() & 255) + 128) << 9;
         p->variant = Random16() & 31;
@@ -772,8 +784,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       if (frame > i) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
-        BattleEffectKernels_IntegrateVector2(p, 64, 0);
-        p->velocityX += -(px(1) / 16);
+        BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
+        p->velocityX += -px(1) / 16;
         p->variant++;
       }
     }
@@ -800,9 +812,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
-/// four enemies, the actor steps 15 pixels further from x = 0 on its
-/// anchor's side, its y velocity growing by 0x28000 while y is under 10.
+/// BattleEffect_StartActorMotion with fixed values: unless the unit is the
+/// Fusion Dragon or one of three of the Doom Dragon's forms, the actor steps
+/// 15 pixels further from x = 0 on its anchor's side, its y velocity growing
+/// by 0x28000 while y is under 10.
 void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
@@ -812,7 +825,8 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = Unit_Get(id)->enemyId;
-  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+  if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
+      enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     object->acceleration = px(2);
     object->speedLimit = px(8);
     if (object->y < px(10))
@@ -835,25 +849,6 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
 #define DAGGER_FALL_FRAME 80 ///< the daggers turn and fall on the target
 #define DAGGER_LAST_HIT 90
 
-/// A dagger's texture: log2 of its width and height in the first word (32x32
-/// here), then its pixels.
-struct DaggerTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 rest : 16;
-  void *pixels;
-};
-
-/// One entry of the model list Flora draws its dagger with.
-struct RenderPrimitive {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct DaggerTexture *texture;
-  s32 unk14;
-};
-
 /// Crossed daggers. The canvas is moved over the target. Eight daggers rise
 /// spinning from below it, and the target is struck eight times, six frames
 /// apart from frame 20: each strike shakes the screen, flashes the target and
@@ -864,10 +859,10 @@ struct RenderPrimitive {
 /// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct DaggerTexture texture;
+  struct ModelTexture texture;
   struct ScreenPoint target;
   struct Particle *dagger;
-  struct RenderPrimitive *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 frame;
   s32 i;
@@ -929,13 +924,13 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     // One textured quad, drawn once for each dagger.
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
-    quad->unk14 = 0;
+    quad->shade = 0;
     texture.logWidth = 5;
     texture.logHeight = 5;
     quad->texture = &texture;
     texture.pixels = work->sheet;
-    quad->kind = 9;
-    quad->faces = gSabreDance_DaggerMesh;
+    quad->kind = MODEL_SHADED;
+    quad->mesh = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
     for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {
       // The fall: from 48 pixels above the canvas, fanned out by angle and
@@ -960,9 +955,10 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
-        BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
+        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE, 0);
       else
-        BattleEffectKernels_IntegrateVector3(dagger, 64, -px(1) / 16);
+        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE,
+                                             -px(1) / 16);
     }
     Heap_Release(quad);
     Heap_Release(vertices);
@@ -1099,7 +1095,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     if (frame == STAR_BURST_FRAME) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
+          SHEET_PALETTE_BYTES);
       casterObject->z = targetObject->z;
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;

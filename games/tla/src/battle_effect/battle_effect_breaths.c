@@ -70,9 +70,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (args->variant == EFFECT_VARIANT_BASIC)
           shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
         else
-          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * 63)) - i * 4;
-        if (shade > 63)
-          shade = 63;
+          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * CANVAS_LEVEL_BRIGHTEST)) -
+                  i * 4;
+        if (shade > CANVAS_LEVEL_BRIGHTEST)
+          shade = CANVAS_LEVEL_BRIGHTEST;
         if (shade < 0)
           shade = 0;
         for (k = 0; k != 32; k++)
@@ -266,7 +267,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         model = Render_AllocateModelList(1);
         texture.logWidth = 7;
         texture.logHeight = 7;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = vertices;
@@ -295,7 +296,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
               if (mode == BREATH_BLAST) {
                 Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (args->side == EFFECT_SIDE_ENEMIES)
@@ -320,7 +321,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         // Variant 2: four jaws open one after another.
         if (args->variant == EFFECT_VARIANT_STRONGEST) {
           texture.pixels = JAW_TEXTURE;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
             s32 start = gBreaths_RingStarts[mode * 4 + i];
@@ -379,7 +380,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->shade = alpha;
           texture.logWidth = 5;
           texture.logHeight = 2;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
           Transform_Reset();
@@ -420,7 +421,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
               frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
-            // DEAD: never true inside Blast Breath; the source keeps the test.
+            // DEAD: never true inside Blast Breath; the ROM keeps the compare
+            // and the black tint's call.
             if (mode == 6)
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLACK,
                                        POSE_DAMAGE, i, 3);
@@ -440,7 +442,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         }
         work->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
@@ -520,7 +523,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+        SHEET_PALETTE_BYTES);
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {

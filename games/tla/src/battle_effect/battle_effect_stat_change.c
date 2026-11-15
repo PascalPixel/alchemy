@@ -200,15 +200,18 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     if (mode == STAT_BOOST_GRANITE)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
+          SHEET_PALETTE_BYTES);
     else if (mode == STAT_BOOST_FLASH)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+          SHEET_PALETTE_BYTES);
     else
       CopyWordsRoutine()(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
+          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
+          SHEET_PALETTE_BYTES);
   } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
@@ -280,7 +283,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   REG_BG2X = shift << 8;
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
-  work->transferValue = 50; // to 1/2
+  work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (args->side == EFFECT_SIDE_PARTY)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
@@ -423,8 +426,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         cel = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
 
         LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-        draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
-                screen.x - 20, screen.y - 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
+        draw[0](canvas,
+                work->sheet + cel * PICTURE_BYTES(GLOW_ORB) + SERIES_B_BURST,
+                screen.x - GLOW_ORB_WIDTH / 2, screen.y - GLOW_ORB_HEIGHT / 2,
+                GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
@@ -432,34 +437,36 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
         if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + 108) {
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 28) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 7;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas,
                   work->sheet + cel * PICTURE_BYTES(DAGGER) + SERIES_B_PICTURE,
-                  screen.x - 12, screen.y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
+                  screen.x - DAGGER_WIDTH / 2, screen.y - DAGGER_HEIGHT / 2,
+                  DAGGER_WIDTH, DAGGER_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
                  mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
         if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + 104) {
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas,
                   work->sheet + cel * PICTURE_BYTES(VIOLET_STREAK) +
                       SERIES_B_PICTURE,
-                  screen.x - 16, screen.y - 32, VIOLET_STREAK_WIDTH,
+                  screen.x - VIOLET_STREAK_WIDTH / 2,
+                  screen.y - VIOLET_STREAK_HEIGHT / 2, VIOLET_STREAK_WIDTH,
                   VIOLET_STREAK_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + 104) {
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 2 % 6;
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
@@ -470,23 +477,25 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
-          picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
+          picture = work->sheet + cel * PICTURE_BYTES(WISP) + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-          draw[0](canvas, picture, screen.x - 32, screen.y - 24, WISP_WIDTH,
-                  WISP_HEIGHT);
-          draw[1](canvas, picture, screen.x - 32, screen.y + 8, WISP_WIDTH,
-                  WISP_HEIGHT);
+          draw[0](canvas, picture, screen.x - WISP_WIDTH / 2, screen.y - 24,
+                  WISP_WIDTH, WISP_HEIGHT);
+          draw[1](canvas, picture, screen.x - WISP_WIDTH / 2, screen.y + 8,
+                  WISP_WIDTH, WISP_HEIGHT);
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
         if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + 104) {
+            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
           s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
-          draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
-                  screen.x - 20, screen.y - 20, 40, 40);
+          draw[0](canvas,
+                  work->sheet + cel * PICTURE_BYTES(SHIELD) + SERIES_B_PICTURE,
+                  screen.x - SHIELD_WIDTH / 2, screen.y - SHIELD_HEIGHT / 2,
+                  SHIELD_WIDTH, SHIELD_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
@@ -527,8 +536,9 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
-#define RAMP_IMAGE 0x2580 ///< the shard picture, then seven darker copies
-#define RAMP_SIZE 696     ///< one copy
+#define STAT_REDUCTION_SHARD_PICTURES                                          \
+  9600 ///< the shard picture, then seven darker copies
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< one copy
 
 /// A dagger (STAT_REDUCTION_DULL and _UNUSED) or a shield (the others) appears
 /// over each target in turn, four frames apart, and breaks into shards that fly
@@ -552,7 +562,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 point[3];
   DrawRectangle callbacks[2];
   s32 i;
-  s32 palette;
+  void *palette;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -562,35 +572,33 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
   if (mode == STAT_REDUCTION_UNUSED)
-    palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == STAT_REDUCTION_DULL) {
-    palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(barrier): an empty asm. */
-    asm("");
-  } else if (mode == STAT_REDUCTION_IMPAIR)
-    palette = (s32)&ResourceId_GlowOrbSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  else if (mode == STAT_REDUCTION_DULL)
+    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+  else if (mode == STAT_REDUCTION_IMPAIR)
+    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
   else
-    palette = (s32)&ResourceId_PinkBurstSheet;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
-                       SHEET_PALETTE_BYTES);
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
-                             work->sheet + RAMP_IMAGE, 0, 0);
+                             work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
   // Copy i holds every level clamped to 64 - 7i.
   for (i = 1; i != 8; i++) {
-    for (j = 0; j != RAMP_SIZE; j++) {
-      s32 level = work->sheet[RAMP_IMAGE + j];
+    for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
+      s32 level = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
       if (level > 64 - i * 7)
         level = 64 - i * 7;
       if (level < 0)
         level = 0;
-      work->sheet[RAMP_IMAGE + i * RAMP_SIZE + j] = level;
+      work->sheet[STAT_REDUCTION_SHARD_PICTURES +
+                  i * STAT_REDUCTION_SHARD_BYTES + j] = level;
     }
   }
 
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
     xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     REG_BG2X = 0;
@@ -642,7 +650,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->focus);
         point[0] = object->x;
-        point[1] = 160 << 13;
+        point[1] = px(20);
         point[2] = object->z;
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->focus);
@@ -655,12 +663,15 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         y = screen.y;
         if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
           if (time <= 26)
-            callbacks[0](canvas, work->sheet + time / 4 % 7 * 960, x - 12,
-                         y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
+            callbacks[0](canvas,
+                         work->sheet + time / 4 % 7 * PICTURE_BYTES(DAGGER),
+                         x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
+                         DAGGER_WIDTH, DAGGER_HEIGHT);
         } else {
           if (time <= 23)
-            draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20,
-                    SHIELD_WIDTH, SHIELD_HEIGHT);
+            draw[1](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(SHIELD),
+                    x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
+                    SHIELD_HEIGHT);
         }
         // frame - j * 4 is time; this spelling matches here and below.
         if (frame - j * 4 == 24)
@@ -684,13 +695,13 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
             EffectPosition_ProjectPoint((s32 *)shard, &screen);
             x = screen.x + xOffset;
             y = screen.y;
-            callbacks[0](
-                canvas,
-                work->sheet +
-                    (level * RAMP_SIZE + gStatChange_ShardPictures[cell]) +
-                    RAMP_IMAGE,
-                x, y, gStatChange_ShardWidths[cell],
-                gStatChange_ShardHeights[cell]);
+            callbacks[0](canvas,
+                         work->sheet +
+                             (level * STAT_REDUCTION_SHARD_BYTES +
+                              gStatChange_ShardPictures[cell]) +
+                             STAT_REDUCTION_SHARD_PICTURES,
+                         x, y, gStatChange_ShardWidths[cell],
+                         gStatChange_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector3(shard, 60, 0);
           }
         }

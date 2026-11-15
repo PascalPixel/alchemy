@@ -356,7 +356,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     limit = 16;
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
-  work->transferValue = 75; // to 3/4
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != total; frame++) {

@@ -73,7 +73,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
-  work->transferValue = 50;
+  work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != STAR_MINE_FRAMES; frame++) {
@@ -326,7 +326,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
@@ -338,7 +339,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 speed;
 
         spawned->x = px(source.x / 2);
-        spawned->y = 240 << 15;
+        spawned->y = px(120);
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 1023) + 32;
         spawned->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -356,19 +357,21 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame == 164) {
-      BattleBackground_LoadFar(1, ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
     }
     if (frame == 165) {
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
     }
     if (frame == 166) {
       camera->yaw = savedYaw;
       victim->verticalMotionStrength = savedMode;
       victim->x = savedX;
-      victim->y = 200 << 15;
+      victim->y = px(100);
       victim->z = savedZ;
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -384,16 +387,18 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
 
     if (frame == 59) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 60) {
       u16 *color;
       s32 max; // One constant, set in the for: red takes its 31 from it.
 
       // Into the sky: the red haze, its palette made grey-blue.
-      BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31; i != 128;
-           i++, color++) {
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_RedHazeBackdrop, 0);
+      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31;
+           i != BATTLE_BACKGROUND_COLORS; i++, color++) {
         s32 entry = *color;
         s32 red;
         u16 green;
@@ -403,7 +408,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
-        // DEAD: both channels are already at most 31.
+        // DEAD: both channels are already at most 31; the ROM keeps both
+        // compares.
         if (red > RGB_LEVEL_MAX) {
           red = RGB_LEVEL_MAX;
         }
@@ -430,7 +436,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 134) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame > 59) {
       s32 scroll = gBgScroll[1].y;
@@ -460,7 +467,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     victim->verticalMotionStrength = 0;
     if ((u32)(frame - 4) <= 55) {
-      victim->y = (frame * 9 << 16) - px(18);
+      victim->y = px(frame * 9) - px(18);
     } else if (frame > 59) {
       victim->x = 0;
       victim->y = px(294 - height);
@@ -473,11 +480,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     if ((u32)(frame - 152) <= 15) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
       if (frame > 162) {
-        work->transferValue = CANVAS_FILL_WORD(63);
+        work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       }
       Palette_BrightenBgEntries(2, 2, 2);
     }
-    // DEAD: frame is never negative.
+    // DEAD: frame is never negative; the ROM keeps the compare and branch.
     if (frame < 0) {
       goto next;
     }
@@ -495,7 +502,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     zero = 0;
     model = Render_AllocateModelList(1);
     tex = &texture;
-    model->kind = 6;
+    model->kind = MODEL_SHADED_MAX;
     model->shade = zero;
     model->scrollV = zero;
     model->vertices = vertices;

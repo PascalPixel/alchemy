@@ -140,7 +140,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   s32 frame;
   u8 *sheet;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct MotionObject *target;
   s32 resource;
   u8 *cels;
@@ -252,7 +252,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     lines = work->bg2xLines;
-    for (i = 0; i != 160; i++)
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
       *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
     if (mode == FLURRY_CRUSHER_GRIP && frame == 8)
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
@@ -337,7 +337,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
     // The motes, until their life runs out, bouncing off the ground.
     Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->focus);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,

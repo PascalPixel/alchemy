@@ -15,6 +15,9 @@ struct MeshTriangle;
 
 #define GEODE_FRAMES 74
 
+/// Where BillowTexture is decoded in the effect's pictures.
+#define GEODE_BILLOW 0x4710
+
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
 /// palette fades, the Djinni flies across to it, and at frame 48 the dome
@@ -103,12 +106,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             work->sheet + GEODE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
@@ -121,7 +124,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       u16 *from = battle->palette;
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, from++, to++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, from++, to++) {
         s32 red = RGB_RED(*from);
         s32 green = RGB_GREEN(*from);
         s32 blue = RGB_BLUE(*from);
@@ -177,7 +180,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                TASK_PASS_FRAME + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_WORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_HALFWORD);
     }
     if (frame == 18) {
@@ -196,8 +199,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         REG_WIN1H = WIN_RANGE(0, 208);
       }
     } else if (frame == 40) {
-      REG_WIN0H = WIN_RANGE(0, 240);
-      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+      REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
     }
 
     // The Djinni flies to the target.
@@ -237,8 +240,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         curl = 16;
       }
       size = 64 - curl * 2;
-      // DEAD: the ROM sets these defaults and tests frame >= 0, which inside
-      // this range is always true, so the defaults are always overwritten.
+      // DEAD: frame >= 0 is always true inside this range, so the defaults are
+      // always overwritten; the ROM keeps both moves and the compare.
       centerX = 120;
       centerY = -16;
       if (frame >= 0) {
@@ -255,8 +258,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       {
         s32 ratio = 0x2000 / size;
 
-        // DEAD: the ROM reads each scale before storing it and drops the value
-        // (as plain stores, 4 of 1139 differ).
+        // DEAD: each scale is read before it is stored and the value dropped;
+        // the ROM keeps both loads.
         *(volatile u16 *)&work->bg2pa;
         work->bg2pa = ratio;
         *(volatile u16 *)&work->bg2pd;
@@ -284,7 +287,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = picture;
       model->flags = 3;
-      model->kind = 8;
+      model->kind = MODEL_TEXTURED;
       model->texture = &texture;
       model->mesh = mesh;
       model->vertices = projected;
@@ -302,7 +305,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 48) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 64) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -315,8 +319,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       rings = Render_AllocateModelList(1);
       dust.logWidth = 6;
       dust.logHeight = 6;
-      dust.pixels = work->sheet + 0x4710;
-      rings->kind = 7;
+      dust.pixels = work->sheet + GEODE_BILLOW;
+      rings->kind = MODEL_SHADED_ADDITIVE;
       rings->texture = &dust;
       rings->mesh = gBattleEffect_RingMesh;
       rings->vertices = ring;
@@ -361,12 +365,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
     }
     if (frame == 62) {
-      BattleBackground_LoadFar(1, battle->background, -1);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
       battle->brightness = (frame << 13) - 0x7c000;
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           battle->brightness, 128);
+                           battle->brightness, BATTLE_BACKGROUND_COLORS);
     }
     if (frame == 48) {
       work->shakeFrames = 16;

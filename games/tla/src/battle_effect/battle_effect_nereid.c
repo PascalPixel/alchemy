@@ -118,8 +118,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            drop->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            drop->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
@@ -135,8 +135,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            drop->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            drop->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
@@ -201,7 +201,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           if (frame > 80)
-            drop->velocityY += -(px(1) / 2);
+            drop->velocityY += -px(1) / 2;
           else
             drop->velocityY += gNereid_Gravity[k & 3];
           drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;

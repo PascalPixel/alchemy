@@ -16,6 +16,15 @@
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define ECLIPSE_TORNADO_PICTURES 0x2000
 
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define ECLIPSE_GLOW_BAND_A 0x4000
+
+/// Where GlowBandTextureB is decoded in the effect's pictures.
+#define ECLIPSE_GLOW_BAND_B 0x3840
+
+/// Where FlameBandTexture is decoded in the effect's pictures.
+#define ECLIPSE_FLAME_BAND 0x400
+
 /// Eclipse: after a flash the golden dragon (thirty-two sprites, its head one
 /// of them) looms over a blue sky while shafts of light fall about it; it
 /// breathes a blast of light that whites out the field, and the blast lands
@@ -49,7 +58,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 offset;
   u8 *cells;
   s32 fade;
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 place[4];
   struct Scale req;
   struct ModelTexture texture;
@@ -71,16 +80,17 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   // The battle flashes away; at frame 27 the sky and the dragon's sprites load.
   scroll = -80;
-  for (frame = 0; frame != 52; frame++) {
-    if (frame == 27) {
+  for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *tiles;
 
-      list[0] = 0xff;
+      list[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(list, 0);
       VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleBackground_LoadFar(1, (s32)&ResourceId_EarthHorizonBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                               (s32)&ResourceId_EarthHorizonBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -1;
@@ -278,7 +288,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                                      work->sheet + ECLIPSE_TORNADO_PICTURES, 1,
                                      0);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
-                                     work->sheet + 0x4000, 0, 0);
+                                     work->sheet + ECLIPSE_GLOW_BAND_A, 0, 0);
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
@@ -286,8 +296,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->shade = modelShade;
         texture.logWidth = 5;
         texture.logHeight = 2;
-        texture.pixels = work->sheet + 0x4000;
-        model->kind = 6;
+        texture.pixels = work->sheet + ECLIPSE_GLOW_BAND_A;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture;
         model->vertices = verts;
@@ -298,7 +308,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
               work->particles[i].variant <= 47) {
             Transform_Reset();
             {
-              s32 x = ((i & 3) << 17) + px(2);
+              s32 x = px((i & 3) * 2) + px(2);
               s32 o = -0x400000;
               Transform_ApplyTranslation(cx + x + o, cy - px((i & 3) + 2) + o,
                                          0);
@@ -323,7 +333,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           texture.logWidth = 6;
           model->shade = modelShade;
           texture.logHeight = 6;
-          model->kind = 7;
+          model->kind = MODEL_SHADED_ADDITIVE;
           texture.pixels = texturePixels;
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
@@ -411,7 +421,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
@@ -421,18 +431,19 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_DISPCNT = EFFECT_DISPCNT;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+  Iwram_FillWords(canvas, CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+                             work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
 
-    if (v > 63) {
-      v = 63;
+    if (v > CANVAS_LEVEL_BRIGHTEST) {
+      v = CANVAS_LEVEL_BRIGHTEST;
     }
     for (j = 0; j != 120; j++) {
       work->sheet[j * 120 + i] = v;
@@ -450,7 +461,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     if (frame == 18) {
       work->shakeFrames = 90;
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 4);
@@ -465,12 +477,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       breathTexture.logWidth = 5;
       breathTexture.logHeight = 2;
-      breathTexture.pixels = work->sheet + 0x3840;
+      breathTexture.pixels = work->sheet + ECLIPSE_GLOW_BAND_B;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->shade = fade;
       model->texture = &breathTexture;
       model->vertices = verts;
-      model->kind = 6;
+      model->kind = MODEL_SHADED_MAX;
       if (frame > 15) {
         struct Particle *q = &work->particles[63];
 
@@ -516,16 +528,17 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   // The blast lands on the land far below and spreads in rings of light.
   count = -1;
   transition[4] = 1;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
   gBgScroll[1].x = 0;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x400, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                             work->sheet + ECLIPSE_FLAME_BAND, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+                             work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   {
     s32 *v = &FLASHES[0].variant;
     s32 c = -1;
@@ -591,7 +604,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 1;
-            // sizeOffsets[n - 1] spelled as a byte offset: plain, 49 differ.
+            /* FAKEMATCH(temporary): the table read at a byte offset held in
+             * off; as sizeOffsets[n - 1], 49 of 2159 instructions differ in
+             * tla-en.
+             */
             s32 off = n * 2 - 2;
 
             blit[0](canvas,
@@ -613,11 +629,11 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
         landingTexture.logWidth = 5;
         landingTexture.logHeight = 2;
-        landingTexture.pixels = work->sheet + 0x3840;
+        landingTexture.pixels = work->sheet + ECLIPSE_GLOW_BAND_B;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapGridCellBuffer;
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &landingTexture;
         Transform_Reset();
         Transform_ApplyTranslation(-px(2), px(16), 0);
@@ -656,7 +672,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       landingTexture.logHeight = 5;
       landingTexture.pixels = work->sheet;
       {
-        model->kind = 6;
+        model->kind = MODEL_SHADED_MAX;
         model->mesh = mesh;
         model->vertices = vertices;
         model->texture = &landingTexture;
@@ -679,9 +695,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       landingTexture.logHeight = 5;
       landingTexture.logWidth = 7;
-      landingTexture.pixels = work->sheet + 0x400;
+      landingTexture.pixels = work->sheet + ECLIPSE_FLAME_BAND;
       model->texture = &landingTexture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = bandMesh;
       model->flags = shade;
       model->vertices = vertices;
@@ -723,7 +739,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   wait(1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();
@@ -746,6 +762,9 @@ void BattleEffect_ReservedNoOpB(void) {}
 // 0x78f4 bytes.
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define FORM_CHANGE_GLOW_BAND 0x3000
 
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
@@ -774,9 +793,10 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                             work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             (Ram_MapCellBuffer + 0x2000), 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -806,11 +826,13 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       if (kind == KIND_LEFT)
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+            SHEET_PALETTE_BYTES);
       else
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC), 128);
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC),
+            SHEET_PALETTE_BYTES);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
     }
@@ -892,7 +914,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     }
 
     if (frame >= 0) {
-      s32 cx = center.x / 2 << 16;
+      s32 cx = px(center.x / 2);
       s32 cy = px(center.y);
       struct RenderModel *model;
       void *corners;
@@ -931,8 +953,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       bias = 0;
       model->shade = bias;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + 0x3000;
-      model->kind = 7;
+      texture.pixels = work->sheet + FORM_CHANGE_GLOW_BAND;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->vertices = corners;
@@ -965,8 +987,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->texture = &texture;
       model->vertices = corners;
       texture.logWidth = 6;
-      texture.pixels = Data_02012000;
-      model->kind = 7;
+      texture.pixels = (Ram_MapCellBuffer + 0x2000);
+      model->kind = MODEL_SHADED_ADDITIVE;
       texture.logHeight = 6;
       model->mesh = gBattleEffect_RingMesh;
       for (i = 0; i != 4; i++) {
@@ -1057,7 +1079,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
                            (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -1119,7 +1141,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
                          BATTLE_BACKGROUND_BYTES);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -1161,7 +1183,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
                          0x3c00);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -1231,30 +1253,30 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
-/// One step of the background palette fade.
-#define CANVAS_FADE_STEP 1092
-
 void Palette_StepFadeTransfer(void) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
   struct BattleWork *battle;
 
-  framesLeft = (s32 *)(work + 0x77b4);
+  framesLeft = &work->fadeFrames;
   battle = Ram_HeapSlots->battleWork;
 
   if (*framesLeft > 0) {
-    s32 *step = (s32 *)(work + 0x77b8);
+    s32 *step = &work->fadeStep;
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         Q16_ONE - *step * CANVAS_FADE_STEP, 128);
+                         Q16_ONE - *step * CANVAS_FADE_STEP,
+                         BATTLE_BACKGROUND_COLORS);
     (*framesLeft)--;
   }
 }
 
 /// Clears every target's flash timer.
 void BattleEffect_ClearActorTimers(void) {
-  Iwram_ClearWords(Ram_HeapSlots->battleEffect + 0x78dc, 8);
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+
+  Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
 
 /// Counts down each target's flash timer; when one runs out, the target gets
@@ -1284,15 +1306,12 @@ void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
   REG_BG2PD = Q_8_8(1);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
 }
 
@@ -1310,7 +1329,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_ClearActorTimers();
-  display->secondMode = 1;
+  display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1320,7 +1339,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
-  BattleBackground_SetModeFar(1, battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1339,7 +1358,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_MODE_1,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = 0;
+  display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
 
   BattleEffect_SetupCanvasWindows();
@@ -1387,7 +1406,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   s32 offset;
 
   BattleEffect_ClearActorTimers();
-  display->secondMode = 1;
+  display->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -1396,7 +1415,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
-  BattleBackground_SetModeFar(1, battle->background, 128);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 128);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1412,7 +1431,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = 0;
+  display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
 
   BattleEffect_SetupCanvasWindows();
@@ -1447,52 +1466,38 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 }
 
 /// Opens the canvas layer with the canvas repeated across a wrapping map.
-void BattleEffect_StartTiledCanvas(s32 bg_control) {
+void BattleEffect_StartTiledCanvas(s32 bgControl) {
   s32 row;
-  s32 col;
+  s32 column;
   s32 offset;
 
-  BattleEffect_StartCanvasLayer(bg_control);
-  REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
+  BattleEffect_StartCanvasLayer(bgControl);
+  REG_BG2CNT = bgControl | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
                BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
   for (row = 0; row != CANVAS_TILES; row++) {
-    for (col = 0; col != 8; col++, offset += 2) {
-      s32 tile;
-      s16 pair;
-
-      tile = row * 16 + col * 2;
-      pair = ((tile + 1) << 8) | tile;
-      *(volatile s16 *)(0x06003800 + offset) = pair;
-    }
-    for (col = 0; col != 8; col++, offset += 2) {
-      *(volatile u16 *)(0x06003800 + offset) = 0;
+    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+    for (column = 0; column != 8; column++, offset += 2) {
+      *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
     }
   }
 }
 
 /// Opens the canvas layer with the canvas repeated across a wrapping map, every
 /// tile numbered in order.
-void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl) {
   s32 row;
-  s32 col;
+  s32 column;
   s32 offset;
 
-  BattleEffect_StartCanvasLayer(bg_control);
-  REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
+  BattleEffect_StartCanvasLayer(bgControl);
+  REG_BG2CNT = bgControl | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
                BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
   for (row = 0; row != CANVAS_TILES; row++) {
-    for (col = 0; col != 8; col++, offset += 2) {
-      s32 tile;
-      s16 pair;
-
-      tile = row * 16 + col * 2;
-      pair = ((tile + 1) << 8) | tile;
-      *(volatile s16 *)(0x06003800 + offset) = pair;
-    }
-    for (col = 0; col != 8; col++, offset += 2) {
-      *(volatile u16 *)(0x06003800 + offset) = 0xf0f;
+    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+    for (column = 0; column != 8; column++, offset += 2) {
+      *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0xf0f;
     }
   }
 }
@@ -1522,7 +1527,7 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   wait(1);
 
-  BattleBackground_SetModeFar(2, battle->background, 7);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 7);
   wait(1);
   for (i = 0; i != 8; i++) {
     BattleBackground_SetPaletteLevelFar(battle->background, 21 - i * 3);
@@ -1551,7 +1556,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
                        DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                            DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1);
   wait(1);
-  BattleBackground_SetModeFar(2, battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                           BGCNT_PRIORITY(3),
@@ -1566,22 +1571,25 @@ void BattleEffect_SetupCanvasTileMap(void) {
   struct BattleBackgroundView *layer =
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   s32 row;
-  s32 col;
-  s32 off;
+  s32 column;
+  s32 byteOffset;
 
   BattleEffect_ClearActorTimers();
-  BattleBackground_SetModeFar(2, screen->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  layer->secondMode = 0;
-  Iwram_ClearWords((void *)0x06003fc0, 64);
-  Iwram_FillWords((void *)0x0600f900, 0x200, -1);
-  off = 0;
+  layer->secondMode = BATTLE_BACKGROUND_NONE;
+  // Blank tile 255, then rows that show nothing.
+  Iwram_ClearWords(BG_CHAR_BLOCK(0) + 255 * 64, 64);
+  Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 8 * 64, -1);
+  // The canvas's tiles, then blank tile 255 across the rest of each row.
+  byteOffset = 0;
   for (row = 0; row != CANVAS_TILES; row++) {
-    for (col = 0; col != 32; col++, off += 2) {
-      if (col > 15)
-        *(volatile u16 *)(0x0600fb00 + off) = 0xff;
+    for (column = 0; column != 32; column++, byteOffset += 2) {
+      if (column >= CANVAS_TILES)
+        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 255;
       else
-        *(volatile u16 *)(0x0600fb00 + off) = row * CANVAS_TILES + 0x100 + col;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) =
+            row * CANVAS_TILES + 256 + column;
     }
   }
   REG_DISPCNT = DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
@@ -1589,10 +1597,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
                 DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1;
   REG_BG1CNT = BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS | BGCNT_PRIORITY(1);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
               WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;

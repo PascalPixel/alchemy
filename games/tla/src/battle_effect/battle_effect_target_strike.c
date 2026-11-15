@@ -200,7 +200,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint center;
   struct ScreenPoint position;
   BlitterPair draw;
-  struct StarTexture texture;
+  struct ModelTexture texture;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -332,9 +332,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   else
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // Aim at the middle of the first target.
@@ -693,18 +693,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // over the target's middle (the canvas is cleared to colour 0x3f first).
     if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR) {
       void *corners = Heap_AllocEwram(32);
-      struct ModelDraw *model = Render_AllocateModelList(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
 
-      model->unk14 = 0;
+      model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + 0x3200;
-      model->kind = 6;
-      model->model = gBattleEffect_SquareMesh;
+      model->kind = MODEL_SHADED_MAX;
+      model->mesh = gBattleEffect_SquareMesh;
       model->texture = &texture;
-      model->corners = corners;
+      model->vertices = corners;
       if (frame == 8)
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       if (frame >= 8 && frame <= 17) {
         s32 scale =
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
@@ -928,7 +929,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   }
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer leaves 3/4 of the old picture,
-  work->transferValue = 75; // a trail
+  work->transferValue = CANVAS_FADE_THREE_QUARTERS; // a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -1038,22 +1039,20 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
-  view->secondMode = 1;
+  view->secondMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(1, BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                              BATTLE_BACKGROUND_ID(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = 0;
+  view->secondMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
   REG_BG2PD = Q_8_8(1);
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
@@ -1082,10 +1081,12 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
+                  CANVAS_FILL_WORD(1));
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
-  BattleBackground_LoadFar(1, BATTLE_BACKGROUND_ID(battle), -1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           BATTLE_BACKGROUND_ID(battle), -1);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
@@ -1108,7 +1109,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(2, BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
+                              BATTLE_BACKGROUND_ID(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

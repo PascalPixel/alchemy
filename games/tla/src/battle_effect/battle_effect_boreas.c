@@ -106,8 +106,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-  BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleEffect_SpawnObjects(9, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -246,7 +247,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     // Each time crystals crumble, shards fly up.
     if (frame == BOREAS_CRUMBLE_A_FRAME) {
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != BOREAS_SHARDS / 2; i++) {
         PARTICLES[i].x = px((Random16() & 31) + 68);
         PARTICLES[i].y = px((Random16() & 31) + 8);
         PARTICLES[i].velocityX = ((Random16() & 127) - 63) << 11;
@@ -255,16 +256,18 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
     if (frame == BOREAS_CRUMBLE_B_FRAME) {
-      for (i = 0; i != 32; i++) {
-        PARTICLES[i + 32].x = px(Random16() % 48 + 60);
-        PARTICLES[i + 32].y = px((Random16() & 31) + 52);
-        PARTICLES[i + 32].velocityX = ((Random16() & 127) - 63) << 12;
-        PARTICLES[i + 32].velocityY = ((-Random16() & 31) - 32) << 13;
-        PARTICLES[i + 32].variant = (Random16() & 15) + 32;
+      for (i = 0; i != BOREAS_SHARDS / 2; i++) {
+        PARTICLES[i + BOREAS_SHARDS / 2].x = px(Random16() % 48 + 60);
+        PARTICLES[i + BOREAS_SHARDS / 2].y = px((Random16() & 31) + 52);
+        PARTICLES[i + BOREAS_SHARDS / 2].velocityX = ((Random16() & 127) - 63)
+                                                     << 12;
+        PARTICLES[i + BOREAS_SHARDS / 2].velocityY = ((-Random16() & 31) - 32)
+                                                     << 13;
+        PARTICLES[i + BOREAS_SHARDS / 2].variant = (Random16() & 15) + 32;
       }
     }
     if (frame == BOREAS_CRUMBLE_C_FRAME) {
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != BOREAS_SHARDS / 2; i++) {
         PARTICLES[i].x = px((Random16() & 63) + 52);
         PARTICLES[i].y = px((Random16() & 31) + 72);
         PARTICLES[i].velocityX = ((Random16() & 127) - 63) << 11;

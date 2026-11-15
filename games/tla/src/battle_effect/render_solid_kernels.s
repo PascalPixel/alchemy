@@ -1,4 +1,4 @@
-@ Why Func_08138fc8 to Func_081393d8 are assembly:
+@ Why Render_SolidKernelEntry to Render_SolidAdditiveKernelEntry are assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11 (fp) as an ordinary register: it holds a byte pointer from its argument
@@ -7,11 +7,11 @@
 @ is subs r7, r8, #0.
 .syntax unified
 	.thumb
-	.global Data_08138fc8
-Data_08138fc8:
-	.global Func_08138fc8
+	.global Render_SolidKernel
+Render_SolidKernel:
+	.global Render_SolidKernelEntry
 	.thumb_func
-Func_08138fc8:
+Render_SolidKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_08138fca:
@@ -156,14 +156,14 @@ AlchemyUncreditedEnd_08138fca:
 .L_081391c0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Data_08138fc8CodeSize
-	.set Data_08138fc8CodeSize, . - Data_08138fc8
+	.global Render_SolidKernelCodeSize
+	.set Render_SolidKernelCodeSize, . - Render_SolidKernel
 	.thumb
-	.global Data_081391c8
-Data_081391c8:
-	.global Func_081391c8
+	.global Render_SolidMaxKernel
+Render_SolidMaxKernel:
+	.global Render_SolidMaxKernelEntry
 	.thumb_func
-Func_081391c8:
+Render_SolidMaxKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081391ca:
@@ -312,14 +312,14 @@ AlchemyUncreditedEnd_081391ca:
 .L_081393d0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Data_081391c8CodeSize
-	.set Data_081391c8CodeSize, . - Data_081391c8
+	.global Render_SolidMaxKernelCodeSize
+	.set Render_SolidMaxKernelCodeSize, . - Render_SolidMaxKernel
 	.thumb
-	.global Data_081393d8
-Data_081393d8:
-	.global Func_081393d8
+	.global Render_SolidAdditiveKernel
+Render_SolidAdditiveKernel:
+	.global Render_SolidAdditiveKernelEntry
 	.thumb_func
-Func_081393d8:
+Render_SolidAdditiveKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
 AlchemyUncredited_081393da:
@@ -472,5 +472,5 @@ AlchemyUncreditedEnd_081393da:
 .L_081395f0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
-	.global Data_081393d8CodeSize
-	.set Data_081393d8CodeSize, . - Data_081393d8
+	.global Render_SolidAdditiveKernelCodeSize
+	.set Render_SolidAdditiveKernelCodeSize, . - Render_SolidAdditiveKernel

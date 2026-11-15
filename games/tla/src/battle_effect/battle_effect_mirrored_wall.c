@@ -421,7 +421,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       s32 aimZ;
 
       SET_POSITION(shot, source->x, height, source->z);
-      aimZ = target->z + (((Random16() & 31) - 16) << 17);
+      aimZ = target->z + px(((Random16() & 31) - 16) * 2);
       shot->velocityX = (target->x - source->x) >> 4;
       shot->velocityY = px(4);
       shot->velocityZ = (aimZ - source->z) >> 4;

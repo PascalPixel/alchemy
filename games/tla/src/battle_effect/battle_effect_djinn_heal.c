@@ -26,13 +26,13 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
   s32 size[3];
   struct ScreenPoint pos;
-  struct Texture texture;
+  struct ModelTexture texture;
   s32 y;
   struct BattleEffectWork *work;
   struct Particle *quad;
   s32 x;
   s32 frame;
-  struct RenderJob *job;
+  struct RenderModel *job;
   void *vertices;
   void *canvas;
   // Unused: draws[1] gives the stack frame its 4 bytes.
@@ -135,14 +135,15 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       if (frame <= 3)
         draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
                  DJINNI_HEIGHT);
-      // DEAD: frame never passes 63 here; the source keeps the test.
+      // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
       if (frame <= 79) {
         s32 angle;
         s32 lineX;
         s32 lineY;
 
         Iwram_FillWordsEntry(work->sheet, 128,
-                             0x28282828 - frame / 2 * 0x01010101);
+                             CANVAS_FILL_WORD(40) -
+                                 frame / 2 * CANVAS_FILL_WORD(1));
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
@@ -158,20 +159,20 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // translation, scale, pitch and roll.
     Transform_Reset();
     gProjection.centerY = 104;
-    // DEAD: frame never passes 63 here; the source keeps the test.
+    // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
       job = Render_AllocateModelList(1);
       fade = 0;
       if (frame > 55)
         fade = (56 - frame) * 8;
-      job->fade = fade;
+      job->shade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + SHEET_TEXTURE;
-      job->kind = 6;
+      job->kind = MODEL_SHADED_MAX;
       job->texture = &texture;
-      job->faces = gBattleEffect_SquareMesh;
+      job->mesh = gBattleEffect_SquareMesh;
       job->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {
@@ -226,6 +227,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
 #define ZAGAN_PARTS 12
 
+#define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the dust
+
 /// The screen slides over to a white field and petals blow across it; Zagan
 /// (twelve objects) gallops in from the right as the backdrop darkens, rears,
 /// and at frame 157 swings its axe across the targets, striking four times
@@ -279,7 +282,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
+                           COLOR_PAIR(RGB_WHITE));
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       // Ten ever-fainter copies of one mote.
@@ -323,7 +327,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   REG_BG2X = skip;
   REG_BG2PA = Q_8_8(0.5);
 
-  for (frame = 0; frame != 200; frame++) {
+  for (frame = 0; frame != ZAGAN_FRAMES; frame++) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       skip = 1;
     }
@@ -361,7 +365,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         Sprite_StartAnimationFar(work->sprites[i], i + 12);
       }
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
+                           COLOR_PAIR(RGB_WHITE));
       work->scrollStepX = -8;
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -370,7 +375,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                                  1);
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+          SHEET_PALETTE_BYTES);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     gProjection.centerX -= work->scrollStepX;
@@ -381,7 +387,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       u16 *from = Resource_GetTableEntry(battle->background);
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-      for (i = 0; i != 128; i++, from++, to++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, from++, to++) {
         s32 b = RGB_BLUE(*to);
         s32 g = RGB_GREEN(*to);
         s32 r = RGB_RED(*to);
@@ -412,7 +418,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 64) <= 35) {
       velocity.x += px(1) / 2;
-      velocity.y += -(px(1) / 16);
+      velocity.y += -px(1) / 16;
     }
     if (frame > 177) {
       velocity.x += -px(2);
@@ -421,7 +427,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x += -40000;
       velocity.y += px(1) / 8;
     } else if (frame > 99) {
-      velocity.x += -(px(1) / 8);
+      velocity.x += -px(1) / 8;
       velocity.y += px(1) / 32;
     }
     if (frame == 156) {
@@ -553,7 +559,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       texture.pixels = ringPixels;
       model->texture = &texture;
-      model->kind = 7;
+      model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;

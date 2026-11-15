@@ -127,9 +127,12 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       }
       for (i = 0, spray = work->particles; i != 24; i++, spray++) {
         if ((u32)spray->variant <= 17) {
-          blitters[0](canvas, (u8 *)(((spray->variant / 3) << 11) + (s32)sheet),
-                      Q_16_16_UPPER_HALF(spray->x) - 16,
-                      Q_16_16_UPPER_HALF(spray->y) - 32, 32, 64);
+          blitters[0](canvas,
+                      (u8 *)((spray->variant / 3) * PICTURE_BYTES(FLASH_BURST) +
+                             (s32)sheet),
+                      Q_16_16_UPPER_HALF(spray->x) - FLASH_BURST_WIDTH / 2,
+                      Q_16_16_UPPER_HALF(spray->y) - FLASH_BURST_HEIGHT / 2,
+                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(spray, 62, -px(1) / 8);
         }
         if (++spray->variant == 0) {

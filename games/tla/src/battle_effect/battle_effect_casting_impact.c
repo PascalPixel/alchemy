@@ -53,7 +53,8 @@ struct DrawFuncs {
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define BLITTER ((DrawFunc)Ram_HeapSlots->ramCode)
 #define ALT_BLITTER ((DrawFunc)Ram_HeapSlots->ramCodePaired)
-/* FAKEMATCH(dead): the second release in a once-only block. */
+/// Both blitters released, the second in a once-only block (tagged where the
+/// effect uses it).
 #define RELEASE_BLITTERS()                                                     \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                                 \
   do {                                                                         \
@@ -225,6 +226,26 @@ enum CastingImpact {
 /// The flame Forcible Arm and Truncheon Fist drop.
 #define FALLING_FLAME_WIDTH 32
 
+/// ImpFaceSheet's 32x32 face, and the seven dimmer copies Wheeze makes after
+/// it.
+#define IMP_FACE_WIDTH 32
+#define IMP_FACE_HEIGHT 32
+#define IMP_FACE_FADES 8
+/// The Stun Bolt's four bolts, LightningBoltSheet's pictures centred in 32x128
+/// textures after the tornado's glints.
+#define STUN_BOLT_TEXTURE_WIDTH 32
+#define STUN_BOLT_TEXTURE_HEIGHT 128
+#define STUN_BOLT_TEXTURES GLINT_SET_BYTES
+#define STUN_BOLT_PICTURES 4
+/// Hammersphere's ball: a 48x48 shaded circle mirrored into a 48x96 picture.
+#define HAMMERSPHERE_BALL 0x800
+#define HAMMERSPHERE_BALL_WIDTH 48
+#define HAMMERSPHERE_BALL_HEIGHT 96
+/// TwelveModeImage's four 18x48 pictures, each half of the bite: drawn once,
+/// then mirrored beside it.
+#define BITE_HALF_WIDTH 18
+#define BITE_HALF_HEIGHT 48
+
 /// Where SmokeSheet is decoded in the effect's pictures.
 #define CASTING_IMPACT_SMOKE_PICTURES 0x1809
 /// Where FlashBurstSheet is decoded in the effect's pictures.
@@ -247,7 +268,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   struct BattleEffectWork *work;
   void *screen;
   s32 frame;
-  void *bg;
+  struct BattleCamera *bg;
   void *tiles;
   s32 scrollA;
   s32 scrollB;
@@ -315,21 +336,21 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     u8 *src;
 
     Resource_LoadAndDecompress((s32)&ResourceId_ImpFaceSheet, buffer, 1, 0);
-    for (i = 1; i != 8; i++) {
+    for (i = 1; i != IMP_FACE_FADES; i++) {
       s32 fade;
       j = 0;
       fade = i * 8;
       src = buffer;
-      for (; j != 0x400; j++) {
+      for (; j != PICTURE_BYTES(IMP_FACE); j++) {
         v = *src++;
         if (v == 0) {
-          buffer[j + i * 0x400] = 0;
+          buffer[j + i * PICTURE_BYTES(IMP_FACE)] = 0;
           continue;
         }
         v -= fade;
         if (v <= 0)
           v = 1;
-        buffer[j + i * 0x400] = v;
+        buffer[j + i * PICTURE_BYTES(IMP_FACE)] = v;
       }
     }
   } else if (kind == CASTING_IMPACT_IMPACT_CHILL) {
@@ -368,12 +389,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet,
                                1, 1);
-    Iwram_ClearWords(buffer + 0xc56, 0x4000);
-    for (i = 0; i != 4; i++) {
-      for (j = 0; j != 120; j++) {
-        for (k = 0; k != 24; k++)
-          buffer[0xc5a + i * 0x1000 + j * 32 + k] =
-              work->sheet[i * 2880 + j * 24 + k];
+    Iwram_ClearWords(buffer + STUN_BOLT_TEXTURES,
+                     STUN_BOLT_PICTURES * PICTURE_BYTES(STUN_BOLT_TEXTURE));
+    for (i = 0; i != STUN_BOLT_PICTURES; i++) {
+      for (j = 0; j != LIGHTNING_BOLT_HEIGHT; j++) {
+        for (k = 0; k != LIGHTNING_BOLT_WIDTH; k++)
+          buffer[STUN_BOLT_TEXTURES +
+                 (STUN_BOLT_TEXTURE_WIDTH - LIGHTNING_BOLT_WIDTH) / 2 +
+                 i * PICTURE_BYTES(STUN_BOLT_TEXTURE) +
+                 j * STUN_BOLT_TEXTURE_WIDTH + k] =
+              work->sheet[i * LIGHTNING_BOLT_PICTURE_BYTES +
+                          j * LIGHTNING_BOLT_WIDTH + k];
       }
     }
     Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
@@ -397,24 +423,35 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
 
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
                                buffer + CASTING_IMPACT_RUNE_PICTURES, 1, 0);
-    Iwram_ClearWords(buffer, 0x1000);
-    for (i = 0; i != 48; i++) {
-      for (k = 0; k != 24; k++) {
-        buffer[0x208 + i * 64 + k] = buffer[0x1000 + i * 24 + k];
-        buffer[0x237 + i * 64 - k] = buffer[0x1000 + i * 24 + k];
+    Iwram_ClearWords(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
+    for (i = 0; i != RUNE_HALF_HEIGHT; i++) {
+      for (k = 0; k != RUNE_HALF_WIDTH; k++) {
+        buffer[RUNE_TEXTURE_RUNE + i * RUNE_TEXTURE_SIZE + k] =
+            buffer[CASTING_IMPACT_RUNE_PICTURES + i * RUNE_HALF_WIDTH + k];
+        buffer[RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
+               i * RUNE_TEXTURE_SIZE - k] =
+            buffer[CASTING_IMPACT_RUNE_PICTURES + i * RUNE_HALF_WIDTH + k];
       }
     }
   } else if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
     s32 i;
     s32 k;
 
-    BattleEffect_DrawShadedCircles(buffer, 48, Q16_ONE);
-    for (i = 0; i != 48; i++) {
-      for (k = 0; k != 24; k++) {
-        buffer[0x800 + i * 48 + k] = buffer[i * 24 + k];
-        buffer[0x800 + i * 48 + 47 - k] = buffer[i * 24 + k];
-        buffer[0x800 + (95 - i) * 48 + k] = buffer[i * 24 + k];
-        buffer[0x800 + (95 - i) * 48 + 47 - k] = buffer[i * 24 + k];
+    BattleEffect_DrawShadedCircles(buffer, HAMMERSPHERE_BALL_WIDTH, Q16_ONE);
+    for (i = 0; i != HAMMERSPHERE_BALL_HEIGHT / 2; i++) {
+      for (k = 0; k != HAMMERSPHERE_BALL_WIDTH / 2; k++) {
+        buffer[HAMMERSPHERE_BALL + i * HAMMERSPHERE_BALL_WIDTH + k] =
+            buffer[i * (HAMMERSPHERE_BALL_WIDTH / 2) + k];
+        buffer[HAMMERSPHERE_BALL + i * HAMMERSPHERE_BALL_WIDTH +
+               HAMMERSPHERE_BALL_WIDTH - 1 - k] =
+            buffer[i * (HAMMERSPHERE_BALL_WIDTH / 2) + k];
+        buffer[HAMMERSPHERE_BALL +
+               (HAMMERSPHERE_BALL_HEIGHT - 1 - i) * HAMMERSPHERE_BALL_WIDTH +
+               k] = buffer[i * (HAMMERSPHERE_BALL_WIDTH / 2) + k];
+        buffer[HAMMERSPHERE_BALL +
+               (HAMMERSPHERE_BALL_HEIGHT - 1 - i) * HAMMERSPHERE_BALL_WIDTH +
+               HAMMERSPHERE_BALL_WIDTH - 1 - k] =
+            buffer[i * (HAMMERSPHERE_BALL_WIDTH / 2) + k];
       }
     }
   } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
@@ -559,9 +596,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
-    work->transferValue = 75;
+    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = 50;
+    work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectScaledBattler(action->targets[0], target);
   EffectPosition_ProjectScaledBattler(action->user, base);
@@ -669,7 +706,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
       if (kind <= CASTING_IMPACT_LAST_DJINNI && count < CASTING_IMPACT_SPARKS) {
         Transform_Reset();
-        Transform_SetLookAt(bg, (u8 *)bg + 12);
+        Transform_SetLookAt(bg->eye, bg->focus);
         EffectPosition_ProjectPoint(origin, pos);
         pos[0] = pos[0] / 2;
         drawFuncs.draw[0](screen, buffer + CASTING_IMPACT_DJINNI_PICTURE,
@@ -1131,7 +1168,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                   ((frame - 4) / 2) * PICTURE_BYTES(YELLOW_ORB_PACKED),
               target[0] / 2 - 8, base[1] - 24, 20, YELLOW_ORB_PACKED_HEIGHT);
         Transform_Reset();
-        Transform_SetLookAt(bg, (u8 *)bg + 12);
+        Transform_SetLookAt(bg->eye, bg->focus);
         if (frame > 3) {
           if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
             struct Particle *r;
@@ -1148,7 +1185,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                     screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
                     point[0] - n / 2, point[1] - n, n, n * 2);
                 // DEAD: this arm runs only for kind 79, so the kind 89 test
-                // never holds; the source keeps it.
+                // never holds; the ROM keeps the compare and both arms.
                 {
                   s32 gravity;
                   if (kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
@@ -1269,7 +1306,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             point[0] = point[0] / 2;
             drawFuncs.draw[0](screen, buffer, point[0] - 20, point[1] - 32,
                               FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(p, 64, 0);
+            BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
             p->variant++;
           }
         }
@@ -1308,8 +1345,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             angle = frame * 1848 + i * (TRIG_TURN / 4);
             m = ((frame + i * 3) / 2) & 3;
             x = target[0] / 2 + (Q_16_16_TO_INT(Trig_Sin(angle) << 5));
-            // DEAD: the cosine is computed and dropped; the source keeps the
-            // call.
+            // DEAD: the cosine is computed and dropped; the ROM keeps the call.
             Trig_Cos(angle);
             drawFuncs.draw[0](screen,
                               buffer + GLINT_SET_BYTES +
@@ -1365,6 +1401,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
+            /* FAKEMATCH(dead): RELEASE_BLITTERS releases its second blitter in
+             * a once-only block, here and in the stun bolt below. */
             RELEASE_BLITTERS();
             BattleEffect_BuildBlitter(
                 188, 7, 7, gCastingImpact_SapGlintFlips[Random16() & 3] | 3, 1);
@@ -1464,6 +1502,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
+        // A tornado stands over the target.
         s32 m;
         if (frame > 15)
           REG_BLDALPHA = BLEND_ALPHA(32 - frame, BLEND_WEIGHT_MAX);
@@ -1472,8 +1511,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           s32 o1;
           x = target[0] / 2;
           m = frame / 2 % 3;
-          x -= 20;
-          o1 = m * 0xa00;
+          x -= TORNADO_STRIP_WIDTH / 2;
+          o1 = m * (2 * PICTURE_BYTES(TORNADO_STRIP));
           drawFuncs.draw[0](screen, buffer + GLINT_SET_BYTES + o1, x, 16,
                             TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
           drawFuncs.draw[0](screen,
@@ -1483,7 +1522,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                             x, 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
           {
             u8 *o0;
-            o0 = buffer + 0x1156 + o1;
+            o0 = buffer + GLINT_SET_BYTES + PICTURE_BYTES(TORNADO_STRIP) + o1;
             drawFuncs.draw[0](screen, o0, x, 80, TORNADO_STRIP_WIDTH,
                               TORNADO_STRIP_HEIGHT);
           }
@@ -1657,14 +1696,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                                 BLITTER_ADDITIVE);
-            BLITTER(screen, buffer + m * 0x360, target[0] / 2 - 18, pinned = 56,
-                    18, 48);
+            BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF),
+                    target[0] / 2 - BITE_HALF_WIDTH, pinned = 56,
+                    BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                 BLITTER_ADDITIVE);
           } while (0);
-          BLITTER(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
+          BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF), target[0] / 2,
+                  56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
@@ -1692,7 +1733,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                   point[0] - FLASH_BURST_WIDTH / 2,
                                   point[1] - FLASH_BURST_HEIGHT / 2,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-                BattleEffectKernels_IntegrateVector3(p, 64, px(1) / 16);
+                BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE,
+                                                     px(1) / 16);
                 p->variant++;
               }
             }
@@ -1968,14 +2010,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         }
         if (frame < 32) {
-          drawFuncs.draw[1](screen, buffer + 0x800, (Q_16_16_TO_INT(p->x)) - 24,
-                            (Q_16_16_TO_INT(p->y)) - 96, 48, 96);
+          drawFuncs.draw[1](screen, buffer + HAMMERSPHERE_BALL,
+                            Q_16_16_TO_INT(p->x) - HAMMERSPHERE_BALL_WIDTH / 2,
+                            Q_16_16_TO_INT(p->y) - HAMMERSPHERE_BALL_HEIGHT,
+                            HAMMERSPHERE_BALL_WIDTH, HAMMERSPHERE_BALL_HEIGHT);
           if (frame < 12)
-            BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
+            BattleEffectKernels_IntegrateVector2(SPARKS, PARTICLE_DAMPING_NONE,
+                                                 0);
           else if (frame == 12)
             p->velocityY = -p->velocityY / 3;
           else if (frame < 13 || frame > 18)
-            BattleEffectKernels_IntegrateVector2(SPARKS, 64, px(1) / 4);
+            BattleEffectKernels_IntegrateVector2(SPARKS, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 4);
         }
         if (frame == 11) {
           Sound_PlayFar(SE_CLATTER);
@@ -2019,7 +2065,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             table = gPrism_ShardStarts;
             for (i = 0; i != 16; i++, p++) {
               p->x = px(*table++ + x - 40);
-              p->y = *table++ << 16;
+              p->y = px(*table++);
               p->velocityX = ((Random16() & 127) - 64) << 11;
               p->velocityY = -(Random16() & 127) << 11;
               p->z = 32;
@@ -2040,7 +2086,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 (Q_16_16_TO_INT(particle->x)) - gPrism_ShardWidths[m] / 2,
                 (Q_16_16_TO_INT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
-            BattleEffectKernels_IntegrateVector2(particle, 64, px(1) / 8);
+            BattleEffectKernels_IntegrateVector2(
+                particle, PARTICLE_DAMPING_NONE, px(1) / 8);
             particle->variant += particle->z;
             if (particle->z > 1 && (frame & 1))
               particle->z--;
@@ -2157,7 +2204,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           model = Render_AllocateModelList(1);
           stunBoltTexture.logWidth = 5;
           stunBoltTexture.logHeight = 7;
-          model->kind = 6;
+          model->kind = MODEL_SHADED_MAX;
           model->texture = &stunBoltTexture;
           model->mesh = gBattleEffect_ColumnMesh;
           model->vertices = matrix;
@@ -2173,8 +2220,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->shade = fade;
               {
                 s32 life = p->variant;
-                stunBoltTexture.pixels = buffer + 0xc56 + (life << 12);
-                p->variant = (life + 1) & 3;
+                stunBoltTexture.pixels =
+                    buffer + STUN_BOLT_TEXTURES +
+                    life * PICTURE_BYTES(STUN_BOLT_TEXTURE);
+                p->variant = (life + 1) & (STUN_BOLT_PICTURES - 1);
               }
               Transform_Reset();
               Transform_ApplyTranslation(px(target[0] / 2 - 64),
@@ -2206,7 +2255,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         reverseStarTexture.logWidth = 6;
         reverseStarTexture.logHeight = 6;
         reverseStarTexture.pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &reverseStarTexture;
         model->mesh = gBattleEffect_SquareMesh;
         model->vertices = matrix;
@@ -2270,7 +2319,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         boscaHitTexture.logHeight = 7;
         boscaHitTexture.pixels = buffer;
         model->texture = &boscaHitTexture;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = matrix;
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
@@ -2289,7 +2338,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 Transform_ApplyTranslation(px(target[0] / 2 - 64),
                                            px(target[1] - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
                 Transform_ApplyUniformScale(angle >> 1);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
@@ -2334,7 +2383,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 Transform_ApplyTranslation(px(target[0] / 2 - 64),
                                            px(target[1] - 64), 0);
                 Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-                Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
+                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
                 Transform_ApplyUniformScale(t * 3 << 12);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
@@ -2389,7 +2438,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         stunJipTexture.logWidth = 7;
         stunJipTexture.logHeight = 7;
         stunJipTexture.pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &stunJipTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = matrix;
@@ -2460,7 +2509,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         model->texture = tex;
         model->vertices = matrix;
         tex->pixels = buffer;
-        model->kind = 7;
+        model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
@@ -2643,7 +2692,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               // DEAD: kind 74 has its own arm above, so only kind 69 reaches
-              // this test.
+              // this test; the ROM keeps both compares.
               if (kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
                   kind == CASTING_IMPACT_IMPACT_SCORPIONFISH)
                 drawFuncs.draw[1](screen,

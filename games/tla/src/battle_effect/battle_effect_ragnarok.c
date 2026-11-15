@@ -14,16 +14,18 @@ enum FallingSwordMode {
 #undef RESULTS_FRAME
 
 /// The sheet holds the blade (64 x 128) and then the flash pictures.
-#define FLASH_SHEET (64 * 128)
+#define RAGNAROK_FLASH_PICTURES (64 * 128)
 
 /// The sparks, in the map cell buffer.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
-#define SPARKS_PER_COLUMN 340
-#define SPARKS_DRAWN 256
-#define FLASHES_PER_COLUMN 16
-#define FLASHES_DRAWN 12
+#define RAGNAROK_COLUMNS 2  ///< columns that strike
+#define RAGNAROK_SEEDED 3   ///< columns given particles; the third is unused
+#define RAGNAROK_FLASHES 16 ///< flashes kept per column
+#define RAGNAROK_RING 12    ///< of which drawn as the ring
+#define RAGNAROK_SPARKS 340 ///< sparks kept per column
+#define RAGNAROK_DRAWN_SPARKS 256 ///< of which flown
 
-#define BLADE_FRAMES 80
+#define RAGNAROK_FRAMES 80
 #define BLADE_SWING_FRAMES 10 ///< the blade comes down
 #define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
@@ -66,7 +68,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + FLASH_SHEET, 1, 0);
+                             work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
 
   // Each column's flashes (a ring, 2 pixels apart, living 25 to 32 frames)
@@ -75,7 +77,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   do {
     i = 0;
     do {
-      struct Particle *flash = &work->particles[col * FLASHES_PER_COLUMN + i];
+      struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
       s32 radius = i * 2;
       s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -83,11 +85,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       flash->y = -(Trig_Cos(angle) * radius);
       flash->variant = i / 2 + 25;
       i++;
-    } while (i != FLASHES_PER_COLUMN);
+    } while (i != RAGNAROK_FLASHES);
 
     i = 0;
     do {
-      struct Particle *spark = &SPARKS[col * SPARKS_PER_COLUMN + i];
+      struct Particle *spark = &SPARKS[col * RAGNAROK_SPARKS + i];
       s32 speed;
       s32 angle;
 
@@ -99,9 +101,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
       i++;
-    } while (i != SPARKS_PER_COLUMN);
+    } while (i != RAGNAROK_SPARKS);
     col++;
-  } while (col != 3);
+  } while (col != RAGNAROK_SEEDED);
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -165,13 +167,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         work->shakeFrames = 12;
       if (frame >= start) {
         if (frame < start + 2)
-          draw[0](canvas, work->sheet + FLASH_SHEET,
+          draw[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
                   gRagnarok_StrikeColumns[col + args->side * 3] + baseX - 16,
                   56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         i = 0;
         do {
-          struct Particle *flash =
-              &work->particles[col * FLASHES_PER_COLUMN + i];
+          struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
           s32 x;
           s32 life;
           s32 y;
@@ -183,19 +184,19 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           if (life >= 0 && life <= 17)
             draw[0](canvas,
                     work->sheet + (gRagnarok_FlashPictures[life / 3] << 11) +
-                        FLASH_SHEET,
+                        RAGNAROK_FLASH_PICTURES,
                     x - 16, y + 56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;
           i++;
-        } while (i != FLASHES_DRAWN);
+        } while (i != RAGNAROK_RING);
       }
 
       // The sparks, from six frames after the strike, bouncing at y = 108.
       if (frame > start + 5) {
         i = 0;
         do {
-          struct Particle *spark = &SPARKS[col * SPARKS_PER_COLUMN + i];
+          struct Particle *spark = &SPARKS[col * RAGNAROK_SPARKS + i];
 
           if (spark->variant > 0) {
             s32 x;
@@ -226,7 +227,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             }
           }
           i++;
-        } while (i != SPARKS_DRAWN);
+        } while (i != RAGNAROK_DRAWN_SPARKS);
       }
 
       // The column's targets flash at the strike and are struck by its
@@ -240,12 +241,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         }
       }
       col++;
-    } while (col != 2);
+    } while (col != RAGNAROK_COLUMNS);
 
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
     frame++;
-  } while (frame != BLADE_FRAMES);
+  } while (frame != RAGNAROK_FRAMES);
 
   Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
@@ -260,8 +261,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
   BattleEffect_RunFallingSword(args, FALLING_SWORD_ACHERONS_GRIEF);
 }
-
-#undef FLASH_SHEET
 
 // The sheet: the fire pillar, the flashes after it, the sword far after.
 #define FLASH_SHEET (221 << 4)
@@ -368,7 +367,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     speed &= Random16();
     angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = origin;
-    spark->y = 176 << 15;
+    spark->y = px(88);
     spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
     spark->velocityY = -(Trig_Cos(angle) * (speed + 32)) >> 6;
     spark->variant = (Random16() & 7) + 32;
@@ -384,7 +383,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+            SHEET_PALETTE_BYTES);
         Palette_MirrorBgColors();
       }
     }
@@ -443,7 +443,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -468,7 +468,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -572,7 +572,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                                                128 << 6);
           y = spark->y;
           spark->variant--;
-          if (y > (216 << 15)) {
+          if (y > px(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;

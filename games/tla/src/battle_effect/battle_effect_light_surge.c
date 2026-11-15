@@ -10,6 +10,12 @@ struct StripQuad;
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
 
+/// Where GlowOrbTexture is decoded in the effect's pictures.
+#define LIGHT_SURGE_GLOW_ORB 0x1000
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define LIGHT_SURGE_GLOW_BAND 0x4000
+
 /// The camera swings around the target while 14 bolts of light rain onto
 /// it, four frames apart; each lands with a flash and a ring of light (two
 /// rings of shaded circles), and four pillars of light rise and sway over
@@ -59,10 +65,10 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C4,
+                             work->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                             work->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
@@ -206,8 +212,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->vertices = vertices;
     model->shade = shade;
-    model->kind = 7;
-    texture.pixels = work->sheet + 0x4000;
+    model->kind = MODEL_SHADED_ADDITIVE;
+    texture.pixels = work->sheet + LIGHT_SURGE_GLOW_BAND;
     for (i = 0, flash = work->particles, glow = &work->particles[16],
         bolt = &work->particles[32];
          i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
@@ -268,8 +274,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       EffectPosition_ProjectBattler(args->targets[0], &center);
       texture.logWidth = 5;
       texture.logHeight = 5;
-      texture.pixels = work->sheet + 0x1000;
-      model->kind = 6;
+      texture.pixels = work->sheet + LIGHT_SURGE_GLOW_ORB;
+      model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);

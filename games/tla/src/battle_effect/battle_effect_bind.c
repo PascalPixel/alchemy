@@ -126,7 +126,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw[2];
   s32 member;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 shift;
   u8 *graphics;
   struct MotionObject *motion;
@@ -171,7 +171,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
     if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
 
     // The prelude: the Djinn circles where the effect was prepared, and
     // rises away after frame 32; its blitters live for this frame only.
@@ -198,14 +199,14 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     for (member = 0; member != 1; member++) {
       motion = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->focus);
         vector[0] = motion->x;
         vector[1] = motion->y;
         vector[2] = motion->z;
@@ -288,7 +289,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw[2];
   s32 member;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 shift;
   u8 *graphics;
   struct MotionObject *object;
@@ -326,7 +327,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
 
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -335,14 +337,14 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += 0x01010101;
+      work->transferValue += CANVAS_FILL_WORD(1);
 
     for (member = 0; member != 1; member++) {
       object = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->focus);
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;

@@ -7,20 +7,12 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// The seven panels of the counter picture: the first two in the work sheet,
-/// the rest in the map buffer.
-#define PANEL_B 0x15d2
-#define PANEL_C 0x3081
-#define PANEL_D 0x0000
-#define PANEL_E 0x2d80
-#define PANEL_F 0x4b00
-#define PANEL_G 0x58d2
-
 #define CONDEMN_FRAMES 104
 
-/// A shimmering image circles in, fading out and in as it closes on the first
-/// target, then splits into its panels with a white flash, and the target is
-/// thrown back while the screen shakes.
+/// A hooded reaper with a scythe circles in, fading out through a ripple as it
+/// jumps closer twice, the second time onto the first target; the screen
+/// flashes white, the reaper swings, and the red crescent its scythe leaves
+/// fades while the target is thrown back and the screen shakes.
 ///
 /// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
@@ -42,8 +34,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
   zero = 0;
 
-  // Set up: half-and-half blending, the image with its palette, the crescent
-  // panels into the map buffer, two transparent blitters (the second
+  // Set up: half-and-half blending, the reaper with its palette, the crescent
+  // fading into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
   BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   REG_BG2PA = Q_8_8(1);
@@ -62,13 +54,13 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
 
-  // The image starts off to the side, above the field.
+  // The reaper starts off to the side, above the field.
   visible = 1;
   if (args->side == EFFECT_SIDE_PARTY)
-    curve[0] = -0x500000;
+    curve[0] = -px(80);
   else
-    curve[0] = 0x700000;
-  curve[1] = -0x200000;
+    curve[0] = px(112);
+  curve[1] = -px(32);
 
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
@@ -90,10 +82,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // for the frame of each jump.
     if (frame == 24) {
       if (args->side == EFFECT_SIDE_PARTY)
-        curve[0] = -0x200000;
+        curve[0] = -px(32);
       else
-        curve[0] = 0x480000;
-      curve[1] = 0x180000;
+        curve[0] = px(72);
+      curve[1] = px(24);
       visible = 0;
     }
     if (frame == 25) {
@@ -114,7 +106,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       visible = 1;
     }
 
-    // Before each jump the image fades out over eight frames while the
+    // Before each jump the reaper fades out over eight frames while the
     // background waves harder.
     scanline = work->bg2xLines;
     amp = 0;
@@ -140,7 +132,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       angle += TRIG_TURN / 32;
     }
 
-    // The image, then from frame 72 its panels, each shown for two frames.
+    // The reaper, then from frame 72 its swing and the crescent fading, each
+    // picture shown for two frames.
     if (visible != 0) {
       s32 side = args->side;
 
@@ -156,39 +149,46 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       }
       if (frame <= 71) {
         draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                         gCondemn_PictureY[row * 7] + screenY, 57,
-                         REAPER_SHEET_RAISED_HEIGHT);
+                         gCondemn_PictureY[row * 7] + screenY,
+                         REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 75)
           draw[args->side](canvas, work->sheet, gCondemn_PictureX[column * 7],
-                           gCondemn_PictureY[row * 7] + screenY, 57,
+                           gCondemn_PictureY[row * 7] + screenY,
+                           REAPER_SHEET_RAISED_WIDTH,
                            REAPER_SHEET_RAISED_HEIGHT);
-        draw[args->side](canvas, work->sheet + PANEL_B,
-                         gCondemn_PictureX[column * 7 + 1],
-                         gCondemn_PictureY[row * 7 + 1] + screenY, 99, 69);
+        EFFECT_DRAW_PICTURE(draw[args->side], canvas, work->sheet,
+                            REAPER_SHEET_SWUNG,
+                            gCondemn_PictureX[column * 7 + 1],
+                            gCondemn_PictureY[row * 7 + 1] + screenY);
         if ((u32)(frame - 72) <= 1)
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                                CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         if ((u32)(frame - 74) <= 1)
-          draw[args->side](canvas, work->sheet + PANEL_C,
-                           gCondemn_PictureX[column * 7 + 2],
-                           gCondemn_PictureY[row * 7 + 2] + screenY, 128, 91);
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, work->sheet,
+                              REAPER_SHEET_CRESCENT,
+                              gCondemn_PictureX[column * 7 + 2],
+                              gCondemn_PictureY[row * 7 + 2] + screenY);
         if ((u32)(frame - 76) <= 1)
-          draw[args->side](canvas, gMapGridCellBuffer + PANEL_D,
-                           gCondemn_PictureX[column * 7 + 3],
-                           gCondemn_PictureY[row * 7 + 3] + screenY, 128, 91);
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
+                              RED_CRESCENT_FADE_A,
+                              gCondemn_PictureX[column * 7 + 3],
+                              gCondemn_PictureY[row * 7 + 3] + screenY);
         if ((u32)(frame - 78) <= 1)
-          draw[args->side](canvas, gMapGridCellBuffer + PANEL_E,
-                           gCondemn_PictureX[column * 7 + 4],
-                           gCondemn_PictureY[row * 7 + 4] + screenY, 128, 59);
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
+                              RED_CRESCENT_FADE_B,
+                              gCondemn_PictureX[column * 7 + 4],
+                              gCondemn_PictureY[row * 7 + 4] + screenY);
         if ((u32)(frame - 80) <= 1)
-          draw[args->side](canvas, gMapGridCellBuffer + PANEL_F,
-                           gCondemn_PictureX[column * 7 + 5],
-                           gCondemn_PictureY[row * 7 + 5] + screenY, 122, 29);
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
+                              RED_CRESCENT_FADE_C,
+                              gCondemn_PictureX[column * 7 + 5],
+                              gCondemn_PictureY[row * 7 + 5] + screenY);
         if ((u32)(frame - 82) <= 1)
-          draw[args->side](canvas, gMapGridCellBuffer + PANEL_G,
-                           gCondemn_PictureX[column * 7 + 6],
-                           gCondemn_PictureY[row * 7 + 6] + screenY, 76, 25);
+          EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
+                              RED_CRESCENT_FADE_D,
+                              gCondemn_PictureX[column * 7 + 6],
+                              gCondemn_PictureY[row * 7 + 6] + screenY);
       }
     }
 
@@ -208,7 +208,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
-  BattleBackground_LoadFar(1, Ram_HeapSlots->battleWork->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           Ram_HeapSlots->battleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

@@ -25,8 +25,8 @@ enum DragonFireMode {
 #define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
 #define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
 #define COMET_SHEET 0x3600      ///< the violet comets
-#define COMETS 9
-#define FORMATION_RESOURCE 646
+/// Procne's nine sprites, placed on a grid by gProcne_GridX and _GridY.
+#define PROCNE_SPRITES 9
 
 /// Procne appears in the violet sky, and the targets it lifted drop.
 #define PROCNE_ARRIVAL_FRAME 160
@@ -41,7 +41,7 @@ enum DragonFireMode {
 /// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   void *canvas;
-  void *camera;
+  struct BattleCamera *camera;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
   s32 frame;
@@ -129,7 +129,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
 
       Transform_Reset();
-      Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
+      Transform_SetLookAt(camera->eye, camera->focus);
 
       if (frame == 16)
         Sound_PlayFar(SE_RUMBLE);
@@ -260,10 +260,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         s32 speed;
         s32 angle;
 
-        BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-        BattleBackground_SetModeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+        BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                                 (s32)&ResourceId_VioletSkyBackdrop, 0);
+        BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                    (s32)&ResourceId_VioletSkyBackdrop, 8);
         BattleEffect_SelectLivingTargets(work->args);
-        BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
+        BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
                                    work->sheet + COMET_SHEET, 1, 1);
 
@@ -322,7 +324,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
-        } while (index != COMETS);
+        } while (index != PROCNE_SPRITES);
 
         if (frame > 255) {
           s32 threshold;
@@ -533,7 +535,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     do {
       Sprite_DestroyFar(work->sprites[index]);
       index++;
-    } while (index != COMETS);
+    } while (index != PROCNE_SPRITES);
 
     EFFECT_FINISH_CANVAS();
   }
@@ -549,10 +551,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 
-#undef FORMATION_RESOURCE
-
 #define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
-#define FORMATION_RESOURCE 647
 
 #define DRAGON_FIRE_FRAMES 208
 
@@ -577,7 +576,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   DrawRectangle draw[2];
   void *canvas;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct BattleEffectWork *work;
   s32 frame;
   u8 *sheet;
@@ -665,7 +664,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (mode == DRAGON_FIRE_TIAMAT) {
       BattleEffect_SelectLivingTargets(work->args);
       wait(1);
-      BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
+      BattleEffect_SpawnObjects(8, SPRITE_TIAMAT, 2);
     }
 
     for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
@@ -684,14 +683,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         frame = DRAGON_FIRE_FLASH_FRAME;
       }
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (frame == 178)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
       if (frame == DRAGON_FIRE_BREATH_FRAME)
-        work->transferValue = 50;
+        work->transferValue = CANVAS_FADE_HALF;
       if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
@@ -832,7 +831,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                   Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
-          spark->velocityY += -(px(1) / 64);
+          spark->velocityY += -px(1) / 64;
           spark->variant++;
           if (spark->variant == 48)
             spark->variant = -1;
@@ -856,11 +855,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             grain->y += grain->velocityY;
             if (frame > DRAGON_FIRE_BREATH_FRAME) {
               if (i & 1)
-                grain->velocityX += -(px(1) / 2);
+                grain->velocityX += -px(1) / 2;
               else
-                grain->velocityX += -(px(1) / 8);
+                grain->velocityX += -px(1) / 8;
             } else {
-              grain->velocityY += -(px(1) / 64);
+              grain->velocityY += -px(1) / 64;
             }
             grain->variant++;
             if (grain->variant == 256)

@@ -176,7 +176,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         // The screen waves, line by line.
         s32 *line = work->bg2xLines;
 
-        for (i = 0; i != 160; i++)
+        for (i = 0; i != DISPLAY_HEIGHT; i++)
           *line++ =
               scroll -
               ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 16)) << 2) >> 10);
@@ -228,7 +228,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       texture.logHeight = 6;
       model->vertices = vertices;
       texture.pixels = CARD;
-      model->kind = 8;
+      model->kind = MODEL_TEXTURED;
       model->texture = &texture;
       model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();
@@ -338,7 +338,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
         EFFECT_SHOW_DAMAGE(-1);
         work->shakeFrames = 4;
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 16);
         for (i = 0; i != 64; i++) {
@@ -402,37 +403,46 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         if (frame <= 63) {
           draw[0](canvas, work->sheet,
                   overflow + gCastingImpact_PictureX[args->side * 7],
-                  gCastingImpact_PictureY[0], 57, 98);
+                  gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                  REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= 67)
             draw[0](canvas, work->sheet,
                     overflow + gCastingImpact_PictureX[args->side * 7],
-                    gCastingImpact_PictureY[0], 57, 98);
-          draw[0](canvas, work->sheet + 0x15d2,
-                  overflow + gCastingImpact_PictureX[args->side * 7 + 1],
-                  gCastingImpact_PictureY[1], 99, 69);
+                    gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
+                    REAPER_SHEET_RAISED_HEIGHT);
+          EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, REAPER_SHEET_SWUNG,
+                              overflow +
+                                  gCastingImpact_PictureX[args->side * 7 + 1],
+                              gCastingImpact_PictureY[1]);
           if (frame >= 64 && frame <= 65)
-            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                                 CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           if (frame >= 66 && frame <= 67)
-            draw[0](canvas, work->sheet + 0x3081,
-                    overflow + gCastingImpact_PictureX[args->side * 7 + 2],
-                    gCastingImpact_PictureY[2], 128, 91);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, work->sheet, REAPER_SHEET_CRESCENT,
+                overflow + gCastingImpact_PictureX[args->side * 7 + 2],
+                gCastingImpact_PictureY[2]);
           if (frame >= 68 && frame <= 69)
-            draw[0](canvas, Ram_MapCellBuffer,
-                    overflow + gCastingImpact_PictureX[args->side * 7 + 3],
-                    gCastingImpact_PictureY[3], 128, 91);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_A,
+                overflow + gCastingImpact_PictureX[args->side * 7 + 3],
+                gCastingImpact_PictureY[3]);
           if (frame >= 70 && frame <= 71)
-            draw[0](canvas, Ram_MapCellBuffer + 0x2d80,
-                    overflow + gCastingImpact_PictureX[args->side * 7 + 4],
-                    gCastingImpact_PictureY[4], 128, 59);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_B,
+                overflow + gCastingImpact_PictureX[args->side * 7 + 4],
+                gCastingImpact_PictureY[4]);
           if (frame >= 72 && frame <= 73)
-            draw[0](canvas, Ram_MapCellBuffer + 0x4b00,
-                    overflow + gCastingImpact_PictureX[args->side * 7 + 5],
-                    gCastingImpact_PictureY[5], 122, 29);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_C,
+                overflow + gCastingImpact_PictureX[args->side * 7 + 5],
+                gCastingImpact_PictureY[5]);
           if (frame >= 74 && frame <= 75)
-            draw[0](canvas, Ram_MapCellBuffer + 0x58d2,
-                    overflow + gCastingImpact_PictureX[args->side * 7 + 6],
-                    gCastingImpact_PictureY[6], 76, 25);
+            EFFECT_DRAW_PICTURE(
+                draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_D,
+                overflow + gCastingImpact_PictureX[args->side * 7 + 6],
+                gCastingImpact_PictureY[6]);
         }
       }
     }

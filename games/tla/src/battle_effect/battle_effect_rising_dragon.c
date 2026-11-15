@@ -22,7 +22,7 @@ struct StripVertex {
   s8 x;
   s8 y;
   s8 z;
-  s8 unk3;
+  s8 pad;
 };
 
 /// Where ClawSlashSheet is decoded in the effect's pictures.
@@ -39,7 +39,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   void *canvas;
   DrawRectangle blit[2];
   s32 frame;
-  s32 *camera;
+  struct BattleCamera *camera;
   u8 *sprites;
   void *caster;
   s32 arcs[4];
@@ -85,13 +85,14 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                                1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+        SHEET_PALETTE_BYTES);
     REG_BG2PA = Q_8_8(0.5);
     Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (frame == 0) {
         arcs[0] = 0;
         arcs[1] = 0;
@@ -122,7 +123,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 16;
         }
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         work->shakeFrames = 8;
         if (frame == 28) {
           if (args->variant == EFFECT_VARIANT_BASIC) {
@@ -252,10 +254,10 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 
         model = Render_AllocateModelList(1);
         vertices = gMapGridCellBuffer + 0x1000;
-        model->scrollV = 0;
-        model->kind = 6;
         model->texture = &texture;
         model->shade = 0;
+        model->kind = MODEL_SHADED_MAX;
+        model->scrollV = 0;
         model->vertices = vertices;
         for (i = 0; i != args->variant + 1; i++) {
           if (arcs[i * 2 + 1] >= arcs[i * 2]) {
@@ -478,7 +480,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       work->shakeFrames = 3;
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -490,7 +493,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

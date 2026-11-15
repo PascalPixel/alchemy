@@ -3,12 +3,13 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "enemy_ids.h"
 #include "sounds.h"
 
 /// Projects a unit onto the screen, raised by half its height, from the battle
 /// camera.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
-  u8 *camera;
+  struct BattleCamera *camera;
   s32 *object;
   u8 *info;
   s32 scale;
@@ -17,7 +18,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = BattleObject_GetFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   Transform_Reset();
-  Transform_SetLookAt(camera, camera + 12);
+  Transform_SetLookAt(camera->eye, camera->focus);
   scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
                        *(s32 *)(info + 12));
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
@@ -33,7 +34,8 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   work = Ram_HeapSlots->battleEffect;
   args = work->args;
 
-  // DEAD: nothing uses the held keys read here; their load is in the ROM.
+  // DEAD: nothing uses the held keys read here; the ROM keeps the test and the
+  // load.
   if (args->targets[0] > 0x7f)
     (void)gInput.held;
 }
@@ -546,8 +548,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
 /// Starts a unit moving away from the centre with its own force, acceleration,
 /// top speed, hop and reach in percent, as BattleMotion_ApplyKnockback does
-/// from its tables; four enemies (ids 357, 369, 373 and 376) are not moved,
-/// only posed.
+/// from its tables; the Fusion Dragon and three of the Doom Dragon's
+/// forms are not moved, only posed.
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {
   struct BattleObject *slot;
@@ -557,7 +559,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
   slot = BattleObject_GetFar(id);
   object = slot->object;
   enemy = Unit_Get(id)->enemyId;
-  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+  if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
+      enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     object->acceleration = acceleration;
     object->speedLimit = speedLimit;
     if (force != 0 || object->velocityY != 0)

@@ -17,7 +17,11 @@
 #define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
 
 #define DRAGON_CLOUD_TRAIL_WIDTH 24
-#define DRAGON_CLOUD_FIRST_EMBER 8 ///< the first ember in work->particles
+#define DRAGON_CLOUD_TRAIL_PICTURE_BYTES                                       \
+  PICTURE_BYTES(DRAGON_CLOUD_TRAIL) ///< bytes in each trail copy
+#define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
+#define DRAGON_CLOUD_EMBERS 40      ///< embers, from DRAGON_CLOUD_FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16     ///< flashes, after the embers
 
 /// A flame leaves the user along a stored path with a fading trail behind it,
 /// strikes the first target and bursts into embers and flashes.
@@ -51,20 +55,20 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  // The pillar sheet, and nine copies of its cell, each darker than the last,
-  // for the trail.
+  // The pillar sheet, and darker copies of the trail picture, for the trail's
+  // tail.
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
                              1);
   for (i = 1; i != 20; i++) {
-    for (j = 0; j != PILLAR_CELL_SIZE; j++) {
+    for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
       s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
 
       if (i > 10) {
         shade = shade - i * 4 + 40;
         if (shade < 0)
           shade = 0;
-        work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + (i - 10) * PILLAR_CELL_SIZE +
-                    j] = shade;
+        work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
+                    (i - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES + j] = shade;
       }
     }
   }
@@ -77,14 +81,15 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_STRONGER)
     Iwram_GetCopyWords()(
         (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+        SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
   object = BattleObject_GetFar(args->targets[0])->object;
-  for (i = 0; i != 56; i++) {
+  for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
     step = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
     SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
     if (i >= gDragonCloud_SparkCounts[args->variant]) {
@@ -163,13 +168,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       offset = gBattleEffect_PuffArcPictures[cell];
       /* FAKEMATCH(dead): width, read from the puff table and never used. */
       width = gBattleEffect_PuffArcPictureWidths[cell];
-      draw[0](canvas, &work->sheet[offset + 0x3c00],
+      draw[0](canvas, &work->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
               56 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
               gBattleEffect_PuffArcPictureBiasY[cell] + 60,
               gBattleEffect_PuffArcPictureWidths[cell],
               gBattleEffect_PuffArcPictureHeights[cell]);
       draw[1](canvas,
-              &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+              &work->sheet[gBattleEffect_PuffArcPictures[cell] +
+                           DRAGON_CLOUD_PUFF_PICTURES],
               64 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
               gBattleEffect_PuffArcPictureBiasY[cell] + 60,
               gBattleEffect_PuffArcPictureWidths[cell],
@@ -241,7 +247,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         if (j > 10)
           draw[0](canvas,
                   &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
-                               (j - 10) * PILLAR_CELL_SIZE],
+                               (j - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
                   trail[j].x - 12, trail[j].y, DRAGON_CLOUD_TRAIL_WIDTH,
                   DRAGON_CLOUD_TRAIL_HEIGHT);
         else
@@ -277,8 +283,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       lift = drift / 4 + 2;
       trail[0].x = position.x;
       trail[0].y = position.y - 20;
-      draw[0](canvas, &work->sheet[lift * 0x480], trail[0].x - 12,
-              trail[0].y - 2, DRAGON_CLOUD_FLAME_WIDTH,
+      draw[0](canvas, &work->sheet[lift * PICTURE_BYTES(DRAGON_CLOUD_FLAME)],
+              trail[0].x - 12, trail[0].y - 2, DRAGON_CLOUD_FLAME_WIDTH,
               DRAGON_CLOUD_FLAME_HEIGHT);
 
       // The head sheds four sparks a frame (only variant 1 draws them).
@@ -301,8 +307,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
     // After the strike: the embers fly from the target, sized by depth;
     // the flashes play the flash sheet.
-    if (frame > 82) {
-      for (i = 0; i != 56; i++) {
+    if (frame >= DRAGON_CLOUD_STRIKE_FRAME) {
+      for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
         step = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
         if (step->y >= 0) {
           s32 size;
@@ -331,7 +337,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 64, -px(1) / 8);
+            BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE,
+                                                 -px(1) / 8);
           }
         }
       }
@@ -392,7 +399,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+                  &work->sheet[gBattleEffect_PuffArcPictures[cell] +
+                               DRAGON_CLOUD_PUFF_PICTURES],
                   step->x - gBattleEffect_PuffArcPictureWidths[cell] / 2,
                   step->y + gBattleEffect_PuffArcPictureBiasY[cell],
                   gBattleEffect_PuffArcPictureWidths[cell],

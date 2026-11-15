@@ -130,7 +130,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                        SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
-  work->transferValue = 50; // leaving a trail
+  work->transferValue = CANVAS_FADE_HALF; // leaving a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   source = BattleObject_GetFar(args->user)->object;

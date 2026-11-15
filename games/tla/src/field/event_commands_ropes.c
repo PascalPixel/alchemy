@@ -69,7 +69,7 @@ void Rope_Draw(void) {
       s32 x = node->x;
       s32 z = node->z;
 
-      y += 0xfffc0000;
+      y -= px(4);
 
       if (started) {
         s32 screenX;
@@ -95,8 +95,8 @@ void Rope_Draw(void) {
           sprite = &node->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = spriteY | OBJ_X(spriteX) | 0x2000;
-          ((u32 *)&node->sprite)[2] = 0x800 | tile;
+          ((u32 *)&node->sprite)[1] = spriteY | OBJ_X(spriteX) | OBJ_256_COLORS;
+          ((u32 *)&node->sprite)[2] = OBJ_PRIORITY(2) | tile;
           if (angle != 0) {
             transform.angle = angle;
             transform.scaleX = 0x100;
@@ -154,9 +154,9 @@ void Rope_Update(void) {
     if (slot->swinging != 0) {
       s32 swing = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
 
-      slot->phase += 0x1000;
-      slot->amplitude = Iwram_MulQ16(slot->amplitude, 0xf333);
-      if (slot->amplitude <= 0x1998) {
+      slot->phase += TRIG_TURN / 16;
+      slot->amplitude = Iwram_MulQ16(slot->amplitude, Q16_ONE * 19 / 20);
+      if (slot->amplitude < Q16_ONE / 10) {
         slot->amplitude = 0;
         slot->swinging = 0;
       }
@@ -259,8 +259,8 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   *link = NULL;
   slot->state = 1;
   slot->swinging = 1;
-  slot->amplitude = 0x10000;
-  slot->phase = 0x4000;
+  slot->amplitude = Q16_ONE;
+  slot->phase = TRIG_TURN / 4;
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
   return result;
@@ -440,7 +440,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
                  to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                  Trig_Sin(gRope_LashPhase) << 2);
-      gRope_LashPhase += 0x1000;
+      gRope_LashPhase += TRIG_TURN / 16;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
       Actor_SelectAnimationFar(to, 2);
@@ -523,7 +523,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   slot = &work->slots[index];
   slot->swinging = 1;
   slot->amplitude = px(4);
-  slot->phase = 0x4000;
+  slot->phase = TRIG_TURN / 4;
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
   Heap_Release(nodes);
@@ -548,7 +548,7 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
     Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
                 to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                 Trig_Sin(gRope_UntiePhase) * 4);
-    gRope_UntiePhase += 0x1000;
+    gRope_UntiePhase += TRIG_TURN / 16;
   }
 }
 
@@ -792,7 +792,7 @@ void Tightrope_Draw(void) {
       s32 x = node->x;
       s32 z = node->z;
 
-      y += 0xfffc0000;
+      y -= px(4);
 
       if (started) {
         s32 screenX = (prevX + x) / 2 - viewX;
@@ -809,8 +809,8 @@ void Tightrope_Draw(void) {
           s32 key = FIELD_PIXEL(prevY + prevZ) + 58;
 
           ((u32 *)&node->sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = top | OBJ_X(left) | 0x2000;
-          ((u32 *)&node->sprite)[2] = tile | 0x800;
+          ((u32 *)&node->sprite)[1] = top | OBJ_X(left) | OBJ_256_COLORS;
+          ((u32 *)&node->sprite)[2] = tile | OBJ_PRIORITY(2);
           node->sprite.affine = affine;
           node->sprite.affineIndex = matrix;
           Oam_AddSpriteAtDepthClamped(&node->sprite, key);
@@ -866,9 +866,9 @@ void Tightrope_Update(void) {
     if (slot->wobbling != 0) {
       s32 wobble = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
 
-      slot->phase += 0x1000;
-      slot->amplitude = Iwram_MulQ16(slot->amplitude, 0xf333);
-      if (slot->amplitude <= 0x1998) {
+      slot->phase += TRIG_TURN / 16;
+      slot->amplitude = Iwram_MulQ16(slot->amplitude, Q16_ONE * 19 / 20);
+      if (slot->amplitude < Q16_ONE / 10) {
         slot->amplitude = 0;
         slot->wobbling = 0;
       }
@@ -1060,7 +1060,7 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
     Tightrope_Throw(arg, first->x.fixed, first->y.fixed + px(8), first->z.fixed,
                     second->x.fixed, second->y.fixed + px(8), second->z.fixed,
                     Trig_Sin(gTightrope_LashPhase) << 2);
-    gTightrope_LashPhase += 0x1000;
+    gTightrope_LashPhase += TRIG_TURN / 16;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
     Actor_SelectAnimationFar(second, 2);
@@ -1141,7 +1141,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   slot = &work->slots[index];
   slot->wobbling = 1;
   slot->amplitude = px(4);
-  slot->phase = 0x4000;
+  slot->phase = TRIG_TURN / 4;
   Heap_Release(nodes);
   return 0;
 }
@@ -1164,7 +1164,7 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
     Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + px(8),
                      first->z.fixed, second->x.fixed, second->y.fixed + px(8),
                      second->z.fixed, Trig_Sin(gTightrope_UntiePhase) << 2);
-    gTightrope_UntiePhase += 0x1000;
+    gTightrope_UntiePhase += TRIG_TURN / 16;
   }
 }
 
@@ -1385,8 +1385,9 @@ void HangingVine_Draw(void) {
           struct AnimationSpritePart *sprite = &link->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&link->sprite)[1] = sy | OBJ_X(sx) | 0x40002000;
-          ((u32 *)&link->sprite)[2] = tile | 0x800;
+          ((u32 *)&link->sprite)[1] =
+              sy | OBJ_X(sx) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+          ((u32 *)&link->sprite)[2] = tile | OBJ_PRIORITY(2);
           if (angle != 0) {
             transform.angle = angle;
             transform.scaleX = 0x100;
@@ -1436,7 +1437,7 @@ void HangingVine_Update(void) {
     if (slot->root == 0 || slot->active == 0)
       continue;
 
-    slot->phase += 0x200;
+    slot->phase += TRIG_TURN / 128;
     link = slot->root->next;
     x = link->x;
     y = link->y;
@@ -1467,9 +1468,9 @@ void HangingVine_Update(void) {
 
     // Ease the swing towards the target.
     if (slot->swing > target)
-      slot->swing = Iwram_MulQ16(slot->swing, 0xfd70);
+      slot->swing = Iwram_MulQ16(slot->swing, Q16_ONE * 99 / 100);
     else
-      slot->swing = Iwram_MulQ16(slot->swing, 0x11c28);
+      slot->swing = Iwram_MulQ16(slot->swing, Q16_ONE * 111 / 100);
   }
 }
 

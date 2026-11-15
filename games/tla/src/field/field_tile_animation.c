@@ -21,7 +21,28 @@
 
 // A tileset animation script's commands, a halfword each where a source tile
 // would stand (TilesetAnim_Update and TilesetAnim_StartAll).
+#define TILESET_ANIM_LOOP 0xffff        ///< back to the start of the script
+#define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
 #define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
+#define TILESET_ANIM_STOP 0xff   ///< TILESET_ANIM_JUMP's low byte to stop
+/// A layout with wide tiles animates 64-byte (256-colour) tiles in char block
+/// 2; others animate 16-colour ones in char block 1.
+#define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
+#define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
+#define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
+// The first source tile read from gMapGridAnimTiles rather than VRAM, for
+// 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
+#define TILESET_ANIM_RAM_TILE 1536
+#define TILESET_ANIM_RAM_WIDE_TILE 512
+
+// The blend script's commands (BlendScript_Run): as the tileset animations',
+// and a BLDCNT value, told apart by its top four bits.
+#define BLEND_SCRIPT_LOOP 0xffff
+#define BLEND_SCRIPT_OPCODE_MASK 0xff00
+#define BLEND_SCRIPT_JUMP 0xfe00
+#define BLEND_SCRIPT_STOP 0xff
+#define BLEND_SCRIPT_BLDCNT_MASK 0xf000
+#define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
 
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
@@ -263,55 +284,77 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 
 /// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
-  u32 i;
+  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  u32 channelIndex;
 
-  for (i = 0; i <= 15; i++) {
-    const u16 *script;
-    u32 op;
-    u32 count;
-    u32 dst;
+  for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
+    const u16 *commands;
+    u32 sourceTileOrOpcode;
+    u32 tileCount;
+    u32 destinationTile;
 
-    if ((state->anim + i)->start == NULL || (state->anim + i)->paused != 0)
+    // A tileset animation with no script, or paused by an event, keeps its
+    // place.
+    if ((gridState->anim + channelIndex)->start == NULL ||
+        (gridState->anim + channelIndex)->paused != 0)
       continue;
+    // While the wait lasts the tileset animation only counts down; when it is
+    // over, commands run in this same frame until one sets a new wait or stops.
   next:
-    if ((state->anim + i)->timer == 0) {
-      script = (state->anim + i)->cursor;
-      op = *script++;
-      if (op == 0xffff) {
-        (state->anim + i)->cursor = (state->anim + i)->start;
+    if ((gridState->anim + channelIndex)->timer == 0) {
+      commands = (gridState->anim + channelIndex)->cursor;
+      sourceTileOrOpcode = *commands++;
+      if (sourceTileOrOpcode == TILESET_ANIM_LOOP) {
+        (gridState->anim + channelIndex)->cursor =
+            (gridState->anim + channelIndex)->start;
         goto next;
       }
-      if ((op & 0xff00) == 0xfe00) {
-        if ((op & 0xff) == 0xff)
+      // TILESET_ANIM_STOP leaves the cursor on itself, so the tileset animation
+      // stays stopped until it is started again; TILESET_ANIM_JUMP jumps to
+      // the halfword pair its low byte names.
+      if ((sourceTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
+          TILESET_ANIM_JUMP) {
+        if ((sourceTileOrOpcode & 0xff) == TILESET_ANIM_STOP)
           continue;
-        (state->anim + i)->cursor = (state->anim + i)->start + (op & 0xff) * 2;
+        (gridState->anim + channelIndex)->cursor =
+            (gridState->anim + channelIndex)->start +
+            (sourceTileOrOpcode & 0xff) * 2;
         goto next;
       }
-      count = *script++;
-      dst = script[0];
-      (state->anim + i)->timer = script[1];
-      if (state->wideTiles == 0) {
-        if (op >= 0x600)
-          Dma_Set(Ram_DecodeBuffer + op * 32, (void *)(dst * 32 + 0x06004000),
-                  DMA_COPY_WORDS(count * 8), REG_DMA3);
+      tileCount = *commands++;
+      destinationTile = commands[0];
+      (gridState->anim + channelIndex)->timer = commands[1];
+      // A source tile from TILESET_ANIM_RAM_TILE (TILESET_ANIM_RAM_WIDE_TILE
+      // for 64-byte tiles) is read from RAM, at the start of gMapGridAnimTiles.
+      if (gridState->wideTiles == 0) {
+        if (sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
+          Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * TILE_SIZE_4BPP,
+                  BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
+                  DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)), REG_DMA3);
         else
-          Dma_Set((void *)(op * 32 + 0x06004000),
-                  (void *)(dst * 32 + 0x06004000), DMA_COPY_WORDS(count * 8),
-                  REG_DMA3);
+          Dma_Set(BG_CHAR_BLOCK(1) + sourceTileOrOpcode * TILE_SIZE_4BPP,
+                  BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
+                  DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)), REG_DMA3);
       } else {
-        if (op >= 0x200)
-          Dma_Set(Ram_MapBlocks + op * 64, (void *)(dst * 64 + 0x06008000),
-                  DMA_COPY_WORDS(count * 16), REG_DMA3);
+        if (sourceTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
+          Dma_Set(
+              Ram_MapBlocks + sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+              BG_CHAR_BLOCK(2) + destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+              DMA_COPY_WORDS(tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+              REG_DMA3);
         else
-          Dma_Set((void *)(op * 64 + 0x06008000),
-                  (void *)(dst * 64 + 0x06008000), DMA_COPY_WORDS(count * 16),
-                  REG_DMA3);
+          Dma_Set(
+              BG_CHAR_BLOCK(2) +
+                  sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+              BG_CHAR_BLOCK(2) + destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+              DMA_COPY_WORDS(tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+              REG_DMA3);
       }
-      (state->anim + i)->cursor += 4;
+      // A copy with a wait of 0 lets the next command run at once.
+      (gridState->anim + channelIndex)->cursor += 4;
       goto next;
     } else {
-      (state->anim + i)->timer--;
+      (gridState->anim + channelIndex)->timer--;
     }
   }
 }
@@ -336,102 +379,112 @@ void TilesetAnim_Pause(u32 no) {
 /// marker starts the tileset animation its low four bits name there, paused
 /// when bit 7 is set.
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
-  s32 count;
-  u32 command;
+  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  s32 channelsStarted;
+  u32 marker;
 
-  count = 0;
-  Iwram_ClearWordsEntry(state->anim, sizeof(state->anim));
-  command = *script++;
-  while (command != 0xffff) {
-    if ((command & 0xff00) == 0xfd00) {
-      struct MapAnimation *anim;
-      u32 idx = command & 15;
-      u32 flag = 0;
+  channelsStarted = 0;
+  Iwram_ClearWordsEntry(gridState->anim, sizeof(gridState->anim));
+  // Each tileset animation's script starts just after its marker and runs on
+  // through the rest of the stream; the scan steps over the halfwords between
+  // markers.
+  marker = *script++;
+  // The stream ends at the TILESET_ANIM_LOOP every script after a marker runs
+  // on to.
+  while (marker != TILESET_ANIM_LOOP) {
+    if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
+      struct MapAnimation *channel;
+      u32 channelIndex = marker & 15;
+      u32 paused = 0;
 
-      if (command & 0x80)
-        flag = 1;
-      anim = &state->anim[idx];
-      anim->start = script;
-      anim->cursor = script;
-      anim->timer = 0;
-      anim->paused = flag;
-      count++;
+      if (marker & TILESET_ANIM_MARKER_PAUSED)
+        paused = 1;
+      channel = &gridState->anim[channelIndex];
+      channel->start = script;
+      channel->cursor = script;
+      channel->timer = 0;
+      channel->paused = paused;
+      channelsStarted++;
     }
-    command = *script++;
+    marker = *script++;
   }
-  if (count != 0 && Task_Find(TilesetAnim_Update) == -1)
+  // A map with no tileset animations never adds the update, nor adds it twice.
+  if (channelsStarted != 0 && Task_Find(TilesetAnim_Update) == -1)
     Task_Add(TilesetAnim_Update, TASK_PASS_VBLANK);
 }
 
 /// Suspends the tileset animations, unless the world map's still picture is
 /// shown.
 void TilesetAnim_SuspendAll(void) {
-  if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
+  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 /// Resumes the tileset animations, unless the world map's still picture is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
-  if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
+  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
-  struct BlendScriptState *state;
-  u16 *cursor;
-  u32 command;
-  u32 value;
-  u16 test;
+  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct BlendScriptState *blend;
+  u16 *commands;
+  u32 instruction;
+  u32 delayOrJumpIndex;
+  u16 delay;
 
-  state = &work->blend;
-  if (state->script == 0)
+  blend = &gridState->blend;
+  if (blend->script == 0)
     return;
-  if (state->paused != 0)
+  if (blend->paused != 0)
     return;
 
+  // As with the tileset animations, commands run in one frame until a level
+  // sets a wait; a BLDCNT command and the jumps take no time.
 again:
-  value = state->delay;
-  test = value;
-  if (test != 0)
-    goto count_down;
+  delayOrJumpIndex = blend->delay;
+  delay = delayOrJumpIndex;
+  if (delay == 0) {
+    commands = blend->cursor;
+    instruction = *commands;
+    commands++;
+    if (instruction == BLEND_SCRIPT_LOOP) {
+      blend->cursor = blend->script;
+      goto again;
+    }
 
-  cursor = state->cursor;
-  command = *cursor;
-  cursor++;
-  if (command == 0xffff) {
-    state->cursor = state->script;
+    if ((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
+      delayOrJumpIndex = instruction & 0xff;
+      if (delayOrJumpIndex == BLEND_SCRIPT_STOP)
+        return;
+      blend->cursor = blend->script + delayOrJumpIndex * 2;
+      goto again;
+    }
+
+    // A BLDCNT value is told apart by its top four bits being 3, its second
+    // target's sprite and backdrop bits.
+    if ((instruction & BLEND_SCRIPT_BLDCNT_MASK) == BLEND_SCRIPT_BLDCNT) {
+      REG_BLDCNT = instruction;
+      gridState->blendControl = instruction;
+      blend->cursor++;
+      goto again;
+    }
+
+    // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
+    // to white or black by BLDY.
+    if ((gridState->blendControl & 0xc0) == BLDCNT_EFFECT_BLEND)
+      REG_BLDALPHA = instruction;
+    else
+      REG_BLDY = instruction;
+    blend->delay = commands[0];
+    blend->cursor += 2;
     goto again;
   }
-
-  if ((command & 0xff00) == 0xfe00) {
-    value = command & 0xff;
-    if (value == 0xff)
-      return;
-    state->cursor = state->script + value * 2;
-    goto again;
-  }
-
-  if ((command & 0xf000) == 0x3000) {
-    REG_BLDCNT = command;
-    work->blendControl = command;
-    state->cursor++;
-    goto again;
-  }
-
-  if ((work->blendControl & 0xc0) == 0x40)
-    REG_BLDALPHA = command;
-  else
-    REG_BLDY = command;
-  state->delay = cursor[0];
-  state->cursor += 2;
-  goto again;
-
-count_down:
-  state->delay = value + 0xffff;
+  // Adding 0xffff to the halfword counts the wait down by one.
+  blend->delay = delayOrJumpIndex + 0xffff;
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
@@ -576,11 +629,19 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     perspective->tint += region;
   }
   if (perspective->tint > 0) {
-    IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
-    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)perspective->tint, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                        BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                            BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
+                        IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, (u16)perspective->tint,
+                        IO_WRITE_HALFWORD);
   } else {
-    IO_WRITE_QUEUE_PUSH(0x4000050, 0x3fce, 0x20000);
-    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-perspective->tint, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                        BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                            BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL,
+                        IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, (u16)-perspective->tint,
+                        IO_WRITE_HALFWORD);
   }
 }
 

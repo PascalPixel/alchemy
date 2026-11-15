@@ -56,7 +56,7 @@ struct HeapWords {
   s32 eventWord;
 };
 
-void MarsLighthouseAerie_TalkToCoughingParent(void);
+void MarsLighthouseAerie_TalkToKyle(void);
 
 void MarsLighthouseAerie_FindWhoTheDragonWas(void);
 
@@ -95,10 +95,10 @@ void MarsLighthouseAerie_HoldBackFromParents(void);
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void);
 void MarsLighthouseAerie_OfferToCastMarsStar(void);
 void MarsLighthouseAerie_ClearCastOffer(void);
-void MarsLighthouseAerie_TalkToConsoler(void);
-void MarsLighthouseAerie_TalkToBlindedParent(void);
-void MarsLighthouseAerie_TalkToGladParent(void);
-void MarsLighthouseAerie_HaltBlindedParent(void);
-void MarsLighthouseAerie_HaltGladParent(void);
+void MarsLighthouseAerie_TalkToIvan(void);
+void MarsLighthouseAerie_TalkToJennasMother(void);
+void MarsLighthouseAerie_TalkToJennasFather(void);
+void MarsLighthouseAerie_HaltJennasMother(void);
+void MarsLighthouseAerie_HaltJennasFather(void);
 
 #endif

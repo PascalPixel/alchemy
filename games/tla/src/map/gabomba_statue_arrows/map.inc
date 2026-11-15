@@ -39,7 +39,7 @@ Tileset_GabombaStatueArrowsPalette:
 	.global Tileset_GabombaStatueArrowsTilesA
 Tileset_GabombaStatueArrowsTilesA:
 	.incbin "games/tla/src/graphics/tileset/gabomba_statue_arrows/tiles_a.4bpp.mtf"
-	.byte 0x00	@ PACKER: left in the buffer by Field_Kibombo3+0x1e57
+	.byte 0x00	@ PACKER: left in the buffer by Field_KibomboHouses+0x1e57
 	.global Tileset_GabombaStatueArrowsTilesB
 Tileset_GabombaStatueArrowsTilesB:
 	.incbin "games/tla/src/graphics/tileset/gabomba_statue_arrows/tiles_b.4bpp.mtf"

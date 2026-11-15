@@ -394,7 +394,7 @@ void Map_CopyPalette(s32 scene, s32 a1);
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
     Map_CopyPalette(gMainRoutineWork.mapId +
-                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
+                        (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                     0x5000000);
   if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
     Event_SetFlag(FLAG_FLAME_DRAGONS_BEATEN);
@@ -419,7 +419,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 16);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 20);
-  Event_PlaySound(MUS_053);
+  Event_PlaySound(MUS_FLAME_DRAGONS);
   Actor_SetAnimation(ACTOR_AGATIO_DRAGON, 2);
   Actor_SetAnimation(ACTOR_KARST_DRAGON, 2);
   FieldEvent_Wait(24);
@@ -527,7 +527,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 1);
   FieldEvent_Wait(20);
-  Event_PlaySound(MUS_034);
+  Event_PlaySound(MUS_KARST_AND_AGATIO);
   // "Wait, I think I remember... We were going to light the beacon..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_KARST, 1);
@@ -875,7 +875,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
+                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                   screen);
   zero = 0;
   *screen = zero;
@@ -1064,7 +1064,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
+                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                   screen);
   *screen = 0;
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1893,7 +1893,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_572);
+          Event_PlaySound(SE_CRUMBLE);
           Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }

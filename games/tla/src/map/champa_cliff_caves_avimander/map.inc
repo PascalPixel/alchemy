@@ -27,7 +27,7 @@ Field_ChampaCliffCavesAvimander:
 	.incbin "games/tla/src/map/champa_cliff_caves_avimander/animation.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesAvimander_BLEND:
-	.incbin "games/tla/src/map/garoh_4/blend.script.lz"
+	.incbin "games/tla/src/map/garoh_tunnels/blend.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesAvimander_SCENE:
 	.incbin "games/tla/src/map/champa_cliff_caves_avimander/scene.scene.lz"

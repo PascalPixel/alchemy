@@ -216,7 +216,7 @@ const struct ForgeRecipe gForge_Recipes[] = {
     {
         .item = ITEM_DRAGON_SKIN,
         .condition = FORGE_CONDITION_PROCESSED,
-        .results = {ITEM_DRAGON_MAIL, ITEM_DRAGON_ROBE, ITEM_354, ITEM_DRAGON_HELM, ITEM_DRAGON_BOOTS},
+        .results = {ITEM_DRAGON_MAIL, ITEM_DRAGON_ROBE, ITEM_FORGED_DRAGON_SHIELD, ITEM_DRAGON_HELM, ITEM_DRAGON_BOOTS},
         .weights = {20, 15, 25, 25, 15},
     },
     {
@@ -256,19 +256,19 @@ const struct ForgeRecipe gForge_Recipes[] = {
         .weights = {100},
     },
     {
-        .item = ITEM_418,
+        .item = ITEM_RUSTY_ROBBERS_BLADE,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_ROBBERS_BLADE},
         .weights = {100},
     },
     {
-        .item = ITEM_419,
+        .item = ITEM_RUSTY_PIRATES_SABRE,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_PIRATES_SABRE},
         .weights = {100},
     },
     {
-        .item = ITEM_420,
+        .item = ITEM_RUSTY_SOUL_BRAND,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_SOUL_BRAND},
         .weights = {100},
@@ -280,7 +280,7 @@ const struct ForgeRecipe gForge_Recipes[] = {
         .weights = {100},
     },
     {
-        .item = ITEM_422,
+        .item = ITEM_RUSTY_VIKING_AXE,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_VIKING_AXE},
         .weights = {100},
@@ -292,7 +292,7 @@ const struct ForgeRecipe gForge_Recipes[] = {
         .weights = {100},
     },
     {
-        .item = ITEM_424,
+        .item = ITEM_RUSTY_HAGBONE_MACE,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_HAGBONE_MACE},
         .weights = {100},
@@ -304,13 +304,13 @@ const struct ForgeRecipe gForge_Recipes[] = {
         .weights = {100},
     },
     {
-        .item = ITEM_426,
+        .item = ITEM_RUSTY_GLOWER_STAFF,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_GLOWER_STAFF},
         .weights = {100},
     },
     {
-        .item = ITEM_427,
+        .item = ITEM_RUSTY_GOBLINS_ROD,
         .condition = FORGE_CONDITION_RUSTED,
         .results = {ITEM_GOBLINS_ROD},
         .weights = {100},

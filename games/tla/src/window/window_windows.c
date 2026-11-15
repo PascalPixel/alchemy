@@ -507,10 +507,10 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
     found->countdown = 0;
     found->outline = TEXT_STYLE_PLAIN;
     found->ended = 0;
-    found->unk26 = 0;
+    found->compressLines = 0;
     found->flags = flags;
     if (work->textMode != 0 && spacing != NULL)
-      found->unk26 = spacing[3];
+      found->compressLines = spacing[3];
     if (spacing != NULL) {
       for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;

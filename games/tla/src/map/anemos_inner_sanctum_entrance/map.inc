@@ -24,7 +24,7 @@ Field_AnemosInnerSanctumEntrance:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_entrance/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AnemosInnerSanctumEntrance_ANIMATION:
-	.incbin "games/tla/src/map/ankohl_ruins_1/animation.script.lz"
+	.incbin "games/tla/src/map/ankohl_ruins_stone_faces/animation.script.lz"
 	.balign 4, 0
 .LField_AnemosInnerSanctumEntrance_BLEND:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_entrance/blend.script.lz"

@@ -9,8 +9,7 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
+#define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
 /// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
 /// each under the leader with staggered timers, drawn semi-transparent.
@@ -29,7 +28,7 @@ void FieldMotes_Start(void) {
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
+  Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -64,7 +63,7 @@ void FieldMotes_Start(void) {
   Task_Add(FieldMotes_Update, TASK_PASS_VBLANK);
 }
 
-#undef Resource_DecodeByteLzInRam
+#undef Decompress_ByteLz
 
 /// Starts Weather_UpdateRain's particles: allocates and clears heap slot 0x74,
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
@@ -86,7 +85,7 @@ void Weather_StartRain(s32 withCue) {
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gFieldEffect_StreakTiles, tiles);
+  Decompress_ByteLz(gFieldEffect_StreakTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -217,8 +216,7 @@ void FieldEffect_UpdateSparkles(void) {
   } while (i <= 63);
 }
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
+#define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
 /// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
@@ -240,7 +238,7 @@ void FieldEffect_InitializeSparkles(void) {
               (sizeof(struct WeatherWork) / 4),
           REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gFieldEffect_SparkleTiles, buf);
+  Decompress_ByteLz(gFieldEffect_SparkleTiles, buf);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x200, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

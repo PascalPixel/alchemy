@@ -15,13 +15,13 @@ Field_Test7:
 	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test7_SHAPES:
-	.incbin "games/tla/src/map/daila_1/shapes.table.lz"
+	.incbin "games/tla/src/map/daila_flooded/shapes.table.lz"
 	.balign 4, 0
 .LField_Test7_GRID:
 	.incbin "games/tla/src/map/test_7/map.grid.lz"
 	.balign 4, 0
 .LField_Test7_SHAPE_GRID:
-	.incbin "games/tla/src/map/daila_1/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/daila_flooded/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test7_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"

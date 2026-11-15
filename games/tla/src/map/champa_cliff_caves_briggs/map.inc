@@ -27,7 +27,7 @@ Field_ChampaCliffCavesBriggs:
 	.incbin "games/tla/src/map/champa_cliff_caves_briggs/animation.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesBriggs_BLEND:
-	.incbin "games/tla/src/map/garoh_4/blend.script.lz"
+	.incbin "games/tla/src/map/garoh_tunnels/blend.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesBriggs_SCENE:
 	.incbin "games/tla/src/map/champa_cliff_caves_briggs/scene.scene.lz"
@@ -39,7 +39,7 @@ Tileset_ChampaCliffCavesBriggsPalette:
 	.global Tileset_ChampaCliffCavesBriggsTilesA
 Tileset_ChampaCliffCavesBriggsTilesA:
 	.incbin "games/tla/src/graphics/tileset/champa_cliff_caves_briggs/tiles_a.4bpp.mtf"
-	.byte 0xe6	@ PACKER: left in the buffer by Field_AquaRock1+0x2aa3
+	.byte 0xe6	@ PACKER: left in the buffer by Field_AquaRockMoai+0x2aa3
 	.global Tileset_ChampaCliffCavesBriggsTilesB
 Tileset_ChampaCliffCavesBriggsTilesB:
 	.incbin "games/tla/src/graphics/tileset/champa_cliff_caves_briggs/tiles_b.4bpp.mtf"

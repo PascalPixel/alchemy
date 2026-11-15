@@ -142,7 +142,7 @@ void Blocks_MarkCells(u16 *ids) {
 
   while (*ids != 0xffff) {
     object = Actor_Get(*ids);
-    blocked = &object->blockMarked;
+    blocked = &object->riseEnabled;
     *blocked = 0;
     if (MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20) &
         0x40) {
@@ -544,7 +544,7 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 }
 
 void MagmaRock_FlashStatue(struct Actor *object) {
-  if (gFrameCount & object->blockMarked)
+  if (gFrameCount & object->riseEnabled)
     FieldActor_SetSpriteColor(object, 10);
   else
     FieldActor_SetSpriteColor(object, 0);
@@ -1343,7 +1343,7 @@ loop:
 }
 
 void MagmaRock_FlashTarget(struct Actor *object) {
-  if (gFrameCount & object->blockMarked)
+  if (gFrameCount & object->riseEnabled)
     FieldActor_SetSpriteColor(object, 7);
   else
     FieldActor_SetSpriteColor(object, 0);

@@ -628,7 +628,7 @@ void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   sprite->unk17 = 4;
   sprite->scale = Q16_ONE;
   sprite->oam.index = tile;
-  sprite->oam.palette256 = 0;
+  sprite->oam.fullColor = 0;
   sprite->oam.palette = 0;
 }
 

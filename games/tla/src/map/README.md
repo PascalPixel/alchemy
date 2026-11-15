@@ -81,7 +81,7 @@ many maps share tiles.
 
 A folder is named for the scene that uses it, as The Broken Seal's are:
 the first in the scene table, when several share it. Daila is row 9 of
-`gMaps` and folder `daila_1/`, for the scene `Daila1`; a room keeps its
+`gMaps` and folder `daila_flooded/`, for the scene `DailaFlooded`; a room keeps its
 scene's number until the scene has a better name. Two keep their number
 among the maps' resources: `map_000/`, which the scene table gives the
 title, the World Map, the credits and the debug level room, and

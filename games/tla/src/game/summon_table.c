@@ -17,147 +17,147 @@ const u8 gSummon_OrderList[SUMMON_COUNT] = {
 const struct SummonDefinition gSummon_DefinitionTable[] = {
     // Venus
     {
-        .nameMessageId = ABILITY_VENUS,
+        .abilityId = ABILITY_VENUS,
         .djinnRequired = {1},
     },
     // Mercury
     {
-        .nameMessageId = ABILITY_MERCURY,
+        .abilityId = ABILITY_MERCURY,
         .djinnRequired = {0, 1},
     },
     // Mars
     {
-        .nameMessageId = ABILITY_MARS,
+        .abilityId = ABILITY_MARS,
         .djinnRequired = {0, 0, 1},
     },
     // Jupiter
     {
-        .nameMessageId = ABILITY_JUPITER,
+        .abilityId = ABILITY_JUPITER,
         .djinnRequired = {0, 0, 0, 1},
     },
     // Ramses
     {
-        .nameMessageId = ABILITY_RAMSES,
+        .abilityId = ABILITY_RAMSES,
         .djinnRequired = {2},
     },
     // Nereid
     {
-        .nameMessageId = ABILITY_NEREID,
+        .abilityId = ABILITY_NEREID,
         .djinnRequired = {0, 2},
     },
     // Kirin
     {
-        .nameMessageId = ABILITY_KIRIN,
+        .abilityId = ABILITY_KIRIN,
         .djinnRequired = {0, 0, 2},
     },
     // Atalanta
     {
-        .nameMessageId = ABILITY_ATALANTA,
+        .abilityId = ABILITY_ATALANTA,
         .djinnRequired = {0, 0, 0, 2},
     },
     // Cybele
     {
-        .nameMessageId = ABILITY_CYBELE,
+        .abilityId = ABILITY_CYBELE,
         .djinnRequired = {3},
     },
     // Neptune
     {
-        .nameMessageId = ABILITY_NEPTUNE,
+        .abilityId = ABILITY_NEPTUNE,
         .djinnRequired = {0, 3},
     },
     // Tiamat
     {
-        .nameMessageId = ABILITY_TIAMAT,
+        .abilityId = ABILITY_TIAMAT,
         .djinnRequired = {0, 0, 3},
     },
     // Procne
     {
-        .nameMessageId = ABILITY_PROCNE,
+        .abilityId = ABILITY_PROCNE,
         .djinnRequired = {0, 0, 0, 3},
     },
     // Judgment
     {
-        .nameMessageId = ABILITY_JUDGMENT,
+        .abilityId = ABILITY_JUDGMENT,
         .djinnRequired = {4},
     },
     // Boreas
     {
-        .nameMessageId = ABILITY_BOREAS,
+        .abilityId = ABILITY_BOREAS,
         .djinnRequired = {0, 4},
     },
     // Meteor
     {
-        .nameMessageId = ABILITY_METEOR,
+        .abilityId = ABILITY_METEOR,
         .djinnRequired = {0, 0, 4},
     },
     // Thor
     {
-        .nameMessageId = ABILITY_THOR,
+        .abilityId = ABILITY_THOR,
         .djinnRequired = {0, 0, 0, 4},
     },
     // Zagan
     {
-        .nameMessageId = ABILITY_ZAGAN,
+        .abilityId = ABILITY_ZAGAN,
         .djinnRequired = {1, 0, 1},
     },
     // Megaera
     {
-        .nameMessageId = ABILITY_MEGAERA,
+        .abilityId = ABILITY_MEGAERA,
         .djinnRequired = {0, 0, 1, 1},
     },
     // Flora
     {
-        .nameMessageId = ABILITY_FLORA,
+        .abilityId = ABILITY_FLORA,
         .djinnRequired = {1, 0, 0, 2},
     },
     // Moloch
     {
-        .nameMessageId = ABILITY_MOLOCH,
+        .abilityId = ABILITY_MOLOCH,
         .djinnRequired = {0, 2, 0, 1},
     },
     // Ulysses
     {
-        .nameMessageId = ABILITY_ULYSSES,
+        .abilityId = ABILITY_ULYSSES,
         .djinnRequired = {0, 2, 2},
     },
     // Haures
     {
-        .nameMessageId = ABILITY_HAURES,
+        .abilityId = ABILITY_HAURES,
         .djinnRequired = {3, 0, 2},
     },
     // Eclipse
     {
-        .nameMessageId = ABILITY_ECLIPSE,
+        .abilityId = ABILITY_ECLIPSE,
         .djinnRequired = {0, 2, 0, 3},
     },
     // Coatlicue
     {
-        .nameMessageId = ABILITY_COATLICUE,
+        .abilityId = ABILITY_COATLICUE,
         .djinnRequired = {0, 3, 0, 3},
     },
     // Daedalus
     {
-        .nameMessageId = ABILITY_DAEDALUS,
+        .abilityId = ABILITY_DAEDALUS,
         .djinnRequired = {3, 0, 4},
     },
     // Azul
     {
-        .nameMessageId = ABILITY_AZUL,
+        .abilityId = ABILITY_AZUL,
         .djinnRequired = {3, 4},
     },
     // Catastrophe
     {
-        .nameMessageId = ABILITY_CATASTROPHE,
+        .abilityId = ABILITY_CATASTROPHE,
         .djinnRequired = {0, 0, 3, 5},
     },
     // Charon
     {
-        .nameMessageId = ABILITY_CHARON,
+        .abilityId = ABILITY_CHARON,
         .djinnRequired = {8, 0, 0, 2},
     },
     // Iris
     {
-        .nameMessageId = ABILITY_IRIS,
+        .abilityId = ABILITY_IRIS,
         .djinnRequired = {0, 4, 9},
     },
 };

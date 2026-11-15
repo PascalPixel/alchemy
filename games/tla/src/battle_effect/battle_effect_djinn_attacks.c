@@ -113,7 +113,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   for (i = 0; i != 512; i++)
     DOTS[i].variant = -1;
 
-  Sound_PlayFar(SE_162);
+  Sound_PlayFar(SE_WAVE);
   frame = 0;
   do {
     // The battle resumes and resolves the targets, hit cue 133.

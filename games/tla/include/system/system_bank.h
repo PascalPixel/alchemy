@@ -105,7 +105,7 @@ void Decompress_Halfwords(const void *source, void *destination);
 
 void ScreenFade_FromBlack(s32 vblanks);
 
-s32 Resource_DecodeType2(const void *source, void *destination);
+s32 Decompress_MoveToFrontLz(const void *source, void *destination);
 
 s32 Palette_GetBasicSpriteColors(void);
 

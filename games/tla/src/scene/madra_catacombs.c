@@ -68,7 +68,8 @@ enum MadraCatacombsVillageActorId {
   ACTOR_VILLAGE_CHEST = 64
 };
 
-/// The tunnel the Champa dug (MadraCatacombs3), by the rows of its table.
+/// The tunnel the Champa dug (MadraCatacombsChampaTunnel), by the rows of its
+/// table.
 enum MadraCatacombsTunnelActorId {
   /// The posts at the two ends of the tunnel's rope.
   ACTOR_TUNNEL_ROPE_EAST_POST = ACTOR_FIRST_PLACED,
@@ -183,7 +184,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const s16 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MADRA_CATACOMBS_2)
+  if (scene == SCENE_MADRA_CATACOMBS_LADDERS)
     return gMadraCatacombs_LadderRoomRegions;
   return 0;
 }
@@ -193,7 +194,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_EntrancePlacements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     return gMadraCatacombs_ChampaTunnelPlacements;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_BookshelfPlacements;
@@ -205,9 +206,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_EntranceTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_2)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_LADDERS)
     return gMadraCatacombs_LaddersTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     return gMadraCatacombs_ChampaTunnelTriggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     return gMadraCatacombs_StoneDoorTriggers;
@@ -479,7 +480,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 
   sprite->rotation = ((struct Sprite *)bookshelf->sprite)->rotation;
   if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && sprite->rotation == 0) {
-    Event_PlaySound(SE_535);
+    Event_PlaySound(SE_BOOKSHELF_SLIDE);
     chest->x.fixed += px(-2);
     chest->velocityY = px(2);
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
@@ -587,7 +588,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     MadraCatacombs_SetUpVillage();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
+  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     MadraCatacombs_SetUpChampaTunnel();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     MadraCatacombs_SetUpRoomBelowBookshelf();
@@ -794,23 +795,23 @@ u32 gSceneExits[] = {
     SCENE_EXITS(MadraCatacombsEntrance),
     SCENE_EXIT(1, MadraCatacombsBookshelf, 8),
     SCENE_EXIT(2, MadraCatacombsStoneDoor, 7),
-    SCENE_EXIT(3, MadraCatacombs3, 1),
+    SCENE_EXIT(3, MadraCatacombsChampaTunnel, 1),
     SCENE_EXIT(4, MadraCatacombsStoneDoor, 13),
-    SCENE_EXIT(5, MadraCatacombs3, 6),
-    SCENE_EXITS(MadraCatacombs2),
+    SCENE_EXIT(5, MadraCatacombsChampaTunnel, 6),
+    SCENE_EXITS(MadraCatacombsLadders),
     SCENE_EXIT(1, Madra, 15),
-    SCENE_EXIT(2, MadraCatacombs3, 7),
+    SCENE_EXIT(2, MadraCatacombsChampaTunnel, 7),
     SCENE_EXIT(3, Madra, 16),
-    SCENE_EXIT(4, MadraCatacombs3, 4),
-    SCENE_EXITS(MadraCatacombs3),
+    SCENE_EXIT(4, MadraCatacombsChampaTunnel, 4),
+    SCENE_EXITS(MadraCatacombsChampaTunnel),
     SCENE_EXIT(1, MadraCatacombsEntrance, 3),
-    SCENE_EXIT(2, MadraCatacombs3, 3),
-    SCENE_EXIT(3, MadraCatacombs3, 2),
-    SCENE_EXIT(4, MadraCatacombs2, 4),
-    SCENE_EXIT(5, MadraCatacombs3, 8),
+    SCENE_EXIT(2, MadraCatacombsChampaTunnel, 3),
+    SCENE_EXIT(3, MadraCatacombsChampaTunnel, 2),
+    SCENE_EXIT(4, MadraCatacombsLadders, 4),
+    SCENE_EXIT(5, MadraCatacombsChampaTunnel, 8),
     SCENE_EXIT(6, MadraCatacombsEntrance, 5),
-    SCENE_EXIT(7, MadraCatacombs2, 2),
-    SCENE_EXIT(8, MadraCatacombs3, 5),
+    SCENE_EXIT(7, MadraCatacombsLadders, 2),
+    SCENE_EXIT(8, MadraCatacombsChampaTunnel, 5),
     SCENE_EXITS(MadraCatacombsStoneDoor),
     SCENE_EXIT(1, MadraCatacombsBookshelf, 1),
     SCENE_EXIT(2, MadraCatacombsStoneDoor, 11),

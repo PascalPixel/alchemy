@@ -422,7 +422,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(5, IsletsPrettyStone, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaInteriorsSanctum),
     SCENE_EXIT_UNLESS(1, Mikasalla, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ApojiiIslands1, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Yallam, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

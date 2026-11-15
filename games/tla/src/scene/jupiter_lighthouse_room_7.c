@@ -720,7 +720,9 @@ s32 Scene_PrepareMap(void) {
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 extern u32 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"
@@ -739,7 +741,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),

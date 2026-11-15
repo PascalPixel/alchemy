@@ -24,7 +24,7 @@ Field_AirsRockInsideElixirChest:
 	.incbin "games/tla/src/map/airs_rock_inside_elixir_chest/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AirsRockInsideElixirChest_ANIMATION:
-	.incbin "games/tla/src/map/airs_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/airs_rock_inside_hall/animation.script.lz"
 	.balign 4, 0
 .LField_AirsRockInsideElixirChest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

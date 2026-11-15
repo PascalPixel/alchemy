@@ -8,7 +8,7 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
   id &= 0xfff;
   if (id >= 716)
     id = 0;
-  return &gResource_Data012[id];
+  return &gSprite_AnimationMetadata[id];
 }
 
 /// Decompresses an LZ stream from source into destination and returns

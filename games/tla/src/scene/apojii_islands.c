@@ -195,9 +195,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_APOJII_ISLANDS_1)
+  if (scene == SCENE_APOJII_ISLANDS)
     return gApojiiIslands_Room1Placements;
-  if (scene == SCENE_APOJII_ISLANDS_3)
+  if (scene == SCENE_APOJII_ISLANDS_SHOPS)
     return gApojiiIslands_Room3Placements;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_HazePlacements;
@@ -363,7 +363,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   Sound_Play(MUS_AQUA_ROCK);
   ApojiiIslands_StartSparkles();
   ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
-  Scene_QueueMusic(SE_170);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
   /* FAKEMATCH(signature): PaletteFade_SetTarget declared
@@ -538,9 +538,9 @@ void ApojiiIslands_JumpDownLedge(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_APOJII_ISLANDS_1)
+  if (scene == SCENE_APOJII_ISLANDS)
     return gApojiiIslands_Room1Triggers;
-  if (scene == SCENE_APOJII_ISLANDS_3)
+  if (scene == SCENE_APOJII_ISLANDS_SHOPS)
     return gApojiiIslands_Room3Triggers;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_HazeTriggers;
@@ -642,11 +642,11 @@ s32 Scene_Initialize(void) {
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
     ApojiiIslands_InitializeHaze();
-  } else if (scene == SCENE_APOJII_ISLANDS_1) {
+  } else if (scene == SCENE_APOJII_ISLANDS) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
     if (Event_GetFlag(0x95e))
       ApojiiIslands_FatherSeesTheStone();
-  } else if (scene == SCENE_APOJII_ISLANDS_3) {
+  } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
     *effect = 0x100;
     if (party->entrance == 6)
       ApojiiIslands_LeaveQuietly();
@@ -660,7 +660,7 @@ void ApojiiIslands_InitializeHaze(void) {
   Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
-  Scene_QueueMusic(SE_170);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)
     Leader_RiseFromWater();
@@ -709,7 +709,8 @@ void ApojiiIslands_FlowWithStream(void) {
   s32 position[3];
   s32 result;
 
-  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1 || leader->groundHeight != 0) {
+  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI ||
+      leader->groundHeight != 0) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed + px(2);
@@ -950,7 +951,7 @@ void ApojiiIslands_StartSparkles(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gField_Tiles679, buf);
+  Decompress_ByteLz(gField_Tiles679, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -1093,27 +1094,27 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(ApojiiIslands1),
+    SCENE_EXITS(ApojiiIslands),
     SCENE_EXIT_UNLESS(1, WorldMap, 36, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, ApojiiIslandsHaze, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ApojiiIslandsHaze, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ApojiiIslands3, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ApojiiIslands3, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, ApojiiIslands3, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, ApojiiIslands3, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, ApojiiIslands3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslandsShops, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslandsShops, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, ApojiiIslandsShops, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, ApojiiIslandsShops, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ApojiiIslandsShops, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, MikasallaInteriorsSanctum, 5, EXIT_FLAG_NONE),
     SCENE_EXIT(77, WorldMap, 78),
-    SCENE_EXITS(ApojiiIslands3),
-    SCENE_EXIT_UNLESS(1, ApojiiIslands1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ApojiiIslands1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ApojiiIslands1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ApojiiIslands1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ApojiiIslands1, 8, EXIT_FLAG_NONE),
+    SCENE_EXITS(ApojiiIslandsShops),
+    SCENE_EXIT_UNLESS(1, ApojiiIslands, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslands, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslands, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ApojiiIslands, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ApojiiIslands, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, IsletsTurtle, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(ApojiiIslandsHaze),
-    SCENE_EXIT_UNLESS(1, ApojiiIslands1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ApojiiIslands1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, ApojiiIslands, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslands, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ApojiiIslandsCave, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, ApojiiIslandsCave, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslandsCave, 5, EXIT_FLAG_NONE),

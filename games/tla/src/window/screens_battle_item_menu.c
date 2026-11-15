@@ -178,14 +178,15 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgBattleItemUnavailable, messageText,
+                         CURSOR_TEXT_LENGTH);
         else
           MENU_TEXT_COPY(
               (entries[firstEntry + selectedRow] & INVENTORY_ITEM_ID_MASK) +
                   (s32)MsgItemPlainName,
               messageText, CURSOR_TEXT_LENGTH);
       } else {
-        MENU_TEXT_COPY((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
+        MENU_TEXT_COPY((s32)MsgBattleNoItems, messageText, CURSOR_TEXT_LENGTH);
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -282,11 +283,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(SE_MENU_ERROR);
         if (unusableReason == 2)
-          MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgBattleItemUnavailable, messageText,
+                         REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
-          MENU_TEXT_COPY((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgBattleItemBroken, messageText,
+                         REFUSAL_TEXT_LENGTH);
         else
-          MENU_TEXT_COPY((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
+          MENU_TEXT_COPY((s32)MsgBattleItemNoEffect, messageText,
+                         REFUSAL_TEXT_LENGTH);
         Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {

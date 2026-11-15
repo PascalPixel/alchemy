@@ -246,19 +246,19 @@ s32 MapGrid_LoadMap(s32 index) {
                           graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
-      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->tiles[0] +
-                                                  (u32)&ResourceId_Map000),
-                           graphicsBuffer);
+      Decompress_MoveToFrontLz(Resource_GetTableEntry(sceneResources->tiles[0] +
+                                                      (u32)&ResourceId_Map000),
+                               graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->tiles[1] +
-                                                  (u32)&ResourceId_Map000),
-                           graphicsBuffer);
+      Decompress_MoveToFrontLz(Resource_GetTableEntry(sceneResources->tiles[1] +
+                                                      (u32)&ResourceId_Map000),
+                               graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(Resource_GetTableEntry(sceneResources->tiles[2] +
-                                                  (u32)&ResourceId_Map000),
-                           graphicsBuffer);
+      Decompress_MoveToFrontLz(Resource_GetTableEntry(sceneResources->tiles[2] +
+                                                      (u32)&ResourceId_Map000),
+                               graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(
+      Decompress_MoveToFrontLz(
           Resource_GetTableEntry(sceneResources->animationTiles +
                                  (u32)&ResourceId_Map000),
           gData_02028000);
@@ -931,20 +931,20 @@ void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 void MapGrid_SetShownLayers(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   u32 mask = v & 0xe00;
-  u32 flags = state->flags;
+  u32 dispcnt = state->dispcnt;
 
-  flags = (flags & 0xf1ff) | mask;
-  state->flags = flags;
+  dispcnt = (dispcnt & 0xf1ff) | mask;
+  state->dispcnt = dispcnt;
 }
 
 /// Plays every edit of the map whose flag is set, as Map_ApplyFlagEdits does,
 /// bit 12 of an edit's flag word choosing attributes over pictures.
 void Map_ApplySetFlagEdits(void) {
-  u8 *cursor = gData_0202e002;
+  u8 *cursor = gMapSceneEditsOffset;
   u32 entry;
   s32 srcX, srcY, dstX, dstY, width, height;
 
-  cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
+  cursor = gMapScene + (u16)Map_ReadEditU16(&cursor);
   for (;;) {
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
@@ -997,11 +997,11 @@ void Map_SetFlagAndApplyAttributeEdits(s32 flag) {
 /// then source x and y, destination x and y, width and height in bytes, ended
 /// by 0xffff.
 void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
-  u8 *cursor = gData_0202e002;
+  u8 *cursor = gMapSceneEditsOffset;
   u32 entry;
   s32 srcX, srcY, dstX, dstY, width, height;
 
-  cursor = gData_0202e000 + (u16)Map_ReadEditU16(&cursor);
+  cursor = gMapScene + (u16)Map_ReadEditU16(&cursor);
   for (;;) {
     entry = (u16)Map_ReadEditU16(&cursor);
     if (((entry + 1) & 0xffff) == 0)
@@ -1084,8 +1084,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   *shownQuarter = tile;
   decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
   if (tileOffsets[tile] != 0)
-    Resource_DecodeByteLzInRam((u8 *)tileOffsets + tileOffsets[tile],
-                               decodedTile);
+    Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
   else
     Iwram_ClearWordsEntry(decodedTile, 0x400);
 

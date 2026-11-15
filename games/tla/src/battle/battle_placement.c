@@ -137,10 +137,10 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case SHEBA:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case ENEMY_SLIME:
+  case ENEMY_SLIME_SOL_SANCTUM:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case ENEMY_SLIME_2:
+  case ENEMY_SLIME_WORLD_MAP:
     actor->scale = Q16_ONE * 9 / 10;
     break;
   case ENEMY_OOZE:
@@ -176,10 +176,10 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_THIEF:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case ENEMY_BANDIT_2:
+  case ENEMY_BANDIT_WORLD_MAP:
     actor->scale = Q16_ONE;
     break;
-  case ENEMY_THIEF_2:
+  case ENEMY_THIEF_WORLD_MAP:
     actor->scale = Q16_ONE * 9 / 10;
     break;
   case ENEMY_KRAKEN:
@@ -188,31 +188,31 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_FUSION_DRAGON:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC:
+  case ENEMY_MIMIC_KANDOREAN_TEMPLE:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_2:
+  case ENEMY_MIMIC_AIRS_ROCK:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_3:
+  case ENEMY_MIMIC_GABOMBA_STATUE:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_4:
+  case ENEMY_MIMIC_AQUA_ROCK:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_5:
+  case ENEMY_MIMIC_GAIA_ROCK:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_6:
+  case ENEMY_MIMIC_TREASURE_ISLE:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_7:
+  case ENEMY_MIMIC_JUPITER_LIGHTHOUSE:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_8:
+  case ENEMY_MIMIC_MAGMA_ROCK:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case ENEMY_MIMIC_9:
+  case ENEMY_MIMIC_MARS_LIGHTHOUSE:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_TROLL:
@@ -227,7 +227,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_ORC_LORD:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case ENEMY_KOBOLD_2:
+  case ENEMY_UNUSED_KOBOLD:
     actor->scale = Q16_ONE * 9 / 10;
     break;
   case ENEMY_HOBGOBLIN:
@@ -239,22 +239,22 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_CHIMERA:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case ENEMY_AZART:
+  case ENEMY_AZART_IRON_SHIELD:
     actor->scale = Q16_ONE * 21 / 20;
     break;
-  case ENEMY_AZART_2:
+  case ENEMY_AZART_PADDED_GLOVES:
     actor->scale = Q16_ONE * 21 / 20;
     break;
-  case ENEMY_SATRAGE:
+  case ENEMY_SATRAGE_CHAIN_MAIL:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case ENEMY_SATRAGE_2:
+  case ENEMY_SATRAGE_COTTON_SHIRT:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case ENEMY_NAVAMPA:
+  case ENEMY_NAVAMPA_CLAYMORE:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case ENEMY_NAVAMPA_2:
+  case ENEMY_NAVAMPA_HUNTERS_SWORD:
     actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_TOADONPA:
@@ -279,42 +279,42 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SUCCUBUS:
   case ENEMY_NIGHTMARE:
   case ENEMY_MYSTERY_MAN:
-  case ENEMY_SATUROS:
-  case ENEMY_SATUROS_2:
+  case ENEMY_SATUROS_MERCURY_LIGHTHOUSE:
+  case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
   case ENEMY_MYSTERY_WOMAN:
   case ENEMY_MENARDI:
     actor->scale = Q16_ONE * 9 / 10;
     break;
   case ENEMY_RUFFIAN:
-  case ENEMY_RUFFIAN_2:
-  case ENEMY_RUFFIAN_3:
+  case ENEMY_UNUSED_RUFFIAN_A:
+  case ENEMY_UNUSED_RUFFIAN_B:
     actor->scale = Q16_ONE * 19 / 20;
     break;
   case ENEMY_DULLAHAN:
-  case ENEMY_DULLAHAN_2:
-  case ENEMY_DULLAHAN_3:
+  case ENEMY_DULLAHAN_B:
+  case ENEMY_DULLAHAN_C:
   case ENEMY_SENTINEL:
-  case ENEMY_SENTINEL_2:
-  case ENEMY_SENTINEL_3:
+  case ENEMY_UNUSED_SENTINEL_A:
+  case ENEMY_UNUSED_SENTINEL_B:
     actor->scale = Q16_ONE * 13 / 10;
     break;
   case ENEMY_VALUKAR:
-  case ENEMY_VALUKAR_2:
-  case ENEMY_VALUKAR_3:
+  case ENEMY_UNUSED_VALUKAR_A:
+  case ENEMY_UNUSED_VALUKAR_B:
     actor->scale = Q16_ONE * 29 / 20;
     break;
   case ENEMY_SERPENT:
-  case ENEMY_SERPENT_2:
-  case ENEMY_SERPENT_3:
-  case ENEMY_SERPENT_4:
-  case ENEMY_SERPENT_5:
-  case ENEMY_SERPENT_6:
-  case ENEMY_SERPENT_7:
+  case ENEMY_SERPENT_ONE_BEAM:
+  case ENEMY_SERPENT_TWO_BEAMS:
+  case ENEMY_SERPENT_THREE_BEAMS:
+  case ENEMY_SERPENT_FOUR_BEAMS:
+  case ENEMY_UNUSED_SERPENT_A:
+  case ENEMY_UNUSED_SERPENT_B:
     actor->scale = Q16_ONE * 11 / 10;
     break;
   case ENEMY_POSEIDON:
-  case ENEMY_POSEIDON_2:
-  case ENEMY_POSEIDON_3:
+  case ENEMY_POSEIDON_SECOND_ACTION:
+  case ENEMY_UNUSED_POSEIDON:
     actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_AQUA_HYDRA:
@@ -346,24 +346,24 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = Q16_ONE * 3 / 4;
     break;
   case ENEMY_MOAPA:
-  case ENEMY_MOAPA_2:
-  case ENEMY_MOAPA_3:
+  case ENEMY_MOAPA_B:
+  case ENEMY_MOAPA_C:
     // XXX: which shadow Moapa takes; the sprite table's row 685 rendered would
     // say.
     actor->shadow = 685;
     actor->scale = Q16_ONE * 23 / 20;
     break;
   case ENEMY_KNIGHT:
-  case ENEMY_KNIGHT_2:
-  case ENEMY_KNIGHT_3:
+  case ENEMY_KNIGHT_B:
+  case ENEMY_UNUSED_KNIGHT:
     actor->scale = Q16_ONE * 101 / 100;
     break;
   case ENEMY_BRIGGS:
     actor->scale = Q16_ONE * 5 / 4;
     break;
   case ENEMY_SEA_FIGHTER:
-  case ENEMY_CHAMPA_2:
-  case ENEMY_CHAMPA_3:
+  case ENEMY_UNUSED_CHAMPA_A:
+  case ENEMY_UNUSED_CHAMPA_B:
   case ENEMY_MINOTAURUS:
   case ENEMY_MINOS_WARRIOR:
   case ENEMY_MINOS_KNIGHT:
@@ -372,10 +372,10 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_AESHMA:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case ENEMY_FLAME_DRAGON:
+  case ENEMY_FLAME_DRAGON_AGATIO:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case ENEMY_FLAME_DRAGON_2:
+  case ENEMY_FLAME_DRAGON_KARST:
     actor->scale = Q16_ONE;
     break;
   case ENEMY_PIXIE:
@@ -396,9 +396,9 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_BRUTAL_TROLL:
   case ENEMY_LIZARD_FIGHTER:
   case ENEMY_LIZARD_KING:
-  case ENEMY_DOOM_DRAGON:
-  case ENEMY_DOOM_DRAGON_5:
-  case ENEMY_DOOM_DRAGON_8:
+  case ENEMY_DOOM_DRAGON_A:
+  case ENEMY_DOOM_DRAGON_E:
+  case ENEMY_DOOM_DRAGON_H:
     actor->scale = Q16_ONE * 7 / 5;
     break;
   }
@@ -492,10 +492,12 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
         enemy = actor->enemyId;
         // The first place keeps ENEMY_COLUMN_X whatever its enemy.
         if (enemy == ENEMY_FUSION_DRAGON || enemy == ENEMY_KRAKEN ||
-            enemy == ENEMY_SERPENT || enemy == ENEMY_SERPENT_2 ||
-            enemy == ENEMY_SERPENT_3 || enemy == ENEMY_SERPENT_4 ||
-            enemy == ENEMY_SERPENT_5 || enemy == ENEMY_SERPENT_6 ||
-            enemy == ENEMY_SERPENT_7) {
+            enemy == ENEMY_SERPENT || enemy == ENEMY_SERPENT_ONE_BEAM ||
+            enemy == ENEMY_SERPENT_TWO_BEAMS ||
+            enemy == ENEMY_SERPENT_THREE_BEAMS ||
+            enemy == ENEMY_SERPENT_FOUR_BEAMS ||
+            enemy == ENEMY_UNUSED_SERPENT_A ||
+            enemy == ENEMY_UNUSED_SERPENT_B) {
           xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }
       }

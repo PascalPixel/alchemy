@@ -39,7 +39,7 @@ Tileset_GabombaStatueBoneArmletChestPalette:
 	.global Tileset_GabombaStatueBoneArmletChestTilesA
 Tileset_GabombaStatueBoneArmletChestTilesA:
 	.incbin "games/tla/src/graphics/tileset/gabomba_statue_bone_armlet_chest/tiles_a.4bpp.mtf"
-	.byte 0x22, 0xe3, 0x07	@ PACKER: left in the buffer by Field_Kibombo3+0x1949
+	.byte 0x22, 0xe3, 0x07	@ PACKER: left in the buffer by Field_KibomboHouses+0x1949
 	.global Tileset_GabombaStatueBoneArmletChestTilesB
 Tileset_GabombaStatueBoneArmletChestTilesB:
 	.incbin "games/tla/src/graphics/tileset/gabomba_statue_bone_armlet_chest/tiles_b.4bpp.mtf"

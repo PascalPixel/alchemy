@@ -1015,7 +1015,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         BattleEffect_StepPaletteToResource((s32)&ResourceId_FireballSheet);
         break;
       case CASTING_IMPACT_IMPACT_SEARING_FOG:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_GreyPaletteA);
         break;
       case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
@@ -1083,7 +1083,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         BattleEffect_StepPaletteToResource((s32)&ResourceId_RedPaletteB);
         break;
       case CASTING_IMPACT_IMPACT_STUN_BOLT:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette05);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteG);
         break;
       }
       if (frame < 6) {

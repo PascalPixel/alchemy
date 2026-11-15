@@ -192,7 +192,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Soldier
     {
@@ -217,7 +217,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Warrior
     {
@@ -246,7 +246,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Champion
     {
@@ -275,7 +275,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Hero
     {
@@ -304,7 +304,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // ?
     {0},
@@ -2302,7 +2302,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Ruffian
     {
@@ -2332,7 +2332,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Savage
     {
@@ -2362,7 +2362,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Barbarian
     {
@@ -2392,7 +2392,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Berserker
     {
@@ -2422,7 +2422,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Chaos Lord
     {
@@ -2452,7 +2452,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // ?
     {0},
@@ -2490,7 +2490,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Ronin
     {
@@ -2520,7 +2520,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // ?
     {0},
@@ -3237,7 +3237,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_POISON, .level = 5},
             {.ability = ABILITY_RESTORE, .level = 13},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Trainer
     {
@@ -3266,7 +3266,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_POISON, .level = 5},
             {.ability = ABILITY_RESTORE, .level = 13},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Beastkeeper
     {
@@ -3295,7 +3295,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_POISON, .level = 5},
             {.ability = ABILITY_RESTORE, .level = 13},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Beast Lord
     {
@@ -3324,7 +3324,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_POISON, .level = 5},
             {.ability = ABILITY_RESTORE, .level = 13},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // ?
     {0},

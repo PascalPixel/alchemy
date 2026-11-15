@@ -121,9 +121,9 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gMainRoutineWork.mapId == SCENE_GABOMBA_CATACOMBS_5)
+  if (gMainRoutineWork.mapId == SCENE_GABOMBA_CATACOMBS_STREAM)
     work->lit = 1;
-  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_1)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_ENTRANCE)
     work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
     work->lit = 1;
@@ -133,7 +133,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerieBeacon)
     work->lit = 1;
-  if (gMainRoutineWork.mapId == SCENE_LOHO_1)
+  if (gMainRoutineWork.mapId == SCENE_LOHO)
     work->lit = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   if (work->fieldPsynergy != 8)

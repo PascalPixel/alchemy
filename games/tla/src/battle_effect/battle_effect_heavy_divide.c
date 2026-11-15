@@ -928,7 +928,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   for (frame = 0; frame != HURRICANE_FRAMES; frame++) {
     // Frame 0: the streaks wait above the screen, drifting with the wind.
     if (frame == 0) {
-      Sound_PlayFar(SE_170);
+      Sound_PlayFar(SE_AMBIENT_WATER);
       for (i = 0; i != 256; i++)
         PARTICLES[i].variant = -1;
       for (i = 0; i != STREAKS; i++) {

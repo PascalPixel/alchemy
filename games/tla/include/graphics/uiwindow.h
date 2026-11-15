@@ -54,7 +54,7 @@ struct UiChannelSlot {
   u16 flags;
   /// Copied from spacing[3] when queued; with WindowWork.textMode set it
   /// places the glyphs by y / 320.
-  u16 unk26;
+  u16 compressLines;
 };
 
 STATIC_ASSERT(sizeof(struct UiChannelSlot) == 0x28);

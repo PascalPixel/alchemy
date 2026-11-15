@@ -941,9 +941,10 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   // XXX: the battle backdrop is resource 88, the lava cave's
-  // (Battle_LavaCaveBackdrop), a link-time number; SceneId_AirsRockInside4 is
-  // 88 too and stands in until resource_directory.s names the backdrop.
-  gMainRoutineWork.battleBackground = SCENE_AIRS_ROCK_INSIDE_4;
+  // (Battle_LavaCaveBackdrop), a link-time number;
+  // SceneId_AirsRockInsideTightropes is 88 too and stands in until
+  // resource_directory.s names the backdrop.
+  gMainRoutineWork.battleBackground = SCENE_AIRS_ROCK_INSIDE_TIGHTROPES;
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 

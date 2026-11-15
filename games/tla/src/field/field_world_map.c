@@ -69,8 +69,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
                       DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
   perspective->fadeStep = 128;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
-                      gData_0202e000);
+  Decompress_TaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_DefaultMapEntrances), gMapScene);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG3CNT);
@@ -266,7 +266,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
   backdropColor = WORLD_MAP_BG_PALETTE[0];
-  Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
+  Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_LoadPaletteFar(buffer);

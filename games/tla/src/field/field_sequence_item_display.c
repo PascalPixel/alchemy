@@ -131,7 +131,7 @@ void Reveal_EmitSparkles(struct Actor *source);
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
-struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
+struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *picture = work->actors[actor];
   struct Actor *object;

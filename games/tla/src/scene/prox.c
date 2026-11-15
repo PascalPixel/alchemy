@@ -1,7 +1,7 @@
 /// @file
 /// Prox, Felix's home in the frozen north, where the clan of Puelle lives in
 /// poverty in the shadow of the Mars Lighthouse, in six rooms that share this
-/// overlay (SceneId_Prox1 to SceneId_Prox6).
+/// overlay (SceneId_ProxSouthGate to SceneId_ProxCaves).
 ///
 /// While the lighthouse is unlit a storm rages over the village. Up the
 /// riverbed the Venus Djinni Mold bolts into the snow until Scoop digs it out;
@@ -293,8 +293,8 @@ void Prox_MoldJoins(void) {
 
 /// The Mercury Djinni kept in the house joins the party.
 void Prox_MercuryDjinniJoins(void) {
-  Djinn_JoinParty(ACTOR_MERCURY_DJINNI, DJINNI_39 / DJINN_PER_ELEMENT,
-                  DJINNI_INDEX(DJINNI_39));
+  Djinn_JoinParty(ACTOR_MERCURY_DJINNI, DJINNI_WATER19 / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_WATER19));
 }
 
 #include "shared/distance.c"
@@ -527,7 +527,8 @@ extern struct ActorPlacement gProx_HousesPlacementsOnceLit[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_PROX_1 && Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
+  if (scene == SCENE_PROX_SOUTH_GATE &&
+      Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
       !Event_GetFlag(FLAG_SAID_FAREWELL))
     return gProx_SouthGateFarewellPlacements;
   scene = gMainRoutineWork.next;
@@ -538,7 +539,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       return gProx_MoldPlacementsOnceLit;
     return gProx_MoldPlacements;
   }
-  if (scene == SCENE_PROX_4) {
+  if (scene == SCENE_PROX_HOUSES) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       gProx_HousesPlacementsOnceLit[1].talkFacing =
           TALK_FACING_PARTY_THEN_WATCH;
@@ -548,12 +549,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     }
     return gProx_HousesPlacements;
   }
-  if (scene == SCENE_PROX_5) {
+  if (scene == SCENE_PROX_CAVE_HOMES) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_CaveHomesPlacementsOnceLit;
     return gProx_CaveHomesPlacements;
   }
-  if (scene == SCENE_PROX_6)
+  if (scene == SCENE_PROX_CAVES)
     return gProx_CavesPlacements;
   return gProx_SouthGatePlacements;
 }
@@ -575,17 +576,17 @@ extern struct Trigger gProx_HousesTriggers[];
 const u8 *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_PROX_1)
+  if (scene == SCENE_PROX_SOUTH_GATE)
     return gProx_SouthGateTriggers;
   if (scene == SCENE_PROX)
     return gProx_TownTriggers;
   if (scene == SCENE_PROX_MOLD)
     return gProx_MoldTriggers;
-  if (scene == SCENE_PROX_4)
+  if (scene == SCENE_PROX_HOUSES)
     return gProx_HousesTriggers;
-  if (scene == SCENE_PROX_5)
+  if (scene == SCENE_PROX_CAVE_HOMES)
     return gProx_CaveHomesTriggers;
-  if (scene == SCENE_PROX_6)
+  if (scene == SCENE_PROX_CAVES)
     return gProx_CavesTriggers;
   return gProx_Triggers;
 }
@@ -1759,13 +1760,13 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_PROX_4) {
+  if (scene == SCENE_PROX_HOUSES) {
     gFieldWork->transition = 0x209;
     Prox_InitializeHouses();
-  } else if (scene == SCENE_PROX_5) {
+  } else if (scene == SCENE_PROX_CAVE_HOMES) {
     gFieldWork->transition = 0x209;
     Prox_InitializeCaveHomes();
-  } else if (scene == SCENE_PROX_6) {
+  } else if (scene == SCENE_PROX_CAVES) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
@@ -2649,44 +2650,44 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Prox1),
+    SCENE_EXITS(ProxSouthGate),
     SCENE_EXIT(1, WorldMap, 62),
     SCENE_EXIT(2, Prox, 1),
     SCENE_EXIT(3, StaffCredit, 0),
     SCENE_EXITS(Prox),
-    SCENE_EXIT(1, Prox1, 2),
-    SCENE_EXIT(2, Prox4, 8),
-    SCENE_EXIT(3, Prox4, 1),
-    SCENE_EXIT(4, Prox4, 10),
-    SCENE_EXIT(5, Prox4, 4),
-    SCENE_EXIT(6, Prox4, 5),
-    SCENE_EXIT(7, Prox4, 2),
-    SCENE_EXIT(8, Prox6, 7),
+    SCENE_EXIT(1, ProxSouthGate, 2),
+    SCENE_EXIT(2, ProxHouses, 8),
+    SCENE_EXIT(3, ProxHouses, 1),
+    SCENE_EXIT(4, ProxHouses, 10),
+    SCENE_EXIT(5, ProxHouses, 4),
+    SCENE_EXIT(6, ProxHouses, 5),
+    SCENE_EXIT(7, ProxHouses, 2),
+    SCENE_EXIT(8, ProxCaves, 7),
     SCENE_EXIT(9, ProxMold, 2),
-    SCENE_EXIT(10, Prox5, 9),
+    SCENE_EXIT(10, ProxCaveHomes, 9),
     SCENE_EXIT(11, ProxMold, 1),
     SCENE_EXITS(ProxMold),
     SCENE_EXIT(1, Prox, 11),
     SCENE_EXIT(2, Prox, 9),
     SCENE_EXIT(3, WorldMap, 63),
-    SCENE_EXIT(4, Prox4, 7),
-    SCENE_EXITS(Prox4),
+    SCENE_EXIT(4, ProxHouses, 7),
+    SCENE_EXITS(ProxHouses),
     SCENE_EXIT(1, Prox, 3),
     SCENE_EXIT(2, Prox, 7),
-    SCENE_EXIT(3, Prox5, 6),
+    SCENE_EXIT(3, ProxCaveHomes, 6),
     SCENE_EXIT(4, Prox, 5),
     SCENE_EXIT(5, Prox, 6),
-    SCENE_EXIT(6, Prox5, 7),
+    SCENE_EXIT(6, ProxCaveHomes, 7),
     SCENE_EXIT(7, ProxMold, 4),
     SCENE_EXIT(8, Prox, 2),
-    SCENE_EXIT(9, Prox5, 8),
+    SCENE_EXIT(9, ProxCaveHomes, 8),
     SCENE_EXIT(10, Prox, 4),
-    SCENE_EXITS(Prox5),
-    SCENE_EXIT(6, Prox4, 3),
-    SCENE_EXIT(7, Prox4, 6),
-    SCENE_EXIT(8, Prox4, 9),
+    SCENE_EXITS(ProxCaveHomes),
+    SCENE_EXIT(6, ProxHouses, 3),
+    SCENE_EXIT(7, ProxHouses, 6),
+    SCENE_EXIT(8, ProxHouses, 9),
     SCENE_EXIT(9, Prox, 10),
-    SCENE_EXITS(Prox6),
+    SCENE_EXITS(ProxCaves),
     SCENE_EXIT(7, Prox, 8),
     SCENE_EXITS_END,
 };
@@ -2780,7 +2781,7 @@ struct ActorPlacement gProx_HousesPlacements[] = {
     ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 394, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_39), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_WATER19), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2801,7 +2802,7 @@ struct ActorPlacement gProx_HousesPlacementsOnceLit[] = {
     ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_39), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_WATER19), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(44, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 428, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(45, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 428, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),

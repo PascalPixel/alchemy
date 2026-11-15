@@ -179,7 +179,7 @@ void ParticleBurst_Start(void) {
     EffectSprite_Init(sprite, 4, 4, 0, vram);
     sprite->depth = 250;
     sprite->oam.priority = 0;
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
     Vector_AddPolarOffset(Random16() * 8 + px(8), Random16(), &particle->x);

@@ -66,14 +66,14 @@ gSaveSlot:
 	.global gSerialSendSize
 gSerialSendSize:
 	.space 0x00000004
-	.global gData_020036d8
-gData_020036d8:
+	.global gTitleBattleOptionEnabled
+gTitleBattleOptionEnabled:
 	.space 0x00000008
 	.global gVramCacheEntries
 gVramCacheEntries:
 	.space 0x00000180
-	.global gData_02003860
-gData_02003860:
+	.global gAnyFileCleared
+gAnyFileCleared:
 	.space 0x00000010
 	.global gSerialPeerPayloads
 gSerialPeerPayloads:
@@ -99,8 +99,8 @@ gData_02003a90:
 	.global gModelTransformWork
 gModelTransformWork:
 	.space 0x00000bd8
-	.global gData_02005350
-gData_02005350:
+	.global gTitleUpdateOptionEnabled
+gTitleUpdateOptionEnabled:
 	.space 0x00000004
 	.global gSerialReceivedSize
 gSerialReceivedSize:
@@ -385,11 +385,11 @@ Data_02010380:
 	.global Data_02010400
 Data_02010400:
 	.space 0x000000f0
-	.global Data_020104f0
-Data_020104f0:
+	.global gHaures_WingCorners
+gHaures_WingCorners:
 	.space 0x00000088
-	.global Data_02010578
-Data_02010578:
+	.global gIris_TileBuffer
+gIris_TileBuffer:
 	.space 0x00000170
 	.global Data_020106e8
 Data_020106e8:
@@ -403,8 +403,8 @@ Data_0201082f:
 	.global Data_0201083c
 Data_0201083c:
 	.space 0x000002ac
-	.global Data_02010ae8
-Data_02010ae8:
+	.global gHaures_WingStrip
+gHaures_WingStrip:
 	.space 0x00000008
 	.global Data_02010af0
 Data_02010af0:
@@ -430,8 +430,8 @@ Data_02010d80:
 	.global Data_02010e00
 Data_02010e00:
 	.space 0x000001a0
-	.global Data_02010fa0
-Data_02010fa0:
+	.global gHaures_WingShades
+gHaures_WingShades:
 	.space 0x00000060
 	.global Data_02011000
 Data_02011000:
@@ -478,8 +478,8 @@ Data_02012400:
 	.global Data_020124de
 Data_020124de:
 	.space 0x00000062
-	.global Data_02012540
-Data_02012540:
+	.global gSerac_MeshEnd
+gSerac_MeshEnd:
 	.space 0x0000018a
 	.global Data_020126ca
 Data_020126ca:
@@ -538,8 +538,8 @@ Data_02013e18:
 	.global gData_02014000
 gData_02014000:
 	.space 0x00000002
-	.global Data_02014002
-Data_02014002:
+	.global gFlora_PetalTiles
+gFlora_PetalTiles:
 	.space 0x00000002
 	.global Data_02014004
 Data_02014004:
@@ -559,8 +559,8 @@ Data_02014208:
 	.global Data_02014218
 Data_02014218:
 	.space 0x00000048
-	.global Data_02014260
-Data_02014260:
+	.global gFlora_SpritePalettes
+gFlora_SpritePalettes:
 	.space 0x000001a0
 	.global Data_02014400
 Data_02014400:
@@ -790,23 +790,23 @@ Data_0202d000:
 	.global Data_0202de00
 Data_0202de00:
 	.space 0x00000200
-	.global gData_0202e000
-gData_0202e000:
+	.global gMapScene
+gMapScene:
 	.space 0x00000002
-	.global gData_0202e002
-gData_0202e002:
+	.global gMapSceneEditsOffset
+gMapSceneEditsOffset:
 	.space 0x00000002
-	.global Data_0202e004
-Data_0202e004:
+	.global gMapSceneBoundsOffset
+gMapSceneBoundsOffset:
 	.space 0x00000004
-	.global gData_0202e008
-gData_0202e008:
+	.global gMapScenePoints
+gMapScenePoints:
 	.space 0x00001ff8
 	.global gEwramHeap
 gEwramHeap:
 	.space 0x00008000
-	.global gData_02038000
-gData_02038000:
+	.global gBgTileBuffer
+gBgTileBuffer:
 	.space 0x00002000
 	.global gData_0203a000
 gData_0203a000:

@@ -126,7 +126,7 @@ struct YallamSaved {
   s32 action;
   s32 mode;
   s32 state; ///< the runner's Actor.riseCounter
-  s32 kind;  ///< the runner's Actor.blockMarked
+  s32 kind;  ///< the runner's Actor.riseEnabled
 };
 
 struct YallamStop {
@@ -155,7 +155,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
   s32 *targetPos;
   s32 *objectPos;
 
-  if (object->blockMarked != 0) {
+  if (object->riseEnabled != 0) {
     object->paused = 1;
     return 1;
   }
@@ -260,7 +260,7 @@ extern struct ActorPlacement gYallam_SongGamePlacements[];
 const u8 *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
     return gYallam_SongGamePlacements;
-  if (gMainRoutineWork.next == SCENE_YALLAM_2)
+  if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CavePlacements;
   return gYallam_Placements;
 }
@@ -370,7 +370,7 @@ extern struct Trigger gYallam_SongGameTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
     return gYallam_SongGameTriggers;
-  if (gMainRoutineWork.next == SCENE_YALLAM_2)
+  if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
     return gYallam_CaveTriggers;
   return gYallam_Triggers;
 }
@@ -400,7 +400,7 @@ void Yallam_TalkAboutSongCircles(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->blockMarked = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgRunningAroundIn);
@@ -411,7 +411,7 @@ void Yallam_TalkAboutSongCircles(void) {
   Event_ShowMessage(ACTOR_CIRCLES_CHILD, 0);
   if (work->psynergy == 0)
     object->facing = angle;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   Event_End();
 }
 
@@ -424,7 +424,7 @@ void Yallam_TalkAboutSongGame(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->blockMarked = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgThereSAGame);
@@ -435,7 +435,7 @@ void Yallam_TalkAboutSongGame(void) {
   Event_ShowMessage(ACTOR_GAME_CHILD, 0);
   if (work->psynergy == 0)
     object->facing = angle;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   Event_End();
 }
 
@@ -1352,27 +1352,27 @@ void Yallam_PauseSongGame(void) {
   gYallam_SavedSongGame[0].action = object->timer;
   gYallam_SavedSongGame[0].mode = (s16)object->userValue;
   gYallam_SavedSongGame[0].state = object->riseCounter;
-  gYallam_SavedSongGame[0].kind = object->blockMarked;
+  gYallam_SavedSongGame[0].kind = object->riseEnabled;
   object = Actor_Get(ACTOR_GAME_CHILD);
   gYallam_SavedSongGame[1].action = object->timer;
   gYallam_SavedSongGame[1].mode = (s16)object->userValue;
   gYallam_SavedSongGame[1].state = object->riseCounter;
-  gYallam_SavedSongGame[1].kind = object->blockMarked;
+  gYallam_SavedSongGame[1].kind = object->riseEnabled;
   object = Actor_Get(ACTOR_CIRCLES_CHILD);
   gYallam_SavedSongGame[2].action = object->timer;
   gYallam_SavedSongGame[2].mode = (s16)object->userValue;
   gYallam_SavedSongGame[2].state = object->riseCounter;
-  gYallam_SavedSongGame[2].kind = object->blockMarked;
+  gYallam_SavedSongGame[2].kind = object->riseEnabled;
   object = Actor_Get(ACTOR_STORY_CHILD);
   gYallam_SavedSongGame[3].action = object->timer;
   gYallam_SavedSongGame[3].mode = (s16)object->userValue;
   gYallam_SavedSongGame[3].state = object->riseCounter;
-  gYallam_SavedSongGame[3].kind = object->blockMarked;
+  gYallam_SavedSongGame[3].kind = object->riseEnabled;
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   gYallam_SavedSongGame[4].action = object->timer;
   gYallam_SavedSongGame[4].mode = (s16)object->userValue;
   gYallam_SavedSongGame[4].state = object->riseCounter;
-  gYallam_SavedSongGame[4].kind = object->blockMarked;
+  gYallam_SavedSongGame[4].kind = object->riseEnabled;
   FieldTask_Remove(Yallam_UpdateSongGame);
 }
 
@@ -1384,27 +1384,27 @@ void Yallam_ResumeSongGame(void) {
   object->timer = gYallam_SavedSongGame[0].action;
   object->userValue = gYallam_SavedSongGame[0].mode;
   object->riseCounter = gYallam_SavedSongGame[0].state;
-  object->blockMarked = gYallam_SavedSongGame[0].kind;
+  object->riseEnabled = gYallam_SavedSongGame[0].kind;
   object = Actor_Get(ACTOR_GAME_CHILD);
   object->timer = gYallam_SavedSongGame[1].action;
   object->userValue = gYallam_SavedSongGame[1].mode;
   object->riseCounter = gYallam_SavedSongGame[1].state;
-  object->blockMarked = gYallam_SavedSongGame[1].kind;
+  object->riseEnabled = gYallam_SavedSongGame[1].kind;
   object = Actor_Get(ACTOR_CIRCLES_CHILD);
   object->timer = gYallam_SavedSongGame[2].action;
   object->userValue = gYallam_SavedSongGame[2].mode;
   object->riseCounter = gYallam_SavedSongGame[2].state;
-  object->blockMarked = gYallam_SavedSongGame[2].kind;
+  object->riseEnabled = gYallam_SavedSongGame[2].kind;
   object = Actor_Get(ACTOR_STORY_CHILD);
   object->timer = gYallam_SavedSongGame[3].action;
   object->userValue = gYallam_SavedSongGame[3].mode;
   object->riseCounter = gYallam_SavedSongGame[3].state;
-  object->blockMarked = gYallam_SavedSongGame[3].kind;
+  object->riseEnabled = gYallam_SavedSongGame[3].kind;
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   object->timer = gYallam_SavedSongGame[4].action;
   object->userValue = gYallam_SavedSongGame[4].mode;
   object->riseCounter = gYallam_SavedSongGame[4].state;
-  object->blockMarked = gYallam_SavedSongGame[4].kind;
+  object->riseEnabled = gYallam_SavedSongGame[4].kind;
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
 }
 
@@ -1417,7 +1417,7 @@ void Yallam_StartRunner(s32 id) {
   actor->timer = 0;
   actor->userValue = 0;
   actor->riseCounter = 1;
-  actor->blockMarked = 0;
+  actor->riseEnabled = 0;
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
@@ -1487,7 +1487,7 @@ void Yallam_ShowSongGame(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 316, 896);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 344, 912);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
-  Event_PlaySound(MUS_017);
+  Event_PlaySound(MUS_SONG_GAME);
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH);
   // "If you want to go to the stars, if you want to go to the stars."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
@@ -1858,11 +1858,11 @@ void Yallam_StartWatchers(void) {
   struct Actor *other;
 
   actor->timer = 1;
-  actor->blockMarked = 0;
+  actor->riseEnabled = 0;
   actor->update = Yallam_WatchSongGame;
   other = Actor_Get(ACTOR_GAME_CHILD);
   other->timer = 0;
-  other->blockMarked = 0;
+  other->riseEnabled = 0;
   other->update = Yallam_WatchSongGame;
 }
 
@@ -1990,13 +1990,13 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, YallamInteriorsShops, 2),
     SCENE_EXIT(7, YallamInteriorsInn, 3),
     SCENE_EXIT(8, MikasallaInteriorsSanctum, 4),
-    SCENE_EXIT(9, Yallam2, 6),
+    SCENE_EXIT(9, YallamCave, 6),
     SCENE_EXIT(10, WorldMap, 34),
     SCENE_EXIT(11, WorldMap, 33),
     SCENE_EXIT(12, Yallam, 15),
-    SCENE_EXIT(13, Yallam2, 7),
+    SCENE_EXIT(13, YallamCave, 7),
     SCENE_EXIT(15, Yallam, 12),
-    SCENE_EXITS(Yallam2),
+    SCENE_EXITS(YallamCave),
     SCENE_EXIT(6, Yallam, 9),
     SCENE_EXIT(7, Yallam, 13),
     SCENE_EXITS_END,

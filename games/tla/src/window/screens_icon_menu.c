@@ -509,7 +509,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         wait(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
-        ability = Ability_Get(summon->nameMessageId);
+        ability = Ability_Get(summon->abilityId);
         summonIconSlot = VramCache_AllocEntry(128);
         commandWindow = Window_Create(SUMMON_WINDOW_X, 17, SUMMON_WINDOW_WIDTH,
                                       3, commandKind);
@@ -528,11 +528,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
-            summon->nameMessageId & ACTION_ID_MASK, summonIconSlot);
+            summon->abilityId & ACTION_ID_MASK, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
           Text_SetColor(TEXT_COLOR_RED);
-        Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->nameMessageId +
+        Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->abilityId +
                                     (s32)MsgAbilityName,
                                 commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
@@ -1132,8 +1132,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   return goal;
 }
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
+#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
 /// Decodes one command-icon table entry into the requested VRAM cache slot,
 /// through a 1 KB block it allocates and frees.
@@ -1142,7 +1141,7 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   void *buffer = (void *)Heap_Alloc(size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
+  Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
   VramCache_Load(slot, size, buffer);
   Heap_Release(buffer);
 }
@@ -1330,9 +1329,9 @@ s32 FileList_SelectAction(void) {
   if (group == 0 || group == 3)
     IconMenu_AddIcon(COMMAND_ICON_COPY);
   IconMenu_AddIcon(COMMAND_ICON_ERASE);
-  if (gData_020036d8 != 0)
+  if (gTitleBattleOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
-  if (gData_02005350 != 0)
+  if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
   IconMenu_Center(17, SAVE_SLOT_MENU_WIDTH, 0);
   ret = IconMenu_Run(initial);
@@ -1342,7 +1341,7 @@ s32 FileList_SelectAction(void) {
 
     ret = gMenu_SaveSlotActionByPosition[ret + (twice + group) * 2];
   }
-  if (gData_020036d8 == 0 && ret == 4)
+  if (gTitleBattleOptionEnabled == 0 && ret == 4)
     ret = 5;
   return ret;
 }
@@ -1761,7 +1760,7 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 void DebugSceneSelect_Schedule(void) {
   Task_Add(DebugSceneSelect_Run, TASK_PASS_VBLANK);
 }
-#undef Resource_DecodeByteLzInRam
+#undef Decompress_ByteLz
 #undef LABEL_RIGHT
 #undef HELP_X
 #undef ENTRY_WIDTH

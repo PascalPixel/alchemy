@@ -97,7 +97,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work->sheet, 1,
@@ -137,7 +137,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, IO_WRITE_HALFWORD);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
@@ -363,7 +363,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -637,7 +637,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(1, battle->background, 0);
@@ -645,14 +645,14 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
   wait(1);
@@ -660,7 +660,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   REG_BG2PA = Q_8_8(1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
   i = 0;
   for (k = 0; k != CANVAS_TILES; k++) {
@@ -862,16 +862,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Sound_PlayFar(SE_CAST);
         }
         if (frame == 64) {
-          Sound_PlayFar(SE_139);
+          Sound_PlayFar(SE_DJINNI_SET);
         }
         if (frame == 74) {
-          Sound_PlayFar(SE_139);
+          Sound_PlayFar(SE_DJINNI_SET);
         }
         if (frame == 84) {
-          Sound_PlayFar(SE_139);
+          Sound_PlayFar(SE_DJINNI_SET);
         }
         if (frame == 94) {
-          Sound_PlayFar(SE_139);
+          Sound_PlayFar(SE_DJINNI_SET);
         }
         if (frame == 124) {
           Sound_PlayFar(SE_CLATTER);
@@ -1198,8 +1198,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     Palette_BrightenBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3648,
                                0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data104, work->sheet + 0x36c8,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_PinkBarSheet,
+                               work->sheet + 0x36c8, 0, 0);
     Graphics_LoadGreyRamp();
     {
       u8 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);

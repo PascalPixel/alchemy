@@ -30,7 +30,7 @@ void Heading_Show(s32 heading) {
   cell = (u16 *)BG_SCREEN_BLOCK(4);
   tiles = Heap_AllocEwram(HEADING_TILE_BYTES);
   headings += headings[heading] / 4;
-  Resource_DecodeByteLzInRam(headings, tiles);
+  Decompress_ByteLz(headings, tiles);
   Dma_Set(tiles, HEADING_TILES, DMA_COPY_WORDS(HEADING_TILE_BYTES / 4),
           REG_DMA3);
   Heap_Release(tiles);

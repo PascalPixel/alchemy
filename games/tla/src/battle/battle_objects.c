@@ -41,12 +41,12 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
       flags |= ICON_STUN;
       switch (state->enemyId) {
       case ENEMY_SERPENT:
-      case ENEMY_SERPENT_2:
-      case ENEMY_SERPENT_3:
-      case ENEMY_SERPENT_4:
-      case ENEMY_SERPENT_5:
-      case ENEMY_SERPENT_6:
-      case ENEMY_SERPENT_7:
+      case ENEMY_SERPENT_ONE_BEAM:
+      case ENEMY_SERPENT_TWO_BEAMS:
+      case ENEMY_SERPENT_THREE_BEAMS:
+      case ENEMY_SERPENT_FOUR_BEAMS:
+      case ENEMY_UNUSED_SERPENT_A:
+      case ENEMY_UNUSED_SERPENT_B:
       case ENEMY_KRAKEN:
       case ENEMY_FUSION_DRAGON:
         flags &= ~ICON_STUN;

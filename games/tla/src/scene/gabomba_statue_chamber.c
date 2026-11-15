@@ -11,7 +11,7 @@
 
 #define FLAG_AKAFUBU_REACHED_CHAMBER 0x8fe
 
-/// The idol's room (SceneId_GabombaStatueChamber1): the statue's face, and
+/// The idol's room (SceneId_GabombaStatueChamberIdol): the statue's face, and
 /// Kraden ("It vanished into that hole!") and Akafubu ("Who... Who are
 /// you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
 enum { ACTOR_STATUE = 8, ACTOR_KRADEN = 11, ACTOR_AKAFUBU = 12 };
@@ -105,7 +105,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolExitRegions;
   return 0;
 }
@@ -115,7 +115,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolActorPlacements;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
     return gGabombaStatueChamber_WitchDoctorActorPlacements;
@@ -125,7 +125,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolTriggers;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
     return gGabombaStatueChamber_LiftTriggers;
@@ -443,9 +443,9 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   GameFlag_Set(FLAG_GABOMBA_MESSAGE_CARRIED);
   GameFlag_Clear(0x86b);
   GameFlag_Clear(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
-  gMainRoutineWork.retreatScene = SCENE_KIBOMBO_1;
+  gMainRoutineWork.retreatScene = SCENE_KIBOMBO;
   gMainRoutineWork.retreatEntrance = 1;
-  gMainRoutineWork.restartScene = SCENE_KIBOMBO_3;
+  gMainRoutineWork.restartScene = SCENE_KIBOMBO_HOUSES;
   gMainRoutineWork.restartEntrance = 6;
   Import_EventSetExitRequest(3);
 }
@@ -1024,7 +1024,7 @@ s32 Scene_Initialize(void) {
   ((struct Actor *)Actor_GetById(Party_GetLeaderActor()))->priorityFlags |=
       0x20;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     GabombaStatueChamber_InitializeIdol();
   else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
     GabombaStatueChamber_InitializeLift();
@@ -1124,7 +1124,7 @@ void GabombaStatueChamber_InitializeWitchDoctor(void) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
-      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_1;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
@@ -1210,19 +1210,19 @@ u32 gGabombaStatueChamber_IdolExitRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(GabombaStatueChamber1),
+    SCENE_EXITS(GabombaStatueChamberIdol),
     SCENE_EXIT_UNLESS(1, GabombaStatueCogs, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GabombaStatueArrows, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Kibombo2, 4, 0x86b),
-    SCENE_EXIT_UNLESS(3, Kibombo5, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboStatueGrounds, 4, 0x86b),
+    SCENE_EXIT_UNLESS(3, KibomboStatueGroundsCeremony, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, GabombaStatueChamberLift, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(GabombaStatueChamberLift),
-    SCENE_EXIT(1, GabombaStatueChamber1, 4),
+    SCENE_EXIT(1, GabombaStatueChamberIdol, 4),
     SCENE_EXIT(2, GabombaStatueChamberWitchDoctor, 1),
     SCENE_EXITS(GabombaStatueChamberWitchDoctor),
     SCENE_EXIT(1, GabombaStatueChamberLift, 2),
     SCENE_EXIT(2, GabombaCatacombsTeleporters, 1),
-    SCENE_EXIT(3, Kibombo3, 9),
+    SCENE_EXIT(3, KibomboHouses, 9),
     SCENE_EXITS_END,
 };
 

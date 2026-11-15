@@ -56,7 +56,7 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
     return;
   }
   *timer = ((Random16() * 80) >> 16) + 40;
-  state = &object->blockMarked;
+  state = &object->riseEnabled;
   switch (*state) {
   case 0:
     object->facing = FACING_WEST;
@@ -196,12 +196,12 @@ void MercuryLighthouse_HearVoices(void) {
   actor = Actor_GetById(ACTOR_OLD_MAN);
   delay = ((Random16() * 80) >> 16) + 40;
   actor->riseCounter = delay;
-  actor->blockMarked = 0;
+  actor->riseEnabled = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(ACTOR_OLD_WOMAN);
   delay = ((Random16() * 80) >> 16) + 40;
   actor->riseCounter = delay;
-  actor->blockMarked = 2;
+  actor->riseEnabled = 2;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "How is it that we can hear you?"

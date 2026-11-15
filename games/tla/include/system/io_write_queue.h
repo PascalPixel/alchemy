@@ -22,11 +22,11 @@ extern struct IoWriteQueue gIoWriteQueue;
 // (system/decompress_tagged_lz.s); a word with no width is a DMA.
 
 /// Writes a byte.
-#define IO_WRITE_8 (1 << 16)
+#define IO_WRITE_BYTE (1 << 16)
 /// Writes a halfword.
-#define IO_WRITE_16 (2 << 16)
+#define IO_WRITE_HALFWORD (2 << 16)
 /// Writes a word.
-#define IO_WRITE_32 (3 << 16)
+#define IO_WRITE_WORD (3 << 16)
 /// ORs the value into the register instead of storing it.
 #define IO_WRITE_SET (4 << 16)
 /// Clears the value's bits in the register instead of storing it.

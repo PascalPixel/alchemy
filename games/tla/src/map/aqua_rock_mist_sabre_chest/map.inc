@@ -27,7 +27,7 @@ Field_AquaRockMistSabreChest:
 	.incbin "games/tla/src/map/aqua_rock_mist_sabre_chest/animation.script.lz"
 	.balign 4, 0
 .LField_AquaRockMistSabreChest_BLEND:
-	.incbin "games/tla/src/map/aqua_rock_1/blend.script.lz"
+	.incbin "games/tla/src/map/aqua_rock_moai/blend.script.lz"
 	.balign 4, 0
 .LField_AquaRockMistSabreChest_SCENE:
 	.incbin "games/tla/src/map/aqua_rock_mist_sabre_chest/scene.scene.lz"

@@ -69,7 +69,9 @@ enum JupiterLighthouseAerieActorId {
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -184,7 +186,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   FieldEvent_Wait(30);
   JupiterLighthouse_StartBeamFlicker(left);
   JupiterLighthouse_StartBeamFlicker(right);
-  Event_PlaySound(SE_522);
+  Event_PlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
   for (i = 255; i >= 0; i--) {
     Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += 0x1999;
     Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += 0x1999;
@@ -419,7 +421,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -905,7 +907,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   i = 31;
   for (; i >= 0; age -= 2, i--, sprite++, spark++) {
     EffectSprite_Init(sprite, 4, 4, 0, smallTile);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     *(u16 *)&sprite->depth = 240;
@@ -924,7 +926,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   SetUp(large, 30, 7, 0x80004000, largeTile);
   *(u16 *)&large->depth = 240;
   large->oam.priority = 1;
-  large->oam.palette256 = 1;
+  large->oam.fullColor = 1;
   large->oam.palette = 0;
   large->scaleX = 0;
   large->scaleY = 0;
@@ -1188,8 +1190,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(JupiterLighthouseAerie),       SCENE_EXIT(1, JupiterLighthouseRoom6, 1), SCENE_EXIT(2, JupiterLighthouseRoom6, 2),     
-      SCENE_EXIT(3, JupiterLighthouseRoom6, 3), SCENE_EXIT(4, JupiterLighthouseRoomPhaetonsBladeChest, 4), SCENE_EXITS_END,           
+      SCENE_EXITS(JupiterLighthouseAerie),       SCENE_EXIT(1, JupiterLighthouseRoomCrackedFloor, 1), SCENE_EXIT(2, JupiterLighthouseRoomCrackedFloor, 2),     
+      SCENE_EXIT(3, JupiterLighthouseRoomCrackedFloor, 3), SCENE_EXIT(4, JupiterLighthouseRoomPhaetonsBladeChest, 4), SCENE_EXITS_END,           
   };
 
 struct ActorPlacement gActorPlacements[] = {

@@ -265,7 +265,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
-        Sound_PlayFar(SE_139);
+        Sound_PlayFar(SE_DJINNI_SET);
       Party_ClearUnusableShortcuts();
       partyHurt = Party_ApplyPoisonDamage();
     }

@@ -198,7 +198,7 @@ enum {
   /// Steam blows from the vent room's west or east vent.
   FLAG_WEST_VENT_BLOWING = FLAG_SCENE_TEMP_0C,
   FLAG_EAST_VENT_BLOWING = FLAG_SCENE_TEMP_0D,
-  /// The vents' rush of steam is playing (SE_162).
+  /// The vents' rush of steam is playing (SE_WAVE).
   FLAG_VENT_SOUND_PLAYING = FLAG_SCENE_TEMP_0E,
   /// Lash has tied the rope across to Fog, or the south rope of Poi's hall.
   FLAG_FOG_ROPE_TIED = FLAG_SCENE_TEMP_0F,
@@ -396,7 +396,7 @@ u32 *Scene_GetExitRegions(void) {
 
   if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     return gKandoreanTemple_ChestbeaterRoomRegions;
-  if (scene == SCENE_KANDOREAN_TEMPLE_5)
+  if (scene == SCENE_KANDOREAN_TEMPLE_STREAM)
     return gKandoreanTemple_StreamRoomRegions;
   return 0;
 }
@@ -499,7 +499,7 @@ void *Scene_GetTriggers(void) {
     return gKandoreanTemple_ChestbeaterRoomEvents;
   if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     return gKandoreanTemple_VentRoomEvents;
-  if (scene == SCENE_KANDOREAN_TEMPLE_5)
+  if (scene == SCENE_KANDOREAN_TEMPLE_STREAM)
     return gKandoreanTemple_Room5Events;
   if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
     return gKandoreanTemple_Room6Events;
@@ -1217,7 +1217,7 @@ void KandoreanTemple_RunWestLift(void) {
   s32 *timer = &gKandoreanTemple_LeftTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(SE_162);
+    Scene_QueueMusic(SE_WAVE);
     FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_LIFT),
                                          px(440), px(-20), px(204));
     Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_WEST_LIFT_COLUMN),
@@ -1275,7 +1275,7 @@ void KandoreanTemple_RunEastLift(void) {
   s32 *timer = &gKandoreanTemple_RightTimer;
 
   if (*timer == 300) {
-    Scene_QueueMusic(SE_162);
+    Scene_QueueMusic(SE_WAVE);
     FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_LIFT),
                                          px(600), px(-20), px(236));
     Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_EAST_LIFT_COLUMN),
@@ -1369,7 +1369,7 @@ void KandoreanTemple_WatchVentPlatforms(void) {
     }
   } else if (Event_GetFlag(FLAG_WEST_VENT_BLOWING) ||
              Event_GetFlag(FLAG_EAST_VENT_BLOWING)) {
-    Scene_QueueMusic(SE_162);
+    Scene_QueueMusic(SE_WAVE);
     Event_SetFlag(FLAG_VENT_SOUND_PLAYING);
   }
 }
@@ -1902,7 +1902,7 @@ s32 Scene_Initialize(void) {
     KandoreanTemple_StartChestbeaterRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     KandoreanTemple_StartVentRoom();
-  else if (scene == SCENE_KANDOREAN_TEMPLE_5)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_STREAM)
     KandoreanTemple_StartStreamRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
     KandoreanTemple_StartSteamRoom();
@@ -2179,7 +2179,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   GameFlag_Clear(FLAG_ON_EAST_LIFT);
   GameFlag_Set(FLAG_PILLAR_ON_EAST_PLATFORM);
   GameFlag_Clear(FLAG_PILLAR_ON_WEST_PLATFORM);
-  Sound_Play(SE_162);
+  Sound_Play(SE_WAVE);
   KandoreanTemple_StartLeftVent();
   i = 0;
   do {
@@ -2259,7 +2259,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
   GameFlag_Set(FLAG_ON_EAST_LIFT);
   GameFlag_Clear(FLAG_PILLAR_ON_EAST_PLATFORM);
   GameFlag_Set(FLAG_PILLAR_ON_WEST_PLATFORM);
-  Sound_Play(SE_162);
+  Sound_Play(SE_WAVE);
   KandoreanTemple_StartRightVent();
   i = 0;
   do {
@@ -2384,7 +2384,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Scene_QueueMusic(SE_162);                                                  \
+    Scene_QueueMusic(SE_WAVE);                                                 \
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
@@ -2490,7 +2490,7 @@ void KandoreanTemple_StartSteamRoom(void) {
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
 
   gKandoreanTemple_SteamCounter = 0;
-  Scene_QueueMusic(SE_170);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   map->wading = 1;
   FieldEffect_StartBlankOverlay(0);
 }
@@ -3396,7 +3396,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, KandoreanTempleLifts, 4),
     SCENE_EXIT(3, KandoreanTempleLifts, 5),
     SCENE_EXIT(4, KandoreanTempleLifts, 6),
-    SCENE_EXITS(KandoreanTemple5),
+    SCENE_EXITS(KandoreanTempleStream),
     SCENE_EXIT(1, KandoreanTempleGate, 3),
     SCENE_EXIT(2, KandoreanTempleGate, 4),
     SCENE_EXITS(KandoreanTempleSteam),
@@ -3410,8 +3410,8 @@ u32 gSceneExits[] = {
     SCENE_EXITS(KandoreanTempleGate),
     SCENE_EXIT(1, WorldMap, 4),
     SCENE_EXIT(2, KandoreanTemplePoi, 1),
-    SCENE_EXIT(3, KandoreanTemple5, 1),
-    SCENE_EXIT(4, KandoreanTemple5, 2),
+    SCENE_EXIT(3, KandoreanTempleStream, 1),
+    SCENE_EXIT(4, KandoreanTempleStream, 2),
     SCENE_EXITS(KandoreanTemplePoi),
     SCENE_EXIT(1, KandoreanTempleGate, 2),
     SCENE_EXIT(2, KandoreanTemplePoi, 4),

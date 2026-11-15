@@ -35,7 +35,7 @@ Tileset_MarsLighthouseAeriePalette:
 	.global Tileset_MarsLighthouseAerieTilesA
 Tileset_MarsLighthouseAerieTilesA:
 	.incbin "games/tla/src/graphics/tileset/mars_lighthouse_aerie/tiles_a.4bpp.mtf"
-	.byte 0x04, 0x07, 0x1a	@ PACKER: left in the buffer by Field_Prox4+0x23a5
+	.byte 0x04, 0x07, 0x1a	@ PACKER: left in the buffer by Field_ProxHouses+0x23a5
 	.global Tileset_MarsLighthouseAerieTilesB
 Tileset_MarsLighthouseAerieTilesB:
 	.incbin "games/tla/src/graphics/tileset/mars_lighthouse_aerie/tiles_b.4bpp.mtf"

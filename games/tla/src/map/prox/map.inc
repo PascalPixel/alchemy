@@ -24,7 +24,7 @@ Field_Prox:
 	.incbin "games/tla/src/map/prox/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Prox_ANIMATION:
-	.incbin "games/tla/src/map/prox_1/animation.script.lz"
+	.incbin "games/tla/src/map/prox_south_gate/animation.script.lz"
 	.balign 4, 0
 .LField_Prox_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

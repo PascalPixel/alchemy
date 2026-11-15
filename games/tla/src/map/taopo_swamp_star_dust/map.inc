@@ -24,7 +24,7 @@ Field_TaopoSwampStarDust:
 	.incbin "games/tla/src/map/taopo_swamp_star_dust/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_TaopoSwampStarDust_ANIMATION:
-	.incbin "games/tla/src/map/taopo_swamp_10/animation.script.lz"
+	.incbin "games/tla/src/map/taopo_swamp_tremor/animation.script.lz"
 	.balign 4, 0
 .LField_TaopoSwampStarDust_BLEND:
 	.incbin "games/tla/src/map/taopo_swamp_star_dust/blend.script.lz"

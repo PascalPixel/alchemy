@@ -24,7 +24,7 @@ Field_AirsRockInsideClarityCircletChest:
 	.incbin "games/tla/src/map/airs_rock_inside_clarity_circlet_chest/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AirsRockInsideClarityCircletChest_ANIMATION:
-	.incbin "games/tla/src/map/airs_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/airs_rock_inside_hall/animation.script.lz"
 	.balign 4, 0
 .LField_AirsRockInsideClarityCircletChest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

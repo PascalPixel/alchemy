@@ -1,12 +1,13 @@
 /// @file
 /// Beneath Jupiter Lighthouse, reached by the Cyclone teleporter in its
-/// grounds (SceneId_JupiterLighthouseBasement1). Cyclone clears three patches
-/// of bushes, the second hiding a Mad Plant
+/// grounds (SceneId_JupiterLighthouseBasementTeleporters). Cyclone clears three
+/// patches of bushes, the second hiding a Mad Plant
 /// (JupiterLighthouse_UncoverMadPlant); Hover on the purple tile crosses to the
 /// far teleporter, whose Cyclone takes the party up to the ground floor inside
 /// the main gates (JupiterLighthouse_TeleportToGroundFloor), and the near one
-/// back up to the grounds. Its side room (SceneId_JupiterLighthouseBasement2)
-/// is lit by sixteen sparks that rise and drift over its floor.
+/// back up to the grounds. Its side room
+/// (SceneId_JupiterLighthouseBasementPsynergyStone) is lit by sixteen sparks
+/// that rise and drift over its floor.
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -154,7 +155,8 @@ void JupiterLighthouse_TeleportToGroundFloor(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2)
+  if (gMainRoutineWork.next ==
+      (s32)&SceneId_JupiterLighthouseBasementPsynergyStone)
     return gJupiterLighthouseBasement_Room2Triggers;
   return gJupiterLighthouseBasement_Triggers;
 }
@@ -197,9 +199,9 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
   }
   Actor_SetAnimationSpeed(object, 16);
   TilesetAnim_ResumeAll();
-  if (object->blockMarked != 0) {
+  if (object->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)
-      object->blockMarked--;
+      object->riseEnabled--;
     return;
   }
   if (object->userValue == 0)
@@ -229,7 +231,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     object->speedLimit = (i << 12) + 0x8000;
     object->acceleration = (i << 12) + 0x8000;
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
-    object->blockMarked = i << 3;
+    object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -252,7 +254,8 @@ void JupiterLighthouse_SpawnSparks(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement1) {
+  if (gMainRoutineWork.next ==
+      (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 4)
@@ -261,7 +264,8 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance == 6)
       Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2) {
+  if (gMainRoutineWork.next ==
+      (s32)&SceneId_JupiterLighthouseBasementPsynergyStone) {
     REG_BLDALPHA = BLEND_ALPHA(8, 16);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     JupiterLighthouse_SpawnSparks();
@@ -283,7 +287,9 @@ extern s32 gPaletteCyclePausesInEvents;
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step_at.h"
 
@@ -296,7 +302,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -625,14 +631,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(JupiterLighthouseBasement1),
-    SCENE_EXIT(1, JupiterLighthouseBasement2, 1),
-    SCENE_EXIT(2, JupiterLighthouseBasement1, 3),
-    SCENE_EXIT(3, JupiterLighthouseBasement1, 2),
+    SCENE_EXITS(JupiterLighthouseBasementTeleporters),
+    SCENE_EXIT(1, JupiterLighthouseBasementPsynergyStone, 1),
+    SCENE_EXIT(2, JupiterLighthouseBasementTeleporters, 3),
+    SCENE_EXIT(3, JupiterLighthouseBasementTeleporters, 2),
     SCENE_EXIT(4, JupiterLighthouseEntrance, 4),
-    SCENE_EXIT(6, JupiterLighthouseRoom1, 6),
-    SCENE_EXITS(JupiterLighthouseBasement2),
-    SCENE_EXIT(1, JupiterLighthouseBasement1, 1),
+    SCENE_EXIT(6, JupiterLighthouseRoomGateButton, 6),
+    SCENE_EXITS(JupiterLighthouseBasementPsynergyStone),
+    SCENE_EXIT(1, JupiterLighthouseBasementTeleporters, 1),
     SCENE_EXITS_END,
 };
 

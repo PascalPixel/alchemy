@@ -9,8 +9,7 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
+#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
@@ -22,7 +21,7 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
   if (resourceIndex <= 0x5F) {
-    Resource_DecodeByteLzInRam((void *)resourceAddress, stagingBuffer);
+    Decompress_ByteLz((void *)resourceAddress, stagingBuffer);
     VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
@@ -77,7 +76,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   if (value <= 95) {
-    Resource_DecodeByteLzInRam((void *)((u32)base + base[index]), buffer);
+    Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);
     VramCache_Load(value, size, buffer);
@@ -100,7 +99,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   if (index != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, index, remap);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
-    entity->sprite.oam.palette256 = 1;
+    entity->sprite.oam.fullColor = 1;
     entity->sentinel = OAM_DEPTH_FRONT - 4;
   }
   return entity;
@@ -432,7 +431,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   s32 ret;
 
   *slot = target;
-  Resource_DecodeByteLzInRam(target, buffer);
+  Decompress_ByteLz(target, buffer);
   ret = VramCache_Reload(slotIndex, (s32)buffer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return ret;
@@ -454,7 +453,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                             sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
-  Resource_DecodeByteLzInRam(decoded->encoded, decoded);
+  Decompress_ByteLz(decoded->encoded, decoded);
   remapped = Heap_Alloc(0x400);
   src = decoded->input;
   dst = remapped;
@@ -528,5 +527,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 }
 
-#undef Resource_DecodeByteLzInRam
+#undef Decompress_ByteLz
 #undef Text_DrawStringAtOffset

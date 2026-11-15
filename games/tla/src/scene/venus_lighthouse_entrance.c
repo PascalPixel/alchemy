@@ -1362,7 +1362,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     } while (0);
     timer = &work->timer;
     if (work->timer == 10)
-      Sound_Play(SE_310);
+      Sound_Play(SE_FALL);
     if (*timer == 90) {
       work->stage++;
       work->timer = -1;
@@ -1449,7 +1449,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
     EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
     sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     state->frame = -1;
     i--;
@@ -1545,7 +1545,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
     EffectSprite_Init(sprite, 8, 8, 0x40000000, tileBase);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;

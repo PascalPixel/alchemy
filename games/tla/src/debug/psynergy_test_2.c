@@ -252,7 +252,7 @@ void PsynergyTest2_StartRocks(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;

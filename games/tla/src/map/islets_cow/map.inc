@@ -28,7 +28,7 @@ Field_IsletsCow:
 	.incbin "games/tla/src/map/islets_cow/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_IsletsCow_ANIMATION:
-	.incbin "games/tla/src/map/daila_1/animation.script.lz"
+	.incbin "games/tla/src/map/daila_flooded/animation.script.lz"
 	.balign 4, 0
 .LField_IsletsCow_SCENE:
 	.ifeq EDITION_INTERNATIONAL

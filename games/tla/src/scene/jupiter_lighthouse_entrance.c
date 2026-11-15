@@ -159,7 +159,9 @@ void MapGrid_CenterOnFollowedPoint(void);
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step_at.h"
 
@@ -174,7 +176,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -297,9 +299,9 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseEntrance),
     SCENE_EXIT(1, WorldMap, 55),
-    SCENE_EXIT(2, JupiterLighthouseRoom1, 2),
-    SCENE_EXIT(3, JupiterLighthouseRoom1, 3),
-    SCENE_EXIT(4, JupiterLighthouseBasement1, 4),
+    SCENE_EXIT(2, JupiterLighthouseRoomGateButton, 2),
+    SCENE_EXIT(3, JupiterLighthouseRoomGateButton, 3),
+    SCENE_EXIT(4, JupiterLighthouseBasementTeleporters, 4),
     SCENE_EXITS_END,
 };
 

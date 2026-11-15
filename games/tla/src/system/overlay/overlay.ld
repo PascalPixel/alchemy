@@ -431,16 +431,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_1.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_gate_button.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_1.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_gate_button.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_1.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_gate_button.o"(.bss)
     }
 }
 #elif OVERLAY == 0x69b
@@ -522,16 +522,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_cracked_floor.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_cracked_floor.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_6.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_cracked_floor.o"(.bss)
     }
 }
 #elif OVERLAY == 0x6a0

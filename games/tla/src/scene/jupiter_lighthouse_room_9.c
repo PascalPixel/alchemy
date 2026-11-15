@@ -238,7 +238,9 @@ extern s32 gPaletteCyclePausesInEvents;
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step.h"
 

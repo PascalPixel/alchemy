@@ -324,7 +324,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     s32 formationX = px(80);

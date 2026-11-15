@@ -374,15 +374,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAquaRockInside_SteamPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_AquariusStonePlacements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_4)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST)
     return gAquaRockInside_RustySwordChestPlacements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_5)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST)
     return gAquaRockInside_CrystalPowderChestPlacements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_6)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST)
     return gAquaRockInside_VialChestPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
     return gAquaRockInside_PsynergyStonePlacements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_8)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_TIGHTROPE)
     return gAquaRockInside_TightropePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_TearStonePlacements;
@@ -589,7 +589,7 @@ void AquaRockInside_UseAquariusStone(void) {
   AquaRockInside_ShowAquariusStone();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);
-  Event_PlaySound(SE_162);
+  Event_PlaySound(SE_WAVE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   MapGrid_SetShake(1, 2, 1);
@@ -784,7 +784,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   struct Vector3 target;
   s32 result;
 
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_5) {
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     s32 column = FIELD_CELL(Actor_Get(8)->x.fixed);
 
     if (trigger == 77 && column == 17)
@@ -792,7 +792,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
     if (trigger == 78 && column == 19)
       clear = 0;
   }
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_6) {
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
     if (trigger == 77 && FIELD_CELL(Actor_Get(10)->x.fixed) == 9)
       clear = 0;
     if (trigger == 78 && FIELD_CELL(Actor_Get(11)->x.fixed) == 13)
@@ -1178,7 +1178,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   first->acceleration = px(1) / 5;
   first->speedLimit = px(1) / 5;
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletRiseScript);
-  Sound_Play(SE_194);
+  Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(firstId, 256);
   REG_BLDALPHA = 0x1008;
@@ -1212,7 +1212,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   for (i = 0; i != 16; i++) {
     spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
                               second->z.fixed);
-    Sound_Play(SE_195);
+    Sound_Play(SE_SPARKS);
     spark->timer = (Random16() & 0x7fff) + 0x8000;
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
@@ -1418,15 +1418,15 @@ const u8 *Scene_GetTriggers(void) {
     return gAquaRockInside_SteamTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_AquariusStoneTriggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_4)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST)
     return gAquaRockInside_RustySwordChestTriggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_5)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST)
     return gAquaRockInside_CrystalPowderChestTriggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_6)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST)
     return gAquaRockInside_VialChestTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
     return gAquaRockInside_PsynergyStoneTriggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_8)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_TIGHTROPE)
     return gAquaRockInside_TightropeTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_TearStoneTriggers;
@@ -1511,7 +1511,7 @@ void AquaRockInside_UpdateVents(void) {
   case 0:
     AquaRockInside_SetVentActive(0, 1);
     AquaRockInside_SetVentActive(1, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 0x34bbf:
     AquaRockInside_SetVentActive(0, 0);
@@ -1574,7 +1574,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
     if (entrance == 7)
       Leader_RiseFromWater();
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_4) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST) {
     AquaRockInside_SetMoaiFace(10);
     Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI_A, 3);
     AquaRockInside_SetMoaiFace(11);
@@ -1599,19 +1599,19 @@ s32 Scene_Initialize(void) {
       object->groundHeight = -px(32);
       object->y.fixed = -px(32);
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_5) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     if ((u32)(entrance - 5) <= 1) {
       AquaRockInside_SetUpOutlets(gAquaRockInside_FirstOutletSpots,
                                   gAquaRockInside_FirstOutletLevels,
                                   AquaRockInside_UpdateVents);
-      Scene_QueueMusic(SE_170);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_6) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
     if (entrance == 5 || entrance == 7) {
       AquaRockInside_SetUpOutlets(gAquaRockInside_SecondOutletSpots,
                                   gAquaRockInside_SecondOutletLevels,
                                   AquaRockInside_UpdateVents);
-      Scene_QueueMusic(SE_170);
+      Scene_QueueMusic(SE_AMBIENT_WATER);
       AquaRockInside_FinishPushingRock(0, 10);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
@@ -1759,7 +1759,7 @@ s32 Scene_PrepareMap(void) {
     } else {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_4) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST) {
     FieldEffect_StartBlankOverlay(0);
     if ((u32)(entrance - 6) <= 1)
       goto statues;
@@ -1809,7 +1809,7 @@ s32 Scene_PrepareMap(void) {
     if (GameFlag_Get(0xa6a)) {
       AquaRockInside_ParchPool();
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_5) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     AquaRockInside_AddSpouts(33, 0, -2);
     AquaRockInside_AddSpouts(40, 0, 0);
     FieldEffect_StartBlankOverlay(0);
@@ -1819,7 +1819,7 @@ s32 Scene_PrepareMap(void) {
       for (i10 = 0; i10 <= 4; i10++)
         AquaRockInside_AdvanceStreams(33, 55);
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_6) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 1 || entrance == 13) {
       AquaRockInside_AddSpouts(33, 0, -2);
@@ -1851,7 +1851,7 @@ s32 Scene_PrepareMap(void) {
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE) {
     AquaRockInside_AddSpouts(33, 0, -2);
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_8) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_TIGHTROPE) {
     FieldEffect_StartBlankOverlay(0);
     AquaRockInside_AddSpouts(33, 0, -2);
     Tightrope_Initialize();
@@ -1968,7 +1968,7 @@ void AquaRockInside_FlowWithStream(void) {
     center = work->camera;
   }
   actor = Actor_Get(id);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && actor->groundHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI && actor->groundHeight == 0)
     return;
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
@@ -2714,7 +2714,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(AquaRockInsideWaterOfLifeChest),
-    SCENE_EXIT(1, AquaRockInside8, 1),
+    SCENE_EXIT(1, AquaRockInsideTightrope, 1),
     SCENE_EXIT(2, AquaRockInsideWaterOfLifeChest, 3),
     SCENE_EXIT(3, AquaRockInsideWaterOfLifeChest, 2),
     SCENE_EXIT(4, AquaRockInsideWaterOfLifeChest, 5),
@@ -2723,13 +2723,13 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(7, AquaRockInsideWaterOfLifeChest, 6),
     SCENE_EXIT(8, AquaRockInsideWaterOfLifeChest, 9),
     SCENE_EXIT(9, AquaRockInsideWaterOfLifeChest, 8),
-    SCENE_EXIT(10, AquaRockInside4, 2),
+    SCENE_EXIT(10, AquaRockInsideRustySwordChest, 2),
     SCENE_EXIT(11, AquaRockInsideAquariusStone, 1),
     SCENE_EXITS(AquaRockInsideSteam),
     SCENE_EXIT(1, AquaRockInsidePsynergyStone, 1),
     SCENE_EXIT(2, AquaRockInsideSteam, 3),
     SCENE_EXIT(3, AquaRockInsideSteam, 2),
-    SCENE_EXIT(4, AquaRockInside8, 5),
+    SCENE_EXIT(4, AquaRockInsideTightrope, 5),
     SCENE_EXIT(5, AquaRockInsideAquariusStone, 2),
     SCENE_EXIT(6, AquaRockInsideAquariusStone, 8),
     SCENE_EXIT(7, AquaRockInsideSteam, 8),
@@ -2739,62 +2739,62 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(1, AquaRockInsideWaterOfLifeChest, 11),
     SCENE_EXIT(2, AquaRockInsideSteam, 5),
     SCENE_EXIT(3, AquaRockInsideParchTablet, 1),
-    SCENE_EXIT(4, AquaRockInside4, 4),
-    SCENE_EXIT(5, AquaRockInside4, 5),
+    SCENE_EXIT(4, AquaRockInsideRustySwordChest, 4),
+    SCENE_EXIT(5, AquaRockInsideRustySwordChest, 5),
     SCENE_EXIT(6, AquaRockInsideSteam, 9),
     SCENE_EXIT(7, AquaRockInsidePsynergyStone, 4),
     SCENE_EXIT(8, AquaRockInsideSteam, 6),
-    SCENE_EXITS(AquaRockInside4),
-    SCENE_EXIT(1, AquaRock1, 4),
+    SCENE_EXITS(AquaRockInsideRustySwordChest),
+    SCENE_EXIT(1, AquaRockMoai, 4),
     SCENE_EXIT(2, AquaRockInsideWaterOfLifeChest, 10),
     SCENE_EXIT(3, AquaRockInsideTearStone, 2),
     SCENE_EXIT(4, AquaRockInsideAquariusStone, 4),
     SCENE_EXIT(5, AquaRockInsideAquariusStone, 5),
-    SCENE_EXIT(6, AquaRockInside5, 6),
-    SCENE_EXIT(7, AquaRockInside4, 8),
-    SCENE_EXIT(8, AquaRockInside4, 7),
-    SCENE_EXIT(9, AquaRockInside8, 4),
-    SCENE_EXITS(AquaRockInside5),
-    SCENE_EXIT(1, AquaRockInside6, 1),
-    SCENE_EXIT(2, AquaRockInside6, 2),
-    SCENE_EXIT(3, AquaRockInside6, 3),
-    SCENE_EXIT(4, AquaRockInside5, 5),
-    SCENE_EXIT(5, AquaRockInside5, 4),
-    SCENE_EXIT(6, AquaRockInside4, 6),
-    SCENE_EXIT(7, AquaRockInside6, 12),
-    SCENE_EXITS(AquaRockInside6),
-    SCENE_EXIT(1, AquaRockInside5, 1),
-    SCENE_EXIT(2, AquaRockInside5, 2),
-    SCENE_EXIT(3, AquaRockInside5, 3),
-    SCENE_EXIT(4, AquaRockInside6, 5),
-    SCENE_EXIT(5, AquaRockInside6, 4),
-    SCENE_EXIT(6, AquaRockInside6, 7),
-    SCENE_EXIT(7, AquaRockInside6, 6),
-    SCENE_EXIT(8, AquaRockInside6, 9),
-    SCENE_EXIT(9, AquaRockInside6, 8),
-    SCENE_EXIT(10, AquaRockInside6, 11),
-    SCENE_EXIT(11, AquaRockInside6, 10),
-    SCENE_EXIT(12, AquaRockInside5, 7),
+    SCENE_EXIT(6, AquaRockInsideCrystalPowderChest, 6),
+    SCENE_EXIT(7, AquaRockInsideRustySwordChest, 8),
+    SCENE_EXIT(8, AquaRockInsideRustySwordChest, 7),
+    SCENE_EXIT(9, AquaRockInsideTightrope, 4),
+    SCENE_EXITS(AquaRockInsideCrystalPowderChest),
+    SCENE_EXIT(1, AquaRockInsideVialChest, 1),
+    SCENE_EXIT(2, AquaRockInsideVialChest, 2),
+    SCENE_EXIT(3, AquaRockInsideVialChest, 3),
+    SCENE_EXIT(4, AquaRockInsideCrystalPowderChest, 5),
+    SCENE_EXIT(5, AquaRockInsideCrystalPowderChest, 4),
+    SCENE_EXIT(6, AquaRockInsideRustySwordChest, 6),
+    SCENE_EXIT(7, AquaRockInsideVialChest, 12),
+    SCENE_EXITS(AquaRockInsideVialChest),
+    SCENE_EXIT(1, AquaRockInsideCrystalPowderChest, 1),
+    SCENE_EXIT(2, AquaRockInsideCrystalPowderChest, 2),
+    SCENE_EXIT(3, AquaRockInsideCrystalPowderChest, 3),
+    SCENE_EXIT(4, AquaRockInsideVialChest, 5),
+    SCENE_EXIT(5, AquaRockInsideVialChest, 4),
+    SCENE_EXIT(6, AquaRockInsideVialChest, 7),
+    SCENE_EXIT(7, AquaRockInsideVialChest, 6),
+    SCENE_EXIT(8, AquaRockInsideVialChest, 9),
+    SCENE_EXIT(9, AquaRockInsideVialChest, 8),
+    SCENE_EXIT(10, AquaRockInsideVialChest, 11),
+    SCENE_EXIT(11, AquaRockInsideVialChest, 10),
+    SCENE_EXIT(12, AquaRockInsideCrystalPowderChest, 7),
     SCENE_EXIT(13, AquaRockMistSabreChest, 1),
     SCENE_EXITS(AquaRockInsidePsynergyStone),
     SCENE_EXIT(1, AquaRockInsideSteam, 1),
-    SCENE_EXIT(2, AquaRockInside8, 3),
-    SCENE_EXIT(3, AquaRockInside8, 2),
+    SCENE_EXIT(2, AquaRockInsideTightrope, 3),
+    SCENE_EXIT(3, AquaRockInsideTightrope, 2),
     SCENE_EXIT(4, AquaRockInsideAquariusStone, 7),
-    SCENE_EXITS(AquaRockInside8),
+    SCENE_EXITS(AquaRockInsideTightrope),
     SCENE_EXIT(1, AquaRockInsideWaterOfLifeChest, 1),
     SCENE_EXIT(2, AquaRockInsidePsynergyStone, 3),
     SCENE_EXIT(3, AquaRockInsidePsynergyStone, 2),
-    SCENE_EXIT(4, AquaRockInside4, 9),
+    SCENE_EXIT(4, AquaRockInsideRustySwordChest, 9),
     SCENE_EXIT(5, AquaRockInsideSteam, 4),
     SCENE_EXIT(6, AquaRockInsideTearStone, 4),
     SCENE_EXIT(7, AquaRockInsideTearStone, 3),
     SCENE_EXIT(8, AquaRockInsideTearStone, 1),
     SCENE_EXITS(AquaRockInsideTearStone),
-    SCENE_EXIT(1, AquaRockInside8, 8),
-    SCENE_EXIT(2, AquaRockInside4, 3),
-    SCENE_EXIT(3, AquaRockInside8, 7),
-    SCENE_EXIT(4, AquaRockInside8, 6),
+    SCENE_EXIT(1, AquaRockInsideTightrope, 8),
+    SCENE_EXIT(2, AquaRockInsideRustySwordChest, 3),
+    SCENE_EXIT(3, AquaRockInsideTightrope, 7),
+    SCENE_EXIT(4, AquaRockInsideTightrope, 6),
     SCENE_EXITS(AquaRockInsideParchTablet),
     SCENE_EXIT(1, AquaRockInsideAquariusStone, 3),
     SCENE_EXITS_END,

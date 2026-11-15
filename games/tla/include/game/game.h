@@ -50,8 +50,8 @@ enum FieldPsynergy {
   FIELD_PSYNERGY_BLAZE = 26,
   FIELD_PSYNERGY_GRIND = 27,
   /// The two abilities whose names are question marks.
-  FIELD_PSYNERGY_UNNAMED_28 = 28,
-  FIELD_PSYNERGY_UNNAMED_29 = 29,
+  FIELD_PSYNERGY_RING = 28,
+  FIELD_PSYNERGY_ARROW = 29,
   FIELD_PSYNERGY_TELEPORT = 30
 };
 

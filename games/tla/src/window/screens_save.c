@@ -345,18 +345,18 @@ s32 Save_ScanFileSummaries(void) {
 
     ret = Save_LoadFileSummaries();
     work = Ram_HeapSlots->saveWork;
-    gData_02003860 = 0;
-    gData_020036d8 = 0;
-    gData_02005350 = 0;
+    gAnyFileCleared = 0;
+    gTitleBattleOptionEnabled = 0;
+    gTitleUpdateOptionEnabled = 0;
     for (i = 0; i < 3; i++) {
       if (work->summary[i].sendFlag != 0) {
-        gData_02003860 = 1;
+        gAnyFileCleared = 1;
         cnt++;
       }
       if (work->summary[i].flagCount != 0)
-        gData_020036d8 = 1;
+        gTitleBattleOptionEnabled = 1;
       if (work->summary[i].level != 0 && work->summary[i].reunited == 0)
-        gData_02005350 = 1;
+        gTitleUpdateOptionEnabled = 1;
     }
   }
   Save_ReleaseWork();

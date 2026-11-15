@@ -1,7 +1,7 @@
 	.include "games/tla/include/edition.inc"
 	.section .rodata
-	.global gResource_Data012
-gResource_Data012:
+	.global gSprite_AnimationMetadata
+gSprite_AnimationMetadata:
 	.ifeq EDITION_INTERNATIONAL
 	.include "games/tla/src/graphics/sprite/sprites_ja.sprites"
 	.else

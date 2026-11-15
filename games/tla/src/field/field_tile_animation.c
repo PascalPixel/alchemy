@@ -97,7 +97,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   case 12: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
-    Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
+    Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
     {
@@ -110,10 +110,10 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     break;
   }
   case 11:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
     break;
   case 10:
-    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048),
+    Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048),
             REG_DMA3);
     break;
   case 9:
@@ -180,7 +180,7 @@ void WorldMap_StartStillPicture(void) {
   Task_SuspendAll(TilesetAnim_Update);
   perspective->viewHeld = one;
   resources = perspective->resources;
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   if (perspective->tileBufferUsed != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   perspective->tileBufferUsed = 0;
@@ -204,7 +204,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG2CNT);
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
-  Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
+  Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
           REG_DMA3);
 }
 
@@ -220,10 +220,10 @@ s32 WorldMap_LoadAreaGraphics(void) {
   buffer = Ram_MapCellBuffer;
   resources = perspective->resources;
   value = *(s16 *)BG_PLTT;
-  Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
+  Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);

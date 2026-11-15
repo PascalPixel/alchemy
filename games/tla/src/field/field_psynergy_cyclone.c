@@ -244,7 +244,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->scaleX = Q16_ONE * 3 / 2;
   canvas->scaleY = Q16_ONE * 3 / 2;
   EffectSprite_Init(&canvas->sprite, 32, 32, OBJ_SIZE_64X64, canvas->tile);
-  canvas->sprite.oam.palette256 = 1;
+  canvas->sprite.oam.fullColor = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;

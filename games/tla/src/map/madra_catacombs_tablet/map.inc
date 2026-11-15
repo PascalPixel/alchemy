@@ -38,7 +38,7 @@ Tileset_MadraCatacombsTabletPalette:
 	.global Tileset_MadraCatacombsTabletTilesA
 Tileset_MadraCatacombsTabletTilesA:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_tablet/tiles_a.4bpp.mtf"
-	.byte 0x04	@ PACKER: left in the buffer by Field_MadraInteriors2+0x25af
+	.byte 0x04	@ PACKER: left in the buffer by Field_MadraInteriorsCavernHomes+0x25af
 	.global Tileset_MadraCatacombsTabletTilesB
 Tileset_MadraCatacombsTabletTilesB:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_tablet/tiles_b.4bpp.mtf"

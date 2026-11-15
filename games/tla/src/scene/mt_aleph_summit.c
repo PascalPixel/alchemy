@@ -580,7 +580,7 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_SetMessageId((MsgGoldenSunEternalLifeAndPower + 4));
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
-    Event_PlaySound(MUS_722);
+    Event_PlaySound(MUS_ELEMENTAL_STARS);
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     Actor_SetAnimation(ACTOR_ALEX, 1);
     Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);

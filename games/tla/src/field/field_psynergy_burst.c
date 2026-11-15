@@ -358,7 +358,7 @@ void FieldPsynergy_Burst(void) {
       sprite = work->sparkSprites;
        i < 32;) {
     EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
@@ -388,7 +388,7 @@ void FieldPsynergy_Burst(void) {
     EffectSprite_Init(burstSprite, 8, 8, OBJ_SIZE_16X16, tile);
     burstSprite->depth = canvas->depth + 1;
     burstSprite->oam.priority = canvas->priority;
-    burstSprite->oam.palette256 = 0;
+    burstSprite->oam.fullColor = 0;
     burstSprite->oam.palette = 15;
     particle->timer = -1;
     burstSprite++;

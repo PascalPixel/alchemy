@@ -366,7 +366,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       }
 #endif
 #endif
-      if (work->textMode != 0 && channel->unk26 != 0)
+      if (work->textMode != 0 && channel->compressLines != 0)
         pixelY = (channel->y + 128) / 320 - 3;
       glyphWidth =
           Glyph_Draw(channel->work, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);

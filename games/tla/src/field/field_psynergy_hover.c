@@ -180,7 +180,7 @@ void FieldPsynergy_Hover(void) {
   work->scale = 0;
   sprite = &work->sprite;
   EffectSprite_Init(sprite, 15, 15, OBJ_SIZE_32X32, (s16)work->tile);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,
                                      player->z.fixed);

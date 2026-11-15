@@ -57,13 +57,13 @@ FarCall_WindowTable:
 	export SelectionMenu_RunFar, SelectionMenu_Run
 	export SelectionMenu_RunWithSoundsFar, SelectionMenu_RunWithSounds
 	export MenuArrow_NoOpCallbackBankFar, MenuArrow_NoOpCallbackBank
-	export MenuArrow_NoOpCallback1Far, MenuArrow_NoOpCallback1
+	export MenuArrow_NoOpCallback1Far, MenuArrow_NoOpCallbackA
 	export SelectionMenu_BuildEntriesFar, SelectionMenu_BuildEntries
 	export SelectionMenu_ReservedNoOpFar, SelectionMenu_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open
-	export MenuArrow_NoOpCallback4Far, MenuArrow_NoOpCallback4
+	export MenuArrow_NoOpCallback4Far, MenuArrow_NoOpCallbackD
 	export Portrait_GetForSpeakerFar, Portrait_GetForSpeaker
 	export FieldMenu_RunFar, FieldMenu_Run
 	export FileList_SelectActionFar, FileList_SelectAction

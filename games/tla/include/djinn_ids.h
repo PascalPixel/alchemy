@@ -38,6 +38,9 @@ enum DjinniId {
   DJINNI_GEODE,
   DJINNI_MOLD,
   DJINNI_CRYSTAL,
+  /// The spare the text names "Earth19", which Treasure Isle places (its fifth
+  /// room's placements).
+  DJINNI_EARTH19 = DJINNI_CRYSTAL + 2,
   DJINNI_FIZZ = DJINN_PER_ELEMENT,
   DJINNI_SLEET,
   DJINNI_MIST,
@@ -56,6 +59,9 @@ enum DjinniId {
   DJINNI_EDDY,
   DJINNI_BALM,
   DJINNI_SERAC,
+  /// The spare the text names "Water19", which Prox's houses place and
+  /// Prox_MercuryDjinniJoins gives.
+  DJINNI_WATER19 = DJINNI_SERAC + 2,
   DJINNI_FORGE = DJINN_PER_ELEMENT * 2,
   DJINNI_FEVER,
   DJINNI_CORONA,
@@ -76,7 +82,7 @@ enum DjinniId {
   DJINNI_FUGUE,
   /// The spare the text names "Fire19", which Magma Rock joins to the party
   /// (MagmaRockInside_MeetDjinni).
-  DJINNI_59 = DJINNI_FUGUE + 2,
+  DJINNI_FIRE19 = DJINNI_FUGUE + 2,
   DJINNI_GUST = DJINN_PER_ELEMENT * 3,
   DJINNI_BREEZE,
   DJINNI_ZEPHYR,
@@ -97,7 +103,7 @@ enum DjinniId {
   DJINNI_GALE,
   /// The spare the text names "Wind19", which the settlements join to the
   /// party (Settlements_MeetLostJupiterDjinni).
-  DJINNI_79 = DJINNI_GALE + 2,
+  DJINNI_WIND19 = DJINNI_GALE + 2,
 };
 
 #endif

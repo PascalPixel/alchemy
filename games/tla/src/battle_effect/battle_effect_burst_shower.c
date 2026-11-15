@@ -481,7 +481,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
         break;
       case BURST_SHOWER_MODE_AGING_GAS:
-        palette = Resource_GetTableEntry((s32)&ResourceId_EffectPalette01);
+        palette = Resource_GetTableEntry((s32)&ResourceId_GreyPaletteA);
         break;
       case BURST_SHOWER_MODE_FIRE_DANCE:
         palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);

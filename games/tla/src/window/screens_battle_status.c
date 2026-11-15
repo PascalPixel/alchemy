@@ -548,13 +548,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         u16 *entry = entries + rowBase + row;
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
-          SUMMARY_TEXT_COPY((s32)MsgKey0d4f, itemText, 32);
+          SUMMARY_TEXT_COPY((s32)MsgBattleItemUnavailable, itemText, 32);
         else
           SUMMARY_TEXT_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
                                 (s32)MsgItemPlainName,
                             itemText, SUMMARY_ITEM_HELP_CAPACITY);
       } else {
-        SUMMARY_TEXT_COPY((s32)MsgKey0d46, itemText, 32);
+        SUMMARY_TEXT_COPY((s32)MsgBattleNoItems, itemText, 32);
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
@@ -618,7 +618,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                 (s32)MsgAbilityDescription,
                             psynergyText, SUMMARY_PSYNERGY_TEXT_LENGTH);
         else
-          SUMMARY_TEXT_COPY((s32)MsgKey0d48, psynergyText,
+          SUMMARY_TEXT_COPY((s32)MsgBattleNoPsynergy, psynergyText,
                             SUMMARY_PSYNERGY_TEXT_LENGTH);
         WindowSprite_RedrawSavedRect(statusWindow);
         Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
@@ -1060,11 +1060,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
             MESSAGE_ARGUMENT_NUMBER);
-        Message_CopyExpanded((s32)MsgKey0d20, helpText,
+        Message_CopyExpanded((s32)MsgOwnerStatusNextLevel, helpText,
                              SUMMARY_HELP_TEXT_LENGTH);
       } else {
-        Message_CopyExpanded(cursor.helpEntry + (s32)MsgKey0d21, helpText,
-                             SUMMARY_HELP_TEXT_LENGTH);
+        Message_CopyExpanded(cursor.helpEntry + (s32)MsgOwnerStatusEntryHelp,
+                             helpText, SUMMARY_HELP_TEXT_LENGTH);
       }
       Text_DrawWideStringAtOffset(helpText, helpWindow, 0, 4);
       Heap_Release(helpText);

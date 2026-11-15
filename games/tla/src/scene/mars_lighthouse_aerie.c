@@ -377,7 +377,7 @@ s32 Scene_PrepareMap(void) {
       Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
+                      (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                   0x5000000);
   return 0;
 }
@@ -592,7 +592,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(40);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 504, 292);
-  Event_PlaySound(SE_162);
+  Event_PlaySound(SE_WAVE);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -633,7 +633,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
   FieldActor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_PlaySound(MUS_036);
+  Event_PlaySound(MUS_CONFRONTATION);
   // "Then search your heart, boy!"
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
@@ -1034,7 +1034,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(work->leaderActorId, FACING_WEST, 40);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Event_PlaySound(SE_572);
+  Event_PlaySound(SE_CRUMBLE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 7);
   FieldEvent_Wait(20);
@@ -1089,7 +1089,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(20);
   dispcnt = (u16 *)&REG_DISPCNT;
-  Event_PlaySound(MUS_039);
+  Event_PlaySound(MUS_ALEX);
   Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
                          (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
   *dispcnt = *dispcnt & 0xf9ff;
@@ -1308,15 +1308,15 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   mother->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
   father->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
   kyle->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
-  Event_PlaySound(SE_595);
+  Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(10);
-  Event_PlaySound(SE_595);
+  Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(10);
-  Event_PlaySound(SE_595);
+  Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(10);
-  Event_PlaySound(SE_595);
+  Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(10);
-  Event_PlaySound(SE_595);
+  Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(40);
   *(s32 *)&gMarsLighthouseAerie_FlickerRate = 3;
   System_Wait(30);
@@ -1374,7 +1374,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It wasn't just the dragon you killed..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Event_PlaySound(MUS_008);
+  Event_PlaySound(MUS_DOOM_DRAGON_REVEALED);
   Actor_SetAttachedEffect(ACTOR_GARET_STAND_IN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
@@ -2566,7 +2566,7 @@ L_0200c66c:
   i = (i + 1);
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
-  Event_PlaySound(MUS_063);
+  Event_PlaySound(MUS_BEACON_LIT);
   Actor_SetScript(ACTOR_BEAM_BOTTOM,
                   (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
@@ -3022,7 +3022,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(SE_598);
+      Event_PlaySound(SE_RISING_RINGS);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }
@@ -3450,7 +3450,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {                                                        
       SCENE_EXITS(MarsLighthouseAerie),       SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 1), SCENE_EXIT(2, MarsLighthouseAerie, 3),     
-      SCENE_EXIT(3, MercuryLighthouse, 2), SCENE_EXIT(4, Prox4, 20), SCENE_EXITS_END,           
+      SCENE_EXIT(3, MercuryLighthouse, 2), SCENE_EXIT(4, ProxHouses, 20), SCENE_EXITS_END,           
   };
 
 struct ActorPlacement gMarsLighthouseAerie_Placements[] = {

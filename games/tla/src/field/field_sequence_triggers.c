@@ -321,7 +321,7 @@ s32 Scene_TalkToActor(s32 id) {
           shown = TreasureSpot_GetActor(index);
           shown->update = ItemDisplay_EmitSparkles;
         } else {
-          shown = BattleEffect_StartRandomParticleEmitter(index, 0);
+          shown = ItemDisplay_ShowItemInFront(index, 0);
           wait(30);
           if (type == CONTAINER_CHEST)
             TreasureSpot_ShowOpened(index);
@@ -351,7 +351,7 @@ s32 Scene_TalkToActor(s32 id) {
         shown = TreasureSpot_GetActor(index);
         shown->update = ItemDisplay_EmitSparkles;
       } else {
-        shown = BattleEffect_StartRandomParticleEmitter(index, contents);
+        shown = ItemDisplay_ShowItemInFront(index, contents);
         wait(30);
       }
       slot = PartyInventory_AddFar(contents);

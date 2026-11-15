@@ -138,8 +138,8 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,
 // The stats page: Japanese makes its window a tile wider, draws the old values
 // a column further left, Defense and Agility in four places as HP, PP and
 // Attack (the other editions give those two three places from the next
-// column), and starts the prompt under them (MsgKey0d0d) 16 pixels further
-// right.
+// column), and starts the prompt under them (MsgBattleAdditionalPsynergyHelp)
+// 16 pixels further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STATS_WINDOW_WIDTH 21
 #define OLD_VALUE_X 4
@@ -252,7 +252,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     page = pages;
 
   if (page == 0) {
-    s32 label = (s32)MsgKey0d0e;
+    s32 label = (s32)MsgPreviewStatLabel;
 
     Text_DrawMessageAsTiles(label, window, 0, 8);
     Text_DrawMessageAsTiles(label + 1, window, 0, 16);
@@ -284,7 +284,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     Window_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
       Text_SetColor(TEXT_COLOR_RED);
-    Text_DrawMessageAsTiles((s32)MsgKey0d0d, window, PSYNERGY_PROMPT_X, 64);
+    Text_DrawMessageAsTiles((s32)MsgBattleAdditionalPsynergyHelp, window,
+                            PSYNERGY_PROMPT_X, 64);
     Text_SetColor(TEXT_COLOR_WHITE);
   }
 
@@ -327,17 +328,19 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     }
     if (gained != 0) {
       Text_SetColor(TEXT_COLOR_YELLOW);
-      Text_DrawMessageAsTiles((s32)MsgKey10d3, window, TOTAL_LABEL_X, 80);
+      Text_DrawMessageAsTiles((s32)MsgPsynergyGained, window, TOTAL_LABEL_X,
+                              80);
       summaryRows = 1;
     }
     if (lost != 0) {
       Text_SetColor(TEXT_COLOR_RED);
-      Text_DrawMessageAsTiles((s32)MsgKey10d4, window, TOTAL_LABEL_X,
+      Text_DrawMessageAsTiles((s32)MsgPsynergyLost, window, TOTAL_LABEL_X,
                               summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
-      Text_DrawMessageAsTiles((s32)MsgKey10d9, window, TOTAL_LABEL_X, 80);
+      Text_DrawMessageAsTiles((s32)MsgPsynergyUnchanged, window, TOTAL_LABEL_X,
+                              80);
     Text_SetColor(TEXT_COLOR_WHITE);
     Text_SetColor(TEXT_COLOR_WHITE);
     Window_DrawDividerLine(window, 0, 10, 19, 10);

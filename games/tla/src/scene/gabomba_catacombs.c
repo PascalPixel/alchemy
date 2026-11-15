@@ -491,7 +491,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return (const struct ActorPlacement *)
         gGabombaCatacombs_TomegathericonActorPlacements;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM)
     return (
         const struct ActorPlacement *)gGabombaCatacombs_StreamActorPlacements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
@@ -506,7 +506,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGabombaCatacombs_HiddenWallTriggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return gGabombaCatacombs_TomegathericonTriggers;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM)
     return gGabombaCatacombs_StreamTriggers;
   return gGabombaCatacombs_Triggers;
 }
@@ -517,7 +517,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 #define CATACOMBS_SCREEN_EFFECT 516
 #endif
 
-extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamber1;
+extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamberIdol;
 void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -532,7 +532,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
-      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_1;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
@@ -556,7 +556,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM &&
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
@@ -609,10 +609,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, GabombaCatacombsHiddenWall, 1),
     SCENE_EXITS(GabombaCatacombsHiddenWall),
     SCENE_EXIT(1, GabombaCatacombsMud, 2),
-    SCENE_EXIT(2, GabombaCatacombs5, 1),
+    SCENE_EXIT(2, GabombaCatacombsStream, 1),
     SCENE_EXITS(GabombaCatacombsTomegathericon),
-    SCENE_EXIT(1, GabombaCatacombs5, 2),
-    SCENE_EXITS(GabombaCatacombs5),
+    SCENE_EXIT(1, GabombaCatacombsStream, 2),
+    SCENE_EXITS(GabombaCatacombsStream),
     SCENE_EXIT(1, GabombaCatacombsHiddenWall, 2),
     SCENE_EXIT(2, GabombaCatacombsTomegathericon, 1),
     SCENE_EXITS_END,

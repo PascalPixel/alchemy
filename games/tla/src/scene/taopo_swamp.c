@@ -45,13 +45,13 @@ enum TaopoSwampMudActorId {
 /// in its own room (SceneId_TaopoSwampFlower).
 #define ACTOR_FLOWER ACTOR_FIRST_PLACED
 
-/// The vents room's pillars Move pushes over a vent (SceneId_TaopoSwamp5).
+/// The vents room's pillars Move pushes over a vent (SceneId_TaopoSwampVents).
 enum TaopoSwampVentsActorId {
   ACTOR_WEST_VENT_PILLAR = ACTOR_FLOWER + 1,
   ACTOR_EAST_VENT_PILLAR
 };
 
-/// The pillar gap's actors (SceneId_TaopoSwamp7).
+/// The pillar gap's actors (SceneId_TaopoSwampPillarGap).
 enum TaopoSwampPillarGapActorId {
   /// The round spot over a vent that Douse fills and Frost freezes
   /// (SPRITE_PUDDLE).
@@ -60,18 +60,18 @@ enum TaopoSwampPillarGapActorId {
   ACTOR_GAP_PILLAR
 };
 
-/// The drips room's puddle under the drops (SceneId_TaopoSwamp8,
+/// The drips room's puddle under the drops (SceneId_TaopoSwampDrips,
 /// SPRITE_PUDDLE).
 #define ACTOR_DRIP_PUDDLE (ACTOR_FIRST_PLACED + 2)
 
-/// The lava rocks' room's two rocks (SceneId_TaopoSwamp9): by the chest and by
-/// the exit.
+/// The lava rocks' room's two rocks (SceneId_TaopoSwampLavaRocks): by the chest
+/// and by the exit.
 enum TaopoSwampLavaRocksActorId {
   ACTOR_CHEST_ROCK = ACTOR_FIRST_PLACED,
   ACTOR_EXIT_ROCK
 };
 
-/// The Tremor room's actors (SceneId_TaopoSwamp10).
+/// The Tremor room's actors (SceneId_TaopoSwampTremor).
 enum TaopoSwampTremorActorId {
   ACTOR_TREMOR_LAVA_ROCK = ACTOR_FIRST_PLACED + 1,
   ACTOR_TREMOR_PILLAR_ROCK,
@@ -276,15 +276,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gTaopoSwampMudActorPlacements;
   if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return gTaopoSwampFlowerActorPlacements;
-  if (scene == SCENE_TAOPO_SWAMP_5)
+  if (scene == SCENE_TAOPO_SWAMP_VENTS)
     return gTaopoSwampVentsActorPlacements;
-  if (scene == SCENE_TAOPO_SWAMP_7)
+  if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP)
     return gTaopoSwampPillarGapActorPlacements;
-  if (scene == SCENE_TAOPO_SWAMP_8)
+  if (scene == SCENE_TAOPO_SWAMP_DRIPS)
     return gTaopoSwampDripsActorPlacements;
-  if (scene == SCENE_TAOPO_SWAMP_9)
+  if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS)
     return gTaopoSwampLavaRocksActorPlacements;
-  if (scene == SCENE_TAOPO_SWAMP_10)
+  if (scene == SCENE_TAOPO_SWAMP_TREMOR)
     return gTaopoSwampTremorActorPlacements;
   if (scene == SCENE_TAOPO_SWAMP_STAR_DUST)
     return gTaopoSwampStarDustActorPlacements;
@@ -444,7 +444,7 @@ void TaopoSwamp_StartMadPlantBattle(void) {
 void TaopoSwamp_FallThroughHole(s32 a) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   TaopoSwamp_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x1000);
-  Event_PlaySound(SE_310);
+  Event_PlaySound(SE_FALL);
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(a);
 }
@@ -479,14 +479,14 @@ void TaopoSwamp_StepOnVent(s32 hole) {
   struct Vector3 position;
   s32 found, result, slip;
 
-  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_5) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_VENTS) {
     found = Vent_IsActive(gTaopoSwampVentsHoleVents[hole - 10]);
     if (hole == 12 && Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT))
       return;
     if (hole == 18 && Event_GetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT))
       return;
   }
-  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_7) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     u8 *table = gTaopoSwampPillarGapHoleVents + 1;
     s32 at = hole - 10;
     found = Vent_IsActive(table[at]);
@@ -495,12 +495,12 @@ void TaopoSwamp_StepOnVent(s32 hole) {
     if (hole == 12 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_8) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_DRIPS) {
     found = Vent_IsActive(hole - 10);
     if (hole == 10 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_9)
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_LAVA_ROCKS)
     found = Vent_IsActive(hole - 10);
   if (found == 0)
     return;
@@ -563,7 +563,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
     Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
     speed += 0x4000;
   } while (--i >= 0);
-  Event_PlaySound(SE_310);
+  Event_PlaySound(SE_FALL);
   object->velocityY = px(4);
   Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
   FieldEvent_Wait(60);
@@ -982,7 +982,7 @@ extern struct Trigger gTaopoSwampStarDustTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_TAOPO_SWAMP_1)
+  if (scene == SCENE_TAOPO_SWAMP_ENTRANCE)
     return (const struct Trigger *)gTaopoSwampEntranceTriggers;
   if (scene == SCENE_TAOPO_SWAMP_MUD)
     return (const struct Trigger *)gTaopoSwampMudTriggers;
@@ -990,17 +990,17 @@ const struct Trigger *Scene_GetTriggers(void) {
     return (const struct Trigger *)gTaopoSwampTearStonesTriggers;
   if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return (const struct Trigger *)gTaopoSwampFlowerTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_5)
+  if (scene == SCENE_TAOPO_SWAMP_VENTS)
     return (const struct Trigger *)gTaopoSwampVentsTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_6)
+  if (scene == SCENE_TAOPO_SWAMP_POOL)
     return (const struct Trigger *)gTaopoSwampPoolTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_7)
+  if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP)
     return (const struct Trigger *)gTaopoSwampPillarGapTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_8)
+  if (scene == SCENE_TAOPO_SWAMP_DRIPS)
     return (const struct Trigger *)gTaopoSwampDripsTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_9)
+  if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS)
     return (const struct Trigger *)gTaopoSwampLavaRocksTriggers;
-  if (scene == SCENE_TAOPO_SWAMP_10)
+  if (scene == SCENE_TAOPO_SWAMP_TREMOR)
     return (const struct Trigger *)gTaopoSwampTremorTriggers;
   if (scene == SCENE_TAOPO_SWAMP_STAR_DUST)
     return (const struct Trigger *)gTaopoSwampStarDustTriggers;
@@ -1062,7 +1062,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(1, 1);
     Vent_SetActive(4, 1);
     Vent_SetActive(5, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 180:
     Vent_SetActive(0, 0);
@@ -1078,7 +1078,7 @@ void TaopoSwamp_CycleDjinniVents(void) {
     Vent_SetActive(7, 1);
     Vent_SetActive(8, 1);
     Vent_SetActive(9, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 420:
     Vent_SetActive(2, 0);
@@ -1106,7 +1106,7 @@ void TaopoSwamp_CycleSpotVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 120:
     Vent_SetActive(0, 0);
@@ -1131,7 +1131,7 @@ void TaopoSwamp_CycleDripVent(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 120:
     Vent_SetActive(0, 0);
@@ -1155,7 +1155,7 @@ void TaopoSwamp_CycleRockRoomVents(void) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
-    Scene_QueueMusic(SE_170);
+    Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
   case 180:
     Vent_SetActive(0, 0);
@@ -1281,7 +1281,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 513;
   if (scene == SCENE_TAOPO_SWAMP_MUD) {
-    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
+    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_ENTRANCE;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
     for (id = ACTOR_FIRST_BUSH; id <= ACTOR_LAST_BUSH; id++) {
@@ -1312,7 +1312,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
-  } else if (scene == SCENE_TAOPO_SWAMP_5) {
+  } else if (scene == SCENE_TAOPO_SWAMP_VENTS) {
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
@@ -1322,7 +1322,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_EAST_VENT_PILLAR, 472, 248);
     TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsVentPair,
                           TaopoSwamp_CycleDjinniVents);
-  } else if (scene == SCENE_TAOPO_SWAMP_7) {
+  } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_VBLANK);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
@@ -1349,7 +1349,7 @@ s32 Scene_Initialize(void) {
       piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_8) {
+  } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
       Rope_Initialize();
@@ -1373,7 +1373,7 @@ s32 Scene_Initialize(void) {
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_9) {
+  } else if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS) {
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
     if (!Event_GetFlag(FLAG_AREA_TEMP_38)) {
@@ -1395,7 +1395,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_EXIT_ROCK)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(30, 13, 1, 1, 31, 11);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_10) {
+  } else if (scene == SCENE_TAOPO_SWAMP_TREMOR) {
     piece = Actor_GetById(ACTOR_TREMOR_BOULDER);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
       Actor_SetPosition(ACTOR_TREMOR_BOULDER, 480, 248);
@@ -1473,7 +1473,7 @@ s32 Scene_Initialize(void) {
 
   *effect = 0;
   if (scene == SCENE_TAOPO_SWAMP_MUD) {
-    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
+    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_ENTRANCE;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
     for (id = ACTOR_FIRST_BUSH; id <= ACTOR_LAST_BUSH; id++) {
@@ -1506,7 +1506,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
-  } else if (scene == SCENE_TAOPO_SWAMP_5) {
+  } else if (scene == SCENE_TAOPO_SWAMP_VENTS) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
@@ -1517,9 +1517,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_EAST_VENT_PILLAR, 472, 248);
     TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsVentPair,
                           TaopoSwamp_CycleDjinniVents);
-  } else if (scene == SCENE_TAOPO_SWAMP_6) {
+  } else if (scene == SCENE_TAOPO_SWAMP_POOL) {
     *effect = 516;
-  } else if (scene == SCENE_TAOPO_SWAMP_7) {
+  } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_VBLANK);
@@ -1547,7 +1547,7 @@ s32 Scene_Initialize(void) {
       piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_8) {
+  } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
     *effect = 516;
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
@@ -1572,7 +1572,7 @@ s32 Scene_Initialize(void) {
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_9) {
+  } else if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS) {
     *effect = 516;
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
@@ -1595,7 +1595,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_EXIT_ROCK)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(30, 13, 1, 1, 31, 11);
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_10) {
+  } else if (scene == SCENE_TAOPO_SWAMP_TREMOR) {
     *effect = 516;
     piece = Actor_GetById(ACTOR_TREMOR_BOULDER);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
@@ -2096,27 +2096,27 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(TaopoSwamp1),
+    SCENE_EXITS(TaopoSwampEntrance),
     SCENE_EXIT(1, WorldMap, 35),
     SCENE_EXIT(2, TaopoSwampMud, 1),
     SCENE_EXIT(3, TaopoSwampMud, 2),
     SCENE_EXITS(TaopoSwampMud),
-    SCENE_EXIT(1, TaopoSwamp1, 2),
-    SCENE_EXIT(2, TaopoSwamp1, 3),
+    SCENE_EXIT(1, TaopoSwampEntrance, 2),
+    SCENE_EXIT(2, TaopoSwampEntrance, 3),
     SCENE_EXIT(3, TaopoSwampTearStones, 3),
-    SCENE_EXIT(4, TaopoSwamp6, 4),
+    SCENE_EXIT(4, TaopoSwampPool, 4),
     SCENE_EXIT(5, TaopoSwampTearStones, 5),
     SCENE_EXITS(TaopoSwampTearStones),
     SCENE_EXIT(3, TaopoSwampMud, 3),
     SCENE_EXIT(5, TaopoSwampMud, 5),
-    SCENE_EXIT(6, TaopoSwamp5, 2),
-    SCENE_EXIT(7, TaopoSwamp5, 3),
+    SCENE_EXIT(6, TaopoSwampVents, 2),
+    SCENE_EXIT(7, TaopoSwampVents, 3),
     SCENE_EXIT(8, TaopoSwampTearStones, 9),
     SCENE_EXIT(9, TaopoSwampTearStones, 8),
     SCENE_EXITS(TaopoSwampFlower),
-    SCENE_EXIT(1, TaopoSwamp5, 1),
-    SCENE_EXIT(2, TaopoSwamp5, 4),
-    SCENE_EXITS(TaopoSwamp5),
+    SCENE_EXIT(1, TaopoSwampVents, 1),
+    SCENE_EXIT(2, TaopoSwampVents, 4),
+    SCENE_EXITS(TaopoSwampVents),
     SCENE_EXIT(1, TaopoSwampFlower, 1),
     SCENE_EXIT(2, TaopoSwampTearStones, 6),
     SCENE_EXIT(3, TaopoSwampTearStones, 7),
@@ -2128,33 +2128,33 @@ u32 gSceneExits[] = {
     SCENE_EXIT(14, TaopoSwampFlower, 14),
     SCENE_EXIT(15, TaopoSwampFlower, 15),
     SCENE_EXIT(16, TaopoSwampFlower, 16),
-    SCENE_EXITS(TaopoSwamp6),
-    SCENE_EXIT(1, TaopoSwamp7, 1),
+    SCENE_EXITS(TaopoSwampPool),
+    SCENE_EXIT(1, TaopoSwampPillarGap, 1),
     SCENE_EXIT(4, TaopoSwampMud, 4),
-    SCENE_EXITS(TaopoSwamp7),
-    SCENE_EXIT(1, TaopoSwamp6, 1),
-    SCENE_EXIT(2, TaopoSwamp8, 2),
-    SCENE_EXIT(3, TaopoSwamp8, 3),
-    SCENE_EXIT(4, TaopoSwamp7, 5),
-    SCENE_EXIT(5, TaopoSwamp7, 4),
-    SCENE_EXIT(10, TaopoSwamp8, 9),
-    SCENE_EXIT(12, TaopoSwamp8, 9),
-    SCENE_EXITS(TaopoSwamp8),
-    SCENE_EXIT(1, TaopoSwamp10, 1),
-    SCENE_EXIT(2, TaopoSwamp7, 2),
-    SCENE_EXIT(3, TaopoSwamp7, 3),
-    SCENE_EXIT(4, TaopoSwamp8, 5),
-    SCENE_EXIT(5, TaopoSwamp8, 4),
-    SCENE_EXITS(TaopoSwamp10),
-    SCENE_EXIT(1, TaopoSwamp8, 1),
+    SCENE_EXITS(TaopoSwampPillarGap),
+    SCENE_EXIT(1, TaopoSwampPool, 1),
+    SCENE_EXIT(2, TaopoSwampDrips, 2),
+    SCENE_EXIT(3, TaopoSwampDrips, 3),
+    SCENE_EXIT(4, TaopoSwampPillarGap, 5),
+    SCENE_EXIT(5, TaopoSwampPillarGap, 4),
+    SCENE_EXIT(10, TaopoSwampDrips, 9),
+    SCENE_EXIT(12, TaopoSwampDrips, 9),
+    SCENE_EXITS(TaopoSwampDrips),
+    SCENE_EXIT(1, TaopoSwampTremor, 1),
+    SCENE_EXIT(2, TaopoSwampPillarGap, 2),
+    SCENE_EXIT(3, TaopoSwampPillarGap, 3),
+    SCENE_EXIT(4, TaopoSwampDrips, 5),
+    SCENE_EXIT(5, TaopoSwampDrips, 4),
+    SCENE_EXITS(TaopoSwampTremor),
+    SCENE_EXIT(1, TaopoSwampDrips, 1),
     SCENE_EXIT(2, TaopoSwampStarDust, 2),
-    SCENE_EXIT(3, TaopoSwamp9, 3),
-    SCENE_EXIT(4, TaopoSwamp9, 4),
-    SCENE_EXITS(TaopoSwamp9),
-    SCENE_EXIT(3, TaopoSwamp10, 3),
-    SCENE_EXIT(4, TaopoSwamp10, 4),
+    SCENE_EXIT(3, TaopoSwampLavaRocks, 3),
+    SCENE_EXIT(4, TaopoSwampLavaRocks, 4),
+    SCENE_EXITS(TaopoSwampLavaRocks),
+    SCENE_EXIT(3, TaopoSwampTremor, 3),
+    SCENE_EXIT(4, TaopoSwampTremor, 4),
     SCENE_EXITS(TaopoSwampStarDust),
-    SCENE_EXIT(2, TaopoSwamp10, 2),
+    SCENE_EXIT(2, TaopoSwampTremor, 2),
     SCENE_EXIT(3, TaopoSwampStarDust, 4),
     SCENE_EXIT(4, TaopoSwampStarDust, 3),
     SCENE_EXIT(5, TaopoSwampStarDust, 6),

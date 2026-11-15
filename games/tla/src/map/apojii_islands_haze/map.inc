@@ -37,7 +37,7 @@ Tileset_ApojiiIslandsHazePalette:
 	.global Tileset_ApojiiIslandsHazeTilesA
 Tileset_ApojiiIslandsHazeTilesA:
 	.incbin "games/tla/src/graphics/tileset/apojii_islands_haze/tiles_a.4bpp.mtf"
-	.byte 0x0d, 0x09	@ PACKER: left in the buffer by Field_ApojiiIslands1+0x1e3a
+	.byte 0x0d, 0x09	@ PACKER: left in the buffer by Field_ApojiiIslands+0x1e3a
 	.global Tileset_ApojiiIslandsHazeTilesB
 Tileset_ApojiiIslandsHazeTilesB:
 	.incbin "games/tla/src/graphics/tileset/apojii_islands_haze/tiles_b.4bpp.mtf"

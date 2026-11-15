@@ -27,7 +27,7 @@ Field_ChampaCliffCavesObaba:
 	.incbin "games/tla/src/map/champa_cliff_caves_obaba/animation.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesObaba_BLEND:
-	.incbin "games/tla/src/map/garoh_4/blend.script.lz"
+	.incbin "games/tla/src/map/garoh_tunnels/blend.script.lz"
 	.balign 4, 0
 .LField_ChampaCliffCavesObaba_SCENE:
 	.incbin "games/tla/src/map/champa_cliff_caves_obaba/scene.scene.lz"

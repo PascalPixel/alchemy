@@ -159,7 +159,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       }
       if (frame == 48) {
-        Sound_PlayFar(SE_139);
+        Sound_PlayFar(SE_DJINNI_SET);
       }
       if (frame == 136) {
         Sound_PlayFar(SE_SPIN);
@@ -810,7 +810,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       else
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC), 128);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
     }
@@ -1316,7 +1316,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
@@ -1329,7 +1329,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
                           DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
@@ -1337,7 +1337,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
                           DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = 0;
   wait(1);
@@ -1350,7 +1350,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 
   offset = 0;
   for (row = 0; row != CANVAS_TILES; row++) {
@@ -1393,7 +1393,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(1, battle->background, 128);
@@ -1403,14 +1403,14 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   REG_BG2CNT =
       bgControl | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = 0;
   wait(1);
@@ -1423,7 +1423,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
 
   // The canvas map: 16 rows of 8 character pairs.
@@ -1518,7 +1518,7 @@ void BattleEffect_EndCanvasLayer(void) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
                           DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   REG_BLDCNT = 0;
   wait(1);
 
@@ -1533,7 +1533,7 @@ void BattleEffect_EndCanvasLayer(void) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG2_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
                           DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
 }
 
@@ -1555,7 +1555,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                           BGCNT_PRIORITY(3),
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
 }
 

@@ -93,41 +93,41 @@ enum AbilityTarget {
 /// effects no code here reads.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
-  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
-  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
-  ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
-  ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
-  ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
-  ABILITY_EFFECT_ATTACK_UP_2 = 6,        ///< Impact: two stages
-  ABILITY_EFFECT_ATTACK_UP = 7,          ///< High Impact: one stage
-  ABILITY_EFFECT_ATTACK_DOWN_2 = 8,      ///< Dull
-  ABILITY_EFFECT_ATTACK_DOWN = 9,        ///< Blunt
-  ABILITY_EFFECT_DEFENSE_UP_2 = 10,      ///< Guard
-  ABILITY_EFFECT_DEFENSE_UP = 11,        ///< Protect
-  ABILITY_EFFECT_DEFENSE_DOWN_2 = 12,    ///< Impair
-  ABILITY_EFFECT_DEFENSE_DOWN = 13,      ///< Debilitate
-  ABILITY_EFFECT_RESISTANCE_UP_2 = 14,   ///< Ward
-  ABILITY_EFFECT_RESISTANCE_UP = 15,     ///< Resist
-  ABILITY_EFFECT_RESISTANCE_DOWN_2 = 16, ///< Weaken
-  ABILITY_EFFECT_RESISTANCE_DOWN = 17,   ///< Enfeeble
-  ABILITY_EFFECT_POISON = 18,            ///< Taint
-  ABILITY_EFFECT_DEADLY_POISON = 19,     ///< Poison
-  ABILITY_EFFECT_DELUSION = 20,          ///< Delude
-  ABILITY_EFFECT_CONFUSION = 21,         ///< Confuse
-  ABILITY_EFFECT_CHARM = 22,             ///< Charm
-  ABILITY_EFFECT_STUN = 23,              ///< Paralyze
-  ABILITY_EFFECT_SLEEP = 24,             ///< Sleep
-  ABILITY_EFFECT_SEAL = 25,              ///< Bind: Psynergy sealed
-  ABILITY_EFFECT_HAUNT = 26,             ///< Haunt
-  ABILITY_EFFECT_INSTANT_DEATH = 27,     ///< Condemn
-  ABILITY_EFFECT_CURSE = 28,             ///< Curse: the Grim Reaper's countdown
-  ABILITY_EFFECT_REGENERATE = 29,        ///< Regenerate
-  ABILITY_EFFECT_REFLECT = 30,           ///< Reflect
-  ABILITY_EFFECT_DRAIN_HP = 31,          ///< Drain
-  ABILITY_EFFECT_DRAIN_PP = 32,          ///< Psy Drain
-  ABILITY_EFFECT_BREAK = 33,             ///< Break: raised stats undone
-  ABILITY_EFFECT_LEAVE_ONE_HP = 34,      ///< Severe Blow, Thrash
-  ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
+  ABILITY_EFFECT_RESTORE_HP = 1,          ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,          ///< restores PP (the item menu's use)
+  ABILITY_EFFECT_CURE_POISON = 3,         ///< Cure Poison, Antidote
+  ABILITY_EFFECT_RESTORE = 4,             ///< Restore, Elixir
+  ABILITY_EFFECT_REVIVE = 5,              ///< Revive, Water of Life: full HP
+  ABILITY_EFFECT_ATTACK_UP_SHARPLY = 6,   ///< Impact: two stages
+  ABILITY_EFFECT_ATTACK_UP = 7,           ///< High Impact: one stage
+  ABILITY_EFFECT_ATTACK_DOWN_SHARPLY = 8, ///< Dull
+  ABILITY_EFFECT_ATTACK_DOWN = 9,         ///< Blunt
+  ABILITY_EFFECT_DEFENSE_UP_SHARPLY = 10, ///< Guard
+  ABILITY_EFFECT_DEFENSE_UP = 11,         ///< Protect
+  ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY = 12,    ///< Impair
+  ABILITY_EFFECT_DEFENSE_DOWN = 13,            ///< Debilitate
+  ABILITY_EFFECT_RESISTANCE_UP_SHARPLY = 14,   ///< Ward
+  ABILITY_EFFECT_RESISTANCE_UP = 15,           ///< Resist
+  ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY = 16, ///< Weaken
+  ABILITY_EFFECT_RESISTANCE_DOWN = 17,         ///< Enfeeble
+  ABILITY_EFFECT_POISON = 18,                  ///< Taint
+  ABILITY_EFFECT_VENOM = 19,                   ///< Poison
+  ABILITY_EFFECT_DELUSION = 20,                ///< Delude
+  ABILITY_EFFECT_CONFUSION = 21,               ///< Confuse
+  ABILITY_EFFECT_CHARM = 22,                   ///< Charm
+  ABILITY_EFFECT_STUN = 23,                    ///< Paralyze
+  ABILITY_EFFECT_SLEEP = 24,                   ///< Sleep
+  ABILITY_EFFECT_SEAL = 25,                    ///< Bind: Psynergy sealed
+  ABILITY_EFFECT_HAUNT = 26,                   ///< Haunt
+  ABILITY_EFFECT_INSTANT_DEATH = 27,           ///< Condemn
+  ABILITY_EFFECT_CURSE = 28,         ///< Curse: the Grim Reaper's countdown
+  ABILITY_EFFECT_REGENERATE = 29,    ///< Regenerate
+  ABILITY_EFFECT_REFLECT = 30,       ///< Reflect
+  ABILITY_EFFECT_DRAIN_HP = 31,      ///< Drain
+  ABILITY_EFFECT_DRAIN_PP = 32,      ///< Psy Drain
+  ABILITY_EFFECT_BREAK = 33,         ///< Break: raised stats undone
+  ABILITY_EFFECT_LEAVE_ONE_HP = 34,  ///< Severe Blow, Thrash
+  ABILITY_EFFECT_HALVE_DEFENSE = 35, ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
   /// BattleCommand_BuildPlan.
   ABILITY_EFFECT_CRITICAL_A = 36,
@@ -137,9 +137,9 @@ enum AbilityEffect {
   ABILITY_EFFECT_CRITICAL_E = 40,
   /// A chance of a double or triple blow, rolled by BattleCommand_BuildPlan.
   ABILITY_EFFECT_DOUBLE_BLOW_RARE = 41,
-  ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 = 42, ///< Double Fang, Twin Beaks
+  ABILITY_EFFECT_DOUBLE_BLOW = 42, ///< Double Fang, Twin Beaks
   ABILITY_EFFECT_TRIPLE_BLOW_RARE = 43,
-  ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 = 44, ///< Swift Strike
+  ABILITY_EFFECT_TRIPLE_BLOW = 44,        ///< Swift Strike
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
@@ -152,39 +152,39 @@ enum AbilityEffect {
   ABILITY_EFFECT_CHALLENGE = 54,          ///< no ability has it
   ABILITY_EFFECT_SELF_DESTRUCT = 55,      ///< Dynamite, Mortal Blow
   ABILITY_EFFECT_REVIVE_HALF = 56,        ///< Quartz
-  ABILITY_EFFECT_REVIVE_80 = 57,          ///< Dew: 80% of max HP
+  ABILITY_EFFECT_DEW = 57,                ///< Dew: 80% of max HP
   ABILITY_EFFECT_AGILITY_DOWN = 58,       ///< Vine
   ABILITY_EFFECT_AGILITY_UP = 59,         ///< Zephyr
   ABILITY_EFFECT_DRAIN_HALF_HP = 60,      ///< Sap
-  ABILITY_EFFECT_HEAL_HP_60 = 61,         ///< Fizz: 60% of max HP
-  ABILITY_EFFECT_HEAL_HP_30 = 62,         ///< Spritz: 30%
-  ABILITY_EFFECT_HEAL_PP_7 = 63,          ///< Ember: 7% of max PP
+  ABILITY_EFFECT_FIZZ = 61,               ///< Fizz: 60% of max HP
+  ABILITY_EFFECT_SPRITZ = 62,             ///< Spritz: 30%
+  ABILITY_EFFECT_EMBER = 63,              ///< Ember: 7% of max PP
   ABILITY_EFFECT_CURE_ALL = 64,           ///< Tonic
-  ABILITY_EFFECT_DOUBLE_BLOW_60 = 65,     ///< Gust, Rapid Smash: 153 in 256
+  ABILITY_EFFECT_DOUBLE_BLOW_LIKELY = 65, ///< Gust, Rapid Smash: 153 in 256
   ABILITY_EFFECT_ACT_TWICE = 66,          ///< Kite
   ABILITY_EFFECT_SEAL_2_TURNS = 67,       ///< Luff
-  ABILITY_EFFECT_TRIPLE_BLOW_60 = 68,     ///< Sonic Smash
+  ABILITY_EFFECT_TRIPLE_BLOW_LIKELY = 68, ///< Sonic Smash
   ABILITY_EFFECT_PSY_LEECH = 69,          ///< Psy Leech
-  ABILITY_EFFECT_HEAL_HP_50 = 70,         ///< Crystal: half of max HP
-  ABILITY_EFFECT_HEAL_HP_70 = 71,         ///< Spring
+  ABILITY_EFFECT_CRYSTAL = 70,            ///< Crystal: half of max HP
+  ABILITY_EFFECT_SPRING = 71,             ///< Spring
   ABILITY_EFFECT_SHIELD = 72,             ///< Shade: DEFEND_SHIELD
-  ABILITY_EFFECT_REVIVE_60 = 73,          ///< Balm, Spark: 60% of max HP
+  ABILITY_EFFECT_BALM = 73,               ///< Balm, Spark: 60% of max HP
   ABILITY_EFFECT_COUNTER = 74,            ///< Reflux, Counter-rush
   /// Shine: the first target takes the damage, the others are deluded.
   ABILITY_EFFECT_DAZZLE = 75,
-  ABILITY_EFFECT_HEAL_HP_40 = 76, ///< Breath
-  ABILITY_EFFECT_HEAL_PP_10 = 77, ///< Aroma
-  ABILITY_EFFECT_HEAL_PP_30 = 78, ///< Ether
-  ABILITY_EFFECT_VANISH = 79,     ///< Haze: DEFEND_VANISHED
+  ABILITY_EFFECT_BREATH = 76, ///< Breath
+  ABILITY_EFFECT_AROMA = 77,  ///< Aroma
+  ABILITY_EFFECT_ETHER = 78,  ///< Ether
+  ABILITY_EFFECT_VANISH = 79, ///< Haze: DEFEND_VANISHED
   /// Gasp: Curse, rolled three times (Battle_RollEffectSuccess).
   ABILITY_EFFECT_CURSE_THREE_ROLLS = 80,
   /// Lull: "Everybody is resting!" (BattleWork.ceaseFire).
   ABILITY_EFFECT_CEASE_FIRE = 81,
   /// Gale: an enemy blown out of the battle, as one that flees.
   ABILITY_EFFECT_BLOW_AWAY = 82,
-  ABILITY_EFFECT_GROUND_2 = 83, ///< Ulysses: as Ground
+  ABILITY_EFFECT_ULYSSES = 83, ///< Ulysses: as Ground
   /// Catastrophe: the target also loses a tenth of its max PP.
-  ABILITY_EFFECT_PP_LOSS_10 = 84,
+  ABILITY_EFFECT_CATASTROPHE = 84,
   /// Fire Puppet: Paralyze, rolled three times (Battle_RollEffectSuccess).
   ABILITY_EFFECT_STUN_THREE_ROLLS = 85,
   /// Clarion Cry, Mystic Call: a Sea Fighter called in, or a Star Magician's
@@ -192,8 +192,8 @@ enum AbilityEffect {
   ABILITY_EFFECT_CALL_REINFORCEMENT = 86,
   /// Regen Dance: the next enemy of BattleWork.queuedSummons called in.
   ABILITY_EFFECT_CALL_QUEUED = 87,
-  ABILITY_EFFECT_TOTAL_DEFENSE_2 = 88, ///< Guard Aura: as Total Defense
-  ABILITY_EFFECT_VENGEANCE = 89,       ///< Vengeance
+  ABILITY_EFFECT_GUARD_AURA = 88, ///< Guard Aura: as Total Defense
+  ABILITY_EFFECT_VENGEANCE = 89,  ///< Vengeance
   /// Raiden's Wrath: lands only on a dragon (gEnemy_DragonIds), and
   /// ignores its Defense.
   ABILITY_EFFECT_SLAY_DRAGON = 90,

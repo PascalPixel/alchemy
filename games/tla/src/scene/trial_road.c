@@ -1701,7 +1701,7 @@ void TrialRoad_GaspFlees(void) {
   if (far > 15)
     return;
   Event_PlaySound(SE_ENEMY_CRY);
-  Event_PlaySound(SE_122);
+  Event_PlaySound(SE_DJINNI_FLEES);
   partner->speedLimit = px(2);
   partner->acceleration = px(2);
   partner->motionFlags = 2;
@@ -3944,12 +3944,12 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXIT(2, TrialRoad1, 4),
     SCENE_EXIT(3, TrialRoad1, 1),
     SCENE_EXIT(4, TrialRoad1, 2),
-    SCENE_EXIT(5, ShamanVillage1, 1),
-    SCENE_EXIT(6, ShamanVillage1, 2),
+    SCENE_EXIT(5, ShamanVillageTrialGrounds, 1),
+    SCENE_EXIT(6, ShamanVillageTrialGrounds, 2),
     SCENE_EXIT(7, TrialRoadSummit, 1),
     SCENE_EXIT(8, TrialRoadSummit, 2),
-    SCENE_EXIT(9, ShamanVillage1, 9),
-    SCENE_EXIT(10, ShamanVillage1, 11),
+    SCENE_EXIT(9, ShamanVillageTrialGrounds, 9),
+    SCENE_EXIT(10, ShamanVillageTrialGrounds, 11),
     SCENE_EXITS(TrialRoadCaveRock),
     SCENE_EXIT(1, TrialRoadCaveRock, 2),
     SCENE_EXIT(2, TrialRoadCaveRock, 1),

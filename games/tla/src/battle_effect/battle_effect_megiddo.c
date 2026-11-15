@@ -142,8 +142,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
                                  0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
-                                 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,
+                                 work->sheet + 0x1000, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
                                  0);
@@ -172,7 +172,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           *&q->count = count + 1;
           *entry++ = 0x784;
           *entry++ = (u32)&REG_BG2CNT;
-          *entry = IO_WRITE_16;
+          *entry = IO_WRITE_HALFWORD;
         }
         IME_RESTORE(ime, saved);
       }
@@ -308,7 +308,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           *&q->count = count + 1;
           *entry++ = 0x785;
           *entry++ = (u32)&REG_BG2CNT;
-          *entry = IO_WRITE_16;
+          *entry = IO_WRITE_HALFWORD;
         }
         IME_RESTORE(ime, saved);
       }

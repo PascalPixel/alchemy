@@ -488,7 +488,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
     if (effect[0x713] != 0)
       goto near;
   }
-  if (self->blockMarked == 1)
+  if (self->riseEnabled == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
@@ -980,7 +980,7 @@ void Contigo_TalkToWanderer(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->blockMarked = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActorById(ACTOR_WANDERER, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
@@ -1000,7 +1000,7 @@ void Contigo_TalkToWanderer(void) {
   Event_ShowMessageAndWait(ACTOR_WANDERER, 0);
   if (work->psynergy == 0)
     object->facing = angle;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   Event_End();
 }
 
@@ -1012,7 +1012,7 @@ void Contigo_TalkAboutTheShip(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->blockMarked = 1;
+  object->riseEnabled = 1;
   if (event->psynergy == 0) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineWork.leaderActorId,
                         0);
@@ -1029,7 +1029,7 @@ void Contigo_TalkAboutTheShip(void) {
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
     object->facing = angle;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   Event_End();
 }
 
@@ -2289,7 +2289,7 @@ void Contigo_InitializeVillage(void) {
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
   object->riseCounter = 1;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   object->update = Contigo_FaceTalker;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
@@ -2300,7 +2300,7 @@ void Contigo_InitializeVillage(void) {
   } else {
     object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
     object->riseCounter = 0;
-    object->blockMarked = 0;
+    object->riseEnabled = 0;
     *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   }
   if (GameFlag_Get(FLAG_SHINE_FREED) != 0 && GameFlag_Get(0x9e6) == 0) {
@@ -2568,7 +2568,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (object->riseCounter == 0) {
     if ((*count & 15) == 0) {
-      Sound_Play(SE_598);
+      Sound_Play(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
     }
@@ -2635,14 +2635,14 @@ void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
   work->heights[1] = 999;
   work->object = object;
   object->riseCounter = 0;
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   object->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
-      sprite->oam.palette256 = 0;
+      sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite++;

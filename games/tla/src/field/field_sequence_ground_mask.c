@@ -197,7 +197,7 @@ void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 a, s32 b,
                         5);
   sprite->depth = 0;
   sprite->oam.priority = 1;
-  sprite->oam.palette256 = 0;
+  sprite->oam.fullColor = 0;
   sprite->oam.palette = 0;
 }
 
@@ -222,7 +222,7 @@ void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
                         5);
   sprite->depth = 0;
   sprite->oam.priority = 0;
-  sprite->oam.palette256 = 0;
+  sprite->oam.fullColor = 0;
   sprite->oam.palette = 0;
   sprite->oam.objectMode = 1;
 }

@@ -746,7 +746,7 @@ void FieldPsynergy_Lash(void) {
       EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
-      sprite->oam.palette256 = 1;
+      sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
       SET_POSITION(particle, object->x.fixed, object->y.fixed, object->z.fixed);
       Vector_AddPolarOffset(px(12), Random16(), particle);
@@ -1241,7 +1241,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   for (i = 0; i < 2; i++) {
     sprite = &work->sprites[group][i];
     EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
-    sprite->oam.palette256 = 0;
+    sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(target);
   }
@@ -1636,7 +1636,7 @@ void FieldPsynergy_Arrow(void) {
   work->bowTile = tile;
   sprite = &work->bow;
   EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   // volatile keeps the depth store before the scale stores.
@@ -1657,7 +1657,7 @@ void FieldPsynergy_Arrow(void) {
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
   sprite = &work->arrow;
   EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   *(volatile s16 *)&sprite->depth =

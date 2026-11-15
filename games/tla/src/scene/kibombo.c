@@ -182,10 +182,10 @@ extern struct Actor *gKibombo_BlackCrystal;
 #define FLAG_SCOOPING_THIRD_MARKING FLAG_SCENE_TEMP_22
 #define FLAG_SCOOPING_FOURTH_MARKING FLAG_SCENE_TEMP_23
 
-/// The grounds before the statue (SceneId_Kibombo2 and, on the ceremony
-/// night, SceneId_Kibombo5), numbering the rows of their placements; the
-/// night's rows place the warriors and Akafubu's party after them, and
-/// Kraden after those.
+/// The grounds before the statue (SceneId_KibomboStatueGrounds and, on the
+/// ceremony night, SceneId_KibomboStatueGroundsCeremony), numbering the rows of
+/// their placements; the night's rows place the warriors and Akafubu's party
+/// after them, and Kraden after those.
 enum KibomboStatueGroundsActorId {
   ACTOR_GROUNDS_PUDDLE = 8,
   /// The stone pillar Move pushes for Piers (Kibombo_MoveBlockForPiers).
@@ -213,7 +213,7 @@ enum KibomboStatueGroundsActorId {
   ACTOR_CRYSTAL_CARRIER = 27
 };
 
-/// The houses, inn and shops (SceneId_Kibombo3).
+/// The houses, inn and shops (SceneId_KibomboHouses).
 enum {
   /// Akafubu at home after the ceremony: "I'm going to be the one to get the
   /// Great Gabomba's magic! You'll see!"
@@ -295,7 +295,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_3)
+  if (scene == SCENE_KIBOMBO_HOUSES)
     return gKibombo_HousesExitRegions;
   return 0;
 }
@@ -318,15 +318,15 @@ extern struct Trigger gKibombo_Triggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_1)
+  if (scene == SCENE_KIBOMBO)
     return gKibombo_VillageActorPlacements;
-  if (scene == SCENE_KIBOMBO_4)
+  if (scene == SCENE_KIBOMBO_CEREMONY)
     return gKibombo_CeremonyActorPlacements;
-  if (scene == SCENE_KIBOMBO_2)
+  if (scene == SCENE_KIBOMBO_STATUE_GROUNDS)
     return gKibombo_StatueGroundsActorPlacements;
-  if (scene == SCENE_KIBOMBO_5)
+  if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     return gKibombo_StatueGroundsCeremonyActorPlacements;
-  if (scene == SCENE_KIBOMBO_3) {
+  if (scene == SCENE_KIBOMBO_HOUSES) {
     if (GameFlag_Get(0x8ee))
       gKibombo_HousesActorPlacements[0].talkFacing = 0;
     return gKibombo_HousesActorPlacements;
@@ -337,15 +337,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_1)
+  if (scene == SCENE_KIBOMBO)
     return gKibombo_VillageTriggers;
-  if (scene == SCENE_KIBOMBO_4)
+  if (scene == SCENE_KIBOMBO_CEREMONY)
     return gKibombo_CeremonyTriggers;
-  if (scene == SCENE_KIBOMBO_2)
+  if (scene == SCENE_KIBOMBO_STATUE_GROUNDS)
     return gKibombo_StatueGroundsTriggers;
-  if (scene == SCENE_KIBOMBO_5)
+  if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     return gKibombo_StatueGroundsCeremonyTriggers;
-  if (scene == SCENE_KIBOMBO_3)
+  if (scene == SCENE_KIBOMBO_HOUSES)
     return gKibombo_HousesTriggers;
   return gKibombo_Triggers;
 }
@@ -520,9 +520,10 @@ void Kibombo_ReadMindNeverAgain(void) {
 void Kibombo_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_2 || scene == SCENE_KIBOMBO_5)
+  if (scene == SCENE_KIBOMBO_STATUE_GROUNDS ||
+      scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     Actors_SetHidden(show, 15, 2);
-  else if (scene == SCENE_KIBOMBO_3)
+  else if (scene == SCENE_KIBOMBO_HOUSES)
     Actors_SetHidden(show, 26, 2);
 }
 
@@ -2211,11 +2212,11 @@ void Kibombo_CastScoop(void) {
 void Kibombo_StopFireFlicker(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_4)
+  if (scene == SCENE_KIBOMBO_CEREMONY)
     Task_Remove(Kibombo_FlickerVillageFires);
-  else if (scene == SCENE_KIBOMBO_5)
+  else if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     Task_Remove(Kibombo_FlickerCeremonyFires);
-  else if (scene == SCENE_KIBOMBO_6)
+  else if (scene == SCENE_KIBOMBO_STATUE_FACE)
     Task_Remove(Kibombo_FlickerStatueFires);
 }
 
@@ -2782,7 +2783,7 @@ void Kibombo_GabombaSeesOrb(void) {
   Event_SetMessageId((s32)MsgLookLookThe);
   // "Look! Look! The Great Gabomba has seen our jewel!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  Sound_Play(SE_577);
+  Sound_Play(SE_GABOMBA_JAWS_OPEN);
   Actor_SetMovementTypeById(ACTOR_STATUE_JAW_A, gKibombo_JawsOpenScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_STATUE_JAW_B, gKibombo_JawsOpenScript);
   Actor_SetMovementTypeById(ACTOR_STATUE_JAW_A, gKibombo_JawsSettleScript);
@@ -2813,7 +2814,7 @@ void Kibombo_GabombaResponds(void) {
   Sound_Play(SE_576);
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
-  Sound_Play(SE_162);
+  Sound_Play(SE_WAVE);
   Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
@@ -3023,17 +3024,17 @@ void Kibombo_CeremonyEnds(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_1)
+  if (scene == SCENE_KIBOMBO)
     Kibombo_InitializeVillageByDay();
-  else if (scene == SCENE_KIBOMBO_4)
+  else if (scene == SCENE_KIBOMBO_CEREMONY)
     Kibombo_InitializeCeremony();
-  else if (scene == SCENE_KIBOMBO_2)
+  else if (scene == SCENE_KIBOMBO_STATUE_GROUNDS)
     Kibombo_InitializeStatueGroundsByDay();
-  else if (scene == SCENE_KIBOMBO_5)
+  else if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     Kibombo_InitializeStatueGroundsCeremony();
-  else if (scene == SCENE_KIBOMBO_6)
+  else if (scene == SCENE_KIBOMBO_STATUE_FACE)
     Kibombo_InitializeStatueFace();
-  else if (scene == SCENE_KIBOMBO_3)
+  else if (scene == SCENE_KIBOMBO_HOUSES)
     Kibombo_InitializeHouses();
   return 0;
 }
@@ -3699,70 +3700,70 @@ s16 gKibombo_HousesExitRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Kibombo1),
+    SCENE_EXITS(Kibombo),
     SCENE_EXIT(1, WorldMap, 27),
-    SCENE_EXIT(2, Kibombo2, 1),
-    SCENE_EXIT(3, Kibombo3, 1),
-    SCENE_EXIT(4, Kibombo3, 6),
-    SCENE_EXIT(5, Kibombo3, 5),
-    SCENE_EXIT(6, Kibombo3, 4),
-    SCENE_EXIT(7, Kibombo3, 8),
-    SCENE_EXIT(8, Kibombo3, 10),
-    SCENE_EXIT(9, Kibombo2, 2),
-    SCENE_EXIT(10, Kibombo2, 5),
-    SCENE_EXITS(Kibombo4),
+    SCENE_EXIT(2, KibomboStatueGrounds, 1),
+    SCENE_EXIT(3, KibomboHouses, 1),
+    SCENE_EXIT(4, KibomboHouses, 6),
+    SCENE_EXIT(5, KibomboHouses, 5),
+    SCENE_EXIT(6, KibomboHouses, 4),
+    SCENE_EXIT(7, KibomboHouses, 8),
+    SCENE_EXIT(8, KibomboHouses, 10),
+    SCENE_EXIT(9, KibomboStatueGrounds, 2),
+    SCENE_EXIT(10, KibomboStatueGrounds, 5),
+    SCENE_EXITS(KibomboCeremony),
     SCENE_EXIT(1, WorldMap, 27),
-    SCENE_EXIT(2, Kibombo5, 1),
-    SCENE_EXIT(3, Kibombo3, 1),
-    SCENE_EXIT(4, Kibombo3, 6),
-    SCENE_EXIT(5, Kibombo3, 5),
-    SCENE_EXIT(6, Kibombo3, 4),
-    SCENE_EXIT(7, Kibombo3, 8),
-    SCENE_EXIT(8, Kibombo3, 10),
-    SCENE_EXIT(9, Kibombo5, 2),
-    SCENE_EXIT(10, Kibombo5, 5),
-    SCENE_EXITS(Kibombo2),
-    SCENE_EXIT(1, Kibombo1, 2),
-    SCENE_EXIT(2, Kibombo1, 9),
+    SCENE_EXIT(2, KibomboStatueGroundsCeremony, 1),
+    SCENE_EXIT(3, KibomboHouses, 1),
+    SCENE_EXIT(4, KibomboHouses, 6),
+    SCENE_EXIT(5, KibomboHouses, 5),
+    SCENE_EXIT(6, KibomboHouses, 4),
+    SCENE_EXIT(7, KibomboHouses, 8),
+    SCENE_EXIT(8, KibomboHouses, 10),
+    SCENE_EXIT(9, KibomboStatueGroundsCeremony, 2),
+    SCENE_EXIT(10, KibomboStatueGroundsCeremony, 5),
+    SCENE_EXITS(KibomboStatueGrounds),
+    SCENE_EXIT(1, Kibombo, 2),
+    SCENE_EXIT(2, Kibombo, 9),
     SCENE_EXIT(3, GabombaStatuePinion, 1),
-    SCENE_EXIT(4, GabombaStatueChamber1, 3),
-    SCENE_EXIT(5, Kibombo1, 10),
-    SCENE_EXITS(Kibombo5),
-    SCENE_EXIT(1, Kibombo4, 2),
-    SCENE_EXIT(2, Kibombo4, 9),
+    SCENE_EXIT(4, GabombaStatueChamberIdol, 3),
+    SCENE_EXIT(5, Kibombo, 10),
+    SCENE_EXITS(KibomboStatueGroundsCeremony),
+    SCENE_EXIT(1, KibomboCeremony, 2),
+    SCENE_EXIT(2, KibomboCeremony, 9),
     SCENE_EXIT(3, GabombaStatuePinion, 1),
-    SCENE_EXIT(4, GabombaStatueChamber1, 3),
-    SCENE_EXIT(5, Kibombo4, 10),
+    SCENE_EXIT(4, GabombaStatueChamberIdol, 3),
+    SCENE_EXIT(5, KibomboCeremony, 10),
     SCENE_EXIT(10, GabombaStatueArrows, 2),
     SCENE_EXIT(11, GabombaStatueArrows, 3),
     SCENE_EXIT(12, GabombaStatueArrows, 1),
-    SCENE_EXIT(13, GabombaStatueChamber1, 5),
-    SCENE_EXITS(Kibombo3),
-    SCENE_EXIT_UNLESS(1, Kibombo1, 3, 0x86b),
-    SCENE_EXIT_UNLESS(1, Kibombo4, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Kibombo3, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Kibombo3, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Kibombo1, 6, 0x86b),
-    SCENE_EXIT_UNLESS(4, Kibombo4, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Kibombo1, 5, 0x86b),
-    SCENE_EXIT_UNLESS(5, Kibombo4, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Kibombo1, 4, 0x86b),
-    SCENE_EXIT_UNLESS(6, Kibombo4, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Kibombo3, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Kibombo1, 7, 0x86b),
-    SCENE_EXIT_UNLESS(8, Kibombo4, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Kibombo3, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Kibombo1, 8, 0x86b),
-    SCENE_EXIT_UNLESS(10, Kibombo4, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, Kibombo3, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, Kibombo3, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, Kibombo3, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, Kibombo3, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, Kibombo3, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, Kibombo3, 13, EXIT_FLAG_NONE),
-    SCENE_EXITS(Kibombo6),
-    SCENE_EXIT(10, Kibombo5, 16),
-    SCENE_EXIT(11, Kibombo5, 10),
+    SCENE_EXIT(13, GabombaStatueChamberIdol, 5),
+    SCENE_EXITS(KibomboHouses),
+    SCENE_EXIT_UNLESS(1, Kibombo, 3, 0x86b),
+    SCENE_EXIT_UNLESS(1, KibomboCeremony, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboHouses, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboHouses, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Kibombo, 6, 0x86b),
+    SCENE_EXIT_UNLESS(4, KibomboCeremony, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Kibombo, 5, 0x86b),
+    SCENE_EXIT_UNLESS(5, KibomboCeremony, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Kibombo, 4, 0x86b),
+    SCENE_EXIT_UNLESS(6, KibomboCeremony, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, KibomboHouses, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Kibombo, 7, 0x86b),
+    SCENE_EXIT_UNLESS(8, KibomboCeremony, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, KibomboHouses, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Kibombo, 8, 0x86b),
+    SCENE_EXIT_UNLESS(10, KibomboCeremony, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, KibomboHouses, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, KibomboHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, KibomboHouses, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, KibomboHouses, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, KibomboHouses, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, KibomboHouses, 13, EXIT_FLAG_NONE),
+    SCENE_EXITS(KibomboStatueFace),
+    SCENE_EXIT(10, KibomboStatueGroundsCeremony, 16),
+    SCENE_EXIT(11, KibomboStatueGroundsCeremony, 10),
     SCENE_EXITS_END,
 };
 

@@ -254,7 +254,7 @@ struct ObjectSprite {
   u16 affineMode : 2;
   u16 objectMode : 2;
   u16 mosaic : 1;
-  u16 palette256 : 1;
+  u16 fullColor : 1;
   u16 shape : 2;
   u8 unusedAfterShape[2]; ///< no code names it
   u16 tile : 10;
@@ -699,7 +699,7 @@ void Actor_UpdateBlink(struct Actor *object);
 
 extern u32 gScanlineAngle;
 
-extern struct AnimationMetadata gResource_Data012[];
+extern struct AnimationMetadata gSprite_AnimationMetadata[];
 
 extern u8 Render_DecodePictureCode[];
 
@@ -721,7 +721,7 @@ s32 Party_CheckItemLimit(s32 item);
 
 s32 WorldMap_GetCollisionFar(s32 *position);
 
-extern u8 gData_0202e000[];
+extern u8 gMapScene[];
 
 void Party_ClearUnusableShortcuts(void);
 

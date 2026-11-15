@@ -31,7 +31,7 @@ FarCall_RuntimeTable:
 	export DebugText_PrintHexFar, DebugText_PrintHex
 	export DebugText_PrintDecimalFar, DebugText_PrintDecimal
 	export DebugText_PrintBlanksFar, DebugText_PrintBlanks
-	export Resource_DecodeByteLzInRamFar, Resource_DecodeByteLzInRam
+	export Resource_DecodeByteLzInRamFar, Decompress_ByteLz
 	export Decompress_TaggedLzFar, Decompress_TaggedLz
 	export VramCache_ResetFar, VramCache_Reset
 	export VramCache_FreeEntryFar, VramCache_FreeEntry

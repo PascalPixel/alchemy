@@ -9,7 +9,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, 1152);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),

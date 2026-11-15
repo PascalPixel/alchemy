@@ -48,7 +48,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
 
   // The streak: the 32x32 flare, then the same flare upside down below it.
-  Resource_LoadAndDecompress((s32)&ResourceId_Data181, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlamePlumeSheet, work->sheet, 0,
+                             0);
   for (row = 0; row != 32; row++)
     for (column = 0; column != 32; column++)
       work->sheet[0x400 + (31 - row) * 32 + column] =

@@ -52,7 +52,7 @@ void Teleport_PlayWhirl(void) {
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
@@ -193,7 +193,7 @@ void Teleport_PlaySparks(void) {
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;

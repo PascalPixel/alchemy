@@ -57,7 +57,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(4, 664, 1);
+  BattleEffect_SpawnObjects(4, SPRITE_TRIDENT, 1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
@@ -81,7 +81,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   /* FAKEMATCH(dead): a test on the blitter. */
   if (draw) {
     /* FAKEMATCH(temporary): the effect palette's id in a local. */
-    paletteBase = (s32)&ResourceId_EffectPalette02 - 4;
+    paletteBase = (s32)&ResourceId_VioletPaletteF - 4;
     cells = (s32)gMapGridCellBuffer;
     palette = paletteBase + 4;
   }
@@ -102,7 +102,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                              Ram_MapCellBuffer + 0x1400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
+                       Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
                        SHEET_PALETTE_BYTES);
   for (i = 0, p = work->particles; i != 32; i++, p++) {
     s32 radius = i * 2;

@@ -131,11 +131,11 @@ void TitleIntro_LoadPictureTiles(void) {
   u8 *cells;
 
   REG_DISPCNT = 0;
-  source = Resource_GetTableEntry((s32)&ResourceId_Data018);
+  source = Resource_GetTableEntry((s32)&ResourceId_IntroClouds);
   Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   BG_PLTT[0] = 0;
   cells = Ram_MapCellBuffer;
-  Resource_DecodeByteLzInRam(source + BG_PLTT_SIZE, cells);
+  Decompress_ByteLz(source + BG_PLTT_SIZE, cells);
   Dma_Set(cells, (void *)BG_CHAR_BLOCK(0),
           DMA_COPY_WORDS(DATA018_TILE_BYTES / 4), REG_DMA3);
 }
@@ -555,7 +555,7 @@ extern s16 gTitleIntro_GullPath[];
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = Data_02026800;                                                \
-    Resource_DecodeByteLzInRam(Resource_GetTableEntry((s32)&(id)), buffer);    \
+    Decompress_ByteLz(Resource_GetTableEntry((s32)&(id)), buffer);             \
     Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
 
@@ -685,7 +685,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
   buffer = gMapGridCellBuffer;
   source += 32;
-  Resource_DecodeByteLzInRam(source, buffer);
+  Decompress_ByteLz(source, buffer);
   Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
@@ -694,7 +694,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   *(u16 *)BG_PLTT = RGB_WHITE;
   wait(1);
   source += BG_PLTT_SIZE;
-  Resource_DecodeByteLzInRam(source, buffer);
+  Decompress_ByteLz(source, buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(9600), REG_DMA3);
   wait(1);
 
@@ -923,7 +923,7 @@ s32 Title_ShowIntro(s32 prompt) {
     u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
     struct TitleSprite *sprite = work->sprites;
 
-    Resource_DecodeByteLzInRam(gTitle_PromptTiles, buffer);
+    Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILE_BLOCKS; i++) {
       s32 vramBlock =
           VramCache_Load(VramCache_FindFreeEntry(), 128, buffer + (i << 8) / 2);

@@ -192,7 +192,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       pitch = 0xd00;
       yaw = 0x2500;
       work->frame = 8;
-      Sound_PlayFar(SE_162);
+      Sound_PlayFar(SE_WAVE);
     }
     if (frame == 120) {
       Sound_PlayFar(SE_163);
@@ -207,8 +207,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
     }
     if (frame > 128) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);

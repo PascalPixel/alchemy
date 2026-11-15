@@ -15,7 +15,7 @@ Field_YampiDesertTreasurePit:
 	.incbin "games/tla/src/map/yampi_desert_treasure_pit/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_YampiDesertTreasurePit_SHAPES:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_4/shapes.table.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_footprints/shapes.table.lz"
 	.balign 4, 0
 .LField_YampiDesertTreasurePit_GRID:
 	.incbin "games/tla/src/map/yampi_desert_treasure_pit/map.grid.lz"

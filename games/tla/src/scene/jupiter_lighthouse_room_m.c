@@ -439,7 +439,7 @@ void JupiterLighthouse_OpenFloor(void) {
     FieldCamera_SetSpeed(4);
     EventCamera_FollowActor(ACTOR_GREY_BLOCK, 1);
     FieldCamera_WaitForArrival();
-    Sound_Play(SE_310);
+    Sound_Play(SE_FALL);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
     object->groundHeight = px(-80);
@@ -477,7 +477,7 @@ void JupiterLighthouse_OpenFloor(void) {
     FieldCamera_SetSpeed(4);
     EventCamera_FollowActor(ACTOR_GREY_BLOCK, 1);
     FieldCamera_WaitForArrival();
-    Sound_Play(SE_310);
+    Sound_Play(SE_FALL);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
     object->groundHeight = px(-240);
@@ -678,7 +678,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   if (arg != 0) {
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 20, 9, 15, 8, 1, 20, 2, 15, 1,
                                       25);
-    Event_PlaySound(SE_310);
+    Event_PlaySound(SE_FALL);
     FieldEvent_Wait(30);
     Event_PlaySound(SE_CLATTER);
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 21, 9, 16, 8, 1, 21, 2, 16, 1,
@@ -687,7 +687,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
                                       1, 0);
   } else {
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 5, 9, 0, 8, 1, 5, 2, 0, 1, 25);
-    Event_PlaySound(SE_310);
+    Event_PlaySound(SE_FALL);
     FieldEvent_Wait(30);
     Event_PlaySound(SE_CLATTER);
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 5, 9, 0, 8, 1, 5, 2, 0, 1, 0);
@@ -779,7 +779,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(800, 0, 270, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(MUS_039);
+  Event_PlaySound(MUS_ALEX);
   FieldEvent_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_ISAAC, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
@@ -859,7 +859,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_Wait(20);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
-  Event_PlaySound(MUS_034);
+  Event_PlaySound(MUS_KARST_AND_AGATIO);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -1663,7 +1663,9 @@ extern s32 gPaletteCyclePausesInEvents;
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 extern u16 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"

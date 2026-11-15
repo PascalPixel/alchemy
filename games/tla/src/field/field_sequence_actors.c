@@ -171,7 +171,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
 /// id 0xff) and writes its x and z, in 16.16 pixels, to position; returns 0,
 /// or -1 when the map has no such point.
 s32 ScenePoint_GetPosition(s32 id, s32 *position) {
-  u8 *cursor = Ram_Data_0202e008;
+  u8 *cursor = Ram_MapScenePoints;
   s8 key;
 
   key = *cursor++;

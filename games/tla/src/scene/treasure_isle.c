@@ -130,7 +130,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const u8 *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_TREASURE_ISLE_2)
+  if (scene == SCENE_TREASURE_ISLE_CHESTS)
     return gTreasureIsle_Room2Placements;
   if (scene == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST)
     return gTreasureIsle_Room3Placements;
@@ -296,7 +296,7 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_1) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     if (id == 8 && object->x.fixed >> 20 == 16)
       Event_SetFlag(FLAG_AREA_TEMP_00);
     if (id == 9 && object->x.fixed >> 20 == 20)
@@ -304,7 +304,7 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
     if (id == 10 && object->x.fixed >> 20 == 27)
       Event_SetFlag(FLAG_AREA_TEMP_02);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
     if (id == 10 && object->x.fixed >> 19 == 33)
       Event_SetFlag(FLAG_AREA_TEMP_08);
     if (id == 11 && object->x.fixed >> 19 == 85 && object->z.fixed >> 19 == 83)
@@ -447,7 +447,7 @@ extern struct Trigger gTreasureIsle_Room1Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_TREASURE_ISLE_2)
+  if (scene == SCENE_TREASURE_ISLE_CHESTS)
     return gTreasureIsle_Room2Triggers;
   if (scene == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST)
     return gTreasureIsle_Room3Triggers;
@@ -514,7 +514,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   Tightrope_Initialize();
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_1) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     Event_SetFlag(FLAG_AREA_TEMP_00);
     Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_SetFlag(FLAG_AREA_TEMP_02);
@@ -525,7 +525,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetPosition(ACTOR_PUSHED_PILLAR_C, 440, 344);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
     if (Event_GetFlag(FLAG_AREA_TEMP_08))
@@ -658,24 +658,24 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(TreasureIsle1),
+    SCENE_EXITS(TreasureIsleEntrance),
     SCENE_EXIT_UNLESS(1, WorldMap, 87, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TreasureIsle1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TreasureIsle1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TreasureIsle1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TreasureIsle1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TreasureIsle1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, TreasureIsle1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, TreasureIsle2, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(TreasureIsle2),
-    SCENE_EXIT_UNLESS(1, TreasureIsle1, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TreasureIsle2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TreasureIsle2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TreasureIsleEntrance, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TreasureIsleEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TreasureIsleEntrance, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TreasureIsleEntrance, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TreasureIsleEntrance, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TreasureIsleEntrance, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TreasureIsleChests, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(TreasureIsleChests),
+    SCENE_EXIT_UNLESS(1, TreasureIsleEntrance, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TreasureIsleChests, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TreasureIsleChests, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TreasureIsleJestersArmletChest, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TreasureIsleJestersArmletChest, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(TreasureIsleJestersArmletChest),
-    SCENE_EXIT_UNLESS(1, TreasureIsle2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TreasureIsle2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, TreasureIsleChests, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TreasureIsleChests, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TreasureIsleJestersArmletChest, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TreasureIsleJestersArmletChest, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TreasureIsleGale, 1, EXIT_FLAG_NONE),
@@ -758,7 +758,7 @@ struct ActorPlacement gTreasureIsle_Room4Placements[] = {
 
 struct ActorPlacement gTreasureIsle_Room5Placements[] = {
     ACTOR_PLACEMENT(169, 0x9bb, MOVEMENT_TYPE_STAND, 792, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_19), MOVEMENT_TYPE_STAND, 200, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_EARTH19), MOVEMENT_TYPE_STAND, 200, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

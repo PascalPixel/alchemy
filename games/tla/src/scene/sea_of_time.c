@@ -1181,7 +1181,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   gFieldWork->raisedTrigger = 200;
-  Event_PlaySound(SE_530);
+  Event_PlaySound(SE_SEA_OF_TIME_OPENS);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)

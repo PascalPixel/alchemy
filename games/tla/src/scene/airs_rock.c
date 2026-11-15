@@ -189,7 +189,7 @@ void Blocks_MarkCells(u16 *ids) {
 
   while (*ids != 0xffff) {
     object = Actor_Get(*ids);
-    blocked = &object->blockMarked;
+    blocked = &object->riseEnabled;
     *blocked = 0;
     if (MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
                               FIELD_CELL(object->z.fixed)) &
@@ -215,7 +215,7 @@ void Blocks_MarkCells(u16 *ids) {
 void Blocks_UnmarkCells(struct Actor *block) {
   struct MapWork *map;
 
-  if (block->blockMarked != 0) {
+  if (block->riseEnabled != 0) {
     map = Ram_HeapSlots->mapGrid;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
@@ -230,7 +230,7 @@ void Blocks_UnmarkCells(struct Actor *block) {
       cell = *cells;
       cell += x + ((row - 1) << 7);
       cell->collisionCode = 0;
-      block->blockMarked = 0;
+      block->riseEnabled = 0;
     }
   }
 }
@@ -723,7 +723,7 @@ row:
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 9;
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->blockMarked = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
@@ -821,7 +821,7 @@ fade:
   {
     s32 zero = 0;
 
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->blockMarked = zero;
+    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = zero;
     System_Wait(30);
     Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = (void (*)(void))zero;
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL), 6);
@@ -1027,7 +1027,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       212) {
   end:
     Actor_PlaySoundInView(shot, cue);
-    shot->blockMarked = 0;
+    shot->riseEnabled = 0;
     shot->update = 0;
     if (shot->facing == 0xc000)
       Actor_StartScript(shot, gAirsRock_WhirlwindRisesScript);
@@ -1059,7 +1059,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       work->raisedTrigger = 200;
       gMainRoutineWork.movementMode = 0;
       shot->riseCounter = 1;
-      shot->blockMarked = 1;
+      shot->riseEnabled = 1;
     }
   }
   objects = &work->actors[8];
@@ -1116,7 +1116,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
     shot->riseCounter = 0;
-    shot->blockMarked = 0;
+    shot->riseEnabled = 0;
     shot->facing = object->facing;
     shot->update = AirsRock_MoveWhirlwind;
     shot->watchedActor = object;
@@ -1277,7 +1277,7 @@ row:
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter = 9;
-  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->blockMarked = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
@@ -1505,7 +1505,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 9;
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->blockMarked = 1;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
     s32 low = gFrameCount & 3;
@@ -1586,7 +1586,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   {
     s32 zero = 0;
 
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->blockMarked = zero;
+    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = zero;
     System_Wait(30);
     Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = (void (*)(void))zero;
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG), 6);
@@ -2086,7 +2086,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(1, AirsRockStormBrandChest, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockStormBrandChest, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AirsRockStormBrandChest, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AirsRockInside1, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockInsideHall, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AirsRockEntrance, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, AirsRockEntrance, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, AirsRockEntrance, 5, EXIT_FLAG_NONE),
@@ -2108,7 +2108,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AirsRockFujinShieldChest, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, AirsRockFujinShieldChest, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, AirsRockInside2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AirsRockInsideVialChest, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -93,14 +93,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 s32 *Scene_GetExits(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_2)
+  if (gMainRoutineWork.next == SCENE_DAILA)
     return gDailaExits;
   else
     return gDailaFloodedExits;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_2)
+  if (gMainRoutineWork.next == SCENE_DAILA)
     return gDailaActorPlacements;
   else
     return gDailaFloodedActorPlacements;
@@ -132,7 +132,7 @@ void Daila_DigUpPsyCrystal(s32 mode) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_2)
+  if (gMainRoutineWork.next == SCENE_DAILA)
     return gDailaTriggers;
   else
     return gDailaFloodedTriggers;
@@ -489,19 +489,19 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
-  if (gMainRoutineWork.next == SCENE_DAILA_1)
+  if (gMainRoutineWork.next == SCENE_DAILA_FLOODED)
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
-  else if (gMainRoutineWork.next == SCENE_DAILA_2)
+  else if (gMainRoutineWork.next == SCENE_DAILA)
     FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
   Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
-  if (gMainRoutineWork.next == SCENE_DAILA_2 &&
+  if (gMainRoutineWork.next == SCENE_DAILA &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_2) {
+  if (gMainRoutineWork.next == SCENE_DAILA) {
     if (GameFlag_Get(FLAG_DAILA_FIRST_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
     if (GameFlag_Get(FLAG_DAILA_SECOND_PUDDLE_PARCHED))
@@ -599,7 +599,7 @@ struct SceneEntrance gDailaEntrances[] = {
 };
 
 s32 gDailaFloodedExits[] = {
-    SCENE_EXITS(Daila1),
+    SCENE_EXITS(DailaFlooded),
     SCENE_EXIT_UNLESS(1, DailaInteriorsHouses, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, DailaInteriorsHouses, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, DailaInteriorsHouses, 3, EXIT_FLAG_NONE),

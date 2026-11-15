@@ -108,42 +108,42 @@
   {                                                                            \
     (applies) = 0;                                                             \
     switch ((action)->effect) {                                                \
-    case ABILITY_EFFECT_ATTACK_UP_2:                                           \
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:                                     \
     case ABILITY_EFFECT_ATTACK_UP:                                             \
       if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_ATTACK_DOWN_2:                                         \
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:                                   \
     case ABILITY_EFFECT_ATTACK_DOWN:                                           \
       if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_UP_2:                                          \
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:                                    \
     case ABILITY_EFFECT_DEFENSE_UP:                                            \
       if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:                                        \
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:                                  \
     case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
       if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_UP_2:                                       \
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:                                 \
     case ABILITY_EFFECT_RESISTANCE_UP:                                         \
       if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2:                                     \
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:                               \
     case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
       if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \
@@ -157,10 +157,10 @@
     case ABILITY_EFFECT_RESTORE:                                               \
       COUNT_PARTIAL_CURES((unit), (applies));                                  \
       break;                                                                   \
-    case ABILITY_EFFECT_HEAL_HP_60:                                            \
-    case ABILITY_EFFECT_HEAL_HP_30:                                            \
-    case ABILITY_EFFECT_HEAL_HP_50:                                            \
-    case ABILITY_EFFECT_HEAL_HP_70:                                            \
+    case ABILITY_EFFECT_FIZZ:                                                  \
+    case ABILITY_EFFECT_SPRITZ:                                                \
+    case ABILITY_EFFECT_CRYSTAL:                                               \
+    case ABILITY_EFFECT_SPRING:                                                \
       if ((unit)->hp < (unit)->hpMax)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -178,7 +178,7 @@
       if ((unit)->poison == 0)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case ABILITY_EFFECT_DEADLY_POISON:                                         \
+    case ABILITY_EFFECT_VENOM:                                                 \
       if ((unit)->poison <= 1)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -197,13 +197,13 @@
       break;                                                                   \
     case ABILITY_EFFECT_REVIVE:                                                \
     case ABILITY_EFFECT_REVIVE_HALF:                                           \
-    case ABILITY_EFFECT_REVIVE_80:                                             \
-    case ABILITY_EFFECT_REVIVE_60:                                             \
+    case ABILITY_EFFECT_DEW:                                                   \
+    case ABILITY_EFFECT_BALM:                                                  \
       if ((unit)->hp == 0)                                                     \
         (applies) = 100;                                                       \
       break;                                                                   \
     case ABILITY_EFFECT_TOTAL_DEFENSE:                                         \
-    case ABILITY_EFFECT_TOTAL_DEFENSE_2:                                       \
+    case ABILITY_EFFECT_GUARD_AURA:                                            \
       if ((unit)->defendLevel <= 1)                                            \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -889,8 +889,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     }
     break;
   case ENEMY_POSEIDON:
-  case ENEMY_POSEIDON_2:
-  case ENEMY_POSEIDON_3:
+  case ENEMY_POSEIDON_SECOND_ACTION:
+  case ENEMY_UNUSED_POSEIDON:
     if (abilityId != ABILITY_TRIDENT && battle->forceField != 0 &&
         ARE_OPPONENTS(unitId, targetId)) {
       BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
@@ -1080,7 +1080,7 @@ power_end:
   // 4. Effects that change how the damage step works.
   if (hit != 0) {
     if (ability->effect == ABILITY_EFFECT_GROUND ||
-        ability->effect == ABILITY_EFFECT_GROUND_2) {
+        ability->effect == ABILITY_EFFECT_ULYSSES) {
       // Ground holds only a target that has not yet acted this turn.
       hit = 0;
       for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY;
@@ -1217,8 +1217,8 @@ power_end:
       if (hp <= 0) {
         hp = 0;
         BattlePlayback_Push(PLAYBACK_DEFEAT, targetId);
-        if (target->enemyId != ENEMY_DOOM_DRAGON &&
-            target->enemyId != ENEMY_DOOM_DRAGON_5) {
+        if (target->enemyId != ENEMY_DOOM_DRAGON_A &&
+            target->enemyId != ENEMY_DOOM_DRAGON_E) {
           BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
           PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
         }
@@ -1405,7 +1405,7 @@ power_end:
             maxHpPercent = 7;
             break;
           case ABILITY_ECLIPSE:
-          case ABILITY_403:
+          case ABILITY_DAEDALUS_STRIKE:
           case ABILITY_HAURES:
             maxHpPercent = 15;
             break;
@@ -1557,8 +1557,8 @@ power_end:
         if (newHp <= 0) {
           BattlePlayback_Push(PLAYBACK_DEFEAT, targetId);
           newHp = 0;
-          if (target->enemyId != ENEMY_DOOM_DRAGON &&
-              target->enemyId != ENEMY_DOOM_DRAGON_5) {
+          if (target->enemyId != ENEMY_DOOM_DRAGON_A &&
+              target->enemyId != ENEMY_DOOM_DRAGON_E) {
             BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
             PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
           }
@@ -1668,11 +1668,11 @@ power_end:
     // Healing by a share of the target's max HP: "HP fully restored" at the
     // maximum, else the amount restored. Nothing shows if no HP came back,
     // unless the ability heals.
-    case ABILITY_EFFECT_HEAL_HP_60:
-    case ABILITY_EFFECT_HEAL_HP_30:
-    case ABILITY_EFFECT_HEAL_HP_50:
-    case ABILITY_EFFECT_HEAL_HP_70:
-    case ABILITY_EFFECT_HEAL_HP_40: {
+    case ABILITY_EFFECT_FIZZ:
+    case ABILITY_EFFECT_SPRITZ:
+    case ABILITY_EFFECT_CRYSTAL:
+    case ABILITY_EFFECT_SPRING:
+    case ABILITY_EFFECT_BREATH: {
       s32 old;
       s32 maxu;
       s32 maxv;
@@ -1692,7 +1692,7 @@ power_end:
       old = *pt--;
       heal = *(s16 *)(pt + 1);
 #endif
-      if (ability->effect == ABILITY_EFFECT_HEAL_HP_40) {
+      if (ability->effect == ABILITY_EFFECT_BREATH) {
         s32 m;
 
 #ifdef UBFIX
@@ -1704,7 +1704,7 @@ power_end:
         m = *(s16 *)(pt + 1);
 #endif
         heal += m * 2 / 5;
-      } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_70) {
+      } else if (ability->effect == ABILITY_EFFECT_SPRING) {
 #ifdef UBFIX
         maxu = (u16)target->hpMax;
         maxv = target->hpMax;
@@ -1714,7 +1714,7 @@ power_end:
         maxv = *(s16 *)(pt + 1);
 #endif
         heal += maxv * 7 / 10;
-      } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_50) {
+      } else if (ability->effect == ABILITY_EFFECT_CRYSTAL) {
         maxu = (u16)target->hpMax;
         heal += (s16)maxu / 2;
         /* FAKEMATCH(barrier): an empty asm on maxu. */
@@ -1728,7 +1728,7 @@ power_end:
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
 #endif
-        if (ability->effect == ABILITY_EFFECT_HEAL_HP_60) {
+        if (ability->effect == ABILITY_EFFECT_FIZZ) {
           s32 p = maxv * 60;
           heal += p / 100;
         } else {
@@ -1753,9 +1753,9 @@ power_end:
     }
 
     // The same by a share of max PP.
-    case ABILITY_EFFECT_HEAL_PP_7:
-    case ABILITY_EFFECT_HEAL_PP_10:
-    case ABILITY_EFFECT_HEAL_PP_30: {
+    case ABILITY_EFFECT_EMBER:
+    case ABILITY_EFFECT_AROMA:
+    case ABILITY_EFFECT_ETHER: {
       s32 old;
       s32 maxv;
       s32 heal;
@@ -1775,11 +1775,11 @@ power_end:
       old = *pt--;
       heal = *(s16 *)(pt + 1);
 #endif
-      if (ability->effect == ABILITY_EFFECT_HEAL_PP_10) {
+      if (ability->effect == ABILITY_EFFECT_AROMA) {
         maxv = target->ppMax;
         maxu = (u16)target->ppMax;
         heal += (s16)maxv / 10;
-      } else if (ability->effect == ABILITY_EFFECT_HEAL_PP_30) {
+      } else if (ability->effect == ABILITY_EFFECT_ETHER) {
 #ifdef UBFIX
         maxu = (u16)target->ppMax;
         maxv = target->ppMax;
@@ -1849,7 +1849,7 @@ power_end:
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_DOWN_2:
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -1867,7 +1867,7 @@ power_end:
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_UP_2:
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -1885,7 +1885,7 @@ power_end:
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -1903,7 +1903,7 @@ power_end:
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_UP_2:
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -1930,7 +1930,7 @@ power_end:
       Unit_RecalculateGaugesFar(targetId);
       break;
 
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
@@ -1938,7 +1938,7 @@ power_end:
       Unit_RecalculateGaugesFar(targetId);
       break;
 
-    case ABILITY_EFFECT_REVIVE_60:
+    case ABILITY_EFFECT_BALM:
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
@@ -1964,7 +1964,7 @@ power_end:
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2: {
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY: {
       target->resistanceStage -= 2;
       if (STAT_STAGE_MIN > target->resistanceStage)
         target->resistanceStage = STAT_STAGE_MIN;
@@ -1987,7 +1987,7 @@ power_end:
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_UP_2: {
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY: {
       target->resistanceStage += 2;
       if (*(rm = &target->resistanceStage) < STAT_STAGE_MIN)
         target->resistanceStage = STAT_STAGE_MIN;
@@ -2009,7 +2009,7 @@ power_end:
       target->poison = POISON_NORMAL;
       break;
 
-    case ABILITY_EFFECT_DEADLY_POISON:
+    case ABILITY_EFFECT_VENOM:
       if (target->poison > POISON_NORMAL)
         break;
       PUSH_MESSAGE(MsgVenom);
@@ -2149,7 +2149,7 @@ power_end:
 
     // Catastrophe also takes a tenth of the target's max PP, as far as it has
     // it.
-    case ABILITY_EFFECT_PP_LOSS_10:
+    case ABILITY_EFFECT_CATASTROPHE:
       amount = (s16)(target->ppMax / 10);
       if (target->pp < amount)
         amount = target->pp;
@@ -2221,7 +2221,7 @@ power_end:
 
     // The target loses its next action (BattleActionRun_Build).
     case ABILITY_EFFECT_GROUND:
-    case ABILITY_EFFECT_GROUND_2:
+    case ABILITY_EFFECT_ULYSSES:
 
       PUSH_MESSAGE(MsgImmobile);
       target->immobile = 1;
@@ -2230,22 +2230,22 @@ power_end:
     // The guards: the message shows either way, but a guard is never lowered.
     case ABILITY_EFFECT_DEFEND:
 
-      PUSH_MESSAGE(MsgAura);
+      PUSH_MESSAGE(MsgDefendAura);
       if (target->defendLevel > 0)
         break;
       target->defendLevel = DEFEND_NORMAL;
       break;
 
     case ABILITY_EFFECT_SHIELD:
-      PUSH_MESSAGE(MsgAura);
+      PUSH_MESSAGE(MsgDefendAura);
       if ((u32)target->defendLevel > DEFEND_NORMAL)
         break;
       target->defendLevel = DEFEND_SHIELD;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-    case ABILITY_EFFECT_TOTAL_DEFENSE_2:
-      PUSH_MESSAGE(MsgAura2);
+    case ABILITY_EFFECT_GUARD_AURA:
+      PUSH_MESSAGE(MsgTotalDefenseAura);
       if (target->defendLevel > DEFEND_SHIELD)
         break;
       target->defendLevel = DEFEND_TOTAL;
@@ -2314,7 +2314,7 @@ done:
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
   // A haunted unit pays, one time in four, a quarter of what it took, at the
   // end of its action; Daedalus's second strike does not count.
-  if (abilityId != ABILITY_403 && actor->haunt != 0 &&
+  if (abilityId != ABILITY_DAEDALUS_STRIKE && actor->haunt != 0 &&
       (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 
@@ -2411,43 +2411,43 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
         (struct AIState *)&((struct BattleWork *)Ram_HeapSlots->battleWork)
             ->aiStates[request->turnAction];
     if (request->turnAction == 1)
-      enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_2);
-  } else if (unit->enemyId == ENEMY_DOOM_DRAGON) {
+      enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_SECOND_ACTION);
+  } else if (unit->enemyId == ENEMY_DOOM_DRAGON_A) {
     selectionMemory =
         (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_3);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_C);
       break;
     case 2:
       AI_BATTLE->actingAnimation = 3;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_2);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_B);
       break;
     case 3:
       AI_BATTLE->actingAnimation = 7;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_4);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_D);
       break;
     }
-  } else if (unit->enemyId == ENEMY_DOOM_DRAGON_5) {
+  } else if (unit->enemyId == ENEMY_DOOM_DRAGON_E) {
     selectionMemory =
         (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_7);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_G);
       break;
     case 2:
       AI_BATTLE->actingAnimation = 3;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_6);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_F);
       break;
     }
-  } else if (unit->enemyId == ENEMY_DOOM_DRAGON_8) {
+  } else if (unit->enemyId == ENEMY_DOOM_DRAGON_H) {
     selectionMemory =
         (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
     if (request->turnAction == 1) {
       AI_BATTLE->actingAnimation = 3;
-      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_9);
+      enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_I);
     }
   } else if (unit->enemyId == ENEMY_DULLAHAN) {
     if (selectionMemory->initialized == 0)
@@ -2551,7 +2551,7 @@ select_again:
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_COUNTER:
-    case ABILITY_EFFECT_TOTAL_DEFENSE_2:
+    case ABILITY_EFFECT_GUARD_AURA:
       if (retry == 0)
         request->priority += 10000;
       break;
@@ -2604,7 +2604,7 @@ select_again:
         if (summonIndex < 0)
           goto next_candidate;
         request->parameter = summons[summonIndex];
-        abilityId = SummonDefinition_Get(summons[summonIndex])->nameMessageId;
+        abilityId = SummonDefinition_Get(summons[summonIndex])->abilityId;
         ability = Ability_Get(abilityId);
       }
     }

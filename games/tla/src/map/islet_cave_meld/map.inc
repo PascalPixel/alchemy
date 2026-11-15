@@ -39,7 +39,7 @@ Tileset_IsletCaveMeldPalette:
 	.global Tileset_IsletCaveMeldTilesA
 Tileset_IsletCaveMeldTilesA:
 	.incbin "games/tla/src/graphics/tileset/islet_cave_meld/tiles_a.4bpp.mtf"
-	.byte 0xf8	@ PACKER: left in the buffer by Field_Loho2+0x2fbf
+	.byte 0xf8	@ PACKER: left in the buffer by Field_LohoInteriors+0x2fbf
 	.global Tileset_IsletCaveMeldTilesB
 Tileset_IsletCaveMeldTilesB:
 	.incbin "games/tla/src/graphics/tileset/islet_cave_meld/tiles_b.4bpp.mtf"

@@ -266,7 +266,8 @@ s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
 void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 
 void MagmaRockInside_MeetDjinni(void) {
-  Djinn_JoinParty(17, DJINNI_59 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_59));
+  Djinn_JoinParty(17, DJINNI_FIRE19 / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_FIRE19));
 }
 
 #include "shared/position_flat_distance.h"
@@ -324,7 +325,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
 
   while (*ids != 0xffff) {
     object = Actor_Get(*ids);
-    blocked = &object->blockMarked;
+    blocked = &object->riseEnabled;
     *blocked = 0;
     if (MapCell_Get(0, object->x.fixed >> 20, object->z.fixed >> 20) & 0x40) {
       map = Ram_HeapSlots->mapGrid;
@@ -598,7 +599,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
 
 /// Flashes an actor in colour 10 on the frames its mask picks.
 void MagmaRockInside_FlashStatue(struct Actor *object) {
-  if (gFrameCount & object->blockMarked)
+  if (gFrameCount & object->riseEnabled)
     FieldActor_SetSpriteColor(object, 10);
   else
     FieldActor_SetSpriteColor(object, 0);
@@ -660,7 +661,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
 
     MagmaRockInside_FindStatue(table);
     object = watch->object;
-    object->blockMarked = 4;
+    object->riseEnabled = 4;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
   if (mode == 3) {
@@ -668,7 +669,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
 
     MagmaRockInside_FindStatue(table);
     object = watch->object;
-    object->blockMarked = 2;
+    object->riseEnabled = 2;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
 }
@@ -1879,7 +1880,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
   Actor_SetScript(a, gMagmaRockInside_BlazeCasterScript);
-  Event_PlaySound(SE_194);
+  Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_SetSpriteColorById(a, 256);
   REG_BLDALPHA = 0x1008;
@@ -1916,7 +1917,7 @@ burst:
   for (i = 0; i != 16; i++) {
     spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
                               second->z.fixed);
-    Event_PlaySound(SE_195);
+    Event_PlaySound(SE_SPARKS);
     spark->timer = (Random16() & 0x7fff) + 0x8000;
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;

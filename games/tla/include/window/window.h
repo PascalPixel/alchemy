@@ -6,6 +6,7 @@
 /// as window.c declares them for the files that use them.
 
 #include "types.h"
+#include "system/frame.h"
 #include "system/io_reg.h"
 #include "window/window_tile.h"
 #include "window/message_argument.h"
@@ -15,34 +16,6 @@
 #include "graphics/output.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
-
-// The display's sizes and the screen block, palette and sprite words the
-// windows and menus build, as The Broken Seal's io_reg.h names them.
-/// The screen's size in 8-pixel tiles.
-#define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
-#define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
-#define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
-/// Colours in one 16-colour palette.
-#define PALETTE_COLORS 16
-/// Tiles in a row of a screen block, whose map is 32 tiles square.
-#define BG_SCREEN_WIDTH 32
-/// A screen block entry's 16-colour palette, in its top four bits.
-#define BG_TILE_PALETTE(n) ((n) << 12)
-/// A blend weight's full strength: BLEND_ALPHA(BLEND_WEIGHT_MAX, 0) shows only
-/// the top layer.
-#define BLEND_WEIGHT_MAX 16
-/// A sprite's x, 0 to 511, in the high half of its attribute word.
-#define OBJ_X(x) ((x) << 16)
-/// How a sprite is drawn (OBJ_MODE).
-enum ObjMode {
-  OBJ_MODE_NORMAL = 0,
-  OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
-  OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
-};
-/// The frames the game runs each second, one each VBlank.
-#define FRAMES_PER_SECOND 60
-/// The brightest colour, every channel at its highest level.
-#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
@@ -91,7 +64,7 @@ struct WindowWork {
   u8 haltingSpeech;          ///< cleared together with spacingAfter
   u8 spacingAfter;
   /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
-  /// glyphs by y / 320 (UiChannelSlot.unk26).
+  /// glyphs by y / 320 (UiChannelSlot.compressLines).
   s8 textMode;
 };
 
@@ -428,8 +401,8 @@ s32 Djinn_GetGiveTutorialMessage(void);
 
 void WindowSprite_PrepareForRedraw(struct Window *);
 
-extern s16 gData_020036d8;
-extern s16 gData_02005350;
+extern s16 gTitleBattleOptionEnabled;
+extern s16 gTitleUpdateOptionEnabled;
 
 s32 Save_ScanFileSummaries(void);
 

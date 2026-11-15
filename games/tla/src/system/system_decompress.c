@@ -29,7 +29,7 @@ s32 Decompress_TaggedLz(const void *source, void *destination) {
 }
 
 /// As Decompress_TaggedLz, with the move-to-front LZ decoder.
-s32 Resource_DecodeType2(const void *source, void *destination) {
+s32 Decompress_MoveToFrontLz(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
 
@@ -41,7 +41,7 @@ s32 Resource_DecodeType2(const void *source, void *destination) {
 }
 
 /// As Decompress_TaggedLz, with the byte LZ decoder.
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination) {
+s32 Decompress_ByteLz(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
 

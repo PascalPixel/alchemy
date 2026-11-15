@@ -121,7 +121,7 @@ enum MadraInteriorsJailActorId {
   ACTOR_ILL_MAN
 };
 
-/// The left cavern home (MadraInteriors2), by the rows of
+/// The left cavern home (MadraInteriorsCavernHomes), by the rows of
 /// gMadraInteriors_SecondRoomsPlacements.
 enum MadraInteriorsCavernHomeActorId {
   /// A couple who talk of Alhafra, and later of a plan to make money.
@@ -176,7 +176,7 @@ void MadraInteriors_InterrogatePiers(void);
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_2)
+  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_CAVERN_HOMES)
     return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailPlacements;
@@ -423,7 +423,7 @@ void MadraInteriors_TalkToIllMan(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_2)
+  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_CAVERN_HOMES)
     return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailTriggers;
@@ -510,7 +510,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 20)
     MadraInteriors_SetUpJail();
-  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_2) {
+  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_CAVERN_HOMES) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(ACTOR_SISTER_IN_BED, 0, 0);
     } else {
@@ -1432,7 +1432,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(14, MadraInteriorsHouses, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, Madra, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(20, Madra, 9, EXIT_FLAG_NONE),
-    SCENE_EXITS(MadraInteriors2),
+    SCENE_EXITS(MadraInteriorsCavernHomes),
     SCENE_EXIT_UNLESS(1, Madra, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Madra, 10, EXIT_FLAG_NONE),
     SCENE_EXITS_END,

@@ -180,10 +180,10 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
 
   switch (effectId) {
-  case ABILITY_EFFECT_DEFENSE_DOWN_2:
+  case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
   case ABILITY_EFFECT_DEFENSE_DOWN:
     return 70;
-  case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:
   case ABILITY_EFFECT_RESISTANCE_DOWN:
     return 75;
   case ABILITY_EFFECT_CHARM:
@@ -191,7 +191,7 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_SLEEP:
     return 45;
   case ABILITY_EFFECT_POISON:
-  case ABILITY_EFFECT_DEADLY_POISON:
+  case ABILITY_EFFECT_VENOM:
   case ABILITY_EFFECT_SEAL:
     return 55;
   case ABILITY_EFFECT_HAUNT:
@@ -207,20 +207,20 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_REVIVE_HALF:
     fixedChance = 60;
     break;
-  case ABILITY_EFFECT_REVIVE_80:
+  case ABILITY_EFFECT_DEW:
     fixedChance = 90;
     break;
-  case ABILITY_EFFECT_REVIVE_60:
+  case ABILITY_EFFECT_BALM:
     fixedChance = 70;
     break;
-  case ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
   case ABILITY_EFFECT_ATTACK_DOWN:
   case ABILITY_EFFECT_CURSE:
   case ABILITY_EFFECT_DRAIN_PP:
   case ABILITY_EFFECT_CURSE_THREE_ROLLS:
     return 60;
   case ABILITY_EFFECT_HALVE_DEFENSE:
-  case ABILITY_EFFECT_GROUND_2:
+  case ABILITY_EFFECT_ULYSSES:
     return 50;
   case ABILITY_EFFECT_STUN:
   case ABILITY_EFFECT_BLOW_AWAY:
@@ -283,8 +283,7 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
 s32 Battle_IsReviveEffect(s32 effectId) {
   if (effectId == ABILITY_EFFECT_REVIVE ||
       effectId == ABILITY_EFFECT_REVIVE_HALF ||
-      effectId == ABILITY_EFFECT_REVIVE_80 ||
-      effectId == ABILITY_EFFECT_REVIVE_60) {
+      effectId == ABILITY_EFFECT_DEW || effectId == ABILITY_EFFECT_BALM) {
     return 1;
   }
   return 0;
@@ -370,7 +369,7 @@ restore_checked:
   if (*luck >= 40) {
     switch (effectId) {
     case ABILITY_EFFECT_POISON:
-    case ABILITY_EFFECT_DEADLY_POISON:
+    case ABILITY_EFFECT_VENOM:
     case ABILITY_EFFECT_HAUNT:
     case ABILITY_EFFECT_INSTANT_DEATH:
     case ABILITY_EFFECT_CURSE:

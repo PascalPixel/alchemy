@@ -533,7 +533,7 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   if (state == gMarsLighthouseRoomM_DoorwayStep)
     return;
   if ((state ^ gMarsLighthouseRoomM_DoorwayStep) & 1)
-    Event_PlaySound(SE_560);
+    Event_PlaySound(SE_MARS_LIGHTHOUSE_DOORWAY);
   gMarsLighthouseRoomM_DoorwayStep = state;
   odd = state & 1;
   flash = (u16 *)&gMarsLighthouseRoomM_DoorwayBlendTarget;
@@ -656,10 +656,10 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gMarsLighthouseRoomM_Room6Triggers;
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS)
     return gMarsLighthouseRoomM_Room1Triggers;
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
+  if (scene == SCENE_MARS_LIGHTHOUSE_MERCURY_LEDGE ||
+      scene == SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5)
+      scene == SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE)
     return gMarsLighthouseRoomM_Room5Triggers;
   return gMarsLighthouseRoomM_Triggers;
 }
@@ -795,10 +795,10 @@ s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
+      scene == SCENE_MARS_LIGHTHOUSE_MERCURY_LEDGE ||
+      scene == SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5) {
+      scene == SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE) {
     Weather_StartRain(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
@@ -871,12 +871,13 @@ s32 Scene_PrepareMap(void) {
     }
   }
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
-    extern char SceneId_MarsLighthouseRoomM3Second __asm__(
-        "SceneId_MarsLighthouseRoomM3");
+    extern char SceneId_MarsLighthouseJupiterLedgeSecond __asm__(
+        "SceneId_MarsLighthouseJupiterLedge");
 
-    Map_CopyPalette(gMainRoutineWork.mapId +
-                        ((s32)&SceneId_MarsLighthouseRoomM3Second - SCENE_PROX),
-                    0x5000000);
+    Map_CopyPalette(
+        gMainRoutineWork.mapId +
+            ((s32)&SceneId_MarsLighthouseJupiterLedgeSecond - SCENE_PROX),
+        0x5000000);
   }
   return 0;
 }
@@ -1056,7 +1057,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_MoveTo(224, 88, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
-    Event_PlaySound(SE_560);
+    Event_PlaySound(SE_MARS_LIGHTHOUSE_DOORWAY);
     MarsLighthouseRoomM_FlashDoorways();
     FieldEvent_Wait(20);
     PaletteFade_SetTarget(0x10000, 0);
@@ -1872,7 +1873,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_572);
+          Event_PlaySound(SE_CRUMBLE);
           Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
@@ -1996,17 +1997,17 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MarsLighthouseRoomMFlame),
-    SCENE_EXIT(1, MarsLighthouseRoomF4, 5),
-    SCENE_EXIT(2, MarsLighthouseRoomF2, 8),
-    SCENE_EXIT(3, MarsLighthouseRoomF1, 4),
-    SCENE_EXIT(4, MarsLighthouseRoomF3, 15),
+    SCENE_EXIT(1, MarsLighthouseVenusTower, 5),
+    SCENE_EXIT(2, MarsLighthouseMercuryTower, 8),
+    SCENE_EXIT(3, MarsLighthouseMarsTower, 4),
+    SCENE_EXIT(4, MarsLighthouseJupiterTower, 15),
     SCENE_EXITS(MarsLighthouseRoomMInscriptions),
     SCENE_EXIT(1, MarsLighthouseAerie, 1),
     SCENE_EXIT(2, MarsLighthouseEntranceFugue, 2),
-    SCENE_EXIT(3, MarsLighthouseRoomM5, 1),
-    SCENE_EXIT(4, MarsLighthouseRoomM2, 1),
+    SCENE_EXIT(3, MarsLighthouseVenusLedge, 1),
+    SCENE_EXIT(4, MarsLighthouseMercuryLedge, 1),
     SCENE_EXIT(5, MarsLighthouseRoomMAlastorsHoodChest, 1),
-    SCENE_EXIT(6, MarsLighthouseRoomM3, 1),
+    SCENE_EXIT(6, MarsLighthouseJupiterLedge, 1),
     SCENE_EXIT(7, MarsLighthouseRoomMInscriptions, 8),
     SCENE_EXIT(8, MarsLighthouseRoomMInscriptions, 7),
     SCENE_EXIT(9, MarsLighthouseRoomMInscriptions, 10),
@@ -2015,18 +2016,18 @@ u32 gSceneExits[] = {
     SCENE_EXIT(12, MarsLighthouseRoomMInscriptions, 11),
     SCENE_EXIT(13, MarsLighthouseRoomMInscriptions, 14),
     SCENE_EXIT(14, MarsLighthouseRoomMInscriptions, 13),
-    SCENE_EXITS(MarsLighthouseRoomM2),
+    SCENE_EXITS(MarsLighthouseMercuryLedge),
     SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 4),
-    SCENE_EXIT(2, MarsLighthouseRoomF2, 1),
-    SCENE_EXITS(MarsLighthouseRoomM3),
+    SCENE_EXIT(2, MarsLighthouseMercuryTower, 1),
+    SCENE_EXITS(MarsLighthouseJupiterLedge),
     SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 6),
-    SCENE_EXIT(2, MarsLighthouseRoomF3, 1),
+    SCENE_EXIT(2, MarsLighthouseJupiterTower, 1),
     SCENE_EXITS(MarsLighthouseRoomMAlastorsHoodChest),
     SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 5),
-    SCENE_EXIT(2, MarsLighthouseRoomF1, 1),
-    SCENE_EXITS(MarsLighthouseRoomM5),
+    SCENE_EXIT(2, MarsLighthouseMarsTower, 1),
+    SCENE_EXITS(MarsLighthouseVenusLedge),
     SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 3),
-    SCENE_EXIT(2, MarsLighthouseRoomF4, 1),
+    SCENE_EXIT(2, MarsLighthouseVenusTower, 1),
     SCENE_EXITS_END,
 };
 

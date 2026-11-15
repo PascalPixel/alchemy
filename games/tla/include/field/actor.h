@@ -149,7 +149,7 @@ struct Actor {
       u8 frozen;
       u8 riseCounter; ///< frames into the bob, its low six bits a cycle
       /// A block's: nonzero while it blocks the cells ahead of and behind it.
-      u8 blockMarked;
+      u8 riseEnabled;
     };
   };
   /// Two halfwords whose meaning depends on what runs the actor.

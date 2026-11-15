@@ -422,10 +422,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_BANE_ESCAPE);
     }
     if (frame == 88) {
-      Sound_PlayFar(SE_230);
+      Sound_PlayFar(SE_WATER_DRAIN);
     }
     if (frame == 155) {
-      Sound_PlayFar(SE_162);
+      Sound_PlayFar(SE_WAVE);
     }
     if (frame == 217) {
       Sound_PlayFar(SE_SWITCH_MECHANISM);
@@ -442,8 +442,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
         frame = JUDGMENT_SWEEP_BEACH;
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
                                    0);
@@ -461,8 +461,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
     if (frame == JUDGMENT_SWEEP_EXPLOSION) {
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);

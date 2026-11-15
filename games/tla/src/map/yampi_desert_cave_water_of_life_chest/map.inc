@@ -36,4 +36,4 @@ Tileset_YampiDesertCaveWaterOfLifeChestPalette:
 	.global Tileset_YampiDesertCaveWaterOfLifeChestTilesA
 Tileset_YampiDesertCaveWaterOfLifeChestTilesA:
 	.incbin "games/tla/src/graphics/tileset/yampi_desert_cave_water_of_life_chest/tiles_a.4bpp.mtf"
-	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Decompress_MoveToFrontLz uses decoded RAM and output length; writer unknown

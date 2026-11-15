@@ -385,7 +385,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_SET:
-      Sound_PlayFar(SE_139);
+      Sound_PlayFar(SE_DJINNI_SET);
       Djinn_SetFar(menu->shownMember[0], menu->pairElement[0],
                    menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
@@ -1359,7 +1359,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       gInput.pendingPressed = 0;
       switch (state) {
       case 0:
-        Sound_PlayFar(SE_139);
+        Sound_PlayFar(SE_DJINNI_SET);
         Djinn_SetFar(owner, element, number);
         DjinnRecovery_RemoveFar(owner, element, number);
         break;
@@ -1430,7 +1430,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          Sound_PlayFar(SE_139);
+          Sound_PlayFar(SE_DJINNI_SET);
         else
           Sound_PlayFar(SE_NOTE_HIGH);
         for (i = 0; i < menu->memberCount; i++) {
@@ -1650,10 +1650,10 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 #define DJINN_PREVIEW_POOL_ARROW_X 62 ///< beside HP and PP
 #define DJINN_PREVIEW_STAT_ARROW_X 70 ///< beside the other stats
 #define DJINN_PREVIEW_PP_X 88
-#define MSG_STAT_LABELS ((s32)MsgKey0d0e)
-#define MSG_PSYNERGY_GAINED ((s32)MsgKey10d3)
-#define MSG_PSYNERGY_LOST ((s32)MsgKey10d4)
-#define MSG_NO_CHANGE ((s32)MsgKey10d9)
+#define MSG_STAT_LABELS ((s32)MsgPreviewStatLabel)
+#define MSG_PSYNERGY_GAINED ((s32)MsgPsynergyGained)
+#define MSG_PSYNERGY_LOST ((s32)MsgPsynergyLost)
+#define MSG_NO_CHANGE ((s32)MsgPsynergyUnchanged)
 #else
 #define DJINN_PREVIEW_DIGITS 4
 #define DJINN_PREVIEW_CURRENT_X 32

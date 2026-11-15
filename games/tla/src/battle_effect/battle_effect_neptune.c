@@ -154,7 +154,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   frame = 0;
   do {
     if (frame == 24)
-      Sound_PlayFar(SE_162);
+      Sound_PlayFar(SE_WAVE);
     if (frame == 76)
       Sound_PlayFar(SE_SCATTER);
     if (frame == 154)

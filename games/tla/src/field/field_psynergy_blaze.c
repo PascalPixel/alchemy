@@ -194,7 +194,7 @@ void FieldPsynergy_Blaze(void) {
     EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     cursor.particle->timer = -1;
     cursor.particle++;
@@ -211,7 +211,7 @@ void FieldPsynergy_Blaze(void) {
     sprite->scaleY = sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->depth = 250;
     sprite->oam.priority = 0;
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     cursor.particle->timer = -1;
     cursor.particle++;

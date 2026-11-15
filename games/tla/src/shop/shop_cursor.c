@@ -258,7 +258,7 @@ void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
     return;
   source = Resource_GetTableEntry(resourceId);
   buffer = Heap_Alloc(size);
-  Resource_DecodeByteLzInRam(source, buffer);
+  Decompress_ByteLz(source, buffer);
   VramCache_Load(entryId, size, buffer);
   Heap_Release(buffer);
 }

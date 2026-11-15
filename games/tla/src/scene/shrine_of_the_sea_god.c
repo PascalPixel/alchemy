@@ -176,7 +176,7 @@ enum ShrineOfTheSeaGodHallActorId {
 };
 
 /// The torch Move pushes and its flame, the first two rows of the side room
-/// (SceneId_ShrineOfTheSeaGod2) and of the ledge room
+/// (SceneId_ShrineOfTheSeaGodPlankBridge) and of the ledge room
 /// (SceneId_ShrineOfTheSeaGodBreath).
 enum ShrineOfTheSeaGodTorchActorId {
   ACTOR_TORCH = ACTOR_FIRST_PLACED,
@@ -191,8 +191,8 @@ enum ShrineOfTheSeaGodSideRoomActorId {
   ACTOR_SIDE_ROOM_RIKI
 };
 
-/// The great hall's actors (SceneId_ShrineOfTheSeaGod3), numbering the rows of
-/// gShrineOfTheSeaGodCrossroadsActorPlacements.
+/// The great hall's actors (SceneId_ShrineOfTheSeaGodCrossroads), numbering the
+/// rows of gShrineOfTheSeaGodCrossroadsActorPlacements.
 enum ShrineOfTheSeaGodGreatHallActorId {
   /// The block Move pushes aside.
   ACTOR_GREAT_HALL_PUSHED_PILLAR = ACTOR_FIRST_PLACED,
@@ -210,8 +210,8 @@ enum ShrineOfTheSeaGodGreatHallActorId {
   ACTOR_GREAT_HALL_BREATH
 };
 
-/// The room below's actors (SceneId_ShrineOfTheSeaGod4): Breath's footprints,
-/// sixteen of them, left and right feet in turn.
+/// The room below's actors (SceneId_ShrineOfTheSeaGodFootprints): Breath's
+/// footprints, sixteen of them, left and right feet in turn.
 enum ShrineOfTheSeaGodFootprintsActorId {
   ACTOR_FIRST_FOOTPRINT = ACTOR_FIRST_PLACED,
   ACTOR_LAST_FOOTPRINT = ACTOR_FIRST_FOOTPRINT + 15
@@ -228,7 +228,7 @@ enum ShrineOfTheSeaGodLedgeRoomActorId {
   ACTOR_BREATH
 };
 
-/// The hole room's actors (SceneId_ShrineOfTheSeaGod6).
+/// The hole room's actors (SceneId_ShrineOfTheSeaGodPillarHole).
 enum ShrineOfTheSeaGodHoleRoomActorId {
   /// The pillar Move pushes into the hole.
   ACTOR_HOLE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
@@ -312,9 +312,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_STATUE)
     return (const struct SceneRegion *)gShrineOfTheSeaGodStatueExitRegions;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_10)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_LADDERS)
     return (const struct SceneRegion *)gShrineOfTheSeaGodLaddersExitRegions;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG)
     return (const struct SceneRegion *)gShrineOfTheSeaGodRightProngExitRegions;
@@ -349,19 +349,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
     return (const struct ActorPlacement *)gShrineOfTheSeaGodRopeActorPlacements;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE)
     return (const struct ActorPlacement *)
         gShrineOfTheSeaGodPlankBridgeActorPlacements;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_CROSSROADS)
     return (const struct ActorPlacement *)
         gShrineOfTheSeaGodCrossroadsActorPlacements;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS)
     return (const struct ActorPlacement *)
         gShrineOfTheSeaGodFootprintsActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
     return (
         const struct ActorPlacement *)gShrineOfTheSeaGodBreathActorPlacements;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE)
     return (const struct ActorPlacement *)
         gShrineOfTheSeaGodPillarHoleActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
@@ -379,21 +379,21 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
     return gShrineOfTheSeaGodRopeTriggers;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE)
     return gShrineOfTheSeaGodPlankBridgeTriggers;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_CROSSROADS)
     return gShrineOfTheSeaGodCrossroadsTriggers;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS)
     return gShrineOfTheSeaGodFootprintsTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
     return gShrineOfTheSeaGodBreathTriggers;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE)
     return gShrineOfTheSeaGodPillarHoleTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
     return gShrineOfTheSeaGodPillarsTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR)
     return gShrineOfTheSeaGodSeaGodsTearTriggers;
-  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_STATUE)
     return gShrineOfTheSeaGodStatueTriggers;
   return gShrineOfTheSeaGod_Triggers;
 }
@@ -957,7 +957,7 @@ void ShrineOfTheSeaGod_SetActorsHidden(s32 show, s32 first, u32 count);
 
 /// In the hole room, shows or hides its three slides.
 void ShrineOfTheSeaGod_SetSlideActorsShown(s32 show) {
-  if (gMainRoutineWork.next == SCENE_SHRINE_OF_THE_SEA_GOD_6)
+  if (gMainRoutineWork.next == SCENE_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE)
     ShrineOfTheSeaGod_SetActorsHidden(show, 9, 3);
 }
 
@@ -1863,21 +1863,21 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
     ShrineOfTheSeaGod_InitializeRope();
-  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PLANK_BRIDGE)
     ShrineOfTheSeaGod_InitializePlankBridge();
-  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_CROSSROADS)
     ShrineOfTheSeaGod_InitializeCrossroads();
-  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS)
     ShrineOfTheSeaGod_InitializeFootprints();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
     ShrineOfTheSeaGod_InitializeBreath();
-  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE)
     ShrineOfTheSeaGod_InitializePillarHole();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
     ShrineOfTheSeaGod_InitializePillars();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR)
     ShrineOfTheSeaGod_InitializeSeaGodsTear();
-  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_STATUE)
     ShrineOfTheSeaGod_InitializeStatue();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG)
     ShrineOfTheSeaGod_InitializeRightProng();
@@ -2365,45 +2365,45 @@ u32 gShrineOfTheSeaGodRightProngExitRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ShrineOfTheSeaGodRope),
-    SCENE_EXIT(1, ShrineOfTheSeaGod3, 5),
-    SCENE_EXIT(2, ShrineOfTheSeaGod2, 1),
+    SCENE_EXIT(1, ShrineOfTheSeaGodCrossroads, 5),
+    SCENE_EXIT(2, ShrineOfTheSeaGodPlankBridge, 1),
     SCENE_EXIT(3, WorldMap, 5),
-    SCENE_EXITS(ShrineOfTheSeaGod2),
+    SCENE_EXITS(ShrineOfTheSeaGodPlankBridge),
     SCENE_EXIT(1, ShrineOfTheSeaGodRope, 2),
-    SCENE_EXITS(ShrineOfTheSeaGod3),
+    SCENE_EXITS(ShrineOfTheSeaGodCrossroads),
     SCENE_EXIT(1, ShrineOfTheSeaGodPillars, 2),
     SCENE_EXIT(2, ShrineOfTheSeaGodSeaGodsTear, 1),
     SCENE_EXIT(3, ShrineOfTheSeaGodSeaGodsTear, 2),
-    SCENE_EXIT(4, ShrineOfTheSeaGod4, 1),
+    SCENE_EXIT(4, ShrineOfTheSeaGodFootprints, 1),
     SCENE_EXIT(5, ShrineOfTheSeaGodRope, 1),
-    SCENE_EXITS(ShrineOfTheSeaGod4),
-    SCENE_EXIT(1, ShrineOfTheSeaGod3, 4),
+    SCENE_EXITS(ShrineOfTheSeaGodFootprints),
+    SCENE_EXIT(1, ShrineOfTheSeaGodCrossroads, 4),
     SCENE_EXIT(2, ShrineOfTheSeaGodBreath, 2),
     SCENE_EXIT(3, ShrineOfTheSeaGodBreath, 4),
     SCENE_EXIT(4, ShrineOfTheSeaGodBreath, 3),
     SCENE_EXITS(ShrineOfTheSeaGodBreath),
-    SCENE_EXIT(1, ShrineOfTheSeaGod6, 1),
-    SCENE_EXIT(2, ShrineOfTheSeaGod4, 2),
-    SCENE_EXIT(3, ShrineOfTheSeaGod4, 4),
-    SCENE_EXIT(4, ShrineOfTheSeaGod4, 3),
-    SCENE_EXITS(ShrineOfTheSeaGod6),
+    SCENE_EXIT(1, ShrineOfTheSeaGodPillarHole, 1),
+    SCENE_EXIT(2, ShrineOfTheSeaGodFootprints, 2),
+    SCENE_EXIT(3, ShrineOfTheSeaGodFootprints, 4),
+    SCENE_EXIT(4, ShrineOfTheSeaGodFootprints, 3),
+    SCENE_EXITS(ShrineOfTheSeaGodPillarHole),
     SCENE_EXIT(1, ShrineOfTheSeaGodBreath, 1),
     SCENE_EXIT(2, ShrineOfTheSeaGodPillars, 1),
     SCENE_EXITS(ShrineOfTheSeaGodPillars),
-    SCENE_EXIT(1, ShrineOfTheSeaGod6, 2),
-    SCENE_EXIT(2, ShrineOfTheSeaGod3, 1),
+    SCENE_EXIT(1, ShrineOfTheSeaGodPillarHole, 2),
+    SCENE_EXIT(2, ShrineOfTheSeaGodCrossroads, 1),
     SCENE_EXITS(ShrineOfTheSeaGodSeaGodsTear),
-    SCENE_EXIT(1, ShrineOfTheSeaGod3, 2),
-    SCENE_EXIT(2, ShrineOfTheSeaGod3, 3),
-    SCENE_EXIT(3, ShrineOfTheSeaGod9, 1),
-    SCENE_EXITS(ShrineOfTheSeaGod9),
+    SCENE_EXIT(1, ShrineOfTheSeaGodCrossroads, 2),
+    SCENE_EXIT(2, ShrineOfTheSeaGodCrossroads, 3),
+    SCENE_EXIT(3, ShrineOfTheSeaGodStatue, 1),
+    SCENE_EXITS(ShrineOfTheSeaGodStatue),
     SCENE_EXIT(1, ShrineOfTheSeaGodSeaGodsTear, 3),
-    SCENE_EXIT(2, ShrineOfTheSeaGod10, 40),
-    SCENE_EXITS(ShrineOfTheSeaGod10),
-    SCENE_EXIT(1, ShrineOfTheSeaGod9, 2),
+    SCENE_EXIT(2, ShrineOfTheSeaGodLadders, 40),
+    SCENE_EXITS(ShrineOfTheSeaGodLadders),
+    SCENE_EXIT(1, ShrineOfTheSeaGodStatue, 2),
     SCENE_EXIT(2, ShrineOfTheSeaGodRightProng, 40),
     SCENE_EXITS(ShrineOfTheSeaGodRightProng),
-    SCENE_EXIT(1, ShrineOfTheSeaGod10, 41),
+    SCENE_EXIT(1, ShrineOfTheSeaGodLadders, 41),
     SCENE_EXITS_END,
 };
 

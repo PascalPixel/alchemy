@@ -451,7 +451,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     PaletteFade_StartInterpolation(frames);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     PaletteFade_SetBackdrop(0);
     return;
   case TRANSITION_WINDOW: {
@@ -465,7 +465,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     state->start = 0;
     state->end = TRANSITION_OPEN;
     state->duration = frames;
@@ -481,7 +481,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     state->start = 0;
     state->end = TRANSITION_OPEN;
     state->duration = frames;
@@ -515,7 +515,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }
 
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades it
@@ -605,7 +605,7 @@ s32 ScreenTransition_IsScanlineActive(void) {
 /// is set.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
-  struct ScreenTransitionWin *state;
+  struct MapWork *state;
 
   state = Ram_HeapSlots->mapGrid;
   if (state != NULL) {

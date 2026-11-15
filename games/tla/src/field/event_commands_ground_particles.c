@@ -24,11 +24,11 @@ void GroundParticles_Start(void) {
 
   work = HeapSlot_AllocEwram(116, sizeof(struct WeatherWork));
   leader = Ram_HeapSlots->mapGrid->origin;
-  Scene_QueueMusic(SE_170);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct WeatherWork));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gFieldEffect_GroundParticleTiles, words);
+  Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -125,7 +125,7 @@ void RisingParticles_Start(void) {
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
+  Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

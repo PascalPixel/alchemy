@@ -247,7 +247,7 @@ void BattleEffect_DrawCanvasSprite(void) {
   if (scaleX != 0 && scaleY != 0) {
     if (work->mode == CANVAS_SPRITE_16_COLORS) {
       EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
-      work->sprite.oam.palette256 = 0;
+      work->sprite.oam.fullColor = 0;
       work->sprite.oam.palette = 14;
       work->sprite.oam.priority = work->priority;
       work->sprite.depth = work->depth;
@@ -260,7 +260,7 @@ void BattleEffect_DrawCanvasSprite(void) {
     }
     if (work->mode == CANVAS_SPRITE_256_COLORS) {
       EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
-      work->sprite.oam.palette256 = 1;
+      work->sprite.oam.fullColor = 1;
       work->sprite.oam.palette = 0;
       work->sprite.oam.priority = work->priority;
       work->sprite.depth = work->depth;
@@ -385,7 +385,7 @@ void Actor_VanishInSparks(s32 objectId) {
   for (; i < 64; i++, spark++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(object);
     sprite->oam.priority = BattleEffect_GetObjectPriority(object);

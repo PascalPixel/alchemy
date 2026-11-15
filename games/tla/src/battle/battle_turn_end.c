@@ -400,19 +400,20 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 // われにかえった! ("regains consciousness"), two after MsgDefNormal.
 #define MSG_CONSCIOUS ((s32)&MsgDefNormal + 2)
 // まぼろしを うちやぶった! ("sees clearly once again"), three before
-// MsgConscious2.
-#define MSG_CURE_DELUSION ((s32)&MsgConscious2 - 3)
-// エナジーふうじがとけた! ("Psynergy seal is gone"), two before MsgConscious2.
-#define MSG_CURE_SEAL ((s32)&MsgConscious2 - 2)
-// しびれがきえた! ("no longer stunned"), the message before MsgConscious2.
-#define MSG_CURE_STUN ((s32)&MsgConscious2 - 1)
+// MsgCharmConscious.
+#define MSG_CURE_DELUSION ((s32)&MsgCharmConscious - 3)
+// エナジーふうじがとけた! ("Psynergy seal is gone"), two before
+// MsgCharmConscious.
+#define MSG_CURE_SEAL ((s32)&MsgCharmConscious - 2)
+// しびれがきえた! ("no longer stunned"), the message before MsgCharmConscious.
+#define MSG_CURE_STUN ((s32)&MsgCharmConscious - 1)
 // リフレクトのこうかがきえた! ("Reflect no longer affects"), after
 // MsgRefrainEnd.
 #define MSG_REFLECT_END ((s32)&MsgRefrainEnd + 1)
 #else
 #define MSG_WAKES ((s32)&MsgWakes)
 #define MSG_AGI_NORMAL ((s32)&MsgAgiNormal)
-#define MSG_CONSCIOUS ((s32)&MsgConscious)
+#define MSG_CONSCIOUS ((s32)&MsgConfusionConscious)
 #define MSG_CURE_DELUSION ((s32)&MsgCureDelusion)
 #define MSG_CURE_SEAL ((s32)&MsgCureSeal)
 #define MSG_CURE_STUN ((s32)&MsgCureStun)
@@ -541,12 +542,12 @@ void Battle_ProcessTurnEnd(void) {
             hpAmount = unit->hpRegen;
             switch (unit->enemyId) {
             case ENEMY_SERPENT:
-            case ENEMY_SERPENT_2:
-            case ENEMY_SERPENT_3:
-            case ENEMY_SERPENT_4:
-            case ENEMY_SERPENT_5:
-            case ENEMY_SERPENT_6:
-            case ENEMY_SERPENT_7:
+            case ENEMY_SERPENT_ONE_BEAM:
+            case ENEMY_SERPENT_TWO_BEAMS:
+            case ENEMY_SERPENT_THREE_BEAMS:
+            case ENEMY_SERPENT_FOUR_BEAMS:
+            case ENEMY_UNUSED_SERPENT_A:
+            case ENEMY_UNUSED_SERPENT_B:
             case ENEMY_DULLAHAN:
               hpAmount *= 10;
               break;
@@ -588,7 +589,7 @@ void Battle_ProcessTurnEnd(void) {
         ANNOUNCE_END(BattleUnit_CountDownResistanceStage, (s32)&MsgResNormal);
         ANNOUNCE_END(BattleUnit_CountDownDelusion, MSG_CURE_DELUSION);
         ANNOUNCE_END(BattleUnit_CountDownConfusion, MSG_CONSCIOUS);
-        ANNOUNCE_END(BattleUnit_CountDownCharm, (s32)&MsgConscious2);
+        ANNOUNCE_END(BattleUnit_CountDownCharm, (s32)&MsgCharmConscious);
         ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MSG_CURE_STUN);
         ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MSG_WAKES);
         ANNOUNCE_END(BattleUnit_CountDownPsynergySeal, MSG_CURE_SEAL);

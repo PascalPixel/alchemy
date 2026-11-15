@@ -652,7 +652,9 @@ s32 Scene_PrepareMap(void) {
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step.h"
 
@@ -1153,8 +1155,8 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseRoomRedKey),         SCENE_EXIT(1, JupiterLighthouseRoomLockedDoors, 1),    SCENE_EXIT(2, JupiterLighthouseRoomRedKey, 3), 
       SCENE_EXIT(3, JupiterLighthouseRoomRedKey, 2),  SCENE_EXIT(5, JupiterLighthouseRoomM, 5),    SCENE_EXIT(6, JupiterLighthouseRoomM, 6),  
-      SCENE_EXIT(7, JupiterLighthouseRoomRedKey, 8),   SCENE_EXIT(8, JupiterLighthouseRoomRedKey, 7), SCENE_EXIT(9, JupiterLighthouseRoom6, 9), 
-      SCENE_EXIT(10, JupiterLighthouseRoom6, 10), SCENE_EXITS_END,                                
+      SCENE_EXIT(7, JupiterLighthouseRoomRedKey, 8),   SCENE_EXIT(8, JupiterLighthouseRoomRedKey, 7), SCENE_EXIT(9, JupiterLighthouseRoomCrackedFloor, 9), 
+      SCENE_EXIT(10, JupiterLighthouseRoomCrackedFloor, 10), SCENE_EXITS_END,                                
   };
 
 struct ActorPlacement gActorPlacements[] = {

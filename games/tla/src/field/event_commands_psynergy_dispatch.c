@@ -87,7 +87,7 @@ void FieldPsynergy_Run(void) {
     FieldPsynergy_Reveal();
   else if (animation == FIELD_PSYNERGY_LASH)
     FieldPsynergy_Lash();
-  else if (animation == FIELD_PSYNERGY_UNNAMED_29)
+  else if (animation == FIELD_PSYNERGY_ARROW)
     FieldPsynergy_Arrow();
   else if (animation == FIELD_PSYNERGY_CYCLONE)
     FieldPsynergy_Cyclone();
@@ -111,7 +111,7 @@ void FieldPsynergy_Run(void) {
     FieldPsynergy_Teleport();
   else if (animation == FIELD_PSYNERGY_PARCH)
     FieldPsynergy_Parch();
-  else if (animation == FIELD_PSYNERGY_UNNAMED_28)
+  else if (animation == FIELD_PSYNERGY_RING)
     FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the nearest one that
@@ -203,7 +203,7 @@ void FieldPsynergy_Dispatch(void) {
     FieldPsynergy_BurstOnTarget(targetId);
   else if (animation == FIELD_PSYNERGY_POUND)
     FieldPsynergy_PoundOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_UNNAMED_28)
+  else if (animation == FIELD_PSYNERGY_RING)
     FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first; a target that
@@ -266,7 +266,7 @@ void FieldPsynergy_RunExtraHandler(void) {
   case FIELD_PSYNERGY_HOVER:
     FieldPsynergy_EndHover();
     break;
-  case FIELD_PSYNERGY_UNNAMED_28:
+  case FIELD_PSYNERGY_RING:
     FieldPsynergy_EndRing();
     break;
   }

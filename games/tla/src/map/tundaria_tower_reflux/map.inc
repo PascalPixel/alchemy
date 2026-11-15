@@ -15,7 +15,7 @@ Field_TundariaTowerReflux:
 	.incbin "games/tla/src/map/tundaria_tower_reflux/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_TundariaTowerReflux_SHAPES:
-	.incbin "games/tla/src/map/tundaria_tower_3/shapes.table.lz"
+	.incbin "games/tla/src/map/tundaria_tower_ice_slide/shapes.table.lz"
 	.balign 4, 0
 .LField_TundariaTowerReflux_GRID:
 	.incbin "games/tla/src/map/tundaria_tower_reflux/map.grid.lz"
@@ -24,7 +24,7 @@ Field_TundariaTowerReflux:
 	.incbin "games/tla/src/map/tundaria_tower_reflux/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_TundariaTowerReflux_ANIMATION:
-	.incbin "games/tla/src/map/tundaria_tower_3/animation.script.lz"
+	.incbin "games/tla/src/map/tundaria_tower_ice_slide/animation.script.lz"
 	.balign 4, 0
 .LField_TundariaTowerReflux_BLEND:
 	.incbin "games/tla/src/map/tundaria_tower_reflux/blend.script.lz"

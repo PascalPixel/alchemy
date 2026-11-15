@@ -50,7 +50,7 @@ void Whirlwind_Update(struct Actor *self) {
           }
           gMainRoutineWork.movementMode = 0;
           self->riseCounter = 1;
-          self->blockMarked = 1;
+          self->riseEnabled = 1;
         }
       }
       {
@@ -69,7 +69,7 @@ void Whirlwind_Update(struct Actor *self) {
     }
   }
 stop:
-  self->blockMarked = 0;
+  self->riseEnabled = 0;
   self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);
   Event_PlaySound(SE_SPARKLING_PASSAGE);

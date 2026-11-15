@@ -508,7 +508,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       PaletteFade_ApplyTarget(0x10003, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
-      PartyInventory_Remove(ITEM_245);
+      PartyInventory_Remove(ITEM_MYTHRIL_BAG_B);
       felix = Actor_GetById(ACTOR_FELIX);
       star = FieldActor_Create(0x1e9, felix->x.fixed, felix->y.fixed + px(8),
                                felix->z.fixed);
@@ -539,7 +539,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       shadow->scaleX = Q16_ONE / 8;
       shadow->scaleY = Q16_ONE / 8;
       FieldEvent_SetMessageId((s32)MsgThereSeemsTo + 1);
-      Event_PlaySound(MUS_036);
+      Event_PlaySound(MUS_CONFRONTATION);
       if (star != 0) {
         flags = &star->motionFlags;
         *flags = 0;
@@ -667,7 +667,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       PaletteFade_ApplyTarget(0x4063ff, 0);
       PaletteFade_Interpolate(16);
       System_Wait(16);
-      Event_PlaySound(MUS_063);
+      Event_PlaySound(MUS_BEACON_LIT);
       System_Wait(180);
       PaletteFade_ApplyTarget(0x7fff, 0);
       PaletteFade_Interpolate(60);
@@ -1260,7 +1260,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldCamera_MoveTo(520, 104, 344, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(MUS_039);
+  Event_PlaySound(MUS_ALEX);
   FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Alex! You..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
@@ -1800,7 +1800,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   FieldCamera_MoveTo(520, 104, 352, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(MUS_039);
+  Event_PlaySound(MUS_ALEX);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -2403,7 +2403,9 @@ void JupiterLighthouse_SetCycleFrame(s32 a0) {
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step.h"
 
@@ -2416,7 +2418,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -2998,9 +3000,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseAerieBeacon),
     SCENE_EXIT(1, JupiterLighthouseEntrance, 5),
     SCENE_EXIT(2, WorldMap, 72),
-    SCENE_EXIT(11, JupiterLighthouseRoom6, 1),
-    SCENE_EXIT(12, JupiterLighthouseRoom6, 2),
-    SCENE_EXIT(13, JupiterLighthouseRoom6, 3),
+    SCENE_EXIT(11, JupiterLighthouseRoomCrackedFloor, 1),
+    SCENE_EXIT(12, JupiterLighthouseRoomCrackedFloor, 2),
+    SCENE_EXIT(13, JupiterLighthouseRoomCrackedFloor, 3),
     SCENE_EXIT(14, JupiterLighthouseRoomPhaetonsBladeChest, 4),
     SCENE_EXITS_END,
 };

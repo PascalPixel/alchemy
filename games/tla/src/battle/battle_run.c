@@ -110,7 +110,8 @@ void Battle_PlayFormChange(s32 value) {
   request.side = 0;
   request.kind = 0;
   request.variant = 0;
-  BattleEffect_RunFormChangeFar((struct BattleFxRequest *)&request, value);
+  BattleEffect_RunFormChangeFar((struct BattlePresentationWork *)&request,
+                                value);
 }
 
 /// Returns the first of the Djinn tutorial's messages: the second set's
@@ -272,7 +273,7 @@ s32 Battle_Run(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlayFar(MUS_055);
+      Sound_PlayFar(MUS_BOULDER_CHASE);
       Sound_LoadReverbCode(4);
     }
   } else {

@@ -92,7 +92,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     struct EffectSprite *sprite = &work->sprites[i];
 
     EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
-    sprite->oam.palette256 = 0;
+    sprite->oam.fullColor = 0;
     sprite->oam.palette = 14;
     sprite->oam.priority = 0;
     sprite->depth = 240;

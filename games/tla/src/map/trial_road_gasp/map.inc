@@ -45,7 +45,7 @@ Tileset_TrialRoadGaspTilesB:
 	.global Tileset_TrialRoadGaspTilesC
 Tileset_TrialRoadGaspTilesC:
 	.incbin "games/tla/src/graphics/tileset/trial_road_gasp/tiles_c.4bpp.mtf"
-	.byte 0x10, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.byte 0x10, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_MoveToFrontLz uses decoded RAM and output length; writer unknown
 	.global Tileset_TrialRoadGaspTilesD
 Tileset_TrialRoadGaspTilesD:
 	.incbin "games/tla/src/graphics/tileset/trial_road_gasp/tiles_d.4bpp.mtf"

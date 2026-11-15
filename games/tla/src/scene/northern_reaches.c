@@ -395,7 +395,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     zero = 0;
     sprite->depth = 250;
     sprite->oam.priority = zero;
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = zero;
     column = i / 6;
     particle->x = position[0] + (column << 20);

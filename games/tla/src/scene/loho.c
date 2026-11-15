@@ -134,7 +134,7 @@ void Loho_MeetLull(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const u32 *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_2)
+  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
     return gLoho_Regions;
   return 0;
 }
@@ -142,7 +142,7 @@ const u32 *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_2)
+  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
     return gLoho_InteriorsPlacements;
   return gLoho_TownPlacements;
 }
@@ -637,9 +637,9 @@ void Loho_LiftRock(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_1)
+  if (gMainRoutineWork.next == SCENE_LOHO)
     return gLoho_TownTriggers;
-  if (gMainRoutineWork.next == SCENE_LOHO_2)
+  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
     return gLoho_InteriorsTriggers;
   return gLoho_Triggers;
 }
@@ -829,7 +829,7 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_1) {
+  if (gMainRoutineWork.next == SCENE_LOHO) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
@@ -863,7 +863,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_1 && Event_GetFlag(0xa5f))
+  if (gMainRoutineWork.next == SCENE_LOHO && Event_GetFlag(0xa5f))
     Loho_DrawBrokenWall();
   return 0;
 }
@@ -1021,27 +1021,27 @@ u32 gLoho_Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Loho1),
-    SCENE_EXIT_UNLESS(1, Loho2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Loho2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Loho2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Loho2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Loho2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Loho2, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Loho2, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Loho2, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS(Loho),
+    SCENE_EXIT_UNLESS(1, LohoInteriors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LohoInteriors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LohoInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, LohoInteriors, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, LohoInteriors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, LohoInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, LohoInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, LohoInteriors, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, WorldMap, 59, EXIT_FLAG_NONE),
-    SCENE_EXITS(Loho2),
-    SCENE_EXIT_UNLESS(1, Loho1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Loho1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Loho1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Loho1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Loho1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Loho1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Loho2, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Loho2, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Loho2, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Loho2, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(LohoInteriors),
+    SCENE_EXIT_UNLESS(1, Loho, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Loho, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Loho, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Loho, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Loho, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Loho, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, LohoInteriors, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, LohoInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, LohoInteriors, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, LohoInteriors, 9, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

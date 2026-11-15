@@ -164,7 +164,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        BATTLE_MENU_MESSAGE_COPY(definition->nameMessageId +
+        BATTLE_MENU_MESSAGE_COPY(definition->abilityId +
                                      (s32)MsgAbilityDescription,
                                  text, BATTLE_MENU_MESSAGE_CAPACITY);
         Text_DrawWideStringAtOffset(text, description, 0, 4);
@@ -210,13 +210,13 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                 break;
             }
             affordable = element == ELEMENT_COUNT;
-            Ability_LoadGlyph(summon->nameMessageId & ACTION_ID_MASK, 0,
+            Ability_LoadGlyph(summon->abilityId & ACTION_ID_MASK, 0,
                               &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
               Text_SetColor(TEXT_COLOR_RED);
-            Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
+            Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
                                         (s32)MsgAbilityName,
                                     window, 16, index * 16);
             for (element = 0; element <= 3; element++) {

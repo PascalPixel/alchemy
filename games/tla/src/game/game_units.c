@@ -13,7 +13,7 @@
 #include "resource_ids.h"
 #include "system/save.h"
 
-extern u16 gData_02003860;
+extern u16 gAnyFileCleared;
 
 extern s16 gSaveSlot;
 
@@ -592,7 +592,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
-  gMainRoutineWork.unk284[2] = gData_02003860;
+  gMainRoutineWork.unk284[2] = gAnyFileCleared;
   gMainRoutineWork.prizeWeights[0] = 4;
   gMainRoutineWork.prizeWeights[1] = 4;
   gMainRoutineWork.prizeWeights[2] = 4;

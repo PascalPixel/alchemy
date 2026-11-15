@@ -1737,7 +1737,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Mythril Bag
-    [ITEM_UNUSED_MYTHRIL_BAG] = {
+    [ITEM_MYTHRIL_BAG_B] = {
         .type = ITEM_TYPE_ELEMENTAL_STAR,
         .flags = ITEM_CANNOT_UNEQUIP | ITEM_INDISPENSABLE | ITEM_NOT_TRANSFERRED,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(FELIX),
@@ -2705,7 +2705,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 30}},
     },
     // Dragon Shield
-    [ITEM_354] = {
+    [ITEM_FORGED_DRAGON_SHIELD] = {
         .price = 7400,
         .type = ITEM_TYPE_SHIELD,
         .flags = ITEM_RARE,
@@ -3302,7 +3302,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Sword
-    [ITEM_418] = {
+    [ITEM_RUSTY_ROBBERS_BLADE] = {
         .price = 370,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3312,7 +3312,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Sword
-    [ITEM_419] = {
+    [ITEM_RUSTY_PIRATES_SABRE] = {
         .price = 520,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3322,7 +3322,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Sword
-    [ITEM_420] = {
+    [ITEM_RUSTY_SOUL_BRAND] = {
         .price = 580,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3341,7 +3341,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Axe
-    [ITEM_422] = {
+    [ITEM_RUSTY_VIKING_AXE] = {
         .price = 550,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3360,7 +3360,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Mace
-    [ITEM_424] = {
+    [ITEM_RUSTY_HAGBONE_MACE] = {
         .price = 420,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3379,7 +3379,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Staff
-    [ITEM_426] = {
+    [ITEM_RUSTY_GLOWER_STAFF] = {
         .price = 500,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,
@@ -3389,7 +3389,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     // Rusty Staff
-    [ITEM_427] = {
+    [ITEM_RUSTY_GOBLINS_ROD] = {
         .price = 480,
         .type = ITEM_TYPE_WEAPON,
         .flags = ITEM_RARE,

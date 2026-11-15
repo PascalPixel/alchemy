@@ -42,7 +42,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           work->raisedTrigger = 200;
           gMainRoutineWork.movementMode = 0;
           self->riseCounter = 1;
-          self->blockMarked = 1;
+          self->riseEnabled = 1;
         }
       }
       /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed
@@ -58,7 +58,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     }
   }
 stop:
-  self->blockMarked = 0;
+  self->riseEnabled = 0;
   self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);
   Event_PlaySound(SE_SPARKLING_PASSAGE);

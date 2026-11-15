@@ -788,30 +788,30 @@ struct SceneEntrance gSceneEntrances[] = {
 /// Where the houses' doors lead, before Tavi is rescued, out into the flooded village.
 s32 gDailaInteriorsExits[] = {
     SCENE_EXITS(DailaInteriorsHouses),
-    SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Daila1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Daila1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Daila1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Daila1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Daila1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, DailaFlooded, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, DailaFlooded, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, DailaFlooded, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, DailaFlooded, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, DailaFlooded, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, DailaFlooded, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, IsletsCow, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(DailaInteriorsSanctum),
-    SCENE_EXIT_UNLESS(1, Daila1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, DailaFlooded, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// Where the houses' doors lead once Tavi is rescued, out into the drained village.
 s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
     SCENE_EXITS(DailaInteriorsHouses),
-    SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Daila2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Daila2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Daila2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Daila2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Daila2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Daila, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Daila, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Daila, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Daila, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Daila, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Daila, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, IsletsCow, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(DailaInteriorsSanctum),
-    SCENE_EXIT_UNLESS(1, Daila2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Daila, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

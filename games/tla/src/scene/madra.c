@@ -1341,7 +1341,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   FieldCamera_FollowActor(ACTOR_KARST, 1);
   Event_Wait(60);
-  Sound_Play(MUS_036);
+  Sound_Play(MUS_CONFRONTATION);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_KARST, FACING_WEST, 0);
@@ -1798,7 +1798,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Madra),
-    SCENE_EXIT_UNLESS(1, MadraInteriors2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, MadraInteriorsCavernHomes, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, MadraInteriorsHouses, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, MadraInteriorsHouses, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, MadraInteriorsHouses, 8, EXIT_FLAG_NONE),
@@ -1807,10 +1807,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, MadraInteriorsHouses, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, MadraInteriorsHouses, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, MadraInteriorsHouses, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, MadraInteriors2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, MadraInteriorsCavernHomes, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, WorldMap, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, MadraCatacombs2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, MadraCatacombs2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, MadraCatacombsLadders, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, MadraCatacombsLadders, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

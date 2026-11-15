@@ -95,7 +95,7 @@ enum AttekaIsletActorId {
   ACTOR_RIVER_STONE_J,
   ACTOR_RIVER_STONE_K,
   ACTOR_BOULDER, ///< raised by Lift
-  /// The Djinni the game's text calls Wind19 (FLAG_DJINNI(DJINNI_79)),
+  /// The Djinni the game's text calls Wind19 (FLAG_DJINNI(DJINNI_WIND19)),
   /// met in Settlements_MeetLostJupiterDjinni.
   ACTOR_JUPITER_DJINNI
 };
@@ -315,7 +315,8 @@ void Settlements_MeetTinder(void) {
 }
 
 void Settlements_MeetLostJupiterDjinni(void) {
-  Djinn_JoinParty(23, DJINNI_79 / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_79));
+  Djinn_JoinParty(23, DJINNI_WIND19 / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_WIND19));
 }
 
 s32 Settlements_ClearSpriteFlags(struct Actor *object) {
@@ -331,10 +332,10 @@ u32 *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
   u32 *placements;
 
-  if (scene == SCENE_SETTLEMENTS_5)
+  if (scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
     return gSettlements_HesperiaSettlementHousesRegions;
   placements = 0;
-  if (scene == SCENE_SETTLEMENTS_3)
+  if (scene == SCENE_GONDOWAN_SETTLEMENT_CAVE)
     placements = gSettlements_GondowanSettlementCaveRegions;
   return placements;
 }
@@ -354,21 +355,21 @@ extern struct ActorPlacement gSettlements_KaltIslandHousesPlacements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SETTLEMENTS_1)
+  if (scene == SCENE_GONDOWAN_SETTLEMENT)
     return gSettlements_GondowanSettlementPlacements;
-  if (scene == SCENE_SETTLEMENTS_2)
+  if (scene == SCENE_GONDOWAN_SETTLEMENT_HOUSES)
     return gSettlements_GondowanSettlementHousesPlacements;
-  if (scene == SCENE_SETTLEMENTS_4)
+  if (scene == SCENE_HESPERIA_SETTLEMENT)
     return gSettlements_HesperiaSettlementPlacements;
-  if (scene == SCENE_SETTLEMENTS_5)
+  if (scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
     return gSettlements_HesperiaSettlementHousesPlacements;
-  if (scene == SCENE_SETTLEMENTS_7)
+  if (scene == SCENE_KALT_ISLAND)
     return gSettlements_KaltIslandPlacements;
-  if (scene == SCENE_SETTLEMENTS_8)
+  if (scene == SCENE_KALT_ISLAND_HOUSES)
     return gSettlements_KaltIslandHousesPlacements;
-  if (scene == SCENE_SETTLEMENTS_9)
+  if (scene == SCENE_SW_ATTEKA_ISLET)
     return gSettlements_AttekaIsletPlacements;
-  if (scene == SCENE_SETTLEMENTS_10)
+  if (scene == SCENE_SW_ATTEKA_ISLET_HOUSES)
     return gSettlements_AttekaIsletHousesPlacements;
   return gSettlements_Placements;
 }
@@ -480,21 +481,21 @@ extern struct Trigger gSettlements_AttekaIsletHousesTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SETTLEMENTS_1)
+  if (scene == SCENE_GONDOWAN_SETTLEMENT)
     return gSettlements_GondowanSettlementTriggers;
-  if (scene == SCENE_SETTLEMENTS_2)
+  if (scene == SCENE_GONDOWAN_SETTLEMENT_HOUSES)
     return gSettlements_GondowanSettlementHousesTriggers;
-  if (scene == SCENE_SETTLEMENTS_4)
+  if (scene == SCENE_HESPERIA_SETTLEMENT)
     return gSettlements_HesperiaSettlementTriggers;
-  if (scene == SCENE_SETTLEMENTS_5)
+  if (scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
     return gSettlements_HesperiaSettlementHousesTriggers;
-  if (scene == SCENE_SETTLEMENTS_7)
+  if (scene == SCENE_KALT_ISLAND)
     return gSettlements_KaltIslandTriggers;
-  if (scene == SCENE_SETTLEMENTS_8)
+  if (scene == SCENE_KALT_ISLAND_HOUSES)
     return gSettlements_KaltIslandHousesTriggers;
-  if (scene == SCENE_SETTLEMENTS_9)
+  if (scene == SCENE_SW_ATTEKA_ISLET)
     return gSettlements_AttekaIsletTriggers;
-  if (scene == SCENE_SETTLEMENTS_10)
+  if (scene == SCENE_SW_ATTEKA_ISLET_HOUSES)
     return gSettlements_AttekaIsletHousesTriggers;
   return gSettlements_Triggers;
 }
@@ -625,9 +626,9 @@ void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x100;
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_7)
+  if (gMainRoutineWork.next == SCENE_KALT_ISLAND)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_9) {
+  if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
@@ -648,7 +649,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_4) {
+  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(ACTOR_SPROUT, 4);
@@ -660,15 +661,15 @@ s32 Scene_Initialize(void) {
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
   }
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_3)
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT_CAVE)
     FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_6)
+  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT_CAVE)
     FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_9) {
+  if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
@@ -686,7 +687,7 @@ s32 Scene_PrepareMap(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_1) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT) {
     if (Event_GetFlag(0xa60)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -718,7 +719,7 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gMainRoutineWork.next == SCENE_SETTLEMENTS_4)
+  if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
@@ -783,7 +784,7 @@ void Settlements_CycleWaterColors(void) {
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
-  Scene_QueueMusic(SE_170);
+  Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
 }
 
@@ -1240,40 +1241,40 @@ u32 gSettlements_GondowanSettlementCaveRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Settlements1),
+    SCENE_EXITS(GondowanSettlement),
     SCENE_EXIT_UNLESS(1, WorldMap, 48, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Settlements2, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Settlements3, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Settlements3, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements2),
-    SCENE_EXIT_UNLESS(1, Settlements1, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements3),
-    SCENE_EXIT_UNLESS(1, Settlements1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Settlements4, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements4),
+    SCENE_EXIT_UNLESS(2, GondowanSettlementHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GondowanSettlementCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GondowanSettlementCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GondowanSettlementHouses),
+    SCENE_EXIT_UNLESS(1, GondowanSettlement, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(GondowanSettlementCave),
+    SCENE_EXIT_UNLESS(1, GondowanSettlement, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(HesperiaSettlement),
     SCENE_EXIT_UNLESS(1, WorldMap, 49, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Settlements5, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Settlements5, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Settlements5, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Settlements5, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Settlements6, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements6),
-    SCENE_EXIT_UNLESS(2, Settlements4, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements5),
-    SCENE_EXIT_UNLESS(11, Settlements4, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, Settlements5, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, Settlements5, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, Settlements4, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements7),
+    SCENE_EXIT_UNLESS(2, HesperiaSettlementHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, HesperiaSettlementCave, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(HesperiaSettlementCave),
+    SCENE_EXIT_UNLESS(2, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(HesperiaSettlementHouses),
+    SCENE_EXIT_UNLESS(11, HesperiaSettlement, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, HesperiaSettlementHouses, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, HesperiaSettlementHouses, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, HesperiaSettlement, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(KaltIsland),
     SCENE_EXIT_UNLESS(1, WorldMap, 50, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Settlements8, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements8),
-    SCENE_EXIT_UNLESS(1, Settlements7, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements9),
+    SCENE_EXIT_UNLESS(2, KaltIslandHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(KaltIslandHouses),
+    SCENE_EXIT_UNLESS(1, KaltIsland, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(SwAttekaIslet),
     SCENE_EXIT_UNLESS(1, WorldMap, 47, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Settlements10, 11, EXIT_FLAG_NONE),
-    SCENE_EXITS(Settlements10),
-    SCENE_EXIT_UNLESS(1, Settlements9, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, SwAttekaIsletHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXITS(SwAttekaIsletHouses),
+    SCENE_EXIT_UNLESS(1, SwAttekaIslet, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

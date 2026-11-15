@@ -759,7 +759,7 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
   FieldEvent_Wait(20);
   Actor_FaceActor(ACTOR_MOUSE, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(10);
-  Event_PlaySound(SE_VOICE_GIRL_3);
+  Event_PlaySound(SE_VOICE_GIRL_C);
   {
     s32 a = 256, b = 30;
 
@@ -1089,7 +1089,7 @@ void GabombaStatue_JumpDownHole(void) {
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
-    Event_PlaySound(SE_581);                                                   \
+    Event_PlaySound(SE_GABOMBA_STATUE_HOLE);                                   \
     Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 1.6, 1.6);   \
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, n1, n2);               \
     Event_End();                                                               \
@@ -1104,7 +1104,7 @@ void GabombaStatue_PinionThrowsLeader(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_581);
+  Event_PlaySound(SE_GABOMBA_STATUE_HOLE);
   actor->motionFlags = 0;
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 1.6, 1.6);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 488);
@@ -1178,7 +1178,7 @@ void GabombaStatue_CogsTurnBack(void) {
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(360, 0, 496, 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySound(SE_586);
+  Event_PlaySound(SE_GABOMBA_STATUE_COGS);
   GabombaStatue_TurnCogs(0);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_582);
@@ -2854,7 +2854,7 @@ void GabombaStatue_LowerArrowA(void) {
     MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(SE_248);
+      Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetTileMode(3);
@@ -2891,7 +2891,7 @@ void GabombaStatue_RaiseArrowB(void) {
     MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
                              state->originZ - 2);
     if (state->statuesReady != 0) {
-      Event_PlaySound(SE_248);
+      Event_PlaySound(SE_GABOMBA_STATUE_ARROW);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetTileMode(2);
@@ -3179,7 +3179,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->timer = 0;
   actor->userValue = 7;
   actor->riseCounter = 2;
-  actor->blockMarked = 1;
+  actor->riseEnabled = 1;
   actor->riseBaseY = 0;
   /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer, called
    * without the actor it reads from r0. */
@@ -3190,7 +3190,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->timer = 2;
   actor->userValue = 7;
   actor->riseCounter = 0;
-  actor->blockMarked = 1;
+  actor->riseEnabled = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
@@ -3198,7 +3198,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->timer = 8;
   actor->userValue = 7;
   actor->riseCounter = 2;
-  actor->blockMarked = 1;
+  actor->riseEnabled = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
@@ -3206,7 +3206,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   actor->timer = 10;
   actor->userValue = 7;
   actor->riseCounter = 0;
-  actor->blockMarked = 1;
+  actor->riseEnabled = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
@@ -3215,7 +3215,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
         actor = Actor_Get(id);
-        if (actor->blockMarked != 0 && actor->blockMarked != 7)
+        if (actor->riseEnabled != 0 && actor->riseEnabled != 7)
           done = 0;
         GabombaStatue_MoveCharge(actor, frame, id);
       }
@@ -3710,8 +3710,8 @@ LATE_DATA u32 gGabombaStatue_CogsExitRegions[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(GabombaStatuePinion),
-    SCENE_EXIT_UNLESS(1, Kibombo2, 3, 0x86b),
-    SCENE_EXIT_UNLESS(1, Kibombo5, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, KibomboStatueGrounds, 3, 0x86b),
+    SCENE_EXIT_UNLESS(1, KibomboStatueGroundsCeremony, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GabombaStatueBoneArmletChest, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(GabombaStatueBoneArmletChest),
     SCENE_EXIT(1, GabombaStatuePinion, 2),
@@ -3737,18 +3737,18 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(6, GabombaStatueSteel, 8),
     SCENE_EXITS(GabombaStatueCogs),
     SCENE_EXIT(1, GabombaStatueTurntable, 4),
-    SCENE_EXIT(2, GabombaStatueChamber1, 1),
+    SCENE_EXIT(2, GabombaStatueChamberIdol, 1),
     SCENE_EXITS(GabombaStatueArrows),
-    SCENE_EXIT(1, GabombaStatueChamber1, 2),
-    SCENE_EXIT(10, Kibombo6, 10),
-    SCENE_EXIT(11, Kibombo6, 11),
-    SCENE_EXIT(12, Kibombo5, 11),
-    SCENE_EXIT(13, Kibombo5, 12),
-    SCENE_EXIT(14, Kibombo5, 13),
-    SCENE_EXIT(15, Kibombo5, 14),
-    SCENE_EXIT(16, Kibombo5, 15),
-    SCENE_EXIT(17, Kibombo6, 10),
-    SCENE_EXIT(18, GabombaStatueChamber1, 6),
+    SCENE_EXIT(1, GabombaStatueChamberIdol, 2),
+    SCENE_EXIT(10, KibomboStatueFace, 10),
+    SCENE_EXIT(11, KibomboStatueFace, 11),
+    SCENE_EXIT(12, KibomboStatueGroundsCeremony, 11),
+    SCENE_EXIT(13, KibomboStatueGroundsCeremony, 12),
+    SCENE_EXIT(14, KibomboStatueGroundsCeremony, 13),
+    SCENE_EXIT(15, KibomboStatueGroundsCeremony, 14),
+    SCENE_EXIT(16, KibomboStatueGroundsCeremony, 15),
+    SCENE_EXIT(17, KibomboStatueFace, 10),
+    SCENE_EXIT(18, GabombaStatueChamberIdol, 6),
     SCENE_EXITS_END,
 };
 

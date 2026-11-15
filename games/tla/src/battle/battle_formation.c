@@ -596,8 +596,8 @@ assign_enemy:
     enemyId = unit->enemyId;
     switch (enemyId) {
     case ENEMY_POSEIDON:
-    case ENEMY_POSEIDON_2:
-    case ENEMY_POSEIDON_3:
+    case ENEMY_POSEIDON_SECOND_ACTION:
+    case ENEMY_UNUSED_POSEIDON:
       if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
         battle->forceField = 1;
       break;

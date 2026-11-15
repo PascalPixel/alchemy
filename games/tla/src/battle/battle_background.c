@@ -74,7 +74,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                         BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                             BGCNT_PRIORITY(3),
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
 
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);

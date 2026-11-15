@@ -348,7 +348,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   }
   if (hit) {
     if (id != ACTOR_FIRST_CRATE)
-      Event_PlaySound(SE_310);
+      Event_PlaySound(SE_FALL);
     object->gravity = px(9) / 100;
     object->motionFlags = 3;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
@@ -1750,7 +1750,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(ACTOR_CHAUCHA, 824, 856);
   Actor_SetPosition(ACTOR_KRADEN, 744, 1016);
   Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 744, 1016);
-  Event_PlaySound(MUS_035);
+  Event_PlaySound(MUS_BRIGGS_STEALS_SHIP);
   PaletteFade_ApplyTarget(0x10000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

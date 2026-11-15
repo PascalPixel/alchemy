@@ -300,7 +300,7 @@ const void *Scene_GetActorPlacements(void) {
     return gGaroh_HypnosSwordChestActorPlacements;
   if (scene == SCENE_GAROH_BLOCKS)
     return gGaroh_BlocksActorPlacements;
-  if (scene == SCENE_GAROH_4)
+  if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsActorPlacements;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
     return gGaroh_WerewolfCaveActorPlacements;
@@ -350,7 +350,7 @@ void Garoh_OpenDoorAndEnter(void) {
 
 /// "So, uh...you say you saw a werewolf?"
 void Garoh_AskIfSawWerewolf(s32 actor) {
-  s32 msg = (s32)MsgGaroh02;
+  s32 msg = (s32)MsgGarohSoUhYouSayYou;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -367,7 +367,7 @@ void Garoh_AskIfSawWerewolf(s32 actor) {
 
 /// "Don't you love the sight of the full moon?"
 void Garoh_AskAboutFullMoon(s32 actor) {
-  s32 msg = (s32)MsgGaroh06;
+  s32 msg = (s32)MsgGarohDontYouLoveTheSight;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -385,7 +385,7 @@ void Garoh_AskAboutFullMoon(s32 actor) {
 /// By day: "Maha said that you were the only outsiders we could share our
 /// secret with..."
 void Garoh_AskAboutSecret(s32 actor) {
-  s32 msg = (s32)MsgGaroh18;
+  s32 msg = (s32)MsgGarohMahaSaidThatYouWere;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -404,7 +404,7 @@ void Garoh_AskAboutSecret(s32 actor) {
 void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaroh17);
+  FieldEvent_SetMessageId((s32)MsgGarohAwoooooh);
   // "Awoooooh!"
   FieldEvent_ShowMessageThenWait(actor, 0, 10);
   // "Heh heh... Sorry about that! I'm so happy I don't have to hide that..."
@@ -420,7 +420,7 @@ void Garoh_HowlForDog(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   flag = Event_GetFlag(FLAG_AREA_TEMP_00);
-  msg = (s32)MsgGaroh04;
+  msg = (s32)MsgGarohGaaarooooooForDog;
   if (flag) {
     FieldEvent_SetMessageId(msg);
   } else {
@@ -444,9 +444,9 @@ void Garoh_LittleWerewolfThanks(void) {
   FieldEvent_Wait(10);
   Actor_FaceActor(ACTOR_LITTLE_WEREWOLF, ACTOR_FELIX, 0);
   if (Event_GetFlag(FLAG_LITTLE_WEREWOLF_THANKED)) {
-    FieldEvent_SetMessageId((s32)MsgGaroh21);
+    FieldEvent_SetMessageId((s32)MsgGarohImTheReasonYouCan);
   } else {
-    FieldEvent_SetMessageId((s32)MsgGaroh20);
+    FieldEvent_SetMessageId((s32)MsgGarohHeyItsYouGuysThanks);
     // "Hey, it's you guys! Thanks for last night!"
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 10);
     {
@@ -517,7 +517,7 @@ void Garoh_WerewolfPeersFromCrevice(void) {
                                facing);
     Actor_WalkByAndWait(ACTOR_MAHA_AT_THE_CREVICE, 0, 16);
     Garoh_CloseCrevice(ACTOR_SANCTUARY_CREVICE);
-    FieldEvent_SetMessageId((s32)MsgGaroh12);
+    FieldEvent_SetMessageId((s32)MsgGarohWhatOutsidersHere);
     Actor_FaceDirectionAndWait(ACTOR_MAHA_AT_THE_CREVICE,
                                FACING_SOUTH_SOUTHWEST);
     Actor_RunRepeatedMotion(ACTOR_MAHA_AT_THE_CREVICE, 2);
@@ -589,7 +589,7 @@ const void *Scene_GetTriggers(void) {
     return gGaroh_HypnosSwordChestTriggers;
   if (scene == SCENE_GAROH_BLOCKS)
     return gGaroh_BlocksTriggers;
-  if (scene == SCENE_GAROH_4)
+  if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsTriggers;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
     return gGaroh_WerewolfCaveTriggers;
@@ -610,7 +610,7 @@ void Garoh_InitializeHypnosSwordChest(void);
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (gMainRoutineWork.next == SCENE_GAROH_4) {
+  if (gMainRoutineWork.next == SCENE_GAROH_TUNNELS) {
     gFieldWork->transition = 0x204;
   } else if (gMainRoutineWork.next == SCENE_GAROH_WEREWOLF_CAVE) {
     FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
@@ -1060,7 +1060,7 @@ void Garoh_WerewolfProwls(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_WEREWOLF, 96, 8);
-  FieldEvent_SetMessageId((s32)MsgGaroh01);
+  FieldEvent_SetMessageId((s32)MsgGarohGaaaroooooo);
   // "Gaaaroooooo!"
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1416,7 +1416,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaroh13);
+  FieldEvent_SetMessageId((s32)MsgGarohHaowooo);
   Actor_SetPosition(ACTOR_WEREWOLF, 144, 752);
   Actor_WalkToAndWait(ACTOR_FELIX, 280, 776);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
@@ -1519,7 +1519,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaroh14);
+  FieldEvent_SetMessageId((s32)MsgGarohWait);
   Actor_SetPosition(ACTOR_MAHA, 328, 40);
   Actor_SetPosition(ACTOR_WEREWOLF, 328, 40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
@@ -2020,7 +2020,7 @@ void Garoh_MahaTellsTheLegend(void) {
   Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaroh28);
+  FieldEvent_SetMessageId((s32)MsgGarohAhYouCame);
   Actor_SetPosition(ACTOR_MAHA, 328, 40);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   // "Ah, you came..."
@@ -2763,9 +2763,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(4, GarohInteriorsHouses, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, GarohInteriorsHouses, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, GarohInteriorsSanctum, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Garoh4, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Garoh4, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Garoh4, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, GarohTunnels, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, GarohTunnels, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, GarohTunnels, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, GarohHypnosSwordChest, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, GarohHypnosSwordChest, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, GarohWerewolfCave, 1, EXIT_FLAG_NONE),
@@ -2776,17 +2776,17 @@ u32 gSceneExits[] = {
     SCENE_EXITS(GarohBlocks),
     SCENE_EXIT_UNLESS(1, WorldMap, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohHypnosSwordChest, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(Garoh4),
+    SCENE_EXITS(GarohTunnels),
     SCENE_EXIT_UNLESS(1, Garoh, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Garoh4, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Garoh4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GarohTunnels, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GarohTunnels, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Garoh, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, GarohInteriorsShop, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, GarohInteriorsShop, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, GarohInteriorsHouses, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, GarohInteriorsHouses, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Garoh4, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Garoh4, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, GarohTunnels, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, GarohTunnels, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, Garoh, 9, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohWerewolfCave),
     SCENE_EXIT_UNLESS(1, Garoh, 12, EXIT_FLAG_NONE),
@@ -2946,26 +2946,27 @@ struct Trigger gGaroh_VillageTriggers[] = {
     {TRIGGER_STEP, 20, FLAG_GAROH_MET_WEREWOLVES,
      EVENT(Garoh_WerewolfPeersFromCrevice)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Garoh_AskIfSawWerewolf)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh03)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohGoodEveningForgiveMeFor)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlForDog)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGaroh05)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+     MSGNO(MsgGarohYouThereStrangersShouldNot)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Garoh_AskAboutFullMoon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh07)},
+     MSGNO(MsgGarohItsGrimLuckThatBrings)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh08)},
+     MSGNO(MsgGarohSuchGorgeousMoonlightIfOnly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh09)},
+     MSGNO(MsgGarohWhichOneOfUsWas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh10)},
+     MSGNO(MsgGarohForeignersOnlyComeHereEn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh11)},
+     MSGNO(MsgGarohTheNightOfTheFull)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealSanctuaryCrevice)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_HideSanctuaryCrevice)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGaroh31))},
+     FIND_MESSAGE(MSGNO(MsgGarohMehISawTheSilhouette))},
     {TRIGGER_TABLE_END},
 };
 
@@ -2988,32 +2989,32 @@ struct Trigger gGaroh_VillageDayTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS,
      EVENT(Garoh_EnterCrevice)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGaroh15)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohIHearTellFromMaster)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh16)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlOutLoud)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Garoh_AskAboutSecret)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGaroh19)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohIHeardThereWereOther)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh22)},
+     MSGNO(MsgGarohHowCouldTheseOutsidersHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh23)},
+     MSGNO(MsgGarohIThoughtWedNeverBe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh24)},
+     MSGNO(MsgGarohINeverThoughtIdBe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh25)},
+     MSGNO(MsgGarohMahaSaidTheseTravelersWere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh26)},
+     MSGNO(MsgGarohIWouldLoveToMeet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_LITTLE_WEREWOLF_THANKED, EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh27)},
+     MSGNO(MsgGarohMyDadToldMeI)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealSanctuaryCrevice)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_HideSanctuaryCrevice)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgGaroh31))},
+     FIND_MESSAGE(MSGNO(MsgGarohMehISawTheSilhouette))},
     {TRIGGER_TABLE_END},
 };
 
@@ -3092,9 +3093,9 @@ struct Trigger gGaroh_WerewolfCaveTriggers[] = {
     {TRIGGER_STEP, 30, FLAG_GAROH_FOLLOWED_WEREWOLF,
      EVENT(Garoh_FollowWerewolfIntoCave)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Garoh_MeetInTheCave)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGaroh29)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohTakeCareInYourTravels)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgGaroh30)},
+     MSGNO(MsgGarohIWishThatIWere)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealCavePassage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

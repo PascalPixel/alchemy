@@ -543,7 +543,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->update = Sand_JitterGrain;
         effect->motionFlags = 2;
         if (collision == 0)
-          Sound_PlayFar(SE_596);
+          Sound_PlayFar(SE_SAND_MOVE);
         effect->gravity = 0xa3d;
         effect->velocityY = 0;
         effect->scaleX = 0x4ccc;
@@ -732,7 +732,7 @@ counted:
       // stack read of collision after it.
       ((struct Unk_WakeActor *)effect)->unk63 = 100;
       effect->motionFlags = 0;
-      Sound_PlayFar(SE_596);
+      Sound_PlayFar(SE_SAND_MOVE);
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
 

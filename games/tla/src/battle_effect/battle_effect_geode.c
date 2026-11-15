@@ -108,7 +108,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
 
@@ -152,7 +152,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                           DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                               DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
-                          IO_WRITE_16);
+                          IO_WRITE_HALFWORD);
       BattleEffect_BuildCanvasTilemap();
     }
     if (frame == 34) {
@@ -162,7 +162,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                           DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                               DISPCNT_BG1_ON | DISPCNT_OBJ_ON |
                               DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
-                          IO_WRITE_16);
+                          IO_WRITE_HALFWORD);
       Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
       gBgScroll[1].y = 78;
       gBgScroll[1].x = 64 - source.x;
@@ -175,17 +175,17 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                TASK_PASS_FRAME + 15);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_32);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_WORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_HALFWORD);
     }
     if (frame == 18) {
       BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
     }
     if (frame == 36) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
     }
     if ((u32)(frame - 34) <= 5) {
       if (args->side == EFFECT_SIDE_ENEMIES) {

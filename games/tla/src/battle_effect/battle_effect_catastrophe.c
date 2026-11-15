@@ -998,7 +998,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
           Iwram_CopyWords(
               (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
+              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF), 128);
         }
         if (rise <= 0xfffff) {
           rise += px(1);
@@ -1359,7 +1359,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                             CANVAS_FADE_THREE_QUARTERS);
       }
       if ((u32)(frame - 16) <= 47) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette02);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteF);
       }
       if (frame == 66) {
         for (i = 0; i != args->targetCount; i++) {

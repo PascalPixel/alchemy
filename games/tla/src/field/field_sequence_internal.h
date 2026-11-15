@@ -184,7 +184,7 @@ extern s32 gScene_BattleBackgroundRules[];
 /// encounters that use it as (zone << 4) + slot, ended by 0.
 extern const s16 gEncounter_BattleMusic[];
 
-extern u8 Data_0202e004[];
+extern u8 gMapSceneBoundsOffset[];
 
 extern s16 Data_080f2204[];
 

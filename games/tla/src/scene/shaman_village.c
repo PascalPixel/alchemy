@@ -8,9 +8,10 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The trial grounds' actors (SceneId_ShamanVillage1), numbering the rows of
-/// gShamanVillageTrialGroundsActorPlacements; Moapa, his guards and Kraden keep
-/// the same rows in the village's table (gShamanVillageVillageActorPlacements).
+/// The trial grounds' actors (SceneId_ShamanVillageTrialGrounds), numbering the
+/// rows of gShamanVillageTrialGroundsActorPlacements; Moapa, his guards and
+/// Kraden keep the same rows in the village's table
+/// (gShamanVillageVillageActorPlacements).
 enum ShamanVillageTrialActorId {
   /// The six torches about the start of Trial Road (SPRITE_TORCH).
   ACTOR_FIRST_TORCH = ACTOR_FIRST_PLACED,
@@ -387,7 +388,7 @@ extern struct ActorPlacement gShamanVillageSanctumActorPlacements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHAMAN_VILLAGE_1)
+  if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     return gShamanVillageTrialGroundsActorPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     return gShamanVillageAromaRoomActorPlacements;
@@ -757,7 +758,7 @@ extern struct Trigger gShamanVillageSanctumTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHAMAN_VILLAGE_1)
+  if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     return gShamanVillageTrialGroundsTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     return gShamanVillageAromaRoomTriggers;
@@ -1291,14 +1292,14 @@ void ShamanVillage_TakeLeftPath(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
-  owner->blockMarked = 0;
-  shaman->blockMarked = 0;
+  owner->riseEnabled = 0;
+  shaman->riseEnabled = 0;
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(ACTOR_MOAPA, gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
+  } while (owner->riseEnabled == 0 || shaman->riseEnabled == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
@@ -1361,14 +1362,14 @@ void ShamanVillage_TakeRightPath(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 200, 1);
-  owner->blockMarked = 0;
-  shaman->blockMarked = 0;
+  owner->riseEnabled = 0;
+  shaman->riseEnabled = 0;
   Actor_SetScript(ACTOR_MOAPA, gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
+  } while (owner->riseEnabled == 0 || shaman->riseEnabled == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(224, CAMERA_KEEP, 168, 1);
@@ -1670,7 +1671,7 @@ void ShamanVillage_ShowShamansRod(void) {
     FieldCamera_MoveToFixed(px(180), 0x200000, z, 1);
   }
   object = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
-  object->blockMarked = 0;
+  object->riseEnabled = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 15);
   Actor_WatchAndSetScript(ACTOR_JENNA, 15);
   Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
@@ -1686,7 +1687,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   do {
     wait(1);
-  } while (object->blockMarked == 0);
+  } while (object->riseEnabled == 0);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
@@ -2402,7 +2403,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  done = &object->blockMarked;
+  done = &object->riseEnabled;
   owner = gMainRoutineWork.leaderActorId;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -2656,7 +2657,7 @@ void ShamanVillage_AdviseQuitting(void) {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHAMAN_VILLAGE_1)
+  if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     ShamanVillage_SetUpTrialGrounds();
   else if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     ShamanVillage_SetUpAromaRoom();
@@ -3264,7 +3265,7 @@ struct SceneEntrance gShamanVillageSanctumEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(ShamanVillage1),
+    SCENE_EXITS(ShamanVillageTrialGrounds),
     SCENE_EXIT(1, TrialRoad1, 31),
     SCENE_EXIT(2, TrialRoad1, 32),
     SCENE_EXIT(3, ShamanVillageAroma, 1),
@@ -3272,7 +3273,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(11, TrialRoad1, 31),
     SCENE_EXIT(12, TrialRoad1, 32),
     SCENE_EXITS(ShamanVillageAroma),
-    SCENE_EXIT(1, ShamanVillage1, 3),
+    SCENE_EXIT(1, ShamanVillageTrialGrounds, 3),
     SCENE_EXIT(2, ShamanVillage, 8),
     SCENE_EXIT(3, ShamanVillage, 11),
     SCENE_EXIT(4, ShamanVillageShop, 17),

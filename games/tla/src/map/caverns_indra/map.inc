@@ -24,10 +24,10 @@ Field_CavernsIndra:
 	.incbin "games/tla/src/map/caverns_indra/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_CavernsIndra_ANIMATION:
-	.incbin "games/tla/src/map/dehkan_plateau_4/animation.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/animation.script.lz"
 	.balign 4, 0
 .LField_CavernsIndra_BLEND:
-	.incbin "games/tla/src/map/dehkan_plateau_4/blend.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/blend.script.lz"
 	.balign 4, 0
 .LField_CavernsIndra_SCENE:
 	.incbin "games/tla/src/map/caverns_indra/scene.scene.lz"

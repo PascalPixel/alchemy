@@ -257,7 +257,8 @@ next:
     }
     if (gInput.repeat & KEY_SELECT) {
       Task_ResetAll();
-      Stub_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
+      Stub_ReturnZero((s32)&ResourceId_SpriteMetadata,
+                      gSprite_AnimationMetadata);
       goto restart;
     }
     if (gInput.pressed & KEY_B) {

@@ -184,7 +184,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         for (j = 0; j != 24; j++)
           work->sheet[4 + i * 0x1000 + k * 32 + j] =
               cells[(i * 45 << 6) + k * 24 + j];
-    LOAD_BG_PALETTE(ResourceId_EffectPalette02);
+    LOAD_BG_PALETTE(ResourceId_VioletPaletteF);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
@@ -406,7 +406,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 0)
         Sound_PlayFar(SE_SWIRL);
       if (frame == 62)
-        Sound_PlayFar(SE_139);
+        Sound_PlayFar(SE_DJINNI_SET);
       if (frame == 0) {
         for (i = 0; i != 63; i++) {
           struct Particle *p = &work->particles[i];

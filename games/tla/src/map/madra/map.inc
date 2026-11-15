@@ -38,7 +38,7 @@ Tileset_MadraPalette:
 	.global Tileset_MadraTilesA
 Tileset_MadraTilesA:
 	.incbin "games/tla/src/graphics/tileset/madra/tiles_a.4bpp.mtf"
-	.byte 0x00, 0x02	@ PACKER: left in the buffer by Field_DehkanPlateau3+0x288a
+	.byte 0x00, 0x02	@ PACKER: left in the buffer by Field_DehkanPlateauTightropes+0x288a
 	.global Tileset_MadraTilesB
 Tileset_MadraTilesB:
 	.incbin "games/tla/src/graphics/tileset/madra/tiles_b.4bpp.mtf"

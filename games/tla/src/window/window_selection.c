@@ -1293,16 +1293,16 @@ void MenuArrow_NoOpCallback(void) {}
 void MenuArrow_NoOpCallbackBank(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallback1(void) {}
+void MenuArrow_NoOpCallbackA(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallback2(void) {}
+void MenuArrow_NoOpCallbackB(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallback3(void) {}
+void MenuArrow_NoOpCallbackC(void) {}
 
 /// Does nothing.
-void MenuArrow_NoOpCallback4(void) {}
+void MenuArrow_NoOpCallbackD(void) {}
 
 /// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
 /// in *slot).
@@ -1338,8 +1338,7 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
 /// Frees an arrow sprite's tile slot.
 void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
-#define Resource_DecodeByteLzInRam                                             \
-  ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
+#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
 /// 256 colours (32 * 32 bytes, record 15), its scale stepping from 40 to 240 by
@@ -1369,7 +1368,7 @@ void SelectionMenu_LoadLargeIcon(void) {
     resource = table + *(u16 *)(table + selection->base * 2);
     *destination = resource;
   }
-  Resource_DecodeByteLzInRam(resource, buffer);
+  Decompress_ByteLz(resource, buffer);
 
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = VramCache_FindFreeEntry();
@@ -1511,4 +1510,4 @@ u32 Menu_RunSelectionForValue(u32 value) {
 #undef NODE_KIND_YES_NO
 #undef SELECTION_LAST_PLACE
 #undef ARROW_SCROLL_FRAMES
-#undef Resource_DecodeByteLzInRam
+#undef Decompress_ByteLz

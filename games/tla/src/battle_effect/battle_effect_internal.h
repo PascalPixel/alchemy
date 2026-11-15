@@ -1675,7 +1675,7 @@ extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
 
 /// nirvana.c
 extern u8 Data_02012000[];
-extern u8 Data_02012540[]; ///< the mesh's end, after 112 faces
+extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
@@ -1685,8 +1685,8 @@ extern u8 Data_02010020[];
 extern u8 Data_020100a0[];
 extern u8 Data_020102a0[];
 extern u16 Data_0201401e[];
-extern u16 Data_02014002[];
-extern u16 Data_02014260[];
+extern u16 gFlora_PetalTiles[];
+extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
 
@@ -1699,16 +1699,16 @@ extern const struct Scale gCoatlicue_UnitScale;
 extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
-extern u8 Data_02010ae8[];
+extern u8 gHaures_WingStrip[];
 extern u8 Data_02010be0[];
-extern u8 Data_02010fa0[];
+extern u8 gHaures_WingShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
 
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];
-extern u8 Data_02010578[];
+extern u8 gIris_TileBuffer[];
 extern const struct Scale gIris_UnitScale;
 extern const u32 BattleEffect_PatchTemplateCode[];
 extern const u32 BattleEffect_Mask[];

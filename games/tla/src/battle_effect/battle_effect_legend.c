@@ -400,7 +400,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         if (mode == CARD_FROST)
           BattleEffect_StepPaletteToResource((s32)&ResourceId_CrystalSheet);
         else if (mode == CARD_THUNDER)
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette02);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteF);
         else
           BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
       }

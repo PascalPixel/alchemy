@@ -24,10 +24,10 @@ Field_MarsLighthouseEntranceBalm:
 	.incbin "games/tla/src/map/mars_lighthouse_entrance_balm/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MarsLighthouseEntranceBalm_ANIMATION:
-	.incbin "games/tla/src/map/mars_lighthouse_room_f_1/animation.script.lz"
+	.incbin "games/tla/src/map/mars_lighthouse_mars_tower/animation.script.lz"
 	.balign 4, 0
 .LField_MarsLighthouseEntranceBalm_BLEND:
-	.incbin "games/tla/src/map/mars_lighthouse_room_f_2/blend.script.lz"
+	.incbin "games/tla/src/map/mars_lighthouse_mercury_tower/blend.script.lz"
 	.balign 4, 0
 .LField_MarsLighthouseEntranceBalm_SCENE:
 	.incbin "games/tla/src/map/mars_lighthouse_entrance_balm/scene.scene.lz"

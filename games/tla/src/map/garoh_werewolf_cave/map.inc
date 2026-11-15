@@ -27,7 +27,7 @@ Field_GarohWerewolfCave:
 	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_GarohWerewolfCave_BLEND:
-	.incbin "games/tla/src/map/garoh_4/blend.script.lz"
+	.incbin "games/tla/src/map/garoh_tunnels/blend.script.lz"
 	.balign 4, 0
 .LField_GarohWerewolfCave_SCENE:
 	.incbin "games/tla/src/map/garoh_werewolf_cave/scene.scene.lz"

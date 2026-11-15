@@ -24,10 +24,10 @@ Field_DehkanPlateauPoundCube:
 	.incbin "games/tla/src/map/dehkan_plateau_pound_cube/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_DehkanPlateauPoundCube_ANIMATION:
-	.incbin "games/tla/src/map/dehkan_plateau_4/animation.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/animation.script.lz"
 	.balign 4, 0
 .LField_DehkanPlateauPoundCube_BLEND:
-	.incbin "games/tla/src/map/dehkan_plateau_4/blend.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/blend.script.lz"
 	.balign 4, 0
 .LField_DehkanPlateauPoundCube_SCENE:
 	.incbin "games/tla/src/map/dehkan_plateau_pound_cube/scene.scene.lz"
@@ -38,7 +38,7 @@ Tileset_DehkanPlateauPoundCubePalette:
 	.global Tileset_DehkanPlateauPoundCubeTilesA
 Tileset_DehkanPlateauPoundCubeTilesA:
 	.incbin "games/tla/src/graphics/tileset/dehkan_plateau_pound_cube/tiles_a.4bpp.mtf"
-	.byte 0xf8, 0x3e	@ PACKER: left in the buffer by Tileset_DehkanPlateau4TilesA+0x1b56
+	.byte 0xf8, 0x3e	@ PACKER: left in the buffer by Tileset_DehkanPlateauMintChestTilesA+0x1b56
 	.global Tileset_DehkanPlateauPoundCubeTilesB
 Tileset_DehkanPlateauPoundCubeTilesB:
 	.incbin "games/tla/src/graphics/tileset/dehkan_plateau_pound_cube/tiles_b.4bpp.mtf"

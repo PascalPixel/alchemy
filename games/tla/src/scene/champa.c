@@ -731,7 +731,7 @@ void Champa_MeetAlex(void) {
   FieldCamera_MoveTo(312, CAMERA_KEEP, 600, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
-  Event_PlaySound(MUS_039);
+  Event_PlaySound(MUS_ALEX);
   Actor_WalkToAndWait(ACTOR_ALEX, 304, 576);
   FieldEvent_Wait(5);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -16, 0, FACING_NORTH);
@@ -1453,7 +1453,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, ChampaSanctum, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, ChampaCliffCavesBriggs, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 40, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, ChampaCliffCaves2, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, ChampaCliffCavesHouses, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, ChampaCliffCavesObaba, 19, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

@@ -239,10 +239,10 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
       dog = Actor_GetById(ACTOR_GUARD_DOG);
       cell = dog->z.fixed >> 20;
       if (cell == 27) {
-        Sound_Play(SE_VOICE_ANIMAL_2);
+        Sound_Play(SE_VOICE_ANIMAL_B);
         dog->z.fixed = px(440);
       } else if (cell == 28 || cell == 29) {
-        Sound_Play(SE_VOICE_ANIMAL_3);
+        Sound_Play(SE_VOICE_ANIMAL_C);
         dog->z.fixed = px(472);
       }
       if (pillar->z.fixed < dog->z.fixed)
@@ -411,7 +411,7 @@ const u8 *Scene_GetTriggers(void) {
     return gKibomboMountains_WaftTriggers;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST)
     return gKibomboMountains_DiskAxeChestTriggers;
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_3)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_CAVERN)
     return gKibomboMountains_CavernTriggers;
   return gKibomboMountains_Triggers;
 }
@@ -821,15 +821,15 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, KibomboMountainsDiskAxeChest, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, KibomboMountainsDiskAxeChest, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, KibomboMountainsDiskAxeChest, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, KibomboMountains3, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, KibomboMountains3, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, KibomboMountains3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, KibomboMountainsCavern, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, KibomboMountainsCavern, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, KibomboMountainsCavern, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(KibomboMountainsDiskAxeChest),
     SCENE_EXIT_UNLESS(1, WorldMap, 25, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, KibomboMountainsWaft, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, KibomboMountainsWaft, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, KibomboMountainsWaft, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(KibomboMountains3),
+    SCENE_EXITS(KibomboMountainsCavern),
     SCENE_EXIT_UNLESS(1, KibomboMountainsWaft, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, KibomboMountainsWaft, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, KibomboMountainsWaft, 7, EXIT_FLAG_NONE),

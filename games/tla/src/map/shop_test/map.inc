@@ -38,7 +38,7 @@ Tileset_ShopTestPalette:
 	.global Tileset_ShopTestTilesA
 Tileset_ShopTestTilesA:
 	.incbin "games/tla/src/graphics/tileset/shop_test/tiles_a.4bpp.mtf"
-	.byte 0x26, 0x00, 0x00	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.byte 0x26, 0x00, 0x00	@ PACKER: unused post-stream residue; Decompress_MoveToFrontLz uses decoded RAM and output length; writer unknown
 	.global Tileset_ShopTestTilesB
 Tileset_ShopTestTilesB:
 	.incbin "games/tla/src/graphics/tileset/shop_test/tiles_b.4bpp.mtf"

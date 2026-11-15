@@ -78,7 +78,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 0)
-      Sound_PlayFar(SE_139);
+      Sound_PlayFar(SE_DJINNI_SET);
     if (frame == 16)
       Sound_PlayFar(SE_HEAVY_IMPACT);
 
@@ -674,7 +674,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                             DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                             DISPCNT_WIN1_ON,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     REG_BLDCNT = 0;
     wait(1);
     BattleBackground_SetModeFar(2, battle->background, 0);
@@ -682,7 +682,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                             DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                             DISPCNT_WIN1_ON,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     wait(1);
   }
 }

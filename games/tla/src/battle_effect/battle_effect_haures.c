@@ -14,7 +14,7 @@ struct WingVertex {
 };
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
-extern struct WingVertex Data_020104f0[];
+extern struct WingVertex gHaures_WingCorners[];
 extern const u16 gHaures_FeatherPoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
@@ -61,7 +61,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   u16 *dst;
 
   buffer = gMapGridCellBuffer;
-  shades = Data_02010fa0;
+  shades = gHaures_WingShades;
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -85,7 +85,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   morph = 0;
   morphStep = 0;
   dived = 0;
-  BattleEffect_SpawnObjects(2, 0x293, 2);
+  BattleEffect_SpawnObjects(2, SPRITE_HAURES, 2);
   for (i = 0; i != 4; i++) {
     sprite = Sprite_CreateFar(0x294);
     work->sprites[12 + i] = sprite;
@@ -144,12 +144,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
   }
   for (i = 0; i != 31; i++) {
-    Data_02010ae8[i * 8 + 0] = i * 2;
-    Data_02010ae8[i * 8 + 1] = i * 2 + 1;
-    Data_02010ae8[i * 8 + 2] = i * 2 + 2;
-    Data_02010ae8[i * 8 + 4] = i * 2 + 1;
-    Data_02010ae8[i * 8 + 5] = i * 2 + 3;
-    Data_02010ae8[i * 8 + 6] = i * 2 + 2;
+    gHaures_WingStrip[i * 8 + 0] = i * 2;
+    gHaures_WingStrip[i * 8 + 1] = i * 2 + 1;
+    gHaures_WingStrip[i * 8 + 2] = i * 2 + 2;
+    gHaures_WingStrip[i * 8 + 4] = i * 2 + 1;
+    gHaures_WingStrip[i * 8 + 5] = i * 2 + 3;
+    gHaures_WingStrip[i * 8 + 6] = i * 2 + 2;
   }
   Data_02010be0[0] = 0;
   Data_02010be0[1] = 0;
@@ -254,13 +254,16 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
-          Data_020104f0[i].upper.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
-          Data_020104f0[i].upper.y = Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
-          Data_020104f0[i].lower.x = i * 4 - 64;
-          Data_020104f0[i].upper.z = 0;
-          Data_020104f0[i].lower.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
-          Data_020104f0[i].lower.y = (u32)(Trig_Sin(i * 992) * 9) >> 15;
-          Data_020104f0[i].lower.z = 0;
+          gHaures_WingCorners[i].upper.x =
+              Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          gHaures_WingCorners[i].upper.y =
+              Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
+          gHaures_WingCorners[i].lower.x = i * 4 - 64;
+          gHaures_WingCorners[i].upper.z = 0;
+          gHaures_WingCorners[i].lower.x =
+              Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          gHaures_WingCorners[i].lower.y = (u32)(Trig_Sin(i * 992) * 9) >> 15;
+          gHaures_WingCorners[i].lower.z = 0;
         }
       }
       if ((u32)frame <= 31) {
@@ -332,7 +335,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           s32 t;
           s32 sh;
           s32 s;
-          u8 *strip = Data_02010ae8;
+          u8 *strip = gHaures_WingStrip;
 
           verts = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
@@ -380,7 +383,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             s32 b;
             s32 n;
             s32 next;
-            struct WingVertex *wing = Data_020104f0;
+            struct WingVertex *wing = gHaures_WingCorners;
 
             if (frame == 74) {
               morph = 0;
@@ -403,7 +406,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                                       gHaures_WingMorphSteps[a]);
             }
             for (i = 0; i != 32; i++) {
-              Data_020104f0[i].upper.x = i * 4 - 64;
+              gHaures_WingCorners[i].upper.x = i * 4 - 64;
             }
           }
           model->flags = 0;
@@ -414,12 +417,12 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             s32 v = frame - 235;
 
             for (i = 0; i != 31; i++) {
-              Data_02010fa0[i * 2] = v;
-              Data_02010fa0[i * 2 + 1] = v;
+              gHaures_WingShades[i * 2] = v;
+              gHaures_WingShades[i * 2 + 1] = v;
             }
           }
           model->shade = (s32)shades;
-          Render_TransformVertices(Data_020104f0, buffer, 64);
+          Render_TransformVertices(gHaures_WingCorners, buffer, 64);
           Render_DrawModelList(model);
           Heap_Release(model);
           Heap_Release(verts);
@@ -584,7 +587,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Sprite_DestroyFar(work->sprites[16 + i]);
           }
           Sprite_DestroyFar(work->sprites[18]);
-          BattleEffect_SpawnObjects(11, 0x293, 2);
+          BattleEffect_SpawnObjects(11, SPRITE_HAURES, 2);
           q = gHaures_PartPoints;
           {
             struct Particle *p = work->particles;
@@ -677,7 +680,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           }
         }
         for (i = 0; i != 31; i++) {
-          Data_02010fa0[i] = 1;
+          gHaures_WingShades[i] = 1;
         }
         {
           for (i = 0; i != 31; i++) {
@@ -745,7 +748,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
   BattleEffect_SetupBlendedDisplay();
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  BattleEffect_SpawnObjects(11, 0x293, 2);
+  BattleEffect_SpawnObjects(11, SPRITE_HAURES, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);

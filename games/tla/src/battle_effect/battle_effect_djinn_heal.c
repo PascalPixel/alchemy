@@ -319,7 +319,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
-  BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
+  BattleEffect_SpawnObjects(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
   REG_BG2X = skip;
   REG_BG2PA = Q_8_8(0.5);
 

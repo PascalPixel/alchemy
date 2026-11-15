@@ -24,7 +24,7 @@ Field_MikasallaInteriorsSanctum:
 	.incbin "games/tla/src/map/mikasalla_interiors_sanctum/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MikasallaInteriorsSanctum_ANIMATION:
-	.incbin "games/tla/src/map/madra_interiors_2/animation.script.lz"
+	.incbin "games/tla/src/map/madra_interiors_cavern_homes/animation.script.lz"
 	.balign 4, 0
 .LField_MikasallaInteriorsSanctum_BLEND:
 	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"

@@ -533,7 +533,9 @@ void PaletteCycle_SetPausesInEvents(s32 a0) {
 extern s32 gPaletteCycleFrame;
 
 /// Sets the counter, its value built as a word.
-static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
 
 #include "shared/palette_cycle_step_at.h"
 
@@ -548,7 +550,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    Counter_Set(0);
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -773,7 +775,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(JupiterLighthouseRoomBeam),         SCENE_EXIT(1, JupiterLighthouseRoom1, 1),   SCENE_EXIT(2, JupiterLighthouseRoomBeam, 3),   
+      SCENE_EXITS(JupiterLighthouseRoomBeam),         SCENE_EXIT(1, JupiterLighthouseRoomGateButton, 1),   SCENE_EXIT(2, JupiterLighthouseRoomBeam, 3),   
       SCENE_EXIT(3, JupiterLighthouseRoomBeam, 2),    SCENE_EXIT(4, JupiterLighthouseRoomBeam, 5),   SCENE_EXIT(5, JupiterLighthouseRoomBeam, 4),   
       SCENE_EXIT(6, JupiterLighthouseRoomErinyesTunicChest, 6),   SCENE_EXIT(7, JupiterLighthouseRoomErinyesTunicChest, 7),  SCENE_EXIT(8, JupiterLighthouseRoomErinyesTunicChest, 8),   
       SCENE_EXIT(9, JupiterLighthouseRoomErinyesTunicChest, 9),   SCENE_EXIT(10, JupiterLighthouseRoomErinyesTunicChest, 10), SCENE_EXIT(11, JupiterLighthouseRoomErinyesTunicChest, 11), 

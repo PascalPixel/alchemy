@@ -24,10 +24,10 @@ Field_DehkanPlateauCannon:
 	.incbin "games/tla/src/map/dehkan_plateau_cannon/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_DehkanPlateauCannon_ANIMATION:
-	.incbin "games/tla/src/map/dehkan_plateau_4/animation.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/animation.script.lz"
 	.balign 4, 0
 .LField_DehkanPlateauCannon_BLEND:
-	.incbin "games/tla/src/map/dehkan_plateau_4/blend.script.lz"
+	.incbin "games/tla/src/map/dehkan_plateau_mint_chest/blend.script.lz"
 	.balign 4, 0
 .LField_DehkanPlateauCannon_SCENE:
 	.incbin "games/tla/src/map/dehkan_plateau_cannon/scene.scene.lz"

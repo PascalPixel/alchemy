@@ -605,14 +605,14 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   return 1;
 }
 
-/// Reads the map's entrance stream (gData_0202e000) for the current entrance,
+/// Reads the map's entrance stream (gMapScene) for the current entrance,
 /// places the party there unless flag 0x109 keeps its position, then sets the
 /// camera bounds from the first box that holds it.
 s32 Field_PlaceAtEntrance(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 xFixed;
-  u8 *cursor = gData_0202e000;
+  u8 *cursor = gMapScene;
   s32 *angle;
   u16 *layer;
   s32 entrance = work->entrance;
@@ -628,7 +628,7 @@ s32 Field_PlaceAtEntrance(void) {
   s32 right;
   s32 leftEdge, topEdge, rightEdge, bottomEdge;
 
-  cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
+  cursor = gMapScene + (u16)Stream_ReadU16(&cursor);
   angle = &gMainRoutineWork.heading;
   layer = &gMainRoutineWork.layer;
   for (;; cursor += 6) {
@@ -649,7 +649,7 @@ s32 Field_PlaceAtEntrance(void) {
       zFixed = px(z);
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
-      base = (s32)gData_0202e000;
+      base = (s32)gMapScene;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
@@ -661,7 +661,7 @@ s32 Field_PlaceAtEntrance(void) {
       if (flags & 32)
         return 1;
 
-      cursor = Data_0202e004;
+      cursor = gMapSceneBoundsOffset;
       cursor = (u8 *)((u16)Stream_ReadU16(&cursor) + base);
       while (*(s8 *)cursor != -1) {
         {

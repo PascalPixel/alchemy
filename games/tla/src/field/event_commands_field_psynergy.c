@@ -416,7 +416,7 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = 0;
   if (animation == FIELD_PSYNERGY_SCOOP)
     tint = 5;
-  if (animation == FIELD_PSYNERGY_UNNAMED_29)
+  if (animation == FIELD_PSYNERGY_ARROW)
     tint = 0;
   if (animation == FIELD_PSYNERGY_PARCH)
     tint = 7;

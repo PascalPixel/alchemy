@@ -178,9 +178,9 @@ void Clear_FadeInBlend(void) {
                       BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - (u16)level) << 8) | (u16)level,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   if (level > 15)
     FieldTask_Remove(Clear_FadeInBlend);
 }
@@ -408,14 +408,14 @@ top:
       limit = 4;
     if (++i < limit)
       goto close;
-    if (gData_02003860 != 0) {
+    if (gAnyFileCleared != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
-        if (gData_02003860 == 0) {
+        if (gAnyFileCleared == 0) {
           FieldMessage_Show(message + 1, 1);
         } else {
           SAVE_CELLS();
@@ -972,7 +972,7 @@ s32 Clear_EnterPassword(void) {
   mode = IconMenu_ChooseSendOption(1);
   if (mode == -1)
     return -1;
-  Sound_Play(MUS_071);
+  Sound_Play(MUS_PASSWORD);
   cursor = 0;
   column = 0;
   row = 0;

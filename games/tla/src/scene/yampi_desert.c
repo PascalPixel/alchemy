@@ -237,8 +237,8 @@ enum YampiDesertTrainersWhipChestActorId {
   ACTOR_WHIP_CHEST_ROOM_SECOND_SLIDE
 };
 
-/// The scorpion pit's actors (SceneId_YampiDesert10), where the King Scorpion
-/// is fought.
+/// The scorpion pit's actors (SceneId_YampiDesertScorpionPit), where the King
+/// Scorpion is fought.
 enum YampiDesertScorpionPitActorId {
   ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
   /// Moved to the middle of the four rocks once Scoop has dug the pit there.
@@ -362,7 +362,7 @@ void YampiDesert_FightBlitz(void) {
 
 /// Where the party can enter: the cave under the oasis has its own entrances.
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_11)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_OASIS_CAVE)
     return gYampiDesertOasisCaveEntrances;
   return gYampiDesert_Entrances;
 }
@@ -371,9 +371,9 @@ const u8 *Scene_GetEntrances(void) {
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_YAMPI_DESERT_10)
+  if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     return gYampiDesertScorpionPitExitRegions;
-  if (scene == SCENE_YAMPI_DESERT_11)
+  if (scene == SCENE_YAMPI_DESERT_OASIS_CAVE)
     return gYampiDesertOasisCaveExitRegions;
   return 0;
 }
@@ -413,7 +413,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gYampiDesertKingScorpionActorPlacements;
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
     return gYampiDesertTrainersWhipChestActorPlacements;
-  if (scene == SCENE_YAMPI_DESERT_10)
+  if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     return gYampiDesertScorpionPitActorPlacements;
   if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
     return gYampiDesertBlowMaceChestActorPlacements;
@@ -456,15 +456,15 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gYampiDesertKingScorpionTriggers;
   if (scene == SCENE_YAMPI_DESERT_TREASURE_PIT)
     return gYampiDesertTreasurePitTriggers;
-  if (scene == SCENE_YAMPI_DESERT_7)
+  if (scene == SCENE_YAMPI_DESERT_SAND_PASS)
     return gYampiDesertSandPassTriggers;
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
     return gYampiDesertTrainersWhipChestTriggers;
   if (scene == SCENE_YAMPI_DESERT_MEDAL_SPOT)
     return gYampiDesertMedalSpotTriggers;
-  if (scene == SCENE_YAMPI_DESERT_10)
+  if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     return gYampiDesertScorpionPitTriggers;
-  if (scene == SCENE_YAMPI_DESERT_11)
+  if (scene == SCENE_YAMPI_DESERT_OASIS_CAVE)
     return gYampiDesertOasisCaveTriggers;
   if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
     return gYampiDesertBlowMaceChestTriggers;
@@ -1684,7 +1684,7 @@ void YampiDesert_PlayScorpionRumble(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->movementMode != 5 || gInput.held == 0)
-      Sound_Play(SE_596);
+      Sound_Play(SE_SAND_MOVE);
   }
 }
 
@@ -2183,7 +2183,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Actor_SetSpeed(ACTOR_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination(SCENE_YAMPI_DESERT_10, 2);
+  Event_SetAfterBattleDestination(SCENE_YAMPI_DESERT_SCORPION_PIT, 2);
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
@@ -2211,9 +2211,9 @@ s32 Scene_Initialize(void) {
     YampiDesert_SetUpTrainersWhipChest();
   else if (scene == SCENE_YAMPI_DESERT_MEDAL_SPOT)
     YampiDesert_SetUpMedalSpot();
-  else if (scene == SCENE_YAMPI_DESERT_10)
+  else if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     YampiDesert_SetUpScorpionPit();
-  else if (scene == SCENE_YAMPI_DESERT_11)
+  else if (scene == SCENE_YAMPI_DESERT_OASIS_CAVE)
     YampiDesert_SetUpOasisCave();
   else if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
     YampiDesert_SetUpBlowMaceChest();
@@ -2919,9 +2919,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(YampiDesertOasis),
     SCENE_EXIT(1, YampiDesertGuardianRingChest, 2),
     SCENE_EXIT(2, YampiDesertTreasurePit, 1),
-    SCENE_EXIT(3, YampiDesert11, 1),
+    SCENE_EXIT(3, YampiDesertOasisCave, 1),
     SCENE_EXIT(4, YampiDesertBlitz, 1),
-    SCENE_EXIT(5, YampiDesert11, 3),
+    SCENE_EXIT(5, YampiDesertOasisCave, 3),
     SCENE_EXITS(YampiDesertBlitz),
     SCENE_EXIT(1, YampiDesertOasis, 4),
     SCENE_EXIT(2, YampiDesertPsynergyStone, 1),
@@ -2934,31 +2934,31 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(1, YampiDesertPsynergyStone, 4),
     SCENE_EXIT(2, YampiDesertKingScorpion, 3),
     SCENE_EXIT(3, YampiDesertKingScorpion, 2),
-    SCENE_EXIT(4, YampiDesert10, 1),
+    SCENE_EXIT(4, YampiDesertScorpionPit, 1),
     SCENE_EXITS(YampiDesertTreasurePit),
     SCENE_EXIT(1, YampiDesertOasis, 2),
     SCENE_EXIT(2, YampiDesertBlowMaceChest, 1),
-    SCENE_EXITS(YampiDesert7),
+    SCENE_EXITS(YampiDesertSandPass),
     SCENE_EXIT(1, YampiDesertBlowMaceChest, 2),
     SCENE_EXIT(2, YampiDesertTrainersWhipChest, 1),
     SCENE_EXITS(YampiDesertTrainersWhipChest),
-    SCENE_EXIT(1, YampiDesert7, 2),
+    SCENE_EXIT(1, YampiDesertSandPass, 2),
     SCENE_EXIT(2, WorldMap, 18),
     SCENE_EXIT(3, YampiDesertMedalSpot, 1),
     SCENE_EXIT(4, YampiDesertCaveWaterOfLifeChest, 1),
     SCENE_EXITS(YampiDesertMedalSpot),
     SCENE_EXIT(1, YampiDesertTrainersWhipChest, 3),
     SCENE_EXIT(2, WorldMap, 19),
-    SCENE_EXITS(YampiDesert10),
+    SCENE_EXITS(YampiDesertScorpionPit),
     SCENE_EXIT(1, YampiDesertKingScorpion, 4),
-    SCENE_EXITS(YampiDesert11),
+    SCENE_EXITS(YampiDesertOasisCave),
     SCENE_EXIT(1, YampiDesertOasis, 3),
-    SCENE_EXIT(2, YampiDesert11, 4),
+    SCENE_EXIT(2, YampiDesertOasisCave, 4),
     SCENE_EXIT(3, YampiDesertOasis, 5),
-    SCENE_EXIT(4, YampiDesert11, 2),
+    SCENE_EXIT(4, YampiDesertOasisCave, 2),
     SCENE_EXITS(YampiDesertBlowMaceChest),
     SCENE_EXIT(1, YampiDesertTreasurePit, 2),
-    SCENE_EXIT(2, YampiDesert7, 1),
+    SCENE_EXIT(2, YampiDesertSandPass, 1),
     SCENE_EXITS_END,
 };
 

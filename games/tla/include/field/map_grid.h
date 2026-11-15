@@ -70,7 +70,9 @@ struct MapWork {
   /// MapGrid_SetScreenShake keeps a component given as negative.
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;
-  u16 flags;
+  /// Display control bits ORed into DISPCNT; ScreenTransition_HideBackgrounds
+  /// clears those of backgrounds 1 to 3.
+  u16 dispcnt;
   u8 wideTiles;
   /// The ground's marks: bits 1..0 footprints, 3..2 the kind of wading
   /// (rooms with a second level set 1).

@@ -26,7 +26,7 @@ extern struct Actor *gWorldMap_PlacedActors[];
 
 /// Chooses a passage exit from the leader's east-west approach: exitBefore
 /// while the leader is west of the placed object in slot - 100, else exitAfter.
-void WorldMap_SetCountdownByX(s32 slot, s32 exitBefore, s32 exitAfter) {
+void WorldMap_SelectExitByX(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
   struct Actor *leader;
@@ -43,7 +43,7 @@ void WorldMap_SetCountdownByX(s32 slot, s32 exitBefore, s32 exitAfter) {
 }
 
 /// Chooses a passage exit from the leader's north-south approach.
-void WorldMap_SetCountdownByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
+void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
   struct Actor *leader;

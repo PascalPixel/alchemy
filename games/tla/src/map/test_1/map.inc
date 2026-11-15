@@ -15,7 +15,7 @@ Field_Test1:
 	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test1_SHAPES:
-	.incbin "games/tla/src/map/madra_interiors_2/shapes.table.lz"
+	.incbin "games/tla/src/map/madra_interiors_cavern_homes/shapes.table.lz"
 	.balign 4, 0
 .LField_Test1_GRID:
 	.incbin "games/tla/src/map/test_1/map.grid.lz"

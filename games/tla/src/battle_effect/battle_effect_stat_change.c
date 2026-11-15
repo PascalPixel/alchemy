@@ -294,7 +294,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     if (frame == 0)
       Sound_PlayFar(SE_SWIRL);
     if (mode == STAT_BOOST_IRON && (frame & 3) == 0)
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_GreyPaletteA);
     if (mode == STAT_BOOST_STEAM && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
     if (frame == STAT_BOOST_PICTURE_FRAME)

@@ -342,8 +342,8 @@ void ShopTest_GiveEquipmentTestStock(void) {
   Inventory_AddItem(SHEBA, ITEM_MYTHRIL_SILVER);
   Inventory_AddItemAgain(SHEBA, ITEM_RUSTY_SWORD);
   Inventory_AddItem(SHEBA, ITEM_RUSTY_SWORD);
-  Inventory_AddItem(SHEBA, ITEM_418);
-  Inventory_AddItem(SHEBA, ITEM_419);
+  Inventory_AddItem(SHEBA, ITEM_RUSTY_ROBBERS_BLADE);
+  Inventory_AddItem(SHEBA, ITEM_RUSTY_PIRATES_SABRE);
   Inventory_AddItem(PIERS, ITEM_WATER_OF_LIFE);
   Inventory_AddItem(PIERS, ITEM_ORB_OF_FORCE);
   Inventory_AddItem(PIERS, ITEM_DOUSE_DROP);

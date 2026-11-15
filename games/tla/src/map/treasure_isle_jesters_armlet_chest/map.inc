@@ -24,7 +24,7 @@ Field_TreasureIsleJestersArmletChest:
 	.incbin "games/tla/src/map/treasure_isle_jesters_armlet_chest/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_TreasureIsleJestersArmletChest_ANIMATION:
-	.incbin "games/tla/src/map/treasure_isle_2/animation.script.lz"
+	.incbin "games/tla/src/map/treasure_isle_chests/animation.script.lz"
 	.balign 4, 0
 .LField_TreasureIsleJestersArmletChest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

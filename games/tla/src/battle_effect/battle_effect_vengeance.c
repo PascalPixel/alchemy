@@ -1341,7 +1341,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -1386,7 +1386,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 274) {
-      Sound_PlayFar(SE_139);
+      Sound_PlayFar(SE_DJINNI_SET);
     }
     if (frame == 310) {
       Sound_PlayFar(SE_CURSE_FALL);
@@ -2048,7 +2048,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   }
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   for (i = 0; i != 12; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }

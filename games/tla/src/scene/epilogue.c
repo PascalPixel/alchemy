@@ -291,7 +291,7 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(5, 1, 40);
   Epilogue_ShowLine(4, 0, 30);
   Epilogue_ShowLine(1, 1, 30);
-  Event_PlaySound(MUS_067);
+  Event_PlaySound(MUS_EPILOGUE);
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())EndingPicture_Show,
         (s32)&ResourceId_EndingVillagersPictureA, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  Event_PlaySound(MUS_073);
+  Event_PlaySound(MUS_EPILOGUE_VILLAGERS);
   FieldEvent_Wait(30);
   Epilogue_ShowLine(64, 2, 30);
 #if LANGUAGE == LANGUAGE_GERMAN

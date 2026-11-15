@@ -248,7 +248,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   for (; i < 48; i++) {
     EffectSprite_Init(sprite, 4, 4, 0,
                       moteTile + ((Random16() << 4) >> 16) * 2);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
     sprite->depth = 240;
@@ -268,7 +268,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   sprite = work->sparkSprites;
   for (i = 31; i >= 0; i--) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
@@ -277,7 +277,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     mote++;
   }
   wait(1);
-  Sound_PlayFar(SE_139);
+  Sound_PlayFar(SE_DJINNI_SET);
   Actor_SelectAnimationFar(target, 2);
   Event_Wait(60);
   target->timer = 0;

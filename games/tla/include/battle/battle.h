@@ -153,7 +153,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
 void FieldEffect_SnapScaleToFull(struct Actor *object);
 void PaletteFade_StartInterpolation(s32 frames);
-struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
+struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
 void PartyStatus_HighlightMembersFar(u16 *);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,

@@ -200,7 +200,7 @@ void FieldPsynergy_Ring(void) {
     for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
       sprite = &work->sparkSprites[i];
       EffectSprite_Init(sprite, 4, 4, 0, tile);
-      sprite->oam.palette256 = 1;
+      sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = 0;
       sprite->depth = 240;
@@ -301,7 +301,7 @@ void FieldPsynergy_Ring(void) {
         EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
-        sprite->oam.palette256 = 0;
+        sprite->oam.fullColor = 0;
         sprite->oam.palette = 15;
         sprite->angle = heading + TRIG_TURN / 4;
         place = position;
@@ -399,7 +399,7 @@ void FieldPsynergy_EndRing(void) {
     Vector_AddPolarOffset(Random16() * 3 + px(2), angle, &mote->vx);
     mote->timer = -i / 4;
     EffectSprite_Init(sprite, 4, 4, 0, tile);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;

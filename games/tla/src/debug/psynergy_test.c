@@ -641,7 +641,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
-      Event_PlaySound(SE_598);
+      Event_PlaySound(SE_RISING_RINGS);
       work->unka0[work->unka6] = 0;
       work->unka6 ^= 1;
     }

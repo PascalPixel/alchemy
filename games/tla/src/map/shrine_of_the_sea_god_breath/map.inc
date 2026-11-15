@@ -24,7 +24,7 @@ Field_ShrineOfTheSeaGodBreath:
 	.incbin "games/tla/src/map/shrine_of_the_sea_god_breath/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodBreath_ANIMATION:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_3/animation.script.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_crossroads/animation.script.lz"
 	.balign 4, 0
 .LField_ShrineOfTheSeaGodBreath_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

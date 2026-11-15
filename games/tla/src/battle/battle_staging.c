@@ -76,7 +76,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
     plan->targetHit[i] = 1;
   }
   plan->targetCount = count;
-  plan->abilityId = ABILITY_403;
+  plan->abilityId = ABILITY_DAEDALUS_STRIKE;
   plan->battleEffect = EFFECT_SUMMON | 26;
 }
 

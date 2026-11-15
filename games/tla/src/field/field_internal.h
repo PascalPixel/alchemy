@@ -272,7 +272,7 @@ extern u8 Render_ConvertMapCode[];
 
 extern u8 Render_ConvertMapCodeSize[];
 
-extern u8 gData_0202e002[];
+extern u8 gMapSceneEditsOffset[];
 
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 

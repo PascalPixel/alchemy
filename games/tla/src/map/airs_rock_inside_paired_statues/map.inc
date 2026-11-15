@@ -24,7 +24,7 @@ Field_AirsRockInsidePairedStatues:
 	.incbin "games/tla/src/map/airs_rock_inside_paired_statues/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AirsRockInsidePairedStatues_ANIMATION:
-	.incbin "games/tla/src/map/airs_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/airs_rock_inside_hall/animation.script.lz"
 	.balign 4, 0
 .LField_AirsRockInsidePairedStatues_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

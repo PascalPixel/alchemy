@@ -24,7 +24,7 @@ Field_AirsRockInsideCoinsChest:
 	.incbin "games/tla/src/map/airs_rock_inside_coins_chest/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AirsRockInsideCoinsChest_ANIMATION:
-	.incbin "games/tla/src/map/airs_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/airs_rock_inside_hall/animation.script.lz"
 	.balign 4, 0
 .LField_AirsRockInsideCoinsChest_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

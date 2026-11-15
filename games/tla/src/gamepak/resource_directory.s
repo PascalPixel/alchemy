@@ -28,13 +28,13 @@ Resource_DirectoryTable:
 	resource , FarCall_SuperLuckyDiceTable
 	resource , FarCall_SoundTable
 	resource , FarCall_SoundTable
-	resource Data012, gResource_Data012
+	resource SpriteMetadata, gSprite_AnimationMetadata
 	resource WindowTiles, Ui_WindowTiles
 	resource SmallFont, Text_SmallFont
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC
-	resource Data018, Title_IntroClouds
+	resource IntroClouds, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
 	resource Data01B, Resource_Data01B
@@ -45,8 +45,8 @@ Resource_DirectoryTable:
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
-	resource Data023, Title_WorldMapPicture
-	resource Data024, Title_WorldMapPictureLarge
+	resource WorldMapPicture, Title_WorldMapPicture
+	resource WorldMapPictureLarge, Title_WorldMapPictureLarge
 	resource IntroTilesB, Resource_Data025
 	resource Headings, Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
@@ -145,7 +145,7 @@ Resource_DirectoryTable:
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource SlotsDomePicture, Slots_DomePicture
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	resource Data087, LuckyDice_DiceFaces
+	resource DiceFaces, LuckyDice_DiceFaces
 	resource SlotsYouWinBanner, Slots_YouWinBanner
 	resource SlotsYouLoseBanner, Slots_YouLoseBanner
 	resource SlotsHigherBanner, Slots_HigherBanner
@@ -194,8 +194,8 @@ Resource_DirectoryTable:
 	resource Data0B5, Resource_Data0B5
 	resource CharmRingSheet, BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
-	resource EffectPalette00, BattleEffect_MagentaPalette
-	resource EffectPalette01, BattleEffect_SlatePalette
+	resource VioletPaletteE, BattleEffect_VioletPaletteE
+	resource GreyPaletteA, BattleEffect_GreyPaletteA
 	resource Data0BA, Resource_Data0BA
 	resource Data0BB, Resource_Data0BB
 	resource , BattleEffect_ThinBoltSheet
@@ -267,10 +267,10 @@ Resource_DirectoryTable:
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
 	resource Data0FF, Resource_Data0FF
 	resource AxeSheet, BattleEffect_AxeSheet
-	resource Data101, BattleEffect_LongSwordSheet
-	resource Data102, BattleEffect_GlowingSwordSheet
-	resource Data103, BattleEffect_FireStreakSheetB
-	resource Data104, BattleEffect_PinkBarSheet
+	resource GiantSwordBladeSheet, BattleEffect_GiantSwordBladeSheet
+	resource GiantSwordSheet, BattleEffect_GiantSwordSheet
+	resource FireStripesTexture, BattleEffect_FireStripesTexture
+	resource PinkBarSheet, BattleEffect_PinkBarSheet
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
 	resource TileAnimationMask, BattleEffect_TileAnimationMask
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
@@ -319,7 +319,7 @@ Resource_DirectoryTable:
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
 	resource ParticleSpritesA, BattleEffect_ParticleSpritesA
-	resource Data135, BattleEffect_ParticleSpritesB
+	resource ParticleSpritesB, BattleEffect_ParticleSpritesB
 	resource ParticleSpritesC, BattleEffect_ParticleSpritesC
 	resource ParticleSpritesD, BattleEffect_ParticleSpritesD
 	resource GreenPalette, BattleEffect_GreenPalette
@@ -339,8 +339,8 @@ Resource_DirectoryTable:
 	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
 	resource RedPaletteB, BattleEffect_RedPaletteB
 	resource OrangePaletteB, BattleEffect_OrangePaletteB
-	resource EffectPalette02, BattleEffect_IndigoPalette
-	resource EffectPalette03, BattleEffect_OrangePalette
+	resource VioletPaletteF, BattleEffect_VioletPaletteF
+	resource OrangePaletteC, BattleEffect_OrangePaletteC
 	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
@@ -370,8 +370,8 @@ Resource_DirectoryTable:
 	resource VioletPaletteC, BattleEffect_VioletPaletteC
 	resource CyanPalette, BattleEffect_CyanPalette
 	resource TanPalette, BattleEffect_TanPalette
-	resource , BattleEffect_GreyPalette
-	resource EffectPalette05, BattleEffect_VioletPalette
+	resource , BattleEffect_GreyPaletteB
+	resource VioletPaletteG, BattleEffect_VioletPaletteG
 	resource WispSheet, BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource PortalSheet, BattleEffect_PortalSheet
@@ -395,7 +395,7 @@ Resource_DirectoryTable:
 	resource SparkleDots, BattleEffect_SparkleDots
 	resource PinkBurstSheet, BattleEffect_PinkBurstSheet
 	resource LightFanSheet, BattleEffect_LightFanSheet
-	resource Data181, BattleEffect_FlamePlumeSheet
+	resource FlamePlumeSheet, BattleEffect_FlamePlumeSheet
 	resource DustPuffSheet, BattleEffect_DustPuffSheet
 	resource GoldShellSheet, BattleEffect_GoldShellSheet
 	resource BlastSheet, BattleEffect_BlastSheet
@@ -419,7 +419,7 @@ Resource_DirectoryTable:
 	resource DualStreamPath, BattleEffect_DualStreamPath
 	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource Data199, Field_DefaultMapEntrances
+	resource DefaultMapEntrances, Field_DefaultMapEntrances
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
 	resource DefaultCellPictureAttributes, Field_DefaultCellPictureAttributes
@@ -673,13 +673,13 @@ Resource_DirectoryTable:
 	resource , Tileset_IdejimaTilesB
 	resource , Tileset_IdejimaTilesC
 	resource , Tileset_IdejimaTilesD
-	resource , Field_Daila1
-	resource , Tileset_Daila1Palette
-	resource , Tileset_Daila1TilesA
-	resource , Tileset_Daila1TilesB
-	resource , Tileset_Daila1TilesC
-	resource , Tileset_Daila1TilesD
-	resource , Field_Daila2
+	resource , Field_DailaFlooded
+	resource , Tileset_DailaFloodedPalette
+	resource , Tileset_DailaFloodedTilesA
+	resource , Tileset_DailaFloodedTilesB
+	resource , Tileset_DailaFloodedTilesC
+	resource , Tileset_DailaFloodedTilesD
+	resource , Field_Daila
 	resource , Field_DailaInteriorsHouses
 	resource , Tileset_DailaInteriorsHousesPalette
 	resource , Tileset_DailaInteriorsHousesTilesA
@@ -701,7 +701,7 @@ Resource_DirectoryTable:
 	resource , Field_KandoreanTempleLifts
 	resource , Field_KandoreanTempleChestbeaters
 	resource , Field_KandoreanTemplePillar
-	resource , Field_KandoreanTemple5
+	resource , Field_KandoreanTempleStream
 	resource , Field_KandoreanTempleSteam
 	resource , Field_KandoreanTempleFog
 	resource , Field_KandoreanTempleGate
@@ -717,20 +717,20 @@ Resource_DirectoryTable:
 	resource , Tileset_ShrineOfTheSeaGodSeaGodsTearPalette
 	resource , Tileset_ShrineOfTheSeaGodSeaGodsTearTilesA
 	resource , Field_ShrineOfTheSeaGodRope
-	resource , Field_ShrineOfTheSeaGod2
-	resource , Field_ShrineOfTheSeaGod3
-	resource , Field_ShrineOfTheSeaGod4
+	resource , Field_ShrineOfTheSeaGodPlankBridge
+	resource , Field_ShrineOfTheSeaGodCrossroads
+	resource , Field_ShrineOfTheSeaGodFootprints
 	resource , Field_ShrineOfTheSeaGodBreath
-	resource , Field_ShrineOfTheSeaGod6
+	resource , Field_ShrineOfTheSeaGodPillarHole
 	resource , Tileset_PaletteShrineOfTheSeaGod6
 	resource , Field_ShrineOfTheSeaGodPillars
-	resource , Field_ShrineOfTheSeaGod9
-	resource , Field_ShrineOfTheSeaGod10
-	resource , Tileset_ShrineOfTheSeaGod10Palette
-	resource , Tileset_ShrineOfTheSeaGod10TilesA
-	resource , Tileset_ShrineOfTheSeaGod10TilesB
-	resource , Tileset_ShrineOfTheSeaGod10TilesC
-	resource , Tileset_ShrineOfTheSeaGod10TilesD
+	resource , Field_ShrineOfTheSeaGodStatue
+	resource , Field_ShrineOfTheSeaGodLadders
+	resource , Tileset_ShrineOfTheSeaGodLaddersPalette
+	resource , Tileset_ShrineOfTheSeaGodLaddersTilesA
+	resource , Tileset_ShrineOfTheSeaGodLaddersTilesB
+	resource , Tileset_ShrineOfTheSeaGodLaddersTilesC
+	resource , Tileset_ShrineOfTheSeaGodLaddersTilesD
 	resource , Field_ShrineOfTheSeaGodRightProng
 	resource , Tileset_ShrineOfTheSeaGodRightProngPalette
 	resource , Tileset_ShrineOfTheSeaGodRightProngTilesA
@@ -749,18 +749,18 @@ Resource_DirectoryTable:
 	resource , Tileset_DehkanPlateauThemisAxeChestTilesB
 	resource , Tileset_DehkanPlateauThemisAxeChestTilesC
 	resource , Tileset_DehkanPlateauThemisAxeChestTilesD
-	resource , Field_DehkanPlateau3
-	resource , Tileset_DehkanPlateau3Palette
-	resource , Tileset_DehkanPlateau3TilesA
-	resource , Tileset_DehkanPlateau3TilesB
-	resource , Tileset_DehkanPlateau3TilesC
-	resource , Tileset_DehkanPlateau3TilesD
-	resource , Field_DehkanPlateau4
-	resource , Tileset_DehkanPlateau4Palette
-	resource , Tileset_DehkanPlateau4TilesA
-	resource , Tileset_DehkanPlateau4TilesB
-	resource , Tileset_DehkanPlateau4TilesC
-	resource , Tileset_DehkanPlateau4TilesD
+	resource , Field_DehkanPlateauTightropes
+	resource , Tileset_DehkanPlateauTightropesPalette
+	resource , Tileset_DehkanPlateauTightropesTilesA
+	resource , Tileset_DehkanPlateauTightropesTilesB
+	resource , Tileset_DehkanPlateauTightropesTilesC
+	resource , Tileset_DehkanPlateauTightropesTilesD
+	resource , Field_DehkanPlateauMintChest
+	resource , Tileset_DehkanPlateauMintChestPalette
+	resource , Tileset_DehkanPlateauMintChestTilesA
+	resource , Tileset_DehkanPlateauMintChestTilesB
+	resource , Tileset_DehkanPlateauMintChestTilesC
+	resource , Tileset_DehkanPlateauMintChestTilesD
 	resource , Field_DehkanPlateauPoundCube
 	resource , Tileset_DehkanPlateauPoundCubePalette
 	resource , Tileset_DehkanPlateauPoundCubeTilesA
@@ -791,30 +791,30 @@ Resource_DirectoryTable:
 	resource , Tileset_MadraInteriorsTilesB
 	resource , Tileset_MadraInteriorsTilesC
 	resource , Tileset_MadraInteriorsTilesD
-	resource , Field_MadraInteriors2
-	resource , Tileset_MadraInteriors2Palette
-	resource , Tileset_MadraInteriors2TilesA
-	resource , Tileset_MadraInteriors2TilesB
-	resource , Tileset_MadraInteriors2TilesC
-	resource , Tileset_MadraInteriors2TilesD
+	resource , Field_MadraInteriorsCavernHomes
+	resource , Tileset_MadraInteriorsCavernHomesPalette
+	resource , Tileset_MadraInteriorsCavernHomesTilesA
+	resource , Tileset_MadraInteriorsCavernHomesTilesB
+	resource , Tileset_MadraInteriorsCavernHomesTilesC
+	resource , Tileset_MadraInteriorsCavernHomesTilesD
 	resource , Field_MadraCatacombsEntrance
 	resource , Tileset_MadraCatacombsEntrancePalette
 	resource , Tileset_MadraCatacombsEntranceTilesA
 	resource , Tileset_MadraCatacombsEntranceTilesB
 	resource , Tileset_MadraCatacombsEntranceTilesC
 	resource , Tileset_MadraCatacombsEntranceTilesD
-	resource , Field_MadraCatacombs2
-	resource , Tileset_MadraCatacombs2Palette
-	resource , Tileset_MadraCatacombs2TilesA
-	resource , Tileset_MadraCatacombs2TilesB
-	resource , Tileset_MadraCatacombs2TilesC
-	resource , Tileset_MadraCatacombs2TilesD
-	resource , Field_MadraCatacombs3
-	resource , Tileset_MadraCatacombs3Palette
-	resource , Tileset_MadraCatacombs3TilesA
-	resource , Tileset_MadraCatacombs3TilesB
-	resource , Tileset_MadraCatacombs3TilesC
-	resource , Tileset_MadraCatacombs3TilesD
+	resource , Field_MadraCatacombsLadders
+	resource , Tileset_MadraCatacombsLaddersPalette
+	resource , Tileset_MadraCatacombsLaddersTilesA
+	resource , Tileset_MadraCatacombsLaddersTilesB
+	resource , Tileset_MadraCatacombsLaddersTilesC
+	resource , Tileset_MadraCatacombsLaddersTilesD
+	resource , Field_MadraCatacombsChampaTunnel
+	resource , Tileset_MadraCatacombsChampaTunnelPalette
+	resource , Tileset_MadraCatacombsChampaTunnelTilesA
+	resource , Tileset_MadraCatacombsChampaTunnelTilesB
+	resource , Tileset_MadraCatacombsChampaTunnelTilesC
+	resource , Tileset_MadraCatacombsChampaTunnelTilesD
 	resource , Field_MadraCatacombsTablet
 	resource , Tileset_MadraCatacombsTabletPalette
 	resource , Tileset_MadraCatacombsTabletTilesA
@@ -864,7 +864,7 @@ Resource_DirectoryTable:
 	resource , Field_GarohHypnosSwordChest
 	resource , Tileset_PaletteGarohHypnosSwordChest
 	resource , Field_GarohBlocks
-	resource , Field_Garoh4
+	resource , Field_GarohTunnels
 	resource , Tileset_PaletteGaroh4
 	resource , Field_GarohWerewolfCave
 	resource , Tileset_PaletteGarohWerewolfCaveA
@@ -883,11 +883,11 @@ Resource_DirectoryTable:
 	resource , Field_YampiDesertPsynergyStone
 	resource , Field_YampiDesertKingScorpion
 	resource , Field_YampiDesertTreasurePit
-	resource , Field_YampiDesert7
+	resource , Field_YampiDesertSandPass
 	resource , Field_YampiDesertTrainersWhipChest
 	resource , Field_YampiDesertMedalSpot
-	resource , Field_YampiDesert10
-	resource , Field_YampiDesert11
+	resource , Field_YampiDesertScorpionPit
+	resource , Field_YampiDesertOasisCave
 	resource , Field_YampiDesertBlowMaceChest
 	resource , Field_YampiDesertCaveWaterOfLifeChest
 	resource , Tileset_YampiDesertCaveWaterOfLifeChestPalette
@@ -906,15 +906,15 @@ Resource_DirectoryTable:
 	resource , Tileset_AirsRockStormBrandChestTilesD
 	resource , Field_AirsRockEntrance
 	resource , Field_AirsRockFujinShieldChest
-	resource , Field_AirsRockInside1
-	resource , Tileset_AirsRockInside1Palette
-	resource , Tileset_AirsRockInside1TilesA
-	resource , Tileset_AirsRockInside1TilesB
-	resource , Tileset_AirsRockInside1TilesC
-	resource , Tileset_AirsRockInside1TilesD
-	resource , Field_AirsRockInside2
+	resource , Field_AirsRockInsideHall
+	resource , Tileset_AirsRockInsideHallPalette
+	resource , Tileset_AirsRockInsideHallTilesA
+	resource , Tileset_AirsRockInsideHallTilesB
+	resource , Tileset_AirsRockInsideHallTilesC
+	resource , Tileset_AirsRockInsideHallTilesD
+	resource , Field_AirsRockInsideVialChest
 	resource , Field_AirsRockInsideClarityCircletChest
-	resource , Field_AirsRockInside4
+	resource , Field_AirsRockInsideTightropes
 	resource , Field_AirsRockInsideRevealTablet
 	resource , Field_AirsRockInsideElixirChest
 	resource , Field_AirsRockInsidePairedStatues
@@ -979,37 +979,37 @@ Resource_DirectoryTable:
 	resource , Tileset_KibomboMountainsWaftTilesD
 	resource , Field_KibomboMountainsDiskAxeChest
 	resource , Tileset_PaletteKibomboMountainsDiskAxeChest
-	resource , Field_KibomboMountains3
-	resource , Tileset_KibomboMountains3Palette
-	resource , Tileset_KibomboMountains3TilesA
-	resource , Tileset_KibomboMountains3TilesB
-	resource , Tileset_KibomboMountains3TilesC
-	resource , Tileset_KibomboMountains3TilesD
-	resource , Field_Kibombo1
-	resource , Tileset_Kibombo1Palette
-	resource , Tileset_Kibombo1TilesA
-	resource , Tileset_Kibombo1TilesB
-	resource , Tileset_Kibombo1TilesC
-	resource , Tileset_Kibombo1TilesD
-	resource , Field_Kibombo2
-	resource , Tileset_Kibombo2Palette
-	resource , Tileset_Kibombo2TilesA
-	resource , Tileset_Kibombo2TilesB
-	resource , Tileset_Kibombo2TilesC
-	resource , Tileset_Kibombo2TilesD
-	resource , Field_Kibombo4
-	resource , Tileset_Kibombo4Palette
-	resource , Tileset_Kibombo4TilesA
-	resource , Tileset_Kibombo4TilesB
-	resource , Tileset_Kibombo4TilesC
-	resource , Tileset_Kibombo4TilesD
-	resource , Field_Kibombo5
-	resource , Tileset_Kibombo5Palette
-	resource , Tileset_Kibombo5TilesA
-	resource , Tileset_Kibombo5TilesB
-	resource , Tileset_Kibombo5TilesC
-	resource , Tileset_Kibombo5TilesD
-	resource , Field_Kibombo3
+	resource , Field_KibomboMountainsCavern
+	resource , Tileset_KibomboMountainsCavernPalette
+	resource , Tileset_KibomboMountainsCavernTilesA
+	resource , Tileset_KibomboMountainsCavernTilesB
+	resource , Tileset_KibomboMountainsCavernTilesC
+	resource , Tileset_KibomboMountainsCavernTilesD
+	resource , Field_Kibombo
+	resource , Tileset_KibomboPalette
+	resource , Tileset_KibomboTilesA
+	resource , Tileset_KibomboTilesB
+	resource , Tileset_KibomboTilesC
+	resource , Tileset_KibomboTilesD
+	resource , Field_KibomboStatueGrounds
+	resource , Tileset_KibomboStatueGroundsPalette
+	resource , Tileset_KibomboStatueGroundsTilesA
+	resource , Tileset_KibomboStatueGroundsTilesB
+	resource , Tileset_KibomboStatueGroundsTilesC
+	resource , Tileset_KibomboStatueGroundsTilesD
+	resource , Field_KibomboCeremony
+	resource , Tileset_KibomboCeremonyPalette
+	resource , Tileset_KibomboCeremonyTilesA
+	resource , Tileset_KibomboCeremonyTilesB
+	resource , Tileset_KibomboCeremonyTilesC
+	resource , Tileset_KibomboCeremonyTilesD
+	resource , Field_KibomboStatueGroundsCeremony
+	resource , Tileset_KibomboStatueGroundsCeremonyPalette
+	resource , Tileset_KibomboStatueGroundsCeremonyTilesA
+	resource , Tileset_KibomboStatueGroundsCeremonyTilesB
+	resource , Tileset_KibomboStatueGroundsCeremonyTilesC
+	resource , Tileset_KibomboStatueGroundsCeremonyTilesD
+	resource , Field_KibomboHouses
 	resource , Tileset_PaletteKibombo3
 	resource , Field_GabombaStatueBoneArmletChest
 	resource , Tileset_GabombaStatueBoneArmletChestPalette
@@ -1025,7 +1025,7 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteGabombaStatueTurntable
 	resource , Field_GabombaStatueCogs
 	resource , Tileset_PaletteGabombaStatueCogs
-	resource , Field_GabombaStatueChamber1
+	resource , Field_GabombaStatueChamberIdol
 	resource , Tileset_PaletteGabombaStatueChamber1
 	resource , Field_GabombaStatueArrows
 	resource , Tileset_GabombaStatueArrowsPalette
@@ -1043,12 +1043,12 @@ Resource_DirectoryTable:
 	resource , Tileset_GabombaStatuePinionTilesD
 	resource , Field_GabombaStatueChamberWitchDoctor
 	resource , Tileset_PaletteGabombaStatueChamberWitchDoctor
-	resource , Field_Kibombo6
-	resource , Tileset_Kibombo6Palette
-	resource , Tileset_Kibombo6TilesA
-	resource , Tileset_Kibombo6TilesB
-	resource , Tileset_Kibombo6TilesC
-	resource , Tileset_Kibombo6TilesD
+	resource , Field_KibomboStatueFace
+	resource , Tileset_KibomboStatueFacePalette
+	resource , Tileset_KibomboStatueFaceTilesA
+	resource , Tileset_KibomboStatueFaceTilesB
+	resource , Tileset_KibomboStatueFaceTilesC
+	resource , Tileset_KibomboStatueFaceTilesD
 	resource , Field_GabombaCatacombsTeleporters
 	resource , Tileset_GabombaCatacombsTeleportersPalette
 	resource , Tileset_GabombaCatacombsTeleportersTilesA
@@ -1058,14 +1058,14 @@ Resource_DirectoryTable:
 	resource , Field_GabombaCatacombsMud
 	resource , Field_GabombaCatacombsHiddenWall
 	resource , Field_GabombaCatacombsTomegathericon
-	resource , Field_GabombaCatacombs5
+	resource , Field_GabombaCatacombsStream
 	resource , Field_LemurianShipDeck
 	resource , Tileset_LemurianShipDeckPalette
 	resource , Tileset_LemurianShipDeckTilesA
 	resource , Tileset_LemurianShipDeckTilesB
 	resource , Tileset_LemurianShipDeckTilesC
 	resource , Tileset_LemurianShipDeckTilesD
-	resource , Field_LemurianShip1
+	resource , Field_LemurianShipCabins
 	resource , Tileset_PaletteLemurianShip1
 	resource , Field_LemurianShipAquaHydra
 	resource , Field_IsletsDog
@@ -1095,63 +1095,63 @@ Resource_DirectoryTable:
 	resource , Field_YallamInteriorsShops
 	resource , Tileset_PaletteYallamInteriorsShopsA
 	resource , Tileset_PaletteYallamInteriorsShopsB
-	resource , Field_TaopoSwamp1
-	resource , Tileset_TaopoSwamp1Palette
-	resource , Tileset_TaopoSwamp1TilesA
-	resource , Tileset_TaopoSwamp1TilesB
-	resource , Tileset_TaopoSwamp1TilesC
-	resource , Tileset_TaopoSwamp1TilesD
+	resource , Field_TaopoSwampEntrance
+	resource , Tileset_TaopoSwampEntrancePalette
+	resource , Tileset_TaopoSwampEntranceTilesA
+	resource , Tileset_TaopoSwampEntranceTilesB
+	resource , Tileset_TaopoSwampEntranceTilesC
+	resource , Tileset_TaopoSwampEntranceTilesD
 	resource , Field_TaopoSwampMud
 	resource , Tileset_TaopoSwampMudPalette
 	resource , Tileset_TaopoSwampMudTilesA
 	resource , Tileset_TaopoSwampMudTilesB
 	resource , Tileset_TaopoSwampMudTilesC
 	resource , Tileset_TaopoSwampMudTilesD
-	resource , Field_TaopoSwamp6
-	resource , Tileset_TaopoSwamp6Palette
-	resource , Tileset_TaopoSwamp6TilesA
-	resource , Tileset_TaopoSwamp6TilesB
-	resource , Tileset_TaopoSwamp6TilesC
-	resource , Tileset_TaopoSwamp6TilesD
+	resource , Field_TaopoSwampPool
+	resource , Tileset_TaopoSwampPoolPalette
+	resource , Tileset_TaopoSwampPoolTilesA
+	resource , Tileset_TaopoSwampPoolTilesB
+	resource , Tileset_TaopoSwampPoolTilesC
+	resource , Tileset_TaopoSwampPoolTilesD
 	resource , Field_TaopoSwampTearStones
 	resource , Field_TaopoSwampFlower
-	resource , Field_TaopoSwamp5
-	resource , Field_TaopoSwamp7
-	resource , Field_TaopoSwamp8
-	resource , Field_TaopoSwamp9
+	resource , Field_TaopoSwampVents
+	resource , Field_TaopoSwampPillarGap
+	resource , Field_TaopoSwampDrips
+	resource , Field_TaopoSwampLavaRocks
 	resource , Tileset_PaletteTaopoSwamp9
-	resource , Field_TaopoSwamp10
+	resource , Field_TaopoSwampTremor
 	resource , Field_TaopoSwampStarDust
-	resource , Field_ApojiiIslands1
-	resource , Tileset_ApojiiIslands1Palette
-	resource , Tileset_ApojiiIslands1TilesA
-	resource , Tileset_ApojiiIslands1TilesB
-	resource , Tileset_ApojiiIslands1TilesC
-	resource , Tileset_ApojiiIslands1TilesD
+	resource , Field_ApojiiIslands
+	resource , Tileset_ApojiiIslandsPalette
+	resource , Tileset_ApojiiIslandsTilesA
+	resource , Tileset_ApojiiIslandsTilesB
+	resource , Tileset_ApojiiIslandsTilesC
+	resource , Tileset_ApojiiIslandsTilesD
 	resource , Field_ApojiiIslandsHaze
 	resource , Tileset_ApojiiIslandsHazePalette
 	resource , Tileset_ApojiiIslandsHazeTilesA
 	resource , Tileset_ApojiiIslandsHazeTilesB
 	resource , Tileset_ApojiiIslandsHazeTilesC
 	resource , Tileset_ApojiiIslandsHazeTilesD
-	resource , Field_ApojiiIslands3
-	resource , Tileset_ApojiiIslands3Palette
-	resource , Tileset_ApojiiIslands3TilesA
-	resource , Tileset_ApojiiIslands3TilesB
-	resource , Tileset_ApojiiIslands3TilesC
-	resource , Tileset_ApojiiIslands3TilesD
+	resource , Field_ApojiiIslandsShops
+	resource , Tileset_ApojiiIslandsShopsPalette
+	resource , Tileset_ApojiiIslandsShopsTilesA
+	resource , Tileset_ApojiiIslandsShopsTilesB
+	resource , Tileset_ApojiiIslandsShopsTilesC
+	resource , Tileset_ApojiiIslandsShopsTilesD
 	resource , Field_ApojiiIslandsCave
 	resource , Tileset_ApojiiIslandsCavePalette
 	resource , Tileset_ApojiiIslandsCaveTilesA
 	resource , Tileset_ApojiiIslandsCaveTilesB
 	resource , Tileset_ApojiiIslandsCaveTilesC
 	resource , Tileset_ApojiiIslandsCaveTilesD
-	resource , Field_AquaRock1
-	resource , Tileset_AquaRock1Palette
-	resource , Tileset_AquaRock1TilesA
-	resource , Tileset_AquaRock1TilesB
-	resource , Tileset_AquaRock1TilesC
-	resource , Tileset_AquaRock1TilesD
+	resource , Field_AquaRockMoai
+	resource , Tileset_AquaRockMoaiPalette
+	resource , Tileset_AquaRockMoaiTilesA
+	resource , Tileset_AquaRockMoaiTilesB
+	resource , Tileset_AquaRockMoaiTilesC
+	resource , Tileset_AquaRockMoaiTilesD
 	resource , Field_AquaRockMistSabreChest
 	resource , Field_AquaRockInsideWaterOfLifeChest
 	resource , Tileset_AquaRockInsideWaterOfLifeChestPalette
@@ -1161,11 +1161,11 @@ Resource_DirectoryTable:
 	resource , Tileset_AquaRockInsideWaterOfLifeChestTilesD
 	resource , Field_AquaRockInsideSteam
 	resource , Field_AquaRockInsideAquariusStone
-	resource , Field_AquaRockInside4
-	resource , Field_AquaRockInside5
-	resource , Field_AquaRockInside6
+	resource , Field_AquaRockInsideRustySwordChest
+	resource , Field_AquaRockInsideCrystalPowderChest
+	resource , Field_AquaRockInsideVialChest
 	resource , Field_AquaRockInsidePsynergyStone
-	resource , Field_AquaRockInside8
+	resource , Field_AquaRockInsideTightrope
 	resource , Field_AquaRockInsideTearStone
 	resource , Field_AquaRockInsideParchTablet
 	resource , Tileset_PaletteAquaRockInsideParchTablet
@@ -1204,8 +1204,8 @@ Resource_DirectoryTable:
 	resource , Tileset_GaiaRockInsideFirstAltarTilesC
 	resource , Tileset_GaiaRockInsideFirstAltarTilesD
 	resource , Field_GaiaRockInsideTwinAltars
-	resource , Field_GaiaRockInside4
-	resource , Field_GaiaRockInside5
+	resource , Field_GaiaRockInsidePlatforms
+	resource , Field_GaiaRockInsideAltar
 	resource , Field_Champa
 	resource , Tileset_PaletteChampa
 	resource , Field_ChampaInteriors
@@ -1216,7 +1216,7 @@ Resource_DirectoryTable:
 	resource , Tileset_ChampaCliffCavesBriggsTilesB
 	resource , Tileset_ChampaCliffCavesBriggsTilesC
 	resource , Tileset_ChampaCliffCavesBriggsTilesD
-	resource , Field_ChampaCliffCaves2
+	resource , Field_ChampaCliffCavesHouses
 	resource , Field_ChampaCliffCavesObaba
 	resource , Field_ChampaCliffCavesAvimander
 	resource , Field_ChampaSanctum
@@ -1238,13 +1238,13 @@ Resource_DirectoryTable:
 	resource , Tileset_LemurianShipDeck1TilesB
 	resource , Tileset_LemurianShipDeck1TilesC
 	resource , Tileset_LemurianShipDeck1TilesD
-	resource , Field_AnkohlRuins1
+	resource , Field_AnkohlRuinsStoneFaces
 	resource , Tileset_PaletteAnkohlRuins1
 	resource , Field_AnkohlRuinsThanatosMaceChest
-	resource , Field_AnkohlRuins3
-	resource , Field_AnkohlRuins4
+	resource , Field_AnkohlRuinsGreatFace
+	resource , Field_AnkohlRuinsFaceHalves
 	resource , Field_AnkohlRuinsSandDoors
-	resource , Field_AnkohlRuins7
+	resource , Field_AnkohlRuinsEntrance
 	resource , Tileset_PaletteAnkohlRuins7A
 	resource , Tileset_PaletteAnkohlRuins7B
 	resource , Tileset_PaletteAnkohlRuins7C
@@ -1278,51 +1278,51 @@ Resource_DirectoryTable:
 	resource , Tileset_LemuriaSpringTilesD
 	resource , Field_TundariaTowerCenterProng
 	resource , Tileset_PaletteTundariaTowerCenterProng
-	resource , Field_TundariaTower3
+	resource , Field_TundariaTowerIceSlide
 	resource , Tileset_PaletteTundariaTower3
 	resource , Field_TundariaTowerReflux
 	resource , Tileset_PaletteTundariaTowerReflux
-	resource , Field_TundariaTower5
+	resource , Field_TundariaTowerIceColumns
 	resource , Tileset_PaletteTundariaTower5
-	resource , Field_TundariaTower6
+	resource , Field_TundariaTowerLiftPillars
 	resource , Tileset_PaletteTundariaTower6
-	resource , Field_TundariaTower1
-	resource , Tileset_TundariaTower1Palette
-	resource , Tileset_TundariaTower1TilesA
+	resource , Field_TundariaTowerEntrance
+	resource , Tileset_TundariaTowerEntrancePalette
+	resource , Tileset_TundariaTowerEntranceTilesA
 	resource , Field_TundariaTowerBurstBrooch
 	resource , Tileset_PaletteTundariaTowerBurstBrooch
-	resource , Field_Settlements3
-	resource , Tileset_Settlements3Palette
-	resource , Tileset_Settlements3TilesA
-	resource , Tileset_Settlements3TilesB
-	resource , Tileset_Settlements3TilesC
-	resource , Tileset_Settlements3TilesD
-	resource , Field_Settlements9
-	resource , Tileset_Settlements9Palette
-	resource , Tileset_Settlements9TilesA
-	resource , Tileset_Settlements9TilesB
-	resource , Tileset_Settlements9TilesC
-	resource , Tileset_Settlements9TilesD
-	resource , Field_Settlements1
+	resource , Field_GondowanSettlementCave
+	resource , Tileset_GondowanSettlementCavePalette
+	resource , Tileset_GondowanSettlementCaveTilesA
+	resource , Tileset_GondowanSettlementCaveTilesB
+	resource , Tileset_GondowanSettlementCaveTilesC
+	resource , Tileset_GondowanSettlementCaveTilesD
+	resource , Field_SwAttekaIslet
+	resource , Tileset_SwAttekaIsletPalette
+	resource , Tileset_SwAttekaIsletTilesA
+	resource , Tileset_SwAttekaIsletTilesB
+	resource , Tileset_SwAttekaIsletTilesC
+	resource , Tileset_SwAttekaIsletTilesD
+	resource , Field_GondowanSettlement
 	resource , Tileset_PaletteSettlements1
-	resource , Field_Settlements4
-	resource , Tileset_Settlements4Palette
-	resource , Tileset_Settlements4TilesA
-	resource , Tileset_Settlements4TilesB
-	resource , Tileset_Settlements4TilesC
-	resource , Tileset_Settlements4TilesD
-	resource , Field_Settlements7
-	resource , Tileset_Settlements7Palette
-	resource , Tileset_Settlements7TilesA
-	resource , Tileset_Settlements7TilesB
-	resource , Tileset_Settlements7TilesC
-	resource , Tileset_Settlements7TilesD
-	resource , Field_Settlements8
-	resource , Tileset_Settlements8Palette
-	resource , Tileset_Settlements8TilesA
-	resource , Tileset_Settlements8TilesB
-	resource , Tileset_Settlements8TilesC
-	resource , Tileset_Settlements8TilesD
+	resource , Field_HesperiaSettlement
+	resource , Tileset_HesperiaSettlementPalette
+	resource , Tileset_HesperiaSettlementTilesA
+	resource , Tileset_HesperiaSettlementTilesB
+	resource , Tileset_HesperiaSettlementTilesC
+	resource , Tileset_HesperiaSettlementTilesD
+	resource , Field_KaltIsland
+	resource , Tileset_KaltIslandPalette
+	resource , Tileset_KaltIslandTilesA
+	resource , Tileset_KaltIslandTilesB
+	resource , Tileset_KaltIslandTilesC
+	resource , Tileset_KaltIslandTilesD
+	resource , Field_KaltIslandHouses
+	resource , Tileset_KaltIslandHousesPalette
+	resource , Tileset_KaltIslandHousesTilesA
+	resource , Tileset_KaltIslandHousesTilesB
+	resource , Tileset_KaltIslandHousesTilesC
+	resource , Tileset_KaltIslandHousesTilesD
 	resource , Field_MagmaRockSlide
 	resource , Tileset_PaletteMagmaRockSlide
 	resource , Field_MagmaRockSalamanderTailChest
@@ -1358,12 +1358,12 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteContigoShops
 	resource , Field_ShamanVillageCave
 	resource , Tileset_PaletteShamanVillageCave
-	resource , Field_ShamanVillage1
-	resource , Tileset_ShamanVillage1Palette
-	resource , Tileset_ShamanVillage1TilesA
-	resource , Tileset_ShamanVillage1TilesB
-	resource , Tileset_ShamanVillage1TilesC
-	resource , Tileset_ShamanVillage1TilesD
+	resource , Field_ShamanVillageTrialGrounds
+	resource , Tileset_ShamanVillageTrialGroundsPalette
+	resource , Tileset_ShamanVillageTrialGroundsTilesA
+	resource , Tileset_ShamanVillageTrialGroundsTilesB
+	resource , Tileset_ShamanVillageTrialGroundsTilesC
+	resource , Tileset_ShamanVillageTrialGroundsTilesD
 	resource , Field_ShamanVillage
 	resource , Tileset_ShamanVillagePalette
 	resource , Tileset_ShamanVillageTilesA
@@ -1383,7 +1383,7 @@ Resource_DirectoryTable:
 	resource , Field_AnemosInnerSanctumDragonSkinChest
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestPalette
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestTilesA
-	resource , Field_AnemosInnerSanctum2
+	resource , Field_AnemosInnerSanctumElevator
 	resource , Field_AnemosInnerSanctumSwitches
 	resource , Field_AnemosInnerSanctumOrihalconChest
 	resource , Field_AnemosInnerSanctumGuardian
@@ -1413,10 +1413,10 @@ Resource_DirectoryTable:
 	resource , Tileset_JupiterLighthouseEntranceTilesB
 	resource , Tileset_JupiterLighthouseEntranceTilesC
 	resource , Tileset_JupiterLighthouseEntranceTilesD
-	resource , Field_JupiterLighthouseBasement1
+	resource , Field_JupiterLighthouseBasementTeleporters
 	resource , Tileset_PaletteJupiterLighthouseBasement1
-	resource , Field_JupiterLighthouseBasement2
-	resource , Field_JupiterLighthouseRoom1
+	resource , Field_JupiterLighthouseBasementPsynergyStone
+	resource , Field_JupiterLighthouseRoomGateButton
 	resource , Tileset_JupiterLighthouseRoomPalette
 	resource , Tileset_JupiterLighthouseRoomTilesA
 	resource , Tileset_JupiterLighthouseRoomTilesB
@@ -1426,7 +1426,7 @@ Resource_DirectoryTable:
 	resource , Field_JupiterLighthouseRoomErinyesTunicChest
 	resource , Field_JupiterLighthouseRoomLockedDoors
 	resource , Field_JupiterLighthouseRoomRedKey
-	resource , Field_JupiterLighthouseRoom6
+	resource , Field_JupiterLighthouseRoomCrackedFloor
 	resource , Field_JupiterLighthouseRoom7
 	resource , Field_JupiterLighthouseRoomBlueKey
 	resource , Field_JupiterLighthouseRoomPhaetonsBladeChest
@@ -1434,45 +1434,45 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteJupiterLighthouseRoomM
 	resource , Field_JupiterLighthouseAerie
 	resource , Tileset_PaletteJupiterLighthouseAerie
-	resource , Field_Loho1
-	resource , Tileset_Loho1Palette
-	resource , Tileset_Loho1TilesA
-	resource , Tileset_Loho1TilesB
-	resource , Tileset_Loho1TilesC
-	resource , Tileset_Loho1TilesD
-	resource , Field_Loho2
-	resource , Tileset_Loho2Palette
-	resource , Tileset_Loho2TilesA
-	resource , Tileset_Loho2TilesB
-	resource , Tileset_Loho2TilesC
-	resource , Tileset_Loho2TilesD
+	resource , Field_Loho
+	resource , Tileset_LohoPalette
+	resource , Tileset_LohoTilesA
+	resource , Tileset_LohoTilesB
+	resource , Tileset_LohoTilesC
+	resource , Tileset_LohoTilesD
+	resource , Field_LohoInteriors
+	resource , Tileset_LohoInteriorsPalette
+	resource , Tileset_LohoInteriorsTilesA
+	resource , Tileset_LohoInteriorsTilesB
+	resource , Tileset_LohoInteriorsTilesC
+	resource , Tileset_LohoInteriorsTilesD
 	resource , Field_NorthernReaches
 	resource , Tileset_PaletteNorthernReaches
-	resource , Field_Prox1
-	resource , Tileset_Prox1Palette
-	resource , Tileset_Prox1TilesA
-	resource , Tileset_Prox1TilesB
-	resource , Tileset_Prox1TilesC
-	resource , Tileset_Prox1TilesD
+	resource , Field_ProxSouthGate
+	resource , Tileset_ProxSouthGatePalette
+	resource , Tileset_ProxSouthGateTilesA
+	resource , Tileset_ProxSouthGateTilesB
+	resource , Tileset_ProxSouthGateTilesC
+	resource , Tileset_ProxSouthGateTilesD
 	resource , Field_Prox
 	resource , Tileset_PaletteProx
 	resource , Field_ProxMold
 	resource , Tileset_PaletteProxMold
-	resource , Field_Prox4
+	resource , Field_ProxHouses
 	resource , Tileset_PaletteProx4A
 	resource , Tileset_PaletteProx4B
-	resource , Field_MarsLighthouseEntrance1
-	resource , Tileset_MarsLighthouseEntrance1Palette
-	resource , Tileset_MarsLighthouseEntrance1TilesA
-	resource , Field_MarsLighthouseRoomF1
-	resource , Tileset_MarsLighthouseRoomF1Palette
-	resource , Tileset_MarsLighthouseRoomF1TilesA
-	resource , Tileset_MarsLighthouseRoomF1TilesB
-	resource , Tileset_MarsLighthouseRoomF1TilesC
-	resource , Tileset_MarsLighthouseRoomF1TilesD
-	resource , Field_MarsLighthouseRoomF2
-	resource , Field_MarsLighthouseRoomF3
-	resource , Field_MarsLighthouseRoomF4
+	resource , Field_MarsLighthouseOutside
+	resource , Tileset_MarsLighthouseOutsidePalette
+	resource , Tileset_MarsLighthouseOutsideTilesA
+	resource , Field_MarsLighthouseMarsTower
+	resource , Tileset_MarsLighthouseMarsTowerPalette
+	resource , Tileset_MarsLighthouseMarsTowerTilesA
+	resource , Tileset_MarsLighthouseMarsTowerTilesB
+	resource , Tileset_MarsLighthouseMarsTowerTilesC
+	resource , Tileset_MarsLighthouseMarsTowerTilesD
+	resource , Field_MarsLighthouseMercuryTower
+	resource , Field_MarsLighthouseJupiterTower
+	resource , Field_MarsLighthouseVenusTower
 	resource , Field_MarsLighthouseAerie
 	resource , Tileset_MarsLighthouseAeriePalette
 	resource , Tileset_MarsLighthouseAerieTilesA
@@ -1486,15 +1486,15 @@ Resource_DirectoryTable:
 	resource , Field_MarsLighthouseEntranceFugue
 	resource , Field_MarsLighthouseEntranceTeleportLapis
 	resource , Field_MarsLighthouseEntranceBalm
-	resource , Field_MarsLighthouseEntrance5
+	resource , Field_MarsLighthouseEntranceHiddenCircle
 	resource , Field_MarsLighthouseEntranceValkyrieMailChest
 	resource , Field_MarsLighthouseEntranceSolBladeChest
 	resource , Field_MarsLighthouseStarRoom
-	resource , Field_MarsLighthouseRoomM2
-	resource , Tileset_MarsLighthouseRoomM2TilesD
-	resource , Field_MarsLighthouseRoomM3
+	resource , Field_MarsLighthouseMercuryLedge
+	resource , Tileset_MarsLighthouseMercuryLedgeTilesD
+	resource , Field_MarsLighthouseJupiterLedge
 	resource , Field_MarsLighthouseRoomM4
-	resource , Field_MarsLighthouseRoomM5
+	resource , Field_MarsLighthouseVenusLedge
 	resource , Tileset_PaletteMarsLighthouseRoomM5A
 	resource , Tileset_PaletteMarsLighthouseRoomM5B
 	resource , Tileset_PaletteMarsLighthouseRoomM5C
@@ -1506,18 +1506,18 @@ Resource_DirectoryTable:
 	resource , Tileset_MercuryLighthouseTilesB
 	resource , Tileset_MercuryLighthouseTilesC
 	resource , Tileset_MercuryLighthouseTilesD
-	resource , Field_TreasureIsle1
-	resource , Tileset_TreasureIsle1Palette
-	resource , Tileset_TreasureIsle1TilesA
-	resource , Tileset_TreasureIsle1TilesB
-	resource , Tileset_TreasureIsle1TilesC
-	resource , Tileset_TreasureIsle1TilesD
-	resource , Field_TreasureIsle2
-	resource , Tileset_TreasureIsle2Palette
-	resource , Tileset_TreasureIsle2TilesA
-	resource , Tileset_TreasureIsle2TilesB
-	resource , Tileset_TreasureIsle2TilesC
-	resource , Tileset_TreasureIsle2TilesD
+	resource , Field_TreasureIsleEntrance
+	resource , Tileset_TreasureIsleEntrancePalette
+	resource , Tileset_TreasureIsleEntranceTilesA
+	resource , Tileset_TreasureIsleEntranceTilesB
+	resource , Tileset_TreasureIsleEntranceTilesC
+	resource , Tileset_TreasureIsleEntranceTilesD
+	resource , Field_TreasureIsleChests
+	resource , Tileset_TreasureIsleChestsPalette
+	resource , Tileset_TreasureIsleChestsTilesA
+	resource , Tileset_TreasureIsleChestsTilesB
+	resource , Tileset_TreasureIsleChestsTilesC
+	resource , Tileset_TreasureIsleChestsTilesD
 	resource , Field_TreasureIsleJestersArmletChest
 	resource , Tileset_TreasureIsleJestersArmletChestPalette
 	resource , Tileset_TreasureIsleJestersArmletChestTilesA

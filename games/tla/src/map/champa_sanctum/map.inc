@@ -24,7 +24,7 @@ Field_ChampaSanctum:
 	.incbin "games/tla/src/map/champa_sanctum/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ChampaSanctum_ANIMATION:
-	.incbin "games/tla/src/map/madra_interiors_2/animation.script.lz"
+	.incbin "games/tla/src/map/madra_interiors_cavern_homes/animation.script.lz"
 	.balign 4, 0
 .LField_ChampaSanctum_BLEND:
 	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"

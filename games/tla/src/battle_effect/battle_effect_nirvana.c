@@ -650,9 +650,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             }
           }
         }
-        Data_02012540[0] = 0;
-        Data_02012540[1] = 0;
-        Data_02012540[2] = 0;
+        gSerac_MeshEnd[0] = 0;
+        gSerac_MeshEnd[1] = 0;
+        gSerac_MeshEnd[2] = 0;
       }
 
       // The camera circles the spire.
@@ -696,7 +696,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         screen.x = 176;
       }
       gProjection.centerX = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (64 - screen.x) << 8, IO_WRITE_32);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (64 - screen.x) << 8, IO_WRITE_WORD);
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -745,7 +745,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_SWITCH_MECHANISM);
       }
       if (frame == 30) {
-        Sound_PlayFar(SE_139);
+        Sound_PlayFar(SE_DJINNI_SET);
       }
       if (frame == 60) {
         Sound_PlayFar(SE_POWER_UP);

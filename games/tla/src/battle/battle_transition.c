@@ -320,8 +320,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       struct BattleObject *battleObject = BattleObject_Get(id);
       u16 enemyId = Unit_Get(id)->enemyId;
 
-      if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON &&
-          enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8)
+      if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON_A &&
+          enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H)
         battleObject->scale = Q16_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x6041, 0x20000);

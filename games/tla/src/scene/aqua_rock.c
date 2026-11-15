@@ -241,7 +241,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AQUA_ROCK_1)
+  if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesRegions;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_MistSabreChestRegions;
@@ -315,7 +315,7 @@ s32 AquaRock_StartDrifter(struct Actor *object) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AQUA_ROCK_1)
+  if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesPlacements;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_MistSabreChestPlacements;
@@ -631,7 +631,8 @@ void AquaRock_RideStreamUp(void) {
     owner = gMainRoutineWork.leaderActorId;
     carried = work->camera;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
+    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI &&
+        leader->groundHeight == 0)
       return;
     ahead.x = leader->x.fixed;
     ahead.y = leader->y.fixed;
@@ -659,7 +660,7 @@ void AquaRock_RideStreamUp(void) {
     ahead.z = leader->z.fixed - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1)
+      if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -847,7 +848,7 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AQUA_ROCK_1)
+  if (scene == SCENE_AQUA_ROCK_MOAI)
     return gAquaRock_SlopesTriggers;
   if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_MistSabreChestTriggers;
@@ -1030,11 +1031,11 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
 
   gFieldWork->transition = 516;
-  gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_1;
+  gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_MOAI;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
-  Scene_QueueMusic(SE_170);
-  if (scene == SCENE_AQUA_ROCK_1) {
+  Scene_QueueMusic(SE_AMBIENT_WATER);
+  if (scene == SCENE_AQUA_ROCK_MOAI) {
     Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI), 4);
     Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 1), 4);
     Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 2), 4);
@@ -1203,7 +1204,8 @@ void AquaRock_FlowWithStream(void) {
     anchor = work->camera;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI &&
+      leader->groundHeight == 0)
     return;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
@@ -1534,7 +1536,7 @@ void AquaRock_StartSparkles(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLzInRam(gField_Tiles679, buf);
+  Decompress_ByteLz(gField_Tiles679, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -1709,20 +1711,20 @@ LATE_DATA s16 gAquaRock_MistSabreChestRegions[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(AquaRock1),
+    SCENE_EXITS(AquaRockMoai),
     SCENE_EXIT(1, WorldMap, 37),
     SCENE_EXIT(2, AquaRockMistSabreChest, 2),
     SCENE_EXIT(3, AquaRockMistSabreChest, 3),
-    SCENE_EXIT(4, AquaRockInside4, 1),
+    SCENE_EXIT(4, AquaRockInsideRustySwordChest, 1),
     SCENE_EXIT(6, AquaRockMistSabreChest, 6),
-    SCENE_EXIT(77, ApojiiIslands1, 1),
+    SCENE_EXIT(77, ApojiiIslands, 1),
     SCENE_EXITS(AquaRockMistSabreChest),
-    SCENE_EXIT(1, AquaRockInside6, 13),
-    SCENE_EXIT(2, AquaRock1, 2),
-    SCENE_EXIT(3, AquaRock1, 3),
+    SCENE_EXIT(1, AquaRockInsideVialChest, 13),
+    SCENE_EXIT(2, AquaRockMoai, 2),
+    SCENE_EXIT(3, AquaRockMoai, 3),
     SCENE_EXIT(4, AquaRockMistSabreChest, 5),
     SCENE_EXIT(5, AquaRockMistSabreChest, 4),
-    SCENE_EXIT(7, AquaRock1, 7),
+    SCENE_EXIT(7, AquaRockMoai, 7),
     SCENE_EXITS_END,
 };
 

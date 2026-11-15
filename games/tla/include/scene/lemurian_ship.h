@@ -9,9 +9,9 @@
 #include "field/scene_tables.h"
 
 extern s32 gLemurianShip_Entrances[];
-extern u32 gLemurianShip_Room1Entrances[];
-extern u32 gLemurianShip_Room1Regions[];
-extern u32 gLemurianShip_Room2Regions[];
+extern u32 gLemurianShip_CabinsEntrances[];
+extern u32 gLemurianShip_CabinsRegions[];
+extern u32 gLemurianShip_AquaHydraRegions[];
 extern struct ActorPlacement gLemurianShip_Placements[];
 extern struct ActorPlacement gLemurianShip_TwoJellyRoomPlacements[];
 

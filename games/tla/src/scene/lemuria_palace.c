@@ -273,7 +273,7 @@ void LemuriaPalace_LoadMaps(void) {
   gLemuriaPalace_FirstMapSprite.depth = 1;
   gLemuriaPalace_FirstMapSprite.oam.priority = 2;
   gLemuriaPalace_FirstMapSprite.oam.objectMode = 1;
-  gLemuriaPalace_FirstMapSprite.oam.palette256 = 1;
+  gLemuriaPalace_FirstMapSprite.oam.fullColor = 1;
   gLemuriaPalace_FirstMapSprite.oam.palette = 0;
   Decompress_TaggedLz(gLemuriaPalace_SecondMapTiles, buffer);
   secondSlot = &gLemuriaPalace_SecondMapVram;
@@ -285,7 +285,7 @@ void LemuriaPalace_LoadMaps(void) {
   gLemuriaPalace_SecondMapSprite.depth = 2;
   gLemuriaPalace_SecondMapSprite.oam.priority = 2;
   gLemuriaPalace_SecondMapSprite.oam.objectMode = 1;
-  gLemuriaPalace_SecondMapSprite.oam.palette256 = 1;
+  gLemuriaPalace_SecondMapSprite.oam.fullColor = 1;
   gLemuriaPalace_SecondMapSprite.oam.palette = 0;
   gLemuriaPalace_FirstMapShown = 0;
   gLemuriaPalace_SecondMapShown = 0;

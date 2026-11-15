@@ -32,7 +32,7 @@ extern struct BattleSpriteDefinition gSummon_EntryTable[];
 
 /// A summon: its name and the Djinn of each element it needs.
 struct SummonDefinition {
-  u16 nameMessageId;
+  u16 abilityId;
   u8 unk02[2];         ///< not named by TLA code
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };

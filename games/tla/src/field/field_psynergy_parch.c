@@ -148,7 +148,7 @@ loaded:
     EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
-    fresh->oam.palette256 = 1;
+    fresh->oam.fullColor = 1;
     fresh->oam.palette = 0;
     particle->timer = -1;
     particle++;
@@ -240,7 +240,7 @@ loaded:
     packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
     EffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, packed);
-    sprite->oam.palette256 = 1;
+    sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =
         FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);

@@ -469,7 +469,7 @@ void WorldPicture_UpdateMarkers(void) {
 void WorldMapPicture_Draw(void) {
   struct WorldMapWork *work = &gWorldMapWork;
   u8 *buffer;
-  s32 resource = (s32)&ResourceId_Data024;
+  s32 resource = (s32)&ResourceId_WorldMapPictureLarge;
   s32 *cursor = work->cursor;
   s32 x = *cursor++ - px(120);
   s32 z = *cursor - px(80);
@@ -485,7 +485,7 @@ void WorldMapPicture_Draw(void) {
   s32 tile;
 
   if (work->centered != 0) {
-    resource = (s32)&ResourceId_Data023;
+    resource = (s32)&ResourceId_WorldMapPicture;
     x = 0;
     z = 0;
   }
@@ -557,7 +557,7 @@ void WorldMapPicture_Draw(void) {
 /// rows and wraps, and copies its cells into the 32-column screen from tile
 /// 256, wrapping at column 32.
 void WorldMapPicture_DrawRow(u32 column, s32 row) {
-  s32 resource = (s32)&ResourceId_Data024;
+  s32 resource = (s32)&ResourceId_WorldMapPictureLarge;
   u32 *graphics;
   s32 unwrapped;
   s32 cell;
@@ -565,7 +565,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
   u32 i;
 
   if (gWorldPicture_Zoomed != 0)
-    resource = (s32)&ResourceId_Data023;
+    resource = (s32)&ResourceId_WorldMapPicture;
   graphics = Resource_GetTableEntry(resource);
   unwrapped = row;
   if (row > 23)

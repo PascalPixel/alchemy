@@ -402,29 +402,29 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     switch (abilityId) {
     case ABILITY_SONIC_WAVE:
     case ABILITY_SONIC_WAVE_STRONG:
-      message = (s32)&MsgEnemyAbility0d53;
+      message = (s32)&MsgEmitsUltrasonicWaves;
       break;
     case ABILITY_HEAT_MIRAGE:
       message = (s32)&MsgActorCasts;
       break;
     case ABILITY_THREATEN:
-      message = (s32)&MsgEnemyAbility0d58;
+      message = (s32)&MsgGlowersFerociously;
       break;
     case ABILITY_TREMBLE:
-      message = (s32)&MsgEnemyAbility0d59;
+      message = (s32)&MsgIsIntimidated;
       break;
     case ABILITY_CONTAIN:
-      message = (s32)&MsgEnemyAbility0d5a;
+      message = (s32)&MsgBalefulGaze;
       break;
     case ABILITY_WORMS:
-      message = (s32)&MsgEnemyAbility0d5b;
+      message = (s32)&MsgEatsWorms;
       break;
     case ABILITY_SHRIEK:
     case ABILITY_BANSHEE_HOWL:
     case ABILITY_CRAZY_VOICE:
     case ABILITY_WAR_CRY:
     case ABILITY_WICKED_HOWL:
-      message = (s32)&MsgEnemyAbility0d5c;
+      message = (s32)&MsgLetsOutAbility;
       break;
     case ABILITY_WING_BEAT:
     case ABILITY_WING_FLUTTER:
@@ -432,28 +432,28 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       message = (s32)&MsgActorUsesAbility;
       break;
     case ABILITY_ROTTEN_BLOOD:
-      message = (s32)&MsgEnemyAbility0d5d;
+      message = (s32)&MsgEnemyUnleashesAbility;
       break;
     case ABILITY_HEARTRENDER:
-      message = (s32)&MsgEnemyAbility0d5e;
+      message = (s32)&MsgGlowersMiserably;
       break;
     case ABILITY_DECOMPOSE:
-      message = (s32)&MsgEnemyAbility0d60;
+      message = (s32)&MsgSmellOfDecay;
       break;
     case ABILITY_BERSERK:
-      message = (s32)&MsgEnemyAbility0d5f;
+      message = (s32)&MsgFuriousRage;
       break;
     case ABILITY_SPEED_SURGE:
-      message = (s32)&MsgEnemyAbility0d61;
+      message = (s32)&MsgAttemptsToDivide;
       break;
     case ABILITY_ALLY_SEARCH:
-      message = (s32)&MsgEnemyAbility0d62;
+      message = (s32)&MsgLooksForAllies;
       break;
     case ABILITY_BATTLE_CRY:
-      message = (s32)&MsgEnemyAbility0d63;
+      message = (s32)&MsgLooksForHelp;
       break;
     case ABILITY_PRESSURE:
-      message = (s32)&MsgEnemyAbility0d65;
+      message = (s32)&MsgCannotMove;
       break;
     }
     BattleMessage_ShowAndWaitFar(message);
@@ -542,7 +542,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
          index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
-    abilityId = summon->nameMessageId;
+    abilityId = summon->abilityId;
     if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
       return ACTION_REPORTED;
     if (index != ELEMENT_COUNT) {
@@ -613,12 +613,12 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->abilityId = abilityId;
     plan->element = ability->element;
     plan->battleEffect = 0;
-    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
+    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY ||
         ability->effect == 89) {
       s32 index;
 
@@ -633,17 +633,17 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             plan->targetMultiplier[index] += amount;
         }
       } else {
-        if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-            ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
+        if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+            ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
           chance = 153;
         else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
                  ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
           chance = 32;
         else
           chance = 64;
-        if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
+        if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
             ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
-            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
+            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW)
           amount = 1;
         else
           amount = 2;

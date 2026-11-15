@@ -383,43 +383,43 @@ const struct MapResources gMaps[] = {
     {30, 25, {26, 27, 28}, 29}, // suhalla_gate_ambush
     {31, 32, {33, 34, 35}, 36}, // suhalla_gate_psynergy_stone
     {37, 38, {39, 40, 41}, 42}, // idejima
-    {43, 44, {45, 46, 47}, 48}, // daila_1
-    {49, 44, {45, 46, 47}, 48}, // daila_2
+    {43, 44, {45, 46, 47}, 48}, // daila_flooded
+    {49, 44, {45, 46, 47}, 48}, // daila
     {50, 51, {52, 53, 54}, 55}, // daila_interiors_houses
     {56, 57, {58, 59, 60}, 61}, // daila_interiors_sanctum
     {62, 63, {64, 65, 66}, 67}, // kandorean_temple_mimic
     {68, 63, {64, 65, 66}, 67}, // kandorean_temple_lifts
     {69, 63, {64, 65, 66}, 67}, // kandorean_temple_chestbeaters
     {70, 63, {64, 65, 66}, 67}, // kandorean_temple_pillar
-    {71, 63, {64, 65, 66}, 67}, // kandorean_temple_5
+    {71, 63, {64, 65, 66}, 67}, // kandorean_temple_stream
     {72, 63, {64, 65, 66}, 67}, // kandorean_temple_steam
     {73, 63, {64, 65, 66}, 67}, // kandorean_temple_fog
     {74, 75, {45, 76, 47}, 48}, // kandorean_temple_gate
     {77, 78, {79, 80, 81}, 82}, // kandorean_temple_poi
     {83, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_sea_gods_tear
     {86, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_rope
-    {87, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_2
-    {88, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_3
-    {89, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_4
+    {87, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_plank_bridge
+    {88, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_crossroads
+    {89, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_footprints
     {90, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_breath
-    {91, 92, {85, 59, 60}, 61}, // shrine_of_the_sea_god_6
+    {91, 92, {85, 59, 60}, 61}, // shrine_of_the_sea_god_pillar_hole
     {93, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_pillars
-    {94, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_9
-    {95, 96, {97, 98, 99}, 100}, // shrine_of_the_sea_god_10
+    {94, 84, {85, 59, 60}, 61}, // shrine_of_the_sea_god_statue
+    {95, 96, {97, 98, 99}, 100}, // shrine_of_the_sea_god_ladders
     {101, 102, {103, 104, 105}, 106}, // shrine_of_the_sea_god_right_prong
     {107, 108, {109, 110, 111}, 112}, // dehkan_plateau_full_metal_vest_chest
     {113, 114, {115, 116, 117}, 118}, // dehkan_plateau_themis_axe_chest
-    {119, 120, {121, 122, 123}, 124}, // dehkan_plateau_3
-    {125, 126, {127, 128, 129}, 130}, // dehkan_plateau_4
+    {119, 120, {121, 122, 123}, 124}, // dehkan_plateau_tightropes
+    {125, 126, {127, 128, 129}, 130}, // dehkan_plateau_mint_chest
     {131, 132, {133, 134, 135}, 136}, // dehkan_plateau_pound_cube
     {137, 138, {139, 140, 141}, 142}, // dehkan_plateau_cannon
     {143, 144, {145, 146, 147}, 148}, // gondowan_cliffs_hideout
     {149, 150, {151, 152, 153}, 154}, // madra
     {155, 156, {157, 158, 159}, 160}, // madra_interiors
-    {161, 162, {163, 164, 165}, 166}, // madra_interiors_2
+    {161, 162, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
     {167, 168, {169, 170, 171}, 172}, // madra_catacombs_entrance
-    {173, 174, {175, 176, 177}, 178}, // madra_catacombs_2
-    {179, 180, {181, 182, 183}, 184}, // madra_catacombs_3
+    {173, 174, {175, 176, 177}, 178}, // madra_catacombs_ladders
+    {179, 180, {181, 182, 183}, 184}, // madra_catacombs_champa_tunnel
     {185, 186, {187, 188, 189}, 190}, // madra_catacombs_tablet
     {191, 192, {187, 188, 189}, 190}, // madra_catacombs_bookshelf
     {193, 194, {187, 188, 189}, 190}, // madra_catacombs_stone_door
@@ -432,22 +432,22 @@ const struct MapResources gMaps[] = {
     {229, 230, {197, 209, 210}, 200}, // garoh
     {231, 232, {197, 209, 210}, 200}, // garoh_hypnos_sword_chest
     {233, 232, {197, 209, 210}, 200}, // garoh_blocks
-    {234, 235, {79, 80, 81}, 82}, // garoh_4
+    {234, 235, {79, 80, 81}, 82}, // garoh_tunnels
     {236, 237, {79, 80, 81}, 82}, // garoh_werewolf_cave
     {223, 238, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
     {239, 240, {219, 220, 221}, 222}, // garoh_interiors
-    {161, 241, {163, 164, 165}, 166}, // madra_interiors_2
+    {161, 241, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
     {242, 243, {244, 245, 246}, 247}, // yampi_desert_guardian_ring_chest
     {248, 243, {244, 245, 246}, 247}, // yampi_desert_oasis
     {249, 243, {244, 245, 246}, 247}, // yampi_desert_blitz
     {250, 243, {244, 245, 246}, 247}, // yampi_desert_psynergy_stone
     {251, 243, {244, 245, 246}, 247}, // yampi_desert_king_scorpion
     {252, 243, {244, 245, 246}, 247}, // yampi_desert_treasure_pit
-    {253, 243, {244, 245, 246}, 247}, // yampi_desert_7
+    {253, 243, {244, 245, 246}, 247}, // yampi_desert_sand_pass
     {254, 243, {244, 245, 246}, 247}, // yampi_desert_trainers_whip_chest
     {255, 243, {244, 245, 246}, 247}, // yampi_desert_medal_spot
-    {256, 243, {244, 245, 246}, 247}, // yampi_desert_10
-    {257, 243, {244, 245, 246}, 247}, // yampi_desert_11
+    {256, 243, {244, 245, 246}, 247}, // yampi_desert_scorpion_pit
+    {257, 243, {244, 245, 246}, 247}, // yampi_desert_oasis_cave
     {258, 243, {244, 245, 246}, 247}, // yampi_desert_blow_mace_chest
     {259, 260, {261, 245, 246}, 247}, // yampi_desert_cave_water_of_life_chest
     {262, 263, {261, 245, 246}, 264}, // yampi_desert_cave_guardian
@@ -455,10 +455,10 @@ const struct MapResources gMaps[] = {
     {268, 269, {270, 271, 272}, 273}, // airs_rock_storm_brand_chest
     {274, 269, {270, 271, 272}, 273}, // airs_rock_entrance
     {275, 269, {270, 271, 272}, 273}, // airs_rock_fujin_shield_chest
-    {276, 277, {278, 279, 280}, 281}, // airs_rock_inside_1
-    {282, 277, {278, 279, 280}, 281}, // airs_rock_inside_2
+    {276, 277, {278, 279, 280}, 281}, // airs_rock_inside_hall
+    {282, 277, {278, 279, 280}, 281}, // airs_rock_inside_vial_chest
     {283, 277, {278, 279, 280}, 281}, // airs_rock_inside_clarity_circlet_chest
-    {284, 277, {278, 279, 280}, 281}, // airs_rock_inside_4
+    {284, 277, {278, 279, 280}, 281}, // airs_rock_inside_tightropes
     {285, 277, {278, 279, 280}, 281}, // airs_rock_inside_reveal_tablet
     {286, 277, {278, 279, 280}, 281}, // airs_rock_inside_elixir_chest
     {287, 277, {278, 279, 280}, 281}, // airs_rock_inside_paired_statues
@@ -478,30 +478,30 @@ const struct MapResources gMaps[] = {
     {340, 335, {336, 337, 338}, 339}, // gondowan_cliffs_pass
     {341, 342, {343, 344, 345}, 346}, // kibombo_mountains_waft
     {347, 348, {343, 344, 345}, 346}, // kibombo_mountains_disk_axe_chest
-    {349, 350, {351, 352, 353}, 354}, // kibombo_mountains_3
-    {355, 356, {357, 358, 359}, 360}, // kibombo_1
-    {361, 362, {363, 364, 365}, 366}, // kibombo_2
-    {367, 368, {369, 370, 371}, 372}, // kibombo_4
-    {373, 374, {375, 376, 377}, 378}, // kibombo_5
-    {379, 380, {330, 331, 332}, 333}, // kibombo_3
+    {349, 350, {351, 352, 353}, 354}, // kibombo_mountains_cavern
+    {355, 356, {357, 358, 359}, 360}, // kibombo
+    {361, 362, {363, 364, 365}, 366}, // kibombo_statue_grounds
+    {367, 368, {369, 370, 371}, 372}, // kibombo_ceremony
+    {373, 374, {375, 376, 377}, 378}, // kibombo_statue_grounds_ceremony
+    {379, 380, {330, 331, 332}, 333}, // kibombo_houses
     {381, 382, {383, 384, 385}, 386}, // gabomba_statue_bone_armlet_chest
     {387, 388, {383, 384, 385}, 386}, // gabomba_statue_elixir_chest
     {389, 390, {383, 384, 385}, 386}, // gabomba_statue_steel
     {391, 392, {383, 384, 385}, 386}, // gabomba_statue_turntable
     {393, 394, {383, 384, 385}, 386}, // gabomba_statue_cogs
-    {395, 396, {383, 384, 385}, 386}, // gabomba_statue_chamber_1
+    {395, 396, {383, 384, 385}, 386}, // gabomba_statue_chamber_idol
     {397, 398, {399, 400, 401}, 402}, // gabomba_statue_arrows
     {403, 404, {399, 400, 401}, 402}, // gabomba_statue_chamber_lift
     {405, 406, {407, 408, 409}, 410}, // gabomba_statue_pinion
     {411, 412, {399, 400, 401}, 402}, // gabomba_statue_chamber_witch_doctor
-    {413, 414, {415, 416, 417}, 418}, // kibombo_6
+    {413, 414, {415, 416, 417}, 418}, // kibombo_statue_face
     {419, 420, {421, 422, 423}, 424}, // gabomba_catacombs_teleporters
     {425, 420, {421, 422, 423}, 424}, // gabomba_catacombs_mud
     {426, 420, {421, 422, 423}, 424}, // gabomba_catacombs_hidden_wall
     {427, 420, {421, 422, 423}, 424}, // gabomba_catacombs_tomegathericon
-    {428, 420, {421, 422, 423}, 424}, // gabomba_catacombs_5
+    {428, 420, {421, 422, 423}, 424}, // gabomba_catacombs_stream
     {429, 430, {431, 432, 433}, 434}, // lemurian_ship_deck
-    {435, 436, {310, 311, 312}, 313}, // lemurian_ship_1
+    {435, 436, {310, 311, 312}, 313}, // lemurian_ship_cabins
     {437, 436, {310, 311, 312}, 313}, // lemurian_ship_aqua_hydra
     {438, 439, {440, 441, 442}, 443}, // islets_dog
     {444, 445, {197, 198, 210}, 200}, // islets_pretty_stone
@@ -511,31 +511,31 @@ const struct MapResources gMaps[] = {
     {456, 457, {458, 459, 460}, 461}, // yallam_interiors
     {462, 463, {163, 164, 165}, 166}, // yallam_interiors_shops
     {211, 464, {213, 214, 215}, 216}, // mikasalla_2
-    {465, 466, {467, 468, 469}, 470}, // taopo_swamp_1
+    {465, 466, {467, 468, 469}, 470}, // taopo_swamp_entrance
     {471, 472, {473, 474, 475}, 476}, // taopo_swamp_mud
-    {477, 478, {479, 480, 481}, 482}, // taopo_swamp_6
+    {477, 478, {479, 480, 481}, 482}, // taopo_swamp_pool
     {483, 478, {479, 480, 481}, 482}, // taopo_swamp_tear_stones
     {484, 478, {479, 480, 481}, 482}, // taopo_swamp_flower
-    {485, 478, {479, 480, 481}, 482}, // taopo_swamp_5
-    {486, 478, {479, 480, 481}, 482}, // taopo_swamp_7
-    {487, 478, {479, 480, 481}, 482}, // taopo_swamp_8
-    {488, 489, {479, 480, 481}, 482}, // taopo_swamp_9
-    {490, 489, {479, 480, 481}, 482}, // taopo_swamp_10
+    {485, 478, {479, 480, 481}, 482}, // taopo_swamp_vents
+    {486, 478, {479, 480, 481}, 482}, // taopo_swamp_pillar_gap
+    {487, 478, {479, 480, 481}, 482}, // taopo_swamp_drips
+    {488, 489, {479, 480, 481}, 482}, // taopo_swamp_lava_rocks
+    {490, 489, {479, 480, 481}, 482}, // taopo_swamp_tremor
     {491, 489, {479, 480, 481}, 482}, // taopo_swamp_star_dust
-    {492, 493, {494, 495, 496}, 497}, // apojii_islands_1
+    {492, 493, {494, 495, 496}, 497}, // apojii_islands
     {498, 499, {500, 501, 502}, 503}, // apojii_islands_haze
-    {504, 505, {506, 507, 508}, 509}, // apojii_islands_3
+    {504, 505, {506, 507, 508}, 509}, // apojii_islands_shops
     {510, 511, {512, 513, 514}, 515}, // apojii_islands_cave
-    {516, 517, {518, 519, 520}, 521}, // aqua_rock_1
+    {516, 517, {518, 519, 520}, 521}, // aqua_rock_moai
     {522, 517, {518, 519, 520}, 521}, // aqua_rock_mist_sabre_chest
     {523, 524, {525, 526, 527}, 528}, // aqua_rock_inside_water_of_life_chest
     {529, 524, {525, 526, 527}, 528}, // aqua_rock_inside_steam
     {530, 524, {525, 526, 527}, 528}, // aqua_rock_inside_aquarius_stone
-    {531, 524, {525, 526, 527}, 528}, // aqua_rock_inside_4
-    {532, 524, {525, 526, 527}, 528}, // aqua_rock_inside_5
-    {533, 524, {525, 526, 527}, 528}, // aqua_rock_inside_6
+    {531, 524, {525, 526, 527}, 528}, // aqua_rock_inside_rusty_sword_chest
+    {532, 524, {525, 526, 527}, 528}, // aqua_rock_inside_crystal_powder_chest
+    {533, 524, {525, 526, 527}, 528}, // aqua_rock_inside_vial_chest
     {534, 291, {292, 293, 294}, 295}, // aqua_rock_inside_psynergy_stone
-    {535, 524, {525, 526, 527}, 528}, // aqua_rock_inside_8
+    {535, 524, {525, 526, 527}, 528}, // aqua_rock_inside_tightrope
     {536, 524, {525, 526, 527}, 528}, // aqua_rock_inside_tear_stone
     {537, 538, {278, 279, 280}, 281}, // aqua_rock_inside_parch_tablet
     {539, 540, {541, 542, 543}, 544}, // izumo
@@ -548,25 +548,25 @@ const struct MapResources gMaps[] = {
     {561, 562, {563, 564, 565}, 566}, // gaia_rock_inside_maze
     {567, 568, {569, 570, 571}, 572}, // gaia_rock_inside_first_altar
     {573, 568, {569, 570, 571}, 572}, // gaia_rock_inside_twin_altars
-    {574, 568, {569, 570, 571}, 572}, // gaia_rock_inside_4
-    {575, 568, {569, 570, 571}, 572}, // gaia_rock_inside_5
+    {574, 568, {569, 570, 571}, 572}, // gaia_rock_inside_platforms
+    {575, 568, {569, 570, 571}, 572}, // gaia_rock_inside_altar
     {576, 577, {541, 542, 543}, 544}, // champa
     {578, 579, {547, 548, 549}, 550}, // champa_interiors
     {580, 581, {582, 583, 584}, 585}, // champa_cliff_caves_briggs
-    {586, 581, {582, 583, 584}, 585}, // champa_cliff_caves_2
+    {586, 581, {582, 583, 584}, 585}, // champa_cliff_caves_houses
     {587, 581, {582, 583, 584}, 585}, // champa_cliff_caves_obaba
     {588, 581, {582, 583, 584}, 585}, // champa_cliff_caves_avimander
     {589, 590, {225, 226, 227}, 228}, // champa_sanctum
     {591, 592, {593, 594, 595}, 596}, // sea_of_time_whirlpool
     {597, 598, {599, 600, 601}, 602}, // sea_of_time_to_lemuria
     {603, 430, {604, 605, 606}, 607}, // lemurian_ship_deck_1
-    {608, 609, {97, 98, 99}, 100}, // ankohl_ruins_1
+    {608, 609, {97, 98, 99}, 100}, // ankohl_ruins_stone_faces
     {610, 609, {97, 98, 99}, 100}, // ankohl_ruins_thanatos_mace_chest
-    {611, 609, {97, 98, 99}, 100}, // ankohl_ruins_3
-    {612, 609, {97, 98, 99}, 100}, // ankohl_ruins_4
-    {95, 609, {97, 98, 99}, 100}, // shrine_of_the_sea_god_10
+    {611, 609, {97, 98, 99}, 100}, // ankohl_ruins_great_face
+    {612, 609, {97, 98, 99}, 100}, // ankohl_ruins_face_halves
+    {95, 609, {97, 98, 99}, 100}, // shrine_of_the_sea_god_ladders
     {613, 609, {97, 98, 99}, 100}, // ankohl_ruins_sand_doors
-    {614, 615, {103, 104, 105}, 106}, // ankohl_ruins_7
+    {614, 615, {103, 104, 105}, 106}, // ankohl_ruins_entrance
     {101, 616, {103, 104, 105}, 106}, // shrine_of_the_sea_god_right_prong
     {603, 617, {604, 605, 606}, 607}, // lemurian_ship_deck_1
     {618, 619, {213, 214, 215}, 216}, // lemuria_entrance
@@ -576,18 +576,18 @@ const struct MapResources gMaps[] = {
     {634, 635, {636, 637, 638}, 639}, // lemuria_interiors
     {640, 641, {642, 643, 644}, 645}, // lemuria_spring
     {646, 647, {97, 98, 99}, 100}, // tundaria_tower_center_prong
-    {648, 649, {97, 98, 99}, 100}, // tundaria_tower_3
+    {648, 649, {97, 98, 99}, 100}, // tundaria_tower_ice_slide
     {650, 651, {97, 98, 99}, 100}, // tundaria_tower_reflux
-    {652, 653, {97, 98, 99}, 100}, // tundaria_tower_5
-    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_6
-    {656, 657, {103, 104, 658}, 106}, // tundaria_tower_1
+    {652, 653, {97, 98, 99}, 100}, // tundaria_tower_ice_columns
+    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_lift_pillars
+    {656, 657, {103, 104, 658}, 106}, // tundaria_tower_entrance
     {659, 660, {103, 104, 658}, 106}, // tundaria_tower_burst_brooch
-    {661, 662, {663, 664, 665}, 666}, // settlements_3
-    {667, 668, {669, 670, 671}, 672}, // settlements_9
-    {673, 674, {324, 325, 326}, 327}, // settlements_1
-    {675, 676, {677, 678, 679}, 680}, // settlements_4
-    {681, 682, {683, 684, 685}, 686}, // settlements_7
-    {687, 688, {689, 690, 691}, 692}, // settlements_8
+    {661, 662, {663, 664, 665}, 666}, // gondowan_settlement_cave
+    {667, 668, {669, 670, 671}, 672}, // sw_atteka_islet
+    {673, 674, {324, 325, 326}, 327}, // gondowan_settlement
+    {675, 676, {677, 678, 679}, 680}, // hesperia_settlement
+    {681, 682, {683, 684, 685}, 686}, // kalt_island
+    {687, 688, {689, 690, 691}, 692}, // kalt_island_houses
     {693, 694, {270, 271, 272}, 273}, // magma_rock_slide
     {695, 694, {270, 271, 272}, 273}, // magma_rock_salamander_tail_chest
     {696, 694, {270, 271, 272}, 273}, // magma_rock_statue
@@ -605,14 +605,14 @@ const struct MapResources gMaps[] = {
     {719, 720, {721, 722, 723}, 724}, // contigo_shops
     {719, 725, {721, 722, 723}, 724}, // contigo_shops
     {726, 727, {663, 664, 665}, 666}, // shaman_village_cave
-    {728, 729, {730, 731, 732}, 733}, // shaman_village_1
+    {728, 729, {730, 731, 732}, 733}, // shaman_village_trial_grounds
     {734, 735, {736, 737, 738}, 739}, // shaman_village
     {740, 741, {736, 737, 738}, 739}, // shaman_village_aroma
     {742, 743, {744, 745, 746}, 747}, // shaman_village_inn
     {742, 748, {744, 745, 746}, 747}, // shaman_village_inn
     {223, 749, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
     {750, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_dragon_skin_chest
-    {753, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_2
+    {753, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_elevator
     {754, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_switches
     {755, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_orihalcon_chest
     {756, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_guardian
@@ -622,69 +622,69 @@ const struct MapResources gMaps[] = {
     {765, 766, {767, 768, 769}, 770}, // trial_road_gasp
     {771, 772, {773, 774, 775}, 776}, // trial_road_summit
     {777, 778, {779, 780, 781}, 782}, // jupiter_lighthouse_entrance
-    {783, 784, {79, 80, 81}, 82}, // jupiter_lighthouse_basement_1
-    {785, 291, {292, 293, 294}, 295}, // jupiter_lighthouse_basement_2
-    {786, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_1
+    {783, 784, {79, 80, 81}, 82}, // jupiter_lighthouse_basement_teleporters
+    {785, 291, {292, 293, 294}, 295}, // jupiter_lighthouse_basement_psynergy_stone
+    {786, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_gate_button
     {792, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_beam
     {793, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_erinyes_tunic_chest
     {794, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_locked_doors
     {795, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_red_key
-    {796, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_6
+    {796, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_cracked_floor
     {797, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_7
     {798, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_blue_key
     {799, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_phaetons_blade_chest
     {800, 801, {779, 780, 781}, 782}, // jupiter_lighthouse_room_m
     {802, 803, {779, 780, 781}, 782}, // jupiter_lighthouse_aerie
-    {804, 805, {806, 807, 808}, 809}, // loho_1
-    {810, 811, {812, 813, 814}, 815}, // loho_2
+    {804, 805, {806, 807, 808}, 809}, // loho
+    {810, 811, {812, 813, 814}, 815}, // loho_interiors
     {816, 817, {599, 600, 601}, 602}, // northern_reaches
-    {818, 819, {820, 821, 822}, 823}, // prox_1
+    {818, 819, {820, 821, 822}, 823}, // prox_south_gate
     {824, 825, {820, 821, 822}, 823}, // prox
     {826, 827, {820, 821, 822}, 823}, // prox_mold
-    {828, 688, {689, 690, 691}, 692}, // prox_4
-    {161, 829, {163, 164, 165}, 166}, // madra_interiors_2
+    {828, 688, {689, 690, 691}, 692}, // prox_houses
+    {161, 829, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
     {223, 830, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
-    {831, 832, {779, 780, 781}, 833}, // mars_lighthouse_entrance_1
-    {834, 835, {836, 837, 838}, 839}, // mars_lighthouse_room_f_1
-    {840, 835, {836, 837, 838}, 839}, // mars_lighthouse_room_f_2
-    {841, 835, {836, 837, 838}, 839}, // mars_lighthouse_room_f_3
-    {842, 835, {836, 837, 838}, 839}, // mars_lighthouse_room_f_4
+    {831, 832, {779, 780, 781}, 833}, // mars_lighthouse_outside
+    {834, 835, {836, 837, 838}, 839}, // mars_lighthouse_mars_tower
+    {840, 835, {836, 837, 838}, 839}, // mars_lighthouse_mercury_tower
+    {841, 835, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
+    {842, 835, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 844, {779, 845, 781}, 846}, // mars_lighthouse_aerie
     {847, 844, {779, 780, 781}, 848}, // mars_lighthouse_room_m_6
     {849, 850, {836, 851, 838}, 852}, // mars_lighthouse_room_m_1
     {853, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
-    {856, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_5
+    {856, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_hidden_circle
     {857, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_valkyrie_mail_chest
     {858, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_sol_blade_chest
     {859, 835, {836, 837, 838}, 839}, // mars_lighthouse_star_room
-    {860, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_2
-    {862, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_3
+    {860, 844, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
+    {862, 844, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
     {863, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_4
-    {864, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_5
-    {831, 865, {779, 780, 781}, 833}, // mars_lighthouse_entrance_1
-    {834, 866, {836, 837, 838}, 839}, // mars_lighthouse_room_f_1
-    {840, 866, {836, 837, 838}, 839}, // mars_lighthouse_room_f_2
-    {841, 866, {836, 837, 838}, 839}, // mars_lighthouse_room_f_3
-    {842, 866, {836, 837, 838}, 839}, // mars_lighthouse_room_f_4
+    {864, 844, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
+    {831, 865, {779, 780, 781}, 833}, // mars_lighthouse_outside
+    {834, 866, {836, 837, 838}, 839}, // mars_lighthouse_mars_tower
+    {840, 866, {836, 837, 838}, 839}, // mars_lighthouse_mercury_tower
+    {841, 866, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
+    {842, 866, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 867, {779, 780, 781}, 846}, // mars_lighthouse_aerie
     {847, 868, {779, 780, 781}, 848}, // mars_lighthouse_room_m_6
     {849, 869, {836, 837, 838}, 852}, // mars_lighthouse_room_m_1
     {853, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
-    {856, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_5
+    {856, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_hidden_circle
     {857, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_valkyrie_mail_chest
     {858, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_sol_blade_chest
     {859, 866, {836, 837, 838}, 839}, // mars_lighthouse_star_room
-    {860, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_2
-    {862, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_3
+    {860, 867, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
+    {862, 867, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
     {863, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_4
-    {864, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_5
+    {864, 867, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
     {870, 871, {872, 873, 874}, 875}, // mercury_lighthouse
-    {876, 877, {878, 879, 880}, 881}, // treasure_isle_1
-    {882, 883, {884, 885, 886}, 887}, // treasure_isle_2
+    {876, 877, {878, 879, 880}, 881}, // treasure_isle_entrance
+    {882, 883, {884, 885, 886}, 887}, // treasure_isle_chests
     {888, 889, {890, 891, 892}, 893}, // treasure_isle_jesters_armlet_chest
     {894, 895, {878, 879, 880}, 881}, // treasure_isle_gale
     {896, 895, {878, 879, 880}, 881}, // treasure_isle_guardian

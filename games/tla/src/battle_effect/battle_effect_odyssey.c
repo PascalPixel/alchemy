@@ -70,7 +70,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordSheet, work->sheet, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                              work->sheet + ODYSSEY_DUST_BLOB_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -147,8 +148,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
     }
     if (frame == 86)
-      Resource_LoadAndDecompress((s32)&ResourceId_Data101, work->sheet + 0xc80,
-                                 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordBladeSheet,
+                                 work->sheet + 0xc80, 1, 1);
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
@@ -542,20 +543,20 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     // (about half size), about the screen's centre (120, 72).
     sine = Trig_Sin(frame << 6) / 532;
     cosine = Trig_Cos(frame << 6) / 532;
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, IO_WRITE_16);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, IO_WRITE_16);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_16);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                         (Iwram_MulQ16(-120 << 24, cosine) +
                          Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
                             8,
-                        IO_WRITE_32);
+                        IO_WRITE_WORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
                         (Iwram_MulQ16(-120 << 24, -sine) +
                          Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
                             8,
-                        IO_WRITE_32);
+                        IO_WRITE_WORD);
     wait(1);
   }
 

@@ -254,7 +254,7 @@ s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AncientLemuria, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemurianShip1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemurianShipCabins, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -262,7 +262,7 @@ s32 gLemuriaDock_ExitsWithFlag960[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AncientLemuria, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemurianShip1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemurianShipCabins, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

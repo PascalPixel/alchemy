@@ -509,7 +509,7 @@ void SuperLuckyDice_Run(void) {
   resourceAddress += 0x1c0;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_Data087);
+  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_DiceFaces);
   Dma_Set(resourceAddress, spritePalette, DMA_COPY_WORDS(48), REG_DMA3);
   resourceAddress += 128;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
@@ -904,7 +904,7 @@ void SuperLuckyDice_Run(void) {
         Sound_PlayFar(SE_CURSE);
       if (timer == 40) {
         if ((u32)resultKind > 1)
-          Sound_PlayFar(MUS_055);
+          Sound_PlayFar(MUS_BOULDER_CHASE);
         else if (jingle != -1)
           Sound_PlayFar(jingle);
         jingle = -1;

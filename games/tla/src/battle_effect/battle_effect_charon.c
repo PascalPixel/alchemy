@@ -521,7 +521,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           object->offsetY = 32;
           Iwram_FillWords(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
-        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_VioletPaletteE);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
         Resource_LoadAndDecompress(
             (s32)&ResourceId_ParticleSpritesD,
@@ -1159,7 +1159,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     wait(1);
   }
 
-  Sound_PlayFar(SE_162);
+  Sound_PlayFar(SE_WAVE);
   if (frame < 132) {
     Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
   } else {
@@ -1230,7 +1230,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       work->sheet[0x3000 + i] = 63;
     }
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   for (i = 0; i != 16; i++) {
     DROPS[i].variant = -i;
   }
@@ -1253,7 +1253,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       frame = 120;
     }
     if (frame == 0) {
-      Sound_PlayFar(SE_162);
+      Sound_PlayFar(SE_WAVE);
       WAVE_SIZE = 160;
       shake = 0;
       for (i = 0; i != arg->targetCount; i++) {

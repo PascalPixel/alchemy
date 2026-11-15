@@ -46,14 +46,14 @@ BattleEffect_WhirlBeamSheet:
 	.incbin "games/tla/src/graphics/battle_effects/whirl_beam.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/whirl_beam.bitmap.lz"
 	.byte 0x54, 0xaa, 0x14	@ PACKER: left in the buffer by Summon_ChainedDemonTiles+0x2169
-	.global BattleEffect_MagentaPalette
-BattleEffect_MagentaPalette:
-	.incbin "games/tla/src/graphics/battle_effects/magenta_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/magenta_palette.bitmap.lz"
-	.global BattleEffect_SlatePalette
-BattleEffect_SlatePalette:
-	.incbin "games/tla/src/graphics/battle_effects/slate_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/slate_palette.bitmap.lz"
+	.global BattleEffect_VioletPaletteE
+BattleEffect_VioletPaletteE:
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_e.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_e.bitmap.lz"
+	.global BattleEffect_GreyPaletteA
+BattleEffect_GreyPaletteA:
+	.incbin "games/tla/src/graphics/battle_effects/grey_palette_a.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/grey_palette_a.bitmap.lz"
 @ Uncolored art using BattleEffect_OrangePaletteB colors (same effect).
 	.global Resource_Data0BA
 Resource_Data0BA:
@@ -106,7 +106,7 @@ Resource_Data0C2:
 Resource_Data0C3:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0c3.bitmap.lz"
 	.byte 0x08, 0x81	@ PACKER: left in the buffer by Resource_Data0C2+0x2e6
-@ Uncolored art using BattleEffect_IndigoPalette colors (same effect).
+@ Uncolored art using BattleEffect_VioletPaletteF colors (same effect).
 	.global Resource_Data0C4
 Resource_Data0C4:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0c4.bitmap.lz"
@@ -303,12 +303,12 @@ BattleEffect_CornerRuneBSheet:
 	.incbin "games/tla/src/graphics/battle_effects/corner_rune_b.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/corner_rune_b.bitmap.lz"
 	.byte 0x47	@ PACKER: left in the buffer by BattleEffect_CornerRuneASheet+0x947
-@ Uncolored art using BattleEffect_IndigoPalette colors (same effect).
+@ Uncolored art using BattleEffect_VioletPaletteF colors (same effect).
 	.global Resource_Data0EE
 Resource_Data0EE:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0ee.bitmap.lz"
 	.byte 0x01, 0x2e	@ PACKER: left in the buffer by BattleEffect_CornerRuneBSheet+0x65a
-@ Uncolored art using BattleEffect_IndigoPalette colors (same effect).
+@ Uncolored art using BattleEffect_VioletPaletteF colors (same effect).
 	.global Resource_Data0EF
 Resource_Data0EF:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0ef.bitmap.lz"
@@ -329,7 +329,7 @@ Resource_Data0F2:
 	.incbin "games/tla/src/graphics/battle_effects/sheet_0f2.bitmap.lz"
 	.byte 0x2e, 0x15, 0x23	@ PACKER: left in the buffer by Resource_Data0F1+0x6e1
 @ Five cels of a flame with no palette of their own, at the sizes and offsets
-@ BattleEffect_RunWhiplash draws them at; that effect loads BattleEffect_IndigoPalette to
+@ BattleEffect_RunWhiplash draws them at; that effect loads BattleEffect_VioletPaletteF to
 @ colour them
 	.global Resource_Data0F3
 Resource_Data0F3:
@@ -401,20 +401,20 @@ BattleEffect_AxeSheet:
 	.incbin "games/tla/src/graphics/battle_effects/axe.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/axe.bitmap.lz"
 	.byte 0x10, 0x00	@ PACKER: left in the buffer by BattleEffect_ArcFragmentsSheet+0x316
-	.global BattleEffect_LongSwordSheet
-BattleEffect_LongSwordSheet:
-	.incbin "games/tla/src/graphics/battle_effects/long_sword_sheet.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/long_sword_sheet.bitmap.lz"
+	.global BattleEffect_GiantSwordBladeSheet
+BattleEffect_GiantSwordBladeSheet:
+	.incbin "games/tla/src/graphics/battle_effects/giant_sword_blade_sheet.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/giant_sword_blade_sheet.bitmap.lz"
 	.byte 0xa5, 0x0a, 0x23	@ PACKER: left in the buffer by Resource_Data0F8+0x9a5
 @ A 40x80 spear with no palette of its own: BattleEffect_RunOdyssey draws it at that
 @ size, after copying BattleEffect_GreatSwordSheet's palette into BG palette RAM
-	.global BattleEffect_GlowingSwordSheet
-BattleEffect_GlowingSwordSheet:
-	.incbin "games/tla/src/graphics/battle_effects/glowing_sword_sheet.bitmap.lz"
-	.global BattleEffect_FireStreakSheetB
-BattleEffect_FireStreakSheetB:
-	.incbin "games/tla/src/graphics/battle_effects/fire_streak_sheet_b.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/fire_streak_sheet_b.8bpp.lz"
+	.global BattleEffect_GiantSwordSheet
+BattleEffect_GiantSwordSheet:
+	.incbin "games/tla/src/graphics/battle_effects/giant_sword_sheet.bitmap.lz"
+	.global BattleEffect_FireStripesTexture
+BattleEffect_FireStripesTexture:
+	.incbin "games/tla/src/graphics/battle_effects/fire_stripes_texture.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/fire_stripes_texture.8bpp.lz"
 	.byte 0x31, 0x32, 0x8d	@ PACKER: left in the buffer by Resource_Data0F8+0xb2d
 @ A 64x32 bar with a rounded end and no palette of its own: BattleEffect_RunCruelRuin
 @ maps it as a 64 by 32 texture and shows it in a grey ramp it writes in
@@ -722,14 +722,14 @@ BattleEffect_RedPaletteB:
 BattleEffect_OrangePaletteB:
 	.incbin "games/tla/src/graphics/battle_effects/orange_palette_b.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/orange_palette_b.bitmap.lz"
-	.global BattleEffect_IndigoPalette
-BattleEffect_IndigoPalette:
-	.incbin "games/tla/src/graphics/battle_effects/indigo_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/indigo_palette.bitmap.lz"
-	.global BattleEffect_OrangePalette
-BattleEffect_OrangePalette:
-	.incbin "games/tla/src/graphics/battle_effects/orange_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/orange_palette.bitmap.lz"
+	.global BattleEffect_VioletPaletteF
+BattleEffect_VioletPaletteF:
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_f.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_f.bitmap.lz"
+	.global BattleEffect_OrangePaletteC
+BattleEffect_OrangePaletteC:
+	.incbin "games/tla/src/graphics/battle_effects/orange_palette_c.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/orange_palette_c.bitmap.lz"
 	.global BattleEffect_VioletCometSheet
 BattleEffect_VioletCometSheet:
 	.incbin "games/tla/src/graphics/battle_effects/violet_comet_00.gbapal"
@@ -858,14 +858,14 @@ BattleEffect_CyanPalette:
 BattleEffect_TanPalette:
 	.incbin "games/tla/src/graphics/battle_effects/tan_palette.gbapal"
 	.incbin "games/tla/src/graphics/battle_effects/tan_palette.bitmap.lz"
-	.global BattleEffect_GreyPalette
-BattleEffect_GreyPalette:
-	.incbin "games/tla/src/graphics/battle_effects/grey_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/grey_palette.bitmap.lz"
-	.global BattleEffect_VioletPalette
-BattleEffect_VioletPalette:
-	.incbin "games/tla/src/graphics/battle_effects/violet_palette.gbapal"
-	.incbin "games/tla/src/graphics/battle_effects/violet_palette.bitmap.lz"
+	.global BattleEffect_GreyPaletteB
+BattleEffect_GreyPaletteB:
+	.incbin "games/tla/src/graphics/battle_effects/grey_palette_b.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/grey_palette_b.bitmap.lz"
+	.global BattleEffect_VioletPaletteG
+BattleEffect_VioletPaletteG:
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_g.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/violet_palette_g.bitmap.lz"
 	.global BattleEffect_WispSheet
 BattleEffect_WispSheet:
 	.incbin "games/tla/src/graphics/battle_effects/wisp.gbapal"

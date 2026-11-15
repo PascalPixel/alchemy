@@ -167,7 +167,7 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = Q16_ONE * 3 / 4;
@@ -222,7 +222,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   sprite->scaleY = 0x3333;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
   sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
 }
 
@@ -350,7 +350,7 @@ void FieldPsynergy_EndSand(void) {
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
     if (frame == 0)
-      Sound_PlayFar(SE_544);
+      Sound_PlayFar(SE_SAND_END);
     if (frame <= 64) {
       Picture_SinkColumnsByWave(work->picture, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
@@ -362,7 +362,7 @@ void FieldPsynergy_EndSand(void) {
       Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
       Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 1);
       FieldCamera_FollowActor(effect->firstActorId, 1);
-      Sound_PlayFar(SE_539);
+      Sound_PlayFar(SE_SAND_EMERGE);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineWork.movementMode = 1;
         *motionFlags = 2;

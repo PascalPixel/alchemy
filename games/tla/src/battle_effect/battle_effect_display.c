@@ -24,7 +24,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
 }
 

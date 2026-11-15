@@ -57,7 +57,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
     focus.y = px(64);
     BattleEffect_SelectLivingTargets(work->args);
     wait(1);
-    BattleEffect_SpawnObjects(12, 654, 2);
+    BattleEffect_SpawnObjects(12, SPRITE_MOLOCH, 2);
 
     frame = 0;
     do {
@@ -967,7 +967,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     camera[27] = yaw;
   }
-  tileBuffer = Data_02010578;
+  tileBuffer = gIris_TileBuffer;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
@@ -1163,7 +1163,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
       colors += 0x200;
       Decompress_TaggedLz(colors, tileBuffer);
-      tiles = Data_02010578;
+      tiles = gIris_TileBuffer;
       for (i = 0; i != 16; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);

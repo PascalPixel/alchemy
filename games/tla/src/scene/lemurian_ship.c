@@ -1,7 +1,7 @@
 /// @file
 /// The Lemurian Ship below deck, at the East Indra Shore, in two scenes
-/// (SceneId_LemurianShip1 and SceneId_LemurianShipAquaHydra) whose rooms are
-/// told apart by the entrance used. Aqua Jellies fill the cabins: each one
+/// (SceneId_LemurianShipCabins and SceneId_LemurianShipAquaHydra) whose rooms
+/// are told apart by the entrance used. Aqua Jellies fill the cabins: each one
 /// beaten melts into a puddle Frost turns to ice to stand on, and crates are
 /// pushed between them. A frightened jelly flees down the lift; the last one
 /// calls the others together into the Aqua Hydra, whose fall floods the hold
@@ -134,25 +134,25 @@ enum LemurianShipEngineRoomActorId {
 /// The first of sixteen: the battle with jelly n is on.
 #define FLAG_FIGHTING_JELLY FLAG_AREA_TEMP_00
 
-extern s16 gLemurianShip_Room2Entrances[];
+extern s16 gLemurianShip_AquaHydraEntrances[];
 
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_LEMURIAN_SHIP_1)
-    return gLemurianShip_Room1Entrances;
+  if (scene == SCENE_LEMURIAN_SHIP_CABINS)
+    return gLemurianShip_CabinsEntrances;
   if (scene == SCENE_LEMURIAN_SHIP_AQUA_HYDRA)
-    return gLemurianShip_Room2Entrances;
+    return gLemurianShip_AquaHydraEntrances;
   return gLemurianShip_Entrances;
 }
 
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_LEMURIAN_SHIP_1)
-    return gLemurianShip_Room1Regions;
+  if (scene == SCENE_LEMURIAN_SHIP_CABINS)
+    return gLemurianShip_CabinsRegions;
   if (scene == SCENE_LEMURIAN_SHIP_AQUA_HYDRA)
-    return gLemurianShip_Room2Regions;
+    return gLemurianShip_AquaHydraRegions;
   return 0;
 }
 
@@ -205,7 +205,7 @@ extern struct ActorPlacement gLemurianShip_LedgeRoomPlacements[];
 extern struct ActorPlacement gLemurianShip_SevenJellyRoomPlacements[];
 
 struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -381,7 +381,7 @@ extern struct Trigger gLemurianShip_HoldTriggers[];
 extern struct Trigger gLemurianShip_PillarRoomTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -534,7 +534,7 @@ void LemurianShip_StepOnLift(void) {
     opened = Event_GetFlag((FLAG_JELLIES_BEATEN + 2));
     state = &leader->layer;
     if (opened) {
-      Event_PlaySound(SE_243);
+      Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
@@ -569,7 +569,7 @@ void LemurianShip_StepOnLift(void) {
         value |= *bits;
         *bits = value;
       }
-      Event_PlaySound(SE_243);
+      Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
@@ -619,7 +619,7 @@ void LemurianShip_StepOnLiftWestSide(void) {
     Event_ResolvePendingActions(0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 812, 72);
-    Event_PlaySound(SE_243);
+    Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     MapGrid_SetShake(0, 2, 1);
@@ -691,7 +691,7 @@ void LemurianShip_FightAquaHydra(void) {
   Actor_SetPosition(ACTOR_HOLD_JELLY_E, 0, 0);
   Actor_SetPosition(ACTOR_HOLD_JELLY_F, 0, 0);
   Event_Wait(20);
-  Event_PlaySound(MUS_052);
+  Event_PlaySound(MUS_AQUA_HYDRA);
   Actor_RunScriptAndWait(ACTOR_HOLD_JELLY_A, gLemurianShip_HydraSwells);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -1162,7 +1162,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -1787,7 +1787,7 @@ s32 gLemurianShip_Entrances[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gLemurianShip_Room1Entrances[] = {
+u32 gLemurianShip_CabinsEntrances[] = {
     0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424,
     0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424,
     0xffff000b, 566, 0xc0000379, 0x1e80000, 0x2d80308, 936,
@@ -1797,7 +1797,7 @@ u32 gLemurianShip_Room1Entrances[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s16 gLemurianShip_Room2Entrances[] = {
+s16 gLemurianShip_AquaHydraEntrances[] = {
     0, -1, 72, 0, 72, 0x4000, 0, -1,
     -1, -1, -1, 0, 1, -1, 72, 0,
     72, 0x4000, 0, 8, 16, 248, 256, 0,
@@ -1817,65 +1817,65 @@ s16 gLemurianShip_Room2Entrances[] = {
     0, 0, 0, 0,
 };
 
-u32 gLemurianShip_Room1Regions[] = {
+u32 gLemurianShip_CabinsRegions[] = {
     0xffec01d2, 0x1da0244, 0x24cfff4, 0x13ffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gLemurianShip_Room2Regions[] = {
+u32 gLemurianShip_AquaHydraRegions[] = {
     0x100200, 0x21000be, 0xce0020, 0xaffff, 0xffff, 0,
     0, 0,
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(LemurianShip1),
+    SCENE_EXITS(LemurianShipCabins),
     SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
     SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
     SCENE_EXIT_UNLESS(1, AttekaInlet, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT(2, LemurianShip1, 3),
-    SCENE_EXIT(3, LemurianShip1, 2),
-    SCENE_EXIT(4, LemurianShip1, 6),
-    SCENE_EXIT(5, LemurianShip1, 13),
-    SCENE_EXIT(6, LemurianShip1, 4),
-    SCENE_EXIT(7, LemurianShip1, 19),
+    SCENE_EXIT(2, LemurianShipCabins, 3),
+    SCENE_EXIT(3, LemurianShipCabins, 2),
+    SCENE_EXIT(4, LemurianShipCabins, 6),
+    SCENE_EXIT(5, LemurianShipCabins, 13),
+    SCENE_EXIT(6, LemurianShipCabins, 4),
+    SCENE_EXIT(7, LemurianShipCabins, 19),
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 1, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 11, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 16, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, LemurianShipAquaHydra, 2, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(9, LemurianShipAquaHydra, 12, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(9, LemurianShipAquaHydra, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT(10, LemurianShip1, 25),
-    SCENE_EXIT(11, LemurianShip1, 26),
-    SCENE_EXIT(12, LemurianShip1, 29),
-    SCENE_EXIT(13, LemurianShip1, 5),
+    SCENE_EXIT(10, LemurianShipCabins, 25),
+    SCENE_EXIT(11, LemurianShipCabins, 26),
+    SCENE_EXIT(12, LemurianShipCabins, 29),
+    SCENE_EXIT(13, LemurianShipCabins, 5),
     SCENE_EXIT_UNLESS(14, LemurianShipAquaHydra, 3, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(14, LemurianShipAquaHydra, 13, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(14, LemurianShipAquaHydra, 18, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, LemurianShipAquaHydra, 4, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(15, LemurianShipAquaHydra, 14, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(15, LemurianShipAquaHydra, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT(16, LemurianShip1, 27),
-    SCENE_EXIT(17, LemurianShip1, 28),
-    SCENE_EXIT(18, LemurianShip1, 30),
+    SCENE_EXIT(16, LemurianShipCabins, 27),
+    SCENE_EXIT(17, LemurianShipCabins, 28),
+    SCENE_EXIT(18, LemurianShipCabins, 30),
     SCENE_EXIT(19, LemurianShipAquaHydra, 10),
-    SCENE_EXIT(20, LemurianShip1, 7),
-    SCENE_EXIT(25, LemurianShip1, 10),
-    SCENE_EXIT(26, LemurianShip1, 11),
-    SCENE_EXIT(27, LemurianShip1, 16),
-    SCENE_EXIT(28, LemurianShip1, 17),
-    SCENE_EXIT(29, LemurianShip1, 12),
-    SCENE_EXIT(30, LemurianShip1, 18),
+    SCENE_EXIT(20, LemurianShipCabins, 7),
+    SCENE_EXIT(25, LemurianShipCabins, 10),
+    SCENE_EXIT(26, LemurianShipCabins, 11),
+    SCENE_EXIT(27, LemurianShipCabins, 16),
+    SCENE_EXIT(28, LemurianShipCabins, 17),
+    SCENE_EXIT(29, LemurianShipCabins, 12),
+    SCENE_EXIT(30, LemurianShipCabins, 18),
     SCENE_EXITS(LemurianShipAquaHydra),
-    SCENE_EXIT(1, LemurianShip1, 8),
-    SCENE_EXIT(2, LemurianShip1, 9),
-    SCENE_EXIT(3, LemurianShip1, 14),
-    SCENE_EXIT(4, LemurianShip1, 15),
+    SCENE_EXIT(1, LemurianShipCabins, 8),
+    SCENE_EXIT(2, LemurianShipCabins, 9),
+    SCENE_EXIT(3, LemurianShipCabins, 14),
+    SCENE_EXIT(4, LemurianShipCabins, 15),
     SCENE_EXIT(6, LemurianShipAquaHydra, 7),
     SCENE_EXIT(7, LemurianShipAquaHydra, 6),
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 9, FLAG_SHIP_ENGINE_RUNNING),
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 19, EXIT_FLAG_NONE),
     SCENE_EXIT(9, LemurianShipAquaHydra, 8),
-    SCENE_EXIT(10, LemurianShip1, 20),
+    SCENE_EXIT(10, LemurianShipCabins, 20),
     SCENE_EXIT(90, WorldMap, 69),
     SCENE_EXITS_END,
 };

@@ -112,7 +112,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers);
 void WindowSprite_ClearList(void *work);
 void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
+s32 Decompress_ByteLz(const void *source, void *destination);
 #endif
 s32 Resource_LoadByMode(u32 mode, s32 value);
 void SpriteColor_RemapPixelsFar(void *buffer, s32 size);

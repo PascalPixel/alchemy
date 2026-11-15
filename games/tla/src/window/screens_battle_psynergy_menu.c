@@ -157,7 +157,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                              (s32)MsgAbilityDescription,
                          messageText, CURSOR_TEXT_LENGTH);
       else
-        CURSOR_TEXT_COPY((s32)MsgKey0d48, messageText, CURSOR_TEXT_LENGTH);
+        CURSOR_TEXT_COPY((s32)MsgBattleNoPsynergy, messageText,
+                         CURSOR_TEXT_LENGTH);
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {

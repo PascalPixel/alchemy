@@ -202,7 +202,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     scene = gMainRoutineWork.next;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
       return gChampaCliffCaves_BriggsPlacementsAfterAvimander;
-    if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
+    if (scene == SCENE_CHAMPA_CLIFF_CAVES_HOUSES)
       return gChampaCliffCaves_HousesPlacementsAfterAvimander;
     if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
       return gChampaCliffCaves_ObabaPlacementsAfterAvimander;
@@ -213,7 +213,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       scene = gMainRoutineWork.next;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
         return gChampaCliffCaves_BriggsPlacementsBriggsHome;
-      if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_HOUSES)
         return gChampaCliffCaves_HousesPlacementsBriggsHome;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
         return gChampaCliffCaves_ObabaPlacementsBriggsHome;
@@ -223,7 +223,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       scene = gMainRoutineWork.next;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
         return gChampaCliffCaves_BriggsPlacements;
-      if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_HOUSES)
         return gChampaCliffCaves_HousesPlacements;
       if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
         return gChampaCliffCaves_ObabaPlacements;
@@ -362,7 +362,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
     return gChampaCliffCaves_BriggsTriggers;
-  if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
+  if (scene == SCENE_CHAMPA_CLIFF_CAVES_HOUSES)
     return gChampaCliffCaves_HousesTriggers;
   if (scene == SCENE_CHAMPA_CLIFF_CAVES_OBABA)
     return gChampaCliffCaves_ObabaTriggers;
@@ -648,7 +648,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
     Actor_SetSpeed(ACTOR_HELD_ITEM, 1);
     Actor_SetDestinationOffsetById(ACTOR_HELD_ITEM, 0, 40);
-    Sound_Play(SE_310);
+    Sound_Play(SE_FALL);
     Event_Wait(34);
     landing[0] = thrown->x.fixed;
     landing[1] = thrown->y.fixed;
@@ -688,7 +688,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   ChampaCliffCaves_StartEmbers(glow);
   Actor_SetAnimationById(ACTOR_OBABA, 1);
   Actor_Jump(ACTOR_FELIX, 6, 0);
-  Sound_Play(SE_194);
+  Sound_Play(SE_TABLET_RISE);
   Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
   Actor_WalkByAndWait(ACTOR_FELIX, -12, -12);
   Event_Wait(1);
@@ -701,11 +701,11 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   MapGrid_SetShake(4, 4, 1);
   ChampaCliffCaves_StartSparks(glow);
-  Sound_Play(SE_194);
+  Sound_Play(SE_TABLET_RISE);
   Event_Wait(10);
   Actor_Jump(ACTOR_OBABA, 6, 15);
   Actor_Jump(ACTOR_OBABA, 6, 23);
-  Sound_Play(SE_194);
+  Sound_Play(SE_TABLET_RISE);
   Event_Wait(10);
   // "Something's happening! Is that...the legendary trident?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
@@ -834,7 +834,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_SetMessageId((s32)MsgBackForMore);
     // "Back for more?"
     FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-    Sound_Play(MUS_036);
+    Sound_Play(MUS_CONFRONTATION);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 256, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
@@ -849,7 +849,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_SetMessageId((s32)MsgHoldItRight);
     // "Hold it right there!"
     FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-    Sound_Play(MUS_036);
+    Sound_Play(MUS_CONFRONTATION);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 256, 1);
     FieldCamera_WaitForArrival();
@@ -989,7 +989,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     target[4] = *colour++;
     ChampaCliffCaves_FadeColours(current, target, 48);
     Event_Wait(20);
-    Sound_Play(SE_194);
+    Sound_Play(SE_TABLET_RISE);
     position.x = px(662);
     position.y = 0;
     position.z = px(238);
@@ -1717,7 +1717,7 @@ next:
   sprite = &work->disc;
   FieldEffectSprite_Init((struct EffectSprite *)sprite, 31, 31, 0xc0000000,
                          vram);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = 2;
   sprite->depth = 1;
@@ -1751,7 +1751,7 @@ next:
   sprite = &work->column;
   FieldEffectSprite_Init((struct EffectSprite *)sprite, 15, 47, 0xc0008000,
                          vram);
-  sprite->oam.palette256 = 1;
+  sprite->oam.fullColor = 1;
   sprite->oam.palette = 1;
   sprite->oam.priority = 1;
   sprite->depth = 1;
@@ -1935,7 +1935,7 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
 
     Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
-  Sound_Play(SE_139);
+  Sound_Play(SE_DJINNI_SET);
   state = 0;
   do {
     if (state == 0) {
@@ -2043,21 +2043,21 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(ChampaCliffCavesBriggs),
     SCENE_EXIT_UNLESS(1, Champa, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ChampaCliffCaves2, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ChampaCliffCavesHouses, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ChampaCliffCavesBriggs, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, ChampaCliffCavesBriggs, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ChampaCliffCavesBriggs, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, ChampaCliffCavesBriggs, 5, EXIT_FLAG_NONE),
-    SCENE_EXITS(ChampaCliffCaves2),
+    SCENE_EXITS(ChampaCliffCavesHouses),
     SCENE_EXIT_UNLESS(7, Champa, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, ChampaCliffCaves2, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, ChampaCliffCaves2, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, ChampaCliffCaves2, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, ChampaCliffCaves2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ChampaCliffCavesHouses, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, ChampaCliffCavesHouses, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, ChampaCliffCavesHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, ChampaCliffCavesHouses, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, ChampaCliffCavesBriggs, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, ChampaCliffCavesObaba, 14, EXIT_FLAG_NONE),
     SCENE_EXITS(ChampaCliffCavesObaba),
-    SCENE_EXIT_UNLESS(14, ChampaCliffCaves2, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, ChampaCliffCavesHouses, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, ChampaCliffCavesObaba, 16, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, ChampaCliffCavesObaba, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(17, ChampaCliffCavesObaba, 18, EXIT_FLAG_NONE),

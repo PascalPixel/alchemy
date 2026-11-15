@@ -146,7 +146,7 @@ enum {
 /// (GaiaRockInside_StartPlatforms): its nine platforms.
 enum { ACTOR_FIRST_PLATFORM = 8, ACTOR_LAST_PLATFORM = 16 };
 
-/// The altar room under the cobweb (SceneId_GaiaRockInside5).
+/// The altar room under the cobweb (SceneId_GaiaRockInsideAltar).
 enum {
   ACTOR_ALTAR_FACE = 8,
   ACTOR_ALTAR = 9,
@@ -331,7 +331,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u32 gGaiaRockInside_Regions[];
 
 const u8 *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
     return gGaiaRockInside_Regions;
   return 0;
 }
@@ -345,7 +345,7 @@ void GaiaRockInside_JumpDownByAltar(void) {
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1ea0000, 286);
   GaiaRockInside_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x800);
-  Event_PlaySound(SE_310);
+  Event_PlaySound(SE_FALL);
   Event_SetFlag(290);
   FieldEvent_SetExitRequest(8);
 }
@@ -630,9 +630,9 @@ const void *Scene_GetActorPlacements(void) {
     return gGaiaRockInside_FirstAltarActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
     return gGaiaRockInside_TwinAltarsActorPlacements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS)
     return gGaiaRockInside_PlatformsActorPlacements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
     return gGaiaRockInside_AltarActorPlacements;
   if (gMainRoutineWork.entrance > 8)
     return gGaiaRockInside_LairPlacements;
@@ -822,7 +822,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
 void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
+  FieldEvent_SetMessageId((s32)MsgGaiaRockInsideMoveOutOfTheWay);
   // "Move out of the way there."
   Event_ShowMessage(ACTOR_SUSA, 0);
   Event_End();
@@ -897,7 +897,7 @@ void GaiaRockInside_MeetSusa(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgGaiaRockInside02);
+  FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoAreYouHowDid);
   EventCamera_FollowActor(ACTOR_SUSA, 1);
   if (object->script == gGaiaRockInside_SerpentSettleScript ||
       object->script == gGaiaRockInside_SerpentStrikeScript)
@@ -958,16 +958,16 @@ void GaiaRockInside_TalkToSusa(void) {
         Event_GetFlag(FLAG_WEST_ALTAR_STREAM_OPEN) ||
         Event_GetFlag(FLAG_EAST_ALTAR_STREAM_OPEN) ||
         Event_GetFlag(FLAG_BUSHES_STREAM_OPEN))
-      FieldEvent_SetMessageId((s32)MsgGaiaRockInside10);
+      FieldEvent_SetMessageId((s32)MsgGaiaRockInsideImDoneForThatDragon);
     else
-      FieldEvent_SetMessageId((s32)MsgGaiaRockInside06);
+      FieldEvent_SetMessageId((s32)MsgGaiaRockInsideTheSerpentIsStillToo);
     // "The serpent is still too strong. If only there were a way to weaken..."
     Event_ShowMessage(ACTOR_SUSA, 0);
   } else {
     if (Actor_Get(ACTOR_CASK)->script == gGaiaRockInside_SerpentSettleScript)
       FieldActor_WaitForScriptEndById(ACTOR_CASK);
     GaiaRockInside_SaveSusa();
-    FieldEvent_SetMessageId((s32)MsgGaiaRockInside03);
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInsideIfYouUnderstandThenGet);
     Actor_FaceActor(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_Wait(10);
     // "If you understand, then get out of my way. Stand over there."
@@ -987,7 +987,7 @@ void GaiaRockInside_ReadSusasMind(void) {
   FieldEvent_ResolvePendingActions(0);
   t2 = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
   if (t2 != -1) {
-    FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoDoTheyThinkThey);
     // "Who do they think they are? I'm the only one who can save Kushinada."
     Event_ShowMessage(ACTOR_SUSA, 0);
   } else {
@@ -996,7 +996,7 @@ void GaiaRockInside_ReadSusasMind(void) {
       FieldActor_WaitForScriptEndById(ACTOR_CASK);
     }
     GaiaRockInside_SaveSusa();
-    FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInsideHowManyCasksDoesIt);
     // "How many casks does it take to weaken this stupid serpent?"
     Event_ShowMessage(ACTOR_SUSA, 0);
     GaiaRockInside_RestoreSusa();
@@ -1124,7 +1124,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletRiseScript);
-  Sound_Play(SE_194);
+  Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(idA, 0x100);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
@@ -1165,7 +1165,7 @@ second:
   {
     struct Spark *spark =
         ((void *)Import_ActorCreate(kind, b->x.fixed, b->y.fixed, b->z.fixed));
-    Sound_Play(SE_195);
+    Sound_Play(SE_SPARKS);
     angle = &spark->action;
     *angle = (Random16() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
@@ -1257,7 +1257,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  message = (s32)MsgGaiaRockInside09;
+  message = (s32)MsgGaiaRockInsideSearchedTheSlateThereIs;
   ((s32 (*)())FieldMessage_Show)(message, 1);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1445,7 +1445,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
 
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     // "The serpent, with its eyes closed, looks almost alive."
-    Message_ShowCentered((s32)MsgGaiaRockInside08, 1);
+    Message_ShowCentered((s32)MsgGaiaRockInsideTheSerpentWithItsEyes, 1);
   } else {
     s32 a = Event_GetFlag(FLAG_ALTAR_ROOM_STREAM_OPEN);
     s32 b = Event_GetFlag(FLAG_WEST_ALTAR_STREAM_OPEN);
@@ -1523,8 +1523,8 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
-  Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
-  Event_PlaySound(SE_193);
+  Message_ShowCentered((s32)&MsgGaiaRockInsidePlacedADollOnThe, 1);
+  Event_PlaySound(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(doll, 1);
   work = &gMainRoutineWork;
   leaderId = &work->leaderActorId;
@@ -1607,8 +1607,8 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
-  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(SE_193);
+  FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
+  Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 528, 372);
@@ -1698,8 +1698,8 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
-  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(SE_193);
+  FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
+  Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 672, 372);
@@ -1789,8 +1789,8 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
-  FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
-  Sound_Play(SE_193);
+  FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
+  Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
   Actor_MoveToObject(ACTOR_ALTAR_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_ALTAR_DOLL, 336, 396);
@@ -1923,9 +1923,9 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGaiaRockInside_FirstAltarTriggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
     return gGaiaRockInside_TwinAltarsTriggers;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS)
     return gGaiaRockInside_PlatformsTriggers;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
     return gGaiaRockInside_AltarTriggers;
   if (gMainRoutineWork.entrance == 9)
     return gGaiaRockInside_LairTriggers;
@@ -2230,7 +2230,7 @@ s32 Scene_Initialize(void) {
         GaiaRockInside_OpenHallPassages();
         Event_Wait(15);
         Actor_SetAnimationById(ACTOR_SERPENT, 3);
-        Sound_Play(SE_530);
+        Sound_Play(SE_SEA_OF_TIME_OPENS);
         MapGrid_SetShake(2, 2, 1);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
         Event_Wait(120);
@@ -2259,7 +2259,7 @@ s32 Scene_Initialize(void) {
 
       if (Test(FLAG_SERPENT_SLAIN))
         goto end;
-      Sound_Play(MUS_053);
+      Sound_Play(MUS_FLAME_DRAGONS);
       found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
       none = -1;
       if (found != none) {
@@ -2328,7 +2328,7 @@ s32 Scene_Initialize(void) {
         width = 30;
         height = 19;
         MapGrid_CopyCellPictureCellsRect(85, 76, 5, 2, width, height);
-        Sound_Play(SE_572);
+        Sound_Play(SE_CRUMBLE);
         PaletteFade_SetTarget(0x7fff, 0);
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
@@ -2361,7 +2361,7 @@ s32 Scene_Initialize(void) {
         susa->velocityY = px(6);
         Actor_SetAnimationById(ACTOR_SUSA, 6);
         Event_Wait(10);
-        Sound_Play(SE_572);
+        Sound_Play(SE_CRUMBLE);
         {
           struct Actor *a = Actor_GetById(ACTOR_SUSA);
           mask &= a->steeringFlags;
@@ -2484,9 +2484,9 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-      Event_PlaySound(SE_530);
+      Event_PlaySound(SE_SEA_OF_TIME_OPENS);
       Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-      Event_PlaySound(SE_530);
+      Event_PlaySound(SE_SEA_OF_TIME_OPENS);
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2517,12 +2517,12 @@ s32 Scene_Initialize(void) {
       Event_Wait(10);
       susa->velocityY = px(6);
       Event_Wait(10);
-      Sound_Play(SE_572);
+      Sound_Play(SE_CRUMBLE);
       susa->paused = 1;
       PaletteFade_ApplyTarget(0x7fff, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
-      Sound_Play(SE_530);
+      Sound_Play(SE_SEA_OF_TIME_OPENS);
       PaletteFade_SetTarget(scale, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
@@ -2724,7 +2724,7 @@ s32 Scene_Initialize(void) {
       Actor_SetHorizontalPositionWithTerrain(
           ACTOR_ROCK_B, gGaiaRockInside_RockSpots[(s8)high][0] << 19,
           gGaiaRockInside_RockSpots[(s8)high][1] << 19);
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_4) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS) {
     if (Test(FLAG_PLATFORMS_SWAYING))
       GaiaRockInside_StartPlatforms(1);
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS) {
@@ -2804,7 +2804,7 @@ s32 Scene_Initialize(void) {
     if (!Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 3)
       GaiaRockInside_RaiseDust();
 #endif
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_5) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
     HangingVine_Place(ACTOR_HANGING_VINE, 1);
     GaiaRockInside_SetPlatformPose(ACTOR_ALTAR_FACE, ACTOR_ALTAR);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -2942,7 +2942,7 @@ s32 Scene_PrepareMap(void) {
       GaiaRockInside_ClearMazeLayer(101);
       break;
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 3:
@@ -3598,7 +3598,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(3, GaiaRockInsideMaze, 2),
     SCENE_EXIT(4, GaiaRockInsideMaze, 1),
     SCENE_EXIT(9, GaiaRockInsideFirstAltar, 4),
-    SCENE_EXIT(21, GaiaRockInside5, 4),
+    SCENE_EXIT(21, GaiaRockInsideAltar, 4),
     SCENE_EXIT(22, GaiaRockInsideTwinAltars, 3),
     SCENE_EXIT(23, GaiaRockInsideTwinAltars, 3),
     SCENE_EXIT(24, GaiaRockInsideTwinAltars, 3),
@@ -3611,26 +3611,26 @@ u32 gSceneExits[] = {
     SCENE_EXIT(4, GaiaRockInsideMaze, 1),
     SCENE_EXIT(5, GaiaRockInsideFirstAltar, 6),
     SCENE_EXIT(6, GaiaRockInsideFirstAltar, 5),
-    SCENE_EXIT(7, GaiaRockInside4, 1),
+    SCENE_EXIT(7, GaiaRockInsidePlatforms, 1),
     SCENE_EXIT(8, GaiaRockInsideFirstAltar, 9),
     SCENE_EXIT(9, GaiaRockInsideFirstAltar, 8),
-    SCENE_EXIT(10, GaiaRockInside4, 2),
+    SCENE_EXIT(10, GaiaRockInsidePlatforms, 2),
     SCENE_EXITS(GaiaRockInsideTwinAltars),
-    SCENE_EXIT(1, GaiaRockInside4, 3),
-    SCENE_EXIT(2, GaiaRockInside5, 7),
-    SCENE_EXIT(3, GaiaRockInside5, 6),
+    SCENE_EXIT(1, GaiaRockInsidePlatforms, 3),
+    SCENE_EXIT(2, GaiaRockInsideAltar, 7),
+    SCENE_EXIT(3, GaiaRockInsideAltar, 6),
     SCENE_EXIT(20, GaiaRockInsideMaze, 20),
-    SCENE_EXITS(GaiaRockInside4),
+    SCENE_EXITS(GaiaRockInsidePlatforms),
     SCENE_EXIT(1, GaiaRockInsideFirstAltar, 10),
     SCENE_EXIT(2, GaiaRockInsideFirstAltar, 7),
     SCENE_EXIT(3, GaiaRockInsideTwinAltars, 1),
-    SCENE_EXITS(GaiaRockInside5),
-    SCENE_EXIT(1, GaiaRockInside5, 2),
-    SCENE_EXIT(2, GaiaRockInside5, 1),
-    SCENE_EXIT(3, GaiaRockInside5, 4),
-    SCENE_EXIT(4, GaiaRockInside5, 3),
-    SCENE_EXIT(5, GaiaRockInside5, 6),
-    SCENE_EXIT(6, GaiaRockInside5, 5),
+    SCENE_EXITS(GaiaRockInsideAltar),
+    SCENE_EXIT(1, GaiaRockInsideAltar, 2),
+    SCENE_EXIT(2, GaiaRockInsideAltar, 1),
+    SCENE_EXIT(3, GaiaRockInsideAltar, 4),
+    SCENE_EXIT(4, GaiaRockInsideAltar, 3),
+    SCENE_EXIT(5, GaiaRockInsideAltar, 6),
+    SCENE_EXIT(6, GaiaRockInsideAltar, 5),
     SCENE_EXIT(7, GaiaRockInsideTwinAltars, 2),
     SCENE_EXIT(8, GaiaRockInsideTwinAltars, 3),
     SCENE_EXIT(9, GaiaRockInsideTwinAltars, 6),
@@ -3920,7 +3920,7 @@ struct Trigger gGaiaRockInside_LairTriggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSusasMind)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
     {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
     {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
     {EXAMINE_TRIGGER(EXAMINE_GROUND), 77, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
@@ -3933,8 +3933,8 @@ struct Trigger gGaiaRockInside_SlainLairTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_RaiseSandTablet)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside11))},
-    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInside08))},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
+    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheSerpentWithItsEyes))},
     {EXAMINE_TRIGGER(EXAMINE_GROUND), 77, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_EndSand)},

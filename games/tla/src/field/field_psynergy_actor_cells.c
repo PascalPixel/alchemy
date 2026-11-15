@@ -225,8 +225,8 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
-  // Through the OAM's address: as sprite->oam.palette256, 2 of 57 differ.
-  (&sprite->oam)->palette256 = 1;
+  // Through the OAM's address: as sprite->oam.fullColor, 2 of 57 differ.
+  (&sprite->oam)->fullColor = 1;
   sprite->oam.index = tile;
 }
 

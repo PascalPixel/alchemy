@@ -33,7 +33,7 @@
 	export Heap_Alloc, Heap_AllocFar
 	export Heap_AllocEwram, Heap_AllocEwramFar
 	export Heap_Release, Heap_ReleaseFar
-	export Resource_DecodeByteLzInRam, Resource_DecodeByteLzInRamFar
+	export Decompress_ByteLz, Resource_DecodeByteLzInRamFar
 	export Decompress_TaggedLz, Decompress_TaggedLzFar
 	export VramCache_ReleaseVram, VramCache_ReleaseVramFar
 	export VramCache_FreeEntry, VramCache_FreeEntryFar

@@ -124,7 +124,7 @@ enum { AREA_DAILA = 0, AREA_YALLAM = 25, AREA_PROX = 50 };
 
 void Gauge_Update(void);
 
-void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
+void WorldMap_SelectExitByZ(s32 a, s32 b, s32 c);
 
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
@@ -480,7 +480,7 @@ void WorldMap_BoardShip(void) {
   Event_SetFlag(0x176);
   gMainRoutineWork.savedX = ship->x.fixed;
   gMainRoutineWork.savedZ = ship->z.fixed;
-  gMainRoutineWork.unk280 = ship->facing;
+  gMainRoutineWork.savedFacing = ship->facing;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
@@ -560,7 +560,7 @@ void WorldMap_LeaveShip(void) {
     Event_ClearFlag(0x176);
     gMainRoutineWork.savedX = ship->x.fixed;
     gMainRoutineWork.savedZ = ship->z.fixed;
-    gMainRoutineWork.unk280 = ship->facing;
+    gMainRoutineWork.savedFacing = ship->facing;
     flags = leader->motionFlags;
     leader->x.fixed = ship->x.fixed;
     leader->y.fixed = px(4);
@@ -603,7 +603,7 @@ void WorldMap_GoAboard(void) {
   Event_WaitTransitionFrames();
   gMainRoutineWork.savedX = leader->x.fixed;
   gMainRoutineWork.savedZ = leader->z.fixed;
-  gMainRoutineWork.unk280 = 0;
+  gMainRoutineWork.savedFacing = 0;
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
   Event_PlaySound(SE_MAP_EXIT);
@@ -787,11 +787,11 @@ void WorldMap_ShowGoldenBoots(void) {
   Event_SetFlag(0xa77);
 }
 
-void WorldMap_EnterProx(s32 id) { WorldMap_SetCountdownByZ(id, 63, 62); }
+void WorldMap_EnterProx(s32 id) { WorldMap_SelectExitByZ(id, 63, 62); }
 
-void WorldMap_EnterYallam(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
+void WorldMap_EnterYallam(s32 id) { WorldMap_SelectExitByZ(id, 34, 33); }
 
-void WorldMap_EnterDaila(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
+void WorldMap_EnterDaila(s32 id) { WorldMap_SelectExitByZ(id, 3, 2); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
@@ -807,7 +807,7 @@ s32 Scene_Initialize(void) {
 
     ship->x.fixed = gMainRoutineWork.savedX;
     ship->z.fixed = gMainRoutineWork.savedZ;
-    ship->facing = gMainRoutineWork.unk280;
+    ship->facing = gMainRoutineWork.savedFacing;
     ship->timer = 0;
     ship->userValue = 0;
   }
@@ -1524,9 +1524,9 @@ void WorldMap_MeetEcho(void) {
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Event_GetFlag(0x175))
-      Sound_Play(MUS_017);
+      Sound_Play(MUS_SONG_GAME);
     else
-      Sound_Play(MUS_035);
+      Sound_Play(MUS_BRIGGS_STEALS_SHIP);
     goto tutorial;
   }
   Event_Start();
@@ -1837,12 +1837,12 @@ void WorldMap_DriftNorthOfContinent(void) {
   // "Oh, Kraden... Felix... What are we going to do?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Event_PlaySound(SE_162);
+  Event_PlaySound(SE_WAVE);
   // "???"
   Event_ShowMessage(gMainRoutineWork.leaderActorId, 0);
   // "Oh... This can't be good."
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
-  Event_PlaySound(MUS_061);
+  Event_PlaySound(MUS_SHIP_DRIFTS);
   WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(10303, CAMERA_KEEP, 7820, 1);
@@ -2087,7 +2087,7 @@ void WorldMap_TakeOff(void) {
   // "You've gone quiet again... It's OK... You don't have to tell us if..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(30);
-  Event_PlaySound(MUS_038);
+  Event_PlaySound(MUS_SHEBAS_PAST);
   // "I thought that if I went to Jupiter Lighthouse, I would learn who I..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldEvent_Wait(20);
@@ -2850,16 +2850,16 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(65, Idejima, 2),
     SCENE_EXIT(66, LemurianShipDeck1, 10),
     SCENE_EXIT(77, Idejima, 12),
-    SCENE_EXIT(78, AquaRock1, 5),
+    SCENE_EXIT(78, AquaRockMoai, 5),
     SCENE_EXIT(1, Idejima, 4),
-    SCENE_EXIT_UNLESS(2, Daila1, 8, 0x873),
-    SCENE_EXIT_UNLESS(3, Daila1, 9, 0x873),
-    SCENE_EXIT(2, Daila2, 8),
-    SCENE_EXIT(3, Daila2, 9),
+    SCENE_EXIT_UNLESS(2, DailaFlooded, 8, 0x873),
+    SCENE_EXIT_UNLESS(3, DailaFlooded, 9, 0x873),
+    SCENE_EXIT(2, Daila, 8),
+    SCENE_EXIT(3, Daila, 9),
     SCENE_EXIT(4, KandoreanTempleGate, 1),
     SCENE_EXIT(5, ShrineOfTheSeaGodRope, 3),
     SCENE_EXIT(6, DehkanPlateauFullMetalVestChest, 1),
-    SCENE_EXIT(7, DehkanPlateau3, 6),
+    SCENE_EXIT(7, DehkanPlateauTightropes, 6),
     SCENE_EXIT(8, LemurianShipDeck2, 2),
     SCENE_EXIT(9, Madra, 11),
     SCENE_EXIT(10, MadraDrawbridge, 1),
@@ -2878,31 +2878,31 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(23, Naribwe, 6),
     SCENE_EXIT(25, KibomboMountainsDiskAxeChest, 1),
     SCENE_EXIT(26, KibomboMountainsWaft, 1),
-    SCENE_EXIT_UNLESS(27, Kibombo4, 1, 0x8ff),
-    SCENE_EXIT_UNLESS(27, Kibombo1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(27, KibomboCeremony, 1, 0x8ff),
+    SCENE_EXIT_UNLESS(27, Kibombo, 1, EXIT_FLAG_NONE),
     SCENE_EXIT(28, IsletsDog, 1),
     SCENE_EXIT(29, IsletsPrettyStone, 1),
     SCENE_EXIT(30, IsletsCow, 1),
-    SCENE_EXIT(31, Islets4, 10),
+    SCENE_EXIT(31, IsletsPier, 10),
     SCENE_EXIT(32, IsletsTurtle, 1),
     SCENE_EXIT(33, Yallam, 10),
     SCENE_EXIT(34, Yallam, 11),
-    SCENE_EXIT(35, TaopoSwamp1, 1),
-    SCENE_EXIT(36, ApojiiIslands1, 1),
-    SCENE_EXIT(37, AquaRock1, 1),
+    SCENE_EXIT(35, TaopoSwampEntrance, 1),
+    SCENE_EXIT(36, ApojiiIslands, 1),
+    SCENE_EXIT(37, AquaRockMoai, 1),
     SCENE_EXIT(38, Izumo, 1),
     SCENE_EXIT(39, GaiaRockSusa, 5),
     SCENE_EXIT(40, Champa, 9),
-    SCENE_EXIT(41, AnkohlRuins7, 1),
+    SCENE_EXIT(41, AnkohlRuinsEntrance, 1),
     SCENE_EXIT(42, SeaOfTimeWhirlpool, 1),
     SCENE_EXIT(43, SeaOfTimeToLemuria, 5),
     SCENE_EXIT(44, SeaOfTimeToLemuria, 3),
     SCENE_EXIT(45, LemuriaEntrance, 1),
-    SCENE_EXIT(46, TundariaTower1, 1),
-    SCENE_EXIT(47, Settlements9, 1),
-    SCENE_EXIT(48, Settlements1, 1),
-    SCENE_EXIT(49, Settlements4, 1),
-    SCENE_EXIT(50, Settlements7, 1),
+    SCENE_EXIT(46, TundariaTowerEntrance, 1),
+    SCENE_EXIT(47, SwAttekaIslet, 1),
+    SCENE_EXIT(48, GondowanSettlement, 1),
+    SCENE_EXIT(49, HesperiaSettlement, 1),
+    SCENE_EXIT(50, KaltIsland, 1),
     SCENE_EXIT(51, MagmaRockSlide, 1),
     SCENE_EXIT(52, AttekaInlet, 1),
     SCENE_EXIT(53, AttekaInletGeode, 2),
@@ -2911,17 +2911,17 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(56, ShamanVillageCave, 1),
     SCENE_EXIT(57, ShamanVillageCave, 10),
     SCENE_EXIT(58, ShamanVillage, 1),
-    SCENE_EXIT(59, Loho1, 7),
+    SCENE_EXIT(59, Loho, 7),
     SCENE_EXIT(60, NorthernReaches, 1),
     SCENE_EXIT(61, NorthernReaches, 4),
-    SCENE_EXIT(62, Prox1, 1),
+    SCENE_EXIT(62, ProxSouthGate, 1),
     SCENE_EXIT(63, ProxMold, 3),
     SCENE_EXIT(82, CavernsOsenia, 1),
     SCENE_EXIT(83, CavernsIndra, 1),
-    SCENE_EXIT(84, MarsLighthouseEntrance1, 1),
+    SCENE_EXIT(84, MarsLighthouseOutside, 1),
     SCENE_EXIT(85, GondowanCliffsPass, 1),
     SCENE_EXIT(86, GondowanCliffsPass, 2),
-    SCENE_EXIT(87, TreasureIsle1, 1),
+    SCENE_EXIT(87, TreasureIsleEntrance, 1),
     SCENE_EXIT(88, CavernsAtteka, 5),
     SCENE_EXIT(89, CavernsAngara, 1),
     SCENE_EXITS_END,

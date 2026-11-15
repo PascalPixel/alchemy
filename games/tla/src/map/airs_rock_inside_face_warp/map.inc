@@ -24,7 +24,7 @@ Field_AirsRockInsideFaceWarp:
 	.incbin "games/tla/src/map/airs_rock_inside_face_warp/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AirsRockInsideFaceWarp_ANIMATION:
-	.incbin "games/tla/src/map/airs_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/airs_rock_inside_hall/animation.script.lz"
 	.balign 4, 0
 .LField_AirsRockInsideFaceWarp_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

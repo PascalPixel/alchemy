@@ -131,7 +131,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(4, Champa, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Champa, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Champa, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT(8, Islets4, 11),
+    SCENE_EXIT(8, IsletsPier, 11),
     SCENE_EXIT(9, IsletsDog, 2),
     SCENE_EXITS_END,
 };

@@ -91,8 +91,8 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   if ((u16)(unit->enemyId - ENEMY_VENUS_DJINNI_UNUSED_QUARTZ) <=
       ENEMY_JUPITER_DJINNI_GALE - ENEMY_VENUS_DJINNI_UNUSED_QUARTZ)
     unit->side = BATTLE_UNIT_PARTY;
-  if ((u16)(unit->enemyId - ENEMY_DOOM_DRAGON) <=
-      ENEMY_DOOM_DRAGON_9 - ENEMY_DOOM_DRAGON)
+  if ((u16)(unit->enemyId - ENEMY_DOOM_DRAGON_A) <=
+      ENEMY_DOOM_DRAGON_I - ENEMY_DOOM_DRAGON_A)
     unit->side = BATTLE_UNIT_PARTY;
   return 1;
 }

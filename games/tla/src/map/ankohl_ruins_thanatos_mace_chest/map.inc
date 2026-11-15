@@ -27,7 +27,7 @@ Field_AnkohlRuinsThanatosMaceChest:
 	.incbin "games/tla/src/map/ankohl_ruins_thanatos_mace_chest/animation.script.lz"
 	.balign 4, 0
 .LField_AnkohlRuinsThanatosMaceChest_BLEND:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_10/blend.script.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_ladders/blend.script.lz"
 	.balign 4, 0
 .LField_AnkohlRuinsThanatosMaceChest_SCENE:
 	.incbin "games/tla/src/map/ankohl_ruins_thanatos_mace_chest/scene.scene.lz"

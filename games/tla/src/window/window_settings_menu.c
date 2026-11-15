@@ -270,7 +270,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
-    out->sprite.oam.palette256 = 1;
+    out->sprite.oam.fullColor = 1;
     work->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
@@ -282,7 +282,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
-    out->sprite.oam.palette256 = 1;
+    out->sprite.oam.fullColor = 1;
     work->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);
@@ -345,7 +345,7 @@ struct RenderInput *SettingsMenu_Open(void) {
 #endif
 
 extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
-    MsgWindowColorHelp[], MsgKey1161[];
+    MsgWindowColorHelp[], MsgSleepModeHelp[];
 extern const u8 gOptionMenu_FirstColorPresets[],
     gOptionMenu_SecondColorPresets[];
 
@@ -521,7 +521,7 @@ s32 SettingsMenu_Run(void) {
   Window_Close((struct Window *)settingsWindow, 2);
   if (result == 0) {
     if (gMainRoutineWork.idleSleepEnabled == 0 && work->option[4] == 1)
-      FieldMessage_Show((s32)MsgKey1161, 1);
+      FieldMessage_Show((s32)MsgSleepModeHelp, 1);
   }
   if (result == 0) {
     gMainRoutineWork.windowHue = work->option[0];

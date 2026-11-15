@@ -62,7 +62,7 @@ An [exit](../../glossary.md#exit) is a way out, by number. The exit table
 turns the number into a scene and an entrance:
 
 ```c
-SCENE_EXIT(2, LemurianShip1, 3),
+SCENE_EXIT(2, LemurianShipCabins, 3),
 ```
 
 Rows can carry conditions here too, which is how one path leads to several

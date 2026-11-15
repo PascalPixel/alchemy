@@ -52,7 +52,7 @@ struct FieldEffect {
   u8 snapToTarget;
   ///@}
   u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
-  /// Actor's steeringFlags to blockMarked; not named by this view.
+  /// Actor's steeringFlags to riseEnabled; not named by this view.
   u8 unk5a[0x0a];
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.

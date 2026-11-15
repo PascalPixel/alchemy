@@ -195,7 +195,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
       }
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
       REG_BG2PA = Q_8_8(1);
       Graphics_LoadGreyRamp();
       REG_BG2X = -0x3c00;
@@ -246,7 +246,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         }
         w->palette[i] = RGB(r, g, b);
       }
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
     }
     if (u <= 7) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
@@ -480,12 +480,12 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         }
       }
       if (i <= 5) {
-        Data_02014002[14 + i] = (Data_02014002[14 + i] + 32) % 3840;
+        gFlora_PetalTiles[14 + i] = (gFlora_PetalTiles[14 + i] + 32) % 3840;
       } else {
-        Data_02014002[14 + i] = (Data_02014002[14 + i] + 128) % 3840;
+        gFlora_PetalTiles[14 + i] = (gFlora_PetalTiles[14 + i] + 128) % 3840;
       }
       ((struct Sprite *)work->sprites[12 + i])->image.tile =
-          w->tiles[Data_02014002[14 + i] >> 8];
+          w->tiles[gFlora_PetalTiles[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {
       place[0] = w->x[i] - px(8);

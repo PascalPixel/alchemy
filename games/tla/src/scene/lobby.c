@@ -989,7 +989,7 @@ UNUSED void LinkLobby_DoNothing(void) {}
 extern u8 MsgLobbyYouHaveSongRequest[];
 extern u8 MsgLobbyComeBackWhenYoureReady[];
 extern u16 gLinkLobby_RequestableSounds[];
-extern s16 gData_02003860;
+extern s16 gAnyFileCleared;
 
 void Event_Start(void);
 void Event_End(void);
@@ -1041,7 +1041,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
           song = 96;
         if ((u32)song > 96)
           song = 0;
-        if (all != 0 || gMainRoutineWork.sendFlag != 0 || gData_02003860 != 0)
+        if (all != 0 || gMainRoutineWork.sendFlag != 0 || gAnyFileCleared != 0)
           break;
         if (SoundFlag_Test(gLinkLobby_RequestableSounds[song]) != 0)
           goto keys;

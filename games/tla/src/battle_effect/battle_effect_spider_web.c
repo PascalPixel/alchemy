@@ -258,7 +258,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   wait(1);
   {
     u32 *map = (u32 *)BG_SCREEN_BLOCK(31);
@@ -822,7 +822,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   REG_BLDCNT = 0;
   wait(1);
   for (frame = 0; frame != 40; frame++) {
@@ -867,7 +867,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   if (dmaArmed == 1) {
     Task_Remove(Ulysses_MoveLastParticle);
   }

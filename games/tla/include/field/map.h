@@ -98,7 +98,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 void Func_0200189c(void);
 
 extern u8 Data_0202d000[];
-extern u8 gData_02038000[];
+extern u8 gBgTileBuffer[];
 extern u8 gData_0203a000[];
 extern u8 gData_0203c000[];
 extern u8 gData_0203e000[];

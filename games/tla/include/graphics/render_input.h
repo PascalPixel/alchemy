@@ -47,7 +47,7 @@ struct RenderOam {
   u16 affineMode : 2;
   u16 objectMode : 2;
   u16 mosaic : 1;
-  u16 palette256 : 1;
+  u16 fullColor : 1;
   u16 shape : 2;
   u16 x : 9;
   u16 matrix : 5;

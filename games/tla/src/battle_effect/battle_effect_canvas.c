@@ -412,7 +412,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(1, battle->background, 24);
   // Two empty once-only blocks before the fills: without them, 18 differ.
   do {
@@ -543,7 +543,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   {
     const void *mesh = Data_02011000;
     void *vertices = gMapGridCellBuffer;
@@ -1333,7 +1333,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
                       IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
   BattleBackground_SetModeFar(1, battle->background, 0);
@@ -1354,7 +1354,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
                           DISPCNT_MODE_1,
                       IO_WRITE_16);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = 0;
   wait(1);
 
@@ -1410,7 +1410,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
                       IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(1, battle->background, 128);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
@@ -1427,7 +1427,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
                       IO_WRITE_16);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   display->secondMode = 0;
   wait(1);
 
@@ -1529,7 +1529,7 @@ void BattleEffect_EndCanvasLayer(void) {
                BGCNT_PRIORITY(3);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP |
@@ -1587,7 +1587,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
   BattleEffect_ClearActorTimers();
   BattleBackground_SetModeFar(2, screen->background, 0);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   layer->secondMode = 0;
   Iwram_ClearWords((void *)0x06003fc0, 64);
   Iwram_FillWords((void *)0x0600f900, 0x200, -1);

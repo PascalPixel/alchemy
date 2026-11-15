@@ -370,7 +370,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       victim[2] = savedX;
       victim[3] = 200 << 15;
       victim[4] = savedZ;
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
     }

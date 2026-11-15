@@ -942,7 +942,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   work->fadeFrames = 0;
   work->fadeStep = 0;
   // Act two: the land seen from the sky, where the orb falls and bursts.
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

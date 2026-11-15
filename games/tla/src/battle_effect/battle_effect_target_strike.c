@@ -1016,10 +1016,10 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
@@ -1084,7 +1084,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   BattleEffect_TintBattler(args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,

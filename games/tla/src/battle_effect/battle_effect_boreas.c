@@ -137,18 +137,18 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       shakeX = (Random16() & 3) - 1;
       shakeY = (Random16() & 3) - 1;
       gBgScroll[1].x = shakeX;
-      gBgScroll[1].y = shakeY + 32;
+      gBgScroll[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
     } else {
       shakeX = 0;
       shakeY = 0;
       gBgScroll[1].x = 0;
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     if (frame >= 176 && frame < 180) {
       shakeX = -gBoreas_ShakeOffsets[frame - 176];
       shakeY = gBoreas_ShakeOffsets[frame - 176];
       gBgScroll[1].x = shakeX;
-      gBgScroll[1].y = shakeY + 32;
+      gBgScroll[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
     }
 
     for (i = 0; i != count; i++) {

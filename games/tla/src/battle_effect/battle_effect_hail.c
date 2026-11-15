@@ -386,7 +386,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
     s32 offsetX = randomX - halfRange;
 
     gBgScroll[1].x = offsetX;
-    gBgScroll[1].y = offsetY + 32;
+    gBgScroll[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
     (*remainingFrames)--;
@@ -408,7 +408,7 @@ void Camera_ApplyVerticalShake(s32 range) {
   if (*timer > 0) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 
-    gBgScroll[1].y = shake + 32;
+    gBgScroll[1].y = shake + BATTLE_BACKGROUND_SCROLL_Y;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - shake;
     (*timer)--;
   } else {

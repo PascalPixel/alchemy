@@ -77,10 +77,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
@@ -364,7 +364,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleEffect_TintBattler(args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -643,7 +643,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -658,7 +658,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       IO_WRITE_16);
-  BattleCamera_SetViewFar(0, 0, 0, 100);
+  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
   view->secondMode = 0;
   wait(1);
   BattleEffect_SetupCanvasWindows();
@@ -1561,7 +1561,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 
     /* FAKEMATCH(dead): a once-only block. */
     do {
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       BattleBackground_LoadFar(1, *background, 24);
     } while (0);
   }

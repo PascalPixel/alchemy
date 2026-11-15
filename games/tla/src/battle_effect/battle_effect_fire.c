@@ -75,7 +75,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 

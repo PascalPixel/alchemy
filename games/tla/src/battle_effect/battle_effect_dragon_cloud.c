@@ -138,7 +138,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       if (frame <= 63)
         camera->yaw += 0x100;
     }
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
 
     // Frames 0-17: the puff arc rises, one cell every three frames.
     if (frame <= 17) {

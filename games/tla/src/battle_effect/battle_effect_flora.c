@@ -308,7 +308,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         gBgScroll[1].y = 34;
       }
     } else {
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       posX += px(8);
       posY += -px(6);
     }

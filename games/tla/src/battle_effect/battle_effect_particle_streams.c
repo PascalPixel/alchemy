@@ -846,7 +846,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     /* FAKEMATCH(temporary): the transfer mode's 3 set in transferMode before
      * the blitter build. */
     gBgScroll[1].x = 0;
-    gBgScroll[1].y = 32;
+    gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->ramCode;

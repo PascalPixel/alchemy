@@ -214,7 +214,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       work->shakeFrames--;
       gBgScroll[1].y = (Random16() & 7) + 28;
     } else {
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     EFFECT_PRESENT_CANVAS(work);
   }

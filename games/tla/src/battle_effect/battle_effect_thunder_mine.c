@@ -779,7 +779,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
 
       REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
     }
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     {

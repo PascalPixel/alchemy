@@ -301,7 +301,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
@@ -531,7 +531,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   // Teardown: the background palette steps back over seven frames.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   for (frame = 0, background = &Ram_HeapSlots->battleWork->background;
        frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(*background, 6 - frame);

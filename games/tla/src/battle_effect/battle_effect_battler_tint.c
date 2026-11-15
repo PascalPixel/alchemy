@@ -21,7 +21,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(1, battle->background, 24);
   /* FAKEMATCH(wrapper): both fills through FillWords. */
   FillWords(buffer, CANVAS_BYTES, 0);

@@ -82,7 +82,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/world_map.o"(.bss)
+        "*/games/tla/src/scene/world_map.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64c
@@ -101,7 +101,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/staff_credit.o"(.bss)
+        "*/games/tla/src/scene/staff_credit.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64d
@@ -127,7 +127,7 @@ SCENE(daila)
 #elif OVERLAY == 0x652
 SCENE(daila_interiors)
 #elif OVERLAY == 0x653
-SCENE_WITH_BSS(kandorean_temple)
+SCENE(kandorean_temple)
 #elif OVERLAY == 0x654
 SCENE(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
@@ -234,9 +234,9 @@ SCENE(gabomba_statue_chamber)
 #elif OVERLAY == 0x673
 SCENE(gabomba_catacombs)
 #elif OVERLAY == 0x674
-SCENE_WITH_BSS(islets)
+SCENE(islets)
 #elif OVERLAY == 0x675
-SCENE_WITH_BSS(islet_cave)
+SCENE(islet_cave)
 #elif OVERLAY == 0x676
 SCENE(yallam)
 #elif OVERLAY == 0x677
@@ -369,7 +369,7 @@ SCENE(magma_rock_inside)
 #elif OVERLAY == 0x693
 SCENE(atteka_inlet)
 #elif OVERLAY == 0x694
-SCENE_WITH_BSS(contigo)
+SCENE(contigo)
 #elif OVERLAY == 0x695
 SCENE(shaman_village_cave)
 #elif OVERLAY == 0x696
@@ -708,7 +708,7 @@ SCENE_WITH_BSS(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
 SCENE(treasure_isle)
 #elif OVERLAY == 0x6b0
-SCENE_WITH_BSS(anemos_inner_sanctum)
+SCENE(anemos_inner_sanctum)
 #elif OVERLAY == 0x6b1
 SECTIONS
 {

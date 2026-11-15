@@ -6,6 +6,7 @@
 /// (Contigo_StartSlowPaletteCycle).
 
 #include "types.h"
+#include "macros.h"
 #include "window/message_argument.h"
 #include "item_ids.h"
 #include "system/main_routine_work.h"
@@ -314,23 +315,21 @@ extern u32 gContigo_WandererScript[];
 extern u32 gContigo_PacerScript[];
 extern s32 gContigo_StatueScript[];
 
-extern u16 *gPaletteSlots;
-extern u16 *gPaletteCycleColors;
+u16 gPaletteCycleBright BSS_DATA;
+u16 *gPaletteCycleSlots BSS_DATA;
+u16 gPaletteCycleTimer BSS_DATA;
+u16 gPaletteCycleDelay BSS_DATA ALIGNED(4);
+u16 *gPaletteSlots BSS_DATA;
+u16 *gPaletteColors BSS_DATA;
+u16 *gPaletteCycleColors BSS_DATA;
+u16 gPaletteCycleLength BSS_DATA;
+u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 
 void Contigo_TeleportIn(void);
-
-extern u16 gPaletteCycleBright;
-extern u16 gPaletteCycleTimer;
-extern u16 gPaletteCycleDelay;
-extern u16 gPaletteCycleLength;
-extern u16 gPaletteCycleIndex;
 
 s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
-
-extern u16 *gPaletteColors;
-extern u16 *gPaletteCycleSlots;
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -1559,7 +1558,7 @@ extern u32 gContigo_PiersReunionScript[];
 extern u32 gContigo_ShebaReunionScript[];
 extern u32 gContigo_KradenReunionScript[];
 extern u32 gContigo_IsaacLeavesScript[];
-extern const u8 gContigo_SparkleWork[];
+struct SparkleWork gContigo_SparkleWork BSS_DATA ALIGNED(16);
 
 /// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
@@ -1919,7 +1918,7 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_HAMA, 4);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Contigo_StartSparkle(object, gContigo_SparkleWork);
+  Contigo_StartSparkle(object, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
   Actor_SetAnimationAndWait(ACTOR_HAMA, 4);
@@ -1927,7 +1926,7 @@ void Contigo_TheReunion(void) {
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Contigo_StartSparkle(object, gContigo_SparkleWork);
+  Contigo_StartSparkle(object, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
   Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);

@@ -234,10 +234,6 @@ extern struct ActorPlacement gIslets_PrettyStoneActorPlacements[];
 extern struct ActorPlacement gIslets_CowActorPlacements[];
 extern struct ActorPlacement gIslets_PierActorPlacements[];
 extern struct ActorPlacement gIslets_TurtleActorPlacements[];
-extern s32 gIslets_SecondCrateZ;
-extern s32 gIslets_FirstCrateZ;
-extern s32 gIslets_SecondCrateX;
-extern s32 gIslets_FirstCrateX;
 extern s32 gIslets_EnterDoorScript[];
 extern struct IsletsExit gIslets_Doors[];
 extern u16 gPushKinds[];
@@ -1232,8 +1228,21 @@ void Islets_SetLedgeBlocksByHeight(void) {
   }
 }
 
-extern u8 gIslets_WaveTableIndex;
-extern s16 gIslets_WaveLines[2][160];
+/// The bytes before the wave lines, which the ROM starts on 16 bytes; the
+/// Japanese release's code ends 4 bytes short of where the others' does.
+#if TLA_PATCH_1
+#define WAVE_LINES_PADDING 11
+#else
+#define WAVE_LINES_PADDING 15
+#endif
+
+u8 gIslets_WaveTableIndex BSS_DATA;
+u8 gIslets_UnusedAfterWaveTableIndex[WAVE_LINES_PADDING] BSS_DATA;
+s16 gIslets_WaveLines[2][160] BSS_DATA;
+s32 gIslets_SecondCrateZ BSS_DATA;
+s32 gIslets_FirstCrateZ BSS_DATA;
+s32 gIslets_SecondCrateX BSS_DATA;
+s32 gIslets_FirstCrateX BSS_DATA;
 
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Islets_StartWaveDma(void) {

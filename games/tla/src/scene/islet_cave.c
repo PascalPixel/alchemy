@@ -15,6 +15,7 @@
 #include "graphics/palette_buffers.h"
 #include "system/main_routine_work.h"
 #include "types.h"
+#include "macros.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -90,18 +91,18 @@ extern u32 gIsletCave_SentinelScript[];
 extern s32 gIsletCave_ShrunkenSpriteScript[];
 extern s16 gIsletCave_DoorFrames[];
 
-extern u16 *gPaletteSlots;
-extern u16 *gPaletteCycleColors;
-extern u16 gPaletteCycleBright;
-extern u16 gPaletteCycleDelay;
-extern u16 gPaletteCycleLength;
-extern u16 gPaletteCycleIndex;
+u16 gPaletteCycleBright BSS_DATA;
+u16 *gPaletteCycleSlots BSS_DATA;
+u16 gPaletteCycleTimer BSS_DATA;
+u16 gPaletteCycleDelay BSS_DATA ALIGNED(4);
+u16 *gPaletteSlots BSS_DATA;
+u16 *gPaletteColors BSS_DATA;
+u16 *gPaletteCycleColors BSS_DATA;
+u16 gPaletteCycleLength BSS_DATA;
+u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
-
-extern u16 *gPaletteColors;
-extern u16 *gPaletteCycleSlots;
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
@@ -131,8 +132,6 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   if (gMainRoutineWork.teleportState == 2)
     IsletCave_TeleportIn();
 }
-
-extern u16 gPaletteCycleTimer;
 
 void IsletCave_StartSlowPaletteCycle(void) {
   gPaletteCycleIndex = 0;

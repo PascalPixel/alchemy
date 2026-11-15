@@ -184,7 +184,15 @@ extern u32 gWorldMap_GlowColorModes[];
 
 s32 WorldMap_GetBlockPlace(s32 *position);
 
-extern u16 gWorldMapBlend;
+s32 gWorldMap_HiddenMembers[8] BSS_DATA;
+struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
+u16 gWorldMapBlend BSS_DATA;
+s16 gGauge_Shown BSS_DATA ALIGNED(4);
+s16 gGauge_Vram BSS_DATA;
+s16 gGauge_Countdown BSS_DATA;
+u32 gGauge_Sprite[3] BSS_DATA;
+u8 gGauge_Tiles[8][32] BSS_DATA;
+u8 gGauge_SourceTiles[12][32] BSS_DATA;
 
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
@@ -193,10 +201,6 @@ extern u8 gWorldMapPalettesB[];
 void WorldMap_SpawnTwinSparks(struct Actor *object);
 
 void Actor_Release(struct Actor *object);
-
-extern u8 gGauge_Tiles[][32];
-extern s16 gGauge_Countdown;
-extern u32 gGauge_Sprite[3];
 
 void Party_DrainPp(s32 value);
 FIXED Party_GetPpRatio(void);
@@ -211,7 +215,6 @@ void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
-extern s32 gWorldMap_HiddenMembers[8];
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
@@ -2594,10 +2597,6 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
     p->priorityFlags = 2;
   }
 }
-
-extern s16 gGauge_Shown;
-extern s16 gGauge_Vram;
-extern u8 gGauge_SourceTiles[][32];
 
 /// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {

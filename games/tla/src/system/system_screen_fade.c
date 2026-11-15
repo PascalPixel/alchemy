@@ -39,29 +39,20 @@ void ScreenFade_Update(void) {
       *blendControl = control;
     }
     {
-      u8 *remaining = &gScreenFadeVBlanksLeft;
-      s32 delta;
       s32 level;
-      s32 step;
 
       // level = target + (start - target) * remaining / duration: BLDY moves
       // in a straight line and reaches the target as remaining reaches 0.
-      /* FAKEMATCH(dead): the decrement in a once-only block. */
+      gScreenFadeVBlanksLeft--;
+      /* FAKEMATCH(dead): the level and its BLDY write in a once-only block. */
       do {
-        (*remaining)--;
+        level = gScreenFadeTargetLevel;
+        level += (gScreenFadeStartLevel - gScreenFadeTargetLevel) *
+                 gScreenFadeVBlanksLeft / gScreenFadeVBlanks;
+        REG_BLDY = level;
       } while (0);
-      level = gScreenFadeTargetLevel;
-      delta = gScreenFadeStartLevel - gScreenFadeTargetLevel;
-      step = *remaining;
-      // The division is a call to __divsi3, which may write memory, so the
-      // count is read again after it.
-      level += __divsi3(delta * step, gScreenFadeVBlanks);
-      REG_BLDY = level;
-      /* FAKEMATCH(dead): the end test in a once-only block. */
-      do {
-        if (*remaining == 0)
-          gScreenFadeVBlanks = 0;
-      } while (0);
+      if (gScreenFadeVBlanksLeft == 0)
+        gScreenFadeVBlanks = 0;
     }
   }
 }

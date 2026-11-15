@@ -17,7 +17,10 @@ extern u8 gScreenFadeToWhite;
 // fade's end while ScreenFade_Wait waits on it, so it is no device.
 extern volatile u8
     gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
-extern u8 gScreenFadeVBlanksLeft;
+/// VBlanks until the running fade reaches its target.
+// volatile: the fade starts set it for ScreenFade_Update, which the VBlank
+// handler runs and which counts it down, so it is no device.
+extern volatile u8 gScreenFadeVBlanksLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
 /// The brightness the running fade started from, 0 to 16.

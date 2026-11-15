@@ -423,11 +423,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 /// The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 
-/// Copies the swirl's colours into background palette entries 96 on.
-static inline s32 Swirl_CopyPalette(const void *source) {
-  return Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), source, 128);
-}
-
 /// Draws a size by size square of the swirl at x along the top of the buffer.
 static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
                              const void *canvas, s32 x, s32 size) {
@@ -473,12 +468,11 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
-  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
-  Swirl_CopyPalette(palette);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
-  Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

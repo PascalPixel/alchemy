@@ -6,7 +6,7 @@ you can open, `map.txt`, one cell per square.
 
 ## Cells
 
-![Felix walks east behind the house up on Daila's rise: its roof hides him entirely, and he walks back out to the west](https://alchemy.pascalpixel.com/tla/guides/world/behind-roof.gif)
+![Felix walks east along the grass above the house on Daila's rise: the top of its roof hides him to the shoulders, and he walks back out to the west](https://alchemy.pascalpixel.com/tla/guides/world/behind-roof.gif)
 
 A map is a grid of [cells](../../glossary.md#cell), 16 pixels square, 128
 by 128 of them. Each cell says four things. The first three are written

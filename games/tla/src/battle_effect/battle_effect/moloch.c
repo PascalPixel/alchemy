@@ -11,22 +11,22 @@
 struct FxPartyList;
 struct Model;
 
-// Moloch's frames, and the frame A or B skips to.
+/// Moloch's frames, and the frame A or B skips to.
 #define MOLOCH_FRAMES 296
 #define MOLOCH_SKIP_TO 232
 
 void Render_DrawModelList(struct Model *model);
 
-// Moloch. A shower of 256 motes drifts down the screen and, from frame
-// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
-// and from frame 136 four textured rings spread out from the summoned
-// objects. At frames 212 to 268 the targets are struck in turn, and the
-// scene closes with a glow of the whole palette. A or B skips to frame 232.
-//
-// The work's particles 0-11 are the flames (velocityZ picks the blitter, 2
-// retires the column), particles 24-39 the embers of the closing glow; the
-// map cell buffer holds the motes (variant counts down the frames before a
-// mote appears, 0 is a live mote).
+/// Moloch. A shower of 256 motes drifts down the screen and, from frame
+/// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
+/// and from frame 136 four textured rings spread out from the summoned
+/// objects. At frames 212 to 268 the targets are struck in turn, and the
+/// scene closes with a glow of the whole palette. A or B skips to frame 232.
+///
+/// The work's particles 0-11 are the flames (velocityZ picks the blitter, 2
+/// retires the column), particles 24-39 the embers of the closing glow; the
+/// map cell buffer holds the motes (variant counts down the frames before a
+/// mote appears, 0 is a live mote).
 void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
@@ -504,7 +504,7 @@ struct StripQuad;
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
 
-// The spark objects' work, in the map cell buffer at 0x1f40.
+/// The spark objects' work, in the map cell buffer at 0x1f40.
 struct IrisSparks {
   s16 life[36]; // high byte: frames left; 0 frees the slot
   u16 tiles[15];
@@ -515,7 +515,7 @@ struct IrisSparks {
   s32 vy[36];
 };
 
-// A point of a streak: the head moves, the other nine trail it.
+/// A point of a streak: the head moves, the other nine trail it.
 struct IrisPoint {
   s32 x;
   s32 y;
@@ -524,7 +524,7 @@ struct IrisPoint {
   s32 unk10;
 };
 
-// The opening's circle of light and its fifteen streaks, at 0x2ee0.
+/// The opening's circle of light and its fifteen streaks, at 0x2ee0.
 struct IrisScene {
   union {
     s32 x;
@@ -598,7 +598,7 @@ extern const struct FourSpans gIris_RightStripSpans;
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
-// The 128 background colours the scene fades (entries 96 to 223).
+/// The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
 #define Iwram_FillWords(dest, size, value)                                     \
@@ -611,9 +611,9 @@ extern const struct FourSpans gIris_RightStripSpans;
     Decompress_TaggedLz(src, dest);                                            \
   } while (0)
 
-// A splash where a drop lands: rings spread from (x, y) for twice the
-// splash's duration, then a smaller pair of rings and a column of spray
-// rises while the screen shakes; the drop itself is drawn last.
+/// A splash where a drop lands: rings spread from (x, y) for twice the
+/// splash's duration, then a smaller pair of rings and a column of spray
+/// rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -761,11 +761,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   }
 }
 
-// Iris: a circle of light opens over a dark field while fifteen
-// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
-// of sprites and bursts into sparks; drops fall and splash in rings; pillars
-// of light climb, the scene fills with rising motes, rays turn about the
-// centre, and the screen whitens as she heals the party.
+/// Iris: a circle of light opens over a dark field while fifteen
+/// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
+/// of sprites and bursts into sparks; drops fall and splash in rings; pillars
+/// of light climb, the scene fills with rising motes, rays turn about the
+/// centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
   struct IrisPoint(*streaks)[10] = Data_02012ef4;
@@ -2049,7 +2049,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Swaps two integers without a temporary.
+/// Swaps two integers without a temporary.
 #define XOR_SWAP(a, b)                                                         \
   {                                                                            \
     (a) ^= (b);                                                                \
@@ -2057,8 +2057,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     (a) ^= (b);                                                                \
   }
 
-// A triangle of the model: where its three corners start in the vertex
-// buffer (in words) and its colour.
+/// A triangle of the model: where its three corners start in the vertex
+/// buffer (in words) and its colour.
 struct SolidFace {
   s32 corner[3];
   u8 unk0c[12];
@@ -2066,8 +2066,8 @@ struct SolidFace {
   u8 unk19[3];
 };
 
-// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
-// keeping the brighter of each pixel's colour and color.
+/// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
+/// keeping the brighter of each pixel's colour and color.
 #define FILL_SPAN(row, xa, xb)                                                 \
   {                                                                            \
     s32 left = (xa) >> 16;                                                     \
@@ -2086,13 +2086,13 @@ struct SolidFace {
     }                                                                          \
   }
 
-// An unused solid renderer, the filled twin of Func_08196248. Transforms the
-// vertexCount points in the sheet block by the current matrix, then fills
-// every face of the effect work's list that faces the camera into the
-// canvas, centred at (64, 64), keeping the brighter colour where faces
-// overlap. Each triangle is sorted by y and filled in two halves, top to
-// middle and middle to bottom, along 16.16 edge slopes.
-void Func_0819574c(s32 vertexCount, s32 faceCount) {
+/// An unused solid renderer, the filled twin of Render_DrawMeshWireframe.
+/// Transforms the vertexCount points in the sheet block by the current matrix,
+/// then fills every face of the effect work's list that faces the camera into
+/// the canvas, centred at (64, 64), keeping the brighter colour where faces
+/// overlap. Each triangle is sorted by y and filled in two halves, top to
+/// middle and middle to bottom, along 16.16 edge slopes.
+void Render_FillMesh(s32 vertexCount, s32 faceCount) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleEffect;
@@ -2183,8 +2183,8 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
   }
 }
 
-// One mesh face: its three corners as word offsets into the vertex buffer
-// (vertex index * 3), padded to an effect step's 28 bytes.
+/// One mesh face: its three corners as word offsets into the vertex buffer
+/// (vertex index * 3), padded to an effect step's 28 bytes.
 struct MeshFace {
   s32 vertex[3];
   s32 unk0c[4];
@@ -2192,8 +2192,8 @@ struct MeshFace {
 
 #define DIFF_ABS(v) ((v) >= 0 ? (v) : -(v))
 
-// One textured scanline at canvas row y, from xA to xB, keeping the brighter
-// of the canvas and texture colour.
+/// One textured scanline at canvas row y, from xA to xB, keeping the brighter
+/// of the canvas and texture colour.
 #define DRAW_SPAN(y)                                                           \
   {                                                                            \
     u8 *row = work->sheet;                                                     \
@@ -2220,7 +2220,7 @@ struct MeshFace {
     }                                                                          \
   }
 
-// The texture steps along a scanline, from the middle corner's row.
+/// The texture steps along a scanline, from the middle corner's row.
 #define STEP_RIGHTWARD()                                                       \
   {                                                                            \
     width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));        \
@@ -2240,14 +2240,14 @@ struct MeshFace {
                                         (uv[1][1] - uv[0][1]));                \
   }
 
-// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
-// buffer) in place, then draws each front-facing face of the mesh at the
-// start of the effect work as an affine-textured triangle: uvs gives each
-// face's three texture corners (16.16), the texture is the effect sheet,
-// textureShift its row length as a power of two. Coordinates are offset by
-// 64 pixels into the canvas.
-void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
-                   s32 textureShift) {
+/// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
+/// buffer) in place, then draws each front-facing face of the mesh at the
+/// start of the effect work as an affine-textured triangle: uvs gives each
+/// face's three texture corners (16.16), the texture is the effect sheet,
+/// textureShift its row length as a power of two. Coordinates are offset by
+/// 64 pixels into the canvas.
+void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
+                             s32 textureShift) {
   s32 i;
   s32 *vertices;
   u8 *canvas;
@@ -2398,15 +2398,15 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
   }
 }
 
-// A point of the wireframe model, 16.16 fixed point.
+/// A point of the wireframe model, 16.16 fixed point.
 struct WirePoint {
   s32 x;
   s32 y;
   s32 z;
 };
 
-// A triangle of the wireframe model: where its three corners start in the
-// vertex buffer (in words) and the colour its edges are drawn in.
+/// A triangle of the wireframe model: where its three corners start in the
+/// vertex buffer (in words) and the colour its edges are drawn in.
 struct WireFace {
   s32 corner[3];
   u8 unk0c[12];
@@ -2414,12 +2414,12 @@ struct WireFace {
   u8 unk19[3];
 };
 
-// An unused wireframe renderer. Transforms the vertexCount points in the
-// sheet block by the current matrix, then draws the three edges of every
-// face of the effect work's list that faces the camera (its corners run
-// counter-clockwise on screen) as clipped lines into the canvas, centred at
-// (64, 64).
-void Func_08196248(s32 vertexCount, s32 faceCount) {
+/// An unused wireframe renderer. Transforms the vertexCount points in the
+/// sheet block by the current matrix, then draws the three edges of every
+/// face of the effect work's list that faces the camera (its corners run
+/// counter-clockwise on screen) as clipped lines into the canvas, centred at
+/// (64, 64).
+void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleEffect;
   s32 i;
@@ -2496,6 +2496,7 @@ static __inline__ void CopyWords2(const void *source, void *destination) {
 CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
             "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
             "and r1 to the allocator")
+/// Copies three words from source to destination with one block load and store.
 static __inline__ void CopyWords3(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2507,6 +2508,7 @@ static __inline__ void CopyWords3(const void *source, void *destination) {
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
+/// Copies four words from source to destination with one block load and store.
 static __inline__ void CopyWords4(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2557,6 +2559,8 @@ static __inline__ void CopyWords4(const void *source, void *destination) {
     *(site) |= BRANCH_FIELD(site, dst);                                        \
   } while (0)
 
+/// Writes a drawing routine for the canvas into heap slot `slot`, built from
+/// the template gBlitterTemplate for one clip, mirroring and blend mode.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode) {
   const u32 *src;

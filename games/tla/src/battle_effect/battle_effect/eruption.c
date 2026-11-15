@@ -13,7 +13,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
 /// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
 DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
 
-#define MOTE_SHEET 0x3200 // the mote pictures in the sheet
+#define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.
@@ -198,4 +198,5 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   } while (entryIndex != entryCount);
 }
 
+/// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
 void BattleEffect_DoNothing(void) {}

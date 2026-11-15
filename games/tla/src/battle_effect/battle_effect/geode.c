@@ -21,12 +21,12 @@ struct ModelVertex {
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 
-// Abilities: Geode.
-//
-// The Venus Djinni tears up the battlefield itself: the screen is copied
-// into a texture and peeled up into a spinning dome over the target as the
-// palette fades, the Djinni flies across to it, and at frame 48 the dome
-// slams down in rings of dust before the backdrop fades back in.
+/// The Venus Djinni tears up the battlefield itself: the screen is copied
+/// into a texture and peeled up into a spinning dome over the target as the
+/// palette fades, the Djinni flies across to it, and at frame 48 the dome
+/// slams down in rings of dust before the backdrop fades back in.
+///
+/// Abilities: Geode.
 void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

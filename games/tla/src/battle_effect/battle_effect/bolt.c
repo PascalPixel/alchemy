@@ -14,9 +14,13 @@
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.
 
-// The second blitter, loaded again for each glint.
+/// The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
+/// A bolt of lightning strikes each target in turn, and sparks fly up from
+/// where it lands while glints flicker there.
+///
+/// Abilities: Bolt, Flash Bolt, Blue Bolt.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

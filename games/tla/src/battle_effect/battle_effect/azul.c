@@ -29,8 +29,8 @@ struct AzulFace {
   u8 unkA[2];
 };
 
-// A sprite object as Azul edits it: its tile number in the low ten bits of
-// the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
+/// A sprite object as Azul edits it: its tile number in the low ten bits of
+/// the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
 struct AzulObject {
   u8 unk0[8];
   u16 tile : 10;
@@ -40,7 +40,7 @@ struct AzulObject {
   u16 shape;
 };
 
-// Clamps a sprite's projected y to the screen's band.
+/// Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
   do {                                                                         \
     if ((place)[2] < -0x10000)                                                 \
@@ -731,6 +731,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Moves a particle one frame in three dimensions.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 vx = step->velocityX;
@@ -744,6 +745,7 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                vz * damping / 64);
 }
 
+/// Moves a particle one frame on the screen.
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 x = step->x;
@@ -756,6 +758,8 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
   step->velocityY = (vy + gravity) * damping / 64;
 }
 
+/// Projects a 16.16 point onto the screen through the current transform, 16
+/// pixels higher; returns Render_ProjectPoint's result.
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct ScreenPoint *position) {
   s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
@@ -763,22 +767,26 @@ s32 EffectPosition_ProjectPoint(const void *point,
   return result;
 }
 
+/// Projects a unit's sprite onto the screen, raised by half its height, 16
+/// pixels higher.
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position) {
   BattleUnit_ProjectToScreen(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
+/// Projects a unit's place onto the screen at its scale, 16 pixels higher.
 void EffectPosition_ProjectScaledBattler(s32 id, struct ScreenPoint *position) {
   BattleMotion_ProjectScaledPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
+/// Projects a unit's place onto the screen, 16 pixels higher.
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position) {
   BattleMotion_ProjectPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
-// Midpoint between the first and last targets.
+/// Midpoint between the first and last targets.
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   struct BattleEffectWork *work;
   struct ScreenPoint first;

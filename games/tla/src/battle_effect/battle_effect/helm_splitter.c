@@ -4,11 +4,10 @@
 
 #include "../battle_effect_internal.h"
 
-// Effect kind 51: the caster dashes at the target while a swirl of flame grows
-// over seven frames, then bursts into sparks that fall and bounce on the
-// ground. Variant 0: the swirl rises at the caster and throws pink
-// stars. Variant 1: the swirl, recoloured into the blue flame's
-// palette, rises at the target and throws 32 skulls.
+/// The user leaps at the first target and strikes through a fire swirl; the
+/// target reels and sparks scatter, bouncing off the ground.
+///
+/// Abilities: Helm Splitter, Skull Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -172,12 +171,12 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
-// 128 thrown up at the start and 128 shed by the head.
+/// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
+/// 128 thrown up at the start and 128 shed by the head.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
-// The pillar sheet's cell is 24 x 39; the faded copies follow it.
+/// The pillar sheet's cell is 24 x 39; the faded copies follow it.
 #define PILLAR_CELL_SIZE 936
 
 // Returns the fixed IWRAM word copy entry, so the call loads its address before

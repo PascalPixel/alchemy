@@ -13,11 +13,12 @@
 
 #define SHARDS_PER_CRYSTAL 16
 #define GROUND_Y px(56)
-#define SHATTERED 1 // a crystal's z once it has hit the ground
+#define SHATTERED 1 ///< a crystal's z once it has hit the ground
 
-// Crystals fall one after another, eight frames apart, onto the targets'
-// ground and shatter into sixteen spinning shards each; the screen darkens
-// over the last eight frames.
+/// Crystals drop out of the sky onto the targets' side and shatter on the
+/// ground into spinning shards, flashing the targets and shaking the screen.
+///
+/// Abilities: Prism, Hail Prism, Freeze Prism.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -147,6 +148,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 #undef SPARK_COUNT
 #undef GROUND_Y
 
+/// Rebuilds the background palette's first ramp as a grey whose channels sway
+/// with the frame, so the effect shimmers through colours.
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase) {
   u16 palette[64];

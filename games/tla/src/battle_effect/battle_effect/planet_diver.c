@@ -11,17 +11,16 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// The skulls live in the map buffer, 64 for each target.
+/// The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
-#define SKULLS 8 // per target
+#define SKULLS 8 ///< per target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 
-// Closing skulls: for each target in turn, 32 frames apart, eight skulls
-// appear one every four frames from all around, up to 64 pixels away, and
-// close in on a point 20 pixels above the target while the view of them
-// turns; the background waves line by line throughout.
+/// Skulls close in on each target in turn.
+///
+/// Abilities: Haunt.
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 k;
   struct ScreenPoint pos;
@@ -128,9 +127,12 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
 
-// Member orbit: over each target in turn, sixteen frames apart, four
-// spirals circle a point 40 pixels above it for 60 frames, the blitter
-// flipping every sixteen frames; the background waves line by line.
+/// Unused: no row of gAbilityBattleEffects in either game names its kind, and
+/// the handler table is reached with no other kind (BattleEffect_RunFromTable),
+/// so the player never sees it. Four spirals would circle 40 pixels above each
+/// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
+/// the centre; each target would take its damage pose 32 frames into its
+/// turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -14,19 +14,14 @@
 
 #define BURST_FRAMES 54
 #define BURST_HIT_FRAME 10
-#define COLUMN_RISE_FRAME 8 // the columns break the ground
+#define COLUMN_RISE_FRAME 8 ///< the columns break the ground
 #define COLUMN_PEAK_FRAME 31
 #define COLUMN_MAX_HEIGHT 80
 
-// Two lime columns burst out of the ground under the target and a spray of
-// sparks flies up between them.
-//
-// Setup: open the canvas, load the column and blast sheets, line the canvas
-// up with the target, and launch 16 sparks from (64, 112) in random
-// directions. Each frame: from frame 8 the two columns (one drawn flipped)
-// rise 12 pixels a frame to 80, held there with the brighter MAX blitter, and
-// from frame 32 sink 6 a frame; each spark shows its blast picture for its
-// age and falls under gravity. The target is struck at frame 10.
+/// Two mirrored columns of light rise at the first target's feet and sink
+/// again, scattering sparks that drift upward.
+///
+/// Abilities: Undead Sword.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -154,15 +149,17 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Plume Edge: the user dashes at the target, which a fan of white flashes
-// throws back; a pillar of light scrolls up through it for half a second and
-// then bursts into 256 sparks with a white flash of the whole canvas.
-//
-// Setup: canvas layer 0 at half blend, the two rectangle blitters, the
-// pillar and flash sheets in the work sheet, the spark sheet in the shared
-// sheet and the light palette over the background's.
-// Frame loop (80 frames): the fan of 64 flashes at frame 0, the user's dash
-// at frames 18 and 21, the spark burst at frame 32, then the sparks fall.
+/// Plume Edge: the user dashes at the target, which a fan of white flashes
+/// throws back; a pillar of light scrolls up through it for half a second and
+/// then bursts into 256 sparks with a white flash of the whole canvas.
+///
+/// Setup: canvas layer 0 at half blend, the two rectangle blitters, the
+/// pillar and flash sheets in the work sheet, the spark sheet in the shared
+/// sheet and the light palette over the background's.
+/// Frame loop (80 frames): the fan of 64 flashes at frame 0, the user's dash
+/// at frames 18 and 21, the spark burst at frame 32, then the sparks fall.
+///
+/// Abilities: Plume Edge.
 void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -339,8 +336,8 @@ struct WaterVertex {
   s32 z : 8;
 };
 
-// One triangle of the water's mesh: three vertex indices, then a texture
-// coordinate for each.
+/// One triangle of the water's mesh: three vertex indices, then a texture
+/// coordinate for each.
 struct WaterTriangle {
   u32 vertexA : 8;
   u32 vertexB : 8;
@@ -357,7 +354,7 @@ struct WaterTriangle {
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
 #define WATER_QUADS ((WATER_ROWS - 1) * (WATER_COLUMNS - 1))
-// The water's mesh as triangles, two to a quad.
+/// The water's mesh as triangles, two to a quad.
 #define WATER_MESH ((struct WaterTriangle *)gData_02014000)
 
 /// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
@@ -994,11 +991,11 @@ struct RenderModel__undead_sword {
 
 #define DIAMOND_BERG_FRAMES 148
 
-// Abilities: Diamond Berg.
-//
-// An iceberg drops onto the target and is driven down in eight blows (every
-// eighth frame from 31), each throwing eight shards; the last shatters it
-// into a burst of light. Ripples of frost spread over the ground beneath.
+/// An iceberg drops onto the target and is driven down in eight blows (every
+/// eighth frame from 31), each throwing eight shards; the last shatters it
+/// into a burst of light. Ripples of frost spread over the ground beneath.
+///
+/// Abilities: Diamond Berg.
 void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

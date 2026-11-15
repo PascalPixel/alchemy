@@ -6,6 +6,8 @@
 #include "sounds.h"
 #include "macros.h"
 
+/// Projects a unit onto the screen, raised by half its height, from the battle
+/// camera.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
   s32 *object;
@@ -23,6 +25,8 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   return 0;
 }
 
+/// Reads the held keys when the first target is an enemy and does nothing with
+/// them.
 void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work;
   struct BattleEffectParams *args;
@@ -35,6 +39,8 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
     (void)gInput.held;
 }
 
+/// Runs a battle effect from the second range of kinds: the casting impacts,
+/// the beams and the ring and spark effects.
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   s32 kind;
@@ -62,7 +68,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-// The second blitter slot read as what it holds, a drawing routine.
+/// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
      u8 before[188];                                                           \
@@ -70,11 +76,13 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64
 
+/// A plain attack: a slash or streak sweeps from the user over its first
+/// target, a yellow orb flashes over the target and sparks fly off.
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint anchor;
@@ -304,6 +312,9 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
+/// A critical hit: motes of light close in on the attacker as it hangs in its
+/// leap, then a crescent slash sweeps across the first target and sparks fly
+/// from it.
 void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint anchor;
@@ -535,6 +546,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
+/// Starts a unit moving away from the centre with its own force, acceleration,
+/// top speed, hop and reach in percent, as BattleMotion_ApplyKnockback does
+/// from its tables; four enemies (ids 357, 369, 373 and 376) are not moved,
+/// only posed.
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {
   struct BattleObj *slot;

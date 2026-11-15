@@ -128,26 +128,27 @@ struct Model;
 #define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 #define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
-#define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
-#define RECORD_COUNT 1   // strikes or columns
-#define RECORD_FLAGS 2   // the parts drawn (FLAG_*)
-#define RECORD_PALETTE 3 // the colours
-#define RECORD_RATE 4    // frames for each picture
-#define RECORD_BLEND 5   // the columns' blitter mode
-#define RECORD_FRAMES 6  // the effect's length
+#define RECORD_KIND 0    ///< 0: strikes across the target, 1: columns on it
+#define RECORD_COUNT 1   ///< strikes or columns
+#define RECORD_FLAGS 2   ///< the parts drawn (FLAG_*)
+#define RECORD_PALETTE 3 ///< the colours
+#define RECORD_RATE 4    ///< frames for each picture
+#define RECORD_BLEND 5   ///< the columns' blitter mode
+#define RECORD_FRAMES 6  ///< the effect's length
 
-#define FLAG_WISPS 1  // smoke wisps rise from the target
-#define FLAG_MOTES 2  // motes leave the target and fly back to the user
-#define FLAG_GLINTS 4 // glints flicker around the target
-#define FLAG_SPARKS 8 // the hits throw sparks
-#define FLAG_HEAVY 16 // the hits shake harder and knock the target back
-#define FLAG_FLASH 32 // as heavy, with flash pictures for wisps
-#define FLAG_STAR 64  // a star model swells on the target
+#define FLAG_WISPS 1  ///< smoke wisps rise from the target
+#define FLAG_MOTES 2  ///< motes leave the target and fly back to the user
+#define FLAG_GLINTS 4 ///< glints flicker around the target
+#define FLAG_SPARKS 8 ///< the hits throw sparks
+#define FLAG_HEAVY 16 ///< the hits shake harder and knock the target back
+#define FLAG_FLASH 32 ///< as heavy, with flash pictures for wisps
+#define FLAG_STAR 64  ///< a star model swells on the target
 
-// The motes live in the map cell buffer, the sparks 0x3800 bytes on.
+/// The motes live in the map cell buffer, the sparks 0x3800 bytes on.
 #define gMotes ((struct Particle *)Ram_MapCellBuffer)
 #define gSparks ((struct Particle *)(Ram_MapCellBuffer + 0x3800))
 
+/// Render_DrawModelList as the first parts see it.
 void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
     "Render_DrawModelList");
 #define Render_DrawModelList Render_DrawModelList__battle_effect
@@ -686,12 +687,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
 // A rain of daggers on the first target (unused).
 
-// Sixteen daggers fall 8 pixels a frame, one every 4 frames, from columns
-// 16 to 111, drifting towards the middle (x 64) the further out they start,
-// and stick in the ground where they stop. The canvas fades in over 16
-// frames and out from frame 104; from frame 24 to 84 the target flashes and
-// the screen shakes every 4 frames, with a sound every 8.
-
+/// Sixteen swords fall slanting in on the first target, one every 4 frames, and
+/// stick in the ground.
 void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   BlitterPair draw;
@@ -815,20 +812,14 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
-// The flecks live in the map cell buffer.
+/// The flecks live in the map cell buffer.
 #define gFlecks ((struct Particle *)Ram_MapCellBuffer)
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
 
-// The pillar is two mirrored halves of a 17x64 picture with a 24x43 glow,
-// drawn at their maximum: four pillar pictures two frames apart and three
-// glow pictures four frames apart. 32 flecks spiral up around it, one more
-// each frame, turning 0x400 and rising 5 pixels a frame while the spiral
-// widens. effect->kind picks the colours (yellow, ice, red or violet) and
-// effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
-// target flashes; the last 6 frames fade out.
-
+/// A pillar of light in an element's colours stands at a unit's feet while
+/// motes spiral up around it.
 void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   struct ScreenPoint ground;
   struct ScreenPoint pos;

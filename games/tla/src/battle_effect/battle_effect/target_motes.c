@@ -42,16 +42,14 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
 
 // The motes live in the map cell buffer, 64 for each target.
 
-// Modes whose motes close in on the target and start again; the others
-// drift up and are thrown back at random. Mode 7 closes in once.
+/// Modes whose motes close in on the target and start again; the others
+/// drift up and are thrown back at random. Mode 7 closes in once.
 #define CONVERGES(mode)                                                        \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-// Motes swirl around each target in turn, eight frames apart, over a
-// rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
-// in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
-// the caster at the first target for the final blow.
+/// Around each target in turn, motes (smoke, hearts, orbs) close in on it or
+/// rise, and the target flashes.
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -303,9 +301,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SHEEP_FRAMES 98
 #define GROUND_Y px(92)
 
-// A flock of sheep cards drops in over the targets, one every four frames,
-// and bounces on the ground, tumbling through eight cels; at frame 80 the
-// next phase begins, and each target turns back to its own palette in turn.
+/// Twelve sheep drop onto the targets' side, tumbling, and each target falls
+/// asleep in turn.
+///
+/// Abilities: Sleep.
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -418,13 +417,13 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define MARKER_FRAMES 72 // how long each marker stays
+#define MARKER_FRAMES 72 ///< how long each marker stays
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-// A small flame
-// burns above each target in turn, MARKER_STAGGER frames apart, for up to
-// MARKER_FRAMES frames each, over a marker at its feet.
+/// A small flame burns above each target in turn, over a marker at its feet.
+///
+/// Abilities: Curse; Lucid Prophecy.
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -501,9 +500,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// A Djinn rides a swarm of sparks from the caster to the first target: 32
-// sparks spin around it in four planes while it travels, then it hovers
-// over the targets while puffs of sparkle gather on each in turn.
+/// A Djinni rides a swarm of sparks from the user to the first target, then
+/// hovers over the targets while sparkles gather on each in turn.
 void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

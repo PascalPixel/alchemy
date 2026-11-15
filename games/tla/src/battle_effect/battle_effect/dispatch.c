@@ -149,6 +149,8 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
+/// Builds window 0's right edge for every line and restarts the DMA that writes
+/// it.
 void BattleEffect_BuildWindowEdgeTable(void) {
   u16 *edge;
   u16 *line;

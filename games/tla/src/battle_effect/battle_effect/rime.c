@@ -9,13 +9,13 @@
 
 struct Model;
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// The Djinni's picture, 40 pixels wide, at the end of the work sheet.
+/// The Djinni's picture, 40 pixels wide, at the end of the work sheet.
 #define DJINNI_OFFSET 0x65c0
-// Rime's crystal: a 48x48 picture mirrored from its left half into a
-// 64-pixel-wide square after the rune picture.
+/// Rime's crystal: a 48x48 picture mirrored from its left half into a
+/// 64-pixel-wide square after the rune picture.
 #define CRYSTAL_OFFSET 0x480
 #define CRYSTAL_ORIGIN (CRYSTAL_OFFSET + 8 * 64 + 8)
 
@@ -48,16 +48,15 @@ struct RenderModel__f173588 {
   s32 brightness;
 };
 
-// Rime and Haze: the Djinni rises swaying through the canvas over the
-// party while its sign turns in the air: for Rime a crystal that spins in
-// two mirrored copies and shrinks, for Haze sixteen stars that bloom and
-// fade one after another.
-//
-// Setup: canvas layer 0 placed on the far side of the targets by
-// BattleEffect_RunDjinniEntrance; the Djinni's picture with its palette; Rime's
-// rune picture mirrored into a 48x48 crystal, Haze's star sheet; one additive
-// blitter, flipped on the player's side.
-// Frame loop (48 frames).
+/// Rime and Haze: the Djinni rises swaying through the canvas over the
+/// party while its sign turns in the air: for Rime a crystal that spins in
+/// two mirrored copies and shrinks, for Haze sixteen stars that bloom and
+/// fade one after another.
+///
+/// Setup: canvas layer 0 placed on the far side of the targets by
+/// BattleEffect_RunDjinniEntrance; the Djinni's picture with its palette;
+/// Rime's rune picture mirrored into a 48x48 crystal, Haze's star sheet; one
+/// additive blitter, flipped on the player's side. Frame loop (48 frames).
 void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   s32 center[3];
   s32 base[3];

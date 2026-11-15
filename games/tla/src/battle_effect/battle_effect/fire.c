@@ -7,17 +7,14 @@
 #include "macros.h"
 
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
-#define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
+#define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
 
 // Embers spray out of the user, two a frame, then home in on the targets.
 
-// Setup: up to 64 embers start at the top of the user's body with a random
-// heading and speed. Frame loop: an ember flies for 48 frames (drawn MAX
-// while young, then ADDITIVE), then accelerates toward its target, held to
-// 60/64 of its speed until frame 85 of its life. Below the ground it lands:
-// it leaves a six-picture flare, its target flashes and the screen shakes
-// for two frames. The camera sways between frames 16 and 80. The variant
-// chooses the number of embers.
+/// Embers burst from the top of the user and home in on the targets, and each
+/// that lands shows an impact flare as its target flinches.
+///
+/// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

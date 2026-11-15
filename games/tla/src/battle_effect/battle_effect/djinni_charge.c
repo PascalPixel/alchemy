@@ -22,18 +22,18 @@ struct StripQuad;
  * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
  * *screen, s32 count) {; not tried: Render_ProjectVertices's bound declaration
  * was not found. */
+/// Render_ProjectVertices as the ability effects see it.
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
                                              struct ProjectedVertex *screen,
                                              s32 count);
 
 // BattleEffect_RunDjinniEntrance
 
-// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
-// the target. For Core it pulls back, then drives in and strikes four times
-// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
-// first frame) swells over the target and bursts; for Cannon it shoots
-// straight in and strikes once, behind a gust of petals.
-
+/// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
+/// the target. For Core it pulls back, then drives in and strikes four times
+/// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
+/// first frame) swells over the target and bursts; for Cannon it shoots
+/// straight in and strikes once, behind a gust of petals.
 void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   u8 *mesh;
   u8 *projected;

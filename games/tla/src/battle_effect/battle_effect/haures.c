@@ -999,11 +999,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The two rings sit at y = -36 and y = -18.
+/// The two rings sit at y = -36 and y = -18.
 #define FIRST_RING_Y -36
 #define RING_SPACING 18
 
-// Each side of the band shows an 8 x 16 column of the texture.
+/// Each side of the band shows an 8 x 16 column of the texture.
 #define COLUMN_WIDTH 8
 #define COLUMN_HEIGHT 16
 
@@ -1015,12 +1015,12 @@ struct MeshTriangle {
   u8 unk0a[2];
 };
 
-// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
-// `segments` vertices of radius 96 around the y axis, and two textured
-// triangles for each side of the band, joining the first ring (texture row 0)
-// to the second (row 15). A triangle whose three vertices are 0 ends the list.
-// Coatlicue builds it with 32 segments into the buffers at 0x02014400 and
-// 0x02014800.
+/// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
+/// `segments` vertices of radius 96 around the y axis, and two textured
+/// triangles for each side of the band, joining the first ring (texture row 0)
+/// to the second (row 15). A triangle whose three vertices are 0 ends the list.
+/// Coatlicue builds it with 32 segments into the buffers at 0x02014400 and
+/// 0x02014800.
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments) {
   s32 ring;

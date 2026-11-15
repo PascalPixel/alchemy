@@ -8,7 +8,7 @@
 
 #define TASK_PASS_FRAME 0xc80
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define CARD (gMapGridCellBuffer + 0x603e)
@@ -37,14 +37,14 @@ struct Model__f18ad40 {
   s32 tail;
 };
 
-// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
-// the user to above the targets' middle for 48 frames, spinning upright and
-// growing, the background scrolling with it as far as it can. Then it shows
-// its picture: sheep jump out for the Sleep Card, butterflies flutter and
-// the screen waves for the Baffle Card, and for the Death and Sword cards the
-// card dissolves into the background's colours while a skeleton reaps the
-// target or a dagger strikes it and breaks into shards. The screen fades in
-// the last eight frames.
+/// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
+/// the user to above the targets' middle for 48 frames, spinning upright and
+/// growing, the background scrolling with it as far as it can. Then it shows
+/// its picture: sheep jump out for the Sleep Card, butterflies flutter and
+/// the screen waves for the Baffle Card, and for the Death and Sword cards the
+/// card dissolves into the background's colours while a skeleton reaps the
+/// target or a dagger strikes it and breaks into shards. The screen fades in
+/// the last eight frames.
 void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

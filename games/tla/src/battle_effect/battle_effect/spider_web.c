@@ -12,6 +12,7 @@
  * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the rest
  * of the object declares it, EffectSprite_Acquire moves: 1 of 46 instructions
  * in tla-ja. */
+/// Animation_ApplyChildArgumentFar as Ulysses's part sees it: returning a word.
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Animation_ApplyChildArgumentFar");
 
@@ -174,12 +175,12 @@ void Palette_MirrorBgColors(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
-// A frame callback of Ulysses (BattleEffect_RunUlysses adds and removes it):
-// places effect object 7 at the last particle's point (x across, y in depth)
-// at a scale of one, moves the particle by its velocity (its depth speed
-// grows for 20 frames, then shrinks, and its sideways speed grows from frame
-// 12), and steps the object's animation through cels 7 to 14, seven frames
-// each.
+/// A frame callback of Ulysses (BattleEffect_RunUlysses adds and removes it):
+/// places effect object 7 at the last particle's point (x across, y in depth)
+/// at a scale of one, moves the particle by its velocity (its depth speed
+/// grows for 20 frames, then shrinks, and its sideways speed grows from frame
+/// 12), and steps the object's animation through cels 7 to 14, seven frames
+/// each.
 void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -210,6 +211,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
+/// Render_DrawModelList as the ability effects see it.
 void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
     "Render_DrawModelList");
 #define Render_DrawModelList Render_DrawModelList__ability_effects
@@ -218,9 +220,9 @@ void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
 
 extern const struct Scale gUlysses_ShipScale;
 
-// Ulysses: the hero's ship sails out of a whirlpool, its crew of six
-// warriors leap at the foe and the ship's broadside lands as a storm of
-// explosions.
+/// Ulysses: the hero's ship sails out of a whirlpool, its crew of six
+/// warriors leap at the foe and the ship's broadside lands as a storm of
+/// explosions.
 void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   u8 *canvas;
   s32 *transition;
@@ -896,6 +898,7 @@ void BattleEffect_RunSpinningBeat(void *object) {
   BattleEffect_RunSwirlSwipe(object, 1);
 }
 
+/// A swirl sweeps across the first target from the user's side.
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -996,12 +999,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// Builds the transparent blitter for one quarter.
+/// Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE,                                 \
                            BLITTER(BLITTER_TRANSPARENT, flags))
 
-// Draws one quarter of the web with the blitter just built.
+/// Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
   ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet, x, y, size, size)
 
@@ -1014,6 +1017,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 #define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_SLOT_RAM_CODE)
 #endif
 
+/// A spider web spreads over the targets in four mirrored quarters.
+///
+/// Abilities: Spider Web.
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint middle;
   void *canvas;

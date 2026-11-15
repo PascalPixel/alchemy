@@ -6,9 +6,9 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-// Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
-// then the sigil's beam strikes and the ground erupts in a ring of
-// shockwaves and debris.
+/// The battle wipes away to a violet sky where Judgment flies forward while
+/// motes gather into it; it bursts in a flash, and the blast falls on the land
+/// below and spreads in rings of light.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 anchor[3];
   struct ScreenPoint pos;

@@ -13,9 +13,11 @@
 #define SPARK_MAX 1024
 #define PILLAR_BASE_Y 104
 
-// Pillars of lightning strike the targets' row one after another, eight
-// frames apart; each flashes the screen, throws a fan of sparks up from its
-// base and shakes the camera, and the sparks bounce on the ground.
+/// Pillars of lightning strike one after another, each with a white flash,
+/// throwing sparks up from the ground and knocking the targets back.
+///
+/// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
+/// Thunderhead.
 void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -175,9 +177,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunNova, BattleEffect_RunSparkGroups, 0)
 /// Abilities: Dynamite, Angry Mine (kind 338).
 DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 
-#define FLASH_POINTS 16 // flash points kept for each group
-#define FLASH_DRAWN 12  // of which the first 12 are drawn
-#define FLASH_FRAMES 18 // six cels of three frames
+#define FLASH_POINTS 16 ///< flash points kept for each group
+#define FLASH_DRAWN 12  ///< of which the first 12 are drawn
+#define FLASH_FRAMES 18 ///< six cels of three frames
 #define GROUND_Y px(108)
 
 #define SHAPE(n) gPlasma_Shapes[args->variant][n]

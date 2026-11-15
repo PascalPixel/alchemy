@@ -18,15 +18,15 @@ struct Model;
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
 
-// Where the quads' texture and the Djinn sit in the sheet.
+/// Where the quads' texture and the Djinn sit in the sheet.
 #define SHEET_TEXTURE 0x2710
 #define SHEET_DJINN 0x65c0
 
-// Sixteen textured quads tumble down over the targets (or, from the first
-// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
-// circles over the canvas and a fan of light lines spreads from it. At
-// frame 56 every target flashes.
-// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
+/// Sixteen textured quads tumble down over the targets (or, from the first
+/// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
+/// circles over the canvas and a fan of light lines spreads from it. At
+/// frame 56 every target flashes.
+/// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
   s32 size[3];
@@ -231,13 +231,11 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
 #define ZAGAN_PARTS 12
 
-// Abilities: Zagan.
-//
-// The screen slides over to a white field and petals blow across it; Zagan
-// (twelve objects) gallops in from the right as the backdrop darkens, rears,
-// and at frame 157 swings its axe across the targets, striking four times
-// while the screen shakes and rings of dust spread. Holding A or B draws
-// only every other frame.
+/// The screen slides over to a white field and petals blow across it; Zagan
+/// (twelve objects) gallops in from the right as the backdrop darkens, rears,
+/// and at frame 157 swings its axe across the targets, striking four times
+/// while the screen shakes and rings of dust spread. Holding A or B draws
+/// only every other frame.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   u8 *battle;
   void *canvas;

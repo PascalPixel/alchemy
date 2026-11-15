@@ -11,25 +11,18 @@
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES (48 * 72)
 #define BURST_PICTURE_BYTES (40 * 80)
-#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) // the stronger variant's
+#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) ///< the stronger variant's
 
 #define SHARDS_FRAMES 64
-#define STREAK_FRAME 6 // the user's fire streak, six frames
+#define STREAK_FRAME 6 ///< the user's fire streak, six frames
 #define HIT_FRAME 8
 #define FLASH_FRAME 14
-#define BURST_FRAME 16 // the burst on the target, until frame 47
+#define BURST_FRAME 16 ///< the burst on the target, until frame 47
 
-// The user lunges, a streak of fire leaves them, and the target bursts into
-// flame, throwing 64 burning shards away from the user.
-//
-// Setup: open the canvas, load the streak, burst and shard pictures, dash
-// the user four frames toward the target, and seed the shards at the target
-// with random speeds (flipped to fly away from the user's side). Each frame:
-// the streak's six pictures at the user from frame 6; the hit at frame 8
-// (the damage shown, the stronger variant's cue, the canvas flooded, the target
-// knocked back); the burst's three pictures (two frames each, then held) on
-// the target from frame 16 to 47; from frame 4 the shards in 3D, their
-// picture shrinking with their life.
+/// The user closes on the first target and fire bursts from it in a shower of
+/// shards.
+///
+/// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

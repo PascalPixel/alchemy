@@ -59,9 +59,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDew, BattleEffect_RunDjinnBeams, 1)
 DEFINE_EFFECT_KIND(BattleEffect_RunSpark, BattleEffect_RunDjinnBeams, 2)
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
-#define PIC_MOTE 0x2710  // the crescent motes, 24 x 24
-#define PIC_DJINN 0x65c0 // the Djinn, 40 x 40
-#define MOTES 8          // per target
+#define PIC_MOTE 0x2710  ///< the crescent motes, 24 x 24
+#define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
+#define MOTES 8          ///< per target
 
 // Member beam (kinds through three wrappers; the mode picks the Djinn:
 // 0 Venus, 1 Mercury, 2 Mars): with a prelude, the Djinn appears, sways and
@@ -298,8 +298,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
 #define RECORD_SHOTS 2
 #define RECORD_FRAMES 3
 
-#define SMOKE_SHEET 0x3e80 // the smoke, after the gold shells
-#define SHARD_SHEET 0x1e00 // the shards, among the gold shells
+#define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
+#define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
 
 // Shell shot (the body of ten kinds; the mode picks the colours and the
 // record above the rest): shots arc from the caster to each target, one or

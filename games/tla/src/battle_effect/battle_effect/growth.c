@@ -14,18 +14,17 @@ void BattleEffect_RunPunji(void *object) {
   BattleEffect_RunGrowingColumns(object, 1);
 }
 
-// The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
+/// The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct Particle *)Ram_MapCellBuffer)
 
 #define COLUMN_COUNT 16
 #define COLUMN_INTERVAL 4
 #define PUFF_COUNT 512
-#define PUFF_LIFE 14 // seven cels, two frames each
+#define PUFF_LIFE 14 ///< seven cels, two frames each
 #define CUE_COLUMN 133
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
-
+/// Vines or green pillars grow one after another, alternately mirrored, each
+/// throwing up dust from its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -264,12 +263,14 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
 #define VINE_COUNT 16
 #define VINE_FRAMES 70
-#define CUE_FRAME 32 // the vines reach the targets
+#define CUE_FRAME 32 ///< the vines reach the targets
 #define CUE_VINES 143
 #define CANVAS_MIDDLE 64
 
-// BattleEffect_RunDjinniEntrance's flags: kind | side << 4 | anchor << 5.
-
+/// Sixteen green vines grow from the middle of the row of targets, 2 frames
+/// apart, and shrink back.
+///
+/// Abilities: Vine.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
@@ -386,6 +387,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 
 #define CUE_THORN 133
 
+/// Thorns burst from the ground one every 8 frames, throwing up dust from
+/// their roots.
+///
+/// Abilities: Thorn, Briar, Nettle.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;

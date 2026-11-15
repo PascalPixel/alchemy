@@ -296,8 +296,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The scythe, in the work's first particle: swing is its velocityZ and timer
-// its variant.
+/// The scythe, in the work's first particle: swing is its velocityZ and timer
+/// its variant.
 struct Scythe {
   s32 x;
   s32 y;
@@ -310,12 +310,12 @@ struct Scythe {
 
 #define LIFE_SHEAR_FRAMES 90
 
-// Abilities: Life Shear.
-//
-// The reaper (a tiled background picture) glides in from the far side and
-// swings its scythe (a two-part model) through the target at frame 50, with
-// a four-blade flash; on the right side everything is mirrored. From frame
-// 62 the reaper drifts off and the scythe falls away.
+/// The reaper (a tiled background picture) glides in from the far side and
+/// swings its scythe (a two-part model) through the target at frame 50, with
+/// a four-blade flash; on the right side everything is mirrored. From frame
+/// 62 the reaper drifts off and the scythe falls away.
+///
+/// Abilities: Life Shear.
 void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -592,8 +592,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
 #define GEYSER_FRAMES 54
 #define GEYSER_DRAW_FRAMES 40
-#define GEYSER_PEAK_FRAME 20 // the result phase starts
-#define DROP_COUNT 512       // drops in the map cell buffer, used in a ring
+#define GEYSER_PEAK_FRAME 20 ///< the result phase starts
+#define DROP_COUNT 512       ///< drops in the map cell buffer, used in a ring
 
 // A texture: log2 of its width and height in the first word, then its
 // pixels.
@@ -620,6 +620,7 @@ struct RenderPrimitive__f1811d4 {
   u8 scrollV;
 };
 
+/// Copies a palette over the background's 256 colours.
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
@@ -842,7 +843,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 /// Abilities: Mystic Call (kind 466).
 DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
-#define STARS_PER_TARGET 64 // each target's slice of the star buffer
+#define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
 #define STAR_TOTAL 384
 
 /// Swarms of stars over the targets. Each target gets a swarm, eight frames
@@ -1165,8 +1166,8 @@ struct SpriteView {
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
 
-// Fills the scanline gradient behind the serpent: dark rows above and below,
-// a ramp shaded by level in between.
+/// Fills the scanline gradient behind the serpent: dark rows above and below,
+/// a ramp shaded by level in between.
 #define FILL_GRADIENT(table, i, level, c)                                      \
   do {                                                                         \
     for (; i != 135; i++) {                                                    \
@@ -1195,7 +1196,7 @@ struct SpriteView {
     }                                                                          \
   } while (0)
 
-// Draws cell n of the stone sheet at offset base, centred on (x, y).
+/// Draws cell n of the stone sheet at offset base, centred on (x, y).
 #define BLIT_CELL(base, n, x, y)                                               \
   do {                                                                         \
     u8 *src_ = work->sheet + (base) + gCoatlicue_Pictures[n];                  \
@@ -1206,8 +1207,8 @@ struct SpriteView {
     blit[0](canvas, src_, x_, (y) - (h_ >> 1), w_, h_);                        \
   } while (0)
 
-// Draws one spark of the falling stone sheet and drops it when it leaves the
-// top of the screen.
+/// Draws one spark of the falling stone sheet and drops it when it leaves the
+/// top of the screen.
 #define DRAW_SPARK(p)                                                          \
   do {                                                                         \
     s32 n_ = (p)->z;                                                           \

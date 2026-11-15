@@ -14,12 +14,12 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
-// a great sword (with four fading after-images, each a dimmer copy of the
-// sheet) swings down from over the caster, striking at frame
-// gHeavyBlow_StrikeFrames[0]. Strong Hit: an axe is thrown, spinning, from the
-// caster to the target. Either way chips of stone fly from the target and
-// bounce on the ground.
+/// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
+/// a great sword (with four fading after-images, each a dimmer copy of the
+/// sheet) swings down from over the caster, striking at frame
+/// gHeavyBlow_StrikeFrames[0]. Strong Hit: an axe is thrown, spinning, from the
+/// caster to the target. Either way chips of stone fly from the target and
+/// bounce on the ground.
 void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -254,7 +254,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
+/// The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
 #define SLIM_COLUMN_OFFSET 0x870
 #define SPARK_OFFSET 0x3060
 
@@ -703,17 +703,19 @@ struct Model;
 
 #define FLAMES 32
 
-// Radiant Fire: eight bursts of fire bloom one after another around the
-// target, each a shaded disc that swells and shrinks under a spinning
-// square of flame, with a white flash of the canvas as the first lands.
-//
-// Setup: canvas layer 0 at half blend; one max blitter; the flame texture
-// (resource 0x0c2) and the orange palette; 32 shaded discs of 2 to 64
-// pixels drawn into the map cell buffer, their offsets kept in the work
-// sheet.
-// Frame loop (66 frames): at frame 0 the bursts are placed at random
-// around the target and the user closes in; from frame 8 burst i lands at
-// frame 16 + 4i and burns for 24 frames.
+/// Radiant Fire: eight bursts of fire bloom one after another around the
+/// target, each a shaded disc that swells and shrinks under a spinning
+/// square of flame, with a white flash of the canvas as the first lands.
+///
+/// Setup: canvas layer 0 at half blend; one max blitter; the flame texture
+/// (resource 0x0c2) and the orange palette; 32 shaded discs of 2 to 64
+/// pixels drawn into the map cell buffer, their offsets kept in the work
+/// sheet.
+/// Frame loop (66 frames): at frame 0 the bursts are placed at random
+/// around the target and the user closes in; from frame 8 burst i lands at
+/// frame 16 + 4i and burns for 24 frames.
+///
+/// Abilities: Chill, Radiant Fire.
 void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   struct ModelTexture texture;
@@ -871,27 +873,29 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The map cell buffer holds 1,024 more particles while an effect runs.
+/// The map cell buffer holds 1,024 more particles while an effect runs.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 #define STREAKS 64
 
-// The splash: six 24x48 pictures in the work sheet after the streak.
+/// The splash: six 24x48 pictures in the work sheet after the streak.
 #define SPLASH_OFFSET 0x3200
 #define SPLASH_SIZE (24 * 48)
 
-// Hurricane: driving rain slants down over the target, each drop bursting
-// into a splash where it lands, while the target is struck eight times; the
-// user rushes in at frame 32. The canvas then hands over to the summon
-// canvas effect in mode 3.
-//
-// Setup: canvas layer 1 at half blend and full width, centred on the
-// target; one additive blitter; the cyan palette; a 4x64 streak drawn into
-// the work sheet as a slanted line, leaning with the wind; the splash
-// pictures after it.
-// Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
-// fall in turn, one more each frame; a streak that falls below line 48
-// starts its splash.
+/// Hurricane: driving rain slants down over the target, each drop bursting
+/// into a splash where it lands, while the target is struck eight times; the
+/// user rushes in at frame 32. The canvas then hands over to the summon
+/// canvas effect in mode 3.
+///
+/// Setup: canvas layer 1 at half blend and full width, centred on the
+/// target; one additive blitter; the cyan palette; a 4x64 streak drawn into
+/// the work sheet as a slanted line, leaning with the wind; the splash
+/// pictures after it.
+/// Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
+/// fall in turn, one more each frame; a streak that falls below line 48
+/// starts its splash.
+///
+/// Abilities: Scorch, Hurricane.
 void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

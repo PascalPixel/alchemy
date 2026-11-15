@@ -15,10 +15,10 @@ struct StripQuad;
 /// The sparks, after the map cells.
 #define BOLT_SPARKS ((struct Particle *)gData_02014000)
 
-// The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
-// light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
-// target, trailed by 40 spinning bolts, and grows; when it arrives the
-// target is hit, and in Thunder Mine 128 sparks scatter and bounce.
+/// The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
+/// light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
+/// target, trailed by 40 spinning bolts, and grows; when it arrives the
+/// target is hit, and in Thunder Mine 128 sparks scatter and bounce.
 void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -296,16 +296,14 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SPARKS ((struct Particle *)Ram_MapCellBuffer) // 512 sparks
+#define SPARKS ((struct Particle *)Ram_MapCellBuffer) ///< 512 sparks
 #define PICTURES (Ram_MapCellBuffer + 0x4000)
 extern const struct Scale gMegaera_UnitScale;
 
-// Abilities: Megaera.
-//
-// Two bolts of lightning fall at frames 0 and 16, each with a burst of
-// sparks; a whirl of flame turns over the field from 64 while smoke rises,
-// and at 108 Megaera (eleven objects) swoops in across the targets in a
-// trail of sparkles. Holding A or B after frame 10 skips to the swoop.
+/// Two bolts of lightning fall at frames 0 and 16, each with a burst of
+/// sparks; a whirl of flame turns over the field from 64 while smoke rises,
+/// and at 108 Megaera (eleven objects) swoops in across the targets in a
+/// trail of sparkles. Holding A or B after frame 10 skips to the swoop.
 void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -658,12 +656,12 @@ struct StripQuad;
 #define VOID_BEAM_FRAMES 88
 #define BEAM_SEGMENTS 10
 
-// Abilities: Void Beam.
-//
-// A hexagon of motes is traced, side by side, around the caster while a
-// ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
-// repeated ten times) shoots from the caster toward the targets' side,
-// fading out from frame 80 with the blend.
+/// A hexagon of motes is traced, side by side, around the caster while a
+/// ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
+/// repeated ten times) shoots from the caster toward the targets' side,
+/// fading out from frame 80 with the blend.
+///
+/// Abilities: Void Beam.
 void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

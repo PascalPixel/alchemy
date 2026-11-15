@@ -10,12 +10,16 @@
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// The shards live in the map cell buffer, 21 for each boulder.
+/// The shards live in the map cell buffer, 21 for each boulder.
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 #define SHARDS_PER_ROCK 21
-// A boulder shatters this many frames after it starts to fall.
+/// A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
+/// Boulders drop along the row of targets, centred on it, and shatter into
+/// tumbling shards, hitting every target as each lands.
+///
+/// Abilities: Spire, Clay Spire, Stone Spire.
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -7,10 +7,10 @@
 
 // Battle effect kind 1, the quake: rock pillars rise under the targets.
 
-#define PILLAR_W 40        // pixels
-#define ROCK_OFFSET 0x1e00 // the rock picture in the sheet, after the band
+#define PILLAR_W 40        ///< pixels
+#define ROCK_OFFSET 0x1e00 ///< the rock picture in the sheet, after the band
 
-// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
+/// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
 #define BG_DOT(x, y)                                                           \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 

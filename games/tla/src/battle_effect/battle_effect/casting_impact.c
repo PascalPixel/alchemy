@@ -8,7 +8,7 @@
 #include "sounds.h"
 #include "macros.h"
 
-// Steps the 64 background colours one shade toward the resource's palette.
+/// Steps background colours 0 to 63 one level towards a palette resource.
 void BattleEffect_StepPaletteToResource(s32 resource) {
   u16 dst[64];
   u16 *col = (u16 *)BG_PLTT;
@@ -205,6 +205,8 @@ enum CastingImpact {
   CASTING_IMPACT_LAST_DJINNI = 37
 };
 
+/// Gathers sparks around the caster, launches the Djinni and draws the
+/// impact on the first target.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                    s32 kind) {
   u8 *buffer;

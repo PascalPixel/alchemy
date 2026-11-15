@@ -43,7 +43,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 
 // The Mercury Djinn's flames (effect kind 281).
 
-// The dots live in the map cell buffer: 32 for each of the five flames.
+/// The dots live in the map cell buffer: 32 for each of the five flames.
 #define DOTS ((struct Particle *)Ram_MapCellBuffer)
 #define DOTS_PER_FLAME 32
 #define FLAME_COUNT 5
@@ -190,6 +190,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
+/// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
+/// flameballs fall from the top right onto the targets, 4 frames apart; each
+/// bursts into 32 motes and hits every target.
+///
+/// Abilities: Jupiter.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -321,12 +326,17 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   Decompress_TaggedLz(res, dst);
 }
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 
+/// The Venus Djinni drops in from above the targets, swaying and trailing
+/// yellow, while ten columns of yellow fire shoot up from the ground beneath
+/// them one after another, each bursting into motes and hitting every target.
+///
+/// Abilities: Venus.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -445,11 +455,16 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The sparks live in the map cell buffer: sixteen under each of nine puffs.
+/// The sparks live in the map cell buffer: sixteen under each of nine puffs.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
 
+/// A fireball blooms high over the targets and burns out, the Mars Djinni
+/// appears where it was and dives onto them, nine flames erupt in a row along
+/// the ground beneath them and embers stream up.
+///
+/// Abilities: Mars.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

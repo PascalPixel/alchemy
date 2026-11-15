@@ -95,18 +95,17 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-#define FLARE_SHEET 0x1000 // the flares, after the rune picture
-#define DJINN_SHEET 0x2000 // the Jupiter Djinn, after the flares
+#define FLARE_SHEET 0x1000 ///< the flares, after the rune picture
+#define DJINN_SHEET 0x2000 ///< the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40
 
 #define CORNERS 3
-#define EDGE_STEPS 24 // flares drawn along each edge
+#define EDGE_STEPS 24 ///< flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as
-// BattleEffect_RunUnusedTriangleStrike, a triangle of flares spins down onto
-// the target and leaves the rune picture where it lands; when the effect has a
-// prelude, the Jupiter Djinn also circles above its place for the first frames
-// and rises away after frame 32.
+/// A triangle of light spins and shrinks onto the first target, changing colour
+/// and leaving a fading trail, then a rune stands on the target.
+///
+/// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 origin[3];
   s32 originSize[3];
@@ -260,10 +259,11 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Triangle strike (kind 67): a triangle of flares spins down onto the
-// target, shrinking, for 64 frames; then the rune picture is stamped in two
-// halves where it landed. The caster approaches the target at frame 46, the
-// palette pulses throughout and the trail fades a step every 16 frames.
+/// Unused: no row of gAbilityBattleEffects in either game names its kind, and
+/// the handler table is reached with no other kind (BattleEffect_RunFromTable),
+/// so the player never sees it. Its frame loop is BattleEffect_RunBind's,
+/// without the Djinni prelude, and on frame 46 it starts the user's approach to
+/// the first target.
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   s32 vector[3];

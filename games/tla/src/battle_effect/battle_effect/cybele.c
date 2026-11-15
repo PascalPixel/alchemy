@@ -37,6 +37,7 @@ struct DescriptorEntry {
 
 extern struct DescriptorEntry gData_080eff28[];
 
+/// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
@@ -52,8 +53,9 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #include "battle_effect_work.h"
 #include "graphics/resource.h"
 
-#define FORMATION_THORN_VINES 645 // eight objects
+#define FORMATION_THORN_VINES 645 ///< eight objects
 
+/// Runs the impact burst at (x, y) in a formation.
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
@@ -539,14 +541,14 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
 #include "bg_scroll.h"
 
-#define FORMATION_ICE_BLOCKS 643 // nine objects in a 3x3 block
+#define FORMATION_ICE_BLOCKS 643 ///< nine objects in a 3x3 block
 
-// Rocks, spray and puffs live in the map cell buffer; the spray's trails
-// follow the first 128 particles.
+/// Rocks, spray and puffs live in the map cell buffer; the spray's trails
+/// follow the first 128 particles.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 0xe00))
 
-// An object's sprite attributes, as far as this scene sets them.
+/// An object's sprite attributes, as far as this scene sets them.
 struct SpriteAttributes {
   u8 unk00[9];
   u8 tileHi : 2;

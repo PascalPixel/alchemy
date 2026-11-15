@@ -34,14 +34,16 @@ struct Model;
 /* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
-// Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
-// and burst from it toward the target (16-110); eight flat flashes turn about
-// the caster; sixteen textured shards fly from the target (54-101), each
-// leaving a fading splash; two rings swell at the caster (0-15); every four
-// frames from 54 the target is struck, and the last strike ends the phase.
-//
-// The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
-// shard's roll); the map cell buffer is cleared but not drawn.
+/// Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
+/// and burst from it toward the target (16-110); eight flat flashes turn about
+/// the caster; sixteen textured shards fly from the target (54-101), each
+/// leaving a fading splash; two rings swell at the caster (0-15); every four
+/// frames from 54 the target is struck, and the last strike ends the phase.
+///
+/// The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
+/// shard's roll); the map cell buffer is cleared but not drawn.
+///
+/// Abilities: Liquifier.
 void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   struct ScreenPoint from;
   struct ScreenPoint to;
@@ -354,6 +356,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
+/// Plays the canvas burst with a small ball for kinds below 200 and a large one
+/// from 200 on.
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
   if (args->kind > 199)
     BattleEffect_RunCanvasBurst(args, 2);
@@ -363,6 +367,10 @@ void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
 
 DEFINE_EFFECT_KIND(BattleEffect_RunShred, BattleEffect_RunCanvasBurst, 0)
 
+/// From the user's action pose, a glowing ball flies to the targets' midpoint
+/// and bursts.
+///
+/// Abilities: Mine Ball.
 void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -379,10 +387,9 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
 
 #define ball (&work->particles[63])
 
-// Draws a disc of the given size from the disc sheet in the map cell buffer
-// as four quarter blits about (x, y), with the second blitter loaded for
-// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode). The sheet
-// offset comes first: the sum only matches in integer form, cells on the right.
+/// Draws a disc of the given size from the disc sheet in the map cell buffer
+/// as four quarter blits about (x, y), with the second blitter loaded for
+/// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -407,21 +414,21 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
 
-// The canvas burst family (its wrappers are above). A glowing ball (or
-// in mode 0 a growing glow at the target, with sixteen rays that close on
-// it) hits the target; at the hit the targets flash and recoil, sixteen
-// flames rise and 47 sparks scatter. Modes:
-//   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
-//      hit at frame 54, then the canvas is cleared and
-//      BattleEffect_RunImpair runs on;
-//   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
-//      half-speed sparks, hit at 32, no flames;
-//   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
-//      32;
-//   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
-//   the
-//      midpoint of the targets, its own palette, hit at 24.
-// Modes 1 and 2 close by restoring the battle display themselves.
+/// The canvas burst family (its wrappers are above). A glowing ball (or
+/// in mode 0 a growing glow at the target, with sixteen rays that close on
+/// it) hits the target; at the hit the targets flash and recoil, sixteen
+/// flames rise and 47 sparks scatter. Modes:
+///   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
+///      hit at frame 54, then the canvas is cleared and
+///      BattleEffect_RunImpair runs on;
+///   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
+///      half-speed sparks, hit at 32, no flames;
+///   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
+///      32;
+///   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
+///   the
+///      midpoint of the targets, its own palette, hit at 24.
+/// Modes 1 and 2 close by restoring the battle display themselves.
 void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint from;
   struct ScreenPoint to;

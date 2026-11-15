@@ -27,8 +27,8 @@ struct MeshVertex {
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gVramCacheEntries[((struct SpriteObject *)(obj))->slot].offset)
 
-// Catastrophe: a black moon rises over a burning city, its towers crack and
-// fall in fire, the sky tears open, and a meteor of shadow crushes the foes.
+/// Catastrophe: a black moon rises over a burning city, its towers crack and
+/// fall in fire, the sky tears open, and a meteor of shadow crushes the foes.
 void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;

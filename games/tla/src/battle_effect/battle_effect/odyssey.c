@@ -47,13 +47,15 @@ struct RenderModel__f190b74 {
 
 void Render_DrawModelList(struct Model *model);
 
-// Effect kind 125, 114 frames. The screen turns to a scrolling red haze
-// with only the caster and the target on it (frame 2); two textured flashes
-// rise from the caster, two claws strike the target from above and below
-// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86
-// a great slash crosses the screen and at 90 the target is struck and 128
-// flat shards scatter, tumbling; from frame 100 everything fades to white,
-// and at the end the battle backdrop returns.
+/// Effect kind 125, 114 frames. The screen turns to a scrolling red haze
+/// with only the caster and the target on it (frame 2); two textured flashes
+/// rise from the caster, two claws strike the target from above and below
+/// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86
+/// a great slash crosses the screen and at 90 the target is struck and 128
+/// flat shards scatter, tumbling; from frame 100 everything fades to white,
+/// and at the end the battle backdrop returns.
+///
+/// Abilities: Odyssey.
 void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct ScreenPoint to;
   struct ScreenPoint from;
@@ -442,13 +444,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The swirl runs until A is pressed, at most this many frames.
+/// The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 
+/// Copies the swirl's colours into background palette entries 96 on.
 static inline s32 Swirl_CopyPalette(const void *source) {
   return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
 }
 
+/// Draws a size by size square of the swirl at x along the top of the buffer.
 static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
                              const void *canvas, s32 x, s32 size) {
   return draw(buffer, canvas, x, 0, size, size);

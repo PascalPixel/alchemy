@@ -54,7 +54,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, 10);
 }
 
-// Build a blitter in its heap slot and fetch its entry.
+/// Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags, mode);            \
   out = (DrawRectangle)Ram_HeapSlots->ramCode
@@ -62,6 +62,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
 #define FLARES ((struct Particle *)Ram_MapCellBuffer)
 #define FLARES_PER_MEMBER 64
 
+/// The IWRAM word copy, fetched as a routine.
 static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline. */
   return Iwram_CopyWordsEntry;
@@ -71,12 +72,8 @@ static inline CopyWordsFn CopyWordsRoutine(void) {
 // they close in; at the center they burst, and the mode's picture plays
 // there (a dagger, a shield, a streak or a wisp).
 
-// Setup: an optional Djinni appears first (the prelude); the canvas is
-// 1.25 times as wide, centered on a lone target or set by the side. Frame
-// loop: the Djinni sways and rises; each target's 32 lights come out one a
-// frame and close in two pixels a frame; from frame 52 of a target its
-// burst plays, six pictures four frames apart, and from frame 80 the
-// mode's picture.
+/// Flares of light swirl in to the centre of each target in turn and burst, and
+/// the mode's picture plays over it.
 void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -465,8 +462,8 @@ void BattleEffect_RunWeaken(void *action) {
   BattleEffect_RunStatReduction(action, STAT_REDUCTION_WEAKEN);
 }
 
-#define RAMP_IMAGE 0x2580 // the shard picture, then seven darker copies
-#define RAMP_SIZE 696     // one copy
+#define RAMP_IMAGE 0x2580 ///< the shard picture, then seven darker copies
+#define RAMP_SIZE 696     ///< one copy
 
 /// A dagger (STAT_REDUCTION_DULL and _UNUSED) or a shield (the others) appears
 /// over each target in turn, four frames apart, and breaks into shards that fly

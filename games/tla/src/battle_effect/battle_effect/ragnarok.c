@@ -7,12 +7,12 @@
 
 #undef RESULTS_FRAME
 
-// The sheet holds the blade (64 x 128) and then the flash pictures.
+/// The sheet holds the blade (64 x 128) and then the flash pictures.
 #define FLASH_SHEET (64 * 128)
 
 // The map cell buffer holds each column's sparks.
 
-// The sparks, in the map cell buffer.
+/// The sparks, in the map cell buffer.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_COLUMN 340
 #define SPARKS_DRAWN 256
@@ -20,23 +20,16 @@
 #define FLASHES_DRAWN 12
 
 #define BLADE_FRAMES 80
-#define BLADE_SWING_FRAMES 10 // the blade comes down
-#define BLADE_HOLD_FRAME 20   // then holds, then creeps on
+#define BLADE_SWING_FRAMES 10 ///< the blade comes down
+#define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
-#define FIRST_STRIKE_FRAME 16 // each column strikes 8 frames after the last
+#define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
 #define RESULTS_FRAME 40
 
-// A blade of fire swings down over the targets and strikes twice, each
-// strike a flash and a fountain of sparks that bounce on the ground.
-//
-// Setup: open the canvas on BG1, pose the user, place the strike columns
-// under the first target, load the blade, flash and spark pictures, and
-// prepare each column's 16 flashes (a ring) and 340 sparks. Each frame: the
-// blade comes down over 10 frames, holds until frame 20, then creeps on and is
-// gone after frame 39; from frame 16 the palette steps toward the blast
-// colours; each column strikes 8 frames after the last (shake, its flash, its
-// targets flashed) and 6 frames later throws its sparks and knocks the
-// targets back.
+/// A huge flaming blade swings down over the targets and light bursts over
+/// them twice.
+///
+/// Abilities: Ragnarok.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -268,7 +261,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 #define FLASH_SHEET (221 << 4)
 #define SWORD_SHEET 20000
 
-// The map cell buffer: 684 motes of dust, then the sword's sparks.
+/// The map cell buffer: 684 motes of dust, then the sword's sparks.
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define SPARK                                                                  \
   ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
@@ -639,6 +632,7 @@ extern const struct Scale gJudgment_UnitScale;
  * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
  * the object has, BattleEffect_RunJudgment moves: 684 of 2634 instructions in
  * tla-ja. */
+/// Fills words through the IWRAM fill, in a once-only block.
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {
     Iwram_FillWordsEntry(dst, size, value);
@@ -648,7 +642,7 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
   ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, sheet, x, y, w, h);         \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
-// The same draw, the routine read through a pointer to its slot.
+/// The same draw, the routine read through a pointer to its slot.
 #define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
@@ -683,6 +677,7 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
     IRQ_UNLOCK(saved);                                                         \
   }
 
+/// Hands back the buffer it is given.
 static inline u8 *PassBuffer(u8 *buffer) {
   /* FAKEMATCH(wrapper): the second queue's source base passed through this
    * inline. */

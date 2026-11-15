@@ -108,6 +108,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode19,
 DEFINE_EFFECT_KIND(BattleEffect_RunGravelBlow,
                    BattleEffect_RunProjectileVolleyB, 20)
 
+/// From the user's action pose, the second projectile volley's shots fly at
+/// each target.
+///
+/// Abilities: Wheeze, Aging Gas.
 void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -118,6 +122,10 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the second projectile volley's shots fly at
+/// each target.
+///
+/// Abilities: Gel, Fire Dance.
 void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -144,13 +152,13 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 // A volley of shots flies from the user at the targets, one launched each
 // frame toward the next target.
 
-// Setup: an optional Djinni appears behind the user (the prelude); the
-// mode prepares its picture and palette and moves the launch point. Frame
-// loop: a shot leaves the user each frame for 48 frames (16 in mode 10),
-// aimed near the next target; every live shot is drawn and moved and goes
-// out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
-// are hit four frames apart and recoil; the blend fades out over the last
-// eight frames.
+/// Setup: an optional Djinni appears behind the user (the prelude); the
+/// mode prepares its picture and palette and moves the launch point. Frame
+/// loop: a shot leaves the user each frame for 48 frames (16 in mode 10),
+/// aimed near the next target; every live shot is drawn and moved and goes
+/// out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
+/// are hit four frames apart and recoil; the blend fades out over the last
+/// eight frames.
 void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
                                        u32 mode) {
   void *canvas;

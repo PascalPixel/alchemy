@@ -12,10 +12,11 @@
 
 #define PILLAR_FRAMES 96
 
-// One, two or four pillars of fire rise in front of the targets, one after
-// another; each burns for the rest of the first 64 frames, scrolling its
-// flames upward, throws a burst of sparks when it starts and a few more
-// every frame after its sixteenth, and strikes every target as it starts.
+/// One, two or four columns of fire rise among the targets, each erupting in a
+/// fountain of sparks and knocking the targets back.
+///
+/// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
+/// Storm.
 void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

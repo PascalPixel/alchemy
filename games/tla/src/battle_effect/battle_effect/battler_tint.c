@@ -19,6 +19,7 @@ extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
  * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
  * Iwram_FillWords(destination, size, value); }; not tried: FillWords_'s
  * definition holds a FAKEMATCH tag. */
+/// Fills words through the IWRAM fill, in a once-only block.
 static __inline__ void FillWords___f14cca8(void *destination, s32 size,
                                            u32 value) {
   /* FAKEMATCH(dead): the call in a once-only block. */
@@ -27,6 +28,7 @@ static __inline__ void FillWords___f14cca8(void *destination, s32 size,
   } while (0);
 }
 
+/// Shows the battle background behind a cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleCanvas;
@@ -53,6 +55,7 @@ struct FxGroup {
   struct FxGroupEntry *entries[4];
 };
 
+/// How many sprites an effect group holds.
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
 /// Updates every effect group of one unit's battle object: its palette, its

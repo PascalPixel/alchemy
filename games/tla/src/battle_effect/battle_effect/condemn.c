@@ -9,8 +9,8 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-// The seven panels of the counter picture: the first two in the work sheet,
-// the rest in the map buffer.
+/// The seven panels of the counter picture: the first two in the work sheet,
+/// the rest in the map buffer.
 #define PANEL_B 0x15d2
 #define PANEL_C 0x3081
 #define PANEL_D 0x0000
@@ -18,10 +18,11 @@
 #define PANEL_F 0x4b00
 #define PANEL_G 0x58d2
 
-// Counter reveal (kind 40): a shimmering image circles in, fades out and in
-// again twice as it closes on the target, then splits into its panels one
-// after another with a white flash at frame 72, when the target is thrown
-// and the screen shakes. The background waves while the image fades.
+/// A shimmering image circles in, fading out and in as it closes on the first
+/// target, then splits into its panels with a white flash, and the target is
+/// thrown back while the screen shakes.
+///
+/// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

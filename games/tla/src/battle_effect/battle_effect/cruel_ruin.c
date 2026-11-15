@@ -34,22 +34,17 @@ union BattleBackgroundId__f13eb70 {
 #define BACKGROUND(battle)                                                     \
   (((union BattleBackgroundId__f13eb70 *)&(battle)->background)->id)
 
-// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
-// the map cell buffer.
+/// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
+/// the map cell buffer.
 #define PLOT(x, y)                                                             \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
 
 // The target's picture shatters, for the scenes.
 
-// A grey circle spreads from (96, 60) over the battle background, 32 pixels
-// of radius a frame for four frames, while the picture in the canvas breaks
-// into 33 pieces that fly outward and fall. Colours 6 to 13 start white and
-// step back to the battle background's own colours from frame 8; colour 1
-// brightens from black to white. At frame 51 a flash sheet replaces the
-// pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
-// frames. At the end the background and the display are put back.
-
+/// The screen turns white and the picture breaks into 33 pieces that fly apart
+/// and fall, while a grey disc grows over it and the battle background's
+/// colours return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -387,19 +382,13 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 // sparks' four blitters are loaded through BattleEffect_BuildBlitter directly,
 // with all five arguments.
 
-// The rising sparkles live in the map cell buffer.
+/// The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct Particle *)Ram_MapCellBuffer)
 
 // Light gathering on the user and bursting, for the scenes.
 
-// For the first 15 frames four sparks flare at the user's corners, each
-// mirrored to face the middle; 64 motes spiral in from a ring around the
-// user, shrinking as they come. At frame 26 the first target flashes with a
-// sound, and from frame 28 to 48 a 48x48 burst plays out over seven
-// pictures. effect->kind picks the colours (yellow, ice, red or violet). The
-// last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
-// never drawn.
-
+/// Sparks in an element's colours flare at four corners around a unit and motes
+/// spiral in, then a burst of light plays over it.
 void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   struct ScreenPoint ground;
   struct BattleEffectWork *work;
@@ -625,9 +614,8 @@ void BattleEffect_DimBackgroundStep(void) {
 // The battle background's id.
 #define BACKGROUND(battle) ((battle)->background)
 
-// Raises the light-streak backdrop in colour set kind (yellow, crystal,
-// ember, violet or dust).
-
+/// Starts the element streaks, which then draw by themselves while the battle
+/// runs on.
 void BattleEffect_StartElementStreaks(s32 kind) {
   struct StreakSceneWork *work;
   void *canvas;
@@ -731,9 +719,9 @@ struct Model;
 
 // Forwarded so that a constant size reaches the call's register at each call.
 
-// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
-// rains ruin in six blasts while the ground splits, then a black sphere
-// bursts over the foes.
+/// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
+/// rains ruin in six blasts while the ground splits, then a black sphere
+/// bursts over the foes.
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   s32 place[4];

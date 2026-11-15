@@ -13,12 +13,12 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// A second, larger particle table, always reached at its fixed address.
+/// A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
-// The user's figure: a 20 x 40 cell drawn over the canvas.
+/// The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
-// Loads a sheet's colours into the background palette.
+/// Loads a sheet's colours into the background palette.
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
     void *palette = Resource_GetTableEntry((s32)&(resource));                  \
@@ -26,8 +26,8 @@ struct StripQuad;
                                                                                \
     copy((void *)BG_PLTT, palette, 128);                                       \
   }
-// Sets the transform for one of modes 11 and 14's spinning particles: at its
-// position, half as wide (the canvas holds every other column), turned by z.
+/// Sets the transform for one of modes 11 and 14's spinning particles: at its
+/// position, half as wide (the canvas holds every other column), turned by z.
 #define PLACE_PARTICLE(p)                                                      \
   do {                                                                         \
     Transform_Reset();                                                         \
@@ -35,8 +35,8 @@ struct StripQuad;
     SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);                 \
     Transform_ApplyRoll((p)->z);                                               \
   } while (0)
-// DEAD: each test reads the count twice and drops the first read; both loads
-// are in the ROM.
+/// DEAD: each test reads the count twice and drops the first read; both loads
+/// are in the ROM.
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)

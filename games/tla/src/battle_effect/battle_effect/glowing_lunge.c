@@ -8,11 +8,11 @@
 struct Model;
 
 #define LUNGE_FRAMES 60
-#define LUNGE_STREAK_FRAMES 15 // the streak follows the caster
-#define LUNGE_HIT_FRAME 8      // the caster reaches the target
-#define LUNGE_FLASH_FRAMES 12  // the flash at the target grows and fades
+#define LUNGE_STREAK_FRAMES 15 ///< the streak follows the caster
+#define LUNGE_HIT_FRAME 8      ///< the caster reaches the target
+#define LUNGE_FLASH_FRAMES 12  ///< the flash at the target grows and fades
 #define SPARK_COUNT 64
-#define BURST_COUNT 16 // mode 5's flame bursts
+#define BURST_COUNT 16 ///< mode 5's flame bursts
 
 // A texture: log2 of its width and height in the first word, then its
 // pixels.
@@ -44,13 +44,8 @@ struct RenderPrimitive__f17e0c0 {
   s32 brightness;
 };
 
-// A lunge. The caster runs 80 percent of the way to the target in ten
-// frames behind a glowing streak (a 32x32 flare and its reflection); on
-// frame 8 it strikes: the target flashes and is knocked back, a 128x128
-// flash stretched four times taller grows over it and fades in twelve
-// frames, and 64 sparks fly out of it to the caster's side and burn down.
-// Mode 5 adds sixteen rising flame bursts. The mode also picks the palette:
-// fire pillar, ice block, pink burst, blast (modes 3 and 5) or orange.
+/// The user rushes at the first target; a ring flares where it hits and sparks
+/// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct Texture__f17e0c0 texture;
   DrawRectangle draw[2];

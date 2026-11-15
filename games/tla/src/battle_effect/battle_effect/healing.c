@@ -24,6 +24,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunSpring, BattleEffect_RunHealingMotes, 8)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunBreath, BattleEffect_RunHealingMotes, 9)
 
+/// Sparkles twinkle around each target, four more a frame, and go out one by
+/// one instead of closing in.
+///
+/// Abilities: Cure Poison, Restore.
 void BattleEffect_RunCurePoison(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunHealingMotes(args, 3);
@@ -47,6 +51,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAura, BattleEffect_RunHealingMotes, 11)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunEddy, BattleEffect_RunHealingMotes, 12)
 
+/// Motes of light scattered around each target swirl in towards it.
+///
+/// Abilities: Reverse Star.
 void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
   args->prelude = 0;
   args->variant = 2;
@@ -55,21 +62,16 @@ void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
 
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_MEMBER 64
-#define BEAM_SHEET 0x800    // the blue beam as unpacked, two bytes a pixel
-#define BEAM_BYTES 0x2000   // the beam packed to a byte a pixel
-#define DJINNI_SHEET 0x1000 // the Djinni picture
+#define BEAM_SHEET 0x800    ///< the blue beam as unpacked, two bytes a pixel
+#define BEAM_BYTES 0x2000   ///< the beam packed to a byte a pixel
+#define DJINNI_SHEET 0x1000 ///< the Djinni picture
 
 // Motes of light gather around each target in turn, eight frames apart,
 // turning as they close in on its middle; a healing chime sounds as they
 // gather and the target glows.
 
-// Setup: an optional Djinni appears first (the prelude); the mode chooses
-// the canvas scale, the palette, the Djinni and how the 512 motes are
-// scattered. Frame loop: the Djinni sways and, after frame 32, rises two
-// pixels a frame; each target's motes come out four a frame around a point
-// 40 pixels above it, turn about it by the mode's axes, and close in two
-// pixels a frame (modes 3-5 let them fade instead, mode 7 throws them).
-// The variant chooses 32, 64 or 128 motes a target.
+/// Motes of light scattered around each target swirl in towards it, one target
+/// after another.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

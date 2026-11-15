@@ -7,14 +7,10 @@
 #include "sounds.h"
 #include "macros.h"
 
-// Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
-// dragon's head flies the path from frame 18, trailing fading copies of
-// itself, while the camera turns; from frame 78 it dives onto the target.
-// The puffs burst at frame 50 and the target flashes; at frame 83 the head
-// strikes, the target reels, and 56 embers fly from it: sparks, then flashes.
-// Variant 1, ⚓️'s own, loads orange colours, throws 128 sparks up from the
-// user's side at the start, sheds four sparks a frame from the head and
-// throws 128 more from the target with the embers.
+/// A flame leaves the user along a stored path with a fading trail behind it,
+/// strikes the first target and bursts into embers and flashes.
+///
+/// Abilities: Dragon Cloud, Epicenter.
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   struct Point2D trail[20];
   struct ScreenPoint target;

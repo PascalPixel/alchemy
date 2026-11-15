@@ -10,10 +10,8 @@
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
 
-// Setup: 256 stars are scattered up to 127 pixels each way. Frame loop
-// (160 frames): four stars a frame join, each turning about one of four
-// axes as fast as its number, sized by depth; thirty frames after joining
-// a star accelerates toward the center by 1/256 of its distance a frame.
+/// Swirling stars: stars spin about a point above the field, each on its own
+/// axis, then are drawn back towards it.
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -105,14 +103,12 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
+#define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
 
 // Bursts of smoke rise from each target in turn, eight frames apart.
 
-// Setup: 64 puffs, six a target, each but the sixth thrown out at a random
-// heading. Frame loop (96 frames): for 40 frames from its start a
-// target's puffs rise 40 pixels above it through six 24x48 pictures; the
-// sixth, drawn ADDITIVE, is the burst itself and falls faster.
+/// Target bursts: on each target in turn a burst flares while puffs of smoke
+/// scatter around it.
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -210,7 +206,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #include "graphics/vram_tab.h"
 
-// The second blitter slot read as what it holds, a drawing routine.
+/// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
      u8 before[188];                                                           \
@@ -218,7 +214,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-// A sprite object as EffectSprite_CreateWithTiles returns it.
+/// A sprite object as EffectSprite_CreateWithTiles returns it.
 struct SpriteObject {
   u8 unk00[9];
   u8 tileHigh : 2;

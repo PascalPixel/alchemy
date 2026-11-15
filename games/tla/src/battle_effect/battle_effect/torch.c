@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-// The disc: a 128 x 128 picture of each pixel's distance from the centre,
-// which the 63-colour ramp turns into rings.
+/// The disc: a 128 x 128 picture of each pixel's distance from the centre,
+/// which the 63-colour ramp turns into rings.
 #define DISC_SIZE 128
 #define DISC_RINGS 63
 

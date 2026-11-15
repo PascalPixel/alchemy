@@ -25,13 +25,15 @@ struct Model;
 
 // Forwarded so that a constant size reaches the call's register at each call.
 
-// Eclipse: the battlefield scrolls up, thirty-two objects (31 with
-// Summon_GoldenDragonTiles, 1 with Summon_GoldenDragonHeadTiles) rise over
-// the foes, a ring flares and collapses, then a beam strikes and a sphere
-// bursts.
-// XXX: what the player sees in each stage; a tbs-en-style render of the
-// effect would settle it.
+/// Eclipse: the battlefield scrolls up, thirty-two objects (31 with
+/// Summon_GoldenDragonTiles, 1 with Summon_GoldenDragonHeadTiles) rise over
+/// the foes, a ring flares and collapses, then a beam strikes and a sphere
+/// bursts.
+///
+/// Abilities: Eclipse.
 void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
+  // XXX: what the player sees in each stage; a render of the summon would
+  // settle it.
   u8 *canvas;
   struct BattleEffectWork *work;
   // Unused: blit[1] gives the stack frame its 4 bytes.
@@ -736,6 +738,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 /// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
 void BattleEffect_ReservedNoOpA(void) {}
 
+/// Does nothing; nothing calls it.
 void BattleEffect_ReservedNoOpB(void) {}
 
 struct Model;
@@ -1183,6 +1186,8 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   }
 }
 
+/// Writes BG2's map in screen block 31 for the canvas: the rows above and below
+/// it blank, and the canvas's tiles numbered across between them.
 void BattleEffect_BuildCanvasTilemap(void) {
   u32 *map = (u32 *)BG_SCREEN_BLOCK(31);
   u32 tiles;
@@ -1306,6 +1311,8 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (i != 8);
 }
 
+/// Shows the canvas on BG2 at half width across the whole screen, blended over
+/// the battle, inside window 0.
 void BattleEffect_SetupCanvasWindows(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
@@ -1474,6 +1481,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   wait(1);
 }
 
+/// Opens the canvas layer with the canvas repeated across a wrapping map.
 void BattleEffect_StartTiledCanvas(s32 bg_control) {
   s32 row;
   s32 col;
@@ -1498,6 +1506,8 @@ void BattleEffect_StartTiledCanvas(s32 bg_control) {
   }
 }
 
+/// Opens the canvas layer with the canvas repeated across a wrapping map, every
+/// tile numbered in order.
 void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
   s32 row;
   s32 col;
@@ -1585,6 +1595,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   wait(1);
 }
 
+/// Shows the canvas on BG1 instead of BG2, at its own size.
 void BattleEffect_SetupCanvasTileMap(void) {
   void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleWork *screen = Ram_HeapSlots->battleWork;

@@ -37,7 +37,7 @@ struct RenderModel__f178710 {
 
 #define DRAGON_SEGMENTS 33
 
-// A strip's vertex, as Render_TransformVertices reads it.
+/// A strip's vertex, as Render_TransformVertices reads it.
 struct StripVertex {
   s8 x;
   s8 y;
@@ -51,12 +51,12 @@ struct StripVertex {
 extern struct StripVertex
     gMapCellBuffer__f178710[2][66] __asm__("gMapGridCellBuffer");
 
-// Abilities: Rising Dragon.
-//
-// One dragon (two at a higher level: effect->variant + 1) of smoke rises
-// from the caster and arcs onto the target, each a scrolling textured strip
-// of 33 segments with a clawed head; each strikes ten frames after the
-// last, scattering 32 sparks.
+/// One dragon (two at a higher level: effect->variant + 1) of smoke rises
+/// from the caster and arcs onto the target, each a scrolling textured strip
+/// of 33 segments with a clawed head; each strikes ten frames after the
+/// last, scattering 32 sparks.
+///
+/// Abilities: Echo, Rising Dragon.
 void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -330,24 +330,26 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 }
 
 #define FIGURE_FRAMES 108
-#define FIGURE_SWING_FRAME 30 // the first blow
-#define FIGURE_HIT_FRAME 80   // the second, which starts the result phase
+#define FIGURE_SWING_FRAME 30 ///< the first blow
+#define FIGURE_HIT_FRAME 80   ///< the second, which starts the result phase
 
 // The parts of the figure in Resource_Data0DC, unpacked into the map cells.
-#define FIGURE_BODY 0             // 96x83
-#define FIGURE_ARM_LOWERED 0x1f20 // 42x35
-#define FIGURE_ARM_RAISED 0x24de  // 48x51
-#define FIGURE_SWING 0x2e6e       // four pictures, gHeartbreak_SwingPictures
+#define FIGURE_BODY 0             ///< 96x83
+#define FIGURE_ARM_LOWERED 0x1f20 ///< 42x35
+#define FIGURE_ARM_RAISED 0x24de  ///< 48x51
+#define FIGURE_SWING 0x2e6e       ///< four pictures, gHeartbreak_SwingPictures
 #define FIGURE_FIST                                                            \
   0x4e9d // 32x29, then eight pictures, gHeartbreak_FistPictures
 
-// A great figure strikes. It sweeps down on the target from above the far
-// side, swaying on a small circle and fading in through the blend; its arm
-// is raised, and at frame 30 it swings down through four cels and the
-// screen flashes white; from frame 40 its fist falls through eight cels,
-// and at frame 80 the blow lands and the result phase starts. From frame
-// 92 it fades out and rises away; the battle background is reloaded at the
-// end. On the far side the whole figure is drawn mirrored.
+/// A great figure strikes. It sweeps down on the target from above the far
+/// side, swaying on a small circle and fading in through the blend; its arm
+/// is raised, and at frame 30 it swings down through four cels and the
+/// screen flashes white; from frame 40 its fist falls through eight cels,
+/// and at frame 80 the blow lands and the result phase starts. From frame
+/// 92 it fades out and rises away; the battle background is reloaded at the
+/// end. On the far side the whole figure is drawn mirrored.
+///
+/// Abilities: Heartbreak.
 void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;

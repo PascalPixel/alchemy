@@ -42,6 +42,7 @@ struct FloraWork {
 #define w ((struct FloraWork *)petals)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
+/// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the sheet's address through this inline. */
   return owner->sheet;
@@ -845,12 +846,12 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
 }
 
 #define DAGGER_FRAMES 96
-#define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn
-#define DAGGER_FALL_FRAME 80 // the daggers turn and fall on the target
+#define DAGGER_COUNT 8       ///< of the 32 steps set up, the first 8 are drawn
+#define DAGGER_FALL_FRAME 80 ///< the daggers turn and fall on the target
 #define DAGGER_LAST_HIT 90
 
-// A dagger's texture: log2 of its width and height in the first word (32x32
-// here), then its pixels.
+/// A dagger's texture: log2 of its width and height in the first word (32x32
+/// here), then its pixels.
 struct DaggerTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -867,12 +868,14 @@ struct RenderPrimitive {
   s32 unk14;
 };
 
-// Crossed daggers. The canvas is moved over the target. Eight daggers rise
-// spinning from below it, and the target is struck eight times, six frames
-// apart from frame 20: each strike shakes the screen, flashes the target and
-// knocks it up. At frame 80 the daggers turn point down in a fan above the
-// target and plunge into it; the last strike, at frame 90, starts the
-// result phase.
+/// Crossed daggers. The canvas is moved over the target. Eight daggers rise
+/// spinning from below it, and the target is struck eight times, six frames
+/// apart from frame 20: each strike shakes the screen, flashes the target and
+/// knocks it up. At frame 80 the daggers turn point down in a fan above the
+/// target and plunge into it; the last strike, at frame 90, starts the
+/// result phase.
+///
+/// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -1019,18 +1022,20 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 }
 
 #define STAR_FRAMES 60
-#define STAR_LEAP_FRAME 16  // the caster leaps at the target
-#define STAR_BURST_FRAME 32 // and strikes it
+#define STAR_LEAP_FRAME 16  ///< the caster leaps at the target
+#define STAR_BURST_FRAME 32 ///< and strikes it
 #define SMOKE_COUNT 32
 #define STAR_COUNT 16
-#define STAR_CELS 0x3e80 // the pink star's six 16x16 cels, after the smoke's
+#define STAR_CELS 0x3e80 ///< the pink star's six 16x16 cels, after the smoke's
 
-// A pink star burst. Smoke puffs from the caster for its first 24 frames
-// while the caster stands just past the target; at frame 16 it leaps at
-// the target, and at frame 32 the palette turns pink, the caster lands
-// beside the target, which is knocked back and flashes, and sixteen pink
-// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
-// whole effect.
+/// A pink star burst. Smoke puffs from the caster for its first 24 frames
+/// while the caster stands just past the target; at frame 16 it leaps at
+/// the target, and at frame 32 the palette turns pink, the caster lands
+/// beside the target, which is knocked back and flashes, and sixteen pink
+/// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
+/// whole effect.
+///
+/// Abilities: Backstab.
 void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;

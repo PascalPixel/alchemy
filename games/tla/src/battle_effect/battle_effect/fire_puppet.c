@@ -27,7 +27,7 @@ struct RenderModel__f17bd88 {
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// The target's motion object, as the effect reads it.
+/// The target's motion object, as the effect reads it.
 struct PuppetTarget {
   u8 unk00[8];
   s32 x;
@@ -41,13 +41,13 @@ struct PuppetTarget {
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
 
-// Abilities: Fire Puppet.
-//
-// From the caster rises a flaming arm (33 segments of two vertices each, a
-// scrolling textured strip) that reaches up and over to 1424 units, with a
-// hand at its end; at frame 54 it strikes, hitting every target, and from
-// frame 74 it shrinks back. The target's position is kept in the work's
-// last particle.
+/// From the caster rises a flaming arm (33 segments of two vertices each, a
+/// scrolling textured strip) that reaches up and over to 1424 units, with a
+/// hand at its end; at frame 54 it strikes, hitting every target, and from
+/// frame 74 it shrinks back. The target's position is kept in the work's
+/// last particle.
+///
+/// Abilities: Fire Puppet.
 void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   u8 *buffer;
   struct BattleEffectWork *work;
@@ -223,11 +223,13 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256
 
-// A swing. A five-cel slash sweeps across the caster's front, six frames a
-// cel, mirrored on the far side; at frame 18 the target is knocked back and
-// flashes, the result phase starts, and 256 sparks spray from the slash's
-// end toward the target, half of them falling and half rising as they burn
-// down.
+/// A swing. A five-cel slash sweeps across the caster's front, six frames a
+/// cel, mirrored on the far side; at frame 18 the target is knocked back and
+/// flashes, the result phase starts, and 256 sparks spray from the slash's
+/// end toward the target, half of them falling and half rising as they burn
+/// down.
+///
+/// Abilities: Whiplash.
 void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;

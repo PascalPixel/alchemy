@@ -13,13 +13,10 @@
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
 
-// Setup: each mote gets an angle, a radius of 56-119 and a height of -64 to
-// -33 pixels. Frame loop: until the burst the motes close in and climb five
-// pixels a frame while they turn, and from frame 36 a pillar rises every
-// three frames. At the burst the motes spread and fall, 32 chips leap up
-// from below, and smoke rises half a pixel a frame through the height the
-// motes and chips cover. The variant chooses the number of motes and
-// pillars and the frame of the burst.
+/// Motes of ice spiral down and in while mounds of ice spring up; at the burst
+/// the motes spread and rise, chips fly up and sparkles rise.
+///
+/// Abilities: Frost, Tundra, Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

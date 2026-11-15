@@ -100,7 +100,7 @@ struct StreakPoint {
   s32 z;
 };
 
-// The backdrop's work, in place of the battle effect work.
+/// The backdrop's work, in place of the battle effect work.
 struct StreakSceneWork {
   s32 frame;        // the streaks' frame count (BattleEffect_DrawStreaks)
   s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
@@ -147,7 +147,7 @@ enum {
   QUADS_RISING   // rising from the first target
 };
 
-// A render job (the first of Render_AllocateModelList's entries).
+/// A render job (the first of Render_AllocateModelList's entries).
 struct RenderJob {
   s32 kind;
   s32 next;
@@ -158,7 +158,7 @@ struct RenderJob {
   s32 tail;
 };
 
-// The map cell buffer holds WIN0's line table and then the splashes.
+/// The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
   u16 lines[160];
   struct Particle splashes[512];
@@ -171,7 +171,7 @@ enum {
   SPARKS_FROM_ACTOR // from the caster, lightning colours, sparks rising
 };
 
-// The camera's heading, as the camera work holds it.
+/// The camera's heading, as the camera work holds it.
 struct CameraView {
   u8 unk00[0x36];
   u16 yaw;
@@ -182,7 +182,7 @@ enum { MODE_SOOTHING_STAR, MODE_SLEEP_STAR, MODE_SLAVER };
 // Where mode 3 unpacks the tornado's glints in the sheet.
 enum { RENDER_MODE_TORNADO = 0x2580 };
 
-// The star's texture, 64x64 pixels.
+/// The star's texture, 64x64 pixels.
 struct StarTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -190,7 +190,7 @@ struct StarTexture {
   u8 *pixels;
 };
 
-// One model for the IWRAM renderer.
+/// One model for the IWRAM renderer.
 struct ModelDraw {
   s32 kind;
   s32 next;
@@ -201,7 +201,7 @@ struct ModelDraw {
   s32 tail;
 };
 
-extern s32 gBind_Vertex[]; // the triangle's first corner: (0, 24, 0)
+extern s32 gBind_Vertex[]; ///< the triangle's first corner: (0, 24, 0)
 
 extern s32
     gBind_TriangleStrikeVertex[]; // the triangle's first corner: (0, 24, 0)
@@ -230,8 +230,8 @@ extern const u8 gEclipse_RingGrowth[];
 
 extern const s8 gEclipse_RingHeights[];
 
-// The four crystals: the frame each starts after 48, how fast it grows and
-// how tall.
+/// The four crystals: the frame each starts after 48, how fast it grows and
+/// how tall.
 extern u8 gFormChange_WaveStarts[];
 
 extern u8 gFormChange_WaveGrowth[];
@@ -240,11 +240,11 @@ extern u8 gFormChange_WaveStretch[];
 
 extern char ResourceId_EffectPalette03;
 
-extern u8 gCondemn_PictureX[]; // each panel's x, by side (7 a side)
+extern u8 gCondemn_PictureX[]; ///< each panel's x, by side (7 a side)
 
-extern u8 gCondemn_PictureY[]; // each panel's y
+extern u8 gCondemn_PictureY[]; ///< each panel's y
 
-// The 33 pieces: each one's size, place in the sheet and starting point.
+/// The 33 pieces: each one's size, place in the sheet and starting point.
 extern u8 gDeathPlunge_PieceWidths[];
 
 extern u8 gDeathPlunge_PieceHeights[];
@@ -255,7 +255,7 @@ extern u8 gDeathPlunge_PieceStartX[];
 
 extern u8 gDeathPlunge_PieceStartY[];
 
-// The four corner sparks: their flips and their place around the target.
+/// The four corner sparks: their flips and their place around the target.
 extern u8 gElementBurst_GlintFlips[];
 
 extern s8 gDeathPlunge_X[];
@@ -300,119 +300,120 @@ extern const s32 gCruelRuin_StreakRolls[];
 
 extern void (*gBattleEffect_Handlers[])(struct BattleEffectParams *args);
 
-extern char ResourceId_Data0D0; // directory row 0xd0
+extern char ResourceId_Data0D0; ///< directory row 0xd0
 
-extern char ResourceId_FeatherSheet; // directory row 0xd1
+extern char ResourceId_FeatherSheet; ///< directory row 0xd1
 
 extern char ResourceId_CrescentRowSheet;
 
 extern const struct Scale gZagan_UnitScale;
 
-extern const u16 gZagan_ChargePoints[][2]; // the charging Zagan's parts
+extern const u16 gZagan_ChargePoints[][2]; ///< the charging Zagan's parts
 
-extern const u16 gZagan_GallopPoints[][2]; // the galloping Zagan's
+extern const u16 gZagan_GallopPoints[][2]; ///< the galloping Zagan's
 
-extern const u8 gZagan_RingStarts[]; // each ring's start
+extern const u8 gZagan_RingStarts[]; ///< each ring's start
 
-extern const u8 gZagan_RingGrowth[]; // growth
+extern const u8 gZagan_RingGrowth[]; ///< growth
 
-extern const s8 gZagan_RingHeights[]; // height
+extern const s8 gZagan_RingHeights[]; ///< height
 
-// Shards and frames for each variant.
+/// Shards and frames for each variant.
 extern u8 gFalling_IceCounts[];
 
-// Four bytes for each variant.
+/// Four bytes for each variant.
 extern u8 gFalling_Counts[];
 
 extern u8
     gDjinnBeams_MotePictures[]; // the mote's picture for each step of its sway
 
-extern u16 gMirroredWall_Pictures[]; // the beam's head: three pictures, offsets
+extern u16
+    gMirroredWall_Pictures[]; ///< the beam's head: three pictures, offsets
 
-extern u8 gDjinnBeams_HeadWidths[]; // ... their widths
+extern u8 gDjinnBeams_HeadWidths[]; ///< ... their widths
 
-extern u8 gDjinnBeams_HeadHeights[]; // ... their heights
+extern u8 gDjinnBeams_HeadHeights[]; ///< ... their heights
 
-// Each mode's record: whether its shots burst into shards (else into smoke),
-// the shots' blitter, shots per target, and frames before the targets'
-// share.
+/// Each mode's record: whether its shots burst into shards (else into smoke),
+/// the shots' blitter, shots per target, and frames before the targets'
+/// share.
 extern s8 gLobbedShells_Styles[];
 
-extern u8 gLobbedShells_ShardWidths[]; // shard widths
+extern u8 gLobbedShells_ShardWidths[]; ///< shard widths
 
-extern u8 gLobbedShells_ShardHeights[]; // shard heights
+extern u8 gLobbedShells_ShardHeights[]; ///< shard heights
 
-extern u16 gLobbedShells_ShardPictures[]; // shard cell offsets
+extern u16 gLobbedShells_ShardPictures[]; ///< shard cell offsets
 
-extern u8 gNereid_Columns[]; // the three columns' feet, x and y
+extern u8 gNereid_Columns[]; ///< the three columns' feet, x and y
 
-extern s32 gNereid_Gravity[]; // a falling spark's gravity, by spark
+extern s32 gNereid_Gravity[]; ///< a falling spark's gravity, by spark
 
-// Per mode: how many motes each target gets, and the effect's frame count
-// before the targets' share.
+/// Per mode: how many motes each target gets, and the effect's frame count
+/// before the targets' share.
 extern u8 gGatheringLights_Counts[];
 
 extern u8 gPlasma_Counts[];
 
-extern u8 gPlasma_Columns[]; // 7 for each side
+extern u8 gPlasma_Columns[]; ///< 7 for each side
 
-extern u16 gPlasma_Sparks[]; // sparks, shake
+extern u16 gPlasma_Sparks[]; ///< sparks, shake
 
-// Five halfwords for each variant: sparks in each
-// group, groups, and each group's x offset.
+/// Five halfwords for each variant: sparks in each
+/// group, groups, and each group's x offset.
 extern u16 gPlasma_Shapes[][5];
 
 extern u8 gPlasma_FlashPictures[];
 
-// Crystals, frames and the frame that begins phase 134, for each variant.
+/// Crystals, frames and the frame that begins phase 134, for each variant.
 extern u8 gPrism_Counts[];
 
-extern struct Scale gProcne_UnitScale; // the comets' unit scale
+extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 
-extern u8 gProcne_GridX[]; // the nine comets' grid: x
+extern u8 gProcne_GridX[]; ///< the nine comets' grid: x
 
-extern u8 gProcne_GridY[]; // ... and depth
+extern u8 gProcne_GridY[]; ///< ... and depth
 
-extern u16 gProcne_Frames[]; // the four comet strikes' frames
+extern u16 gProcne_Frames[]; ///< the four comet strikes' frames
 
-extern u8 gProcne_PictureWidths[]; // a strike's three pictures: widths
+extern u8 gProcne_PictureWidths[]; ///< a strike's three pictures: widths
 
-extern u8 gProcne_PictureHeights[]; // ... heights
+extern u8 gProcne_PictureHeights[]; ///< ... heights
 
-extern u8 gProcne_PictureBiasY[]; // ... raise above the mark
+extern u8 gProcne_PictureBiasY[]; ///< ... raise above the mark
 
-extern u16 gProcne_Pictures[]; // ... cell offsets
+extern u16 gProcne_Pictures[]; ///< ... cell offsets
 
-extern u8 gTiamat_EmberSpeeds[]; // a grain's added speed, by grain
+extern u8 gTiamat_EmberSpeeds[]; ///< a grain's added speed, by grain
 
-extern u8 gTiamat_SparkPixels[]; // a spark's two pixels
+extern u8 gTiamat_SparkPixels[]; ///< a spark's two pixels
 
-extern u8 gTiamat_EmberSizes[]; // a grain's size, by grain
+extern u8 gTiamat_EmberSizes[]; ///< a grain's size, by grain
 
-extern u8 gTiamat_FlameWidths[]; // the streak's six pictures: widths
+extern u8 gTiamat_FlameWidths[]; ///< the streak's six pictures: widths
 
-extern u8 gTiamat_FlameHeights[]; // ... heights
+extern u8 gTiamat_FlameHeights[]; ///< ... heights
 
-extern u8 gTiamat_FlameDrops[]; // ... drops below the streak
+extern u8 gTiamat_FlameDrops[]; ///< ... drops below the streak
 
-extern u16 gTiamat_FlamePictures[]; // ... cell offsets
+extern u16 gTiamat_FlamePictures[]; ///< ... cell offsets
 
-extern s32 gStar_Points[]; // the two ring points, alternating
+extern s32 gStar_Points[]; ///< the two ring points, alternating
 
-extern u8 gStar_Radii[]; // ring radii, alternating: 32, 16
+extern u8 gStar_Radii[]; ///< ring radii, alternating: 32, 16
 
-// Four signed bytes for each mode.
+/// Four signed bytes for each mode.
 extern s8 gStreaks_Styles[];
 
-// The struck target's sideways tremble, in pixels (gStreaks_Tremble).
+/// The struck target's sideways tremble, in pixels (gStreaks_Tremble).
 extern s8 gStreaks_Tremble[];
 
 extern u8 gTargetMotes_GlintFlips[];
-// Seven bytes for each mode.
+/// Seven bytes for each mode.
 extern u8 gTargetStrike_Styles[][7];
 
-// The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
-// and the column stages (gTargetStrike_BiteStages).
+/// The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
+/// and the column stages (gTargetStrike_BiteStages).
 extern u8 gTargetStrike_Widths[];
 
 extern u8 gTargetStrike_Heights[];
@@ -425,16 +426,16 @@ extern u8 gTargetStrike_BiteStages[];
 
 extern u8 gTargetStrike_GlintDrawFlags[];
 
-extern u8 gVolcano_Counts[]; // for each variant
+extern u8 gVolcano_Counts[]; ///< for each variant
 
 extern s8 gVolcano_Depths[][4];
 
 extern u8 gVolcano_StartFrames[];
 
-// Motes, then frames, for each variant.
+/// Motes, then frames, for each variant.
 extern u8 gVortices_Counts[];
 
-// Funnels, sway radius and shake, for each variant.
+/// Funnels, sway radius and shake, for each variant.
 extern u8 gVortices_Shapes[];
 
 /// The battle screen's display mode while an effect plays: background mode 1
@@ -789,13 +790,20 @@ void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
+/// Turns the battle camera, over `frames` frames, to look at the point between
+/// two units.
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
+/// Glowing orbs spiral in on each target.
+///
+/// Abilities: Mystic Flame.
 void BattleEffect_RunMysticFlame(struct BattleEffectParams *);
 void BattleObject_PutFar(void);
+/// Spawns the battle objects of a list of units through its far call.
 void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
 /// BattlePlayback_Start through its far call.
 void BattlePlayback_StartFar(s32 phase);
+/// Whether an enemy's sprite takes the heavy impact, through its far call.
 s32 BattleSprite_HasHeavyImpactFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void *GetMotionRecordFar(void *object, s32 index);
@@ -829,11 +837,11 @@ void wait(s32 frames);
 
 // Tables and resources, by the first part that reads them.
 
-// falling.c
-// The cone's 64 vertices, stored at the buffer's constant address.
+/// falling.c
+/// The cone's 64 vertices, stored at the buffer's constant address.
 extern u8 gMapGridCellBuffer[];
 
-// cruel_ruin.c
+/// cruel_ruin.c
 extern char ResourceId_Data0B4;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data0C9;
@@ -845,10 +853,10 @@ extern char ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 
-// canvas.c
-// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
+/// canvas.c
+/// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
 extern char ResourceId_EarthHorizonBackdrop;
-// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
+/// Rows of Resource_DirectoryTable; the directory has yet to name most of them.
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_GoldenDragonTiles;
 extern char ResourceId_GoldenDragonHeadTiles;
@@ -865,7 +873,7 @@ extern char ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
 // Each mote size's picture in the particle sheet.
 extern u16 gBattleEffect_MotePictures[];
-// Directory rows, named by their assets.
+/// Directory rows, named by their assets.
 extern char ResourceId_CometSheetA;
 extern char ResourceId_CometSheetB;
 extern char ResourceId_CometSheetC;
@@ -882,15 +890,15 @@ extern char ResourceId_FireballSheet;
 extern char ResourceId_CrystalSheet;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_IceChipSheet;
-extern u8 gProjectileVolley_CometHeights[]; // by kind
-extern u8 gProjectileVolley_Modes[][5];     // five bytes for each mode
+extern u8 gProjectileVolley_CometHeights[]; ///< by kind
+extern u8 gProjectileVolley_Modes[][5];     ///< five bytes for each mode
 extern u8 gProjectileVolley_FlashWidths[];
 extern u8 gProjectileVolley_FlashHeights[];
 extern u8 gProjectileVolley_FlashSteps[];
 extern u8 gProjectileVolley_FlashRises[];
 extern u16 gProjectileVolley_FlashPictures[];
 extern u16 gProjectileVolley_PelletPictures[];
-extern u8 gProjectileVolley_GlintFlips[]; // the glints' palettes
+extern u8 gProjectileVolley_GlintFlips[]; ///< the glints' palettes
 extern u16 gBattleEffect_GlintPictures[]; // the flashes' pictures: offsets,
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[]; // and heights
@@ -911,14 +919,14 @@ extern u8 gBattleEffect_PuffArcPictureHeights[];
 extern u8 gBattleEffect_PuffArcPictureBiasY[];
 extern u16 gBattleEffect_PuffArcPictures[];
 
-// hail.c
-// The ice chip's four pictures: offsets, widths and heights.
+/// hail.c
+/// The ice chip's four pictures: offsets, widths and heights.
 extern u16 gHail_Pictures[];
 extern u8 gHail_PictureWidths[];
 extern u8 gHail_PictureHeights[];
 extern char ResourceId_PortalSheet;
-// The chips: their flips (a blitter's flags), and, by shape, their pictures,
-// places and sizes.
+/// The chips: their flips (a blitter's flags), and, by shape, their pictures,
+/// places and sizes.
 extern const u8 gHail_CrackleFlips[];
 extern const u16 gHail_PortalPictures[];
 extern const u8 gHail_PortalX[];
@@ -926,7 +934,7 @@ extern const u8 gHail_PortalY[];
 extern const u8 gHail_PortalWidths[];
 extern const u8 gHail_PortalHeights[];
 
-// thor.c
+/// thor.c
 extern char ResourceId_Data135;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_JupiterDjinnSheet;
@@ -937,17 +945,17 @@ extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_ParticleSpritesC;
 extern char ResourceId_VioletLightningSheetB;
 extern char ResourceId_VioletMoteSheet;
-extern const s16 gThor_Points[6][2]; // the three lines' end points
+extern const s16 gThor_Points[6][2]; ///< the three lines' end points
 extern const u8 gThor_TargetPalettes[];
 extern const u8 gThor_CrackleFlips[];
 
 // spire.c
 extern char ResourceId_BoulderSheet;
-// By variant.
+/// By variant.
 extern u8 gSpire_RockCounts[];
-// x, y in the boulder for each shard.
+/// x, y in the boulder for each shard.
 extern u8 gSpire_ShardOffsets[];
-// By boulder.
+/// By boulder.
 extern s8 gSpire_RockX[];
 extern u8 gSpire_DropFrames[];
 // The shards' pictures, widths and heights.
@@ -1007,20 +1015,20 @@ extern const u8 gFlurry_GlintFlips[];
 // gaia.c
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteA;
-// By side and variant.
+/// By side and variant.
 extern s8 gGaia_Bg2Shifts[][3];
-// The growing wall's nine rows.
+/// The growing wall's nine rows.
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_RowPictures[];
-// The flame's three pictures.
+/// The flame's three pictures.
 extern u8 gGaia_FlameWidths[];
 extern u8 gGaia_FlameHeights[];
 extern u16 gGaia_FlamePictures[];
 extern u8 gGaia_LateRockColumns[];
 extern struct Scale gGaia_UnitScale;
 
-// spider_web.c
-// A scale of one in 16.16 on both axes.
+/// spider_web.c
+/// A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gUlysses_ParticleScale;
 extern char ResourceId_Data0B1;
 extern char ResourceId_Data0B3;
@@ -1045,8 +1053,8 @@ extern const u16 gBattleEffect_LargeSquareMesh[];
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
-// The swirl's six pictures: offsets, x (six for each side), widths, rise and
-// heights.
+/// The swirl's six pictures: offsets, x (six for each side), widths, rise and
+/// heights.
 extern const u16 gSpiderWeb_Pictures[];
 extern const u8 gSpiderWeb_PictureX[];
 extern const u8 gSpiderWeb_PictureWidths[];
@@ -1070,7 +1078,7 @@ extern const u8 gBattleEffect_SquareCorners[]; // its corners
 // positions.c
 extern char ResourceId_BeamImage;
 extern char ResourceId_StarCrescentSheet;
-// The strike's six pictures: offsets, reach, widths and heights.
+/// The strike's six pictures: offsets, reach, widths and heights.
 extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
 extern u8 gBeam_PictureWidths[];
@@ -1104,7 +1112,7 @@ extern char ResourceId_DustPuffSheet;
 extern char ResourceId_RockSpireSheet;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_TwelveModeImage;
-// The reaper's seven panels: x by side (seven each), then y.
+/// The reaper's seven panels: x by side (seven each), then y.
 extern u8 gCastingImpact_PictureX[];
 extern u8 gCastingImpact_PictureY[];
 extern u8 gPrism_ShardStarts[];
@@ -1133,18 +1141,18 @@ extern const s8 gCastingImpact_StunJipBandHeights[];
 extern const u8 gCastingImpact_ArmorCrushWaveStarts[];
 extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
 extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
-// The geyser: a mesh of sixteen corners and its faces.
+/// The geyser: a mesh of sixteen corners and its faces.
 extern const u8 gBattleEffect_OctagonBandCorners[];
 extern const u16 gCastingImpact_BandMesh[];
 extern const u8 gBattleEffect_RingCorners[];
 extern const u16 gBattleEffect_RingMesh[];
 extern const u8
     gBattleEffect_TaperedBeamCorners[];      // its corners (Thunder Mine)
-extern const u16 gBattleEffect_ColumnMesh[]; // a bolt's mesh
+extern const u16 gBattleEffect_ColumnMesh[]; ///< a bolt's mesh
 
 // particle_streams.c
 extern char ResourceId_FirePillarSheetA;
-extern u8 gNereidCopy_Columns[]; // the pillars' feet, x and y
+extern u8 gNereidCopy_Columns[]; ///< the pillars' feet, x and y
 extern const s32 gNereidCopy_Gravity[];
 extern const u8 gHelmSplitter_TwelveX[];
 extern const u8 gHelmSplitter_TwelveZ[];
@@ -1174,16 +1182,16 @@ extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffPictures[];
 extern u16 gRamses_PuffSizes[];
 
-// annihilation.c
+/// annihilation.c
 extern char ResourceId_FireBurstSheet;
 
-// ragnarok.c
+/// ragnarok.c
 extern char ResourceId_FlameBladeSheet;
 extern u8 gRagnarok_StrikeColumns[];
 extern u8 gRagnarok_FlashPictures[];
 extern char ResourceId_SwordSheet;
 extern u8 gTitanBlade_FlashPictures[];
-extern s32 gTitanBlade_DustGravity[]; // the dust's four gravities
+extern s32 gTitanBlade_DustGravity[]; ///< the dust's four gravities
 extern char ResourceId_BeachBackdrop;
 extern char ResourceId_ForestBackdrop;
 extern char ResourceId_WingedKnightATiles;
@@ -1197,17 +1205,17 @@ extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
 extern const u16 gJudgment_ShardPictures[];
 
-// kirin.c
+/// kirin.c
 extern char ResourceId_FireBlobSheet;
-extern u8 gKirin_Columns[]; // the row's x offsets
-extern u8 gKirin_Rows[];    // the row's heights
+extern u8 gKirin_Columns[]; ///< the row's x offsets
+extern u8 gKirin_Rows[];    ///< the row's heights
 
-// neptune.c
+/// neptune.c
 extern char ResourceId_SeaSerpentTiles;
-extern struct Scale gNeptune_UnitScale; // the serpent's scale
-extern s32 gNeptune_Gravity[];          // the spray's four gravities
+extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
+extern s32 gNeptune_Gravity[];          ///< the spray's four gravities
 
-// thrash.c
+/// thrash.c
 extern char ResourceId_ArcFragmentsSheet;
 extern char ResourceId_RevealMaskA;
 extern char ResourceId_RevealMaskB;
@@ -1216,7 +1224,7 @@ extern char ResourceId_RevealMaskD;
 extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 
-// undead_sword.c
+/// undead_sword.c
 extern char ResourceId_LimeColumnSheet;
 extern const u16 gUndeadSword_SparkPictures[];
 extern const u16 gUndeadSword_SparkSizes[];
@@ -1224,92 +1232,93 @@ extern char ResourceId_CrackedTextureSheet;
 extern char ResourceId_Data0D3;
 extern u8 Data_02010108[];
 extern u8 Data_02010318[];
-extern const u8 gWindFunnel_Counts[]; // the funnels per mode
+extern const u8 gWindFunnel_Counts[]; ///< the funnels per mode
 extern char ResourceId_CrystalBitmapSheet;
-extern u8 Data_02014e20[]; // gMapGridCellBuffer + 20000, the berg
+extern u8 Data_02014e20[]; ///< gMapGridCellBuffer + 20000, the berg
 extern const u16 gBattleEffect_CylinderMesh[];   // the ripple's mesh
 extern const u8 gBattleEffect_CylinderCorners[]; // its corners
-extern const u8 gDiamondBerg_RingStarts[4];      // per ripple: its start,
-extern const u8 gDiamondBerg_RingGrowth[4];      // its growth
-extern const s8 gDiamondBerg_RingHeights[4];     // and its height
-extern const s16 gDiamondBerg_ShardRolls[8];     // per flash: its roll
-extern const s16 gDiamondBerg_ShardPitches[8];   // and pitch
+extern const u8 gDiamondBerg_RingStarts[4];      ///< per ripple: its start,
+extern const u8 gDiamondBerg_RingGrowth[4];      ///< its growth
+extern const s8 gDiamondBerg_RingHeights[4];     ///< and its height
+extern const s16 gDiamondBerg_ShardRolls[8];     ///< per flash: its roll
+extern const s16 gDiamondBerg_ShardPitches[8];   ///< and pitch
 
-// crystal.c
+/// crystal.c
 extern char ResourceId_Data0FB;
 
 // geode.c
-extern const u8 gGeode_WaveStarts[]; // each ring's start
+extern const u8 gGeode_WaveStarts[]; ///< each ring's start
 extern const u8 gGeode_WaveGrowth[];
 extern const s8 gGeode_WaveHeights[];
 extern const u8 gGeode_RingCorners[];
 
-// nirvana.c
-// The spark pictures by stage.
+/// nirvana.c
+/// The spark pictures by stage.
 extern u16 gSoulShatter_SparkPictures[];
 extern u16 gSoulShatter_SparkSizes[];
 extern char ResourceId_Data0CF;
 extern u8 Data_02012000[];
-extern u8 Data_02012540[];            // the mesh's end, after 112 faces
-extern const s8 gSerac_RowHeights[];  // the cone's ring heights
-extern const s8 gSerac_RowRadii[];    // and radii
-extern const u8 gSerac_RingStarts[];  // each ripple's delay
-extern const u8 gSerac_RingGrowth[];  // its growth
-extern const s8 gSerac_RingHeights[]; // its height
+extern u8 Data_02012540[];            ///< the mesh's end, after 112 faces
+extern const s8 gSerac_RowHeights[];  ///< the cone's ring heights
+extern const s8 gSerac_RowRadii[];    ///< and radii
+extern const u8 gSerac_RingStarts[];  ///< each ripple's delay
+extern const u8 gSerac_RingGrowth[];  ///< its growth
+extern const s8 gSerac_RingHeights[]; ///< its height
 extern const u16 gBattleEffect_TriangleMesh[];
 extern const u8 gBattleEffect_TriangleCorners[];
 
-// heavy_divide.c
+/// heavy_divide.c
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
-extern const u16 gHeavyBlow_SwordMesh[];     // the sword's mesh
+extern const u16 gHeavyBlow_SwordMesh[];     ///< the sword's mesh
 extern const u8 gBattleEffect_BeamCorners[]; // its corners
-extern u8 gHeavyBlow_StrikeFrames[];         // per mode: the strike's frame
-extern u8 gHeavyBlow_ChipCounts[];           // per mode: the chips
-extern const u8 gHeavyBlow_ChipPixels[];     // a chip's two pixels
+extern u8 gHeavyBlow_StrikeFrames[];         ///< per mode: the strike's frame
+extern u8 gHeavyBlow_ChipCounts[];           ///< per mode: the chips
+extern const u8 gHeavyBlow_ChipPixels[];     ///< a chip's two pixels
 extern char ResourceId_Data0CE;
-// The columns, by number: x, start frame, full height and lean.
+/// The columns, by number: x, start frame, full height and lean.
 extern s16 gCool_ColumnX[];
 extern u8 gCool_ColumnStarts[];
 extern u8 gCool_ColumnHeights[];
 extern u8 gCool_ColumnLeans[];
-// The spark pictures by stage.
+/// The spark pictures by stage.
 extern u16 gCool_SparkPictures[];
 extern u16 gCool_SparkSizes[];
 extern char ResourceId_Data0D8;
-extern const s8 gWyrdCurse_DropBounces[]; // the drops' bounce speeds
-extern const u16 gBattleEffect_SmallSquareMeshReversed[]; // the glow's and the
+extern const s8 gWyrdCurse_DropBounces[]; ///< the drops' bounce speeds
+extern const u16
+    gBattleEffect_SmallSquareMeshReversed[]; ///< the glow's and the
 
 // thunder_mine.c
 extern char ResourceId_VioletPaletteC;
-extern const u8 gBoltTrail_GlintFlips[4]; // their flips
+extern const u8 gBoltTrail_GlintFlips[4]; ///< their flips
 extern char ResourceId_WhirlBeamSheet;
 extern char ResourceId_SparkleDots;
 extern u16 gBattleEffect_SparklePictures[]; // the sparkles' cells
 extern u8 gBattleEffect_SparkleSizes[];     // and sizes
 extern const u8 gMegaera_GlintFlips[];
 extern const u8 gMegaera_GlintModes[];
-extern const s8 gVoidBeam_Corners[]; // the hexagon's corners (z, y)
+extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
-// light_surge.c
+/// light_surge.c
 extern char ResourceId_Data0C4;
 extern char ResourceId_EffectPalette02;
-extern const s32 gLightSurge_PillarSizes[4]; // per pillar: its size,
-extern const s8 gLightSurge_PillarShades[4]; // its shade
-extern s8 gLightSurge_PillarOffsets[4];      // and its offset
+extern const s32 gLightSurge_PillarSizes[4]; ///< per pillar: its size,
+extern const s8 gLightSurge_PillarShades[4]; ///< its shade
+extern s8 gLightSurge_PillarOffsets[4];      ///< and its offset
 
-// whorl.c
+/// whorl.c
 extern char ResourceId_Data0D2;
 
 // djinni_charge.c
 extern char ResourceId_PetalSheet;
-extern const u8 gDjinniCharge_EntranceFlags[];   // each mode's flags for
-extern const s32 gDjinniCharge_DebrisGravity[4]; // the debris's gravities
+extern const u8 gDjinniCharge_EntranceFlags[];   ///< each mode's flags for
+extern const s32 gDjinniCharge_DebrisGravity[4]; ///< the debris's gravities
 
 // rime.c
 extern char ResourceId_StarCrossSheet;
 
-// gasp.c
+/// gasp.c
 extern const s8 gGaspFamily_StreakSteps[];
 extern const u16 gGaspFamily_StreakMesh[];
 extern const u8 gGaspFamily_Counts[];
@@ -1320,7 +1329,7 @@ extern char ResourceId_Data0D7;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_VenusDjinnSheet;
 
-// charon.c
+/// charon.c
 extern char ResourceId_CrimsonBeastTiles;
 extern char ResourceId_RedSlashTiles;
 extern char ResourceId_RedCrescentTiles;
@@ -1334,12 +1343,12 @@ extern char ResourceId_CurseSealSheet;
 extern char ResourceId_Data0C3;
 extern u8 gCharon_FlashFrames[];
 
-// rising_dragon.c
+/// rising_dragon.c
 extern char ResourceId_ClawSlashSheet;
 extern u8 Data_02011000[];
 extern char ResourceId_Data0DC;
-// The swing's pictures: widths, heights and offsets; the fist's: heights,
-// y offsets and offsets.
+/// The swing's pictures: widths, heights and offsets; the fist's: heights,
+/// y offsets and offsets.
 extern u8 gHeartbreak_SwingWidths[];
 extern u8 gHeartbreak_SwingHeights[];
 extern u16 gHeartbreak_SwingPictures[];
@@ -1347,18 +1356,18 @@ extern u8 gHeartbreak_FistHeights[];
 extern u8 gHeartbreak_FistY[];
 extern u16 gHeartbreak_FistPictures[];
 
-// raging_heat.c
+/// raging_heat.c
 extern char ResourceId_CornerRuneBSheet;
-// Per level (effect->variant): the sparks, their spread, the rings' size
-// and the embers.
+/// Per level (effect->variant): the sparks, their spread, the rings' size
+/// and the embers.
 extern const u8 gRagingHeat_Styles[][4];
 extern char ResourceId_SmallFlameSheet;
-// The life of each spark in the map cell buffer: gMapGridCellBuffer's
-// Particles from their variant field on.
+/// The life of each spark in the map cell buffer: gMapGridCellBuffer's
+/// Particles from their variant field on.
 extern s32 Data_02010018[];
 extern u8 gJuggle_Styles[][7];
 
-// flora.c
+/// flora.c
 extern const struct Scale gFlora_UnitScale;
 extern const u8 gFlora_PetalSizes[];
 extern const u16 gFlora_PetalPictures[];
@@ -1376,34 +1385,34 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 extern char ResourceId_CrossedDaggersSheet;
-// The dagger quad: its face list and its four corners, 32x80 pixels from
-// (-16, -16) to (16, 64), the point down.
+/// The dagger quad: its face list and its four corners, 32x80 pixels from
+/// (-16, -16) to (16, 64), the point down.
 extern const u16 gSabreDance_DaggerMesh[];
 extern const u8 gSabreDance_DaggerCorners[];
 extern char ResourceId_PinkStarSheet;
 
-// fire_puppet.c
+/// fire_puppet.c
 extern char ResourceId_Data0F2;
 extern char ResourceId_Data0F3;
 
 // ocean_fist.c
-extern const s32 gOceanFist_DropGravity[4]; // the early drops' drags
+extern const s32 gOceanFist_DropGravity[4]; ///< the early drops' drags
 
-// rushing_strike.c
+/// rushing_strike.c
 extern char ResourceId_RedHazeBackdrop;
 
-// glowing_lunge.c
+/// glowing_lunge.c
 extern char ResourceId_Data181;
 extern char ResourceId_FirePillarSheetB;
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
 extern const u16 gBattleEffect_TallMesh[];
-// The streak's scale per mode, 16.16.
+/// The streak's scale per mode, 16.16.
 extern const s32 gRushingStrike_Scales[];
 
 // daedalus.c
-extern const u8 gBattleEffect_StandingSquareCorners[]; // its corners
-// Per mode: the quad's scale (16.16, doubled when used) and its unk14.
+extern const u8 gBattleEffect_StandingSquareCorners[]; ///< its corners
+/// Per mode: the quad's scale (16.16, doubled when used) and its unk14.
 extern const s32 gMirroredWall_BurstScales[];
 extern const s32 gMirroredWall_BurstShades[];
 extern char ResourceId_BronzeAutomatonTiles;
@@ -1424,31 +1433,32 @@ extern s8 gDaedalus_RingX[];
 extern u8 gDaedalus_SpritePoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
 extern u16 gDaedalus_ParticleStarts[];
-extern const u8 gDaedalusAlt_StrikeFrames[];      // the seven strike frames
+extern const u8 gDaedalusAlt_StrikeFrames[];      ///< the seven strike frames
 extern const u16 gBattleEffect_SmallSquareMesh[]; // the rings' mesh
 
-// vengeance.c
+/// vengeance.c
 extern char ResourceId_Data0B0;
-extern const u8 gVengeance_BladeStrikes[][7]; // per level: which blades strike
+extern const u8 gVengeance_BladeStrikes[]
+                                       [7]; ///< per level: which blades strike
 extern char ResourceId_Data0F5;
-extern u8 Data_020112e8[];                  // the reaper's raised pose
-extern u8 Data_0201276b[];                  // the blade's texture
-extern u8 Data_0201476b[];                  // the handle's texture
-extern u8 Data_0201576b[];                  // the flash's texture
-extern const u16 gLifeShear_BladeMesh[];    // the blade's mesh
-extern const u16 gLifeShear_HandleMesh[];   // the handle's mesh
-extern const u8 gLifeShear_ScytheCorners[]; // their corners
+extern u8 Data_020112e8[];                  ///< the reaper's raised pose
+extern u8 Data_0201276b[];                  ///< the blade's texture
+extern u8 Data_0201476b[];                  ///< the handle's texture
+extern u8 Data_0201576b[];                  ///< the flash's texture
+extern const u16 gLifeShear_BladeMesh[];    ///< the blade's mesh
+extern const u16 gLifeShear_HandleMesh[];   ///< the handle's mesh
+extern const u8 gLifeShear_ScytheCorners[]; ///< their corners
 extern char ResourceId_CrossTextureSheet;
-// Per mode: the drops' gravity, and their smallest cel.
+/// Per mode: the drops' gravity, and their smallest cel.
 extern const s32 gGeyser_DropGravity[];
 extern const s8 gGeyser_DropMinSizes[];
 extern const u8 gGeyser_Faces[];
 extern char ResourceId_Data0FD;
-// 256 bubbles past the map cells. Each is an Particle with its picture in z
-// and its life in variant (-1 once it has left the top of the canvas).
+/// 256 bubbles past the map cells. Each is an Particle with its picture in z
+/// and its life in variant (-1 once it has left the top of the canvas).
 extern struct Particle gData_02015000[];
-// The fifteen pictures of ResourceId_Data0FD, a glowing oval from 16x32 down to
-// 3x4: their widths, heights and byte offsets into the sheet.
+/// The fifteen pictures of ResourceId_Data0FD, a glowing oval from 16x32 down
+/// to 3x4: their widths, heights and byte offsets into the sheet.
 extern u8 gBubbleColumn_PictureWidths[];
 extern u8 gBubbleColumn_PictureHeights[];
 extern u16 gBubbleColumn_Pictures[];
@@ -1479,7 +1489,7 @@ extern u16 gCoatlicue_CoilMaxScales[];
 extern char ResourceId_BellMaidenTiles;
 extern char ResourceId_Data0FC;
 
-// catastrophe.c
+/// catastrophe.c
 extern char ResourceId_ChainedDemonTiles;
 extern char ResourceId_Data0EE;
 extern char ResourceId_Data0EF;
@@ -1515,7 +1525,7 @@ extern const s16 gCatastrophe_StrikePictures[];
 extern const u8 gCatastrophe_GlintFlips[];
 extern const s16 gCatastrophe_ShardRolls[];
 
-// haures.c
+/// haures.c
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
@@ -1530,11 +1540,11 @@ extern const u8 gHaures_WingShapes[];
 extern u8 gHaures_WingMorphSteps[];
 extern const u8 gHaures_PartPoints[];
 extern const u8 gHaures_BandStarts[];
-// Resource ids, named after their places in the resource directory.
+/// Resource ids, named after their places in the resource directory.
 extern char ResourceId_Data0F7;
 extern char ResourceId_MossCaveBackdrop;
 
-// helm_splitter.c
+/// helm_splitter.c
 extern char ResourceId_FireSwirlSheet;
 extern u16 gHelmSplitter_Pictures[];
 extern s8 gHelmSplitter_PictureBiasX[];
@@ -1542,11 +1552,11 @@ extern s8 gHelmSplitter_PictureBiasY[];
 extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gHelmSplitter_PictureHeights[];
 extern char ResourceId_DualStreamPath;
-// How many of the 56 embers are sparks, by variant (48 and 40); the rest
-// are flashes.
+/// How many of the 56 embers are sparks, by variant (48 and 40); the rest
+/// are flashes.
 extern u8 gDragonCloud_SparkCounts[];
 
-// legend.c
+/// legend.c
 extern char ResourceId_BladeSheet;
 extern char ResourceId_Data0E9;
 extern s32 gLegend_WingCorners[];
@@ -1554,7 +1564,7 @@ extern char ResourceId_VineCardSheet;
 extern char ResourceId_DragonCardSheet;
 extern char ResourceId_SunCardSheet;
 extern char ResourceId_BoltCardSheet;
-// Each card's length in frames: 124, 140, 132 and 130.
+/// Each card's length in frames: 124, 140, 132 and 130.
 extern u8 gElementCards_Frames[];
 
 // cards.c
@@ -1569,33 +1579,33 @@ extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 
-// triple_chomp.c
-// The three bites' frames: 0, 12 and 24.
+/// triple_chomp.c
+/// The three bites' frames: 0, 12 and 24.
 extern u8 gTripleChomp_BiteFrames[];
 
-// breaths.c
+/// breaths.c
 extern char ResourceId_DustCloudSheet;
-// Each breath's length, the frame its burst starts, and the glow's widest
-// size by variant.
+/// Each breath's length, the frame its burst starts, and the glow's widest
+/// size by variant.
 extern u8 gBreaths_Frames[];
 extern u8 gBreaths_BurstFrames[];
 extern u8 gBreaths_MaxSizes[];
-// The four jaws of variant 2, by breath: their start frames, their growth,
-// and their x offsets from the mouth.
+/// The four jaws of variant 2, by breath: their start frames, their growth,
+/// and their x offsets from the mouth.
 extern u8 gBreaths_RingStarts[];
 extern u8 gBreaths_RingGrowth[];
 extern s8 gBreaths_RingX[];
-// The frame each breath hits the targets.
+/// The frame each breath hits the targets.
 extern u8 gBreaths_FlashFrames[];
 
-// trident.c
+/// trident.c
 extern char ResourceId_Data0FA;
 extern u8 Data_02011400[];
-extern u8 Data_02012964[];             // 128 sparks
-extern const u8 gTrident_RingStarts[]; // each ring's start
+extern u8 Data_02012964[];             ///< 128 sparks
+extern const u8 gTrident_RingStarts[]; ///< each ring's start
 extern const u8 gTrident_RingGrowth[];
 extern const s8 gTrident_RingHeights[];
-extern const s32 gTrident_Spins[]; // each trident's yaw and turn
+extern const s32 gTrident_Spins[]; ///< each trident's yaw and turn
 extern const u8 gTrident_ProngCorners[];
 extern const u8 gTrident_GlintFlips[];
 extern const u8 gLeapingStrike_WaveStarts[];
@@ -1605,7 +1615,7 @@ extern const u8 gLeapingStrike_RingStarts[];
 extern const u8 gLeapingStrike_RingGrowth[];
 extern const s8 gLeapingStrike_RingHeights[];
 
-// meteor_blow.c
+/// meteor_blow.c
 extern char ResourceId_GlowOrbSetSheet;
 extern const u8 gMeteorBlow_PictureWidths[];
 extern const u8 gMeteorBlow_PictureHeights[];
@@ -1618,7 +1628,7 @@ extern const u8 gMeteorBlow_RingGrowth[];
 extern const s8 gMeteorBlow_RingHeights[];
 
 // megiddo.c
-extern const u16 gMegiddo_FlashStarts[]; // the five rings' start frames
+extern const u16 gMegiddo_FlashStarts[]; ///< the five rings' start frames
 extern const s16 gMegiddo_FlashPitches[];
 extern const s16 gMegiddo_FlashYaws[];
 extern const s16 gMegiddo_RayPitches[];
@@ -1628,14 +1638,14 @@ extern const s8 gMegiddo_RayX[];
 extern const s8 gMegiddo_RayY[];
 extern char ResourceId_Data103;
 
-// odyssey.c
+/// odyssey.c
 extern char ResourceId_Data102;
 extern char ResourceId_Data101;
 extern const s16 gOdyssey_FlashPitches[];
 extern const s16 gOdyssey_FlashYaws[];
 extern char ResourceId_CloudSwirlSheet;
 
-// moloch.c
+/// moloch.c
 extern const u8 gMoloch_MoteSizes[];
 extern const u8 gMoloch_RingStarts[];
 extern const u8 gMoloch_RingGrowth[];
@@ -1695,8 +1705,8 @@ extern const u8 Data_081380ac[];
 extern u8 Data_081380acCodeSize[];
 extern const u8 Data_0813b9a0[];
 extern u8 Data_0813b9a0CodeSize[];
-// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-// bytes and, for three of them, in DMA words.
+/// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
+/// bytes and, for three of them, in DMA words.
 extern const u8 Data_08138fc8[];
 extern const u8 Data_081391c8[];
 extern const u8 Data_081393d8[];

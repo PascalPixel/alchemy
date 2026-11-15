@@ -45,24 +45,18 @@ void BattleEffect_RunLimeStreaks(void *object) {
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 #define RECORD(mode, field) gStreaks_Styles[(mode) * 4 + (field)]
-#define RECORD_ANIMATE 0 // cycle the streak through its three pictures
-#define RECORD_HIT 1     // sound the hit and flash the target
-#define RECORD_MOTION 2  // the target's recoil motion, or -1
-#define RECORD_SHAKE 3   // tremble the target after the hit
+#define RECORD_ANIMATE 0 ///< cycle the streak through its three pictures
+#define RECORD_HIT 1     ///< sound the hit and flash the target
+#define RECORD_MOTION 2  ///< the target's recoil motion, or -1
+#define RECORD_SHAKE 3   ///< tremble the target after the hit
 
-#define STREAK_MAX 3 // streaks for each target
+#define STREAK_MAX 3 ///< streaks for each target
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
 
-// Three streaks rise 20 pixels above the user and fly at each target in turn,
-// 6 frames apart, reaching it in 24 frames; each target starts 32 frames
-// after the one before. A streak is a 20x40 picture drawn twice, its upper
-// half mirrored, and the canvas wobbles line by line on a sine wave while the
-// transfer halves the old picture each frame into a trail. The mode chooses
-// the colour, whether the streak animates, the hit's sound and flash, a
-// recoil, and a tremble of the target.
-
+/// Fires the streaks at each target in turn from above the user; each leaves a
+/// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   struct HeapSlots *heap;
@@ -268,23 +262,14 @@ void BattleEffect_RunSlaver(void *object) {
   BattleEffect_RunMoteFountain(object, 2);
 }
 
-// The motes live in the map cell buffer.
+/// The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
 
 // Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
 // Slaver (mode 2, kind 395).
 
-// 256 motes burst from 5 pixels above the user and spread in every
-// direction; the first 128 are drawn, a quarter of them starting every 8
-// frames, each swaying on a sine wave and sized by its depth. Soothing Star's
-// burst is half as wide and sounds as it touches each target; Sleep Star's
-// drifts away from the user's side. From frame 48 the targets flash one
-// after another, 8 frames apart, and the first flash lets the battle show its
-// results. Slaver instead throws green drops up in a half-circle fan, turned
-// by the user's side, with a sound at the start; they fall back and bounce
-// on the ground for 96 frames, and then Impair's canvas effect runs on the
-// targets.
-
+/// Motes burst out of the user and float upwards, wobbling, and each target
+/// reacts in turn.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 point[3];
   struct ScreenPoint position;

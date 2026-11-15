@@ -13,12 +13,12 @@
 #define STAR_DROPS 192
 #define DROPS ((struct Particle *)Ram_MapCellBuffer)
 
-// Abilities: Star Mine.
-//
-// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
-// halves) are thrown from the caster, each one at a target in turn; from
-// frame 8 * i + 11 each is drawn toward its target and bursts once it has
-// passed it, into four sparks and 32 drops, pushing the target back.
+/// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
+/// halves) are thrown from the caster, each one at a target in turn; from
+/// frame 8 * i + 11 each is drawn toward its target and bursts once it has
+/// passed it, into four sparks and 32 drops, pushing the target back.
+///
+/// Abilities: Star Mine.
 void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -245,11 +245,11 @@ struct CornerRow {
 
 #define SEGMENTS 33
 
-// Abilities: Rising Dragon, the enemy's.
-//
-// The dragon bursts up under the target and carries it into the sky: the
-// backdrop changes to a red haze scrolling past as the target is lifted,
-// swaying, then is dropped back to the field at frame 166 and lands at 179.
+/// The dragon bursts up under the target and carries it into the sky: the
+/// backdrop changes to a red haze scrolling past as the target is lifted,
+/// swaying, then is dropped back to the field at frame 166 and lands at 179.
+///
+/// Abilities: Rising Dragon.
 void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

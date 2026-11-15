@@ -15,17 +15,17 @@ struct ProjectedVertex;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-// The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
-// function are constants built from the fixed buffer, not their own symbols.
+/// The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
+/// function are constants built from the fixed buffer, not their own symbols.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
 
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
                                              struct ProjectedVertex *screen,
                                              s32 count);
 
-// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
-// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
-// rises around the target, with spray, bubbles and a burst.
+/// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
+/// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
+/// rises around the target, with spray, bubbles and a burst.
 void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;

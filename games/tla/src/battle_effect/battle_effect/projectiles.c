@@ -340,6 +340,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunWingStroke, BattleEffect_RunProjectileVolley,
 DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
                    4)
 
+/// From the user's action pose, one large comet in ice colours flies at each
+/// target and bursts into 80 sparks.
+///
+/// Abilities: Cutting Edge.
 void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -350,6 +354,10 @@ void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, seven fireballs trailing embers fly at each
+/// target, two frames apart, each bursting into 40 sparks.
+///
+/// Abilities: Heat Wave.
 void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -362,6 +370,10 @@ void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
 
+/// From the user's action pose, sixty ice chips stream at each target, one a
+/// frame, scattered up and down, without knocking it back.
+///
+/// Abilities: Blizzard.
 void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -372,6 +384,10 @@ void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Steel, Blaze Rush.
 void BattleEffect_RunBlazeRush(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -382,6 +398,10 @@ void BattleEffect_RunBlazeRush(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Hydro Slash.
 void BattleEffect_RunHydroSlash(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -392,6 +412,10 @@ void BattleEffect_RunHydroSlash(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Diamond Dust.
 void BattleEffect_RunDiamondDust(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -420,8 +444,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-// The particle buffer at the map cell buffer: flashes from 0, sparks from
-// 100, smoke from 512, the falling-streak particles from 960.
+/// The particle buffer at the map cell buffer: flashes from 0, sparks from
+/// 100, smoke from 512, the falling-streak particles from 960.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define PTCL_SPARKS 100
 #define PTCL_SMOKE 512
@@ -429,20 +453,20 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define PTCL_MAX 1024
 
 // The five bytes of a mode in gProjectileVolley_Modes.
-#define VOLLEY_SHOTS 0   // shots at each target
-#define VOLLEY_STEPS 1   // frames a shot takes to reach its target
-#define VOLLEY_STAGGER 2 // frames between shots
-#define VOLLEY_DELAY 3   // frames between targets
-#define VOLLEY_SPARKS 4  // sparks on impact
+#define VOLLEY_SHOTS 0   ///< shots at each target
+#define VOLLEY_STEPS 1   ///< frames a shot takes to reach its target
+#define VOLLEY_STAGGER 2 ///< frames between shots
+#define VOLLEY_DELAY 3   ///< frames between targets
+#define VOLLEY_SPARKS 4  ///< sparks on impact
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
+/// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a
+/// heap slot.
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// The second blitter, loaded again for each draw that needs its own.
+/// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
-// Frees the second blitter after a draw.
+/// Frees the second blitter after a draw.
 #define RELEASE_DRAW_BLITTER()                                                 \
   do {                                                                         \
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);                                    \
@@ -451,6 +475,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
 
+/// Shots fly from the user to each target and burst into a flash and sparks
+/// when they pass it. The hit sound plays at most once every 8 frames.
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                       s32 mode) {
   struct ScreenPoint screen;
@@ -1143,6 +1169,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
+/// Sends a unit back to its place (its anchor) with a hop.
 void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;

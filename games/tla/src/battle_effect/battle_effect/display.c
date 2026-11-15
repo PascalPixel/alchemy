@@ -29,6 +29,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
   wait(1);
 }
 
+/// Scrolls BG1 a step every few VBlanks.
 void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work;
 

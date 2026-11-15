@@ -70,7 +70,7 @@ enum SummonEffectId {
 
 typedef DrawRectangle BlitterPair[2];
 
-// A texture as the render jobs take it: 1 << logWidth by 1 << logHeight.
+/// A texture as the render jobs take it: 1 << logWidth by 1 << logHeight.
 struct Texture {
   u8 logWidth;
   u8 logHeight;
@@ -143,7 +143,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 void BattleEffect_UpdatePhasePalette(
     s32 frame, s32 redPhase, s32 greenPhase,
     s32 bluePhase);                       // Graphics_UpdatePhasePalette
-extern u16 gBattleEffect_FlarePictures[]; // flare sizes 1 to 5: cell offsets
+extern u16 gBattleEffect_FlarePictures[]; ///< flare sizes 1 to 5: cell offsets
 /// The canvas layer and its helpers; the comments give The Broken Seal's
 /// names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -167,10 +167,14 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
+/// Moves a particle one frame on the screen: its velocity scaled by `gravity`
+/// sixty-fourths, then `drag` added to its y speed.
 void BattleEffectKernels_IntegrateVector2(struct Particle *step, s32 gravity,
                                           s32 drag);
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
+/// Moves a particle one frame in three dimensions: its velocity scaled by
+/// `damping` sixty-fourths, then `gravity` added to its y speed.
 void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -178,17 +182,17 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
-extern u16 gBattleEffect_MotePictures[]; // dot sizes 1
-                                         // to 10, cell offsets in the sheet
+extern u16 gBattleEffect_MotePictures[]; ///< dot sizes 1
+                                         ///< to 10, cell offsets in the sheet
 extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
 extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_BeamCorners[];
-extern const u8 gBattleEffect_GroundSquareCorners[]; // a quad's four corners, x
-                                                     // y z for each
+extern const u8 gBattleEffect_GroundSquareCorners[]; ///< a quad's four corners,
+                                                     ///< x y z for each
 extern const u16 gBattleEffect_SmallSquareMesh[];
-extern const u16 gBattleEffect_SquareMesh[]; // the quad's face
+extern const u16 gBattleEffect_SquareMesh[]; ///< the quad's face
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
@@ -200,8 +204,8 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
-// The models: the rings' quad (gBattleEffect_SmallSquareMesh), its corners, the
-// crystal and its corners.
+/// The models: the rings' quad (gBattleEffect_SmallSquareMesh), its corners,
+/// the crystal and its corners.
 extern const u16 gBattleEffect_RingMesh[];
 extern const u8 gBattleEffect_RingCorners[];
 extern char ResourceId_Data0DA;
@@ -245,8 +249,8 @@ extern char ResourceId_PetalSheet;
 extern char ResourceId_Data0C1;
 extern const u8 gBattleEffect_CylinderCorners[];
 extern const u16 gBattleEffect_CylinderMesh[];
-// The sparkle puff's size and cell for each of its nine pictures
-// (gBattleEffect_SparkleSizes and gBattleEffect_SparklePictures).
+/// The sparkle puff's size and cell for each of its nine pictures
+/// (gBattleEffect_SparkleSizes and gBattleEffect_SparklePictures).
 extern u8 gBattleEffect_SparkleSizes[];
 extern u16 gBattleEffect_SparklePictures[];
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *effect, s32 mode);
@@ -260,7 +264,7 @@ void Palette_MirrorBgColors(void);       // mode 3 only
 extern s32 gPrism_ShardPictures[];
 extern u8 gPrism_ShardWidths[];
 extern u8 gPrism_ShardHeights[];
-extern u8 gPrism_ShardStarts[]; // x, y for each shard
+extern u8 gPrism_ShardStarts[]; ///< x, y for each shard
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_RunDragonFire(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
@@ -269,7 +273,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x,
                                  s32 y); // ..RunImpactBurst
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);
-extern char ResourceId_SheepCardSheet; // directory row 0xe3
+extern char ResourceId_SheepCardSheet; ///< directory row 0xe3
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *midpoint);
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *effect, s32 mode);
@@ -389,7 +393,7 @@ enum SlashSheetPicture {
   ATALANTA_SHAFT_BOTTOM = ATALANTA_SHAFT_MIDDLE + 29 * 35
 };
 
-// A growing column, laid over struct Particle in work->particles.
+/// A growing column, laid over struct Particle in work->particles.
 struct DualColumn {
   s32 x; // root on the canvas
   s32 y;
@@ -406,7 +410,7 @@ extern u8 gBattleEffect_PuffArcPictureHeights[];
 extern u8 gBattleEffect_PuffArcPictureBiasY[];
 extern u16 gBattleEffect_PuffArcPictures[];
 extern u8 gSpire_ShardWidths[];
-extern u8 gSpire_ShardHeights[]; // the shard heights
+extern u8 gSpire_ShardHeights[]; ///< the shard heights
 extern u16 gSpire_ShardPictures[];
 void BattleEffect_StepPaletteToResource(s32);
 extern char ResourceId_Data0C9;
@@ -414,9 +418,9 @@ extern char ResourceId_VioletPaletteC;
 extern char ResourceId_Data0D7;
 void BattleEffect_WipeCanvas(s32, s32);
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
-// The quad meshes and corners: the card, the pictures and their spread.
+/// The quad meshes and corners: the card, the pictures and their spread.
 extern const u16 gBattleEffect_TallMesh[];
-// The dagger's shards, ☀️'s palette ramp shards.
+/// The dagger's shards, ☀️'s palette ramp shards.
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
@@ -460,7 +464,7 @@ extern u16 gBoreas_FallPictures[];
 extern u8 gBoreas_FallWidths[];
 extern u8 gBoreas_FallHeights[];
 extern s32 gDrain_Gravities[];
-extern u8 gDrainMotes_Sizes[]; // the mote size by mode
+extern u8 gDrainMotes_Sizes[]; ///< the mote size by mode
 void BattleEffect_RunStatBoost(struct BattleEffectParams *effect, u32 mode);
 extern u8 gQuake_Timings[][3];
 extern struct RockWallHeights gRockWall_Heights;
@@ -490,34 +494,34 @@ extern s32 gAtalanta_UnitScale[];
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
 // The Broken Seal's gGrowth_* tables, in effect_table.s.
-extern u8 gGrowth_ColumnCounts[];    // _ColumnCounts: columns by strength
-extern u8 gGrowth_ColumnX[];         // _ColumnX: each column's root
-extern u8 gGrowth_HeightLimits[];    // _HeightLimits: by i % 3
-extern u16 gGrowth_VinePictures[];   // _VineCells
-extern u8 gGrowth_VineWidths[];      // _VineWidths
-extern s8 gGrowth_PillarHeights[];   // _PillarHeights: by i & 7
-extern u16 gGrowth_PillarPictures[]; // _PillarCells
-extern u8 gGrowth_PillarWidths[];    // _PillarWidths
-extern u16 gGrowth_PuffPictures[];   // _PuffCells
-extern s8 gGrowth_PuffWidths[];      // _PuffWidths
-extern u8 gGrowth_PuffHeights[];     // _PuffHeights
-// Each vine's x about the
-// middle of the targets.
+extern u8 gGrowth_ColumnCounts[];    ///< _ColumnCounts: columns by strength
+extern u8 gGrowth_ColumnX[];         ///< _ColumnX: each column's root
+extern u8 gGrowth_HeightLimits[];    ///< _HeightLimits: by i % 3
+extern u16 gGrowth_VinePictures[];   ///< _VineCells
+extern u8 gGrowth_VineWidths[];      ///< _VineWidths
+extern s8 gGrowth_PillarHeights[];   ///< _PillarHeights: by i & 7
+extern u16 gGrowth_PillarPictures[]; ///< _PillarCells
+extern u8 gGrowth_PillarWidths[];    ///< _PillarWidths
+extern u16 gGrowth_PuffPictures[];   ///< _PuffCells
+extern s8 gGrowth_PuffWidths[];      ///< _PuffWidths
+extern u8 gGrowth_PuffHeights[];     ///< _PuffHeights
+/// Each vine's x about the
+/// middle of the targets.
 extern const s8 gGrowth_ColumnOffsets[];
-// Thorns by strength.
+/// Thorns by strength.
 extern u8 gGrowth_Counts[];
-// Each thorn's root.
+/// Each thorn's root.
 extern s8 gGrowth_X[];
-// 0-1 large, 2-3 small; odd ones
-// grow to the left.
+/// 0-1 large, 2-3 small; odd ones
+/// grow to the left.
 extern u8 gGrowth_Kinds[];
 // The Broken Seal's table of this name, _PuffCells, _PuffWidths:
 // the seven dust cels.
 extern u8 gGrowth_ThornPuffHeights[];
 extern u16 gGrowth_ThornPuffPictures[];
 extern s8 gGrowth_ThornPuffWidths[];
-// Four bytes for each strength,
-// sparks, glints, glint spread and bolts.
+/// Four bytes for each strength,
+/// sparks, glints, glint spread and bolts.
 extern u8 gBolt_Counts[];
 // The Broken Seal's gBolt_GlintFlips and _GlintModes.
 extern u8 gBolt_GlintFlips[];
@@ -546,11 +550,17 @@ struct FxGroupEntry {
   u8 frame;
 };
 
+/// Copies `size` bytes of colour levels, halving each.
 void ColorBuffer_Halve(void *source, void *destination, s32 size);
+/// Copies `size` bytes of colour levels at three quarters of each.
 void ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
+/// Copies `size` bytes of colour levels, each lowered by `amount`.
 void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
+/// Copies `size` bytes of colour levels, each raised by `amount`.
 void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
                           s32 size);
+/// The high word of value times magic, plus value times multiplier: a division
+/// by a constant.
 s32 Math_UnsignedMulHighAdd(s32 value, u32 magic, s32 multiplier);
 
 #endif

@@ -112,28 +112,30 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The pixel half of a 16.16 fixed-point value.
+/// The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
   /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define ROCKS 21
 
-// Stone Justice: 21 boulders rise in a column beside the user and tumble
-// across the screen into the target, while the battle background slides
-// with them.
-//
-// Setup: canvas layer 1 at full width, the boulder sheet, one transparent
-// blitter, and the user's sprite group set apart (48) for the length of
-// the effect.
-// Frame loop (107 frames): the boulders are thrown at frame 0 and spin as
-// they fly; from frame 64 the background scrolls after them and each
-// boulder turns toward the target; every boulder that reaches the target
-// shakes the screen and knocks the target back.
+/// Stone Justice: 21 boulders rise in a column beside the user and tumble
+/// across the screen into the target, while the battle background slides
+/// with them.
+///
+/// Setup: canvas layer 1 at full width, the boulder sheet, one transparent
+/// blitter, and the user's sprite group set apart (48) for the length of
+/// the effect.
+/// Frame loop (107 frames): the boulders are thrown at frame 0 and spin as
+/// they fly; from frame 64 the background scrolls after them and each
+/// boulder turns toward the target; every boulder that reaches the target
+/// shakes the screen and knocks the target back.
+///
+/// Abilities: Bane, Stone Justice.
 void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -544,13 +546,13 @@ void Render_ProjectVertices__ability_effects(
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
 
-// Abilities: Serac.
-//
-// The Mercury Djinni drops onto the target, dust bursting where it lands;
-// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
-// first frame) grows up around the target in rings of mist while the
-// camera circles, the caster closes in at frame 56, and at 64 the spire
-// shatters into 64 tumbling shards.
+/// The Mercury Djinni drops onto the target, dust bursting where it lands;
+/// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
+/// first frame) grows up around the target in rings of mist while the
+/// camera circles, the caster closes in at frame 56, and at 64 the spire
+/// shatters into 64 tumbling shards.
+///
+/// Abilities: Serac.
 void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;

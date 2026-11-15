@@ -18,7 +18,7 @@
 /// The sparks of the strike, in the map cell buffer.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
-extern struct SpriteScale gRamses_UnitScale; // one to one
+extern struct SpriteScale gRamses_UnitScale; ///< one to one
 
 /// In a desert the giant statue of Ramses pounds the ground with its fist while
 /// rocks rain down, then launches the fist at the targets, which strikes them

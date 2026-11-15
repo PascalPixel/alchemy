@@ -8,14 +8,14 @@
 
 #define TASK_PASS_FRAME 0xc80
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-// The sparks live in the map cell buffer's second 16 KB.
+/// The sparks live in the map cell buffer's second 16 KB.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
-// Each bite's anchor, where its jaw is drawn: the first three particles.
+/// Each bite's anchor, where its jaw is drawn: the first three particles.
 #define BITE_ANCHOR(bite) (&work->particles[bite])
 
 // A texture for the model kernels: its size as powers of two, then its

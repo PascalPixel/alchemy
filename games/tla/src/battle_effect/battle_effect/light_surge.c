@@ -23,12 +23,12 @@ struct SurgeTarget {
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
 
-// Abilities: Light Surge.
-//
-// The camera swings around the target while 14 bolts of light rain onto
-// it, four frames apart; each lands with a flash and a ring of light (two
-// rings of shaded circles), and four pillars of light rise and sway over
-// the target.
+/// The camera swings around the target while 14 bolts of light rain onto
+/// it, four frames apart; each lands with a flash and a ring of light (two
+/// rings of shaded circles), and four pillars of light rise and sway over
+/// the target.
+///
+/// Abilities: Light Surge.
 void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

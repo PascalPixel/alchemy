@@ -233,8 +233,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 
 #define RING_FRAMES 122
 #define RING_CUE_FRAME 16
-#define RING_RISE_FRAME 8   // the ring starts to rise over the caster
-#define RING_THROW_FRAME 64 // it flies at the targets
+#define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
+#define RING_THROW_FRAME 64 ///< it flies at the targets
 #define RING_HIT_FRAME 88
 #define SPARK_COUNT 768
 
@@ -249,17 +249,19 @@ enum {
   RING_BLITTER    // which of the pair draws the flames
 };
 
-// The transform entry, typed as its callers use it.
+/// The transform entry, typed as its callers use it.
 #define TransformVector                                                        \
   ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
 
-// A ring of small flames. The flames circle the caster in a ring that rises
-// over its head from frame 8, each turning its own way through four cels.
-// At frame 64 the ring flies at the targets' midpoint, slowing as it
-// nears; at frame 88 it strikes: every target is knocked back and flashes,
-// sparks burst from each, and the screen shakes. The variant sets the
-// ring's rise, its flames and sparks and the shake; variant 2 also takes
-// the orange palette.
+/// A ring of small flames. The flames circle the caster in a ring that rises
+/// over its head from frame 8, each turning its own way through four cels.
+/// At frame 64 the ring flies at the targets' midpoint, slowing as it
+/// nears; at frame 88 it strikes: every target is knocked back and flashes,
+/// sparks burst from each, and the screen shakes. The variant sets the
+/// ring's rise, its flames and sparks and the shake; variant 2 also takes
+/// the orange palette.
+///
+/// Abilities: Juggle, Heat Juggle, Fiery Juggle.
 void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   struct ScreenPoint caster;
   struct ScreenPoint midpoint;

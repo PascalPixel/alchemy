@@ -14,8 +14,6 @@
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
-// Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
-
 // Shards of ice fall in a slanting column onto the targets' side. Each one
 // flies down at 8 pixels a frame until it reaches the ground line, then
 // flashes every target, shakes the screen and shatters: fourteen frames of
@@ -23,9 +21,11 @@
 // Window 0 is narrowed line by line through an HBlank DMA table into a
 // slanting band, so the shards appear only over the targets.
 
-// Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
-// its age: -1 is a shard still falling or a free puff.
-
+/// Ice shards rain down diagonally onto the targets' side of the field and
+/// shatter into puffs of sparkle, flashing and shaking each target as they
+/// land.
+///
+/// Abilities: Ice, Ice Horn, Ice Missile.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -226,8 +226,6 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 #define DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
 #define FRAME_COUNT(variant) gFalling_Counts[(variant) * 4 + 3]
 
-// Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
-
 // Drops of water fall in a slanting column onto the targets' side, 8 pixels
 // down and 4 across a frame. At the ground line each one flashes every
 // target and bursts: its splash pictures play for eight frames while a spray
@@ -235,10 +233,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 // line by line through an HBlank DMA table into a slanting band over the
 // targets. Deluge throws its droplets higher.
 
-// Particles hold the drops; the splash droplets live in the map cell buffer
-// after the line table. A variant of -1 is a drop still falling or a free
-// droplet.
-
+/// Blue bolts streak down diagonally onto the targets' side of the field, each
+/// bursting into a fountain of falling sparks where it lands, while the targets
+/// flash.
+///
+/// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   void **heapCache;
   struct BattleEffectWork *work;

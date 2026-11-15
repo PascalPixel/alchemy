@@ -16,11 +16,9 @@ struct StripQuad;
 
 extern const struct Scale gTrident_UnitScale;
 
-// Abilities: Trident (Poseidon).
-//
-// Poseidon (four objects) rises behind the targets as rings of foam
-// spread across the water; seven spinning tridents fly in from frame 18,
-// spray bursts up around them, and at 64 the waters strike every target.
+/// Poseidon (four objects) rises behind the targets as rings of foam
+/// spread across the water; seven spinning tridents fly in from frame 18,
+/// spray bursts up around them, and at 64 the waters strike every target.
 void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

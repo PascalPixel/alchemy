@@ -39,19 +39,19 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 struct FxPartyList;
 
-// The map cell buffer holds the embers.
+/// The map cell buffer holds the embers.
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define EMBER_COUNT 1024
-#define PILLAR_SHEET 0x6e4 // the fire pillar after the spray in the sheet
+#define PILLAR_SHEET 0x6e4 ///< the fire pillar after the spray in the sheet
 
 #define FORMATION 649
 #define FORMATION_SIZE 12
 
 #define SCENE_FRAMES 124
-#define SKIP_FROM_FRAME 32 // A or B jumps from here...
-#define SKIP_TO_FRAME 98   // ...to here
+#define SKIP_FROM_FRAME 32 ///< A or B jumps from here...
+#define SKIP_TO_FRAME 98   ///< ...to here
 #define FIRST_SPOUT_FRAME 28
-#define SPOUT_FRAME 32 // the embers spout and the pillars rise until frame 79
+#define SPOUT_FRAME 32 ///< the embers spout and the pillars rise until frame 79
 #define SPOUT_END_FRAME 80
 #define RESULTS_FRAME 120
 
@@ -359,6 +359,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 #define SHARD_E 0x59d8
 
+/// Opens an impact flash and scatters sparks and fragments, keeping the
+/// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -623,21 +625,21 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 // SUMMON_EFFECT_NONE) and the outer space scene run, with its nested helpers
 // AddFlame and AddMote (unused).
 
-// The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
-// tiles), then, in the second act, the flashes and the embers.
+/// The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
+/// tiles), then, in the second act, the flashes and the embers.
 #define FLASHES ((struct Particle *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-// The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
+/// The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
 #define HEAT_LINES(work) ((u16 *)((u8 *)(work) + 0x7640))
 
-// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
-// the COMPOSITE_ flags in the low one.
+/// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
+/// the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define STREAM_FRAMES 192
 #define BLAST_FRAMES 54
-#define BLAST_FLASH_FRAME 16 // the flashes rise from here
+#define BLAST_FLASH_FRAME 16 ///< the flashes rise from here
 #define BLAST_HIT_FRAME 48
 
 struct FxAnimObject {
@@ -649,19 +651,9 @@ struct FxAnimObject {
   u8 flags;
 };
 
-// Meteor: the screen goes dark and the ground dissolves away from the top;
-// a sun (or, in mode 1, two great flames the user throws) climbs over a
-// spinning ring of seven orbs while burning drops rain and the sky glows from
-// a heat palette under every scanline; then the scene bursts: embers fountain
-// up, flashes rise from the target, and the sun swells over the enemies.
-//
-// Act one (192 frames, A or B ends it after frame 4, or 16 in mode 1): the
-// dark backdrop, a noise of 256 bright pixels on the canvas, the ground
-// eaten away row by row, the HBlank heat palette and the BG2 scroll; each
-// frame the heat lines, the objects, a new mote, the orbs, the drops (each
-// becomes a flame where it lands) and the motes. Act two (54 frames): the
-// blast pictures, 32 motes, 128 flashes and 512 embers; the palette
-// brightens from frame 36, the hit at 48.
+/// Meteor's scene: the ground dissolves, a sun climbs over a ring of orbs while
+/// burning drops rain, then embers fountain up and the sun swells over the
+/// enemies.
 void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   u8 offsets[128];

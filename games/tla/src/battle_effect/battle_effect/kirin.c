@@ -377,8 +377,8 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 // Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
 // the serpent's tiles and the window's column noise).
 
-#define SCENE_FRAMES 244  // act one; A or B ends it after frame 16
-#define PILLAR_FRAMES 144 // act two
+#define SCENE_FRAMES 244  ///< act one; A or B ends it after frame 16
+#define PILLAR_FRAMES 144 ///< act two
 #define RESULTS_FRAME 96
 
 /* VIEW(ability_effects): tag struct SpriteObject as struct

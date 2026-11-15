@@ -14,13 +14,13 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// frame / 4 % 3, as the source writes it: the multiply-high routine with the
-// reciprocal of 3, where a plain % calls __modsi3.
+/// frame / 4 % 3, as the source writes it: the multiply-high routine with the
+/// reciprocal of 3, where a plain % calls __modsi3.
 #define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
 
-#define WHIRLWIND_CEL (48 * 64) // one of the whirlwind's three frames
-#define DUST_SHEET 0x2400       // the dust motes, after the whirlwind
-#define COMET_SHEET 0x3600      // the violet comets
+#define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
+#define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
+#define COMET_SHEET 0x3600      ///< the violet comets
 #define COMETS 9
 #define FORMATION_RESOURCE 646
 
@@ -540,7 +540,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 
 // The rising grains live in the map buffer.
 
-#define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
+#define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
 // Tiamat (mode 0) and Dragon Driver (mode 1, the same scene cast from the

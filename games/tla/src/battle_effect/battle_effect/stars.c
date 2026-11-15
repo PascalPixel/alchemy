@@ -11,14 +11,16 @@
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
-#define RING_STEPS 16 // dots drawn between two ring points
+#define RING_STEPS 16 ///< dots drawn between two ring points
 #define FAR_DEPTH 399999
 
 #define ACTOR(id) ((struct Actor *)BattleObject_GetFar(id)->object)
 
-// Three rings of light fly one after another from the caster to the target,
-// each growing as it spins, while the camera swings round; each ring that
-// lands throws the target back, and the last begins the results.
+/// Three pink stars of light fly from above the user at the first target,
+/// growing and spinning, while the camera swings round; each knocks the target
+/// back.
+///
+/// Abilities: Astral Blast.
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint base;

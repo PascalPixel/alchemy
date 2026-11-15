@@ -42,13 +42,13 @@ extern const u16 gFume_Levels[][FUME_COLUMNS];
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 
-// Abilities: Fume.
-//
-// A band of smoke arcs from the caster to the target (33 segments of two
-// vertices each, a scrolling textured strip), its head growing 44 units a
-// frame and its tail following from the level's start frame; a claw strikes
-// at the arc's end until frame 22, when the target is hit, pushed back and
-// sparks burst from it. The camera shakes harder at higher levels.
+/// A band of smoke arcs from the caster to the target (33 segments of two
+/// vertices each, a scrolling textured strip), its head growing 44 units a
+/// frame and its tail following from the level's start frame; a claw strikes
+/// at the arc's end until frame 22, when the target is hit, pushed back and
+/// sparks burst from it. The camera shakes harder at higher levels.
+///
+/// Abilities: Fume, Serpent Fume, Dragon Fume.
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

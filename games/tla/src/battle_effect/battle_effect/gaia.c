@@ -9,10 +9,10 @@
 
 #undef ROCK_COUNT
 
-// The dust lives in the map cell buffer once the picture is laid out.
+/// The dust lives in the map cell buffer once the picture is laid out.
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define ROCK_COUNT 11
-// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
+/// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
 struct RockSpritePart {
@@ -38,6 +38,11 @@ struct RockObject {
   u8 flags;
 };
 
+/// Flames flicker at the targets' feet under a narrow shaft of orange light,
+/// which widens into a glowing wall and stands while rocks tumble up through it
+/// and the targets are battered, then narrows away again.
+///
+/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

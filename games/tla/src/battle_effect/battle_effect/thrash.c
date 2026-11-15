@@ -20,6 +20,10 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
 }
 
+/// The user leaps at the first target, waits 26 frames, and the spark groups
+/// burst below it as the strongest variant.
+///
+/// Abilities: Mighty Press.
 void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 0x18, 0xc3333);
   wait(26);
@@ -68,25 +72,18 @@ void BattleEffect_RunTwinShear(s32 a0) {
 
 #undef RESULTS_FRAME
 
-// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
-// variant's are half as tall.
+/// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
+/// variant's are half as tall.
 #define PICTURE_SIZE 120
 #define PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE)
 #define HALF_PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
 
 #define REVEAL_FRAMES 21
-#define FLOOD_FRAME 16 // the pictures end and the canvas floods
+#define FLOOD_FRAME 16 ///< the pictures end and the canvas floods
 #define RESULTS_FRAME 18
 #define HIT_FRAME 20
 
-// A picture flashes up over the target (four pictures, four frames each), the
-// canvas floods with one colour, and the target is struck.
-//
-// Setup: open the canvas, load the variant's four pictures (two into the
-// sheet, two into the map cell buffer), move the user up to the target, and
-// build the blitters. Each frame shows the current picture for its time,
-// floods the canvas from frame 16 to 19, and shakes the camera; results at
-// frame 18, the hit at 20.
+/// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                                     s32 variant) {
   struct BattleEffectWork *work;

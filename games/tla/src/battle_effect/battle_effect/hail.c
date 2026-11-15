@@ -9,10 +9,14 @@
 
 // The canvas preparer's packed arguments.
 
-// The ice chips live in the map cell buffer.
+/// The ice chips live in the map cell buffer.
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
+/// After a Mercury Djinni enters, ice chips burst out of the first target and
+/// waves of water rise along the bottom of the screen.
+///
+/// Abilities: Hail.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -158,9 +162,13 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
-// The chips' shapes and flips live in particles[32..63].
+/// The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
+/// After a Venus Djinni enters, six glowing portals leave the user, swirl and
+/// close in on the first target, each striking it as it arrives.
+///
+/// Abilities: Ground.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

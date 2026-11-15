@@ -13,13 +13,13 @@ struct Model;
 #define BURST_FRAMES 48
 #define BURST_DRAW_FRAMES 28
 
-// The three 64x64 cels of the burst, built in the sheet's first 0x3000
-// bytes; the picture loads behind them.
+/// The three 64x64 cels of the burst, built in the sheet's first 0x3000
+/// bytes; the picture loads behind them.
 #define CEL_SIZE 0x1000
 #define PICTURE_OFFSET 0x4000
 
-// Copies a half-picture of width by height pixels into the bottom middle of
-// a 64x64 cel, once as it is and once mirrored, so the cel is symmetrical.
+/// Copies a half-picture of width by height pixels into the bottom middle of
+/// a 64x64 cel, once as it is and once mirrored, so the cel is symmetrical.
 #define MIRROR_HALF(cel, half, width, height)                                  \
   for (y = 0; y != (height); y++) {                                            \
     for (x = 0; x != (width); x++) {                                           \
@@ -30,8 +30,8 @@ struct Model;
     }                                                                          \
   }
 
-// A burst cel's texture: log2 of its width and height in the first word
-// (64x64 here), then its pixels.
+/// A burst cel's texture: log2 of its width and height in the first word
+/// (64x64 here), then its pixels.
 struct BurstTexture {
   u32 size;
   void *pixels;
@@ -39,12 +39,7 @@ struct BurstTexture {
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
 
-// A symmetrical burst over the target. Three half-pictures of the earth
-// wall sheet are mirrored into three 64x64 cels; the burst grows through
-// them in its first twelve frames, flickers between the last two until
-// frame 28 and is gone, while the screen shakes for all 48 frames. The
-// mode picks the palette (Mars Djinn, Mars Djinn, fireball, orange), the
-// scale, how hard the screen shakes and the target's flash colour.
+/// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -259,6 +254,10 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
+/// Daedalus: the great machine glides in over the field and fires on the foes,
+/// then the second scene (BattleEffect_RunDaedalusAlt) plays.
+///
+/// Abilities: Daedalus.
 void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s16 targets[14];
   struct SpritePlacement pos;
@@ -1398,7 +1397,7 @@ extern const struct PlacementSource__f17e698
 #define DAEDALUS_FRAMES 108
 #define DAEDALUS_SPARKS 64
 
-// The summoned object's display fields that the scene sets.
+/// The summoned object's display fields that the scene sets.
 struct SummonObject {
   u8 unk00[18];
   u16 unk12;
@@ -1407,13 +1406,11 @@ struct SummonObject {
   u8 unk17;
 };
 
-// Abilities: Daedalus (the second scene).
-//
-// The summoned object glides in from the right and down over 92 frames
-// while, from frame 56, a shaded disc swells at the centre and six rings of
-// light spin out from it. At the seven frames of gDaedalusAlt_StrikeFrames
-// every target is knocked back and flashes; from frame 80 eight bursts of eight
-// sparks, one a frame, scatter over the canvas.
+/// The summoned object glides in from the right and down over 92 frames
+/// while, from frame 56, a shaded disc swells at the centre and six rings of
+/// light spin out from it. At the seven frames of gDaedalusAlt_StrikeFrames
+/// every target is knocked back and flashes; from frame 80 eight bursts of
+/// eight sparks, one a frame, scatter over the canvas.
 void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

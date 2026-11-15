@@ -8,10 +8,10 @@
 
 #define TASK_PASS_FRAME 0xc80
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
+/// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
@@ -33,13 +33,15 @@ struct Model__f189b14 {
   s32 tail;
 };
 
-// Legend (effect kind 122): a fan of eight blades opens over the target for
-// 50 frames while a rune, mirrored from one corner, rises and turns behind
-// it. Then one sword for each step of the variant (variant + 1 in all, 16
-// frames apart) falls on the target from above the user's side: it strikes
-// at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
-// while a flash grows and fades where it lands. The effect lasts 86 frames
-// and 16 more for each further sword.
+/// Legend (effect kind 122): a fan of eight blades opens over the target for
+/// 50 frames while a rune, mirrored from one corner, rises and turns behind
+/// it. Then one sword for each step of the variant (variant + 1 in all, 16
+/// frames apart) falls on the target from above the user's side: it strikes
+/// at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
+/// while a flash grows and fades where it lands. The effect lasts 86 frames
+/// and 16 more for each further sword.
+///
+/// Abilities: Legend.
 void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -303,8 +305,8 @@ enum {
   CARD_THUNDER, // Thunder Card, kind 89: bolts strike from the card.
 };
 
-// How each card's sparks move: the kernel's gravity and damping, and how
-// many steps (each drawn) a frame.
+/// How each card's sparks move: the kernel's gravity and damping, and how
+/// many steps (each drawn) a frame.
 struct SparkMotion {
   s32 gravity;
   s32 damping;
@@ -313,13 +315,13 @@ struct SparkMotion {
 
 extern struct SparkMotion gElementCards_SparkMotions[];
 
-// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
-// the user, spinning and growing, for 48 frames, then shows its picture.
-// From frame 48 the background takes the card's colours; the Frost and
-// Flame cards throw shards or smoke at the targets, and the Bramble and
-// Thunder cards spread four pictures over the field. Each target is struck
-// every five frames for a while, reeling, flashing and throwing up sparks.
-// From frame 96 the card shrinks away.
+/// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
+/// the user, spinning and growing, for 48 frames, then shows its picture.
+/// From frame 48 the background takes the card's colours; the Frost and
+/// Flame cards throw shards or smoke at the targets, and the Bramble and
+/// Thunder cards spread four pictures over the field. Each target is struck
+/// every five frames for a while, reeling, flashing and throwing up sparks.
+/// From frame 96 the card shrinks away.
 void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

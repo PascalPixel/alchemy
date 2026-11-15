@@ -11,18 +11,17 @@
 
 #define SPARK_COUNT 1024
 
-#define BOLT_SHEET 0x60e // the bolt pictures in the sheet
-#define BOLT_SIZE 2880   // one 24x120 bolt
+#define BOLT_SHEET 0x60e ///< the bolt pictures in the sheet
+#define BOLT_SIZE 2880   ///< one 24x120 bolt
 #define BOLT_COUNT 4
 
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
 
-// Setup: 1,024 sparks wait at the canvas center. Frame loop: for 16
-// frames the bolts circle in, their radius shrinking a pixel a frame, the
-// canvas wiped every five frames, and each bolt throws the variant's
-// number of sparks; the sparks fall and bounce off y = 120 until frame 64.
-// The targets are hit from frame 4, four frames apart.
+/// Four bolts close in, turning towards the centre and scattering sparks from
+/// their roots.
+///
+/// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -10,12 +10,9 @@
 
 // Nine flames puff up along a half-circle arc, four frames apart.
 
-// Setup: the flames are placed on an arc 32 pixels wide and 16 high, from
-// the left when the first target is an enemy (128 and up), else from the
-// right, each one starting four frames after the last. Frame loop: a flame
-// steps through six pictures, four frames each; variant 1 adds a copy 16
-// pixels higher, variant 2 another 32 higher and a brighter trail. The
-// targets are hit from frame 16, eight frames apart.
+/// Nine flames rise one after another along half an ellipse.
+///
+/// Abilities: Flare, Flare Wall, Flare Storm.
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -119,6 +116,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Lists the indices within indexRadius of where currentValue sits in values,
+/// up to entryLimit, and returns how many.
 s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                         s16 *output) {
   s32 length = window->indexRadius * 2 + 1;

@@ -8,10 +8,10 @@
 
 #define TASK_PASS_FRAME 0xc80
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
+/// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
+/// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
 #define JAW_TEXTURE (Ram_MapCellBuffer + 0x4000)
 
 // The four breaths, as the wrappers pass them.
@@ -490,13 +490,13 @@ DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
 
-// The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
-// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
-// in five steps of three frames: the star crescent, a blank frame, the two
-// halves of the grey crescent and the star crescent's last cell. Echo Cut
-// cuts it upside down and higher, and throws the target into the air at
-// frame 12. Human Hunt loads the Mars Djinn's colours into the background
-// palette and blends its slash more faintly.
+/// The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
+/// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
+/// in five steps of three frames: the star crescent, a blank frame, the two
+/// halves of the grey crescent and the star crescent's last cell. Echo Cut
+/// cuts it upside down and higher, and throws the target into the air at
+/// frame 12. Human Hunt loads the Mars Djinn's colours into the background
+/// palette and blends its slash more faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
@@ -620,6 +620,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
                               s32 height);
 
+/// Draws a picture `size` pixels tall and half as wide into the canvas,
+/// standing on (x, y), at its maximum.
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;

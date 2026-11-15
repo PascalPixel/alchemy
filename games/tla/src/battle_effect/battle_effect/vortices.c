@@ -11,13 +11,15 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
+/// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
 #define MOTE_COUNT 30
-#define SEAT_FIRST 32 // the particles that hold each target's seat
+#define SEAT_FIRST 32 ///< the particles that hold each target's seat
 
-// Thirty motes rise from the caster, swirl, and home in on the targets; each
-// one that reaches the ground flashes and knocks back its target and plays a
-// three-cel splash where it landed.
+/// Bubbles fly out of the top of the user, hang, and home in on the targets;
+/// each that lands bursts into a swirling vortex, knocking back its target,
+/// while the camera swings round.
+///
+/// Abilities: Froth, Froth Sphere, Froth Spiral.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct BattleEffectWork *work;
@@ -152,12 +154,13 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 }
 
 #define TORNADO_FRAMES 80
-#define GLINT_COUNT 16 // four glints for each of up to four funnels
-#define GLINT_CELS 6   // three cels of two frames each
+#define GLINT_COUNT 16 ///< four glints for each of up to four funnels
+#define GLINT_CELS 6   ///< three cels of two frames each
 
-// One to four funnels of wind sway across the targets for 80 frames, each
-// drawn as three stacked segments with glints swirling around it; the canvas
-// is wiped every eight frames, and each target is struck seven times.
+/// Tornadoes sweep across the targets, sparkling with glints, and the targets
+/// reel again and again.
+///
+/// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;

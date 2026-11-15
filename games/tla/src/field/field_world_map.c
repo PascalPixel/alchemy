@@ -14,6 +14,7 @@
 #include "field/map.h"
 #include "field/object.h"
 #include "battle/battle_camera.h"
+#include "field/world_map.h"
 
 /* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
  * graphics.h has void Transform_Reset(void); tried as the definition's void
@@ -224,13 +225,6 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
   WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
 }
 
-/* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
- * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_world_map.c:284: `gWorldMapWork' has an incomplete
- * type. */
-extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
-
 /// Loads the world map's palette and tiles for the area at (x, z): the set
 /// its region picks, its tint, and the plain BG maps the world map draws over.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
@@ -295,8 +289,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]),
-                      gWorldMapWork__world_map);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01810180;

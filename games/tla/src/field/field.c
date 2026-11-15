@@ -15,9 +15,6 @@
 // parts").
 #include "field_decompress.c"
 #include "field_sprite_draw.c"
-
-#undef Render_ApplyProjectedPlacement
-
 #include "field_sprite_animation.c"
 #include "field_actors.c"
 #include "field_actor_motion.c"
@@ -27,17 +24,7 @@
 #include "field_move_by_keys.c"
 #include "field_map_grid.c"
 #include "field_world_map.c"
-
-#undef Sprite_ResetAnimations
-#undef Sprite_AddAnimation
-#undef Sprite_StartAnimation
-#undef Sprite_SetAnimationSpeed
-#undef Render_ApplyProjectedPlacementAtDepth
-
 #include "field_tile_animation.c"
-
-#undef gWorldMapWork
-
 #include "field_view.c"
 
 #include "field_sprite_viewer.c"

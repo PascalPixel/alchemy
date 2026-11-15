@@ -673,9 +673,6 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 /// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
-#define Render_ApplyProjectedPlacementAtDepth                                  \
-  Render_ApplyProjectedPlacementAtDepth
-
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
 #define CELL_PRIORITY(cells, x, z)                                             \

@@ -6,6 +6,7 @@
 
 #include "field_internal.h"
 #include "flags.h"
+#include "field/world_map.h"
 
 #include "field/map_grid.h"
 #include "graphics/graphics.h"
@@ -17,14 +18,6 @@
 #include "field/flag_call.h"
 #include "field/curve.h"
 #include "edition.h"
-
-/* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
- * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:144: `gWorldMapWork' has an
- * incomplete type. */
-extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
-#define gWorldMapWork gWorldMapWork__tile_animation
 
 // A tileset animation script's commands, a halfword each where a source tile
 // would stand (TilesetAnim_Update and TilesetAnim_StartAll).
@@ -148,7 +141,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
     break;
   case 1:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
     break;
   }
   perspective->reloadSteps--;
@@ -244,7 +237,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = 159;

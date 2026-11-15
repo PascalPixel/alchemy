@@ -111,12 +111,12 @@ struct Sprite {
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 unusedFlags : 6; ///< no code names them
-  u16 rotation;       ///< 1/65536 turns
-  u8 width;           ///< pixels; zero marks a free sprite
-  u8 height;          ///< pixels
-  s8 offsetX;         ///< pixels
-  s8 offsetY;         ///< pixels
+  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
+  u16 rotation;    ///< 1/65536 turns
+  u8 width;        ///< pixels; zero marks a free sprite
+  u8 height;       ///< pixels
+  s8 offsetX;      ///< pixels
+  s8 offsetY;      ///< pixels
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn

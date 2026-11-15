@@ -69,40 +69,11 @@ void Animation_SkipToStop(struct ScriptPlayer *player) {
   }
 }
 
-/// The sprite object: The Broken Seal's struct Sprite with the shadow after
-/// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
-/// attributes 0 and 1 as one word.
-struct LayeredSprite {
-  union {
-    struct AnimationSpritePart image;
-    struct {
-      u8 link[4];
-      u32 attributes;
-    };
-  };
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 useOwnScale : 1;
-  u8 depth : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags;
-  u8 count;
-  struct AnimationSpritePart shadow;
-  struct SpriteAnimation *entries[4];
-};
-
 /// Advances a sprite's animations by one frame, picks each sprite animation's
 /// picture for the facing dir, and when any picture changed redraws the sprite:
 /// the sprite animations composed by priority into one pixel buffer, an
 /// optional outline, and the result uploaded to the sprite's VRAM tiles.
-s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
+s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemColours *system;
@@ -326,7 +297,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         u32 *src;
 
         // Rows to sink, held in picture: see the header.
-        picture = obj->depth;
+        picture = obj->sunkRows;
         height = obj->height;
         width = obj->width;
         if (picture > height)
@@ -345,7 +316,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         for (i = 0; i < limit; i++)
           *dst-- = 0;
       } else if (obj->flags & 4) {
-        u32 rows = obj->depth;
+        u32 rows = obj->sunkRows;
         u32 height = obj->height;
         u32 width = obj->width;
         const u8 *shade = gSpriteColorShadeTables;
@@ -389,9 +360,8 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
 /// parts use the double-size affine mode.
-void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
-                                s32 height, s32 screenY, s32 groundHeight,
-                                s32 *scale) {
+void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
+                                s32 screenY, s32 groundHeight, s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = HEIGHT_COPY(sprite) >> 1;
   s32 marginX = 8;
@@ -433,21 +403,9 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
 /// Places an animation object's sprite (and its shadow) at the screen point
 /// of a projected position (x, y, z, ground), scaled by scale[0] and
 /// scale[1]; the sprites go into the depth list by their depth.
-/* VIEW(field): routine Render_ApplyProjectedPlacement as void
- * Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos, s32
- * *scale, s32 mode); field/field.h has void Render_ApplyProjectedPlacement(void
- * *sprite, s32 *position, s32 *scale, u16 angle); tried as the definition's
- * void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
- * s32 *scale, s32 mode), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field_sprite_draw.c:436: conflicting types for
- * `Render_ApplyProjectedPlacement'. */
-void Render_ApplyProjectedPlacement__field(
-    struct LayeredSprite *object, s32 *pos, s32 *scale,
-    s32 mode) __asm__("Render_ApplyProjectedPlacement");
-#define Render_ApplyProjectedPlacement Render_ApplyProjectedPlacement__field
 /// Places a sprite for the scrolling camera and queues it for drawing.
-void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
-                                    s32 *scale, s32 mode) {
+void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
+                                    s32 mode) {
   s32 matrix;
   u32 halfWidth;
   u32 halfHeight;
@@ -535,15 +493,14 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
   }
 }
 
-static inline u8 PlacedObject_Height(struct LayeredSprite *object) {
+static inline u8 PlacedObject_Height(struct Sprite *object) {
   return object->height;
 }
 
 /// Render_ApplyProjectedPlacement into the given draw slot: the sprite and its
 /// shadow both go to depth, and mode chooses the picture as facing does there.
-void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
-                                           s32 *pos, s32 *scale, s32 mode,
-                                           s32 depth) {
+void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
+                                           s32 *scale, s32 mode, s32 depth) {
   s32 matrix;
   u32 halfWidth;
   u32 halfHeight;
@@ -645,8 +602,8 @@ void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
 /// Places a sprite at a 3D point for the fixed camera and queues it for
 /// drawing, projected to the screen and scaled by its distance, as The Broken
 /// Seal's Render_PlaceProjectedSprite does.
-void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
-                                 s32 *scale, s32 facing, s32 depth) {
+void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
+                                 s32 facing, s32 depth) {
   s32 screen[3];
   s32 ground[3];
   s32 z;
@@ -700,8 +657,9 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
       }
       if (scaleX != 0 && scaleY != 0) {
         offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
-        sprite->attributes =
-            (sprite->attributes & 0xc000fc00) | (affine << 8) | (matrix << 25) |
+        ((u32 *)&sprite->image)[1] =
+            (((u32 *)&sprite->image)[1] & 0xc000fc00) | (affine << 8) |
+            (matrix << 25) |
             ((u32)(screen[0] - halfWidth + offsetX) << 23 >> 7) |
             (u8)(screen[1] - halfHeight + offsetY);
         if (depth == 0) {

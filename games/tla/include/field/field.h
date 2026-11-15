@@ -104,8 +104,8 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ActorSystem_Configure(s32 mode);
 s32 Party_AddMemberFar(s32 event_id);
 void Party_RemoveMemberFar(s32 owner);
-void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale,
-                                    u16 angle);
+void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *position,
+                                    s32 *scale, s32 facing);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
 s32 Message_OpenWindowFar(s32, s32, s32, s32);

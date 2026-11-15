@@ -63,7 +63,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/clear.o"(.bss)
+        "*/games/tla/src/scene/clear.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64b
@@ -121,7 +121,7 @@ SCENE(venus_lighthouse)
 #elif OVERLAY == 0x64f
 SCENE(suhalla_gate)
 #elif OVERLAY == 0x650
-SCENE_WITH_BSS(idejima)
+SCENE(idejima)
 #elif OVERLAY == 0x651
 SCENE(daila)
 #elif OVERLAY == 0x652
@@ -131,11 +131,11 @@ SCENE_WITH_BSS(kandorean_temple)
 #elif OVERLAY == 0x654
 SCENE(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
-SCENE_WITH_BSS(dehkan_plateau)
+SCENE(dehkan_plateau)
 #elif OVERLAY == 0x656
 SCENE(lemurian_ship)
 #elif OVERLAY == 0x657
-SCENE_WITH_BSS(lemurian_ship_deck)
+SCENE(lemurian_ship_deck)
 #elif OVERLAY == 0x658
 SCENE(madra)
 #elif OVERLAY == 0x659
@@ -172,11 +172,11 @@ SCENE_WITH_BSS(yampi_desert_cave)
 #elif OVERLAY == 0x663
 SCENE(airs_rock)
 #elif OVERLAY == 0x664
-SCENE_WITH_BSS(airs_rock_inside)
+SCENE(airs_rock_inside)
 #elif OVERLAY == 0x665
 SCENE(alhafra)
 #elif OVERLAY == 0x666
-SCENE_WITH_BSS(alhafra_interiors)
+SCENE(alhafra_interiors)
 #elif OVERLAY == 0x667
 SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
@@ -184,7 +184,7 @@ SCENE(eastern_alhafra)
 #elif OVERLAY == 0x669
 SCENE(eastern_alhafra_ship)
 #elif OVERLAY == 0x66a
-SCENE_WITH_BSS(alhafran_cave)
+SCENE(alhafran_cave)
 #elif OVERLAY == 0x66b
 SECTIONS
 {
@@ -211,7 +211,7 @@ SCENE(naribwe_interiors)
 #elif OVERLAY == 0x66f
 SCENE(kibombo_mountains)
 #elif OVERLAY == 0x670
-SCENE_WITH_BSS(kibombo)
+SCENE(kibombo)
 #elif OVERLAY == 0x671
 SECTIONS
 {
@@ -276,7 +276,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/aqua_rock.o"(.bss)
+        "*/games/tla/src/scene/aqua_rock.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67c
@@ -293,7 +293,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/aqua_rock_inside.o"(.bss)
+        "*/games/tla/src/scene/aqua_rock_inside.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67d
@@ -328,7 +328,7 @@ SECTIONS
 #elif OVERLAY == 0x686
 SCENE(ankohl_ruins)
 #elif OVERLAY == 0x687
-SCENE_WITH_BSS(sea_of_time)
+SCENE(sea_of_time)
 #elif OVERLAY == 0x688
 SCENE(lemuria_entrance)
 #elif OVERLAY == 0x689
@@ -336,7 +336,7 @@ SCENE(lemuria_dock)
 #elif OVERLAY == 0x68a
 SCENE(ancient_lemuria)
 #elif OVERLAY == 0x68b
-SCENE_WITH_BSS(lemuria)
+SCENE(lemuria)
 #elif OVERLAY == 0x68c
 SCENE(lemuria_interiors)
 #elif OVERLAY == 0x68d
@@ -359,13 +359,13 @@ SECTIONS
 #elif OVERLAY == 0x68e
 SCENE_WITH_BSS(lemuria_spring)
 #elif OVERLAY == 0x68f
-SCENE_WITH_BSS(tundaria_tower)
+SCENE(tundaria_tower)
 #elif OVERLAY == 0x690
 SCENE_WITH_BSS(settlements)
 #elif OVERLAY == 0x691
 SCENE(magma_rock)
 #elif OVERLAY == 0x692
-SCENE_WITH_BSS(magma_rock_inside)
+SCENE(magma_rock_inside)
 #elif OVERLAY == 0x693
 SCENE(atteka_inlet)
 #elif OVERLAY == 0x694
@@ -681,7 +681,7 @@ SCENE(caverns)
 #elif OVERLAY == 0x6aa
 SCENE_WITH_BSS(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
-SCENE_WITH_BSS(mars_lighthouse_star_room)
+SCENE(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
 SCENE_WITH_BSS(mars_lighthouse_room_m)
 #elif OVERLAY == 0x6ad
@@ -706,7 +706,7 @@ SECTIONS
 #elif OVERLAY == 0x6ae
 SCENE_WITH_BSS(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
-SCENE_WITH_BSS(treasure_isle)
+SCENE(treasure_isle)
 #elif OVERLAY == 0x6b0
 SCENE_WITH_BSS(anemos_inner_sanctum)
 #elif OVERLAY == 0x6b1
@@ -759,7 +759,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/lobby.o"(.bss)
+        "*/games/tla/src/scene/lobby.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b6
@@ -796,7 +796,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/debug/bss/psynergy_test.o"(.bss)
+        "*/games/tla/src/debug/psynergy_test.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b9

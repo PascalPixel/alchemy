@@ -10,6 +10,7 @@
 
 #include "system/task.h"
 #include "types.h"
+#include "macros.h"
 #include "window/message_argument.h"
 #include "item_ids.h"
 #include "system/system.h"
@@ -143,8 +144,8 @@ s32 AquaRockInside_GetVentCounter(void);
 s32 Vents_AdvanceCounter(s32 limit);
 
 extern s32 gAquaRockInside_SpringLevel;
-extern struct PillarWork gAquaRockInside_Pillars;
-extern struct BeamWork gAquaRockInside_Splashes;
+struct PillarWork gAquaRockInside_Pillars BSS_DATA;
+struct BeamWork gAquaRockInside_Splashes BSS_DATA;
 extern u32 gAquaRockInside_SparkScript[];
 extern u32 gAquaRockInside_SplashScript[];
 extern u32 gAquaRockInside_StreamSplashScript[];
@@ -195,7 +196,6 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "system/iwram_call.h"
 #include "field/map_grid.h"
 #include "graphics/vram_tab.h"
-#include "macros.h"
 #include "shared/tables.h"
 #include "../field/actor_set_sprite_priority.c"
 

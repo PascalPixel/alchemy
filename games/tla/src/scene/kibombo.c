@@ -15,6 +15,7 @@
 #include "item_ids.h"
 #include "field/sprite.h"
 #include "types.h"
+#include "macros.h"
 #include "field/field_sequence_event.h"
 #include "gamepak/far_call/system.h"
 #include "field/event_commands.h"
@@ -154,8 +155,9 @@ extern u32 gKibombo_PartyGathersScript[];
 extern s32 gKibombo_JawsSettleScript[];
 extern s32 gKibombo_JawsOpenScript[];
 extern s16 gKibombo_FrozenPuddle[];
-extern s16 gKibombo_FireColors[];
-extern struct Actor *gKibombo_BlackCrystal;
+u8 gKibombo_UnusedBeforeFireColors[4] BSS_DATA;
+s16 gKibombo_FireColors[4] BSS_DATA;
+struct Actor *gKibombo_BlackCrystal BSS_DATA;
 
 /// Set once the party has found the dead end by the statue and turned back
 /// (Kibombo_DeadEndByTheStatue).

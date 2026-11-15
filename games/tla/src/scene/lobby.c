@@ -18,6 +18,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -141,7 +142,8 @@ void LinkLobby_WriteSlotValue(s32 slot) {
   dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
-extern s32 gLinkLobby_WaitFrames;
+s32 gLinkLobby_WaitFrames BSS_DATA;
+s32 gLinkLobby_CallFrames BSS_DATA;
 
 /// The lobby's task each frame: counts frames without the opponent, clears
 /// the peer signatures after 25, and raises the event trigger when both sides
@@ -210,8 +212,6 @@ s32 LinkLobby_PollPeerReady(void) {
     work->raisedTrigger = 2;
   return result;
 }
-
-extern s32 gLinkLobby_CallFrames;
 
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
@@ -1259,9 +1259,6 @@ next:
 }
 
 void Event_End(void);
-
-extern s32 gLinkLobby_WaitFrames;
-extern s32 gLinkLobby_CallFrames;
 
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);

@@ -17,6 +17,7 @@
 #include "scene_ids.h"
 #include "sprite_ids.h"
 #include "types.h"
+#include "macros.h"
 #include "version.h"
 #include "battle/battle.h"
 #include "field/actor.h"
@@ -781,7 +782,8 @@ void TundariaTower_SpawnDustRing(void);
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-extern union FieldObject *gTundariaTower_Reflection;
+union FieldObject *gTundariaTower_Reflection BSS_DATA;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
 void TundariaTower_ParchLeftWater(void);
 void TundariaTower_ParchRightWater(void);

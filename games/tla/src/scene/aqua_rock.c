@@ -61,7 +61,6 @@ void AquaRock_DrawRisingCellMarkers(void);
 void AquaRock_DrawFallingCellMarkers(void);
 void AquaRock_DrawCellMarkers(void);
 
-extern struct AquaRockWork gAquaRock_CellMarkers;
 extern u32 gAquaRock_SplashScript[];
 extern u32 gWaterDropScript[];
 extern const u8 gAquaRock_MarkerTiles[];
@@ -241,7 +240,8 @@ struct AquaRockStream {
   s16 nextWave;
 };
 
-extern struct AquaRockStream gAquaRock_Streams[];
+struct AquaRockStream gAquaRock_Streams[5] BSS_DATA ALIGNED(16);
+struct AquaRockWork gAquaRock_CellMarkers BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

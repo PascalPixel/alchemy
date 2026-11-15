@@ -90,9 +90,6 @@ void ClearData_Apply(void *data);
 extern u8 gClear_FirstPasswordRow[];
 extern u8 gClear_SecondPasswordRow[];
 extern u8 gClear_ThirdPasswordRow[];
-extern u8 gClear_PasswordText[];
-extern u8 gClear_PasswordWork[];
-extern u8 gClear_PasswordCodes[];
 void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
 extern u8 gClear_PasswordGrid[];
@@ -586,6 +583,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define PASSWORD_SYMBOL_MASK 0x3f ///< six bits: 64 symbols
 /// A place of the entered password that holds no symbol yet.
 #define PASSWORD_SYMBOL_EMPTY 99
+
+u8 gClear_PasswordText[PASSWORD_GOLD_LENGTH] BSS_DATA;
+u8 gClear_PasswordCodes[60] BSS_DATA;
+u8 gClear_PasswordWork[PASSWORD_GOLD_BYTES] BSS_DATA;
 
 /// The password grid's glyph sprites, one for each place of a page.
 struct PasswordWork {

@@ -17,6 +17,7 @@
 #include "../field/actor_prepare.c"
 #include "flags.h"
 #include "types.h"
+#include "macros.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
@@ -120,7 +121,7 @@ extern u32 gFieldEffect_LongScript[];
 extern s32 gSeaOfTime_ShipRests[];
 
 s32 Actor_HasArrived(struct Actor *actor);
-extern u16 gSeaOfTime_RippleLines[160];
+u16 gSeaOfTime_RippleLines[160] BSS_DATA ALIGNED(16);
 
 s32 SeaOfTime_HideSprite(struct Actor *object) {
   ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
@@ -690,7 +691,7 @@ void SeaOfTime_StartWaves(void) {
   Event_End();
 }
 
-extern struct SavedColors gSeaOfTime_SavedColors;
+struct SavedColors gSeaOfTime_SavedColors BSS_DATA;
 
 void SeaOfTime_StopWaves(void) {
   s32 changed;

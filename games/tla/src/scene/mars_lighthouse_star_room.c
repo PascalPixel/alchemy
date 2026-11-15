@@ -294,7 +294,7 @@ void Ride_Create(void);
 void CrackedTile_DropIn(void);
 void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
-extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
+struct Actor *gMarsLighthouseStarRoom_MarsStar BSS_DATA;
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -603,8 +603,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
   bits.priority = source.priority;
   to->bits = bits;
 }
-
-extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
 /// The Mars Star as an actor on the floor by Agatio, rising first when asked.
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
@@ -1949,7 +1947,8 @@ extern s16 gSlideOnIce_AnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-extern volatile s16 gSlideOnIce_Stopped;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
 

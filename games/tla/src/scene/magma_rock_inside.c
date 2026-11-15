@@ -351,10 +351,10 @@ void Actor_LiftTargetBlock(s16 *cells);
 void Actor_PlaceMovedBlock(void);
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 void Actor_PlaySoundInView(struct Actor *object, s32 sound);
-extern s32 gMagmaRockInside_StepCellWidth;
-extern s32 gMagmaRockInside_StepCellHeight;
-extern s32 gMagmaRockInside_StepCellX;
-extern s32 gMagmaRockInside_StepCellZ;
+s32 gMagmaRockInside_StepCellWidth BSS_DATA;
+s32 gMagmaRockInside_StepCellHeight BSS_DATA;
+s32 gMagmaRockInside_StepCellX BSS_DATA;
+s32 gMagmaRockInside_StepCellZ BSS_DATA;
 
 extern s32 gPushLeaderSteps[];
 

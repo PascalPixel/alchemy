@@ -2551,16 +2551,9 @@ s32 Scene_Initialize(void) {
       }
       REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
       Event_Wait(30);
-      {
-        s32 x;
-        /* FAKEMATCH(pin): z in r5 and x in r6. */
-        register s32 z asm("r5");
-
-        x = px(464);
-        z = px(348);
-        object = OverlayObject_PrepareObject(x, -px(32), z, SPRITE_SLATE);
-        Actor_SetHorizontalPositionWithTerrain(ACTOR_SAND_TABLET, x, z);
-      }
+      object =
+          OverlayObject_PrepareObject(px(464), -px(32), px(348), SPRITE_SLATE);
+      Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
       for (i = 0; i < 20; i++) {
         if (i % 5 == 0)
           GaiaRockInside_RingOfDust();

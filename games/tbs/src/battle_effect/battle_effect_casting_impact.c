@@ -98,11 +98,8 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
 
-/// The fire streak's six pictures over the caster, at the sheet's start.
-#define CASTING_IMPACT_STREAK_WIDTH 48
-#define CASTING_IMPACT_STREAK_HEIGHT 72
 /// The impact orb's pictures, packed at half width, after the streak's.
-#define CASTING_IMPACT_ORB_PICTURES (6 * PICTURE_BYTES(CASTING_IMPACT_STREAK))
+#define CASTING_IMPACT_ORB_PICTURES (6 * PICTURE_BYTES(FIRE_STREAK))
 /// The Djinni's picture, in Ram_MapGridCellBuffer after the impact's own.
 #define CASTING_IMPACT_DJINNI_WIDTH 20
 #define CASTING_IMPACT_DJINNI_HEIGHT 40
@@ -621,17 +618,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           mode != CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
         if (frame <= 11) {
           if (work->args->side == EFFECT_SIDE_ENEMIES) {
-            blitters[0](
-                canvas,
-                work->sheet + frame / 2 * PICTURE_BYTES(CASTING_IMPACT_STREAK),
-                casterPos.x - 32, casterPos.y - 40, CASTING_IMPACT_STREAK_WIDTH,
-                CASTING_IMPACT_STREAK_HEIGHT);
+            blitters[0](canvas,
+                        work->sheet + frame / 2 * PICTURE_BYTES(FIRE_STREAK),
+                        casterPos.x - 32, casterPos.y - 40, FIRE_STREAK_WIDTH,
+                        FIRE_STREAK_HEIGHT);
           } else {
-            blitters[0](
-                canvas,
-                work->sheet + frame / 2 * PICTURE_BYTES(CASTING_IMPACT_STREAK),
-                casterPos.x, casterPos.y - 40, CASTING_IMPACT_STREAK_WIDTH,
-                CASTING_IMPACT_STREAK_HEIGHT);
+            blitters[0](canvas,
+                        work->sheet + frame / 2 * PICTURE_BYTES(FIRE_STREAK),
+                        casterPos.x, casterPos.y - 40, FIRE_STREAK_WIDTH,
+                        FIRE_STREAK_HEIGHT);
           }
         }
       }

@@ -427,8 +427,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas,
                         work->sheet + picture * (24 * 48) +
                             TARGET_STRIKE_SMOKE_PICTURES,
-                        Q_16_16_TO_INT(step->x) - 12,
-                        Q_16_16_TO_INT(step->y) - 24, 24, 48);
+                        Q_16_16_TO_INT(step->x) - SMOKE_PUFF_WIDTH / 2,
+                        Q_16_16_TO_INT(step->y) - SMOKE_PUFF_HEIGHT / 2,
+                        SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
             Particle_AdvanceWithGravity2D(step, 62, -px(1) / 64);
             step->variant++;
           }

@@ -162,12 +162,14 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       if (frame <= 87) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
-            CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
+            CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
+            REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 91) {
           draw[work->args->side](
               canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
-              CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
+              CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
+              REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
         }
         EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
                             REAPER_SHEET_SWUNG,

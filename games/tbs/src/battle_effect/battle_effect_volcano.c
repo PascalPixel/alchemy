@@ -95,21 +95,26 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           Sound_PlayFar(SE_CRASH);
         // The column scrolls up over its flickering flame.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
-          s32 scroll = (frame * 16 + pillar * 25) % 104;
+          s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
-          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll - 104, 34, 104);
-          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll, 34, scroll);
+          draw[pillar & 1](canvas, work->sheet,
+                           screen.x - FIRE_PILLAR_WIDTH / 2,
+                           screen.y - scroll - FIRE_PILLAR_HEIGHT,
+                           FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
+          draw[pillar & 1](canvas, work->sheet,
+                           screen.x - FIRE_PILLAR_WIDTH / 2, screen.y - scroll,
+                           FIRE_PILLAR_WIDTH, scroll);
           if (frame & 1) {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
-                    screen.x - 20, screen.y - 24, 20, 37);
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
             draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD, screen.x,
                     screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
                     FIRE_PILLAR_FLAME_HEIGHT);
           } else {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN,
-                    screen.x - 20, screen.y - 24, 20, 37);
+                    screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
             draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN, screen.x,
                     screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
                     FIRE_PILLAR_FLAME_HEIGHT);

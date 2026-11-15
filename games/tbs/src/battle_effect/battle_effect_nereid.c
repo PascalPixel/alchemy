@@ -144,8 +144,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereid_Columns[k][NEREID_COLUMN_X] - 17,
-                  gNereid_Columns[k][NEREID_COLUMN_Y] - span - 104, 34, 104);
+                  gNereid_Columns[k][NEREID_COLUMN_X] - FIRE_PILLAR_WIDTH / 2,
+                  gNereid_Columns[k][NEREID_COLUMN_Y] - span -
+                      FIRE_PILLAR_HEIGHT,
+                  FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k][NEREID_COLUMN_X] - 17,
                   gNereid_Columns[k][NEREID_COLUMN_Y] - span, 34, span);
@@ -156,7 +158,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
-                  120 - rise, 32, 32);
+                  120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
       // Drops swell as they clear.

@@ -18,7 +18,7 @@
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
-#define TITAN_BLADE_FLASH_PICTURES (34 * 104)
+#define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
 
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
@@ -148,7 +148,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                       work->sheet +
                           (gTitanBlade_FlashPictures[life / 3] << 11) +
                           TITAN_BLADE_FLASH_PICTURES,
-                      x - 16, y + 48, 32, 64);
+                      x - FLASH_BURST_WIDTH / 2, y + 48, FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
         }
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;

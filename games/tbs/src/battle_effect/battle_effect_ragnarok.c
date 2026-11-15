@@ -149,8 +149,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       if (frame >= start) {
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
-                  gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
-                  64);
+                  gRagnarok_StrikeColumns[work->args->side][col] -
+                      FLASH_BURST_WIDTH / 2,
+                  56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
         for (i = 0; i != RAGNAROK_RING; i++) {
           struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
@@ -168,7 +169,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                     work->sheet +
                         gRagnarok_FlashPictures[life / 3] * (32 * 64) +
                         RAGNAROK_FLASH_PICTURES,
-                    x - 16, y + 56, 32, 64);
+                    x - FLASH_BURST_WIDTH / 2, y + 56, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
           }
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;

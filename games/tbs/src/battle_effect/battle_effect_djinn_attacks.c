@@ -26,7 +26,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// on their side.
 enum MercurySheetPicture {
   /// The shaft turned; never drawn.
-  MERCURY_TURNED_SHAFT = 20 * 34,
+  MERCURY_TURNED_SHAFT = SMALL_DJINNI_WIDTH * MERCURY_SMALL_DJINNI_HEIGHT,
   /// The flame turned to fly left.
   MERCURY_TURNED_FLAME = MERCURY_TURNED_SHAFT +
       BLUE_FLAME_COLUMN_HEIGHT * BLUE_FLAME_COLUMN_WIDTH
@@ -115,7 +115,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
       s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2)) + 60;
 
-      blit[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
+      blit[1](canvas, work->sheet, x - SMALL_DJINNI_WIDTH / 2,
+              y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+              MERCURY_SMALL_DJINNI_HEIGHT);
       for (i = 0; i != MERCURY_FLAMES; i++) {
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
           struct Particle *shot = &work->particles[i];
@@ -337,7 +339,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
       s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
       s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
-      draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
+      draw[1](canvas, work->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
+              VENUS_SMALL_DJINNI_HEIGHT);
     }
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);

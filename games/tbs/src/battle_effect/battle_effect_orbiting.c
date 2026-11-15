@@ -169,7 +169,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
               Q_16_16_TO_INT(
                   (Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           spark->velocityX += TRIG_TURN / 128;
-          draw[0](canvas, work->sheet + i * (24 * 24), x - 12, y - 28, 24, 24);
+          draw[0](canvas, work->sheet + i * (24 * 24), x - SKULL_WIDTH / 2,
+                  y - 28, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }
@@ -179,7 +180,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 }
 
 /// The burst's six pictures in the sheet, after the smoke's six.
-#define TARGET_BURST_PICTURES (6 * (24 * 48))
+#define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -261,11 +262,13 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
                       work->sheet + picture * (24 * 48) + TARGET_BURST_PICTURES,
-                      screen.x - 12, screen.y - 36, 24, 48);
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
-            drawSmoke(canvas, work->sheet + picture * (24 * 48), screen.x - 12,
-                      screen.y - 36, 24, 48);
+            drawSmoke(canvas, work->sheet + picture * (24 * 48),
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
           puff->variant++;
         }

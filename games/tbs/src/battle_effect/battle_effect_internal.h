@@ -324,6 +324,21 @@ enum RedCrescentPicture {
 /// CrescentSheet's and the reveal masks.
 #define SLASH_PICTURE_SIZE 120
 
+/// FireStreakSheet's six pictures and FireBurstSheet's.
+#define FIRE_STREAK_WIDTH 48
+#define FIRE_STREAK_HEIGHT 72
+#define FIRE_BURST_WIDTH 40
+#define FIRE_BURST_HEIGHT 80
+/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
+/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+#define MERCURY_SMALL_DJINNI_HEIGHT 34
+#define VENUS_SMALL_DJINNI_HEIGHT 38
+/// FireBlobSheet's blobs and CrystalSheet's crystal.
+#define FIRE_BLOB_WIDTH 48
+#define FIRE_BLOB_HEIGHT 32
+#define CRYSTAL_WIDTH 32
+#define CRYSTAL_HEIGHT 64
+
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
 #define LIGHTNING_PILLAR_HEIGHT 112

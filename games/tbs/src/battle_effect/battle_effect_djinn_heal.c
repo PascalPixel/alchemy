@@ -120,7 +120,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
-      callbacks[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
+      callbacks[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
+                   screen.y - MERCURY_SMALL_DJINNI_HEIGHT / 2,
+                   SMALL_DJINNI_WIDTH, MERCURY_SMALL_DJINNI_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -143,7 +145,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                target[2] + Trig_Sin(frame << 11) * 40);
     Projection_Point(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
+    callbacks[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
+                 view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+                 MERCURY_SMALL_DJINNI_HEIGHT);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *object =
           GetBattleObjectSlotFar(work->args->targets[member])->actor;

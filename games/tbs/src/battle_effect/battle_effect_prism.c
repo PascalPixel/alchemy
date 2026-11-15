@@ -4,8 +4,9 @@
 
 #include "battle_effect_internal.h"
 
-#define PRISM_GROUND_Y px(56)          ///< y 56, where the crystals shatter
-#define PRISM_SHARD_PICTURES (32 * 64) ///< the shards, after the 32x64 crystal
+#define PRISM_GROUND_Y px(56) ///< y 56, where the crystals shatter
+#define PRISM_SHARD_PICTURES                                                   \
+  PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -103,8 +104,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           }
         } else if (frame >= crystal->variant) {
           // A falling crystal.
-          draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
-                      Q_16_16_TO_INT(crystal->y), 32, 64);
+          draw[i & 1](canvas, work->sheet,
+                      Q_16_16_TO_INT(crystal->x) - CRYSTAL_WIDTH / 2,
+                      Q_16_16_TO_INT(crystal->y), CRYSTAL_WIDTH,
+                      CRYSTAL_HEIGHT);
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
                                         Q16_ONE);
           if (crystal->y > PRISM_GROUND_Y) {

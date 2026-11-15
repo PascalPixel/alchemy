@@ -101,13 +101,13 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
               SLASH_PICTURE_SIZE);
     else if (frame <= 7)
       draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
-              120, 120);
+              SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     else if (frame <= 11)
       draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
               SLASH_PICTURE_SIZE);
     else if (frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
-              0, 120, 120);
+              0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     if (frame >= 16 && frame <= 19)
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

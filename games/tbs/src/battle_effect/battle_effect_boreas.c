@@ -7,6 +7,14 @@
 /// The sparkles that trail the spray, after the spray in PARTICLES.
 #define BOREAS_SPRAY_SPARKLES (PARTICLES + 128)
 
+/// IceBlockSheet's first crystal, its big block and its streak.
+#define BOREAS_CRYSTAL_WIDTH 24
+#define BOREAS_CRYSTAL_HEIGHT 48
+#define BOREAS_BIG_BLOCK_WIDTH 24
+#define BOREAS_BIG_BLOCK_HEIGHT 48
+#define BOREAS_STREAK_WIDTH 40
+#define BOREAS_STREAK_HEIGHT 80
+
 /// The pictures in the ice block sheet that this file draws; the tables in
 /// battle_effect_table.c read the rest.
 enum IceBlockSheetPicture {
@@ -202,7 +210,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       } else if (frame > 208) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, blockX, blockY, 24, 48);
+      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, blockX, blockY,
+              BOREAS_BIG_BLOCK_WIDTH, BOREAS_BIG_BLOCK_HEIGHT);
     }
 
     if (frame == 32) {
@@ -378,7 +387,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // A streak of ice falls from the top right.
     if (frame > 64) {
       draw(canvas, work->sheet + BOREAS_STREAK, (64 - frame) * 7 + 88,
-           frame * 14 - 992, 40, 80);
+           frame * 14 - 992, BOREAS_STREAK_WIDTH, BOREAS_STREAK_HEIGHT);
     }
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
@@ -428,8 +437,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // Crystals rain down.
     if (frame <= 71) {
       for (i = 0; i != 64; i++) {
-        draw(canvas, work->sheet, Q_16_16_TO_INT(work->particles[i].x) - 12,
-             Q_16_16_TO_INT(work->particles[i].y) - 24, 24, 48);
+        draw(canvas, work->sheet,
+             Q_16_16_TO_INT(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
+             Q_16_16_TO_INT(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
+             BOREAS_CRYSTAL_WIDTH, BOREAS_CRYSTAL_HEIGHT);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
         if (Q_16_16_TO_INT(work->particles[i].y) > 120 && frame <= 47) {

@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-#define KIRIN_BLOB_BYTES (48 * 32)
+#define KIRIN_BLOB_BYTES PICTURE_BYTES(FIRE_BLOB)
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then, unseen behind the battle background, it charges across the
@@ -217,7 +217,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       }
       for (i = 0; i != 6; i++)
         blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-             120 - slide, i * 18, 48, 32);
+             120 - slide, i * 18, FIRE_BLOB_WIDTH, FIRE_BLOB_HEIGHT);
     }
 
     if (work->shakeFrames > 0) {
@@ -354,7 +354,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
         for (i = 0; i != 16; i++)
           blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-               jitterRow[i] - slide + 120, i * 8 - 8, 48, 32);
+               jitterRow[i] - slide + 120, i * 8 - 8, FIRE_BLOB_WIDTH,
+               FIRE_BLOB_HEIGHT);
       }
       if (frame > 64) {
         work->transferMode = CANVAS_COPY_AND_FADE;

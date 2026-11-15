@@ -89,13 +89,15 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                   work->sheet +
                       (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                       RAY_PICTURES,
-                  x + (Random16() & 7) - 16, y, 24, 120);
+                  x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+                  LIGHTNING_BOLT_HEIGHT);
         else
           draw[bolt & 1](canvas,
                          work->sheet +
                              (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                              RAY_PICTURES,
-                         x + (Random16() & 7) - 16, y, 24, 120);
+                         x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+                         LIGHTNING_BOLT_HEIGHT);
 
         // Sparks fly from the bolt's root.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {

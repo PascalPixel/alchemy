@@ -261,7 +261,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           draw[1](canvas,
                   work->sheet + burst->variant / 8 * (24 * 48) +
                       LOBBED_SHELLS_SMOKE_PICTURES,
-                  position.x - 12, position.y - 24, 24, 48);
+                  position.x - SMOKE_PUFF_WIDTH / 2,
+                  position.y - SMOKE_PUFF_HEIGHT / 2, SMOKE_PUFF_WIDTH,
+                  SMOKE_PUFF_HEIGHT);
         } else {
           s32 picture = burst->variant / 5;
           s32 flip;

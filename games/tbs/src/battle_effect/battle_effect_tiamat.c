@@ -250,8 +250,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (puff->variant >= 0) {
           draw[0](canvas, work->sheet + ((puff->variant >> 2) << 11),
-                  Q_16_16_TO_INT(puff->x) - 16, Q_16_16_TO_INT(puff->y) - 32,
-                  32, 64);
+                  Q_16_16_TO_INT(puff->x) - FLASH_BURST_WIDTH / 2,
+                  Q_16_16_TO_INT(puff->y) - FLASH_BURST_HEIGHT / 2,
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           puff->x += puff->velocityX * dir;
           puff->y += puff->velocityY;
           puff->variant++;

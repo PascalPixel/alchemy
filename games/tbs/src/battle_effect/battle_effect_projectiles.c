@@ -584,9 +584,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
-                  20, 40);
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
-                20, 40);
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
 

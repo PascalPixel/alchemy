@@ -78,16 +78,18 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
     // The flash spreads from the user.
     if (frame >= 2 && frame <= 3)
-      draw[0](canvas, work->sheet, screenPosition.x - 16, screenPosition.y - 64,
-              32, 64);
+      draw[0](canvas, work->sheet, screenPosition.x - FLASH_BURST_WIDTH / 2,
+              screenPosition.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
         s32 x = screenPosition.x + Q_16_16_TO_INT(frame * Trig_Sin(i << 12));
         s32 y = screenPosition.y + Q_16_16_TO_INT(frame * Trig_Cos(i << 12)) -
                 frame;
 
-        draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64), x - 16,
-                y - 64, 32, 64);
+        draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64),
+                x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
     // The user leaps, heading out past its own position.
@@ -125,12 +127,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
         // 0 moves x; only the author's intent would say.
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet, screenPosition.x - 20,
-                  screenPosition.y - 52, 40, 64);
+          draw[0](canvas, work->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
+                  screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.x -= 8;
         } else {
           draw[1](canvas, work->sheet, screenPosition.x - 26,
-                  screenPosition.y - 52, 40, 64);
+                  screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.y += 8;
         }
       }

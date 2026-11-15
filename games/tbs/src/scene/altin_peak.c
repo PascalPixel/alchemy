@@ -1776,11 +1776,11 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
     spray->x.fixed +=
-        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)px(Random_Below(2) - 1) >> 1);
     break;
   case FACING_WEST:
     spray->x.fixed -=
-        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)px(Random_Below(2) - 1) >> 1);
     break;
   }
   if (spray->timer <= 3) {
@@ -1846,8 +1846,8 @@ static void AltinPeak_SpawnDebris(void) {
   s32 scale;
 
   if (gFrameCount % 3 == 0) {
-    debris = FieldActor_Create(
-        SPRITE_ROCK, ((Random_Below(48)) << 16) + px(765), -px(64), px(608));
+    debris = FieldActor_Create(SPRITE_ROCK, px(Random_Below(48)) + px(765),
+                               -px(64), px(608));
     if (debris != NULL) {
       if (gFrameCount % 9 == 0) {
         if (Random_Below(2) != 0)

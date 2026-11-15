@@ -276,8 +276,8 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = ((Random_Below(17)) << 16) + baseX;
-    s32 particleZ = ((Random_Below(14)) << 16) + baseZ;
+    s32 particleX = px(Random_Below(17)) + baseX;
+    s32 particleZ = px(Random_Below(14)) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,

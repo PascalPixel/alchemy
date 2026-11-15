@@ -1956,11 +1956,11 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
-  x = actor->x.fixed + (randomOffset << 16);
+  x = actor->x.fixed + px(randomOffset);
   x -= px(10);
-  spark = FieldActor_Create(
-      SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
-      actor->z.fixed);
+  spark = FieldActor_Create(SPRITE_GLINT, x,
+                            actor->y.fixed + px(Random_Next() & 15) - px(8),
+                            actor->z.fixed);
   if (spark == NULL)
     return;
   sprite = spark->sprite;

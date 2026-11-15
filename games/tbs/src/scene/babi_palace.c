@@ -72,6 +72,7 @@
 #include "graphics/display_transition.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
@@ -331,7 +332,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   s32 facingOrMessage;
 
   roundedFacing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & 0xc000;
+      FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {

@@ -690,7 +690,7 @@ static void HeatGauge_CountStep(void) {
     params.spin = (Random_Below(4096)) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = px(2) - px(((z >> 20) & 1) * 5);
+      dx = px(2) - px((FIELD_CELL(z) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }
@@ -814,7 +814,7 @@ static void LamakanDesert_SlideDownDune(void) {
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = (Random_Below(4096)) + 0xf800;
-    x = actor->x.fixed + ((Random_Below(12)) << 16) - px(6);
+    x = actor->x.fixed + px(Random_Below(12)) - px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
                       (Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
@@ -1003,7 +1003,7 @@ static void HeatGauge_Draw(void) {
   } else if (gHeatGaugeSlide <= 1) {
     if (++gHeatGaugeSlide == 1) {
       Dma_Set(gHeatGauge_Palette, (void *)&OBJ_PLTT_COLOR(14, 0),
-              (DMA_ENABLE | DMA_16BIT) << 16 | 16, REG_DMA3);
+              DMA_COPY_HALFWORDS(16), REG_DMA3);
     }
   }
   slide = gHeatGaugeSlide;
@@ -1026,8 +1026,7 @@ static void HeatGauge_Draw(void) {
   }
 
   buffer = Heap_Alloc(2304);
-  Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
-          REG_DMA3);
+  Dma_Set(gHeatGauge_Palette, buffer, DMA_COPY_HALFWORDS(16), REG_DMA3);
   colors = (s16 *)buffer + 6;
   color = colors;
   for (i = 6; i < 12; i++) {

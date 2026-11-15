@@ -58,6 +58,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
@@ -240,7 +241,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The side the leader faces, which is the facing rounded to the nearest of
 /// east, south, west and north.
 static inline u16 TimberRoomsBC_LeaderGetSide(void) {
-  return (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+  return FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
 }
 
 /// The weapon merchant sells weapons, or talks of Sheba and the sea.
@@ -248,7 +249,7 @@ static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   // The side of the counter the leader faces, as TimberRoomsBC_LeaderGetSide
   // rounds it.
-  u16 side = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  u16 side = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);

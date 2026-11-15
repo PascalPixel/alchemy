@@ -43,6 +43,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/kolima_palette.h"
 #include "sound/sound.h"
@@ -435,8 +436,7 @@ s32 Scene_Initialize(void) {
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
-            gKolimaForestFloodgateRecords, (DMA_ENABLE | DMA_32BIT) << 16 | 18,
-            REG_DMA3);
+            gKolimaForestFloodgateRecords, DMA_COPY_WORDS(18), REG_DMA3);
     *gKolimaForestFloodgateReturned = 0;
     *gKolimaForestFloodgateMap = 1;
   }
@@ -571,7 +571,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
 
   moved = 0;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = (actor->facing + TRIG_TURN / 8) & 0xc000;
+  facing = FACING_NEAREST_CARDINAL(actor->facing);
   SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
              (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), facing, point);

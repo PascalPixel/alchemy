@@ -190,7 +190,7 @@ static void FileScreen_LoadBackground(void) {
     scroll->x = 0;
     scroll++;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;

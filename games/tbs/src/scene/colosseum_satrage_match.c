@@ -82,6 +82,7 @@
 #include "scene/colosso_occupant.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -540,7 +541,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *log = Actor_Get(logId);
-  s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
+  s32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
   s32 alongX = FIELD_CELL(log->x.fixed) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
@@ -1081,16 +1082,15 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, (attendantX << 16),
-                         ((attendantZ << 16) - px(48)));
-  Actor_SetPositionFixed(ACTOR_GARET, (attendantX << 16) - px(16),
-                         (attendantZ << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_IVAN, (attendantX << 16) + px(16),
-                         (attendantZ << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_MIA, (attendantX << 16),
-                         ((attendantZ << 16) - px(32)));
-  Actor_SetPositionFixed(attendantId, (attendantX << 16),
-                         ((attendantZ << 16) - px(80)));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(attendantX),
+                         (px(attendantZ) - px(48)));
+  Actor_SetPositionFixed(ACTOR_GARET, px(attendantX) - px(16),
+                         px(attendantZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, px(attendantX) + px(16),
+                         px(attendantZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, px(attendantX), (px(attendantZ) - px(32)));
+  Actor_SetPositionFixed(attendantId, px(attendantX),
+                         (px(attendantZ) - px(80)));
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();

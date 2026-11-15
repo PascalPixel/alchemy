@@ -213,7 +213,7 @@ static void Ship_UpdateSwell(void) {
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
-    swell = Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2) << 16;
+    swell = px(Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2));
     grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = gShipHullY + swell;
     grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {

@@ -76,6 +76,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -1186,7 +1187,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
-  s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  s32 climbDirection = FACING_NEAREST_CARDINAL(leader->facing);
   s32 climbResult = -1;
 
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == NULL) {

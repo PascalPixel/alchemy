@@ -77,6 +77,7 @@
 #include "scene/colosso_occupant.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -716,7 +717,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     Actor_SelectAnimation(log, 1);
     Sound_Play(SE_STOP_ACTION_SE);
     Sound_Play(SE_HEAVY_STOP);
-    column = x >> 20;
+    column = FIELD_CELL(x);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 9);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 61);
   }

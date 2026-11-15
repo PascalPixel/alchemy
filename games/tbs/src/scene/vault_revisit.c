@@ -56,6 +56,7 @@
 #include "game/inventory.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/vault.h"
 #include "scene/vault_range.h"

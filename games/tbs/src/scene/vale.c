@@ -109,6 +109,7 @@
 #include "scene/actor_polar_target.h"
 #include "scene/catch_nut.h"
 #include "scene/event_psynergy.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
 #include "scene/world_map_attached_effects.h"
@@ -2939,10 +2940,10 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
       force != 0) {
     angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                          target->x.fixed - actor->x.fixed);
-    left = (angle - FACING_STEP) & 0xf000;
-    right = (angle + FACING_STEP) & 0xf000;
-    angle &= 0xf000;
-    dir = actor->facing & 0xf000;
+    left = FACING_SIXTEENTH(angle - FACING_STEP);
+    right = FACING_SIXTEENTH(angle + FACING_STEP);
+    angle = FACING_SIXTEENTH(angle);
+    dir = FACING_SIXTEENTH(actor->facing);
     if (angle == dir || right == dir || left == dir || force != 0) {
       actor->paused = 1;
       Actor_SelectAnimation(actor, ANIM_STAND);

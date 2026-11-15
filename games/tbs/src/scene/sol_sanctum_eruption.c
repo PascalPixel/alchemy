@@ -754,17 +754,15 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->sprite->image.priority = 1;
       Actor_SelectAnimation(ember, 2);
       Actor_StartScript(ember, gEruption_EmberScript);
-      ember->x.fixed = Iwram_MulQ16(Trig_Cos((u16)angle),
-                                    ((Random_Below(256)) << 16) + px(256)) +
-                       px(325);
+      ember->x.fixed =
+          Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Below(256)) + px(256)) +
+          px(325);
       ember->y.fixed = 0;
-      ember->z.fixed = Iwram_MulQ16(Trig_Sin((u16)angle),
-                                    ((Random_Below(256)) << 16) + px(256)) +
-                       px(302);
-      x = Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Random_Next() & 63) << 16) + px(8));
-      z = Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Random_Next() & 63) << 16) + px(8));
+      ember->z.fixed =
+          Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Below(256)) + px(256)) +
+          px(302);
+      x = Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Next() & 63) + px(8));
+      z = Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Next() & 63) + px(8));
       FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;

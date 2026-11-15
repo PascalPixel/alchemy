@@ -78,6 +78,7 @@
 #include "menu/menu.h"
 #include "scene/actor_nearest.h"
 #include "scene/event_psynergy.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -352,7 +353,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   u8 flags;
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
+  angle = FACING_NEAREST_EIGHTH(actor->facing);
   flags = actor->motionFlags;
   SET_VECTOR(destination.coordinates,
              (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
@@ -1876,15 +1877,13 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   }
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
-    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)(Random_Below(256) << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = FieldActor_Create(
+        SPRITE_PARTICLE, center->x.fixed,
+        (s32)px(Random_Below(256)) + center->y.fixed - px(28), center->z.fixed);
   } else {
-    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)(Random_Below(64) << 16) + center->y.fixed -
-                                   px(28),
-                               center->z.fixed);
+    effect = FieldActor_Create(
+        SPRITE_PARTICLE, center->x.fixed,
+        (s32)px(Random_Below(64)) + center->y.fixed - px(28), center->z.fixed);
   }
   if (effect != NULL) {
     sprite = effect->sprite;
@@ -3018,7 +3017,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   }
   if (spawnParticles) {
-    randomHeight = (Random_Below(80)) << 16;
+    randomHeight = px(Random_Below(80));
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
@@ -3077,7 +3076,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 
   center = (Actor_Get(23));
   grid = gMapGridWork[0];
-  drift = Random_Below(48) << 16;
+  drift = px(Random_Below(48));
   if ((s16)(grid->view[1] >> 16) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);

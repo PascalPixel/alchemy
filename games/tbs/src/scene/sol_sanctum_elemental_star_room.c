@@ -2156,10 +2156,10 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   for (frame = 0; frame <= 31; frame++) {
     Event_Wait(1);
     if (!(frame & 1)) {
-      xOffset = (Random_Below(24)) << 16;
+      xOffset = px(Random_Below(24));
       x = alex->x.fixed + xOffset;
       x -= px(12);
-      FieldEffect_Spawn(x, alex->y.fixed + ((Random_Below(32)) << 16) + px(32),
+      FieldEffect_Spawn(x, alex->y.fixed + px(Random_Below(32)) + px(32),
                         alex->z.fixed, 0, -px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,

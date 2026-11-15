@@ -702,8 +702,8 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 12);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 13);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 14);
-  MapGrid_CopyCellAttributes(1, 0, 1, 1, (statueX >> 20), statueRow);
-  if ((statueX >> 20) != 16 || statueRow != 13) {
+  MapGrid_CopyCellAttributes(1, 0, 1, 1, FIELD_CELL(statueX), statueRow);
+  if (FIELD_CELL(statueX) != 16 || statueRow != 13) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 13);
   }
   // The statue may have moved onto the leader while this event was running.

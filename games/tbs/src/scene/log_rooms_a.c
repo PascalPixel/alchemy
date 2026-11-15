@@ -88,6 +88,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/vault_item_icon.h"
 #include "sound/sound.h"
@@ -629,7 +630,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Event_ShowMessage(ACTOR_SUSPECTED_LEADER, 0);
   Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
   // Pushed from the north he runs on along his route, from the south back.
-  facing = suspect->facing & 0xf000;
+  facing = FACING_SIXTEENTH(suspect->facing);
   if (facing >= TRIG_TURN * 5 / 16 && facing <= TRIG_TURN * 11 / 16) {
     if (suspect->timer <= 2) {
       Actor_SetScript(ACTOR_SUSPECTED_LEADER,
@@ -679,7 +680,7 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   s32 routePair;
 
   actor = Actor_Get(ACTOR_SUSPECTED_THIEF);
-  facing = actor->facing & 0xf000;
+  facing = FACING_SIXTEENTH(actor->facing);
   routePair = actor->timer >> 1;
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);

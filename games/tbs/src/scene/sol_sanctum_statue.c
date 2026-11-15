@@ -1015,7 +1015,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   if (statue != NULL) {
     statueZ = statue->z.fixed;
     Event_Start();
-    if ((statueZ >> 20) == 8) {
+    if (FIELD_CELL(statueZ) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
         s32 halfCell = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19;
 

@@ -15,7 +15,7 @@ static void Vault_UpdateBoneProximityFlag(void) {
   s32 row;
 
   struct Actor *leaderAgain = Actor_GetById(ACTOR_PARTY_LEADER);
-  column = fixedX >> 20;
+  column = FIELD_CELL(fixedX);
   row = leaderAgain->z.fixed;
   column -= 34;
   row >>= 20;

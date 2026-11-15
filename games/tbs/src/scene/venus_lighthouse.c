@@ -97,6 +97,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/actor_step.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
@@ -626,9 +627,9 @@ static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
     options.startScaleX = 2 * Q16_ONE / 5;
     options.startScaleY = 2 * Q16_ONE / 5;
     options.palette = 14;
-    particleX = actor->x.fixed + (((Random_Below(9)) - 4) << 16);
-    particleY = actor->y.fixed + ((32 - (Random_Below(32))) << 16);
-    riseSpeed = Math_Divide(((Random_Below(5)) << 16) + px(5), 10);
+    particleX = actor->x.fixed + px(Random_Below(9) - 4);
+    particleY = actor->y.fixed + px(32 - Random_Below(32));
+    riseSpeed = Math_Divide(px(Random_Below(5)) + px(5), 10);
     FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
@@ -666,8 +667,8 @@ VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   if (framePhase == 0) {
     options.startScaleX = Q16_ONE / 2;
     options.startScaleY = Q16_ONE / 2;
-    FieldEffect_Spawn(actor->x.fixed + (((Random_Below(9)) - 4) << 16),
-                      actor->y.fixed, actor->z.fixed, 0, 0, 0,
+    FieldEffect_Spawn(actor->x.fixed + px(Random_Below(9) - 4), actor->y.fixed,
+                      actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
   }
 
@@ -881,7 +882,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   landing.y = leader->y.fixed;
   landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-  direction = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  direction = FACING_NEAREST_CARDINAL(leader->facing);
   Vector_AddPolarOffset(px(16), direction, &landing);
 #else
   direction = leader->facing >> 12;
@@ -893,7 +894,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
     landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     landing.y = leader->y.fixed;
     landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-    Vector_AddPolarOffset(px(32), (leader->facing + TRIG_TURN / 8) & 0xc000,
+    Vector_AddPolarOffset(px(32), FACING_NEAREST_CARDINAL(leader->facing),
                           &landing);
 #else
     step = gPushedActor_DirectionSteps[direction];
@@ -1732,7 +1733,8 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     for (candidateIndex = 0; candidateIndex <= 3; candidateIndex++) {
       if (FIELD_CELL(pillar->x.fixed) ==
               gVenusThirdFloorSockets[candidateIndex].x &&
-          pillar->z.fixed >> 20 == gVenusThirdFloorSockets[candidateIndex].z &&
+          FIELD_CELL(pillar->z.fixed) ==
+              gVenusThirdFloorSockets[candidateIndex].z &&
           pillar->y.fixed >= 0) {
         switchIndex = candidateIndex;
         break;
@@ -1745,8 +1747,8 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
          candidateIndex <= ACTOR_FIRST_SWITCH_PILLAR + 2; candidateIndex++) {
       other = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
-          pillar->x.fixed >> 20 == FIELD_CELL(other->x.fixed) &&
-          pillar->z.fixed >> 20 == FIELD_CELL(other->z.fixed)) {
+          FIELD_CELL(pillar->x.fixed) == FIELD_CELL(other->x.fixed) &&
+          FIELD_CELL(pillar->z.fixed) == FIELD_CELL(other->z.fixed)) {
         switchIndex = 5;
         break;
       }
@@ -1810,7 +1812,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (FIELD_CELL(Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed) ==
                 gVenusThirdFloorSockets[0].x &&
-            Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
+            FIELD_CELL(Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed) ==
                 gVenusThirdFloorSockets[0].z) {
           GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY);
         } else {
@@ -2943,7 +2945,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
     options.spin = (Random_Below(4096)) + 0xf800;
-    particleX = actor->x.fixed + ((Random_Below(12)) << 16) - px(6);
+    particleX = actor->x.fixed + px(Random_Below(12)) - px(6);
     FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
         ((Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10)) * direction->x,
@@ -3078,13 +3080,12 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   options.spin = (Random_Below(4096)) + 0xf800;
   if ((gFrameCount & 3) == 0) {
     if ((Random_Below(2)) != 0) {
-      FieldEffect_Spawn((x + ((Random_Below(2)) << 4)) << 16, 0, z << 19, 0, 0,
-                        (s32)(((Random_Below(5)) << 16) + px(7)) / 10,
+      FieldEffect_Spawn(px(x + (Random_Below(2) << 4)), 0, z << 19, 0, 0,
+                        (s32)(px(Random_Below(5)) + px(7)) / 10,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
-      FieldEffect_Spawn((x + (Random_Below(17))) << 16, 0, (x << 19) - px(4), 0,
-                        0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-                        &options);
+      FieldEffect_Spawn(px(x + Random_Below(17)), 0, (x << 19) - px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
   }
 }
@@ -3217,9 +3218,9 @@ static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
     if ((gFrameCount & 7) == 0) {
       Sound_Play(SE_GLITTER);
     }
-    particleX = actor->x.fixed + (((Random_Below(49)) - 24) << 16);
-    particleY = actor->y.fixed + (((Random_Below(49)) - 24) << 16);
-    particleZ = actor->z.fixed + (((Random_Below(49)) - 24) << 16);
+    particleX = actor->x.fixed + px(Random_Below(49) - 24);
+    particleY = actor->y.fixed + px(Random_Below(49) - 24);
+    particleZ = actor->z.fixed + px(Random_Below(49) - 24);
     riseSpeed = ((Random_Below(4)) << 15) + px(1) / 2;
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
@@ -3357,7 +3358,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
       for (socket = 0;
            socket <= 3 &&
            !(FIELD_CELL(light->x.fixed) == gVenusThirdFloorSockets[socket].x &&
-             light->z.fixed >> 20 == gVenusThirdFloorSockets[socket].z);
+             FIELD_CELL(light->z.fixed) == gVenusThirdFloorSockets[socket].z);
            socket++) {
       }
       for (pathIndex = 0;; pathIndex++) {
@@ -3377,7 +3378,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
       for (socket = 0;
            socket <= 7 &&
            !(FIELD_CELL(light->x.fixed) == gVenusFourthFloorSockets[socket].x &&
-             light->z.fixed >> 20 == gVenusFourthFloorSockets[socket].z);
+             FIELD_CELL(light->z.fixed) == gVenusFourthFloorSockets[socket].z);
            socket++) {
       }
       for (pathIndex = 0;; pathIndex++) {

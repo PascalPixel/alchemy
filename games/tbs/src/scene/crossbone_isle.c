@@ -99,6 +99,7 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
+#include "scene/facing_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "sound/sound.h"
@@ -901,7 +902,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
   destination.y = actor->y.fixed;
   destination.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
   {
-    s32 direction = (actor->facing + TRIG_TURN / 8) & 0xc000;
+    s32 direction = FACING_NEAREST_CARDINAL(actor->facing);
 
     Vector_AddPolarOffset(px(32), direction, &destination);
   }

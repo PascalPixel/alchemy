@@ -42,9 +42,9 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
     if (actor == NULL)
       continue;
 #endif
-    if ((position->x >> 20) == FIELD_CELL(actor->x.fixed) &&
+    if (FIELD_CELL(position->x) == FIELD_CELL(actor->x.fixed) &&
         (position->y / px(1)) == (actor->y.fixed / px(1)) &&
-        (position->z >> 20) == FIELD_CELL(actor->z.fixed)) {
+        FIELD_CELL(position->z) == FIELD_CELL(actor->z.fixed)) {
       return actor;
     }
   }
@@ -432,8 +432,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
       probe.position.x >>= 20;
       probe.position.z >>= 20;
     }
-    horizontalOrigin = workspace->layers[1].offsetX >> 20;
-    verticalOrigin = workspace->layers[1].offsetY >> 20;
+    horizontalOrigin = FIELD_CELL(workspace->layers[1].offsetX);
+    verticalOrigin = FIELD_CELL(workspace->layers[1].offsetY);
 
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
@@ -516,8 +516,8 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
   probe.position.z += px(gPushedActor_FootprintBounds[offset + 1]);
   probe.position.x >>= 20;
   probe.position.z >>= 20;
-  idx = grid->layers[1].offsetX >> 20;
-  dstZ = grid->layers[1].offsetY >> 20;
+  idx = FIELD_CELL(grid->layers[1].offsetX);
+  dstZ = FIELD_CELL(grid->layers[1].offsetY);
   MapGrid_CopyCellAttributeRect(probe.position.x, probe.position.z, width,
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);

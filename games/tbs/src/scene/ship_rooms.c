@@ -115,6 +115,7 @@
 #include "game/inventory.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/facing_nearest.h"
 #include "scene/import.h"
 #include "scene/tolbi_ship.h"
 #include "scene/walk_into_leader.h"
@@ -1117,17 +1118,17 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   passenger->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
-  direction = ((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12;
+  direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 4) >> 12;
   if (ShipRooms_IsSpotFree(direction) != 0) {
     blocked = 0;
   }
   if (blocked != 0) {
-    direction = ((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12;
+    direction = FACING_SIXTEENTH(leader->facing - TRIG_TURN / 4) >> 12;
     if (ShipRooms_IsSpotFree(direction) != 0) {
       blocked = 0;
     }
     if (blocked != 0) {
-      direction = ((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12;
+      direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 2) >> 12;
     }
   }
   {

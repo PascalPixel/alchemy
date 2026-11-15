@@ -833,8 +833,8 @@ s32 Scene_Initialize(void) {
 
 /// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette, DMA_COPY_WORDS(112),
+          REG_DMA3);
 }
 
 /// Tints background colours 16 to 78 every thirty-two frames, leaving

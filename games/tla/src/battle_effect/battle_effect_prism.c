@@ -176,20 +176,20 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
     if (red < 0)
       red = 0;
-    if (red > 31)
-      red = 31;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     if (green < 0)
       green = 0;
-    if (green > 31)
-      green = 31;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
     if (blue < 0)
       blue = 0;
-    if (blue > 31)
-      blue = 31;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
 
     palette[index] = RGB(red, green, blue);
     index++;
   } while (index != 64);
 
-  Iwram_CopyWords((void *)(BG_PLTT + 1), palette, sizeof(palette));
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(0, 1), palette, sizeof(palette));
 }

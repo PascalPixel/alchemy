@@ -14,7 +14,7 @@ struct MeshVertex {
 
 /// The VRAM address of an effect sprite's tiles.
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gVramCacheEntries[((struct Sprite *)(obj))->slot].offset)
+  (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(obj))->slot].offset)
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define CATASTROPHE_FLASH_BURST_PICTURES 0x1800
@@ -91,7 +91,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-  Palette_BrightenSavedBattleBg(-31, -31, -31);
+  Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = Q_8_8(0.5);
@@ -161,7 +161,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
-    Iwram_CopyWords((void *)(OBJ_PLTT + 0xc0), e, 32);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(12, 0), e, 32);
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
@@ -177,7 +177,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
-    Iwram_CopyWords((void *)(OBJ_PLTT + 0xd0), e, 32);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(13, 0), e, 32);
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
@@ -193,7 +193,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
-    Iwram_CopyWords((void *)(OBJ_PLTT + 0xe0), e, 32);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), e, 32);
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
@@ -325,7 +325,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
       if (level >= 0) {
-        u16 *dst = (u16 *)(BG_PLTT + 0x60);
+        u16 *dst = (u16 *)&BG_PLTT_COLOR(6, 0);
         backdropColor = battle->palette;
 
         for (i = 0; i != 128; i++) {
@@ -333,14 +333,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 g = RGB_GREEN(*backdropColor);
           s32 b = RGB_BLUE(*backdropColor) + level;
 
-          if (r > 31) {
-            r = 31;
+          if (r > RGB_LEVEL_MAX) {
+            r = RGB_LEVEL_MAX;
           }
-          if (g > 31) {
-            g = 31;
+          if (g > RGB_LEVEL_MAX) {
+            g = RGB_LEVEL_MAX;
           }
-          if (b > 31) {
-            b = 31;
+          if (b > RGB_LEVEL_MAX) {
+            b = RGB_LEVEL_MAX;
           }
           backdropColor++;
           *dst++ = RGB(r, g, b);
@@ -397,9 +397,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         fb = 16 - d;
         apply[0] = 1;
       } else if (frame == 324) {
-        fr = 31;
-        fg = 31;
-        fb = 31;
+        fr = RGB_LEVEL_MAX;
+        fg = RGB_LEVEL_MAX;
+        fb = RGB_LEVEL_MAX;
         apply[0] = 1;
         apply[1] = 1;
       } else if ((u32)(frame - 332) <= 59) {
@@ -425,9 +425,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (j == 0) {
             src = (u16 *)(work->sheet + 0x5002);
             n = 240;
-            dst = (u16 *)(OBJ_PLTT + 1);
+            dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
           } else {
-            dst = (u16 *)(BG_PLTT + 0x60);
+            dst = (u16 *)&BG_PLTT_COLOR(6, 0);
             src = battle->palette;
             n = 128;
           }
@@ -436,14 +436,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 g = RGB_GREEN(*src) + fg;
             s32 b = RGB_BLUE(*src) + fb;
 
-            if (r > 31) {
-              r = 31;
+            if (r > RGB_LEVEL_MAX) {
+              r = RGB_LEVEL_MAX;
             }
-            if (g > 31) {
-              g = 31;
+            if (g > RGB_LEVEL_MAX) {
+              g = RGB_LEVEL_MAX;
             }
-            if (b > 31) {
-              b = 31;
+            if (b > RGB_LEVEL_MAX) {
+              b = RGB_LEVEL_MAX;
             }
             if (r < 0) {
               r = 0;
@@ -461,7 +461,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 554) <= 31 && !((frame - 554) & 1)) {
-      ColorBuffer_ScaleFar(battle->palette, (void *)(BG_PLTT + 0x60),
+      ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            0x10000 - ((frame - 554) << 10), 128);
     }
     if (swapped == 0) {
@@ -1020,7 +1020,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Palette_BrightenBgEntries(1, 1, 1);
         }
         if (frame == 80 || frame == 83) {
-          u16 *c = (u16 *)(BG_PLTT + 0x60);
+          u16 *c = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (i = 0; i != 128; i++, c++) {
             *c ^= 0x7fff;
@@ -1038,7 +1038,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           u16 *c;
 
           work->shakeFrames = 16;
-          c = (u16 *)(BG_PLTT + 0x60);
+          c = (u16 *)&BG_PLTT_COLOR(6, 0);
           for (i = 0; i != 128; i++, c++) {
             *c ^= 0x7fff;
           }

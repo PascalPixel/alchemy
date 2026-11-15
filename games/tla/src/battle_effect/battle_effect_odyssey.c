@@ -123,23 +123,23 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       BattleEffect_BuildRepeatingTilemap();
-      palette = (u16 *)BG_PLTT + 96;
+      palette = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++) {
         s32 entry = *palette;
-        s32 red = 31;
+        s32 red = RGB_LEVEL_MAX;
         u16 green;
         s32 blue;
 
         red &= entry;
         /* FAKEMATCH(dead): green is taken and clamped, then never used. */
-        green = ((u16)entry >> 5) & 31;
-        blue = ((u16)entry >> 10) & 31;
+        green = RGB_GREEN((u16)entry);
+        blue = RGB_BLUE((u16)entry);
 
-        if (red > 31)
-          red = 31;
-        if (blue > 31)
-          blue = 31;
-        green = green > 31 ? 31 : green;
+        if (red > RGB_LEVEL_MAX)
+          red = RGB_LEVEL_MAX;
+        if (blue > RGB_LEVEL_MAX)
+          blue = RGB_LEVEL_MAX;
+        green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;
@@ -449,7 +449,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
 /// Copies the swirl's colours into background palette entries 96 on.
 static inline s32 Swirl_CopyPalette(const void *source) {
-  return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
+  return Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), source, 128);
 }
 
 /// Draws a size by size square of the swirl at x along the top of the buffer.
@@ -502,7 +502,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
-  Iwram_CopyWordsEntry((void *)&BG_PLTT[96], palette, 128);
+  Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -627,7 +627,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
     ramp[i] = RGB(level, level, level);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)ramp, 0x8000003f);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp, 0x8000003f);
 
   REG_BG2X = scrollX << 8;
   // x, done with the band, now counts the slide's frames.

@@ -301,7 +301,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (col = (u16 *)(BG_PLTT + 6 * 16), i = 0; i != 128; i++, col++) {
+      for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0; i != 128; i++, col++) {
         s32 mid;
         s32 s;
 
@@ -316,12 +316,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           r = 0;
         if (b < 0)
           b = 0;
-        if (g > 31)
-          g = 31;
-        if (r > 31)
-          r = 31;
-        if (b > 31)
-          b = 31;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
+        if (r > RGB_LEVEL_MAX)
+          r = RGB_LEVEL_MAX;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
         *col = RGB(g, r, b);
       }
       work->scrollTimer = 0;
@@ -355,7 +355,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_CopyWords((void *)(OBJ_PLTT + 15 * 16), src, 32);
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, 32);
       src += 32;
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
@@ -365,7 +365,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
-              (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
+              (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
               &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
@@ -385,7 +385,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
-            (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
+            (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = EffectSprite_CreateWithTiles(32, 64,
@@ -398,19 +398,17 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       /* FAKEMATCH(barrier): an asm operand cuts i, known 21, from the copy's
        * source. */
       __asm__("" : "=r"(i) : "0"(i));
-      Iwram_CopyWords(
-          (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
-          DECODE_BUFFER + i * 0x400, 0x800);
+      Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
+                      DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(14));
       obj->priority = 1;
       work->sprites[41] = obj;
-      Iwram_CopyWords(
-          (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
-          DECODE_BUFFER, 0x100);
+      Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
+                      DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != 15; i++) {
@@ -579,7 +577,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         r = RGB_RED(*pal);
         g = RGB_GREEN(*pal);
         b = RGB_BLUE(*pal);
-        if (r < 31)
+        if (r < RGB_LEVEL_MAX)
           r++;
         if (g < 20)
           g++;
@@ -846,7 +844,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->velocityY = Trig_Cos(work->sprites[39]->rotation) * 2;
             q->x = (p->x + camera) / 2 -
                    ((Trig_Sin(work->sprites[39]->rotation) * 27) >> 1);
-            q->y = p->y + Trig_Cos(work->sprites[39]->rotation) * 27 - 0xc0000;
+            q->y = p->y + Trig_Cos(work->sprites[39]->rotation) * 27 - px(12);
           }
           if (((p->variant >= 50 && p->variant < 60) ||
                (p->variant >= 113 && p->variant < 200)) &&
@@ -1198,7 +1196,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Sprite_DestroyFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
-    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16),
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
     *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1544,7 +1542,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapGridCellBuffer;
-        BattleEffect_DrawShadedCircles(cells, size, 0x10000);
+        BattleEffect_DrawShadedCircles(cells, size, Q16_ONE);
       }
       cells = gMapGridCellBuffer;
       Canvas_BlitAtFoot(cells, Q_16_16_TO_INT(i), Q_16_16_TO_INT(discY), size);

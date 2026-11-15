@@ -93,8 +93,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-  depth = -0x400000;
-  zoom = 0x80000;
+  depth = -px(64);
+  zoom = Q16_ONE * 8;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
@@ -128,8 +128,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
                              Ram_MapCellBuffer + i * 0x400, 0x400);
       }
-      depth = -0x400000;
-      zoom = 0x80000;
+      depth = -px(64);
+      zoom = Q16_ONE * 8;
     }
     if (frame == 143) {
       BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
@@ -198,7 +198,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = zoom * 60 / DAMPING_SCALE;
     }
     if (frame == JUDGMENT_BEAM_FRAME) {
-      zoom = -0x80000;
+      zoom = -Q16_ONE * 8;
     }
     if (frame == 146) {
       zoom = Q16_ONE;
@@ -232,7 +232,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (n > 80) {
         n = 80;
       } else {
-        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, Q16_ONE);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
       /* FAKEMATCH(dead): the test of the block it stands in, made again. */
@@ -286,11 +286,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 g = RGB_GREEN(*src) + addG;
           s32 b = RGB_BLUE(*src) + addB;
 
-          if (r > 31)
+          if (r > RGB_LEVEL_MAX)
             r = RGB_LEVEL_MAX;
-          if (g > 31)
+          if (g > RGB_LEVEL_MAX)
             g = RGB_LEVEL_MAX;
-          if (b > 31)
+          if (b > RGB_LEVEL_MAX)
             b = RGB_LEVEL_MAX;
           if (r < 0)
             r = 0;
@@ -517,19 +517,19 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       for (i = 0; i != 63; i++, c++) {
         s32 v = *c;
-        s32 b = ((u16)v >> 10) & 31;
-        s32 g = ((u16)v >> 5) & 31;
-        s32 r = v & 31;
+        s32 b = RGB_BLUE((u16)v);
+        s32 g = RGB_GREEN((u16)v);
+        s32 r = RGB_RED(v);
 
         b++;
         g++;
         r++;
 
-        if (b > 31)
+        if (b > RGB_LEVEL_MAX)
           b = RGB_LEVEL_MAX;
-        if (g > 31)
+        if (g > RGB_LEVEL_MAX)
           g = RGB_LEVEL_MAX;
-        if (r > 31)
+        if (r > RGB_LEVEL_MAX)
           r = RGB_LEVEL_MAX;
         *c = RGB(r, g, b);
       }

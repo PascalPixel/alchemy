@@ -13,7 +13,7 @@
 /// The flashes, after the map cells.
 #define FLASHES ((struct Particle *)gData_02014000)
 
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define ECLIPSE_TORNADO_PICTURES 0x2000
@@ -219,8 +219,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
         work->fadeStep = 0;
       }
-      cx = baseX / 2 - (work->particles[16].variant << 13) + 0x1c0000;
-      cy = baseY + (work->particles[16].variant << 14) + 0x380000;
+      cx = baseX / 2 - (work->particles[16].variant << 13) + px(28);
+      cy = baseY + (work->particles[16].variant << 14) + px(56);
       u = frame - 136;
       if (u <= 84) {
         if (frame == 136) {
@@ -233,7 +233,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame > 171) {
           if (frame == 172) {
             work->particles[16].variant = 64;
-            BattleEffect_DrawShadedCircles(work->sheet, 128, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet, 128, Q16_ONE);
             velX = px(3);
             velY = -px(3);
           }
@@ -302,7 +302,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
               work->particles[i].variant <= 47) {
             Transform_Reset();
             {
-              s32 x = ((i & 3) << 17) + 0x20000;
+              s32 x = ((i & 3) << 17) + px(2);
               s32 o = -0x400000;
               Transform_ApplyTranslation(cx + x + o, cy - px((i & 3) + 2) + o,
                                          0);
@@ -347,10 +347,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(0x2800);
           if (frame > 203) {
-            Transform_ApplyAxisScale(0x80000 - ((frame - 204) << 15),
+            Transform_ApplyAxisScale(Q16_ONE * 8 - ((frame - 204) << 15),
                                      Q16_ONE * 2, 0x10000);
           } else {
-            Transform_ApplyAxisScale(0x80000, Q16_ONE * 2, Q16_ONE);
+            Transform_ApplyAxisScale(Q16_ONE * 8, Q16_ONE * 2, Q16_ONE);
           }
           Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
           Render_DrawModelList(model);
@@ -493,7 +493,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
-          BattleEffect_DrawShadedCircles(cells, 96, 0x10000);
+          BattleEffect_DrawShadedCircles(cells, 96, Q16_ONE);
           Canvas_BlitAtFoot(cells, Q_16_16_TO_INT(q->x), Q_16_16_TO_INT(q->y),
                             96);
         }
@@ -526,7 +526,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   count = -1;
   transition[4] = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
-  Palette_BrightenSavedBattleBg(31, 31, 31);
+  Palette_BrightenSavedBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
   gBgScroll[1].x = 0;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -588,8 +588,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
         a = Random16();
         r = (Random16() & 15) + frame * 2;
-        q->x = Trig_Sin(a) * r + 0x3c0000;
-        q->y = Trig_Cos(a) * r + 0x3c0000;
+        q->x = Trig_Sin(a) * r + px(60);
+        q->y = Trig_Cos(a) * r + px(60);
         q->velocityX = 0;
         q->velocityY = 0;
         q->variant = (Random16() & 15) + 16;
@@ -714,7 +714,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Transform_ApplyAxisScale(s / 4, s / 4, s / 4);
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
-            Transform_ApplyAxisScale(Q16_ONE, 0x60000, Q16_ONE);
+            Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 6, Q16_ONE);
             Transform_ApplyTranslation(0, px(gEclipse_RingHeights[i]), 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
@@ -912,7 +912,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
         if (width <= 64) {
           size = width * 2;
-          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, 0x10000);
+          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, Q16_ONE);
         }
         Canvas_BlitAtFoot(Ram_MapCellBuffer, Q_16_16_TO_INT(cx),
                           Q_16_16_TO_INT(cy), size);

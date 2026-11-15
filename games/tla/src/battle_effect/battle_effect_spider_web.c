@@ -34,7 +34,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
   sprite->entries[0] = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->height = height;
-  sprite->scale = 0x10000;
+  sprite->scale = Q16_ONE;
   sprite->retainCacheEntry = 0;
   sprite->offsetY = 0;
   sprite->offsetX = 0;
@@ -48,7 +48,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
 /// Fills BG palette colours 1 to 63 with a grey ramp, each level i / 2.
 void Graphics_LoadGreyRamp(void) {
   s32 i = 0;
-  u16 *color = (u16 *)(BG_PLTT + 1);
+  u16 *color = (u16 *)&BG_PLTT_COLOR(0, 1);
 
   do {
     {
@@ -229,7 +229,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   skip = 0;
   BattleEffect_SelectLivingTargets(work->args);
   for (frame = 0, mask = 31; frame != 32; frame++) {
-    volatile u16 *c = (volatile u16 *)(BG_PLTT + 96);
+    volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
     for (i = 0; i != 128; i++, c++) {
       s32 v = *c;
@@ -237,8 +237,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 g;
       s32 b;
 
-      g = (u16)(((u16)v >> 5) & 31);
-      b = (u16)(((u16)v >> 10) & 31);
+      g = (u16)RGB_GREEN((u16)v);
+      b = (u16)RGB_BLUE((u16)v);
       if (g == 0) {
         if (b > 0) {
           b--;
@@ -413,7 +413,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 g = (i * ((level * 9 * 4) / 16)) / 64;
           s32 r = (i * level * 3) / 64;
 
-          ((u16 *)(BG_PLTT + 128))[i] = r << 10 | g;
+          ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = r << 10 | g;
         }
       }
       if (frame == 116) {
@@ -434,8 +434,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
         low &= v;
         r = low - 3;
-        g = ((u16)(((u16)v >> 5) & 31)) - 3;
-        b = ((u16)(((u16)v >> 10) & 31)) - 3;
+        g = ((u16)RGB_GREEN((u16)v)) - 3;
+        b = ((u16)RGB_BLUE((u16)v)) - 3;
 
         if (r < 0)
           r = 0;
@@ -732,8 +732,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (frame > 131) {
         s32 u = frame - 132;
 
-        ship.x = (Trig_Sin(u << 11) << 1) + 0xc80000;
-        ship.z = (Trig_Sin(u << 10) << 1) + 0x540000;
+        ship.x = (Trig_Sin(u << 11) << 1) + px(200);
+        ship.z = (Trig_Sin(u << 10) << 1) + px(84);
       }
       if (draw) {
         place[1] = place[3] = 0;
@@ -810,7 +810,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   gBgScroll[1].y = work->savedBg1Y;
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
+  Iwram_ClearWords((void *)&BG_PLTT_COLOR(6, 0), 256);
   wait(1);
   BattleBackground_LoadFar(2, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -827,11 +827,11 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   wait(1);
   for (frame = 0; frame != 40; frame++) {
     u16 *src = battle->palette;
-    volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
+    volatile u16 *dst = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
     for (i = 0; i != 128; i++, src++, dst++) {
       s32 v = *src;
-      s32 r = 31;
+      s32 r = RGB_LEVEL_MAX;
       s32 g;
       s32 b;
       s32 nr;
@@ -839,8 +839,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 nb;
 
       r &= v;
-      g = (u16)(((u16)v >> 5) & 31);
-      b = (u16)(((u16)v >> 10) & 31);
+      g = (u16)RGB_GREEN((u16)v);
+      b = (u16)RGB_BLUE((u16)v);
       nr = r + frame - 30;
       ng = g + frame - 40;
       nb = b + frame - 30;

@@ -87,7 +87,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   offset = 0x2400;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -196,7 +196,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           if (frame > 39) {
             u8 *pool = work->sheet + 0x4c86;
 
-            BattleEffect_DrawShadedCircles(pool, grow, 0x10000);
+            BattleEffect_DrawShadedCircles(pool, grow, Q16_ONE);
             Canvas_BlitAtFoot(pool, centerX, 100, grow);
           }
           continue;
@@ -210,7 +210,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           sine = Trig_Sin(heading) * speed;
           x = px(centerX);
           p->x = (sine >> 4) + x;
-          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
+          p->y = ((Trig_Cos(heading) * speed) >> 3) + px(104);
           angle += TRIG_TURN * 3 / 4;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;

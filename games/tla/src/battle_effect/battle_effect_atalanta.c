@@ -115,8 +115,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   scrollX = gBgScroll[1].x;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
-  BG_PLTT[0] = 0;
-  BG_PLTT[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
@@ -305,9 +305,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
+  Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           (volatile u32 *)0x040000d4);
-  BG_PLTT[94] = BG_PLTT[244];
+  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != ATALANTA_PIECES; i++)
     Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);

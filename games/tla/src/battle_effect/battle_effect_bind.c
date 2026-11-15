@@ -19,7 +19,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 *palette;
   u32 delayMask;
 
-  palette = (u16 *)(BG_PLTT + 2 * 16);
+  palette = (u16 *)&BG_PLTT_COLOR(2, 0);
   i = 0;
   do {
     s32 half;
@@ -71,7 +71,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       break;
     i++;
   } while (i != 27);
-  palette = (u16 *)(BG_PLTT + 6 * 16);
+  palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   i = 0;
   do {
     s32 half;

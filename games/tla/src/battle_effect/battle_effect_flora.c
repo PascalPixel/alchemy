@@ -24,7 +24,7 @@ struct FloraWork {
 };
 
 #define w ((struct FloraWork *)petals)
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->slot].offset)
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -104,7 +104,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)(OBJ_PLTT + 15 * 16), e, 32);
+      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e, 32);
       e += 32;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
@@ -211,7 +211,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 108) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      BattleEffect_DrawShadedCircles(source, 8, 0x10000);
+      BattleEffect_DrawShadedCircles(source, 8, Q16_ONE);
       BattleEffect_DrawShadedCircles(Data_02010020, 16, 0xc000);
       BattleEffect_DrawShadedCircles(Data_020100a0, 32, 0xc000);
       BattleEffect_DrawShadedCircles(Data_020102a0, 48, 0xc000);
@@ -228,13 +228,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
       for (i = 0; i != 240; i++, e++) {
         s32 c = w->palette[i];
-        s32 b = (u16)c >> 10 & 31;
-        s32 g = (u16)c >> 5 & 31;
-        s32 r = c & 31;
+        s32 b = RGB_BLUE((u16)c);
+        s32 g = RGB_GREEN((u16)c);
+        s32 r = RGB_RED(c);
         s32 t = *e;
-        s32 tb = (u16)t >> 10 & 31;
-        s32 tg = (u16)t >> 5 & 31;
-        s32 tr = t & 31;
+        s32 tb = RGB_BLUE((u16)t);
+        s32 tg = RGB_GREEN((u16)t);
+        s32 tr = RGB_RED(t);
 
         if (b > tb) {
           b--;
@@ -695,7 +695,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

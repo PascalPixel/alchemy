@@ -42,7 +42,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }

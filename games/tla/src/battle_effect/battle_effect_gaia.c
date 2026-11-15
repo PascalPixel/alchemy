@@ -73,12 +73,12 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                              1, 0);
   Iwram_CopyWordsEntry(
       palette, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
-  color = (u16 *)&BG_PLTT[1];
+  color = (u16 *)&BG_PLTT_COLOR(0, 1);
   for (i = 0; i != 63; i++) {
     s32 c = *color;
-    s32 blue = ((u16)c >> 10) & 31;
-    s32 green = ((u16)c >> 5) & 31;
-    s32 red = 31;
+    s32 blue = RGB_BLUE((u16)c);
+    s32 green = RGB_GREEN((u16)c);
+    s32 red = RGB_LEVEL_MAX;
 
     red &= c;
     blue -= 8;
@@ -452,7 +452,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
-  sprite->scale = 0x10000;
+  sprite->scale = Q16_ONE;
   sprite->height = height;
   sprite->offsetY = 0;
   sprite->offsetX = 0;

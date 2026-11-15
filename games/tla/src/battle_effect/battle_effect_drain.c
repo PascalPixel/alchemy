@@ -177,7 +177,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 2)
-    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, 0x10000);
+    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, Q16_ONE);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == 0)
@@ -220,7 +220,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
-    u16 *color = BG_PLTT + 1;
+    u16 *color = &BG_PLTT_COLOR(0, 1);
 
     for (i = 1; i != 64; i++) {
       s32 blue = 21 - (i + 1) / 3;

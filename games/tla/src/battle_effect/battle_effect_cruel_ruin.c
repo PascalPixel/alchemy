@@ -152,7 +152,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, 0x1f81, IO_WRITE_16);
-  Iwram_FillWords((void *)(BG_PLTT + 6 * 16), 0x100, 0x7fff7fff);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
@@ -177,7 +177,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     if (frame > 7) {
       u16 *pal;
 
-      pal = (u16 *)(BG_PLTT + 6 * 16);
+      pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != SHATTERING_OPENING_FRAMES; i++) {
         s32 red = RGB_RED(*pal);
         s32 green = RGB_GREEN(*pal);
@@ -212,7 +212,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
       v = frame * 4 + 8;
       rmax = frame * 32;
-      BG_PLTT[2] = RGB(v, v, v);
+      BG_PLTT_COLOR(0, 2) = RGB(v, v, v);
       cx = 96;
       cy = 60;
       for (; r != rmax; r++) {
@@ -309,7 +309,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       v = frame - 8;
       if (v > RGB_LEVEL_MAX)
         v = RGB_LEVEL_MAX;
-      BG_PLTT[1] = RGB(v, v, v);
+      BG_PLTT_COLOR(0, 1) = RGB(v, v, v);
     }
 
     // Frame 51: the flash pictures and colours, and 32 flashes placed at
@@ -727,7 +727,7 @@ void BattleEffect_EndElementStreaks(void) {
 }
 
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -794,7 +794,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     if (size > 96) {
       size = 96;
     }
-    BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+    BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
     Canvas_BlitAtFoot(work->sheet, pos.x / 2, pos.y - 16, size);
     if (frame > 15) {
       actor[3] += 0x100000;
@@ -1126,7 +1126,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             if (frame <= 171) {
               q->x += -px(8);
               q->y += px(16);
-              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
+              BattleEffect_DrawShadedCircles(work->sheet, r, Q16_ONE);
               Canvas_BlitAtFoot(work->sheet, Q_16_16_UPPER_HALF(q->x),
                                 Q_16_16_UPPER_HALF(q->y), r);
             }
@@ -1204,7 +1204,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-    Palette_BrightenBattleBg(31, 31, 31);
+    Palette_BrightenBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3648,
                                0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data104, work->sheet + 0x36c8,
@@ -1285,14 +1285,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             s32 cg = (u16)RGB_GREEN(*e) + add;
             s32 cb = (u16)RGB_BLUE(*e) + add;
 
-            if (cr > 31) {
-              cr = 31;
+            if (cr > RGB_LEVEL_MAX) {
+              cr = RGB_LEVEL_MAX;
             }
-            if (cg > 31) {
-              cg = 31;
+            if (cg > RGB_LEVEL_MAX) {
+              cg = RGB_LEVEL_MAX;
             }
-            if (cb > 31) {
-              cb = 31;
+            if (cb > RGB_LEVEL_MAX) {
+              cb = RGB_LEVEL_MAX;
             }
             *dst = RGB(cr, cg, cb);
           }
@@ -1344,7 +1344,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               s32 y = gCruelRuin_BlastY[i];
               s32 half;
 
-              BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
+              BattleEffect_DrawShadedCircles(work->sheet, r, Q16_ONE);
               /* FAKEMATCH(dead): a test that is always true here (the block is
                * entered only when r > 1). */
               BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -1396,7 +1396,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           scale = size * 9400;
           Transform_ApplyAxisScale(scale, Q16_ONE * 2, Q16_ONE / 2);
           Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
-          BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+          BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
           Canvas_BlitAtFoot(work->sheet, Q_16_16_UPPER_HALF(p->x) - 1,
                             Q_16_16_UPPER_HALF(p->y), size);
           Render_DrawModelList(model);
@@ -1646,7 +1646,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         if ((u32)(frame - 80) <= 31) {
           u32 c;
-          u16 *dst = (u16 *)&OBJ_PLTT[1];
+          u16 *dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
 
           i = 0;
           c = blue | green | (frame - 80);
@@ -1686,7 +1686,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           if (frame <= 43) {
             q->x += -px(8);
             q->y += px(16);
-            BattleEffect_DrawShadedCircles(work->sheet + 0x38c0, r, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet + 0x38c0, r, Q16_ONE);
             Canvas_BlitAtFoot(work->sheet + 0x38c0, Q_16_16_UPPER_HALF(q->x),
                               Q_16_16_UPPER_HALF(q->y), r);
           }

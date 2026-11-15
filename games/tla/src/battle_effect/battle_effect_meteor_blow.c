@@ -252,12 +252,12 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
         if (b < 0)
           b = 0;
-        if (b > 31)
-          b = 31;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
         if (g < 0)
           g = 0;
-        if (g > 31)
-          g = 31;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
         *dst++ = RGB(g >> 1, g, b);
       }
       for (; i != 160; i++) {

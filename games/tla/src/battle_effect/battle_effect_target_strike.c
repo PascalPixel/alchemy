@@ -1076,7 +1076,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
-  Palette_BrightenSavedBattleBg(-31, -31, -31);
+  Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
   // Fade the colours up a shade every two frames; B starts again, A ends.

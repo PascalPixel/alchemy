@@ -286,12 +286,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 160; i++)
         *lines++ = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     } else if (mode == 1 && frame > 31) {
-      u16 *pal = (u16 *)(BG_PLTT + 1);
+      u16 *pal = (u16 *)&BG_PLTT_COLOR(0, 1);
 
       for (i = 0; i != 63; i++, pal++) {
-        s32 r = *pal & 31;
-        s32 g = *pal >> 5 & 31;
-        s32 b = *pal >> 10 & 31;
+        s32 r = RGB_RED(*pal);
+        s32 g = RGB_GREEN(*pal);
+        s32 b = RGB_BLUE(*pal);
 
         if (frame > 40) {
           r += 4;
@@ -302,12 +302,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           g += 2;
           b += 2;
         }
-        if (r > 31)
-          r = 31;
-        if (g > 31)
-          g = 31;
-        if (b > 31)
-          b = 31;
+        if (r > RGB_LEVEL_MAX)
+          r = RGB_LEVEL_MAX;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
         *pal = RGB(r, g, b);
       }
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));

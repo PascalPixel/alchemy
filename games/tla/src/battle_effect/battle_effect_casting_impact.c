@@ -48,7 +48,6 @@ struct DrawFuncs {
   DrawFunc draw[2];
 };
 
-#define PLTT ((void *)BG_PLTT)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(1))
 #define SPARKS sparks
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
@@ -377,7 +376,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     s32 i;
     s32 k;
 
-    BattleEffect_DrawShadedCircles(buffer, 48, 0x10000);
+    BattleEffect_DrawShadedCircles(buffer, 48, Q16_ONE);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
         buffer[0x800 + i * 48 + k] = buffer[i * 24 + k];
@@ -421,8 +420,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   case CASTING_IMPACT_IMPACT_MOTHER_EARTH:
   case CASTING_IMPACT_IMPACT_DINOX:
   case CASTING_IMPACT_IMPACT_TERRIBLE_BITE:
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BlastSheet), PLTT,
-            DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
     if (action->prelude == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 0);
@@ -450,7 +449,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
-              PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+              (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
+              REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_FEVER:
   case CASTING_IMPACT_IMPACT_SCORCH:
@@ -476,7 +476,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-              PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+              (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
+              REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_SMOG:
   case CASTING_IMPACT_IMPACT_SQUALL:
@@ -503,13 +504,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet),
-              PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+              (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
+              REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_BOSCA_HIT:
   case CASTING_IMPACT_IMPACT_ROC:
   case CASTING_IMPACT_IMPACT_WILD_WOLF:
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_DustPuffSheet), PLTT,
-            DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_DustPuffSheet),
+            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI:
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,

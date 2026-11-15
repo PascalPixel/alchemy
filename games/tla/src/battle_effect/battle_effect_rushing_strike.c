@@ -392,7 +392,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
 
       // Into the sky: the red haze, its palette made grey-blue.
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
-      for (color = (u16 *)(BG_PLTT + 96), i = 0, max = 31; i != 128;
+      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31; i != 128;
            i++, color++) {
         s32 entry = *color;
         s32 red;
@@ -401,16 +401,16 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
 
         red = max & entry;
         /* FAKEMATCH(dead): green is taken and clamped, then never used. */
-        green = ((u16)entry >> 5) & 31;
-        blue = ((u16)entry >> 10) & 31;
+        green = RGB_GREEN((u16)entry);
+        blue = RGB_BLUE((u16)entry);
         // DEAD: both channels are already at most 31.
-        if (red > 31) {
-          red = 31;
+        if (red > RGB_LEVEL_MAX) {
+          red = RGB_LEVEL_MAX;
         }
-        if (blue > 31) {
-          blue = 31;
+        if (blue > RGB_LEVEL_MAX) {
+          blue = RGB_LEVEL_MAX;
         }
-        green = green > 31 ? 31 : green;
+        green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
         *color = RGB(blue, red, red);
       }
       BattleEffect_BuildRepeatingTilemap();

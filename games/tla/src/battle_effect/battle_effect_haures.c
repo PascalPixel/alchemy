@@ -69,8 +69,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  BG_PLTT[0] = 0;
-  BG_PLTT[1] = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
@@ -117,7 +117,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)work->sprites)[18] = sprite;
   sprite->blendMode = 1;
-  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + 0x06010000;
+  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + OBJ_VRAM0;
   {
     u8 *c = work->sheet;
 
@@ -155,7 +155,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;
   {
-    dst = BG_PLTT + 1;
+    dst = &BG_PLTT_COLOR(0, 1);
 
     for (i = 1; i != 64; i++) {
       s32 b;
@@ -176,11 +176,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         b = t * 4;
         g = t;
         r = b;
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
       }
       *dst++ = RGB(r, g, b);
@@ -193,11 +193,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       s32 b = i * 3 + 2;
       s32 r = i * 2 + 2;
 
-      if (r > 31) {
-        r = 31;
+      if (r > RGB_LEVEL_MAX) {
+        r = RGB_LEVEL_MAX;
       }
-      if (b > 31) {
-        b = 31;
+      if (b > RGB_LEVEL_MAX) {
+        b = RGB_LEVEL_MAX;
       }
       *dst = b << 10 | (i + 2) << 5 | r;
     }
@@ -499,7 +499,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         s32 s;
 
         if (frame == 267) {
-          u16 *dst = BG_PLTT + 1;
+          u16 *dst = &BG_PLTT_COLOR(0, 1);
 
           for (i = 1; i != 64; i++) {
             s32 v = i;
@@ -615,7 +615,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         gBgScroll[1].x += 0xfff4;
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
-        position.x = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
+        position.x = (Trig_Sin(frame << 9) << 3) + px(108);
         position.y = px(56) - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
           velocity.x -= (frame - 397) << 14;

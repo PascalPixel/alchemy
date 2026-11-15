@@ -78,7 +78,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   offset = 0;
   size = 2;
   for (i = 0; i != 32; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;

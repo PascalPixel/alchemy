@@ -119,7 +119,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
       u16 *from = battle->palette;
-      u16 *to = (u16 *)(BG_PLTT + 96);
+      u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, from++, to++) {
         s32 red = RGB_RED(*from);
@@ -358,14 +358,14 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 61) {
       transition[4] = 0;
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
     }
     if (frame == 62) {
       BattleBackground_LoadFar(1, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
       battle->brightness = (frame << 13) - 0x7c000;
-      ColorBuffer_ScaleFar(battle->palette, (void *)(BG_PLTT + 96),
+      ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            battle->brightness, 128);
     }
     if (frame == 48) {

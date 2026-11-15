@@ -111,9 +111,9 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                                1, 1);
     // Turn the first 64 BG colours: red to blue, blue to green, green to red.
     for (i = 0; i != 64; i++) {
-      s32 blue = (((u16 *)BG_PLTT)[i] >> 10) & 0x1f;
-      s32 green = (((u16 *)BG_PLTT)[i] >> 5) & 0x1f;
-      s32 red = ((u16 *)BG_PLTT)[i] & 0x1f;
+      s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
+      s32 green = RGB_GREEN(((u16 *)BG_PLTT)[i]);
+      s32 red = RGB_RED(((u16 *)BG_PLTT)[i]);
 
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }

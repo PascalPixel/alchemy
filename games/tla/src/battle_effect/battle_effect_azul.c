@@ -32,10 +32,10 @@ struct AzulObject {
 /// Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
   do {                                                                         \
-    if ((place)[2] < -0x10000)                                                 \
-      (place)[2] = -0x10000;                                                   \
+    if ((place)[2] < -px(1))                                                   \
+      (place)[2] = -px(1);                                                     \
     if ((place)[2] > 0x9fffff)                                                 \
-      (place)[2] = 0xa00000;                                                   \
+      (place)[2] = px(160);                                                    \
   } while (0)
 
 #define AZUL_FRAMES 228
@@ -256,20 +256,20 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (b < 0) {
           b = 0;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
         if (g < 0) {
           g = 0;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
         if (r < 0) {
           r = 0;
         }
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
         *c++ = RGB(r, g, b);
       }

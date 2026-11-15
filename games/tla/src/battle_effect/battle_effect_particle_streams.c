@@ -519,7 +519,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 /// Adds the deltas to BG palette entries 1 to 63, clamped
 /// at 0.
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
-  u16 *color = (u16 *)(BG_PLTT + 1);
+  u16 *color = (u16 *)&BG_PLTT_COLOR(0, 1);
   s32 i;
 
   for (i = 0; i != 63; i++) {
@@ -549,7 +549,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
 /// As Palette_BrightenBgEntries over BG palette entries 96 to 223, the deltas
 /// red first.
 void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
-  u16 *color = (u16 *)(BG_PLTT + 6 * 16);
+  u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
   s32 i;
 
   for (i = 0; i != 128; i++) {
@@ -580,7 +580,7 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
 /// palette entries 96 to 223.
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
                                    s32 blueDelta) {
-  u16 *color = (u16 *)(BG_PLTT + 6 * 16);
+  u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
   u16 *source = Ram_HeapSlots->battleWork->palette;
   s32 i;
 
@@ -797,7 +797,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)(BG_PLTT + 8 * 16))[i] = RGB(red, green, blue);
+    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = RGB(red, green, blue);
   }
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 
@@ -942,12 +942,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
         if (red < 0)
           red = 0;
-        if (red > 31)
-          red = 31;
+        if (red > RGB_LEVEL_MAX)
+          red = RGB_LEVEL_MAX;
         if (green < 0)
           green = 0;
-        if (green > 31)
-          green = 31;
+        if (green > RGB_LEVEL_MAX)
+          green = RGB_LEVEL_MAX;
         *line++ = (red << 10) | (green << 5) | (green >> 1);
       }
       for (; i != DISPLAY_HEIGHT; i++)

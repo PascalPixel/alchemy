@@ -431,7 +431,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               cell = &SPARKS[((t << 5) + i) & 511];
               angle = Random16();
               radius = (Random16() & 31) + 16;
-              cell->x = Trig_Sin(angle) * radius + half + 0x100000;
+              cell->x = Trig_Sin(angle) * radius + half + px(16);
               cell->y = Trig_Cos(angle) * radius + position.y - px(8);
               cell->velocityX = 0;
               cell->velocityY = 0;
@@ -835,7 +835,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       for (i = 0; i != count; i++) {
         s32 angle = i << 10;
 
-        point[1] = caster->y - Trig_Cos(angle) * 40 + 0x200000;
+        point[1] = caster->y - Trig_Cos(angle) * 40 + px(32);
         point[2] = caster->z + Trig_Sin(angle) * 40;
         EffectPosition_ProjectPoint(point, &ring);
         ring.x >>= 1;

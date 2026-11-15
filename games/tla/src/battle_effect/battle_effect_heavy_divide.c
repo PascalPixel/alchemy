@@ -479,7 +479,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   width = 32;
-  palette = (u16 *)BG_PLTT + 1;
+  palette = (u16 *)&BG_PLTT_COLOR(0, 1);
   caster = BattleObject_GetFar(args->user)->object;
   Iwram_ClearWordsEntry((void *)BG_PLTT, 128);
   for (i = 0; i != 63; i++) {
@@ -497,7 +497,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     size = width / 2;
     half = size / 2;
     clear(work->sheet + 0x1000, 0x800);
-    BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+    BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
     y = 0;
     offset = 0;
   nextRow:

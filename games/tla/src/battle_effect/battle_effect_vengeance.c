@@ -1141,7 +1141,7 @@ struct SpriteView {
 
 #define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
 
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->vramEntry].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->vramEntry].offset)
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
@@ -1417,11 +1417,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       s32 b = frame - 253;
       u32 c;
 
-      if (g > 31) {
-        g = 31;
+      if (g > RGB_LEVEL_MAX) {
+        g = RGB_LEVEL_MAX;
       }
-      if (b > 31) {
-        b = 31;
+      if (b > RGB_LEVEL_MAX) {
+        b = RGB_LEVEL_MAX;
       }
       i = 0;
       c = b << 10 | g << 5;
@@ -1432,8 +1432,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     if (frame > 299) {
       u16 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
       u16 *dst = (u16 *)OBJ_PLTT;
-      s32 tr = 31;
-      s32 tg = 31;
+      s32 tr = RGB_LEVEL_MAX;
+      s32 tg = RGB_LEVEL_MAX;
 
       k = 15;
 
@@ -1476,14 +1476,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         } else if (cr > sr + 1) {
           cr -= 2;
         }
-        if (cb > 31) {
-          cb = 31;
+        if (cb > RGB_LEVEL_MAX) {
+          cb = RGB_LEVEL_MAX;
         }
-        if (cg > 31) {
-          cg = 31;
+        if (cg > RGB_LEVEL_MAX) {
+          cg = RGB_LEVEL_MAX;
         }
-        if (cr > 31) {
-          cr = 31;
+        if (cr > RGB_LEVEL_MAX) {
+          cr = RGB_LEVEL_MAX;
         }
         if (cb < 0) {
           cb = 0;
@@ -1520,14 +1520,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         g = COLOR_GREEN(s) + half;
         b = COLOR_BLUE(s) + d / 4;
 
-        if (r > 31) {
-          r = 31;
+        if (r > RGB_LEVEL_MAX) {
+          r = RGB_LEVEL_MAX;
         }
-        if (g > 31) {
-          g = 31;
+        if (g > RGB_LEVEL_MAX) {
+          g = RGB_LEVEL_MAX;
         }
-        if (b > 31) {
-          b = 31;
+        if (b > RGB_LEVEL_MAX) {
+          b = RGB_LEVEL_MAX;
         }
         *dst = RGB(r, g, b);
       }
@@ -2025,9 +2025,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           (volatile u32 *)0x040000d4);
-  BG_PLTT[94] = BG_PLTT[244];
+  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);

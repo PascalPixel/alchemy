@@ -149,8 +149,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
-            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
+            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             fountain->velocityX = ((Random16() & 63) - 32) << 14;
             fountain->velocityY = (-(Random16() & 63) - 8) << 13;
             fountain->variant = 0;

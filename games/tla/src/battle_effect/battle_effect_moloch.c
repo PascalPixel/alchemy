@@ -363,12 +363,12 @@ void Iris_ChangeBackdrop(void) {
   BattleActor_SpawnObjectsForListFar(list, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
 
-  palette = (u16 *)BG_PLTT + 96;
+  palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   for (i = 0; i != 128; i++) {
     s32 color = *palette;
-    s32 blue = ((u16)color >> 10) & 31;
-    s32 green = ((u16)color >> 5) & 31;
-    s32 red = 31;
+    s32 blue = RGB_BLUE((u16)color);
+    s32 green = RGB_GREEN((u16)color);
+    s32 red = RGB_LEVEL_MAX;
 
     red &= color;
     red -= 16;
@@ -591,12 +591,11 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
 #define SCENE (&Data_02012ee0)
-#define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
 /// The 128 background colours the scene fades (entries 96 to 223).
-#define FADE_PLTT ((u16 *)(PLTT + 0xc0))
+#define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
 
 #define Iwram_FillWords(dest, size, value)                                     \
   do {                                                                         \
@@ -958,8 +957,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0x2000);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)PLTT = 0;
-  *(u16 *)(PLTT + 2) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   EFFECT_START_TRANSFER(work, CANVAS_COPY, 75);
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -997,7 +996,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (i = 0; i != 0x302; i++)
     sprites[i] >>= 1;
-  BattleEffect_DrawShadedCircles(work->sheet, 32, 0x10000);
+  BattleEffect_DrawShadedCircles(work->sheet, 32, Q16_ONE);
   Graphics_LoadGreyRamp();
   frame = 0;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -1118,9 +1117,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
             for (i = 0; i != 128; i++) {
               s32 c = *fade;
-              s32 b = (u16)c >> 10 & 31;
-              s32 g = (u16)c >> 5 & 31;
-              s32 r = c & 31;
+              s32 b = RGB_BLUE((u16)c);
+              s32 g = RGB_GREEN((u16)c);
+              s32 r = RGB_RED(c);
 
               r += 1;
               *fade++ = (b + 1) << 10 | (g + 1) << 5 | r;
@@ -1135,9 +1134,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
             for (i = 0; i != 128; i++) {
               s32 c = *fade;
-              s32 b = (u16)c >> 10 & 31;
-              s32 g = (u16)c >> 5 & 31;
-              s32 r = c & 31;
+              s32 b = RGB_BLUE((u16)c);
+              s32 g = RGB_GREEN((u16)c);
+              s32 r = RGB_RED(c);
 
               if (r < 23)
                 r++;
@@ -1160,7 +1159,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       {
         s32 size = scene->radiusPixels * 2;
 
-        BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
         Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
@@ -1181,7 +1180,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       battle[0x867] = 1;
       BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
       colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
-      Dma_Set(colors, (void *)(PLTT + 0x200), DMA_COPY_WORDS(128), REG_DMA3);
+      Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
       colors += 0x200;
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
@@ -1195,7 +1194,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                 REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
+      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32, -1);
       colors += 32;
       DECOMPRESS_IN_BLOCK(colors, work->sheet);
       table = gVramCacheEntries;
@@ -1208,7 +1207,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         sparks->tiles[i] = obj->tile;
         sparks->frames[i] = i;
         Dma_Set(work->sheet + i * 128,
-                (void *)(0x06010000 + table[obj->resource].offset),
+                (void *)(OBJ_VRAM0 + table[obj->resource].offset),
                 DMA_COPY_WORDS(32), REG_DMA3);
       }
       for (; i != 36; i++) {
@@ -1252,23 +1251,23 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       pos[1] = px(255);
       lift = 0;
       if (frame > 350) {
-        u16 *pal = (u16 *)(PLTT + 0x200);
+        u16 *pal = (u16 *)OBJ_PLTT;
 
         for (i = 0; i != 255; i++) {
           s32 c = *pal;
-          s32 r = 31;
+          s32 r = RGB_LEVEL_MAX;
           s32 g;
           s32 b;
 
           r &= c;
-          g = (u16)c >> 5 & 31;
-          b = (u16)c >> 10 & 31;
+          g = RGB_GREEN((u16)c);
+          b = RGB_BLUE((u16)c);
 
-          if (r != 31)
+          if (r != RGB_LEVEL_MAX)
             r++;
-          if (g != 31)
+          if (g != RGB_LEVEL_MAX)
             g++;
-          if (b != 31)
+          if (b != RGB_LEVEL_MAX)
             b++;
           *pal++ = RGB(r, g, b);
         }
@@ -1467,7 +1466,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     // The pillars of light.
     if (frame == 370) {
-      BattleEffect_DrawShadedCircles(work->sheet + 0x3e8, 16, 0x10000);
+      BattleEffect_DrawShadedCircles(work->sheet + 0x3e8, 16, Q16_ONE);
       for (i = 0; i != 16; i++) {
         Dma_Set(work->sheet + 0x3e8 + (i << 3), work->sheet + 0x302 + (i << 4),
                 DMA_COPY_HALFWORDS(8), REG_DMA3);
@@ -1574,13 +1573,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         for (i = 0; i != 128; i++) {
           s32 c = *fade;
-          s32 r = 31;
+          s32 r = RGB_LEVEL_MAX;
           s32 g;
           s32 b;
 
           r &= c;
-          g = (u16)c >> 5 & 31;
-          b = (u16)c >> 10 & 31;
+          g = RGB_GREEN((u16)c);
+          b = RGB_BLUE((u16)c);
 
           if (r > 3)
             r -= 2;
@@ -1601,13 +1600,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       off = 0x302;
       {
         u16 *fade = FADE_PLTT;
-        s32 red = 31;
+        s32 red = RGB_LEVEL_MAX;
 
         for (i = 0; i != 128; i++) {
           s32 c = *fade;
           s32 r = red & c;
-          s32 g = (u16)c >> 5 & 31;
-          s32 b = (u16)c >> 10 & 31;
+          s32 g = RGB_GREEN((u16)c);
+          s32 b = RGB_BLUE((u16)c);
 
           g += 1;
           *fade++ = (b + 1) << 10 | g << 5 | (r + 1);
@@ -1618,7 +1617,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 n = i + 14;
         s32 w = n * 2;
 
-        BattleEffect_DrawShadedCircles(work->sheet + off, n, 0x10000);
+        BattleEffect_DrawShadedCircles(work->sheet + off, n, Q16_ONE);
         off += n * w;
       }
       Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
@@ -1813,7 +1812,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      x -= Iwram_MulQ16((frame - 530) * 0x10000, 0x400);
+      x -= Iwram_MulQ16((frame - 530) * px(1), 0x400);
       BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 530,
                                           shade);
     }
@@ -1834,7 +1833,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      x -= Iwram_MulQ16((frame - 553) * 0x10000, 0x600);
+      x -= Iwram_MulQ16((frame - 553) * px(1), 0x600);
       BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 553,
                                           shade);
     }
@@ -1872,7 +1871,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
                                            0x10000);
-      BattleEffect_DrawShadedCircles(work->sheet + 0x1c10, 32, 0x10000);
+      BattleEffect_DrawShadedCircles(work->sheet + 0x1c10, 32, Q16_ONE);
       for (i = 0; i != 32; i++) {
         Dma_Set(work->sheet + (i << 4) + 0x1c10,
                 work->sheet + (i << 5) + 0x1810, DMA_COPY_WORDS(8), REG_DMA3);
@@ -2015,9 +2014,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         for (i = 0; i != 128; i++) {
           s32 c = *fade;
-          s32 b = (u16)c >> 10 & 31;
-          s32 g = (u16)c >> 5 & 31;
-          s32 r = c & 31;
+          s32 b = RGB_BLUE((u16)c);
+          s32 g = RGB_GREEN((u16)c);
+          s32 r = RGB_RED(c);
 
           if (r <= 30)
             r++;
@@ -3036,7 +3035,6 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef Data_02012ef4
 #undef OBJ_TILES
 #undef SCENE
-#undef PLTT
 #undef STREAK
 #undef FADE_PLTT
 #undef DECOMPRESS_IN_BLOCK

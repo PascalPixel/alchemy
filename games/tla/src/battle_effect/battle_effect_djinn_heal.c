@@ -278,7 +278,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       // Ten ever-fainter copies of one mote.
@@ -360,7 +360,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         Sprite_StartAnimationFar(work->sprites[i], i + 12);
       }
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -378,7 +378,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     // The backdrop darkens toward the battle's palette.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
       u16 *from = Resource_GetTableEntry(battle->background);
-      u16 *to = (u16 *)(BG_PLTT + 96);
+      u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, from++, to++) {
         s32 b = RGB_BLUE(*to);

@@ -89,7 +89,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       object->image.priority = 1;
       work->sprites[i] = object;
       Iwram_CopyWords(
-          (void *)(0x06010000 + gVramCacheEntries[object->slot].offset),
+          (void *)(OBJ_VRAM0 + gVramCacheEntries[object->slot].offset),
           tiles + i * 0x400, 0x400);
     }
   }
@@ -141,7 +141,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 r = Random16() & 255;
     s32 a = Random16() & TRIG_ANGLE_MASK;
 
-    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x800000;
+    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
@@ -223,7 +223,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
 
-          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x400000;
+          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
           PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
@@ -417,7 +417,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Irq_SetHandler(2, 0, 0);
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
           (volatile u32 *)0x040000d4);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   Task_Remove(BattleEffect_ResetBg2Pa);

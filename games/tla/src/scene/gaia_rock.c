@@ -455,7 +455,8 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCREEN_EFFECT;
   gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
   gMainRoutineWork.retreatEntrance = 5;
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_VBLANK);
     Call2((void (*)())HangingVine_Place, 8, 1);

@@ -631,7 +631,8 @@ void LightSprites_AddCounted();
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);

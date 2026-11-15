@@ -359,9 +359,9 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   s32 i;
 
   object->motionFlags = 3;
-  Actor_Get(id)->priorityFlags |= 1;
+  Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   party = &gMainRoutineWork;
-  Actor_Get(party->leaderActorId)->priorityFlags |= 1;
+  Actor_Get(party->leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   if (FIELD_CELL(object->x.fixed) == 20 && FIELD_CELL(object->z.fixed) == 39)
     FieldActor_SetSpritePriority(id, 3);
   if (object->groundHeight !=

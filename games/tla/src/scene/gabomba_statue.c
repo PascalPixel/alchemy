@@ -1760,7 +1760,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
                              speed);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(330), px(312), speed);
   {
-    s32 slow = 0x3000;
+    s32 slow = FACING_SOUTH_SOUTHEAST;
 
     Actor_SetPositionAndFacing(ACTOR_KRADEN, px(432), px(312), slow);
   }

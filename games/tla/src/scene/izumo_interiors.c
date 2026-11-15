@@ -343,10 +343,12 @@ s32 IzumoInteriors_KushinadaPleads(void) {
     // "Susa, please... Don't try to save me."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkByById(gMainRoutineWork.leaderActorId, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Event_End();
   return 0;
 }
@@ -685,10 +687,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
     Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
     Actor_WalkToAndWait(ACTOR_SUSA, 56, 584);
-    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~1;
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_WITNESS, 88, 568);
     Event_Wait(1);
-    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= 1;
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirectionById(ACTOR_WITNESS, FACING_EAST, 0);
     Actor_SetSpritePriority(ACTOR_SUSA, 1);
     Actor_WalkToAndWait(ACTOR_SUSA, 104, 568);
@@ -738,10 +740,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_FaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
     Actor_FaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
     Actor_WalkToAndWait(ACTOR_SUSA, 232, 584);
-    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~1;
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_WITNESS, 200, 568);
     Event_Wait(1);
-    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= 1;
+    Actor_GetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
     Actor_SetSpritePriority(ACTOR_SUSA, 1);
     Actor_WalkToAndWait(ACTOR_SUSA, 184, 568);

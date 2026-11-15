@@ -269,7 +269,8 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(40);
     leader->gravity = px(1);
     leader->priorityFlags |= 64;
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_AUTOMATIC;
     Event_End();
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&

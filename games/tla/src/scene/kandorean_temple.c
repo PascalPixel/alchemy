@@ -1818,14 +1818,16 @@ void KandoreanTemple_ReceiveLash(void) {
 
 /// Stepping behind a rope's pole, the leader is drawn behind it.
 void KandoreanTemple_StepBehindThePole(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
 /// Stepping out from behind a rope's pole, the leader is drawn in front again.
 void KandoreanTemple_StepOutFromThePole(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /// Coming up to the Chestbeaters, the three leap down and their battle starts.

@@ -566,13 +566,13 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   Event_ResolvePendingActions(0);
   x = ((leader->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((leader->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
-  leader->speedLimit = 0x10000;
+  leader->speedLimit = px(1);
   leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, 27);
   x = ((actor->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
   z = ((actor->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
-  actor->speedLimit = 0x10000;
+  actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {

@@ -344,7 +344,8 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   JupiterLighthouse_LoadPalettesZero(0);
   Import_HangingVinePlace(ACTOR_FIRST_VINE, 1);
   Import_HangingVinePlace(ACTOR_SECOND_VINE, 1);
@@ -374,7 +375,8 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
   } else {
     LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, 3);
-    Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |= 32;
+    Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   }
   object = Actor_Get(ACTOR_LEFT_PATH_BLOCK);
   object->motionFlags = 0;
@@ -391,7 +393,8 @@ s32 Scene_PrepareMap(void) {
     MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
   } else {
     LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, 5);
-    Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |= 32;
+    Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   }
   object = Actor_Get(ACTOR_RIGHT_PATH_BLOCK);
   object->motionFlags = 0;
@@ -484,7 +487,8 @@ void JupiterLighthouse_RideTheBeam(void) {
     System_Wait(1);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;

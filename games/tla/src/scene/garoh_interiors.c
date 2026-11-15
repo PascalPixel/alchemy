@@ -392,7 +392,8 @@ s32 Scene_Initialize(void) {
   s32 turn;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_HOUSES) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||

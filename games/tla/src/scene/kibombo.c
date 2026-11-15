@@ -545,7 +545,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
     if (show)
       actor->priorityFlags &= ~0x10;
     else
-      actor->priorityFlags |= 0x10;
+      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
 }
 
@@ -968,7 +968,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   Event_SetMessageId((s32)MsgNowThatIKnow);
   // "Now that I know the orb is here, I won't leave this village without..."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_GetById(ACTOR_PIERS)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_PIERS)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkToAndWait(7, 56, 420);
   Actor_WalkToAndWait(7, 40, 344);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -1414,10 +1414,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
   Actor_WatchAndSetScript(ACTOR_PIERS, 26);
   Event_Wait(20);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 248, 188);
   Event_Wait(1);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_SetAnimationById(ACTOR_KRADEN, 7);
   Event_Wait(20);
@@ -1441,10 +1441,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 280, 188);
   Actor_SetAnimationById(ACTOR_KRADEN, 1);
   Event_Wait(10);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 238, 188);
   Event_Wait(1);
-  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   // "Dig there!"
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
@@ -2369,7 +2369,7 @@ done:
 /// Three flashes of light, each with the camera at another place.
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -2382,7 +2382,7 @@ void Kibombo_StatueFlashes(void) {
   wait(1);
 
   Sound_Play(SE_POWER_UP);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
   FieldCamera_MoveTo(584, CAMERA_KEEP, 248, 0);
@@ -3184,7 +3184,8 @@ void Kibombo_InitializeStatueGrounds(void) {
     MapGrid_CopyCellAttributes(5, 18, 1, 1, 6, 18);
     wait(10);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (GameFlag_Get(FLAG_KIBOMBO_VENT_UNCOVERED))
     Kibombo_UncoverVent();
   if (GameFlag_Get(FLAG_FIRST_MARKING_DUG))

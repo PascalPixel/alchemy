@@ -235,7 +235,7 @@ void IzumoRuins_PlacePillars(u16 *list) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, Event_GetFlag((u16)flag) + 1);
     object->motionFlags = 0;
-    object->collisionFlags &= 0xfe;
+    object->collisionFlags &= ~ACTOR_SOLID;
     object->timer = flag;
     IzumoRuins_ShowPillarState(object);
     list += 3;
@@ -290,7 +290,7 @@ void IzumoRuins_FreezePuddle(void) {
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
   object = work->movedBlock;
-  object->priorityFlags |= 1;
+  object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   object->priorityFlags &= ~2;
   Event_End();
 }
@@ -357,15 +357,16 @@ s32 Scene_Initialize(void) {
   s32 height;
 
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_PlaceBlocks(gIzumoRuins_FirstRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_FirstRoomPoundPillars);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);
   } else {
-    Actor_Get(10)->priorityFlags |= 0x20;
-    Actor_Get(11)->priorityFlags |= 0x20;
+    Actor_Get(10)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+    Actor_Get(11)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     Actor_PlaceBlocks(gIzumoRuins_SecondRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_SecondRoomPoundPillars);
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {

@@ -1290,14 +1290,14 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_FaceDirection(ACTOR_PENGUS, FACING_WEST, 10);
   // "Thank you so much for saving my sweet Pengulina. Allow me to give..."
   Event_ShowMessage(ACTOR_PENGUS, 0);
-  Actor_GetById(ACTOR_PENGUS)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_PENGUS)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PENGUS, 222, 186);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_PENGUS)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_PENGUS)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_PENGUS)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_GetById(ACTOR_PENGUS)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PENGUS, 232, 186);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_PENGUS)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_PENGUS)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1962,7 +1962,7 @@ void Islets_InitializePrettyStone(void) {
   if (!Event_GetFlag(0xaa2)) {
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
     Actor_SetAnimation(ACTOR_PENGULINA, 0);
-    Actor_Get(ACTOR_PENGULINA)->steeringFlags &= ~1;
+    Actor_Get(ACTOR_PENGULINA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     other = Actor_Get(ACTOR_PENGUS);
     other->facing = FACING_SOUTH_SOUTHWEST;

@@ -216,10 +216,10 @@ s32 Scene_PrepareMap(void) {
     Actor_SetPosition(15, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
-  Actor_Get(8)->priorityFlags |= 32;
-  Actor_Get(9)->priorityFlags |= 32;
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 32;
-  Actor_Get(11)->priorityFlags |= 32;
+  Actor_Get(8)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(9)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(11)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(8, 3);
   FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
   FieldActor_SetSpritePriority(9, 3);

@@ -96,7 +96,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   return 0;
 }
 

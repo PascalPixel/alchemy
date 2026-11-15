@@ -440,7 +440,8 @@ s32 Scene_Initialize(void) {
     GondowanCliffs_TurnBackToHelpPiers();
     return 0;
   }
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next != SCENE_GONDOWAN_CLIFFS)
     goto done;
   Rope_Initialize();

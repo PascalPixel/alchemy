@@ -249,10 +249,10 @@ void JupiterLighthouse_FlashSky(void) {
   gBgScroll[0].y = 16;
   System_Wait(30);
   PaletteFade_ApplySource(0x10003, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  PaletteFade_ApplySource(0x7fff, 0);
+  PaletteFade_ApplySource(RGB_WHITE, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(8);
   REG_DISPCNT |= 0x100;
@@ -261,7 +261,7 @@ void JupiterLighthouse_FlashSky(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   FieldActor_Jump(ACTOR_FELIX, 6, 0);
-  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
   Actor_Get(ACTOR_STRUCK_PILLAR)->update = Actor_EmitRisingSparks;
   for (i = 0; i != 32; i++) {
@@ -364,7 +364,8 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     PaletteCycle_SetPausesInEvents(0);
     JupiterLighthouse_FlashSky();
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+        ACTOR_FACES_MOTION;
     FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
     Actor_SetAttachedEffect(ACTOR_FELIX,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -789,7 +790,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 5);
-  Actor_Get(ACTOR_MIA)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_MIA, 0.1);
   Actor_SetDestinationOffset(ACTOR_MIA, 4, 2);
   FieldActor_WaitForMoveById(ACTOR_MIA);
@@ -813,7 +814,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetSpeed(ACTOR_MIA, 2);
   Actor_AnimateThenWait(ACTOR_MIA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 5);
-  Actor_Get(ACTOR_MIA)->steeringFlags |= 1;
+  Actor_Get(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetDestinationOffset(ACTOR_MIA, -2, -8);
   FieldActor_WaitForMoveById(ACTOR_MIA);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);

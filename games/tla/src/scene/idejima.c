@@ -1287,7 +1287,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
-  Actor_Get(ACTOR_SHEBA)->steeringFlags &= 254;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_SHEBA, 340, 226);
   FieldActor_Jump(ACTOR_SHEBA, 4, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_STAND);
@@ -1297,7 +1297,7 @@ void Idejima_RideTheTidalWave(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(ACTOR_SHEBA)->steeringFlags |= 1;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1388,7 +1388,8 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 254;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 314, 226);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -1398,7 +1399,8 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 80);

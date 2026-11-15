@@ -2410,7 +2410,7 @@ s32 Scene_Initialize(void) {
           Actor_StartScript(shards[i], gGaiaRockInside_SerpentSmokeScript);
         }
         susa->velocityY = px(10);
-        Actor_GetById(ACTOR_SUSA)->steeringFlags &= 254;
+        Actor_GetById(ACTOR_SUSA)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Actor_WalkToById(ACTOR_SUSA, 432, 320);
         Event_Wait(10);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
@@ -2461,7 +2461,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CASK, 0, 0);
       Actor_SetAnimationById(ACTOR_SERPENT, 3);
       Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = 0x10000;
-      slow = 0x8000;
+      slow = FACING_WEST;
       susa = Actor_GetById(ACTOR_SUSA);
       susa->speedLimit = slow;
       Actor_SetPosition(ACTOR_KRADEN, 440, 312);
@@ -2509,14 +2509,14 @@ s32 Scene_Initialize(void) {
       Event_Wait(10);
       Sound_Play(SE_CRUMBLE);
       susa->paused = 1;
-      PaletteFade_ApplyTarget(0x7fff, 0);
+      PaletteFade_ApplyTarget(RGB_WHITE, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
       Sound_Play(SE_SEA_OF_TIME_OPENS);
       PaletteFade_SetTarget(scale, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
-      PaletteFade_ApplyTarget(0x7fff, 0);
+      PaletteFade_ApplyTarget(RGB_WHITE, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
       PaletteFade_SetTarget(scale, 0);
@@ -2858,7 +2858,8 @@ s32 Scene_PrepareMap(void) {
       for (i = 0; i <= 13; i++)
         total += unit[i];
       GaiaRockInside_LayMaze(total);
-      Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+      Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+          ACTOR_PRIORITY_IGNORES_RISES;
       map[261] = 1;
       {
         volatile u16 control = REG_BG2CNT & ~3;

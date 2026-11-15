@@ -579,8 +579,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
-     * their load. */
+    /* FAKEMATCH(barrier): counted as 4 bytes. */
     asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
@@ -668,11 +667,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Text_SetColor(TEXT_COLOR_WHITE);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
-        /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-         * fill loop's test; without it, 2 of 3111 instructions differ in
-         * tla-en.
-         */
-        asm("");
+        /* FAKEMATCH(dead): a store nothing reads, which keeps the list loop's
+         * exit on the fill loop's test; without it, 1 of 3111 instructions
+         * differ in tla-en. */
+        item = 0;
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
               VramCache_Reload(iconSlots[j], (const void *)-1);
@@ -756,11 +754,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               range--;
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
-          /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-           * fill loop's test; without it, 2 of 3111 instructions differ in
-           * tla-en.
-           */
-          asm("");
+          /* FAKEMATCH(dead): a store nothing reads, which keeps the list loop's
+           * exit on the fill loop's test; without it, 1 of 3111 instructions
+           * differ in tla-en. */
+          id = 0;
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
                 VramCache_Reload(iconSlots[j], (const void *)-1);

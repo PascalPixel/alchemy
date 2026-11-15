@@ -360,13 +360,6 @@ void MagmaRockInside_PausePlatform(struct Actor *object) {
     *state = 0;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Actor_SelectAnimation();
 void Actor_StartScript();
 s32 GameFlag_Get();
@@ -394,7 +387,6 @@ void MagmaRockInside_StartLavaPlatform(s32 id, s32 path, s16 flag) {
   }
   platform->update = (void (*)(void))MagmaRockInside_PausePlatform;
 }
-#undef FIELD_AT
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 
@@ -2010,14 +2002,6 @@ column:
   wait(1);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-#define EVENT_WORK gFieldWork
-
 s32 Actor_MoveToObject();
 
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
@@ -2032,7 +2016,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Event_End();
   } else {
     FieldEvent_SetMessageId((s32)MsgBlazeTabletInscription);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.7);
     Actor_SetSpeed(ACTOR_JENNA, 0.7);
     Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
@@ -2080,8 +2064,8 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestination(ACTOR_JENNA, FIELD_AT(object, s16, 10),
-                           FIELD_AT(object, s16, 18));
+      Actor_SetDestination(ACTOR_JENNA, object->x.part[0].pixel,
+                           object->z.part[0].pixel);
     FieldActor_WaitForMoveById(ACTOR_JENNA);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetMovementType(Actor_Get(8), 9);
@@ -2240,8 +2224,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
   }
 }
 #undef BYTE_AT
-#undef FIELD_AT
-#undef EVENT_WORK
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
@@ -3610,9 +3592,7 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef FIELD_AT
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
 #undef BYTE_AT
-#undef EVENT_WORK
 #undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM

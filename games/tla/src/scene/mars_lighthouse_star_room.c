@@ -448,13 +448,6 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Field_RequestBattleFromEncounterTable(102, 0);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Event_End();
 void Actor_MoveToObject();
 void Scene_PlayMusic();
@@ -468,40 +461,29 @@ extern s32 gMarsLighthouseStarRoom_KarstDragonShrinkScript[];
 /// and Agatio and Karst lie there: lost in the frozen lighthouse, its eye took
 /// their will, and they ask Felix to light the beacon with the Mars Star.
 void MarsLighthouseStarRoom_WakeAfterBattle(void) {
-  s32 t1, t2, t3, t8, t10, t12, t14, t28, t30, t32, t34, t50, t52, t87, v5, v6,
-      v8;
+  s32 answer;
+  struct Actor *dragon, *agatioLight, *karstLight;
 
-  t1 = Actor_Get(ACTOR_AGATIO_DRAGON);
-  v5 = t1;
-  t2 = Actor_Get(ACTOR_AGATIO_LIGHT);
-  v6 = t2;
-  t3 = Actor_Get(ACTOR_KARST_LIGHT);
-  v8 = t3;
+  dragon = Actor_Get(ACTOR_AGATIO_DRAGON);
+  agatioLight = Actor_Get(ACTOR_AGATIO_LIGHT);
+  karstLight = Actor_Get(ACTOR_KARST_LIGHT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MarsLighthouseStarRoom_ClearDragonIce();
-  t8 = Actor_Get(ACTOR_AGATIO);
-  Actor_SetSpriteFlags(t8, 0);
-  t10 = Actor_Get(ACTOR_KARST);
-  Actor_SetSpriteFlags(t10, 0);
-  t12 = Actor_Get(ACTOR_AGATIO_LIGHT);
-  FieldActor_SetSpriteColor(t12, SPRITE_COLOR_WHITE);
-  t14 = Actor_Get(ACTOR_KARST_LIGHT);
-  FieldActor_SetSpriteColor(t14, SPRITE_COLOR_WHITE);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_AGATIO), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_KARST), 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO_LIGHT), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST_LIGHT), SPRITE_COLOR_WHITE);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(v5, FIELD_AT(v5, s32, 8), 0,
-                                       (FIELD_AT(v5, s32, 16) + px(-8)));
-  FIELD_AT(v6, u8, 85) = 0;
-  FIELD_AT(v6, s32, 24) = 0x4000;
-  FIELD_AT(v6, s32, 28) = 0x4000;
-  FIELD_AT(v8, u8, 85) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-   */
-  do {
-  } while (0);
-  FIELD_AT(v8, s32, 24) = 0x4000;
-  FIELD_AT(v8, s32, 28) = 0x4000;
+  FieldActor_SetPositionAndResetMotion(dragon, dragon->x.fixed, 0,
+                                       dragon->z.fixed - px(8));
+  agatioLight->motionFlags = 0;
+  agatioLight->scaleX = Q16_ONE / 4;
+  agatioLight->scaleY = Q16_ONE / 4;
+  karstLight->motionFlags = 0;
+  karstLight->scaleX = Q16_ONE / 4;
+  karstLight->scaleY = Q16_ONE / 4;
   FieldCamera_MoveTo(680, CAMERA_KEEP, 228, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 680, 264);
   System_Wait(1);
@@ -512,14 +494,10 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_LIGHT_APPEAR);
-  t28 = Actor_Get(ACTOR_AGATIO_DRAGON);
-  FieldActor_SetSpriteColor(t28, SPRITE_COLOR_WHITE);
-  t30 = Actor_Get(ACTOR_KARST_DRAGON);
-  FieldActor_SetSpriteColor(t30, SPRITE_COLOR_WHITE);
-  t32 = Actor_Get(ACTOR_AGATIO);
-  FieldActor_SetSpriteColor(t32, SPRITE_COLOR_WHITE);
-  t34 = Actor_Get(ACTOR_KARST);
-  FieldActor_SetSpriteColor(t34, SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO_DRAGON), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST_DRAGON), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO), SPRITE_COLOR_WHITE);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST), SPRITE_COLOR_WHITE);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_WARP);
   Actor_MoveToObject(ACTOR_AGATIO_LIGHT, ACTOR_AGATIO_DRAGON);
@@ -540,10 +518,8 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_RunScriptAndWait(ACTOR_KARST_LIGHT,
                          (s32)&gMarsLighthouseStarRoom_LightSinkScript);
   FieldEvent_Wait(10);
-  t50 = Actor_Get(ACTOR_AGATIO);
-  FieldActor_SetSpriteColor(t50, SPRITE_COLOR_NORMAL);
-  t52 = Actor_Get(ACTOR_KARST);
-  FieldActor_SetSpriteColor(t52, SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AGATIO), SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST), SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
@@ -591,19 +567,15 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Felix? Is that you?"
   Event_OpenMessage(ACTOR_AGATIO, 0);
-  t87 =
+  answer =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  if (t87 == 0) {
+  if (answer == 0) {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 7);
     Event_ShowMessage(ACTOR_AGATIO, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldWork->message++;
   } else {
-    gFieldWork->message = (gFieldWork->message + 1);
-    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
-     */
-    do {
-    } while (0);
+    gFieldWork->message++;
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 6);
     Event_ShowMessage(ACTOR_AGATIO, 0);
@@ -645,7 +617,6 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
   bits.priority = source.priority;
   to->bits = bits;
 }
-#undef FIELD_AT
 
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 
@@ -2077,7 +2048,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #undef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 #undef DIFF
-#undef FIELD_AT
 #undef DEFINE_RIDE_SPAWN_BACKWARD
 #undef ABS
 #undef IWRAM

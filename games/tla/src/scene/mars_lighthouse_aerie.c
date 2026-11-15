@@ -460,12 +460,6 @@ void MarsLighthouseAerie_StopLookingAround(s32 id) {
   Actor_FaceDirection(id, FACING_NORTH, 0);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 struct SparkleWork;
 s32 Actor_ReleaseById();
 s32 Actor_MoveToObject();
@@ -1894,8 +1888,6 @@ void Orbs_SpawnRising(void) {
 
 #include "../field/actor_park_record.c"
 
-#undef FIELD_AT
-
 #include "text/msg_ids.h"
 
 void BattleEffect_GetObjectPriority(void);
@@ -2334,12 +2326,6 @@ L_0200bcea:
   return;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 void MarsLighthouseAerie_SpawnBeaconFlames(void);
 
 void MarsLighthouseAerie_WatchGoldenSunRise(void) {
@@ -3099,7 +3085,6 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   }
 }
 #undef A
-#undef FIELD_AT
 
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,

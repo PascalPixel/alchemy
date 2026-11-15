@@ -7,8 +7,19 @@
 
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define JUDGMENT_TORNADO_PICTURES 0x600
-/// Where OverlayImageA is decoded in the effect's pictures.
-#define JUDGMENT_OVERLAY_A_PICTURES 0x6000
+// OverlayImageA's three flash pictures, a byte a pixel, one after another in
+// the sheet: the small flash, the large flash and the glow.
+#define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
+#define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
+#define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24
+#define JUDGMENT_SHEET_FLASH_LARGE_HEIGHT 41
+#define JUDGMENT_SHEET_FLASH_GLOW_WIDTH 22
+#define JUDGMENT_SHEET_FLASH_GLOW_HEIGHT 44
+#define JUDGMENT_SHEET_FLASH_SMALL 24576
+#define JUDGMENT_SHEET_FLASH_LARGE                                             \
+  (JUDGMENT_SHEET_FLASH_SMALL + PICTURE_BYTES(JUDGMENT_SHEET_FLASH_SMALL))
+#define JUDGMENT_SHEET_FLASH_GLOW                                              \
+  (JUDGMENT_SHEET_FLASH_LARGE + PICTURE_BYTES(JUDGMENT_SHEET_FLASH_LARGE))
 
 #define JUDGMENT_FRAMES 336
 
@@ -457,7 +468,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
-                                 work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 0,
+                                 work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }
     if (frame == 66) {
@@ -565,38 +576,48 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       DRAW_ALT_THROUGH(slot, 31, sheet, 59, top - 1, 24, 24);
     }
     if ((u32)(frame - 64) <= 1) {
-      draw[0](canvas, work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 52, 51, 16,
-              17);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 66) <= 1) {
       /* FAKEMATCH(temporary): the width through a local set at both draws of
        * this picture. */
       width = 24;
-      draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
+              JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }
     if ((u32)(frame - 68) <= 7) {
       s32 d = 76 - frame;
 
-      draw[0](canvas, work->sheet + 0x64e8, 49 - d / 2, 38 - d, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, 49 - d / 2, d + 38, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, d / 2 + 49, 38 - d, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, d / 2 + 49, d + 38, 22, 44);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 2, 38 - d);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 2, d + 38);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, d / 2 + 49, 38 - d);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, d / 2 + 49, d + 38);
     }
     if ((u32)(frame - 78) <= 1) {
-      draw[0](canvas, work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 52, 51, 16,
-              17);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 80) <= 1) {
       width = 24;
-      draw[0](canvas, work->sheet + 0x6110, 48, 40, width, 41);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
+              JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }
     if ((u32)(frame - 82) <= 3) {
       s32 d = frame * 2 - 164;
 
-      draw[0](canvas, work->sheet + 0x64e8, 49 - d / 4, 38 - d, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, 49 - d / 4, d + 38, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, d / 4 + 49, 38 - d, 22, 44);
-      draw[0](canvas, work->sheet + 0x64e8, d / 4 + 49, d + 38, 22, 44);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 4, 38 - d);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 4, d + 38);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, d / 4 + 49, 38 - d);
+      EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                          JUDGMENT_SHEET_FLASH_GLOW, d / 4 + 49, d + 38);
     }
 
     if ((u32)(frame - 72) <= 15) {

@@ -13,32 +13,47 @@ enum StarSwarmMode { STAR_SWARM_DJINN_STUN, STAR_SWARM_MYSTIC_CALL };
 /// plays it.
 enum GeyserMode { GEYSER_PURGATORY, GEYSER_DJINN_STORM, GEYSER_DJINN_BLAST };
 
-// Vengeance: the avenger's blades.
+// Vengeance: the archer's flaming arrows.
 
 struct StripQuad;
 
 #define VENGEANCE_FRAMES 124
-#define BLADES 7
+#define VENGEANCE_ARROWS 7 ///< arrows shot, one every twelve frames
+/// Vengeance's sheet: the archer twice, her bow at rest and drawn, then the
+/// flame at an arrow's tail, the flaming arrow and a glint.
+#define VENGEANCE_ARCHER_WIDTH 88
+#define VENGEANCE_ARCHER_HEIGHT 96
+#define VENGEANCE_ARCHER_DRAWN PICTURE_BYTES(VENGEANCE_ARCHER)
+#define VENGEANCE_FLAME_TIP (2 * PICTURE_BYTES(VENGEANCE_ARCHER))
+#define VENGEANCE_FLAME_TIP_WIDTH 17
+#define VENGEANCE_FLAME_TIP_HEIGHT 12
+#define VENGEANCE_ARROW                                                        \
+  (VENGEANCE_FLAME_TIP + PICTURE_BYTES(VENGEANCE_FLAME_TIP))
+#define VENGEANCE_ARROW_WIDTH 51
+#define VENGEANCE_ARROW_HEIGHT 12
+#define VENGEANCE_GLINT (VENGEANCE_ARROW + PICTURE_BYTES(VENGEANCE_ARROW))
+#define VENGEANCE_GLINT_WIDTH 14
+#define VENGEANCE_GLINT_HEIGHT 13
 
-/// Abilities: Vengeance.
+/// An archer slides in from the far side on a window of her own and from frame
+/// 22 looses a flaming arrow every twelve frames; seven fly across, and those
+/// the level picks strike the target, the last one hardest. Everything is
+/// mirrored on the right side.
 ///
-/// The avenger (a tiled background in a window) slides in from the far
-/// side and raises its arm every twelve frames from frame 22; each time a
-/// blade (one of seven) flies across, and those the level picks strike the
-/// target, the last one hardest. Everything is mirrored on the right side.
+/// Abilities: Vengeance.
 void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
   // The plain and the flipped blitter, as one pair: as two locals the
-  // blade loop no longer hoists them from memory.
+  // arrow loop no longer hoists them from memory.
   DrawRectangle draw[2];
   struct ScreenPoint pos;
-  struct Particle *blade;
+  struct Particle *arrow;
   s32 backgroundX;
   s32 speed;
-  s32 raised;
+  s32 drawn;
   s32 row;
   s32 column;
   s32 i;
@@ -53,7 +68,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 4);
 
-  // The avenger's tile map: the body, and its arm in rows 3 to 6.
+  // The archer's tile map: her body, and her arms in rows 3 to 6.
   i = 0;
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 16; column++, i += 2) {
@@ -140,28 +155,28 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
         backgroundX = 0xffaa0000;
         speed = 0xfff00000;
       }
-      for (i = 0; i != BLADES; i++) {
-        blade = &work->particles[i];
+      for (i = 0; i != VENGEANCE_ARROWS; i++) {
+        arrow = &work->particles[i];
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          blade->x = px(160);
-          blade->velocityX = px(12);
+          arrow->x = px(160);
+          arrow->velocityX = px(12);
         } else {
-          blade->x = px(32);
-          blade->velocityX = -px(12);
+          arrow->x = px(32);
+          arrow->velocityX = -px(12);
         }
-        blade->y = px(12);
+        arrow->y = px(12);
         strikes = gVengeance_BladeStrikes[args->variant][i];
         if (strikes != 0) {
           strikes = 1;
         }
-        blade->z = strikes;
-        blade->velocityY = (Random16() & TRIG_ANGLE_MASK) - 0x8000;
-        blade->velocityZ = 0;
-        blade->variant = 0;
+        arrow->z = strikes;
+        arrow->velocityY = (Random16() & TRIG_ANGLE_MASK) - 0x8000;
+        arrow->velocityZ = 0;
+        arrow->variant = 0;
       }
     }
 
-    // The avenger slides in, its window following.
+    // The archer slides in, her window following.
     if (frame <= 24) {
       REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
       if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -179,48 +194,52 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     backgroundX -= speed;
     speed = speed * 52 / DAMPING_SCALE;
 
-    raised = 0;
+    drawn = 0;
     if (frame > 105) {
-      raised = 1;
+      drawn = 1;
     } else if (frame > 21 && (frame - 22) % 12 > 3) {
-      raised = 1;
+      drawn = 1;
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      if (raised == 0) {
-        draw[0](canvas, work->sheet, 32, 0, 88, 96);
+      if (drawn == 0) {
+        draw[0](canvas, work->sheet, 32, 0, VENGEANCE_ARCHER_WIDTH,
+                VENGEANCE_ARCHER_HEIGHT);
       } else {
-        draw[0](canvas, work->sheet + 0x2100, 32, 0, 88, 96);
+        draw[0](canvas, work->sheet + VENGEANCE_ARCHER_DRAWN, 32, 0,
+                VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
       }
-    } else if (raised == 0) {
-      draw[1](canvas, work->sheet, 8, 0, 88, 96);
+    } else if (drawn == 0) {
+      draw[1](canvas, work->sheet, 8, 0, VENGEANCE_ARCHER_WIDTH,
+              VENGEANCE_ARCHER_HEIGHT);
     } else {
-      draw[1](canvas, work->sheet + 0x2100, 8, 0, 88, 96);
+      draw[1](canvas, work->sheet + VENGEANCE_ARCHER_DRAWN, 8, 0,
+              VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
     }
 
-    // The blades.
-    for (i = 0; i != BLADES; i++) {
-      blade = &work->particles[i];
+    // The arrows.
+    for (i = 0; i != VENGEANCE_ARROWS; i++) {
+      arrow = &work->particles[i];
       if (frame < i * 12 + 22 && (frame > 21 || i != 0)) {
         continue;
       }
-      if (frame >= i * 12 + 26 && blade->variant == 0) {
-        blade->x -= blade->velocityX;
-        blade->y += blade->velocityY;
+      if (frame >= i * 12 + 26 && arrow->variant == 0) {
+        arrow->x -= arrow->velocityX;
+        arrow->y += arrow->velocityY;
       }
-      if (blade->variant > 4) {
+      if (arrow->variant > 4) {
         continue;
       }
-      if (blade->variant > 0) {
-        blade->variant++;
+      if (arrow->variant > 0) {
+        arrow->variant++;
       }
-      if (blade->z == 1 && blade->variant == 0) {
+      if (arrow->z == 1 && arrow->variant == 0) {
         s32 hit = 0;
 
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          if ((Q_16_16_TO_INT(blade->x)) < pos.x / 2 + 16) {
+          if ((Q_16_16_TO_INT(arrow->x)) < pos.x / 2 + 16) {
             hit = 1;
           }
-        } else if ((Q_16_16_TO_INT(blade->x)) > pos.x / 2 + 48) {
+        } else if ((Q_16_16_TO_INT(arrow->x)) > pos.x / 2 + 48) {
           hit = 1;
         }
         if (hit == 1) {
@@ -235,57 +254,74 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
           }
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 4);
-          blade->variant = 1;
+          arrow->variant = 1;
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            blade->x = pos.x / 2 - Q_16_16_UPPER_HALF(blade->x);
+            arrow->x = pos.x / 2 - Q_16_16_UPPER_HALF(arrow->x);
           } else {
-            blade->x = pos.x / 2 - Q_16_16_UPPER_HALF(blade->x) + 128;
+            arrow->x = pos.x / 2 - Q_16_16_UPPER_HALF(arrow->x) + 128;
           }
         }
       }
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        if (blade->variant == 0) {
-          draw[0](canvas, work->sheet + 0x42cc,
-                  (Q_16_16_TO_INT(blade->x)) - 111,
-                  Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
-          draw[0](canvas, work->sheet + 0x42cc,
-                  Q_16_16_UPPER_HALF(blade->x) + 17,
-                  Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
-          draw[0](canvas, work->sheet + 0x4200,
-                  Q_16_16_UPPER_HALF(blade->x) - 128,
-                  Q_16_16_UPPER_HALF(blade->y) + 24, 17, 12);
-          draw[0](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x),
-                  Q_16_16_UPPER_HALF(blade->y) + 96, 17, 12);
+        if (arrow->variant == 0) {
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  (Q_16_16_TO_INT(arrow->x)) - 111,
+                  Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                  VENGEANCE_ARROW_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  Q_16_16_UPPER_HALF(arrow->x) + 17,
+                  Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
+                  VENGEANCE_ARROW_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                  Q_16_16_UPPER_HALF(arrow->x) - 128,
+                  Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
+                  VENGEANCE_FLAME_TIP_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                  Q_16_16_UPPER_HALF(arrow->x),
+                  Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
+                  VENGEANCE_FLAME_TIP_HEIGHT);
         } else {
-          draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 111,
-                  Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
-          draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x + 17,
-                  Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  pos.x / 2 + arrow->x - 111, Q_16_16_UPPER_HALF(arrow->y) + 24,
+                  VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  pos.x / 2 + arrow->x + 17, Q_16_16_UPPER_HALF(arrow->y) + 96,
+                  VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         }
-      } else if (blade->variant == 0) {
-        draw[1](canvas, work->sheet + 0x42cc, Q_16_16_TO_INT(blade->x),
-                Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
-        draw[1](canvas, work->sheet + 0x42cc,
-                Q_16_16_UPPER_HALF(blade->x) - 128,
-                Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
-        draw[1](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x) + 51,
-                Q_16_16_UPPER_HALF(blade->y) + 24, 17, 12);
-        draw[1](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x) - 77,
-                Q_16_16_UPPER_HALF(blade->y) + 96, 17, 12);
+      } else if (arrow->variant == 0) {
+        draw[1](canvas, work->sheet + VENGEANCE_ARROW, Q_16_16_TO_INT(arrow->x),
+                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                VENGEANCE_ARROW_HEIGHT);
+        draw[1](canvas, work->sheet + VENGEANCE_ARROW,
+                Q_16_16_UPPER_HALF(arrow->x) - 128,
+                Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
+                VENGEANCE_ARROW_HEIGHT);
+        draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                Q_16_16_UPPER_HALF(arrow->x) + 51,
+                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
+                VENGEANCE_FLAME_TIP_HEIGHT);
+        draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                Q_16_16_UPPER_HALF(arrow->x) - 77,
+                Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
+                VENGEANCE_FLAME_TIP_HEIGHT);
       } else {
-        draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x,
-                Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
-        draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 128,
-                Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
+        draw[1](canvas, work->sheet + VENGEANCE_ARROW, pos.x / 2 + arrow->x,
+                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                VENGEANCE_ARROW_HEIGHT);
+        draw[1](canvas, work->sheet + VENGEANCE_ARROW,
+                pos.x / 2 + arrow->x - 128, Q_16_16_UPPER_HALF(arrow->y) + 96,
+                VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
       }
     }
 
-    // The avenger's eye, while the arm is down.
-    if (raised == 0) {
+    // The glint, while the bow is at rest.
+    if (drawn == 0) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        draw[0](canvas, work->sheet + 0x4530, 88, 29, 14, 13);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, VENGEANCE_GLINT, 88,
+                            29);
       } else {
-        draw[1](canvas, work->sheet + 0x4530, 26, 29, 14, 13);
+        EFFECT_DRAW_PICTURE(draw[1], canvas, work->sheet, VENGEANCE_GLINT, 26,
+                            29);
       }
     }
     BattleEffect_CountDownBattlerTints();
@@ -2131,7 +2167,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef VENGEANCE_FRAMES
-#undef BLADES
+#undef VENGEANCE_ARROWS
 #undef LIFE_SHEAR_FRAMES
 #undef GEYSER_FRAMES
 #undef GEYSER_DRAW_FRAMES

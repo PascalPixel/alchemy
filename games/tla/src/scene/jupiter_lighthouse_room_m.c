@@ -6,6 +6,7 @@
 /// (JupiterLighthouse_IsaacAndIvanFall) and are hurt
 /// (JupiterLighthouse_IsaacAndIvanAreHurt). Its whirlwinds and blocks lead on.
 #include "flags.h"
+#include "game/character_ids.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -1192,9 +1193,9 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_SetPositionAndFacing(ACTOR_IVAN, px(741), px(232), FACING_NORTHWEST);
   Actor_SetScript(ACTOR_MIA, (s32)gJupiterLighthouse_MiaScript);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ISAAC), 0);
-  Actor_SetAnimation(ACTOR_ISAAC, 0x27);
+  Actor_SetAnimation(ACTOR_ISAAC, 39);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
-  Actor_SetAnimation(ACTOR_IVAN, 0x20);
+  Actor_SetAnimation(ACTOR_IVAN, 32);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId((s32)MsgWeDidItAgatio);
@@ -1337,7 +1338,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_AnimateThenWait(ACTOR_JENNA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
-  Actor_FaceEachOther(ACTOR_AGATIO, 0x1b, 0);
+  Actor_FaceEachOther(ACTOR_AGATIO, ACTOR_KARST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
   FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1374,7 +1375,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
   Actor_FaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
-  Actor_FaceEachOther(ACTOR_FELIX, 0x1c, 0);
+  Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   FieldActor_WaitForScriptEndById(ACTOR_KRADEN);
   FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
@@ -1406,7 +1407,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  Actor_FaceEachOther(ACTOR_FELIX, 0x1c, 0);
+  Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1414,7 +1415,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_Wait(40);
   Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(30);
-  Actor_FaceEachOther(ACTOR_AGATIO, 0x1b, 0);
+  Actor_FaceEachOther(ACTOR_AGATIO, ACTOR_KARST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
@@ -1479,13 +1480,14 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_Wait(4);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_JUPITER_STAR);
-  PartyInventory_Add(245);
+  PartyInventory_Add(ITEM_MYTHRIL_BAG_B);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;
   offset = 0xd8;
   for (index = 0; index <= 14; offset += 2, index++) {
-    if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
-      Inventory_Equip(4, index);
+    if ((*(u16 *)((u8 *)Unit_Get(FELIX) + offset) & 0x1ff) ==
+        ITEM_MYTHRIL_BAG_B) {
+      Inventory_Equip(FELIX, index);
       break;
     }
   }

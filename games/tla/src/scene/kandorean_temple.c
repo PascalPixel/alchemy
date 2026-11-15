@@ -178,9 +178,9 @@ enum KandoreanTemplePoisHallActorId {
   ACTOR_HALL_KRADEN
 };
 
-/// Poi's hall's story entrances: back from the floor below, where the rope
-/// still lies (KandoreanTemple_FindTheRopeOnTheFloor), and in through the cave
-/// to meet Poi (KandoreanTemple_MeetPoi).
+/// Poi's hall's story entrances: finding the rope still lying on the floor
+/// (KandoreanTemple_FindTheRopeOnTheFloor), and coming in through the cave to
+/// meet Poi (KandoreanTemple_MeetPoi).
 enum { ENTRANCE_ROPE_ON_THE_FLOOR = 13, ENTRANCE_THROUGH_THE_CAVE = 14 };
 
 /// The temple's scene and area flags, by the rooms that read them.

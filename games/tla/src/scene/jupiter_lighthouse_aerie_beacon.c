@@ -342,7 +342,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
       {
         u32 counter = Random16() >> 13;
 
-        BYTE_AT(effect, 0x62) = counter;
+        effect->riseCounter = counter;
       }
       effect->update = JupiterLighthouse_CircleBeaconWide;
       effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24;
@@ -2359,7 +2359,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
 
-  while (*((u8 *)linked + 0x63) != 0) {
+  while (linked->riseEnabled != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;

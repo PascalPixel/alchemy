@@ -698,7 +698,7 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
     if (distance < -px(32))
       goto stop;
     {
-      if (*((u8 *)self + 0x62) == 0) {
+      if (self->riseCounter == 0) {
         distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
           distance = self->y.fixed - leader->y.fixed;
@@ -715,8 +715,8 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
             work->raisedTrigger = delay;
           }
           gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
+          self->riseCounter = 1;
+          self->riseEnabled = 1;
         }
       }
       {
@@ -737,7 +737,7 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
 stop:
   {
     s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
+    self->riseEnabled = zero;
     self->update = zero;
     Actor_StartScript(self, gJupiterLighthouse_OrbScript);
     Event_PlaySound(SE_SPARKLING_PASSAGE);

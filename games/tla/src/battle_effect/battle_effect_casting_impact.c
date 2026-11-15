@@ -53,14 +53,6 @@ struct DrawFuncs {
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define BLITTER ((DrawFunc)Ram_HeapSlots->ramCode)
 #define ALT_BLITTER ((DrawFunc)Ram_HeapSlots->ramCodePaired)
-/// Both blitters released, the second in a once-only block (tagged where the
-/// effect uses it).
-#define RELEASE_BLITTERS()                                                     \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                                 \
-  do {                                                                         \
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);                                      \
-  } while (0)
-
 /// The casting impacts, by effect kind less 100: each is named for the first
 /// ability whose effect entry selects it as a casting impact; those no ability
 /// selects are named UNUSED_ and for what they load or share. Kinds up to
@@ -1372,6 +1364,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           for (i = 0; i != 3; i++) {
             s32 m;
             s32 x;
+            u32 flip;
             m = i & 3;
             angle = Random16() & TRIG_ANGLE_MASK;
             x = (FIXEDtoINT(Trig_Sin(angle) << 3)) + target[0] / 2 -
@@ -1379,12 +1372,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             y = (FIXEDtoINT(Trig_Cos(angle) * amp)) + off -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             EFFECT_RELEASE_BLITTERS();
-            /* FAKEMATCH(dead): a once-only block. */
-            do {
-              BattleEffect_BuildBlitter(
-                  188, 7, 7,
-                  gCastingImpact_SquallGlintFlips[Random16() & 3] | 3, 0);
-            } while (0);
+            flip = Random16();
+            EFFECT_LOAD_BLITTER(
+                188, gCastingImpact_SquallGlintFlips[flip & 3] | 3, 0);
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 56, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
@@ -1399,17 +1389,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           for (i = 0; i != 3; i++) {
             s32 m;
             s32 x;
+            u32 flip;
             m = i & 3;
             angle = Random16() & TRIG_ANGLE_MASK;
             x = (FIXEDtoINT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (FIXEDtoINT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
-            /* FAKEMATCH(dead): RELEASE_BLITTERS releases its second blitter in
-             * a once-only block, here and in the stun bolt below. */
-            RELEASE_BLITTERS();
-            BattleEffect_BuildBlitter(
-                188, 7, 7, gCastingImpact_SapGlintFlips[Random16() & 3] | 3, 1);
+            EFFECT_RELEASE_BLITTERS();
+            flip = Random16();
+            EFFECT_LOAD_BLITTER(188, gCastingImpact_SapGlintFlips[flip & 3] | 3,
+                                1);
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
@@ -1694,21 +1684,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           else
             m = 3;
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-          /* FAKEMATCH(dead): a once-only block. */
-          do {
-            /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
-            register s32 pinned __asm__("r3");
+          {
+            s32 flags;
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                                BLITTER_ADDITIVE);
+            flags = EFFECT_CLIP_BOUNDS;
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
             BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF),
-                    target[0] / 2 - BITE_HALF_WIDTH, pinned = 56,
-                    BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
+                    target[0] / 2 - BITE_HALF_WIDTH, 56, BITE_HALF_WIDTH,
+                    BITE_HALF_HEIGHT);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                                BLITTER_ADDITIVE);
-          } while (0);
+            flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
+          }
           BLITTER(screen, buffer + m * PICTURE_BYTES(BITE_HALF), target[0] / 2,
                   56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -2185,16 +2172,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           for (i = 0; i != 3; i++) {
             s32 m;
             s32 x;
+            u32 flip;
             m = i & 3;
             angle = Random16() & TRIG_ANGLE_MASK;
             x = (FIXEDtoINT(Trig_Sin(angle) << 4)) + target[0] / 2 -
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = (FIXEDtoINT(Trig_Cos(angle) << 4)) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
-            RELEASE_BLITTERS();
-            BattleEffect_BuildBlitter(
-                188, 7, 7,
-                gCastingImpact_StunBoltGlintFlips[Random16() & 3] | 3, 1);
+            EFFECT_RELEASE_BLITTERS();
+            flip = Random16();
+            EFFECT_LOAD_BLITTER(
+                188, gCastingImpact_StunBoltGlintFlips[flip & 3] | 3, 1);
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);

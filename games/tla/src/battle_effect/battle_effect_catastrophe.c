@@ -1121,29 +1121,20 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               s32 angle = Random16();
               s32 x = (Trig_Sin(angle) * r >> 17) + 60;
               s32 y;
+              u32 flip;
 
               x -= gBattleEffect_GlintPictureWidths[n] >> 1;
               y = top + (Trig_Cos(angle) * r >> 17) -
                   (gBattleEffect_GlintPictureHeights[n] >> 1);
-
-              {
-                s32 c = gCatastrophe_GlintFlips[Random16() & 3] | 3;
-
-                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, c,
-                                          0);
-              }
-              {
-                s32 at = gBattleEffect_GlintPictures[n];
-
-                /* FAKEMATCH(dead): an empty once-only block between the
-                 * picture's offset and the draw. */
-                do {
-                } while (0);
-                ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-                    canvas, work->sheet + CATASTROPHE_SWEEP_PICTURES + at, x, y,
-                    gBattleEffect_GlintPictureWidths[n],
-                    gBattleEffect_GlintPictureHeights[n]);
-              }
+              flip = Random16();
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                                  gCatastrophe_GlintFlips[flip & 3] | 3, 0);
+              ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+                  canvas,
+                  work->sheet + CATASTROPHE_SWEEP_PICTURES +
+                      gBattleEffect_GlintPictures[n],
+                  x, y, gBattleEffect_GlintPictureWidths[n],
+                  gBattleEffect_GlintPictureHeights[n]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
           }

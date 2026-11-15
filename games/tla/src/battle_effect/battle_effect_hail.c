@@ -308,15 +308,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               s32 chipY;
 
               // A max blitter with the chip's own flip, for this chip only.
-              {
-                s32 mode = BLITTER_MAX;
-                s32 flags = chip->velocityY;
-                /* FAKEMATCH(barrier): an empty asm after the mode and the flags
-                 * are set. */
-                __asm__("");
-                BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                          flags, mode);
-              }
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, chip->velocityY,
+                                  BLITTER_MAX);
               draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
               if (chip->velocityY & COMPOSITE_FLIP_X)
                 chipX = x - gHail_PortalWidths[chip->velocityX] -

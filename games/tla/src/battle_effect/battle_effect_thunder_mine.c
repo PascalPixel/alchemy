@@ -210,11 +210,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         s32 flashY = y + (FIXEDtoINT(Trig_Cos(angle) * half)) -
                      (gBattleEffect_GlintPictureHeights[cell] >> 1);
         s32 flags = 3 | gBoltTrail_GlintFlips[Random16() & 3];
-
-        /* FAKEMATCH(dead): a once-only block. */
-        do {
-        } while (0);
-        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags, 1);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas,
             work->sheet + BOLT_TRAIL_TORNADO_PICTURES +
@@ -614,24 +610,20 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                         LIGHTNING_BOLT_WIDTH, 112);
           }
           if (frame >= start + 10) {
-            for (j = 0; j != 2;) {
+            for (j = 0; j != 2; j++) {
               s32 k = j & 3;
               s32 gx = column + (Random16() & 7) -
                        (gBattleEffect_GlintPictureWidths[k] >> 1);
               s32 gy = (Random16() & 63) -
                        (gBattleEffect_GlintPictureHeights[k] >> 1);
-
-              /* FAKEMATCH(dead): an empty once-only loop. */
-              do {
-              } while (0);
-              BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                        3 | gMegaera_GlintFlips[Random16() & 3],
-                                        gMegaera_GlintModes[args->variant]);
+              u32 flip = Random16();
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                                  3 | gMegaera_GlintFlips[flip & 3],
+                                  gMegaera_GlintModes[args->variant]);
               ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
-              j++;
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
           }
@@ -772,8 +764,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   if (args->side != EFFECT_SIDE_ENEMIES) {
     flip = 0;
   }
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flip | 3, 1);
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flip | 11, 1);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flip | 3, 1);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flip | 11, 1);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   work->cameraDelta = 0;

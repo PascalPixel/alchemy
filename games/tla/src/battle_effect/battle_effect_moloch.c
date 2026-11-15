@@ -998,7 +998,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   s32 off;
   u8 *dst;
   u8 *tiles;
-  /* FAKEMATCH(dead): 284 locals nothing uses (any count from 275 to 294 does).
+  /* FAKEMATCH(dead): 274 locals nothing uses (any count from 264 to 283 does).
    */
   UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14,
       z15, z16, z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29,
@@ -1021,7 +1021,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       z236, z237, z238, z239, z240, z241, z242, z243, z244, z245, z246, z247,
       z248, z249, z250, z251, z252, z253, z254, z255, z256, z257, z258, z259,
       z260, z261, z262, z263, z264, z265, z266, z267, z268, z269, z270, z271,
-      z272, z273, z274, z275, z276, z277, z278, z279, z280, z281, z282, z283;
+      z272, z273;
 
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);

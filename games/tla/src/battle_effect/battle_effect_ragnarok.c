@@ -621,16 +621,6 @@ struct StripQuad;
 
 extern const struct Scale gJudgment_UnitScale;
 
-#define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
-  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, x, y, w, h);    \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
-/// The same draw, the routine read through a pointer to its slot.
-#define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_PAIRED, mode);                   \
-  (*(slot))(canvas, sheet, x, y, w, h);                                        \
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED)
-
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only
 // with each of the three parted from the one before.

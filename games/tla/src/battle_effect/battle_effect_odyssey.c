@@ -107,15 +107,16 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used. */
+        /* LEFTOVER(template): green, taken and clamped as
+         * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
+         * three channels in their palette loops, and left out of the colour
+         * here; as no green at all, 61 of 1075 instructions differ in tla-en.
+         */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
-
-        if (red > RGB_LEVEL_MAX)
-          red = RGB_LEVEL_MAX;
-        if (blue > RGB_LEVEL_MAX)
-          blue = RGB_LEVEL_MAX;
+        red = red > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : red;
         green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
+        blue = blue > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : blue;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;
@@ -563,10 +564,6 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
-   * frame's outgoing argument word at sp+0. */
-  if (0)
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = 0x48;

@@ -104,12 +104,11 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
-                                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                      mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
           else
-            BattleEffect_BuildBlitter(
-                HEAP_SLOT_RAM_CODE, 7, 7,
+            EFFECT_LOAD_BLITTER(
+                HEAP_SLOT_RAM_CODE,
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           (draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode)(
               canvas, work->sheet, x, 112 - height, 14, height);
@@ -849,7 +848,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       /* FAKEMATCH(signature): vertices, a pointer, holds the radius 32 through
        * casts; as an s32 radius of its own, 360 of 609 instructions differ in
        * tla-en. */
-      /* FAKEMATCH(dead): both arms set the radius alike. */
+      // Each mode sets its funnel: the length, and a radius that is 32 for
+      // both.
       if (mode == WIND_FUNNEL_WAFT) {
         x = 80;
         vertices = (u8 *)32;

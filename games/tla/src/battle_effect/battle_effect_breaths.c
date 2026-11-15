@@ -517,7 +517,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
   Nothing();
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7, flags, BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // Load both crescents and set the blend.

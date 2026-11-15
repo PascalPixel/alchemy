@@ -204,15 +204,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                   (gBattleEffect_GlintPictureHeights[cel] >> 1);
           u32 flip = Random16();
 
-          /* FAKEMATCH(dead): an empty once-only loop before the blitter is
-           * built, as every glint draw keeps one; without it, 362 of 755
-           * instructions differ in tla-en. */
-          do {
-          } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    gTargetMotes_GlintFlips[flip & 3] |
-                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    BLITTER_MAX);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              gTargetMotes_GlintFlips[flip & 3] |
+                                  COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
+                              BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[cel] +

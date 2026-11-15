@@ -490,12 +490,6 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 /// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
-/// Frees the second blitter after a draw.
-#define RELEASE_DRAW_BLITTER()                                                 \
-  do {                                                                         \
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);                               \
-  } while (0)
-
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
 
@@ -863,7 +857,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         draw[1](canvas,
                 work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES,
                 djinnX, djinnY, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-        RELEASE_DRAW_BLITTER();
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
 
       // The shots.
@@ -1044,7 +1038,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                            work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                            pos->x - 16, pos->y, PROJECTILE_VOLLEY_COMET_WIDTH,
                            gProjectileVolley_CometHeights[kind]);
-            RELEASE_DRAW_BLITTER();
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
             if (ABS(shot->x) <= ABS(target->x))
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
@@ -1102,9 +1096,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           if (flash->variant == 1) {
             s32 step = flash->z / 2;
+            s32 flags;
 
             if (!(i & 1)) {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
+              flags = EFFECT_CLIP_BOUNDS;
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
@@ -1112,13 +1108,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              /* FAKEMATCH(dead): an empty once-only block before the release.
-               */
-              do {
-              } while (0);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                                  EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+              flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
@@ -1127,34 +1119,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                       gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              RELEASE_DRAW_BLITTER();
-            } else {
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
-                                  BLITTER_MAX);
-              {
-                s32 offset = gProjectileVolley_FlashPictures[step];
-                u8 *picture;
-                s32 rise;
-                s32 left;
-                s32 width;
-
-                /* FAKEMATCH(dead): the picture, x and rise read in a once-only
-                 * block; as plain statements, 4 of 2278 instructions differ in
-                 * tla-en. */
-                do {
-                  picture = work->sheet + offset + 0x128a;
-                  left = flash->x;
-                  rise = gProjectileVolley_FlashRises[step];
-                } while (0);
-                width = gProjectileVolley_FlashWidths[step];
-                DRAW_ALTERNATE(canvas, picture, left - rise, flash->y - width,
-                               gProjectileVolley_FlashHeights[step], width);
-              }
-              do {
-              } while (0);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                                  EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+            } else {
+              flags = EFFECT_CLIP_BOUNDS;
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
+                                  BLITTER_MAX);
+              DRAW_ALTERNATE(canvas,
+                             work->sheet +
+                                 gProjectileVolley_FlashPictures[step] + 0x128a,
+                             flash->x - gProjectileVolley_FlashRises[step],
+                             flash->y - gProjectileVolley_FlashWidths[step],
+                             gProjectileVolley_FlashHeights[step],
+                             gProjectileVolley_FlashWidths[step]);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+              flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(canvas,
                              work->sheet +
@@ -1163,7 +1142,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                  gProjectileVolley_FlashRises[step],
                              flash->y, gProjectileVolley_FlashHeights[step],
                              gProjectileVolley_FlashWidths[step]);
-              RELEASE_DRAW_BLITTER();
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             flash->z++;
             if (flash->z == 12)
@@ -1240,14 +1219,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 glintY = FIXED_INTEGER_PART(p->y) -
                          ((Trig_Cos(angle) * radius) >> 17) -
                          (gBattleEffect_GlintPictureHeights[glint] >> 1);
+            u32 flip = Random16();
 
-            BattleEffect_BuildBlitter(
-                188, 7, 7, gProjectileVolley_GlintFlips[Random16() & 3] | CLIP,
-                0);
-            do {
-              /* FAKEMATCH(dead): an empty once-only block before the glints;
-               * without it, 1895 of 2278 instructions differ in tla-en. */
-            } while (0);
+            EFFECT_LOAD_BLITTER(
+                188, gProjectileVolley_GlintFlips[flip & 3] | CLIP, 0);
             DRAW_ALTERNATE(
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintPictures[glint],
                 glintX, glintY, gBattleEffect_GlintPictureWidths[glint],

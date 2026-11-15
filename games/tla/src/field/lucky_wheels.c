@@ -382,15 +382,15 @@ struct ReelWork {
 #endif
 };
 
-extern char MsgSlotsBet[];
-extern char MsgSlotsStopReels[];
-extern char MsgSlotsChooseHeld[];
-extern char MsgSlotsPullLever[];
-extern char MsgSlotsHold[];
-extern char MsgSlotsRelease[];
-extern char MsgSlotsStart[];
-extern char MsgSlotsAllHeld[];
-extern char MsgSlotsCannotPull[];
+extern char MsgSlotsBet[];        ///< "Bet"
+extern char MsgSlotsStopReels[];  ///< "{button_icon:4}:Stop slots"
+extern char MsgSlotsChooseHeld[]; ///< "When you've chosen which slots"
+extern char MsgSlotsPullLever[];  ///< "to lock, pull the lever!"
+extern char MsgSlotsHold[];       ///< "{button_icon:1}:Stop"
+extern char MsgSlotsRelease[];    ///< "{button_icon:1}:Spin"
+extern char MsgSlotsStart[];      ///< "{button_icon:1}:Start machine"
+extern char MsgSlotsAllHeld[];    ///< "If you lock all the slots,"
+extern char MsgSlotsCannotPull[]; ///< "you can't pull the lever!"
 
 /// Lucky Wheels' VBlank task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing
@@ -1057,8 +1057,9 @@ void LuckyWheels_InitializeTitle(void) {
 typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
                               s32 width, s32 height);
 
-extern char MsgSlotsChangeBet[];
-extern char MsgSlotsControls[];
+extern char MsgSlotsChangeBet[]; ///< "Press up or down to change value"
+extern char MsgSlotsControls[];  ///< "{button_icon:1}:Start machine
+                                 ///< {button_icon:2}:Quit"
 
 /// Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of
 /// the five wheels with 21 random symbols (with eight placed symbols of rank 0

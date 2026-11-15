@@ -159,90 +159,105 @@ const s32 gActor_KeyCheckScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Climbing by the keys (Actor_MoveByKeys).
 const s32 gActor_KeysScript[] = {
     SC_CMD_1B,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Crossing a tied rope (Actor_CrossRope).
 const s32 gActor_RopeScript[] = {
     SC_ROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Crossing a tightrope (Actor_CrossTightrope).
 const s32 gActor_TightropeScript[] = {
     SC_TIGHTROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Moving as sand (Actor_MoveAsSand).
 const s32 gActor_SandScript[] = {
     SC_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Hovering (Actor_UpdateHoverControl).
 const s32 gActor_HoverScript[] = {
     SC_HOVER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Walking (Actor_UpdateWalkingControl).
 const s32 gActor_WalkingScript[] = {
     SC_WALK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The leader on foot (Actor_UpdatePlayerControl).
 const s32 gActor_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The leader on the World Map (Actor_MoveOnWorldMap).
 const s32 gActor_WorldMapScript[] = {
     SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Sailing on a map (Actor_SailOnMap).
 const s32 gActor_SailOnMapScript[] = {
     SC_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Sailing on the World Map (Actor_SailOnWorldMap).
 const s32 gActor_SailScript[] = {
     SC_WORLD_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Flying on the World Map (Actor_FlyOnWorldMap).
 const s32 gActor_FlyScript[] = {
     SC_WORLD_FLY,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Moving as sand on the World Map (Actor_MoveAsSandOnWorldMap).
 const s32 gActor_SandOnWorldMapScript[] = {
     SC_WORLD_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The camera following the leader within the map's bounds.
 const s32 gActor_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Following the watched actor (Actor_ApproachWatchedActor).
 const s32 gActor_ApproachWatchedScript[] = {
     SC_APPROACH_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// A script that ends at once.
 const s32 gActorScript_EndScript[] = {
     SC_END,
 };

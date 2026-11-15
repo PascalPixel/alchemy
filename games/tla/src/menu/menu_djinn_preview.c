@@ -8,9 +8,8 @@
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
-/// Shows or hides the menu's cursor around a line of the Djinn tutorial, the
-/// four stores of its two message steps; the name is ours. The Broken Seal's
-/// steps compile as the same statement.
+/// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
+/// four stores of its two message steps, in both games. The name is ours.
 #define DjinnTutorial_SetCursor(menu, value)                                   \
   do {                                                                         \
     (menu)->cursor->motion = (value);                                          \

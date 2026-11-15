@@ -42,9 +42,10 @@
 /// A latch in the scene state (sLastCocoon) keeps a step from counting twice
 /// until the leader walks on.
 ///
-/// Cocoon 50 is the way down to Tret. Entrances 50, 40, 30 and 20 each let the
-/// leader fall on to the entrance numbered ten lower. At entrance 10 the leader
-/// lands in a ring of dust as the map shakes, in front of Tret.
+/// Cocoon 50 is the way down to Tret. Its landing and the fall's entrances
+/// (TREE_ROOMS_FALL_THROUGH_A to _C) each let the leader fall on to the
+/// entrance numbered ten lower. At TREE_ROOMS_FALL_LANDING the leader lands in
+/// a ring of dust as the map shakes, in front of Tret.
 ///
 /// Torn cocoons stay torn across a battle. After one (FLAG_KEEP_PARTY_POSITION)
 /// the setup redraws them from gTreeRooms_MapPatches.
@@ -71,7 +72,8 @@
 /// heal Tret and lift the curse.
 ///
 /// Once it is set, the setup moves both Tret actors away, opens that passage
-/// and redraws cells near entrance 20. Before, it keeps the passage closed.
+/// and redraws cells near TREE_ROOMS_FALL_THROUGH_C. Before, it keeps the
+/// passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
 /// shifts them every 32 frames. The tint does not start after the battle until
@@ -726,7 +728,8 @@ static void TreeRooms_PlayPostBattleConversation(void) {
 }
 
 /// Sets the map grid by FLAG_TRET_DEFEATED. The passage in Tret's room is
-/// closed before and open after, with cells near entrance 20 redrawn.
+/// closed before and open after, with cells near TREE_ROOMS_FALL_THROUGH_C
+/// redrawn.
 static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
@@ -798,11 +801,13 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
   leaderActorId = gMainRoutineWork.leaderActorId;
   actor = Actor_Get(leaderActorId);
-  // Entrances 20, 30, 40 and 50: the leader falls on through the room,
-  // to the entrance numbered ten lower. Entrance 10: the leader
-  // lands in a cloud of dust in front of Tret.
+  // Falling through a room, the leader falls on to the entrance numbered ten
+  // lower; at the fall's landing he lands in a cloud of dust before Tret.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
-  if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
+  if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON ||
+      entrance == TREE_ROOMS_FALL_THROUGH_A ||
+      entrance == TREE_ROOMS_FALL_THROUGH_B ||
+      entrance == TREE_ROOMS_FALL_THROUGH_C) {
     Event_StartScreenTransition();
     Actor_SetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
     Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
@@ -822,7 +827,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAttachedEffect(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     Event_Wait(8);
-  } else if (entrance == 10) {
+  } else if (entrance == TREE_ROOMS_FALL_LANDING) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       TreeRooms_RunLandingDustEvent();
   } else if (entrance == TREE_ROOMS_AFTER_FIGHT_TRET) {

@@ -1103,6 +1103,14 @@ enum {
   TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR = 14,
   TREE_ROOMS_TRET_FROM_ENTRANCE = 15,
   TREE_ROOMS_ENTRANCE_FROM_TRET = 16,
+  /// The fall from the fifth floor's centre cocoon to Tret: from
+  /// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON the leader falls on through each
+  /// room to the entrance numbered ten lower, A, B and C in the order fallen
+  /// through, and lands in front of Tret at TREE_ROOMS_FALL_LANDING.
+  TREE_ROOMS_FALL_LANDING = 10,
+  TREE_ROOMS_FALL_THROUGH_C = 20,
+  TREE_ROOMS_FALL_THROUGH_B = 30,
+  TREE_ROOMS_FALL_THROUGH_A = 40,
   TREE_ROOMS_AFTER_FIGHT_TRET = 19,
   // The landings below the cocoons, each numbered as its cocoon's cell
   // behavior (TreeRooms_StepOnCocoon) and lying straight below it, one room

@@ -25,16 +25,6 @@ s16 Field_GetSceneAttributes(s32 scene);
 #else
 s32 Field_GetSceneAttributes(s32 scene);
 #endif
-/* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
- * PartyInventory_GiveItem(s32 item); field/event.h has s32
- * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
- * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:214: `PartyInventory_GiveItem'
- * undeclared (first use in this function). */
-s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
-    "PartyInventory_GiveItem");
-#define PartyInventory_GiveItem PartyInventory_GiveItem__field_sequence
 s32 Leader_StepOntoRope(void);
 s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
@@ -216,13 +206,7 @@ s32 FieldSequence_Run(void) {
     if (gMainRoutineWork.pendingItem != 0) {
       WorldMap_Freeze();
       if (Party_CheckItemLimit(gMainRoutineWork.pendingItem) == 0) {
-        // UB: called with a second argument (0) its definition does not take.
-#ifdef UBFIX
-        PartyInventory_GiveItem(gMainRoutineWork.pendingItem);
-#else
-        ((s32 (*)(s32, s32))PartyInventory_GiveItem)(
-            gMainRoutineWork.pendingItem, 0);
-#endif
+        PartyInventory_GiveItem(gMainRoutineWork.pendingItem, 0);
       }
       WorldMap_ReloadPendingAreaGraphics();
       gMainRoutineWork.pendingItem = 0;

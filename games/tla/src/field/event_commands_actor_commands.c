@@ -99,15 +99,6 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
     sprite->rotation = rotation;
 }
 
-/* VIEW(event_commands): routine Icon_DrawItemFar as void Icon_DrawItemFar(s32
- * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32 item);
- * tried as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_actor_commands.c:207: too many arguments
- * to function `Icon_DrawItemFar'. */
-extern void
-Func_08038248__event_commands(s32 resource,
-                              u8 *buffer) __asm__("Icon_DrawItemFar");
-
 /// Lays actor id down along angle, a quarter turn rounded: shows its first
 /// frame turned, shifted by the side it falls to, and blocks its cell and the
 /// cell beyond it.
@@ -212,7 +203,12 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       zero = 0;
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
-      Func_08038248__event_commands(resource, buffer);
+#ifdef UBFIX
+      Icon_DrawItemFar(resource);
+#else
+      // UB: Icon_DrawItem takes the item alone; the call passes the buffer too.
+      ((void (*)(s32, u8 *))Icon_DrawItemFar)(resource, buffer);
+#endif
       tile = VramCache_Load(sprite->slot, 0x80, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       object->retainSpriteCache = kind;

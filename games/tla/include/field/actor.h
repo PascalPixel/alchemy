@@ -165,6 +165,11 @@ struct Actor {
       u8 wakeTimer;           ///< frames to the ship's next wake
       u8 wakeFrames;          ///< a wake's frames left
     };
+    /// An actor showing an item (Actor_SetItemIcon).
+    struct {
+      u8 unusedBeforeIconItem[2]; ///< refused and frozen
+      u8 iconItem;                ///< the item whose icon its sprite shows
+    };
     /// The leader while it crosses a rope or tightrope.
     struct {
       u8 unusedBeforeSavedPriority[2]; ///< refused and frozen

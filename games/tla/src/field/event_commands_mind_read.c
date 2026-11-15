@@ -34,14 +34,11 @@
 
 // The parts, in ROM order.
 
-/// The hue circle, in whole degrees and in degrees as 16.16.
-#define HUE_DEGREES 360
-
 /// Each frame after the delay: rewrites the 160-line wave into the other
 /// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
 /// its 61-frame cycle sends a particle from the target back to the user.
 void FieldPsynergy_UpdateMindReadWave(void) {
-  struct WaveFxWork *work = Ram_HeapSlots->mindRead;
+  struct MindReadWork *work = Ram_HeapSlots->mindRead;
   struct WaveFxVector from;
   struct WaveFxVector to;
   struct WaveFxDescriptor *descriptor;
@@ -162,7 +159,7 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
 
 /// Advances the hue by four degrees and calculates its colour.
 void FieldEffect_AdvanceHueCycle(void) {
-  struct WaveFxWork *work = Ram_HeapSlots->mindRead;
+  struct MindReadWork *work = Ram_HeapSlots->mindRead;
   s16 r;
   s16 g;
   s16 b;

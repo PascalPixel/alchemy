@@ -22,7 +22,13 @@ struct ItemHead {
   u8 flags;
 };
 
-struct WaveFxWork {
+/// A hue's degrees, a full turn of the colour wheel.
+#define HUE_DEGREES 360
+
+/// Mind Read's wave (heap slot HEAP_SLOT_MIND_READ): each scanline's BG0
+/// scroll on two pages, the hue it tints the screen with, its caster and
+/// target, and its delay and particle cycle.
+struct MindReadWork {
   u16 lines[2][162];
   u16 phase;
   u8 page;

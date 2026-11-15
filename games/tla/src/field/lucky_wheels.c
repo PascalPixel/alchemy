@@ -29,6 +29,7 @@
 #include "field/field_sequence.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
+#include "item_ids.h"
 
 void LuckyWheels_Run(void);
 
@@ -573,7 +574,7 @@ void LuckyWheels_Update(void) {
 
   if (gDebugPaused == 0) {
     if (work->state == LUCKY_WHEELS_BETTING) {
-      tickets = PartyInventory_CountItemFar(228);
+      tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
       Text_DrawNumberInWindowFar(tickets - work->bet, LUCKY_WHEELS_COIN_DIGITS,
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
@@ -607,7 +608,7 @@ void LuckyWheels_Update(void) {
           fx->frame = 0;
           Window_CloseFar(work->window, 1);
           for (k = 0; k != work->bet; k++)
-            PartyInventory_RemoveFar(228);
+            PartyInventory_RemoveFar(ITEM_GAME_TICKET);
           Window_CloseFar(work->subWindow, 1);
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
@@ -795,11 +796,12 @@ void LuckyWheels_Update(void) {
         if (work->reels[i].held == 1)
           stoppedReels++;
         else if (work->reels[i].stop == 0 &&
-                 (work->reels[i].position & 15) == 8)
+                 (work->reels[i].position & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
+                     LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
           stoppedReels++;
       }
 
-      if (stoppedReels == 5) {
+      if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
         struct ReelSave *save = (struct ReelSave *)Data_0200024c;
         s32 hits = 0;
 
@@ -811,22 +813,28 @@ void LuckyWheels_Update(void) {
           mixed = 0;
           work->winningLines[col] = 0;
           if (col > 3 - work->bet && col < work->bet + 3) {
-            for (i = 0; i != 5; i++) {
+            for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
               s32 sym;
 
               if (col == 0)
-                sym =
-                    work->reels[i]
-                        .symbols[(i - work->reels[i].position / 16 + 22) % 21];
-              else if (col == 6)
-                sym =
-                    work->reels[i]
-                        .symbols[(-i - work->reels[i].position / 16 + 26) % 21];
+                sym = work->reels[i].symbols[(i -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS + 1) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
+              else if (col == LUCKY_WHEELS_PAYLINES - 1)
+                sym = work->reels[i].symbols[(-i -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS + 5) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
               else
-                sym = work->reels[i]
-                          .symbols[(col - work->reels[i].position / 16 + 21) %
-                                   21];
-              if (sym != 5) {
+                sym = work->reels[i].symbols[(col -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
+              if (sym != LUCKY_WHEELS_WILD_SYMBOL) {
                 if (found == -1)
                   found = sym;
                 else if (found != sym)
@@ -866,7 +874,7 @@ void LuckyWheels_Update(void) {
             Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
           }
           if (work->spins == 4) {
-            s32 left = PartyInventory_CountItemFar(228);
+            s32 left = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
             struct Window *window;
             s32 message;
 
@@ -903,7 +911,8 @@ void LuckyWheels_Update(void) {
           if (reel->held == 0) {
             if (reel->stop != 0)
               reel->position += LUCKY_WHEELS_SPIN_SPEED;
-            else if ((reel->position & 15) != 8)
+            else if ((reel->position & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) !=
+                     LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
               reel->position += LUCKY_WHEELS_SPIN_SPEED;
             if (reel->position == LUCKY_WHEELS_REEL_TURN)
               reel->position = 0;
@@ -1036,7 +1045,11 @@ void LuckyWheels_Update(void) {
       work->obj[index].attr01 =
           symbolY | OBJ_X(i * 32 + 40) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
       work->obj[work->spriteCount].attr2 =
-          (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
+          (reel->symbols[(col - reel->position / LUCKY_WHEELS_SYMBOL_HEIGHT +
+                          LUCKY_WHEELS_REEL_SYMBOLS) %
+                         LUCKY_WHEELS_REEL_SYMBOLS]
+           << 4) |
+          0x800;
       work->spriteCount++;
     }
   }
@@ -1386,7 +1399,7 @@ void LuckyWheels_Run(void) {
     LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
-    if (PartyInventory_CountItemFar(228) == 1) {
+    if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
       struct Window *window = Window_CreateFar(
           HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, CONTROLS_WINDOW_HEIGHT, 6);
 

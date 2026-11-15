@@ -12,6 +12,7 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
+#include "window/window.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
@@ -412,25 +413,17 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
 
 // Messages: teach an ability and display the learning message.
 
-/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void
- * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
- * Unit_LearnPsynergyFar(s32 owner, s32 action); tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_event.c:421: too few arguments to function
- * `Unit_LearnPsynergyFar'. */
-extern void
-Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
-
 /// Teaches the ability, plays a sound, shows a message and waits for it to
 /// advance.
 /// unit: character ID (message name 1).
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
-  Unit_LearnPsynergyFar__event_commands();
+  Unit_LearnPsynergyFar(unit, ability);
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
-  FieldMessage_ShowFar(MsgAbilityLearned, 3);
+  FieldMessage_ShowFar(MsgAbilityLearned,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
 /// The event command "open screen": starts the event's screen transition and

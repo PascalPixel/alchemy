@@ -307,15 +307,6 @@ extern u8 Render_CopyStridedCode[];
 
 extern u8 Render_CopyStridedCodeSize[];
 
-struct IconOwner {
-  u8 unused[80]; ///< no code names it
-  struct IconSprite__resource_slot *sprite;
-  u8 unusedAfterSprite[8]; ///< no code names it
-  u8 unk5c;
-  u8 unusedB[5]; ///< no code names it
-  u8 iconId;
-};
-
 /// Copies Render_DecodePicture into the frame scratch slot, the block sized for
 /// the routine and the colour tables it keeps after its code; the copy stops at
 /// the tables, which the decoder fills itself. As RamCode_LoadSlot, a

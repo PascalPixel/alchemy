@@ -14,24 +14,9 @@
 
 #include "sprite_ids.h"
 
-struct ObjectMetadata {
-  u8 unused[8]; ///< no code names it
-  s8 height;
-};
-
 extern const s32 Data_080f0f90[];
 
 void Field_StartColorTransition(s32 frames, s32 color);
-/* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
- * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
- * system/sprite_metadata.h has struct AnimationMetadata
- * *Resource_GetMetadataRecordFarFar(u32 number); tried as the rest of the
- * object declares it, FieldPsynergy_Blaze moves: 4 of 609 instructions in
- * tla-ja. */
-struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
-    s32 id) __asm__("Resource_GetMetadataRecordFarFar");
-#define Resource_GetMetadataRecordFarFar                                       \
-  Resource_GetMetadataRecordFarFar__psynergy
 
 /// The first layer of an actor's sprite.
 #define ACTOR_FIRST_LAYER(actor)                                               \
@@ -100,10 +85,9 @@ void FieldPsynergy_Blaze(void) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
-          height = Resource_GetMetadataRecordFarFar(
-                       ACTOR_FIRST_LAYER(cursor.object)->animationId)
-                       ->height
-                   << 16;
+          height = px((s8)Resource_GetMetadataRecordFarFar(
+                          ACTOR_FIRST_LAYER(cursor.object)->animationId)
+                          ->boxX);
           work->mode = 1;
           work->origin[0] = cursor.object->x.fixed;
           work->origin[1] = cursor.object->y.fixed + height;
@@ -120,10 +104,9 @@ void FieldPsynergy_Blaze(void) {
     else
       work->mode = 3;
     if (scene->child != NULL)
-      height = Resource_GetMetadataRecordFarFar(
-                   ACTOR_FIRST_LAYER(scene->child)->animationId)
-                   ->height
-               << 16;
+      height = px((s8)Resource_GetMetadataRecordFarFar(
+                      ACTOR_FIRST_LAYER(scene->child)->animationId)
+                      ->boxX);
     else
       height = px(20);
     work->origin[0] = scene->x;

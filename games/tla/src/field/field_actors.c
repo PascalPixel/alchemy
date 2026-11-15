@@ -579,56 +579,35 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/* VIEW(resource_slot): tag struct IconSprite as struct
- * IconSprite__resource_slot; item_icon.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_actors.c:613: dereferencing pointer to incomplete
- * type. */
-struct IconSprite__resource_slot {
-  u8 unused[4]; ///< no code names it
-  struct RenderOam oam;
-  s32 scale;
-  u8 vramSlot;
-  u8 unusedAfterVramSlot[3]; ///< no code names it
-  u8 width;
-  u8 height;
-  u8 unk16;
-  s8 unk17;
-  u8 unk18;
-  u8 unk19;
-  u8 unk1a;
-  u8 unk1b;
-};
-
 /// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
-void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
-  struct IconSprite__resource_slot *sprite;
+void Actor_SetItemIcon(struct Actor *owner, s32 id) {
+  struct Sprite *sprite;
   u8 *buffer;
   s32 tile;
 
   if (owner == 0)
     return;
-  owner->unk5c = 1;
-  owner->iconId = id;
+  owner->retainSpriteCache = 1;
+  owner->iconItem = id;
   sprite = owner->sprite;
   if (sprite == 0)
     return;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItemFar(id);
-  tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
+  tile = VramCache_Load(sprite->slot, 128, buffer + 0x400);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  sprite->unk1b = 0;
-  sprite->unk19 = 0;
+  sprite->count = 0;
+  sprite->dirty = 0;
   sprite->width = 16;
   sprite->height = 16;
-  sprite->unk16 = 0;
-  sprite->unk17 = 4;
+  sprite->offsetX = 0;
+  sprite->offsetY = 4;
   sprite->scale = Q16_ONE;
-  sprite->oam.index = tile;
-  sprite->oam.fullColor = 0;
-  sprite->oam.palette = 0;
+  sprite->image.tile = tile;
+  sprite->image.fullColor = 0;
+  sprite->image.palette = 0;
 }
 
 /// The sprite id an actor is drawn with (the first halfword of its sprite's

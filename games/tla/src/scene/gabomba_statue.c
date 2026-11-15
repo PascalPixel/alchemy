@@ -34,6 +34,91 @@ enum { ACTOR_MOUSE = 39 };
 /// The arrows room at the top, where Akafubu waits with Kraden for the
 /// offering (GabombaStatue_HearTheOffering, GabombaStatue_SeeHowItWorks).
 enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
+
+/// Each room's placed actors. A row of cogs that share one sprite is named by
+/// the first of them: turning its animation turns them all. A Lashed rope runs
+/// between two posts, its second post riding a cog's tooth.
+enum {
+  /// The hole the party climbed out of, a dark patch held above the floor.
+  ACTOR_BONE_ARMLET_HOLE_SHADOW = 8
+};
+enum {
+  ACTOR_FIRST_ROPE_POST_A = 8,
+  ACTOR_FIRST_ROPE_POST_B,
+  ACTOR_SECOND_ROPE_POST_A,
+  ACTOR_SECOND_ROPE_POST_B,
+  ACTOR_FIRST_CONE_PILLAR,
+  ACTOR_SECOND_CONE_PILLAR,
+  ACTOR_ELIXIR_GREEN_COGS,
+  ACTOR_ELIXIR_BLUE_COGS = 21,
+  /// The blue cog that flashes until both cone pillars are Pounded.
+  ACTOR_FLASHING_COG = 26,
+  ACTOR_ELIXIR_PINION_A,
+  ACTOR_ELIXIR_PINION_B,
+  ACTOR_ELIXIR_HOLE_SHADOW_A, ///< over the west and east holes
+  ACTOR_ELIXIR_HOLE_SHADOW_B
+};
+enum {
+  ACTOR_STEEL_GREEN_COGS = 8,
+  ACTOR_STEEL_BLUE_COGS = 15,
+  ACTOR_STEEL_RED_COGS = 20,
+  ACTOR_STEEL_BLUE_PILLARS = 25,
+  ACTOR_STEEL_PINK_DRUMS = 29,
+  ACTOR_STEEL_ROPE_POST_A = 31,
+  ACTOR_STEEL_ROPE_POST_B
+};
+enum {
+  ACTOR_TURNTABLE_GREEN_COGS = 8,
+  ACTOR_TURNTABLE_BLUE_COGS = 21,
+  ACTOR_TURNTABLE_RED_COGS = 29,
+  ACTOR_TURNTABLE_BLUE_PILLAR_A = 34,
+  ACTOR_TURNTABLE_BLUE_PILLAR_B,
+  ACTOR_TURNTABLE_PINK_DRUM_A = 37,
+  ACTOR_TURNTABLE_PINK_DRUM_B
+};
+enum {
+  ACTOR_COGS_ROPE_POST_A = 8,
+  ACTOR_COGS_ROPE_POST_B,
+  ACTOR_COGS_RED_COGS,
+  ACTOR_COGS_PINION_A = 12,
+  ACTOR_COGS_PINION_B
+};
+/// The arrows room: the idol in the middle, the statues holding the blue and
+/// the red orb whose charges run along the channel, the grey cone that raises
+/// the blocks, and the seven blocks the channel is laid on ("It looks like the
+/// energy charge is supposed to run over these blocks.").
+enum {
+  ACTOR_IDOL = 8,
+  ACTOR_BLUE_ORB_STATUE,
+  ACTOR_RED_ORB_STATUE,
+  ACTOR_CHARGE_A, ///< the blue orb's two charges, then the red orb's
+  ACTOR_CHARGE_B,
+  ACTOR_CHARGE_C,
+  ACTOR_CHARGE_D,
+  ACTOR_GREY_CONE,
+  ACTOR_BLOCK_A,
+  ACTOR_BLOCK_B,
+  ACTOR_BLOCK_C,
+  ACTOR_BLOCK_D,
+  ACTOR_BLOCK_E,
+  ACTOR_BLOCK_F,
+  ACTOR_BLOCK_G
+};
+enum {
+  ACTOR_PINION_A = 8,
+  ACTOR_PINION_B,
+  ACTOR_PINION_C,
+  ACTOR_PINION_D,
+  ACTOR_PINION_E
+};
+
+/// The triggers this overlay raises: both cone pillars Pounded, the grey cone
+/// Pounded, and the offering's clock run out.
+enum {
+  RAISED_COGS_TURN_BACK = 200,
+  RAISED_CONE_CHIMES = 200,
+  RAISED_OFFERING_HEARD = 201
+};
 #include "system/io_reg.h"
 #include "field/field.h"
 #include "types.h"
@@ -92,7 +177,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -135,8 +221,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - Q16_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -243,19 +329,20 @@ struct Orbiter__gabomba_statue {
   void *link;
 };
 
+/// The steps of a cog tooth's turn: its phase counts them, two degrees each.
+enum { COG_TOOTH_STEPS = 180 };
 extern s32 gGabombaStatue_CogDirection;
 s32 __divsi3(s32 numerator, s32 denominator);
 
 void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
                                     s32 *x, s32 *z) {
   s32 position[3];
-  s32 angle = (actor->phase << 16) / 180;
+  s32 angle = actor->phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 turn;
 
-  SET_VECTOR(position, (actor->centerX + 16) << 16, px(16),
-             actor->centerZ << 16);
-  turn = gGabombaStatue_CogDirection * 0x3000 + angle;
-  FieldVector_AddPolarOffset(13, turn + 0x8000, position);
+  SET_VECTOR(position, px(actor->centerX + 16), px(16), px(actor->centerZ));
+  turn = gGabombaStatue_CogDirection * (TRIG_TURN * 3 / 16) + angle;
+  FieldVector_AddPolarOffset(13, turn + TRIG_TURN / 2, position);
   *x = position[0];
   *z = position[2];
 }
@@ -264,17 +351,16 @@ void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
 /// direction.
 s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
   u8 *phase = &actor->phase;
-  s32 angle = (*phase << 16) / 180;
+  s32 angle = *phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 next;
 
   actor->flags23 = 0;
-  SET_POSITION(actor, (actor->centerX + 16) << 16, 0x100000,
-               actor->centerZ << 16);
-  FieldVector_AddPolarOffset(13, angle + 0x8000, &actor->x);
+  SET_POSITION(actor, px(actor->centerX + 16), px(16), px(actor->centerZ));
+  FieldVector_AddPolarOffset(13, angle + TRIG_TURN / 2, &actor->x);
   next = *phase + gGabombaStatue_CogDirection;
   if (next < 0)
-    next = 179;
-  if (next > 179)
+    next = COG_TOOTH_STEPS - 1;
+  if (next > COG_TOOTH_STEPS - 1)
     next = 0;
   *phase = next;
   actor->link = GabombaStatue_GetToothPosition;
@@ -383,7 +469,7 @@ extern s8 gGabombaStatue_RopeStopSteps[];
 
 void GabombaStatue_LashRope(void) {
   struct Orbiter__find_near *actor =
-      ((struct Orbiter__find_near *)Actor_Get(9));
+      ((struct Orbiter__find_near *)Actor_Get(ACTOR_FIRST_ROPE_POST_B));
   s32 direction;
   s32 i;
 
@@ -404,14 +490,14 @@ struct Orbiter__find_near *
 GabombaStatue_FindCogUnder(struct Orbiter__find_near *origin, s32 id) {
   s32 i;
 
-  for (i = 8; i < 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
-      if (DIFF_WITHIN(object->x, origin->x, 0x17ffff) &&
-          DIFF_WITHIN(object->z, origin->z, 0x17ffff))
+      if (DIFF_WITHIN(object->x, origin->x, px(24) - 1) &&
+          DIFF_WITHIN(object->z, origin->z, px(24) - 1))
         return object;
     }
   }
@@ -428,14 +514,14 @@ GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
   position[0] = origin->x;
   position[2] = origin->z;
   FieldVector_AddPolarOffset(16, origin->facing, position);
-  for (i = 8; i < 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
-      if (DIFF_WITHIN(object->x, position[0], 0x17ffff) &&
-          DIFF_WITHIN(object->z, position[2], 0x17ffff))
+      if (DIFF_WITHIN(object->x, position[0], px(24) - 1) &&
+          DIFF_WITHIN(object->z, position[2], px(24) - 1))
         return object;
     }
   }
@@ -457,7 +543,7 @@ void GabombaStatue_HopOffCog(struct Actor *object, s32 dx, s32 dz,
   object->speedLimit = px(3);
   object->acceleration = px(2);
   object->velocityY = velocity;
-  *flags &= 0x7e;
+  *flags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(object, 0);
   FieldActor_SetMoveTargetFixed(object, object->x.fixed + dx, object->y.fixed,
                                 object->z.fixed + dz);
@@ -476,12 +562,12 @@ void GabombaStatue_TurnWithCog(void) {
     s32 turn = step * 1092;
     s32 delta = -turn;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
-    struct Actor *near = GabombaStatue_FindCogUnder(leader, 358);
+    struct Actor *near = GabombaStatue_FindCogUnder(leader, SPRITE_GREEN_COG);
 
     if (near != NULL) {
       u16 angle = near->facing;
 
-      if (angle == 0x8000)
+      if (angle == FACING_WEST)
         delta = turn;
     }
     leader->facing += delta;
@@ -499,12 +585,12 @@ void GabombaStatue_RideTurntable(void) {
   if (gGabombaStatue_CogDirection == 0)
     return;
   actor = Actor_GetById(Party_GetLeaderActor());
-  table = GabombaStatue_FindCogUnder(actor, 357);
+  table = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_COG);
   turn = gGabombaStatue_CogDirection * step;
   if (table != 0) {
     if (table->y.fixed + px(16) > actor->y.fixed)
       return;
-    if (table->facing == 0x8000)
+    if (table->facing == FACING_WEST)
       turn = -turn;
     dx = actor->x.fixed - table->x.fixed;
     dz = actor->z.fixed - table->z.fixed;
@@ -555,13 +641,13 @@ void GabombaStatue_RideSlidingCog(void) {
 
   if (*speed != 0) {
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-    struct Actor *found = GabombaStatue_FindCogUnder(actor, 359);
+    struct Actor *found = GabombaStatue_FindCogUnder(actor, SPRITE_RED_COG);
     s32 dx = *speed << 15;
 
     if (found != NULL) {
       s32 diff, x, foundX;
 
-      if (found->facing == 0x8000)
+      if (found->facing == FACING_WEST)
         dx = -dx;
       if (found->z.fixed - actor->z.fixed < -px(2))
         actor->z.fixed = found->z.fixed + px(2);
@@ -571,7 +657,7 @@ void GabombaStatue_RideSlidingCog(void) {
       actor->x.fixed = x;
       foundX = found->x.fixed;
       diff = foundX - x;
-      if (diff >= 0 ? diff >= 0x140000 : x - foundX >= 0x140000) {
+      if (diff >= 0 ? diff >= px(20) : x - foundX >= px(20)) {
         s32 sign;
         s32 offset;
 
@@ -582,7 +668,7 @@ void GabombaStatue_RideSlidingCog(void) {
           if (offset <= 0)
             sign = -sign;
         }
-        GabombaStatue_HopOffCog(actor, sign * 0xc0000, 0, 0x20000);
+        GabombaStatue_HopOffCog(actor, sign * px(12), 0, px(2));
       }
     }
   }
@@ -609,7 +695,7 @@ void GabombaStatue_EndRide(struct Actor *object) {
   for (i = 0; i <= 19; i++) {
     object->scaleX -= 0x300;
     object->scaleY -= 0x300;
-    object->y.fixed -= 0x18000;
+    object->y.fixed -= px(3) / 2;
     System_Wait(1);
     if (i == 10)
       Event_PlaySound(SE_DUST_PUFF);
@@ -635,7 +721,7 @@ void GabombaStatue_RideRollingCog(void) {
     return;
   actor = Actor_Get(FieldParty_GetLeaderActor());
   speed = gGabombaStatue_CogDirection << 15;
-  platform = GabombaStatue_FindCogUnder(actor, 360);
+  platform = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_PILLAR);
   if (platform != 0) {
     if (platform->x.fixed - actor->x.fixed < -px(2))
       actor->x.fixed = platform->x.fixed + px(2);
@@ -645,7 +731,7 @@ void GabombaStatue_RideRollingCog(void) {
     actor->z.fixed = z;
     platformZ = platform->z.fixed;
     d = platformZ - z;
-    if (d >= 0 ? d >= 0x140000 : z - platformZ >= 0x140000) {
+    if (d >= 0 ? d >= px(20) : z - platformZ >= px(20)) {
       sign = 0;
       offset = actor->z.fixed - platformZ;
       if (offset != 0) {
@@ -653,10 +739,10 @@ void GabombaStatue_RideRollingCog(void) {
         if (offset <= 0)
           sign = -sign;
       }
-      GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, 0x20000);
+      GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, px(2));
     }
   }
-  platform = GabombaStatue_FindCogUnder(actor, 361);
+  platform = GabombaStatue_FindCogUnder(actor, SPRITE_PINK_DRUM);
   if (platform == 0)
     return;
   if (platform->x.fixed - actor->x.fixed < -px(2))
@@ -667,7 +753,7 @@ void GabombaStatue_RideRollingCog(void) {
   actor->z.fixed = z;
   platformZ = platform->z.fixed;
   d = platformZ - z;
-  if (d >= 0 ? d >= 0x140000 : z - platformZ >= 0x140000) {
+  if (d >= 0 ? d >= px(20) : z - platformZ >= px(20)) {
     sign = 0;
     offset = actor->z.fixed - platformZ;
     if (offset != 0) {
@@ -675,7 +761,7 @@ void GabombaStatue_RideRollingCog(void) {
       if (offset <= 0)
         sign = -sign;
     }
-    GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, 0x20000);
+    GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, px(2));
   }
   if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_TURNTABLE)
     return;
@@ -697,17 +783,17 @@ void GabombaStatue_HopAcrossEastOrWest(void) {
 
   if (*speed != 0) {
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-    struct Actor *found = GabombaStatue_FindCogAhead(actor, 359);
+    struct Actor *found = GabombaStatue_FindCogAhead(actor, SPRITE_RED_COG);
     s32 dx = *speed << 20;
 
     if (found != NULL) {
       u16 facing = *(u16 *)((u8 *)found + 6);
 
-      if (facing == 0x8000)
+      if (facing == FACING_WEST)
         dx = -dx;
       facing = *(u16 *)((u8 *)actor + 6);
-      if ((facing == 0 && dx > 0) || (facing == 0x8000 && dx < 0))
-        GabombaStatue_HopOffCog(actor, dx, 0, 0x40000);
+      if ((facing == 0 && dx > 0) || (facing == FACING_WEST && dx < 0))
+        GabombaStatue_HopOffCog(actor, dx, 0, px(4));
     }
   }
 }
@@ -717,19 +803,20 @@ void GabombaStatue_HopAcrossNorthOrSouth(void) {
 
   if (*speed != 0) {
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-    struct Actor *found = GabombaStatue_FindCogAhead(actor, 360);
+    struct Actor *found = GabombaStatue_FindCogAhead(actor, SPRITE_BLUE_PILLAR);
     s32 dz = *speed << 20;
     u16 facing;
 
     if (found == NULL) {
-      found = GabombaStatue_FindCogAhead(actor, 361);
+      found = GabombaStatue_FindCogAhead(actor, SPRITE_PINK_DRUM);
       dz = -dz;
       if (found == NULL)
         return;
     }
     facing = *(u16 *)((u8 *)actor + 6);
-    if ((facing == 0x4000 && dz > 0) || (facing == 0xc000 && dz < 0))
-      GabombaStatue_HopOffCog(actor, 0, dz, 0x40000);
+    if ((facing == FACING_SOUTH && dz > 0) ||
+        (facing == FACING_NORTH && dz < 0))
+      GabombaStatue_HopOffCog(actor, 0, dz, px(4));
   }
 }
 
@@ -747,7 +834,7 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   EventCamera_FollowActor(ACTOR_MOUSE, 1);
   FieldEvent_Wait(30);
-  Actor_Get(ACTOR_MOUSE)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_MOUSE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetAnimation(ACTOR_MOUSE, 1);
   Actor_WalkToAndWait(ACTOR_MOUSE, 320, 240);
   Actor_WalkToAndWait(ACTOR_MOUSE, 304, 216);
@@ -816,14 +903,17 @@ void GabombaStatue_ResetCharge(s32 id) {
 /// Puts the four charges at their starting cells, ready to run along the
 /// channel.
 void GabombaStatue_ReleaseCharges(void) {
-  GabombaStatue_ResetCharge(11);
-  GabombaStatue_ResetCharge(12);
-  GabombaStatue_ResetCharge(13);
-  GabombaStatue_ResetCharge(14);
-  GabombaStatue_SendCharge(11, 11, 9, 0);
-  GabombaStatue_SendCharge(12, 11, 9, 0x8000);
-  GabombaStatue_SendCharge(13, 10, 10, 0x4000);
-  GabombaStatue_SendCharge(14, 10, 10, 0xc000);
+  GabombaStatue_ResetCharge(ACTOR_CHARGE_A);
+  GabombaStatue_ResetCharge(ACTOR_CHARGE_B);
+  GabombaStatue_ResetCharge(ACTOR_CHARGE_C);
+  GabombaStatue_ResetCharge(ACTOR_CHARGE_D);
+  GabombaStatue_SendCharge(ACTOR_CHARGE_A, 11, ACTOR_BLUE_ORB_STATUE, 0);
+  GabombaStatue_SendCharge(ACTOR_CHARGE_B, 11, ACTOR_BLUE_ORB_STATUE,
+                           TRIG_TURN / 2);
+  GabombaStatue_SendCharge(ACTOR_CHARGE_C, 10, ACTOR_RED_ORB_STATUE,
+                           TRIG_TURN / 4);
+  GabombaStatue_SendCharge(ACTOR_CHARGE_D, 10, ACTOR_RED_ORB_STATUE,
+                           TRIG_TURN * 3 / 4);
 }
 
 void GabombaStatue_HearTheOffering(void) {
@@ -843,7 +933,7 @@ void GabombaStatue_HearTheOffering(void) {
   Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
@@ -854,14 +944,14 @@ void GabombaStatue_HearTheOffering(void) {
   PaletteFade_Interpolate(10);
   System_Wait(20);
   Event_PlaySound(SE_PSYNERGY_START);
-  FieldActor_SetSpriteColor(Actor_Get(9), 7);
-  FieldActor_SetSpriteColor(Actor_Get(10), 7);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BLUE_ORB_STATUE), 7);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 7);
   System_Wait(8);
-  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   Event_PlaySound(MUS_KIBOMBO);
-  result = GabombaStatue_RunCharges(11, 1);
+  result = GabombaStatue_RunCharges(ACTOR_CHARGE_A, 1);
   ObjectTable_Snapshot();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
@@ -1127,9 +1217,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeaderWest, 440,
 
 void GabombaStatue_SetActorsHidden(s32 show) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    Actors_SetHidden(show, 8, 1);
+    Actors_SetHidden(show, ACTOR_BONE_ARMLET_HOLE_SHADOW, 1);
   else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    Actors_SetHidden(show, 29, 2);
+    Actors_SetHidden(show, ACTOR_ELIXIR_HOLE_SHADOW_A, 2);
 }
 
 extern s16 gGabombaStatue_ConePillars[];
@@ -1151,9 +1241,9 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
     struct Actor *actor = Actor_Get(first + i);
 
     if (show)
-      actor->priorityFlags &= ~0x10;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
     else
-      actor->priorityFlags |= 0x10;
+      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
 }
 
@@ -1161,13 +1251,13 @@ void GabombaStatue_PoundConePillar(s32 a, s32 b) {
   Pound_SinkTarget(gGabombaStatue_ConePillars, a, b);
   if (Event_GetFlag(FLAG_GABOMBA_FIRST_CONE_POUNDED) &&
       Event_GetFlag(FLAG_GABOMBA_SECOND_CONE_POUNDED))
-    gFieldWork->raisedTrigger = 200;
+    gFieldWork->raisedTrigger = RAISED_COGS_TURN_BACK;
 }
 
 /// With both cone pillars Pounded, the flashing cog stops, and all the cogs
 /// start turning the other way.
 void GabombaStatue_CogsTurnBack(void) {
-  struct Actor *actor = Actor_Get(26);
+  struct Actor *actor = Actor_Get(ACTOR_FLASHING_COG);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1195,11 +1285,11 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void GabombaStatue_PoundGreyCone(s32 value) {
   GabombaStatue_RaiseTiles(value);
   if (value == 1)
-    gFieldWork->raisedTrigger = 200;
+    gFieldWork->raisedTrigger = RAISED_CONE_CHIMES;
 }
 
 void GabombaStatue_ConeChimes(void) {
-  struct Actor *object = Actor_Get(15);
+  struct Actor *object = Actor_Get(ACTOR_GREY_CONE);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1213,7 +1303,7 @@ void GabombaStatue_ConeChimes(void) {
 /// When the clock has run out, the offering below is heard again.
 void GabombaStatue_CheckOfferingClock(void) {
   if (GabombaStatue_GetClock() == 0)
-    gFieldWork->raisedTrigger = 201;
+    gFieldWork->raisedTrigger = RAISED_OFFERING_HEARD;
 }
 
 void GabombaStatue_DimActor(s32 id) {
@@ -1250,9 +1340,11 @@ void GabombaStatue_RestoreHiddenActors(void) {
     GabombaStatue_RestoreHiddenActors();                                       \
   }
 
-DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimBoneArmletChestActors, 8, 1)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimBoneArmletChestActors,
+                                   ACTOR_BONE_ARMLET_HOLE_SHADOW, 1)
 
-DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimElixirChestActors, 29, 2)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(GabombaStatue_DimElixirChestActors,
+                                   ACTOR_ELIXIR_HOLE_SHADOW_A, 2)
 /// While a menu or Psynergy is up the cogs and wanderers stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
   s32 value = 16;
@@ -1264,7 +1356,7 @@ void GabombaStatue_PauseCogsInMenus(void) {
     open = 1;
     value = 0;
   }
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
   do {
     {
       struct Actor *object = Actor_Get(i);
@@ -1275,15 +1367,15 @@ void GabombaStatue_PauseCogsInMenus(void) {
 
         if (part != NULL) {
           switch (part->kind) {
-          case 357:
-          case 358:
-          case 359:
-          case 360:
-          case 361:
+          case SPRITE_BLUE_COG:
+          case SPRITE_GREEN_COG:
+          case SPRITE_RED_COG:
+          case SPRITE_BLUE_PILLAR:
+          case SPRITE_PINK_DRUM:
           case 362:
             Actor_SetAnimationSpeed(object, value);
             break;
-          case 407:
+          case SPRITE_TIGHTROPE_POST:
             object->paused = open;
             break;
           }
@@ -1291,7 +1383,7 @@ void GabombaStatue_PauseCogsInMenus(void) {
       }
     }
     i++;
-  } while (i < 64);
+  } while (i < FIELD_TREASURE_ACTOR);
 }
 
 #define MARK(at, cellPicture, shape)                                           \
@@ -1302,11 +1394,11 @@ void GabombaStatue_PauseCogsInMenus(void) {
 void GabombaStatue_DrawCogCells(void) {
   u32 *dest = (u32 *)(Data_0202c001 + 0x1cf);
   u32 *src = gGabombaStatue_CogCellPictures;
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  u8 *layerA = *(u8 **)(map + 0x13c);
-  u8 *layerB = *(u8 **)(map + 0x174);
-  u32 *shapesA = *(u32 **)(map + 0x138);
-  u32 *shapesB = *(u32 **)(map + 0x170);
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  u8 *layerA = map->layers[0].terrainIds;
+  u8 *layerB = map->layers[1].terrainIds;
+  u32 *shapesA = (u32 *)map->layers[0].cells;
+  u32 *shapesB = (u32 *)map->layers[1].cells;
   struct Actor *object;
   s16 *frames;
   u32 *word;
@@ -1317,20 +1409,20 @@ void GabombaStatue_DrawCogCells(void) {
   do {
     *dest++ = *src++;
   } while (++i <= 11);
-  for (i = 8; (s32)i <= 63; i++) {
+  for (i = ACTOR_FIRST_PLACED; (s32)i < FIELD_TREASURE_ACTOR; i++) {
     object = Actor_GetById(i);
     if (object == 0)
       continue;
     if (object->spriteStorageKind != 1)
       continue;
-    frames = *(s16 **)((u8 *)object->sprite + 40);
+    frames = (s16 *)((struct FieldAnimation *)object->sprite)->part;
     if (frames == 0)
       continue;
     found = 0;
     x = FIELD_CELL(object->x.fixed);
     z = FIELD_CELL(object->z.fixed);
-    switch (*frames - 357) {
-    case 1:
+    switch (*frames) {
+    case SPRITE_GREEN_COG:
       cell = x + (z << 7);
       layerA[cell] = 116;
       layerB[cell] = 117;
@@ -1340,7 +1432,7 @@ void GabombaStatue_DrawCogCells(void) {
       *word |= 0x80500000;
       found = 1;
       break;
-    case 0:
+    case SPRITE_BLUE_COG:
       MARK(x + (z << 7) - 129, 118, 0x510000);
       MARK(x + (z << 7) - 128, 117, 0x80510000);
       MARK(x + (z << 7) - 127, 119, 0x510000);
@@ -1352,7 +1444,7 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) + 129, 121, 0x510000);
       found = 1;
       break;
-    case 2:
+    case SPRITE_RED_COG:
       MARK(x + (z << 7) - 2, 127, 0x540000);
       MARK(x + (z << 7) - 1, 122, 0x529000);
       MARK(x + (z << 7), 117, 0x80526000);
@@ -1360,7 +1452,7 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) + 2, 127, 0x540000);
       found = 1;
       break;
-    case 4:
+    case SPRITE_PINK_DRUM:
       MARK(x + (z << 7) - 256, 127, 0x540000);
       MARK(x + (z << 7) - 128, 124, 0x539000);
       MARK(x + (z << 7), 117, 0x539000);
@@ -1368,7 +1460,7 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) + 256, 126, 0x80550000);
       found = 1;
       break;
-    case 3:
+    case SPRITE_BLUE_PILLAR:
       MARK(x + (z << 7) - 256, 127, 0x540000);
       MARK(x + (z << 7) - 128, 124, 0x539000);
       MARK(x + (z << 7), 117, 0x539000);
@@ -1376,7 +1468,7 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) + 256, 127, 0x540000);
       found = 1;
       break;
-    case 5:
+    case 362:
       found = 1;
       break;
     }
@@ -1398,7 +1490,7 @@ void GabombaStatue_FadeByDepth(void) {
   struct Actor *object = gFieldWork->camera;
   s32 level = object->z.fixed;
 
-  level = (level - 0xe80000) >> 19;
+  level = (level - px(232)) >> 19;
   CLAMP(level, 0, 16);
   blend = ((16 - level) << 8) + level;
   REG_BLDALPHA->value = blend;
@@ -1421,43 +1513,43 @@ void GabombaStatue_TurnCogs(s32 direction) {
   gGabombaStatue_CogDirection = direction;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST) {
-    GabombaStatue_SetCogTurn(14, direction, 0);
-    GabombaStatue_SetCogTurn(21, direction, 1);
-    GabombaStatue_SetCogTurn(26, direction, 2);
+    GabombaStatue_SetCogTurn(ACTOR_ELIXIR_GREEN_COGS, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_ELIXIR_BLUE_COGS, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_FLASHING_COG, direction, 2);
     if ((u16)(gMainRoutineWork.entrance - 3) > 1)
-      GabombaStatue_SetCogTurn(27, direction, 3);
+      GabombaStatue_SetCogTurn(ACTOR_ELIXIR_PINION_A, direction, 3);
     if (direction == 0)
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(24, 21, 1, 3, 23, 9);
   } else if (scene == SCENE_GABOMBA_STATUE_STEEL) {
-    GabombaStatue_SetCogTurn(8, direction, 0);
-    GabombaStatue_SetCogTurn(15, direction, 1);
-    GabombaStatue_SetCogTurn(20, direction, 2);
-    GabombaStatue_SetCogTurn(25, direction, 3);
-    GabombaStatue_SetCogTurn(29, direction, 4);
+    GabombaStatue_SetCogTurn(ACTOR_STEEL_GREEN_COGS, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_STEEL_BLUE_COGS, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_STEEL_RED_COGS, direction, 2);
+    GabombaStatue_SetCogTurn(ACTOR_STEEL_BLUE_PILLARS, direction, 3);
+    GabombaStatue_SetCogTurn(ACTOR_STEEL_PINK_DRUMS, direction, 4);
   } else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE) {
-    GabombaStatue_SetCogTurn(8, direction, 0);
-    GabombaStatue_SetCogTurn(21, direction, 1);
-    GabombaStatue_SetCogTurn(29, direction, 2);
-    GabombaStatue_SetCogTurn(35, direction, 3);
-    GabombaStatue_SetCogTurn(38, direction, 4);
+    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_GREEN_COGS, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_BLUE_COGS, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_RED_COGS, direction, 2);
+    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_BLUE_PILLAR_B, direction, 3);
+    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_PINK_DRUM_B, direction, 4);
   } else if (scene == SCENE_GABOMBA_STATUE_COGS) {
-    GabombaStatue_SetCogTurn(10, direction, 0);
-    GabombaStatue_SetCogTurn(12, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_COGS_RED_COGS, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_COGS_PINION_A, direction, 1);
     if (direction == 0)
       MapGrid_CopyCellAttributes(34, 12, 1, 3, 27, 12);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
   } else if (scene == SCENE_GABOMBA_STATUE_ARROWS) {
-    Actor_SetAnimation(13, 5);
-    Actor_SetSpriteFlags(Actor_Get(13), 0);
+    Actor_SetAnimation(ACTOR_CHARGE_C, 5);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_CHARGE_C), 0);
   } else if (scene == SCENE_GABOMBA_STATUE_PINION) {
-    GabombaStatue_SetCogTurn(8, direction, 0);
-    GabombaStatue_SetCogTurn(9, direction, 1);
-    GabombaStatue_SetCogTurn(10, direction, 2);
-    GabombaStatue_SetCogTurn(11, direction, 3);
-    GabombaStatue_SetCogTurn(12, direction, 4);
+    GabombaStatue_SetCogTurn(ACTOR_PINION_A, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_PINION_B, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_PINION_C, direction, 2);
+    GabombaStatue_SetCogTurn(ACTOR_PINION_D, direction, 3);
+    GabombaStatue_SetCogTurn(ACTOR_PINION_E, direction, 4);
     if (direction == 0)
       MapGrid_CopyCellAttributes(0, 0, 1, 3, 9, 27);
     else if (direction == -1)
@@ -1526,8 +1618,8 @@ void GabombaStatue_LandFromFall(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 4 / 5;
+  options.startScaleY = Q16_ONE * 4 / 5;
   i = 0;
   do {
     s32 angle;
@@ -1541,7 +1633,9 @@ void GabombaStatue_LandFromFall(void) {
     velocity[0] += (Random_Below(0xc000)) - 0x6000;
     velocity[2] += (Random_Below(0x6000)) - 0x3000;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
                       &options);
     i++;
   } while (i <= 16);
@@ -1629,10 +1723,11 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
-  Actor_Get(ACTOR_PIERS)->steeringFlags &= 0xfe;
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
-  Actor_Get(ACTOR_SHEBA)->steeringFlags &= 0xfe;
-  Actor_Get(ACTOR_JENNA)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_PIERS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkTo(ACTOR_PIERS, 400, 272);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 420, 272);
   Actor_WalkTo(ACTOR_SHEBA, 444, 272);
@@ -1672,7 +1767,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Event_PlaySound(SE_SHIMMER);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
-  PaletteFade_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(RGB_WHITE, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
   GabombaStatue_ReleaseCharges();
@@ -1682,20 +1777,20 @@ void GabombaStatue_WatchTheChargesStick(void) {
   System_Wait(20);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  GabombaStatue_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  GabombaStatue_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  GabombaStatue_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 60);
   Event_PlaySound(SE_PSYNERGY_START);
-  FieldActor_SetSpriteColor(Actor_Get(9), 7);
-  FieldActor_SetSpriteColor(Actor_Get(10), 7);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_BLUE_ORB_STATUE), 7);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 7);
   System_Wait(8);
-  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.leaderActorId))->timer =
@@ -1711,7 +1806,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Actor_SetScript(ACTOR_SHEBA, gGabombaStatue_GirlsStepBackScript);
   Actor_SetScript(ACTOR_KRADEN, gGabombaStatue_GirlsStepBackScript);
   Event_PlaySound(MUS_KIBOMBO);
-  GabombaStatue_RunCharges(11, 0);
+  GabombaStatue_RunCharges(ACTOR_CHARGE_A, 0);
   FieldEvent_Wait(80);
   Event_SetFlag(0x8f7);
   Event_FinishScreenTransition();
@@ -1748,7 +1843,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
-  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  GabombaStatue_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   // "Ah! So that's how it works!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -1768,7 +1863,8 @@ void GabombaStatue_SeeHowItWorks(void) {
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
-    GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+    GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                            20);
     Actor_SetSpeed(ACTOR_PIERS, 2);
     Actor_WalkToAndWait(ACTOR_PIERS, 340, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 354, 296);
@@ -1797,24 +1893,24 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_ShowMessage(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "Think about it, Piers... Akafubu stole the orb solely to perform..."
   Event_ShowMessage(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  GabombaStatue_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "So, what do you think he intends to do with the orb?"
   Event_ShowMessage(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   // "He means to give it to the Great Gabomba..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Oh! So...if his ceremony succeeds, the orb will be taken into the..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_KRADEN, 3);
   // "And we're INSIDE the statue! If the ceremony succeeds, we can go..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 10);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 10);
   // "I...don't want to help that Akafubu, but..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
@@ -1824,11 +1920,11 @@ void GabombaStatue_SeeHowItWorks(void) {
   // "I don't like the idea of helping him any more than you do, but if we..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 80);
-  GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   // "You're right, Sheba. Let's see if we can't help him finish his..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
@@ -1842,7 +1938,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   // "It looks like the energy charge is supposed to run over these blocks."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  GabombaStatue_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   // "If we can just move these around a little, that might be enough to..."
@@ -1896,19 +1992,19 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   GabombaStatue_SetUpChannelPuzzle(19, 11, gGabombaStatue_PathLengths[index],
-                                   16);
-  Actor_SetAnimation(15, 5);
-  Actor_SetPosition(11, 0, 0);
-  Actor_SetPosition(12, 0, 0);
-  Actor_SetPosition(13, 0, 0);
-  Actor_SetPosition(14, 0, 0);
-  Actor_SetPosition(16, 0, 0);
-  Actor_SetPosition(17, 0, 0);
-  Actor_SetPosition(18, 0, 0);
-  Actor_SetPosition(19, 0, 0);
-  Actor_SetPosition(20, 0, 0);
-  Actor_SetPosition(21, 0, 0);
-  Actor_SetPosition(22, 0, 0);
+                                   ACTOR_BLOCK_A);
+  Actor_SetAnimation(ACTOR_GREY_CONE, 5);
+  Actor_SetPosition(ACTOR_CHARGE_A, 0, 0);
+  Actor_SetPosition(ACTOR_CHARGE_B, 0, 0);
+  Actor_SetPosition(ACTOR_CHARGE_C, 0, 0);
+  Actor_SetPosition(ACTOR_CHARGE_D, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_A, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_B, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_C, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_D, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_E, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_F, 0, 0);
+  Actor_SetPosition(ACTOR_BLOCK_G, 0, 0);
   System_Wait(1);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
@@ -2028,7 +2124,8 @@ s32 Scene_Initialize(void) {
       GabombaStatue_TurnCogs(1);
     GabombaStatue_DrawCogCells();
   }
-  Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
+  Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
     GabombaStatue_InitializeBoneArmletChest();
@@ -2062,29 +2159,36 @@ void GabombaStatue_InitializeBoneArmletChest(void) {
   GabombaStatue_DimBoneArmletChestActors();
 }
 
-static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
-  GabombaStatue_PlaceRope(index, flag, a, b);
+static __inline__ void GabombaStatue_TieRope(s32 index, s32 flag, s32 firstPost,
+                                             s32 secondPost) {
+  GabombaStatue_PlaceRope(index, flag, firstPost, secondPost);
 }
 
 void GabombaStatue_InitializeElixirChest(void) {
+  /* FAKEMATCH(wrapper): the ropes tied through an inline; as
+   * GabombaStatue_PlaceRope called directly, 4 of 66 instructions differ in
+   * tla-en. */
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    Actor_SetScript(27, gGabombaStatue_ElixirChestGuardScript);
-    Actor_SetScript(28, gGabombaStatue_ElixirChestGuardScript);
+    Actor_SetScript(ACTOR_ELIXIR_PINION_A, gGabombaStatue_PinionReleaseScript);
+    Actor_SetScript(ACTOR_ELIXIR_PINION_B, gGabombaStatue_PinionReleaseScript);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
   GabombaStatue_PlaceSwitchActors(gGabombaStatue_ConePillars);
   if (!Event_GetFlag(FLAG_GABOMBA_FIRST_CONE_POUNDED) ||
       !Event_GetFlag(FLAG_GABOMBA_SECOND_CONE_POUNDED))
-    Actor_Get(26)->y.fixed = px(16);
+    Actor_Get(ACTOR_FLASHING_COG)->y.fixed = px(16);
   Rope_Initialize();
-  Exit_Set(0, 513, 8, 9);
-  Exit_Set(1, 514, 10, 11);
+  GabombaStatue_TieRope(0, FLAG_SCENE_TEMP_01, ACTOR_FIRST_ROPE_POST_A,
+                        ACTOR_FIRST_ROPE_POST_B);
+  GabombaStatue_TieRope(1, FLAG_SCENE_TEMP_02, ACTOR_SECOND_ROPE_POST_A,
+                        ACTOR_SECOND_ROPE_POST_B);
   GabombaStatue_DimElixirChestActors();
 }
 
 void GabombaStatue_InitializeSteel(void) {
   Rope_Initialize();
-  GabombaStatue_PlaceRope(0, 513, 31, 32);
+  GabombaStatue_PlaceRope(0, FLAG_SCENE_TEMP_01, ACTOR_STEEL_ROPE_POST_A,
+                          ACTOR_STEEL_ROPE_POST_B);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
@@ -2097,7 +2201,8 @@ void GabombaStatue_InitializeSteel(void) {
 
 void GabombaStatue_InitializeCogs(void) {
   Rope_Initialize();
-  ((s32 (*)(s32, s32, s32))GabombaStatue_CoilRope)(0, 8, 9);
+  ((s32 (*)(s32, s32, s32))GabombaStatue_CoilRope)(0, ACTOR_COGS_ROPE_POST_A,
+                                                   ACTOR_COGS_ROPE_POST_B);
 }
 
 /// The channel's random seed, from the leader's stats.
@@ -2123,19 +2228,19 @@ void GabombaStatue_InitializeArrows(void) {
   struct Actor *leader;
   s32 seed;
 
-  FieldActor_SetSpriteColor(Actor_Get(10), 3);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 3);
   Task_AddFrame((s32)GabombaStatue_FadeByDepth, TASK_PASS_VBLANK);
-  FieldActor_SetSpriteColor(Actor_Get(11), 11);
-  FieldActor_SetSpriteColor(Actor_Get(12), 11);
-  FieldActor_SetSpriteColor(Actor_Get(13), 10);
-  FieldActor_SetSpriteColor(Actor_Get(14), 10);
-  Actor_SetSpriteFlags(Actor_Get(16), 0);
-  Actor_SetSpriteFlags(Actor_Get(17), 0);
-  Actor_SetSpriteFlags(Actor_Get(18), 0);
-  Actor_SetSpriteFlags(Actor_Get(19), 0);
-  Actor_SetSpriteFlags(Actor_Get(20), 0);
-  Actor_SetSpriteFlags(Actor_Get(21), 0);
-  Actor_SetSpriteFlags(Actor_Get(22), 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_A), 11);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_B), 11);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_C), 10);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_D), 10);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_A), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_B), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_C), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_D), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_E), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_F), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BLOCK_G), 0);
   if (Event_GetFlag(FLAG_GABOMBA_RESPONDED) &&
       !Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP)) {
     GabombaStatue_SawEnergyFlow();
@@ -2143,10 +2248,10 @@ void GabombaStatue_InitializeArrows(void) {
   }
   if (Event_GetFlag(0x8fc)) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    Actor_SetPosition(11, 0, 0);
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetPosition(13, 0, 0);
-    Actor_SetPosition(14, 0, 0);
+    Actor_SetPosition(ACTOR_CHARGE_A, 0, 0);
+    Actor_SetPosition(ACTOR_CHARGE_B, 0, 0);
+    Actor_SetPosition(ACTOR_CHARGE_C, 0, 0);
+    Actor_SetPosition(ACTOR_CHARGE_D, 0, 0);
     GabombaStatue_ResetClock();
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -2162,8 +2267,8 @@ void GabombaStatue_InitializeArrows(void) {
   }
   seed = GabombaStatue_GetPuzzleSeed();
   GabombaStatue_SetUpChannelPuzzle(19, 11, gGabombaStatue_PathLengths[seed],
-                                   16);
-  Actor_SetAnimation(15, 5);
+                                   ACTOR_BLOCK_A);
+  Actor_SetAnimation(ACTOR_GREY_CONE, 5);
   if (gMainRoutineWork.entrance == 2) {
     GabombaStatue_WatchTheChargesStick();
     return;
@@ -2220,7 +2325,8 @@ extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
 #define gSceneState gSceneState__s2394
 
 void GabombaStatue_InitializePinion(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.entrance == 1) {
     Event_SetFlag(0xa27);
     Event_ClearFlag(0xa28);
@@ -2770,7 +2876,7 @@ u8 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
 }
 
 void GabombaStatue_RaiseTiles(s32 value, s32 row) {
-  struct Actor *object = Actor_Get(15);
+  struct Actor *object = Actor_Get(ACTOR_GREY_CONE);
 
   if (row <= 7)
     object->scaleY += -0x1f00;
@@ -3528,7 +3634,7 @@ s8 gGabombaStatue_CogAnimations[] = {
     0,
 };
 
-u32 gGabombaStatue_ElixirChestGuardScript[] = {
+u32 gGabombaStatue_PinionReleaseScript[] = {
     SC_RELEASE,
 };
 
@@ -3653,7 +3759,7 @@ LATE_DATA u32 gGabombaStatue_ShebaWatchesScript[] = {
 };
 
 LATE_DATA s16 gGabombaStatue_ConePillars[] = {
-    12, 2, FLAG_GABOMBA_FIRST_CONE_POUNDED, 13, 2, FLAG_GABOMBA_SECOND_CONE_POUNDED, -1, 0,
+    ACTOR_FIRST_CONE_PILLAR, 2, FLAG_GABOMBA_FIRST_CONE_POUNDED, ACTOR_SECOND_CONE_PILLAR, 2, FLAG_GABOMBA_SECOND_CONE_POUNDED, -1, 0,
 };
 
 LATE_DATA u32 gGabombaStatue_PathLengths[] = {
@@ -3922,11 +4028,11 @@ LATE_DATA struct Trigger gGabombaStatue_ElixirChestTriggers[] = {
     {STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoElixirChestHole)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderNorth)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderSouth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_01, EVENT(GabombaStatue_LashRope)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, FLAG_SCENE_TEMP_02, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, FLAG_GABOMBA_FIRST_CONE_POUNDED, EVENT(GabombaStatue_PoundConePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, FLAG_GABOMBA_SECOND_CONE_POUNDED, EVENT(GabombaStatue_PoundConePillar)},
-    {TRIGGER_RAISED, 200, FLAG_GABOMBA_COGS_TURNED_BACK, EVENT(GabombaStatue_CogsTurnBack)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POST_A, FLAG_SCENE_TEMP_01, EVENT(GabombaStatue_LashRope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SECOND_ROPE_POST_A, FLAG_SCENE_TEMP_02, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRST_CONE_PILLAR, FLAG_GABOMBA_FIRST_CONE_POUNDED, EVENT(GabombaStatue_PoundConePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_SECOND_CONE_PILLAR, FLAG_GABOMBA_SECOND_CONE_POUNDED, EVENT(GabombaStatue_PoundConePillar)},
+    {TRIGGER_RAISED, RAISED_COGS_TURN_BACK, FLAG_GABOMBA_COGS_TURNED_BACK, EVENT(GabombaStatue_CogsTurnBack)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3942,8 +4048,8 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 31, FLAG_SCENE_TEMP_01, 0},
-    {TRIGGER_TALK, 33, IF_FLAG_SET(FLAG_SCENE_TEMP_04), EVENT(GabombaStatue_FightSteel)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_STEEL_ROPE_POST_A, FLAG_SCENE_TEMP_01, 0},
+    {TRIGGER_TALK, ACTOR_STEEL, IF_FLAG_SET(FLAG_SCENE_TEMP_04), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3975,7 +4081,7 @@ LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 84, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderEast)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionCarriesLeaderWest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_COGS_ROPE_POST_A, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
 
@@ -3985,16 +4091,16 @@ LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(GabombaStatue_LowerArrowA)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(GabombaStatue_RedrawArrowB)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(GabombaStatue_RaiseArrowB)},
-    {TRIGGER_RAISED, 201, FLAG_SCENE_TEMP_05, EVENT(GabombaStatue_HearTheOffering)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, FLAG_GABOMBA_RESPONDED, EVENT(GabombaStatue_PoundGreyCone)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(GabombaStatue_ConeChimes)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {TRIGGER_RAISED, RAISED_OFFERING_HEARD, FLAG_SCENE_TEMP_05, EVENT(GabombaStatue_HearTheOffering)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_GREY_CONE, FLAG_GABOMBA_RESPONDED, EVENT(GabombaStatue_PoundGreyCone)},
+    {TRIGGER_RAISED, RAISED_CONE_CHIMES, CONDITION_ALWAYS, EVENT(GabombaStatue_ConeChimes)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_A, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_B, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_C, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_D, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_E, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_F, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_G, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
     {TRIGGER_TABLE_END},
 };
 

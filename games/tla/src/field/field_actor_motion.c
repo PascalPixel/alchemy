@@ -211,7 +211,7 @@ void Actor_UpdateAllThumb(void) {
         if (object->targetX != TARGET_UNSET) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance = Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)) << 16;
+          distance = px(Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)));
           if (distance <= 0x00ffffff) {
             dx = object->targetX - x;
             dz = object->targetZ - z;
@@ -491,7 +491,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   dy = (y - object->y.fixed) / Q16_ONE;
   dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
-  distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
+  distance = px(Iwram_Sqrt(dx * dx + dy * dy + squaredZ));
   if (distance < px(16)) {
     dx = x - object->x.fixed;
     dy = y - object->y.fixed;

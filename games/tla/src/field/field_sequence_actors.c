@@ -178,8 +178,8 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
   key = *cursor++;
   while (key != -1) {
     if (key == id) {
-      position[0] = Stream_ReadU16(&cursor) << 16;
-      position[2] = Stream_ReadU16(&cursor) << 16;
+      position[0] = px(Stream_ReadU16(&cursor));
+      position[2] = px(Stream_ReadU16(&cursor));
       return 0;
     }
     cursor += 4;

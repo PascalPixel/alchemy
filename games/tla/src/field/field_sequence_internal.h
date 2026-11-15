@@ -11,6 +11,7 @@
 #include "types.h"
 #include "resource_ids.h"
 #include "window/message_argument.h"
+#include "window/window.h"
 #include "field/world_map.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -28,6 +29,18 @@
 #include "field/scene_tables.h"
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
+
+// A field Psynergy or item use, packed into one value (field_sequence_items.c,
+// field_sequence_psynergy.c), as work->psynergy and work->item hold it, as The
+// Broken Seal's. bits: 13..10 the user (13 is ACT_PACKED) | 9..0 the Psynergy
+// or item.
+#define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
+#define ACT_ITEM_ID(c) ((c) & 0x3ff)
+#define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
+#define ACT_PACKED 0x2000              ///< use it without paying PP
+/// No user named: Field_UsePsynergy takes the first party member, and
+/// Field_UseItem whoever holds the item in the most inventory slots.
+#define UNIT_NONE 15
 #include "field/map_grid.h"
 #include "field/field_sprite.h"
 #include "system/dma.h"

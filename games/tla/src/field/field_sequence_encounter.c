@@ -327,8 +327,8 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[0] == scene &&
         (rule[1] == -1 || entrance == -1 || rule[1] == entrance)) {
-      gMainRoutineWork.shipX = rule[4] << 16;
-      gMainRoutineWork.shipZ = rule[5] << 16;
+      gMainRoutineWork.shipX = px(rule[4]);
+      gMainRoutineWork.shipZ = px(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }
@@ -348,8 +348,8 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
-      gMainRoutineWork.shipX = rule[4] << 16;
-      gMainRoutineWork.shipZ = rule[5] << 16;
+      gMainRoutineWork.shipX = px(rule[4]);
+      gMainRoutineWork.shipZ = px(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }

@@ -28,11 +28,11 @@ void Event_ResolvePendingActions(s32 skip) {
 
   state->busy = 0;
   if (state->revealActive != 0 && !(skip & 1))
-    Field_RunPsynergyEndEvents(0x2090);
+    Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
   if (state->ringActive != 0 && !(skip & 2))
-    Field_RunPsynergyEndEvents(0x209b);
+    Field_RunPsynergyEndEvents(ABILITY_155 | ACT_PACKED);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
-    Field_RunPsynergyEndEvents(0x208b);
+    Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
 
 /// Returns the leader's actor id, or 8 while gMainRoutineWork.ownerOverride is
@@ -59,14 +59,12 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
   return 0;
 }
 
-// The field's event work as this function reads it: the scene's trigger table.
 /// Finds the scene's first kind-4 trigger whose condition holds, whose facing
 /// range (when it has one) takes the controlled actor's angle, whose item
 /// filter takes source (when given), and whose target is the actor the leader
 /// can talk to (flag 0x10) or the object it is touching; 0 when none does.
-/// Rewritten from The Broken Seal's form: The Lost Age asks
-/// Party_GetLeaderActor for the actor and Item_MatchesFilter for
-/// the trigger's item.
+/// The Broken Seal's routine, asking Party_GetLeaderActor for the actor and
+/// Item_MatchesFilter for the trigger's item.
 const struct Trigger *Field_FindItemTrigger(s32 source) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -78,17 +76,17 @@ const struct Trigger *Field_FindItemTrigger(s32 source) {
   collision = Field_GetCollisionAheadOfLeader();
 
   while (trigger->control != -1) {
-    s32 highValue = (s16)(u16)trigger->subject & 0xf000;
-    s16 hasFacing = (u16)trigger->subject & TRIG_TURN / 32;
-    s32 lowValue = (u16)trigger->subject & 0xff;
+    s32 highValue = (s16)(u16)trigger->subject & TRIGGER_SUBJECT_FACING;
+    s16 hasFacing = (u16)trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
+    s32 lowValue = (u16)trigger->subject & TRIGGER_SUBJECT_TARGET;
 
-    if ((trigger->control & 0x0f) == 4 &&
+    if ((trigger->control & TRIGGER_KIND_MASK) == TRIGGER_ITEM &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (hasFacing == 0 || (u16)(highValue - facing + 0x17ff) <= 0x2ffe)) {
       s32 item = (u16)((s32)trigger->control / 256);
 
       if (source == 0 || Item_MatchesFilter(item, source)) {
-        if ((trigger->control & 0x10) != 0) {
+        if ((trigger->control & TRIGGER_ITEM_ON_ACTOR) != 0) {
           if (lowValue == selected)
             return trigger;
         } else if (lowValue == collision) {
@@ -129,7 +127,6 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   struct FieldWork *runtime;
 
   result = -1;
-  // The mask is assigned first, as games/tbs/src/MATCHING.md describes.
   itemId = 0x3ff;
   actorMask = 0xf;
   itemId &= packedItem;
@@ -138,12 +135,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     best = 0;
     count = Party_CountMembersFar();
 
-    if (actor == 15) {
+    if (actor == UNIT_NONE) {
       actor = 0;
       for (i = 0; i < count; i++) {
         unit = Unit_Get(gMainRoutineWork.party[i]);
         matches = 0;
-        for (j = 0; j < 15; j++) {
+        for (j = 0; j < INVENTORY_SLOTS; j++) {
           if ((unit->inventory[j] & INVENTORY_ITEM_ID_MASK) == itemId)
             matches++;
         }
@@ -155,14 +152,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       }
     } else {
       unit = Unit_Get(actor);
-      for (j = 0; j < 15; j++) {
+      for (j = 0; j < INVENTORY_SLOTS; j++) {
         if ((unit->inventory[j] & INVENTORY_ITEM_ID_MASK) == itemId)
           best++;
       }
     }
 
     if (best == 0) {
-      FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
+      FieldMessage_ShowFar((s32)&MsgNothingHappens, FIELD_MESSAGE_ZOOM);
       return -1;
     }
   }
@@ -174,9 +171,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
-      FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
+      FieldMessage_ShowFar((s32)&MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
     }
-    if ((s32)trigger->value < 0x10000) {
+    if ((s32)trigger->value < TRIGGER_RESULT_MESSAGE_END) {
       s32 objref = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
 
       Event_Start();
@@ -201,7 +198,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
       if (actionId == ABILITY_RETREAT && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
+        FieldMessage_ShowFar((s32)&MsgUseItemQuestion,
+                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
+                                 FIELD_MESSAGE_LOWER);
         i = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (i != 0)
@@ -214,7 +213,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
       MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
-      FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
+      FieldMessage_ShowFar((s32)&MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       FieldPsynergy_LoadResources(actionId, 0);
       runtime->psynergyActing = 1;
       FieldPsynergy_Run();
@@ -227,7 +226,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   }
 
   if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
-    FieldMessage_ShowFar((s32)&MsgNothingHappens, 1);
+    FieldMessage_ShowFar((s32)&MsgNothingHappens, FIELD_MESSAGE_ZOOM);
   if (GameFlag_Get(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(actor, slot);
   return result;

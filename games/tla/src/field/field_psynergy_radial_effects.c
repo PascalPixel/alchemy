@@ -1282,7 +1282,7 @@ void BattleEffect_UpdateArcEffect(void) {
       s32 x, y;
 
       position[0] = target->x.fixed;
-      position[1] = target->y.fixed + (work->age[group] << 16);
+      position[1] = target->y.fixed + px(work->age[group]);
       position[2] = target->z.fixed;
       Camera_WorldToScreen(position);
       x = position[0];

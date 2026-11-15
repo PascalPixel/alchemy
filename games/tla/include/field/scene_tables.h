@@ -187,6 +187,14 @@ struct Trigger {
 /// an item trigger's event shows its own message in place of the "uses"
 /// message (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// An item trigger's subject, as The Broken Seal's: the heading it needs in
+/// bits 15..12, whether it needs one, and its target, an actor or a cell
+/// behavior.
+#define TRIGGER_SUBJECT_FACING 0xf000
+#define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
+#define TRIGGER_SUBJECT_TARGET 0xff
+/// A trigger's value below this is a message, from it an event.
+#define TRIGGER_RESULT_MESSAGE_END 65536
 
 /// What a search finds, an examine trigger's value, as The Broken Seal's: an
 /// item, coins or a message.

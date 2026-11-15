@@ -199,9 +199,9 @@ s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)MsgPartyCannotCarry, 1);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry, FIELD_MESSAGE_ZOOM);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, 1);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, FIELD_MESSAGE_ZOOM);
     return -1;
   }
   return 0;
@@ -230,27 +230,28 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)&MsgItemReceived, 1);
-    FieldMessage_ShowFar((s32)&MsgItemCannotCarry, 1);
+    FieldMessage_ShowFar((s32)&MsgItemReceived, FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar((s32)&MsgItemCannotCarry, FIELD_MESSAGE_ZOOM);
   retry:
     {
-      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (((struct ItemHead *)Item_GetDirectFar(item))->flags & 8) {
           MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, 1);
+          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
           goto retry;
         }
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1,
+                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
         result = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
         Item_AdjustCounterFar(item, 1);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, 1);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
         goto done;
       }
       Unit_Get(member);
@@ -258,7 +259,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItemFar(member, item) > 29) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, 1);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
         goto retry;
       }
       for (i = 0; i < count; i++)
@@ -269,7 +270,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Sound_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gMainRoutineWork.leaderActorId) {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
+        FieldMessage_ShowFar((s32)&MsgItemReceived,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
@@ -284,11 +287,12 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   }
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-  FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
+  FieldMessage_ShowFar((s32)&MsgItemReceived,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
   if (owner != gMainRoutineWork.leaderActorId) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
-    FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
+    FieldMessage_ShowFar((s32)&MsgItemReceived + 1, FIELD_MESSAGE_ZOOM);
   }
   work->message = saved;
   return owner;
@@ -396,9 +400,9 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     Actor_GetById(actor)->scaleX = 0;
     ItemDisplay_ShowItem(item, 3);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
+    FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
     // Four messages on: "But <protagonist>'s party can't carry any more".
-    FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
+    FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
     Actor_GetById(actor)->scaleX = Q16_ONE;
     Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
     Event_Wait(20);

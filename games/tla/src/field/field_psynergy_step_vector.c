@@ -546,7 +546,7 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   if (effect->stopAtTarget != 0) {
     ix = dx / Q16_ONE;
     iz = dz / Q16_ONE;
-    distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
+    distance = px(Iwram_Sqrt(ix * ix + iz * iz));
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     if (distance <= px(8)) {

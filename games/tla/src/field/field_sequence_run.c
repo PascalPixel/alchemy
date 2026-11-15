@@ -240,7 +240,8 @@ s32 FieldSequence_Run(void) {
             Actor_SelectAnimationFar(leader, 22);
             MessageArgument_PushFar(work->fallenOwners[value],
                                     MESSAGE_ARGUMENT_ACTOR);
-            FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted, 1);
+            FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted,
+                                 FIELD_MESSAGE_ZOOM);
           }
           if (work->survivorCount == 0) {
             if (*leaderId == 4)
@@ -248,7 +249,8 @@ s32 FieldSequence_Run(void) {
             else
               Actor_SelectAnimationFar(leader, 19);
             Sound_PlayFar(MUS_DEFEAT);
-            FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
+            FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated,
+                                 FIELD_MESSAGE_ZOOM);
             unit = Unit_Get(*leaderId);
             unit->hp = 1;
             Unit_UpdateGauges(unit);
@@ -394,7 +396,7 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         work->examineCell = 0;
       } else if (work->psynergy != 0) {
-        packed = work->psynergy & 0x2000;
+        packed = work->psynergy & ACT_PACKED;
         AreaNameWindow_HideFar();
         if (packed == 0) {
           WorldMap_Freeze();
@@ -442,7 +444,8 @@ s32 FieldSequence_Run(void) {
             PauseMenu_RunFar(0);
             *(u16 *)(objects + 4) = 0;
           } else {
-            FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable, 1);
+            FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable,
+                                 FIELD_MESSAGE_ZOOM);
           }
         }
         WorldMap_ReloadPendingAreaGraphics();

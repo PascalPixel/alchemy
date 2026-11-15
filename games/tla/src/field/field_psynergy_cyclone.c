@@ -297,9 +297,9 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = event->cycloneLiftX << 16;
+    work->to[0] = px(event->cycloneLiftX);
     work->to[1] = owner->y.fixed + px(32);
-    work->to[2] = event->cycloneLiftZ << 16;
+    work->to[2] = px(event->cycloneLiftZ);
     Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
@@ -327,9 +327,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = event->cycloneCarryX << 16;
+    work->to[0] = px(event->cycloneCarryX);
     work->to[1] = owner->y.fixed;
-    work->to[2] = event->cycloneCarryZ << 16;
+    work->to[2] = px(event->cycloneCarryZ);
     Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {

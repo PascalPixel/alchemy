@@ -363,8 +363,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     // A tile event's object holds its map cell, marked by this value.
     if (object->riseBaseY == 0x31415927) {
-      x = object->timer << 16;
-      z = (s16)object->userValue << 16;
+      x = px(object->timer);
+      z = px((s16)object->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - 128) <= 1)

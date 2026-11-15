@@ -306,10 +306,10 @@ void MapGrid_CenterOnFollowedPoint(void) {
     rectList = work->cameraBoxes;
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
-        s32 left = (rect[0] << 16) - 0x780000;
-        s32 top = (rect[1] << 16) + height - px(64);
-        s32 right = (rect[2] << 16) + 0x780000;
-        s32 bottom = (rect[3] << 16) + height + px(96);
+        s32 left = px(rect[0]) - px(120);
+        s32 top = px(rect[1]) + height - px(64);
+        s32 right = px(rect[2]) + px(120);
+        s32 bottom = px(rect[3]) + height + px(96);
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
           s32 nearX = left;

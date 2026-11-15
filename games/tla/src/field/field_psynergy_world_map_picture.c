@@ -211,7 +211,7 @@ void WorldPicture_UpdateMarkers(void) {
     y = gWorldPicture_GlideTargetY;
     dx = (x - work->x) / Q16_ONE;
     dz = (y - work->z) / Q16_ONE;
-    distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+    distance = px(Iwram_Sqrt(dx * dx + dz * dz));
     dx = x - work->x;
     dz = y - work->z;
     if (distance < Q16_ONE * 64)
@@ -663,7 +663,7 @@ void WorldMapPicture_UpdateScroll(void) {
   if (gWorldPicture_Zoomed == 0) {
     dx = (x - SCROLL_X) / Q16_ONE;
     dy = (y - SCROLL_Y) / Q16_ONE;
-    distance = Iwram_Sqrt(dx * dx + dy * dy) << 16;
+    distance = px(Iwram_Sqrt(dx * dx + dy * dy));
     dx = x - SCROLL_X;
     dy = y - SCROLL_Y;
     // Near the target the whole-pixel distance is too coarse.
@@ -833,7 +833,7 @@ s32 WorldPicture_Show(s32 mode) {
                &REG_DISPCNT);
     if ((GameFlag_Get(FLAG_WORLD_MAP_LEFT) || GameFlag_Get(0x11e)) &&
         !messageShown) {
-      FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
+      FieldMessage_ShowFar((s32)MsgNotOnMap, FIELD_MESSAGE_ZOOM);
       messageShown = 1;
     }
     keys = &gInput;
@@ -847,11 +847,11 @@ s32 WorldPicture_Show(s32 mode) {
       wait(1);
       if ((input->repeat & KEY_START) && gliding == 0) {
         WorldPicture_GetLeaderPoint(&screenX, &screenY);
-        *cursorX = screenX << 16;
+        *cursorX = px(screenX);
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
         // the load.
         input = &gInput;
-        *cursorZ = screenY << 16;
+        *cursorZ = px(screenY);
         gliding = 1;
       }
       if (!(keys->held & KEY_START) && gliding == 1) {
@@ -864,19 +864,19 @@ s32 WorldPicture_Show(s32 mode) {
       }
       if (keys->repeat & KEY_R) {
         WorldPicture_StepToPlace(&screenX, &screenY, 1);
-        *cursorX = screenX << 16;
+        *cursorX = px(screenX);
         // wayZ only ever holds &gWorldPicture_CursorStartY, set where it is
         // used.
         wayZ = &gWorldPicture_CursorStartY;
-        *cursorZ = screenY << 16;
+        *cursorZ = px(screenY);
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
       if (input->repeat & KEY_L) {
         WorldPicture_StepToPlace(&screenX, &screenY, -1);
-        *cursorX = screenX << 16;
+        *cursorX = px(screenX);
         wayZ = &gWorldPicture_CursorStartY;
-        *cursorZ = screenY << 16;
+        *cursorZ = px(screenY);
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }

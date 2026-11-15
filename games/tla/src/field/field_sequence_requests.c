@@ -122,7 +122,7 @@ void Scene_PlayQueuedMusic(void) {
 void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldMessage_ShowFar(message, 1);
+  FieldMessage_ShowFar(message, FIELD_MESSAGE_ZOOM);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
   if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)

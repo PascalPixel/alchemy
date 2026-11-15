@@ -9,16 +9,16 @@
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
-   FieldMessage_ShowFar((s32)&(message), 1))
+   FieldMessage_ShowFar((s32)&(message), FIELD_MESSAGE_ZOOM))
 
 /// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9) and its
 /// user (bits 10 to 13; 15 for the first party member).
 s32 Field_UsePsynergy(u32 code) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 abilityId = code & 0x3ff;
+  s32 abilityId = ABILITY_ID(code);
   struct PendingEvent *before;
   s32 group = Ability_Get(abilityId)->fieldEffect;
-  s32 userId = (code >> 10) & 15;
+  s32 userId = ACT_UNIT(code);
   s32 retreat = 0;
   struct PendingEvent *after;
   struct PendingEvent *during;
@@ -66,7 +66,9 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     }
     MessageArgument_PushFar(149, MESSAGE_ARGUMENT_ABILITY);
-    FieldMessage_ShowFar((s32)&MsgKey0dbc, 13);
+    FieldMessage_ShowFar((s32)&MsgKey0dbc, FIELD_MESSAGE_ZOOM |
+                                               FIELD_MESSAGE_KEEP_OPEN |
+                                               FIELD_MESSAGE_LOWER);
     cost = FieldYesNo_Ask(1);
     Message_CloseFinishedWindowsFar();
     if (cost != 0)
@@ -93,7 +95,7 @@ s32 Field_UsePsynergy(u32 code) {
       target = selector & 0xff;
     Field_RunPsynergyEvent(pending, userId, target);
   }
-  if (code & 0x2000)
+  if (code & ACT_PACKED)
     return Field_RunPsynergyEndEvents(code);
 
   selector = Scene_SelectPsynergyTarget(group);
@@ -208,7 +210,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
     }
     if (GameFlag_Get(FLAG_NOTHING_HAPPENS)) {
       Event_Start();
-      FieldMessage_ShowFar((s32)MsgNothingHappens, 1);
+      FieldMessage_ShowFar((s32)MsgNothingHappens, FIELD_MESSAGE_ZOOM);
       Event_End();
     }
   }

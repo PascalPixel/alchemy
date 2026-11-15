@@ -659,8 +659,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
       if (work->heights[i] <= 31) {
         struct Vector3 *p = &position;
 
-        SET_POSITION(p, object->x.fixed,
-                     object->y.fixed + (work->heights[i] << 16),
+        SET_POSITION(p, object->x.fixed, object->y.fixed + px(work->heights[i]),
                      object->z.fixed);
         Camera_WorldToScreen(p);
         x = p->x;

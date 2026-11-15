@@ -123,8 +123,7 @@ void Leader_CenterInCell(void);
 
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTarget *work,
-                      struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
 void CrackedTile_DropIn(void);
 

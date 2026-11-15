@@ -47,7 +47,6 @@ extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];
 
-
 void PaletteCycle_Start(void);
 
 void Task_ResetAll(void);

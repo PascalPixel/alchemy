@@ -71,9 +71,10 @@ struct BattleCommandRowWork {
   s32 commandKinds[6];
 };
 
-/// A unit as the summary screen reads it.
+/// A sprite as the summary screen queues it (Oam_AddSpriteAtDepth): the depth
+/// queue's link, then its OAM attributes as words or as fields.
 struct SummaryOam {
-  u8 unk00[4];
+  u8 link[4];
   union {
     struct {
       u32 attr01;
@@ -88,7 +89,7 @@ struct SummaryOam {
       u16 tile : 10;
       u16 priority : 2;
       u16 palette : 4;
-      u16 unk0a;
+      u16 high;
     } f;
   } oam;
 };

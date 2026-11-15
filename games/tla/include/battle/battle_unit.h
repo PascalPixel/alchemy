@@ -9,7 +9,6 @@
 #include "static_assert.h"
 
 enum {
-  BATTLE_ACTION_SIZE = 0x10,
   BATTLE_UNIT_SIZE = 0x14c,
   PSYNERGY_ABILITY_MASK = 0x3fff
 };
@@ -213,12 +212,10 @@ struct BattleAct {
   u8 effect;  ///< enum AbilityEffect
   u16 icon;   ///< the ability's icon
   u8 fieldEffect;
-  u8 unk07;
+  u8 unused; ///< 0 in every row
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
   u16 power; ///< what the kind applies, 0 for none
-  u8 type0c;
-  u8 unk0d[3];
 };
 
 /// BattleAct.flags: where an ability can be used.
@@ -386,10 +383,9 @@ struct Unit {
   u16 enemyId;
 };
 
-STATIC_ASSERT(sizeof(struct BattleAct) == BATTLE_ACTION_SIZE);
 STATIC_ASSERT(offsetof(struct BattleAct, effect) == 0x03);
 STATIC_ASSERT(offsetof(struct BattleAct, power) == 0x0a);
-STATIC_ASSERT(offsetof(struct BattleAct, type0c) == 0x0c);
+STATIC_ASSERT(sizeof(struct BattleAct) == 12);
 
 STATIC_ASSERT(sizeof(struct PsynergyEntry) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);

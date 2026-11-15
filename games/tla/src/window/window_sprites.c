@@ -159,8 +159,9 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
               (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
               DMA_COPY_WORDS(32), (volatile u32 *)0x040000d4);
       attr = (u16 *)&output->sprite.oam;
-      if (work->battleMode & 4)
-        *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) | 0x400;
+      if (work->battleMode & WINDOW_GLYPHS_BLENDED)
+        *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) |
+                  OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       else
         *attr++ = y + (spacingY >> 1) + window->y * 8 + GLYPH_Y;
       *attr = (x + (spacingX >> 1) + window->x * 8 + GLYPH_X) | 0x4000;

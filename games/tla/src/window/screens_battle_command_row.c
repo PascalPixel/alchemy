@@ -5,6 +5,7 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "window/screens.h"
+#include "menu/djinn_menu.h"
 
 /// Opens a message at (x, y), waits for its text to finish, and returns its
 /// window so the caller can hold it open for a separate prompt.
@@ -261,16 +262,21 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             if (navigation->tutorialStep == 1) {
               void *message;
 
-              ((u8 *)Ram_HeapSlots->windowWork)[5] |= 4;
+              ((struct WindowWork *)Ram_HeapSlots->windowWork)->battleMode |=
+                  WINDOW_GLYPHS_BLENDED;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                   COMMAND_ICON_DJINN)
-                message = Message_ShowAndWait(
-                    Djinn_GetGiveTutorialMessage() + 10, 15, 8);
+                message =
+                    Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                            DJINN_TUTORIAL_LINE_UNLEASH_COMMAND,
+                                        15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                        COMMAND_ICON_SUMMON)
-                message = Message_ShowAndWait(
-                    Djinn_GetGiveTutorialMessage() + 9, 15, 8);
-              ((u8 *)Ram_HeapSlots->windowWork)[5] &= ~4;
+                message = Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                                  DJINN_TUTORIAL_LINE_SUMMON,
+                                              15, 8);
+              ((struct WindowWork *)Ram_HeapSlots->windowWork)->battleMode &=
+                  ~WINDOW_GLYPHS_BLENDED;
               BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;

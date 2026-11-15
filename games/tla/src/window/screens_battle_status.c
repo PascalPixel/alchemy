@@ -117,6 +117,22 @@ enum BattleSummaryPage {
 #define STATUS_CURSOR_DJINN 4      ///< the Djinn page's grid
 #define STATUS_CURSOR_ITEMS 5      ///< the items page's rows
 
+// The Djinn page's list entries: bits 21..17 the recovery turns left, 16 set
+// for a Djinni not set (on standby or recovering), 11..8 its element and
+// 7..0 its number; STATUS_DJINN_END ends the list.
+#define STATUS_DJINN_ELEMENT 0xf00
+#define STATUS_DJINN_ELEMENT_SHIFT 8
+#define STATUS_DJINN_NUMBER 0xff
+#define STATUS_DJINN_UNSET 0x10000
+#define STATUS_DJINN_TURNS 0x3e0000
+#define STATUS_DJINN_TURNS_SHIFT 17
+#define STATUS_DJINN_END 0x80000000
+/// An entry's Djinni, for its name and effect messages.
+#define STATUS_DJINNI(entry)                                                   \
+  (((entry) & STATUS_DJINN_ELEMENT) >> STATUS_DJINN_ELEMENT_SHIFT) *           \
+          DJINN_PER_ELEMENT +                                                  \
+      ((entry) & STATUS_DJINN_NUMBER)
+
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 #if TLA_PATCH_2
@@ -237,9 +253,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     for (i = 0; i <= 5; i++) {
       s32 kind = list[i];
 
-      if (kind == 255)
+      if (kind == BATTLE_UNIT_LIST_END)
         break;
-      if (kind != 254 && kind == member) {
+      if (kind != BATTLE_UNIT_REMOVED && kind == member) {
         memberIndex = i;
         break;
       }
@@ -268,7 +284,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     sprite->oam.f.x = 8;
     sprite->oam.f.y = 24;
     sprite->oam.f.palette = PORTRAIT_PALETTE;
-    Oam_AddSpriteAtDepth(sprite, 240);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
 
     switch (cursor.helpEntry) {
     case OWNER_STATUS_HELP_NAME ... OWNER_STATUS_HELP_RESIST:
@@ -555,7 +571,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         portraitSprite.oam.f.x = 0xac;
         portraitSprite.oam.f.y = 56;
         if (figureShown != 0)
-          Oam_AddSpriteAtDepth(&portraitSprite, 240);
+          Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
         figureShown = 1;
       }
     }
@@ -581,7 +597,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursorSprite.oam.f.affineIndex = 0;
     else
       cursorSprite.oam.f.affineIndex = 8;
-    Oam_AddSpriteAtDepth(&cursorSprite, 241);
+    Oam_AddSpriteAtDepth(&cursorSprite, OAM_DEPTH_WINDOW + 1);
 
     if (redraw == 0)
       goto place_sprites;
@@ -764,10 +780,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                 helpWindow->width, helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
-      for (element = 0; element <= 3; element++) {
-        for (bit = 0; bit <= 19; bit++) {
+      for (element = 0; element < ELEMENT_COUNT; element++) {
+        for (bit = 0; bit < DJINN_PER_ELEMENT; bit++) {
           if (unit->djinnSet[element] & (1 << bit)) {
-            djinnList[djinnCount] = (element << 8) | bit;
+            djinnList[djinnCount] =
+                (element << STATUS_DJINN_ELEMENT_SHIFT) | bit;
             djinnCount++;
           } else if (unit->djinnHeld[element] & (1 << bit)) {
             struct DjinnRecoveryList *recovery =
@@ -783,35 +800,35 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                           recovery->entries[k].index == bit);
                  k++)
               ;
-            value = (element << 8) | bit | 0x10000;
+            value = (element << STATUS_DJINN_ELEMENT_SHIFT) | bit |
+                    STATUS_DJINN_UNSET;
             djinnList[djinnCount] = value;
             if (recovery->entries[k].turns > 0)
-              djinnList[djinnCount] =
-                  value | (recovery->entries[k].turns << 17);
+              djinnList[djinnCount] = value | (recovery->entries[k].turns
+                                               << STATUS_DJINN_TURNS_SHIFT);
             djinnCount++;
           }
         }
       }
-      djinnList[djinnCount] = 0x80000000;
+      djinnList[djinnCount] = STATUS_DJINN_END;
       if (cursor.groupPositions[STATUS_CURSOR_DJINN] >= djinnCount)
         cursor.groupPositions[STATUS_CURSOR_DJINN] = djinnCount - 1;
       entry = djinnList[cursor.groupPositions[STATUS_CURSOR_DJINN]];
       work->holdTilemapUpload = 1;
       if (djinnCount != 0) {
         MessageArgument_ClearAll();
-        if (entry & 0x10000) {
-          if (entry & 0x3e0000) {
-            MessageArgument_Push((entry & 0x3e0000) >> 17,
+        if (entry & STATUS_DJINN_UNSET) {
+          if (entry & STATUS_DJINN_TURNS) {
+            MessageArgument_Push((entry & STATUS_DJINN_TURNS) >>
+                                     STATUS_DJINN_TURNS_SHIFT,
                                  MESSAGE_ARGUMENT_NUMBER);
-            SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                  (s32)MsgDjinnEffect,
+            SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
                               psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
           } else {
             Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
           }
         } else {
-          SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                (s32)MsgDjinnEffect,
+          SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
                             psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
         }
       } else {
@@ -830,23 +847,25 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           shown = djinnList[rowBase + j];
           column = j / 3 * 7;
           tileRow = j % 3 * 2 + 9;
-          if (shown == 0x80000000)
+          if (shown == STATUS_DJINN_END)
             break;
-          Window_SetTilemapEntry(statusWindow,
-                                 ((shown & 0xf00) >> 8) + ELEMENT_ICON_TILE,
-                                 column, tileRow, 0);
-          if (shown & 0x3e0000)
+          Window_SetTilemapEntry(
+              statusWindow,
+              ((shown & STATUS_DJINN_ELEMENT) >> STATUS_DJINN_ELEMENT_SHIFT) +
+                  ELEMENT_ICON_TILE,
+              column, tileRow, 0);
+          if (shown & STATUS_DJINN_TURNS)
             Text_SetColor(TEXT_COLOR_YELLOW);
-          else if (shown & 0x10000)
+          else if (shown & STATUS_DJINN_UNSET)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 + (shown & 0xff) +
-                                      (s32)MsgDjinnName,
+          Text_DrawMessageAsTiles(STATUS_DJINNI(shown) + (s32)MsgDjinnName,
                                   statusWindow, column * 8 + 8, tileRow * 8);
 // Spanish and Italian leave a recovering Djinni's turns off the list.
 #if !TLA_PATCH_4
-          if (shown & 0x3e0000)
-            Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
-                                    column * 8 + 40, tileRow * 8);
+          if (shown & STATUS_DJINN_TURNS)
+            Text_DrawNumberAtOffset(
+                (shown & STATUS_DJINN_TURNS) >> STATUS_DJINN_TURNS_SHIFT, 2,
+                statusWindow, column * 8 + 40, tileRow * 8);
 #endif
           Text_SetColor(TEXT_COLOR_WHITE);
         }
@@ -1133,7 +1152,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText,
                              SUMMARY_HELP_TEXT_LENGTH);
       } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
-                 unit->level <= 98) {
+                 unit->level < UNIT_LEVEL_MAX) {
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
@@ -1165,7 +1184,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         sprite->oam.f.x = iconX;
         sprite->oam.f.y = (s16)statusWindow->y * 8 + 8;
         if (statusKinds[i] > 0)
-          Oam_AddSpriteAtDepth(sprite, 240);
+          Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
         iconX += 15;
         sprite++;
       }
@@ -1184,7 +1203,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           else
             sprite->oam.f.x = 8;
           sprite->oam.f.y = (iconRow + (s16)statusWindow->y) * 8 + 68;
-          Oam_AddSpriteAtDepth(sprite, 240);
+          Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
           sprite++;
           iconRow += 2;
         }
@@ -1229,7 +1248,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(((u8 *)Ram_HeapSlots->battleWork)[0x41]);
+  PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
   NAVIGATION->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleObject_PutFar();

@@ -52,23 +52,26 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
-  if (GameFlag_Get(0x65b))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65c))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65d))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65e))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x66b))
-    GameFlag_Set(0x66c);
-  if (GameFlag_Get(0x668))
-    GameFlag_Set(0x66a);
-  if (GameFlag_Get(0x669))
-    GameFlag_Set(0x66a);
-  GameFlag_Clear(0x771);
-  if (GameFlag_Get(0x778))
-    GameFlag_Set(0x771);
+  // A boss beaten in another of its forms marks one form beaten: the
+  // Serpent's four-beam one, the Knight's second, Moapa's third, and the
+  // Doom Dragon's first only once its last has fallen.
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_ONE_BEAM)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_TWO_BEAMS)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_THREE_BEAMS)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_KNIGHT)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_KNIGHT_B));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_C));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_B)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_C));
+  GameFlag_Clear(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_H)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
        candidateOrUnitIndex++)
@@ -164,8 +167,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->maxHp * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 16383)
-    value = 16383;
+  if (value > UNIT_ENEMY_HP_MAX)
+    value = UNIT_ENEMY_HP_MAX;
   stats->maxHp = value;
 
   value = state->stats.maxPp;
@@ -173,8 +176,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->maxPp * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 9999)
-    value = 9999;
+  if (value > UNIT_ENEMY_PP_MAX)
+    value = UNIT_ENEMY_PP_MAX;
   state->stats.maxPp = value;
 
   floor = __divsi3(levels * 123, 10);
@@ -183,8 +186,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->atk * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.atk = value;
 
   floor = __divsi3(levels * 33, 10);
@@ -193,8 +196,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->def * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.def = value;
 
   floor = __divsi3(levels * 51, 10);
@@ -203,8 +206,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->agi * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.agi = value;
 
   for (i = 0; i < ELEMENT_COUNT; i++) {
@@ -212,8 +215,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
     floor = __divsi3(base->element[i].power * 7, 10);
     if (value < floor)
       value = floor;
-    if (value > 200)
-      value = 200;
+    if (value > UNIT_ELEMENT_MAX)
+      value = UNIT_ELEMENT_MAX;
     state->stats.element[i].power = value;
   }
 
@@ -236,22 +239,22 @@ void BattleUnit_Strengthen(s32 unitId) {
   floor = saved->hp * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 16383)
-    value = 16383;
+  if (value > UNIT_ENEMY_HP_MAX)
+    value = UNIT_ENEMY_HP_MAX;
   unit->baseHp = value;
   value = unit->baseAttack * 5 / 4;
   floor = saved->attack * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   unit->baseAttack = value;
   value = unit->baseDefense * 5 / 4;
   floor = saved->defense * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   unit->baseDefense = value;
   Unit_CalculateFar(unitId);
   Heap_Release(saved);

@@ -483,6 +483,9 @@ enum WindowBattleMode {
   /// In battle, while BattleMessage_Open decodes a battle message: the
   /// Japanese decoder then sets names off with spaces and style codes.
   WINDOW_BATTLE_MESSAGE = 2,
+  /// A flag with WINDOW_BATTLE: glyphs are drawn blended (semi-transparent),
+  /// while the Djinn tutorial's line shows over the command row.
+  WINDOW_GLYPHS_BLENDED = 4,
 };
 
 /// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots

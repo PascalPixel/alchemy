@@ -43,11 +43,18 @@ enum DjinnTutorialLine {
   /// "After being unleashed, we Djinn will then stand by, ready to be summoned
   /// back again..."
   DJINN_TUTORIAL_LINE_STANDBY = 8,
+  /// "If you have multiple standby Djinn, you can summon even greater powers
+  /// into battle!"
+  DJINN_TUTORIAL_LINE_SUMMON = 9,
+  /// "Choose this command when you want to unleash me in battle, all right?"
+  DJINN_TUTORIAL_LINE_UNLEASH_COMMAND = 10,
   /// "After a Djinni has been used to summon, it must spend time in recovery."
   DJINN_TUTORIAL_LINE_RECOVERY = 12,
   /// "And once we've recovered, we automatically set ourselves again, so we're
   /// ready to attack!"
-  DJINN_TUTORIAL_LINE_SET_AGAIN = 13
+  DJINN_TUTORIAL_LINE_SET_AGAIN = 13,
+  /// "That's all you have to do to unleash a set Djinni!"
+  DJINN_TUTORIAL_LINE_UNLEASH_HINT = 14
 };
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,

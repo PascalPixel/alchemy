@@ -1413,11 +1413,6 @@ void Garoh_WerewolfProwls(void) {
 /// Through the crevice: "Look! It's that werewolf!", the little werewolf, which
 /// runs deeper in.
 void Garoh_FollowWerewolfIntoCave(void) {
-  s32 v5;
-  struct Actor *object;
-  s32 t3;
-  s32 b1;
-
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1468,11 +1463,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 296, 712);
   FieldEvent_Wait(1);
-  object = Actor_Get(ACTOR_WEREWOLF);
-  /* FAKEMATCH(temporary): a local holding the constant 1. */
-  b1 = 1;
-  b1 |= object->steeringFlags;
-  object->steeringFlags = b1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(15);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(25);
@@ -1496,9 +1487,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 144, 712);
   Actor_SetPosition(ACTOR_WEREWOLF, 0, 0);
   FieldEvent_Wait(30);
-  v5 = ((s32)&gMainRoutineWork);
-  v5 = (v5 + 0x214);
-  EventCamera_FollowActor(*(s32 *)(v5), 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1514,20 +1503,11 @@ void Garoh_FollowWerewolfIntoCave(void) {
   FieldEvent_Wait(20);
   FieldActor_Jump(ACTOR_KRADEN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN, 6, 23);
-  {
-    s32 a0 = ACTOR_FELIX;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  t3 = ((s32)Actor_Get(*(s32 *)(v5)));
-  if (t3 != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
-  }
+  Scene_WalkTowardLeader(ACTOR_KRADEN);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
@@ -1536,13 +1516,6 @@ void Garoh_FollowWerewolfIntoCave(void) {
 /// "Where could that werewolf have gone?" The werewolves surround the party and
 /// Maha speaks with it.
 void Garoh_WerewolvesRevealThemselves(void) {
-  s32 v5;
-  s32 t3;
-  s32 t12;
-  s32 t13;
-  s32 t14;
-  s32 b1;
-
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1572,13 +1545,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   // "Where could that werewolf have gone?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
-  {
-    s32 a0 = ACTOR_KRADEN;
-    s32 a1 = FACING_SOUTHEAST;
-    /* FAKEMATCH(barrier): an empty asm on a0 and a1. */
-    __asm__("" : "+l"(a0), "+l"(a1));
-    Actor_FaceDirection(a0, a1, 0);
-  }
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldCamera_MoveToActorById(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1.5);
@@ -1638,13 +1605,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(25);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = ACTOR_JENNA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1656,8 +1617,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
-  t3 = Actor_Get(ACTOR_CAVE_CREVICE);
-  Actor_SetSpriteFlags(t3, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
   Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1694,13 +1654,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
@@ -1716,13 +1670,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 23);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1736,19 +1684,8 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Event_OpenMessage(ACTOR_MAHA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(40);
-    {
-      s32 a0 = ACTOR_MAHA;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldActor_SetAnimation(a0, 4);
-    }
-    FieldEvent_Wait(33);
-    {
-      s32 a0 = ACTOR_MAHA;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldEvent_ShowMessageThenWait(a0, 0, 0);
-    }
+    Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
+    FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
@@ -1762,13 +1699,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1782,13 +1713,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1799,13 +1724,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   Call2(FieldMessage_ShowAtActor, ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1822,13 +1741,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
-    {
-      s32 a0 = ACTOR_JENNA;
-      /* FAKEMATCH(barrier): an empty asm on a0. */
-      asm volatile("" : "+l"(a0));
-      FieldActor_SetAnimation(a0, 3);
-    }
-    FieldEvent_Wait(20);
+    Actor_AnimateThenWait(ACTOR_JENNA, ANIM_NOD, 20);
     FieldEvent_Wait(20);
     gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1850,13 +1763,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = ACTOR_KRADEN;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_ShowEmote(ACTOR_MAHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1874,13 +1781,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
@@ -1904,26 +1805,14 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = ACTOR_KRADEN;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -1939,31 +1828,17 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 8, 0);
   FieldActor_Jump(ACTOR_WEREWOLF, 4, 0);
-  t12 = Actor_Get(ACTOR_MAHA);
-  v5 = 254;
-  *(u8 *)((t12 + 90)) = (v5 & *(u8 *)((t12 + 90)));
+  Actor_Get(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_MAHA, -8, 0);
-  t13 = Actor_Get(ACTOR_WEREWOLF);
-  v5 = (v5 & *(u8 *)((t13 + 90)));
-  *(u8 *)((t13 + 90)) = v5;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 16, 0);
   FieldEvent_Wait(1);
-  t14 = Actor_Get(ACTOR_WEREWOLF);
-  /* FAKEMATCH(temporary): a local holding the constant 1. */
-  b1 = 1;
-  b1 |= *(u8 *)((t14 + 90));
-  *(u8 *)((t14 + 90)) = b1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldActor_SetAnimation(ACTOR_WEREWOLF, 5);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_WEREWOLF, 1.3);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
@@ -1972,90 +1847,42 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(30);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  {
-    s32 a0 = ACTOR_WEREWOLF;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(15);
   Actor_SetAttachedEffect(ACTOR_WEREWOLF,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  {
-    s32 a0 = ACTOR_WEREWOLF;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  FieldEvent_Wait(20);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(45);
   Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
-  {
-    s32 a0 = ACTOR_WEREWOLF;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH, 0);
   FieldEvent_Wait(35);
-  {
-    s32 a0 = ACTOR_WEREWOLF;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_WEREWOLF, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = ACTOR_KRADEN;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 8);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, 8);
@@ -2091,13 +1918,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   }
   FieldEvent_Wait(30);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
@@ -2109,26 +1930,14 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
-  }
-  FieldEvent_Wait(33);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
@@ -2136,13 +1945,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
-  {
-    s32 a0 = ACTOR_MAHA;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
@@ -2150,13 +1953,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
-  {
-    s32 a0 = ACTOR_KRADEN;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -2173,13 +1970,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldActor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
-  {
-    s32 a0 = ACTOR_FELIX;
-    /* FAKEMATCH(barrier): an empty asm on a0. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
-  }
-  FieldEvent_Wait(20);
+  Actor_AnimateThenWait(ACTOR_FELIX, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   FieldActor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
@@ -2225,14 +2016,6 @@ void Garoh_MahaTellsTheLegend(void) {
   s32 total;
   struct Actor *ether;
   struct Sprite *sprite;
-  struct Actor *t2;
-  struct Actor *t15;
-  struct Actor *t16;
-  s32 t17;
-  struct Actor *t18;
-  struct Actor *t22;
-  struct Actor *t23;
-  s32 b1;
 
   Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
@@ -2257,8 +2040,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
-  t2 = Actor_Get(ACTOR_CAVE_CREVICE);
-  Actor_SetSpriteFlags(t2, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
   Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
@@ -2710,19 +2492,10 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, -16, 0);
   FieldEvent_Wait(10);
-  {
-    s32 a1 = -16;
-    s32 a2 = 0;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_WalkByAndWait(ACTOR_MAHA, a1, a2);
-  }
+  Actor_WalkByAndWait(ACTOR_MAHA, -16, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
-  {
-    s32 a0 = ACTOR_MAHA;
-    Actor_FaceDirection(a0, FACING_EAST, 0);
-  }
+  Actor_FaceDirection(ACTOR_MAHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   FieldEvent_Wait(20);
@@ -2749,34 +2522,21 @@ void Garoh_MahaTellsTheLegend(void) {
   sprite = ether->sprite;
   sprite->scale = Q16_ONE * 2 / 5;
   FieldActor_SetSpritePriority(ACTOR_ETHER, 1);
-  t16 = Actor_Get(ACTOR_ETHER);
-  Actor_SetSpriteFlags(t16, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 0);
   Actor_SetPosition(ACTOR_ETHER, 328, 160);
   FieldActor_Jump(ACTOR_ETHER, 9, 0);
   total = 0;
   frames = 20;
   do {
     sprite->scale = Math_Divide(total, 20) + Q16_ONE * 2 / 5;
-    {
-      s32 angle = ether->facing;
-      /* FAKEMATCH(barrier): the native starts the 0x1000 step before it loads
-       * the angle. */
-      __asm__("" : "+l"(angle));
-      ether->facing = angle + TRIG_TURN / 16;
-    }
+    ether->facing += FACING_STEP;
     System_Wait(1);
     frames--;
     total += Q16_ONE * 3 / 5;
   } while (frames >= 0);
   ether->facing = FACING_SOUTH;
-  {
-    s32 a2 = 8;
-    s32 a1 = 0;
-
-    Actor_WalkByAndWait(ACTOR_ETHER, a1, a2);
-  }
-  t18 = Actor_Get(ACTOR_ETHER);
-  Actor_SetSpriteFlags(t18, 1);
+  Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 1);
   FieldEvent_Wait(5);
   Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
   FieldEvent_Wait(5);
@@ -2796,11 +2556,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  {
-    s32 a1 = 0;
-
-    Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, a1);
-  }
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
@@ -2815,10 +2571,7 @@ void Garoh_MahaTellsTheLegend(void) {
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message = (gFieldWork->message + 1);
-    {
-      s32 a0 = 0x200a;
-      FieldEvent_ShowMessageThenWait(a0, 0, 0);
-    }
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
@@ -2873,21 +2626,9 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  {
-    s32 a1 = 0x108;
-    s32 a2 = 30;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_ShowEmote(ACTOR_JENNA, a1, a2);
-  }
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 0);
-  {
-    s32 a1 = 0x3000;
-    s32 a2 = 0;
-    /* FAKEMATCH(barrier): the native loads the later arguments before the
-     * first. */
-    Actor_FaceDirection(ACTOR_MAHA, a1, a2);
-  }
+  Actor_FaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(20);

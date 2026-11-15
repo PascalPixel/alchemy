@@ -175,23 +175,24 @@ void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
     window[15] = ~value;
 }
 
+/// The ARM routine ScanlineWindow_FillSpans copies to RAM and runs; it returns
+/// the end of the spans it wrote.
+typedef u16 *(*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
+
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
 /// window tiles' map through the cell picture routine copied to RAM.
-void ScanlineWindow_FillSpans(void *dst) {
-  u8 *scene = Ram_HeapSlots->windowWork;
+void ScanlineWindow_FillSpans(void *spans) {
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
 
-  if (scene == 0) {
-    Dma_Fill16(0xe0e0, dst, 0x140);
+  if (work == NULL) {
+    Dma_Fill16(0xe0e0, spans, 0x140);
   } else {
-    void (*code)(void *, void *);
+    WindowSpanRoutine routine;
 
-    RamCode_Load(code, Tile_BuildCellPicturesCode,
+    RamCode_Load(routine, Tile_BuildCellPicturesCode,
                  Tile_BuildCellPicturesCodeSize);
-    code(dst, scene + 8);
-    /* FAKEMATCH(dead): an empty once-only block after the call. */
-    do {
-    } while (0);
-    Heap_Release(code);
+    routine(spans, work->tilemap);
+    Heap_Release(routine);
   }
 }
 

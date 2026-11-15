@@ -2,7 +2,9 @@
 #include "types.h"
 #include "window/window.h"
 
-void Tile_BuildCellPictures(u16 *dst, u16 *src) {
+/// Builds the hardware window's left and right edges for each scan line from
+/// the window tilemap at src, and returns the end of what it wrote at dst.
+u16 *Tile_BuildCellPictures(u16 *dst, u16 *src) {
   u32 row;
   u32 col;
   s32 a;
@@ -102,4 +104,5 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
     dst++;
     *dst++ = v;
   }
+  return dst;
 }

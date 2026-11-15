@@ -686,7 +686,7 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Call7(Cyclone_CopyTouchedCells, 37, 26, 0, 3, 3, 61, 0);
-  if (FieldMapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
+  if (FieldMapGrid_GetCellBehaviorAt(2, px(608), px(400)) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -795,10 +795,10 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
     MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
   }
   FieldEvent_Wait(30);
-  OverlayObject_PrepareObject(175 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(175 << 18, 0, 0x1ea0000, 286);
-  OverlayObject_PrepareObject(181 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(px(700), 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject(px(700), 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(px(724), 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject(px(724), 0, 0x1ea0000, 286);
   Event_PlaySound(SE_DUST_PUFF);
   guard->motionFlags = 3;
   ((struct FieldSprite *)guard->sprite)->priority = 3;
@@ -1394,8 +1394,7 @@ void GaiaRockInside_RaiseSandTablet(void) {
   }
   REG_DISPCNT &= ~DISPCNT_BG1_ON;
   FieldEvent_Wait(30);
-  object =
-      OverlayObject_PrepareObject(232 << 17, -Q16_ONE * 32, 174 << 17, 323);
+  object = OverlayObject_PrepareObject(px(464), -Q16_ONE * 32, px(348), 323);
   Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
   GaiaRockInside_RingOfDust();
   for (i = 0; i <= 19; i++) {
@@ -3297,8 +3296,8 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 
   cell += column + (row << 7);
   cell->collisionCode = 255;
-  object->x.fixed = (x & 0xfff00000) + 0x80000;
-  object->z.fixed = (z & 0xfff00000) + 0x80000;
+  object->x.fixed = (x & FIELD_CELL_MASK) + px(8);
+  object->z.fixed = (z & FIELD_CELL_MASK) + px(8);
   object->y.fixed = object->z.fixed - (row << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;

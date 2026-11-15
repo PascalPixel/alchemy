@@ -2045,8 +2045,8 @@ void GabombaStatue_SawEnergyFlow(void) {
   // "Here, look... It runs all the way over there!"
   Event_ShowMessage(ACTOR_JENNA, 0);
   GabombaStatue_FindFreeTileCell(&x, &z);
-  x = (x << 20) + (156 << 17);
-  z = (z << 20) + (184 << 16);
+  x = (x << 20) + (px(312));
+  z = (z << 20) + (px(184));
   spark = (FieldActor_Create(434, x, 0, z));
   spark->motionFlags |= 4;
   Actor_SetSpriteFlags(spark, 0);

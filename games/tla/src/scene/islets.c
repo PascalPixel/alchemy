@@ -2165,7 +2165,7 @@ inner:
     s32 next = ((u16)j + 1) << 16;
 
     j = next >> 16;
-    if (next != 16 << 16)
+    if (next != px(16))
       goto inner;
   }
   entry++;
@@ -2173,7 +2173,7 @@ inner:
     s32 next = (i << 16) + 0x10000;
 
     i = next >> 16;
-    if (next != 4 << 16)
+    if (next != px(4))
       goto outer;
   }
   queue->count = 0;

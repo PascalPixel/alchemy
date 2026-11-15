@@ -584,8 +584,8 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = 255;
-  object->x.fixed = (x & 0xfff00000) + 0x80000;
-  object->z.fixed = (z & 0xfff00000) + 0x80000;
+  object->x.fixed = (x & FIELD_CELL_MASK) + px(8);
+  object->z.fixed = (z & FIELD_CELL_MASK) + px(8);
   object->y.fixed = object->z.fixed - (cellZ << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;

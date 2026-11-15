@@ -588,8 +588,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
+  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -934,19 +934,19 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   large->scaleX = 0;
   large->scaleY = 0;
   if (side == 0) {
-    work->from[0] = 152 << 16;
+    work->from[0] = px(152);
     work->from[1] = 0x200000;
-    work->from[2] = 164 << 16;
-    work->to[0] = 235 << 17;
+    work->from[2] = px(164);
+    work->to[0] = px(470);
     work->to[1] = 0x200000;
-    work->to[2] = 164 << 16;
+    work->to[2] = px(164);
   } else {
-    work->from[0] = 218 << 18;
+    work->from[0] = px(872);
     work->from[1] = 0x200000;
-    work->from[2] = 164 << 16;
+    work->from[2] = px(164);
     work->to[0] = 0x2260000;
     work->to[1] = 0x200000;
-    work->to[2] = 164 << 16;
+    work->to[2] = px(164);
   }
   work->start[0] = work->from[0];
   work->start[1] = work->from[1];
@@ -1015,7 +1015,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -1058,8 +1059,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -1152,8 +1153,8 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = ((x + dx) << 20) + 0x80000;
-    object->z.fixed = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = FIELD_CELL_CENTER(x + dx);
+    object->z.fixed = FIELD_CELL_CENTER(z + dz);
     shadow = *(struct Actor **)(event + 460);
     shadow->x.fixed = object->x.fixed;
     shadow->z.fixed = object->z.fixed;

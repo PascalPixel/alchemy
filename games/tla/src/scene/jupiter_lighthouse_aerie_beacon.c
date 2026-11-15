@@ -282,9 +282,9 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
-    center->x.fixed = 152 << 17;
+    center->x.fixed = px(304);
     center->y.fixed = -px(360);
-    center->z.fixed = 164 << 16;
+    center->z.fixed = px(164);
     center->scaleX = Q16_ONE;
     center->scaleY = Q16_ONE;
     SceneActor_ParkRecord(center);

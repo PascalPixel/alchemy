@@ -3205,7 +3205,7 @@ void Kibombo_InitializeStatueGrounds(void) {
   Actor_GetById(ACTOR_GROUNDS_PILLAR)->motionFlags = 0;
   if (GameFlag_Get(FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS)) {
     FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_GROUNDS_PILLAR),
-                                         208 << 15, 0, 148 << 17);
+                                         px(104), 0, px(296));
     MapGrid_CopyCellAttributes(5, 18, 1, 1, 6, 18);
     wait(10);
   }
@@ -3309,7 +3309,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
     s32 angle = FACING_SOUTHEAST;
 
-    Actor_SetPositionAndFacing(7, 152 << 17, 176 << 15, angle);
+    Actor_SetPositionAndFacing(7, px(304), px(88), angle);
   }
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Kibombo_SetStatueTongue(1, 6);

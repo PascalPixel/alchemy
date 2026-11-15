@@ -414,12 +414,12 @@ s32 Scene_Initialize(void) {
          * half. */
         asm volatile("" : "+l"(id));
         x <<= 17;
-        z = 335 << 16;
+        z = px(335);
         Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, turn);
       }
       {
         s32 angle = FACING_SOUTHWEST;
-        s32 z = 336 << 16;
+        s32 z = px(336);
 
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
                                                        px(345), z, angle);

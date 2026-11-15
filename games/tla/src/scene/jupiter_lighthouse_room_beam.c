@@ -163,13 +163,13 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 32) {
-    target[0] = 136 << 16;
-    target[1] = 144 << 16;
-    target[2] = 148 << 18;
+    target[0] = px(136);
+    target[1] = px(144);
+    target[2] = px(592);
   } else {
-    target[0] = 248 << 16;
-    target[1] = 144 << 16;
-    target[2] = 144 << 18;
+    target[0] = px(248);
+    target[1] = px(144);
+    target[2] = px(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -226,13 +226,13 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 30) {
-    target[0] = 136 << 16;
-    target[1] = 144 << 16;
-    target[2] = 148 << 18;
+    target[0] = px(136);
+    target[1] = px(144);
+    target[2] = px(592);
   } else {
-    target[0] = 248 << 16;
-    target[1] = 144 << 16;
-    target[2] = 144 << 18;
+    target[0] = px(248);
+    target[1] = px(144);
+    target[2] = px(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -390,7 +390,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
   }
 }
 
@@ -437,12 +437,12 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
-      (height * 3 << 16) + px(8), 170 << 18);
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (px(214)),
+      (height * px(3)) + px(8), px(680));
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
-  if (object->y.fixed > 170 << 17)
+  if (object->y.fixed > px(340))
     object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
   } else {
     LightSprites_InitB();
     LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);
@@ -648,7 +648,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -691,8 +692,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

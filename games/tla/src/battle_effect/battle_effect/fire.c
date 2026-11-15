@@ -4,20 +4,14 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
-#define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
+#define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
 
-// Embers spray out of the user, two a frame, then home in on the targets.
-
-// Setup: up to 64 embers start at the top of the user's body with a random
-// heading and speed. Frame loop: an ember flies for 48 frames (drawn MAX
-// while young, then ADDITIVE), then accelerates toward its target, held to
-// 60/64 of its speed until frame 85 of its life. Below the ground it lands:
-// it leaves a six-picture flare, its target flashes and the screen shakes
-// for two frames. The camera sways between frames 16 and 80. The variant
-// chooses the number of embers.
+/// Embers burst from the top of the user and home in on the targets, and each
+/// that lands shows an impact flare as its target flinches.
+///
+/// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -30,11 +24,11 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct MotionObject *user;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     BattleEffect_StartCanvasLayer(1);
   else
     BattleEffect_StartCanvasLayer(0);
@@ -59,7 +53,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     angle = Random16();
     speed = (Random16() & 127) + 127;
     ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
-    ember->velocityY = (s32)(((Random16() & 127) - 16) << 16) >> 6;
+    ember->velocityY = (s32)px((Random16() & 127) - 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
     SET_POSITION(ember, user->x, top, user->z);
     ember->variant = IN_FLIGHT;
@@ -134,7 +128,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          if (args->variant == 2)
+          if (args->variant == EFFECT_VARIANT_STRONGEST)
             Sound_PlayFar(SE_HEAVY_IMPACT);
           else
             Sound_PlayFar(SE_WHOOSH);
@@ -174,3 +168,4 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
+#undef EMBERS

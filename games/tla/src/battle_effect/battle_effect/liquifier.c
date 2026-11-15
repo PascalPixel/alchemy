@@ -5,57 +5,26 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/io_reg.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "battle/battle_effect.h"
-#include "battle_effect_work.h"
-#include "system/task.h"
-#include "actor.h"
-#include "battle_display.h"
-#include "fixed_math.h"
-#include "graphics/graphics.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "module/system/system.h"
-#include "battle/render_model.h"
-#include "graphics/resource.h"
 #include "resource_ids.h"
-#include "system/system.h"
-
-struct Model;
 
 #define KIND123_FRAMES 111
-
-// A model for the ARM renderer (Render_DrawModelList).
-/* VIEW(liquifier): tag struct RenderModel as struct RenderModel__liquifier;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunLiquifier moves: 2 of 892 instructions in
- * tla-ja. */
-struct RenderModel__liquifier {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  u8 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-};
 
 /* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
-// Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
-// and burst from it toward the target (16-110); eight flat flashes turn about
-// the caster; sixteen textured shards fly from the target (54-101), each
-// leaving a fading splash; two rings swell at the caster (0-15); every four
-// frames from 54 the target is struck, and the last strike ends the phase.
-//
-// The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
-// shard's roll); the map cell buffer is cleared but not drawn.
+/// 111 frames. Sparks gather at the caster (frames 0-15)
+/// and burst from it toward the target (16-110); eight flat flashes turn about
+/// the caster; sixteen textured shards fly from the target (54-101), each
+/// leaving a fading splash; two rings swell at the caster (0-15); every four
+/// frames from 54 the target is struck, and the last strike ends the phase.
+///
+/// The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
+/// shard's roll); the map cell buffer is cleared but not drawn.
+///
+/// Abilities: Liquifier.
 void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   struct ScreenPoint from;
   struct ScreenPoint to;
@@ -68,7 +37,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -96,7 +65,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // The shards start about the target, each with its own roll.
       for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
-        SET_POSITION(shard, (to.x + (Random16() & 127) - 64) << 16, to.y << 16,
+        SET_POSITION(shard, px(to.x + (Random16() & 127) - 64), px(to.y),
                      (Random16() & 0x1fff) + 0x7000);
       }
     }
@@ -178,7 +147,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           step->x = px(from.x / 2);
           y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
-          step->y = (y << 16) - (step->velocityY << 6);
+          step->y = px(y) - (step->velocityY << 6);
           step->variant = 0;
           step++;
         }
@@ -215,7 +184,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
     {
       void *projected = Heap_AllocEwram(32);
-      struct RenderModel__liquifier *model = Render_AllocateModelList(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
       void *splash = gData_02014000;
 
       // Eight flashes turn about the caster, each for 16 frames from its
@@ -237,8 +206,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           age = frame - start;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((from.x - 128) << 16,
-                                        (from.y - 74) << 16, 0);
+          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 74), 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(0x5555,
                                      Trig_Sin(age << 11) *
@@ -317,8 +285,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((from.x - 128) << 16,
-                                        (from.y - 80) << 16, 0);
+          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 80), 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
           Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
           Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -352,22 +319,11 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-
-#include "battle/motobj.h"
-#include "field_event.h"
-
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
+/// Plays the canvas burst with a small ball for kinds below 200 and a large one
+/// from 200 on.
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
   if (args->kind > 199)
     BattleEffect_RunCanvasBurst(args, 2);
@@ -375,8 +331,15 @@ void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
     BattleEffect_RunCanvasBurst(args, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunShred, BattleEffect_RunCanvasBurst, 0)
+/// Abilities: Fog, Shred.
+void BattleEffect_RunShred(struct BattleEffectParams *args) {
+  BattleEffect_RunCanvasBurst(args, 0);
+}
 
+/// From the user's action pose, a glowing ball flies to the targets' midpoint
+/// and bursts.
+///
+/// Abilities: Mine Ball.
 void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   struct Actor *object;
 
@@ -387,16 +350,11 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-#include "system/io_write_queue.h"
-#include "bg_scroll.h"
-#include "battle_work.h"
-
 #define ball (&work->particles[63])
 
-// Draws a disc of the given size from the disc sheet in the map cell buffer
-// as four quarter blits about (x, y), with the second blitter loaded for
-// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode). The sheet
-// offset comes first: the sum only matches in integer form, cells on the right.
+/// Draws a disc of the given size from the disc sheet in the map cell buffer
+/// as four quarter blits about (x, y), with the second blitter loaded for
+/// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -421,21 +379,21 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
 
-// The canvas burst family (its wrappers are above). A glowing ball (or
-// in mode 0 a growing glow at the target, with sixteen rays that close on
-// it) hits the target; at the hit the targets flash and recoil, sixteen
-// flames rise and 47 sparks scatter. Modes:
-//   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
-//      hit at frame 54, then the canvas is cleared and
-//      BattleEffect_RunImpair runs on;
-//   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
-//      half-speed sparks, hit at 32, no flames;
-//   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
-//      32;
-//   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
-//   the
-//      midpoint of the targets, its own palette, hit at 24.
-// Modes 1 and 2 close by restoring the battle display themselves.
+/// The canvas burst family (its wrappers are above). A glowing ball (or
+/// in mode 0 a growing glow at the target, with sixteen rays that close on
+/// it) hits the target; at the hit the targets flash and recoil, sixteen
+/// flames rise and 47 sparks scatter. Modes:
+///   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
+///      hit at frame 54, then the canvas is cleared and
+///      BattleEffect_RunImpair runs on;
+///   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
+///      half-speed sparks, hit at 32, no flames;
+///   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
+///      32;
+///   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
+///   the
+///      midpoint of the targets, its own palette, hit at 24.
+/// Modes 1 and 2 close by restoring the battle display themselves.
 void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint from;
   struct ScreenPoint to;
@@ -452,7 +410,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   s32 j;
   s32 cells = (s32)Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   if (mode <= 1)
@@ -602,11 +560,11 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         if (mode == 0 || mode == 2 || mode == 3) {
           EFFECT_SHOW_DAMAGE(SE_CRASH);
           for (i = 0; i != args->targetCount; i++)
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         } else {
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
           for (i = 0; i != args->targetCount; i++)
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
         }
         for (i = 0; i != args->targetCount; i++)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -715,3 +673,4 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     wait(1);
   }
 }
+#undef Actor_SetAnimationSpeedFar

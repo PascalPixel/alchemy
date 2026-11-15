@@ -5,12 +5,10 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Battle effect kind 1, the quake: rock pillars rise under the targets.
+#define PILLAR_W 40        ///< pixels
+#define ROCK_OFFSET 0x1e00 ///< the rock picture in the sheet, after the band
 
-#define PILLAR_W 40        // pixels
-#define ROCK_OFFSET 0x1e00 // the rock picture in the sheet, after the band
-
-// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
+/// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
 #define BG_DOT(x, y)                                                           \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
@@ -39,12 +37,11 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   s32 col;
   s32 y;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1); // no horizontal stretch
-  REG_BLDCNT = 0;       // no blending
+  EFFECT_START_NARROW_CANVAS(1); // no horizontal stretch
+  REG_BLDCNT = 0;                // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
@@ -61,7 +58,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
   // On the far side the canvas moves 112 pixels right, and the targets'
   // screen positions with it.
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {

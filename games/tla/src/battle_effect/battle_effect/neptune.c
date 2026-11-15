@@ -48,7 +48,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   u8 *tiles;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   tiles = gMapGridCellBuffer;
 
@@ -62,8 +62,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleEffect_SelectLivingTargets(work->args);
@@ -199,8 +198,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       position[3] = 0;
       position[1] = 0;
       for (i = 0; i != 8; i++) {
-        position[0] = ((i & 3) * 48 << 16) + serpentX - 0x200000;
-        position[2] = ((i / 4) * 48 << 16) + serpentY - 0x180000;
+        position[0] = ((i & 3) * 48 << 16) + serpentX - px(32);
+        position[2] = ((i / 4) * 48 << 16) + serpentY - px(24);
         Render_ApplyProjectedPlacementFar(work->sprites[i], position, &scale.x,
                                           0);
       }
@@ -464,8 +463,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
               r &= Random16();
               a = (Random16() & 0x7fff) - 0x4000;
-              PARTICLES[j].x = pillarX << 16;
-              PARTICLES[j].y = ground << 16;
+              PARTICLES[j].x = px(pillarX);
+              PARTICLES[j].y = px(ground);
               r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;
@@ -479,9 +478,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     for (i = 0; i != args->targetCount; i++) {
       if (frame == i * 16 + 8) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
+        EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != 1024; i++) {

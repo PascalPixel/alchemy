@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 /// The sparkles that trail the spray, after the spray in PARTICLES.
@@ -54,7 +53,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct Scale scale;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sparkleSheet = Ram_HeapSlots->battleSheet;
   edgeSpeed = 1;
   BattleEffect_StartCanvasLayer(0);
@@ -63,8 +62,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
@@ -469,3 +467,4 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 #undef BOREAS_SPRAY_SPARKLES
 #undef BOREAS_POINT_X
 #undef BOREAS_POINT_Y
+#undef PARTICLES

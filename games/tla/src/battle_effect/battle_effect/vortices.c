@@ -3,21 +3,19 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
+/// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
 #define MOTE_COUNT 30
-#define SEAT_FIRST 32 // the particles that hold each target's seat
+#define SEAT_FIRST 32 ///< the particles that hold each target's seat
 
-// Thirty motes rise from the caster, swirl, and home in on the targets; each
-// one that reaches the ground flashes and knocks back its target and plays a
-// three-cel splash where it landed.
+/// Bubbles fly out of the top of the user, hang, and home in on the targets;
+/// each that lands bursts into a swirling vortex, knocking back its target,
+/// while the camera swings round.
+///
+/// Abilities: Froth, Froth Sphere, Froth Spiral.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct BattleEffectWork *work;
@@ -37,7 +35,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the vortex sheet and two blitters, the one on
   // the right mirrored.
   landed = (s8 *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 1);
@@ -124,7 +122,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
                                    SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                    i % args->targetCount, 4);
           BattleMotion_ApplyKnockbackFar(args->targets[i % args->targetCount],
-                                         0);
+                                         KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
           Sound_PlayFar(SE_WATER);
         }
@@ -152,12 +150,13 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 }
 
 #define TORNADO_FRAMES 80
-#define GLINT_COUNT 16 // four glints for each of up to four funnels
-#define GLINT_CELS 6   // three cels of two frames each
+#define GLINT_COUNT 16 ///< four glints for each of up to four funnels
+#define GLINT_CELS 6   ///< three cels of two frames each
 
-// One to four funnels of wind sway across the targets for 80 frames, each
-// drawn as three stacked segments with glints swirling around it; the canvas
-// is wiped every eight frames, and each target is struck seven times.
+/// Tornadoes sweep across the targets, sparkling with glints, and the targets
+/// reel again and again.
+///
+/// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -174,7 +173,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the tornado sheet and two max blitters, the
   // second mirrored.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -210,7 +209,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
     // Sway toward the targets' side; fade in over 16 frames and out over the
     // last 16.
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       wave += 0x200000;
     else
       wave -= 0x200000;
@@ -259,9 +258,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     for (j = 0; j != args->targetCount; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, j, 4);
-          BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+          EFFECT_STRIKE_TARGET(args, j, 4, KNOCKBACK_BOUNCE);
         }
       }
     }
@@ -277,3 +274,4 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+#undef MOTE_COUNT

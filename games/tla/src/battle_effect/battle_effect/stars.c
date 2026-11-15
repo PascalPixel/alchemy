@@ -3,22 +3,21 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "macros.h"
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
-#define RING_STEPS 16 // dots drawn between two ring points
+#define RING_STEPS 16 ///< dots drawn between two ring points
 #define FAR_DEPTH 399999
 
 #define ACTOR(id) ((struct Actor *)BattleObject_GetFar(id)->object)
 
-// Three rings of light fly one after another from the caster to the target,
-// each growing as it spins, while the camera swings round; each ring that
-// lands throws the target back, and the last begins the results.
+/// Three pink stars of light fly from above the user at the first target,
+/// growing and spinning, while the camera swings round; each knocks the target
+/// back.
+///
+/// Abilities: Astral Blast.
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   struct ScreenPoint base;
@@ -42,7 +41,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -56,9 +55,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Actor_SelectAnimationFar(caster, 2);
   Actor_SetAnimationSpeedFar(caster, 48);
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_RAM_CODE,
-      BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -68,13 +65,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   source = ACTOR(args->user);
   target = ACTOR(args->targets[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
-    SET_POSITION(point, source->x.fixed, source->y.fixed + 0x280000,
+    SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
                  source->z.fixed);
     if (i == 0)
       point->velocityX = (target->x.fixed - point->x) / 12;
     else
       point->velocityX = (target->x.fixed * 2 - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + 0x280000) / 12;
+    point->velocityY = (target->y.fixed - point->y + px(40)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
@@ -84,14 +81,14 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   for (frame = 0; frame != 60; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
-      struct CameraView *view = (struct CameraView *)camera;
+      struct BattleCamera *view = (struct BattleCamera *)camera;
       s32 speed;
 
       if (frame <= 39)
         speed = 128;
       else
         speed = 0x300 - frame * 16;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         view->yaw -= speed;
       else
         view->yaw += speed;
@@ -168,10 +165,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Actor_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed - px(40), 0,
                                    target->z.fixed);
           else
-            Actor_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed + px(40), 0,
                                    target->z.fixed);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -223,7 +220,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *ring;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -233,9 +230,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_RAM_CODE,
-      BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -246,10 +241,10 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
+    SET_POSITION(point, source->x / 2, source->y + px(120), source->z);
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
-    point->velocityY = (target->y - point->y + 0x140000) / 12;
+    point->velocityY = (target->y - point->y + px(20)) / 12;
     point->velocityZ = (target->z - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;
@@ -328,3 +323,5 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS();
 }
+#undef BOLT_COUNT
+#undef STAR_COUNT

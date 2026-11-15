@@ -4,28 +4,27 @@
 
 #include "../battle_effect_internal.h"
 
-/// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
-void BattleEffect_RunGrowth(void *object) {
-  BattleEffect_RunGrowingColumns(object, 0);
+/// Abilities: Growth, Mad Growth, Wild Growth.
+void BattleEffect_RunGrowth(struct BattleEffectParams *args) {
+  BattleEffect_RunGrowingColumns(args, 0);
 }
 
-/// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
-void BattleEffect_RunPunji(void *object) {
-  BattleEffect_RunGrowingColumns(object, 1);
+/// Abilities: Punji, Punji Trap, Punji Strike.
+void BattleEffect_RunPunji(struct BattleEffectParams *args) {
+  BattleEffect_RunGrowingColumns(args, 1);
 }
 
-// The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
+/// The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct Particle *)Ram_MapCellBuffer)
 
 #define COLUMN_COUNT 16
 #define COLUMN_INTERVAL 4
 #define PUFF_COUNT 512
-#define PUFF_LIFE 14 // seven cels, two frames each
+#define PUFF_LIFE 14 ///< seven cels, two frames each
 #define CUE_COLUMN 133
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
-
+/// Vines or green pillars grow one after another, alternately mirrored, each
+/// throwing up dust from its root.
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -56,10 +55,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   // Set up: the canvas layer, the sheet for the mode, and the canvas moved
   // 112 pixels right for the other side.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
@@ -67,7 +65,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
@@ -264,14 +262,14 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
 #define VINE_COUNT 16
 #define VINE_FRAMES 70
-#define CUE_FRAME 32 // the vines reach the targets
+#define CUE_FRAME 32 ///< the vines reach the targets
 #define CUE_VINES 143
 #define CANVAS_MIDDLE 64
 
-// BattleEffect_RunDjinniEntrance's flags: kind | side << 4 | anchor << 5.
-#define PREPARE_KIND 4
-#define PREPARE_ANCHOR 4
-
+/// Sixteen green vines grow from the middle of the row of targets, 2 frames
+/// apart, and shrink back.
+///
+/// Abilities: Vine.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
@@ -296,8 +294,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      args, PREPARE_KIND | args->side << 4 | PREPARE_ANCHOR << 5, &screen,
-      &world);
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS + DJINNI_ENTRANCE_LONG, args->side,
+                      DJINNI_ANCHOR_CENTRE),
+      &screen, &world);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(1);
@@ -386,6 +386,10 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 
 #define CUE_THORN 133
 
+/// Thorns burst from the ground one every 8 frames, throwing up dust from
+/// their roots.
+///
+/// Abilities: Thorn, Briar, Nettle.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
@@ -407,12 +411,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -545,3 +548,5 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   // Tear down: stop the transfer, free both blitters, close the layer.
   EFFECT_FINISH_CANVAS();
 }
+#undef COLUMN_COUNT
+#undef PUFF_COUNT

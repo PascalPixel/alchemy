@@ -4,24 +4,29 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-// The skulls live in the map buffer, 64 for each target.
+/// The gathering lights' modes (BattleEffect_RunGatheringLights), each named
+/// for the effect that plays it, and its row of gGatheringLights_Counts.
+enum GatheringLightsMode {
+  GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
+  GATHERING_LIGHTS_RUMBLE,      ///< Mars Djinn colours
+  GATHERING_LIGHTS_HAUNTING,    ///< Mercury Djinn colours
+  GATHERING_LIGHTS_THORNY_GRAVE
+};
+
+/// The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
-#define SKULLS 8 // per target
+#define SKULLS 8 ///< per target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 
-// Closing skulls: for each target in turn, 32 frames apart, eight skulls
-// appear one every four frames from all around, up to 64 pixels away, and
-// close in on a point 20 pixels above the target while the view of them
-// turns; the background waves line by line throughout.
+/// Skulls close in on each target in turn.
+///
+/// Abilities: Haunt.
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 k;
   struct ScreenPoint pos;
@@ -33,7 +38,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   s32 *camera;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the skull sheet with its palette, the pink burst palette, the
@@ -65,7 +70,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
@@ -128,9 +133,12 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define SPIRAL_SIZE 32
 #define SPIRAL_CELS 4
 
-// Member orbit: over each target in turn, sixteen frames apart, four
-// spirals circle a point 40 pixels above it for 60 frames, the blitter
-// flipping every sixteen frames; the background waves line by line.
+/// Unused: no row of gAbilityBattleEffects in either game names its kind, and
+/// the handler table is reached with no other kind (BattleEffect_RunFromTable),
+/// so the player never sees it. Four spirals would circle 40 pixels above each
+/// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
+/// the centre; each target would take its damage pose 32 frames into its
+/// turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -141,13 +149,12 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   s32 offsetX;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up: the spiral sheet with its palette, the two blitters, the wave's
   // HBlank DMA and the transfer at half strength.
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -158,7 +165,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // On the far side the background and the spirals move 112 pixels left.
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x6800;
     offsetX = -112;
   } else {
@@ -173,7 +180,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     // The background waves sideways line by line.
     camera = Ram_HeapSlots->cameraWork;
     row = work->bg2xLines;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       s32 angle;
       s32 base;
 
@@ -239,29 +246,34 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Demon Night (kind 50).
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, BattleEffect_RunGatheringLights,
-                   0)
+/// Abilities: Demon Night.
+void BattleEffect_RunDemonNight(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
+}
 
-/// Abilities: Rumble (kind 308).
-DEFINE_EFFECT_KIND(BattleEffect_RunRumble, BattleEffect_RunGatheringLights, 1)
+/// Abilities: Rumble.
+void BattleEffect_RunRumble(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
+}
 
-/// Abilities: Haunting (kind 351).
-DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, BattleEffect_RunGatheringLights, 2)
+/// Abilities: Haunting.
+void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
+}
 
-/// Abilities: Thorny Grave (kind 127).
-DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, BattleEffect_RunGatheringLights,
-                   3)
+/// Abilities: Thorny Grave.
+void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_THORNY_GRAVE);
+}
 
 #define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)
 
-// Member burst (kinds through four wrappers; mode picks the colours): from
-// the caster's body, 128 motes per target scatter every way, and from 30
-// frames on each is pulled toward the middle of its target's body, vanishing
-// once it has crossed it. The background sways sideways, swelling and dying
-// away over the effect. In mode 3 every mote that arrives also pushes its
-// target back.
+/// From the caster's body 128 motes a target scatter every way, and from frame
+/// 30 each is pulled toward the middle of its target's body, vanishing once it
+/// has crossed it, in the mode's colours. The background sways sideways,
+/// swelling and dying away over the effect. In Thorny Grave every mote that
+/// arrives also pushes its target back.
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint pos;
@@ -274,7 +286,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   s32 palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 
@@ -283,9 +295,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
-  if (mode == 0 || mode == 3)
+  if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||
+      mode == GATHERING_LIGHTS_THORNY_GRAVE)
     palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 1)
+  else if (mode == GATHERING_LIGHTS_RUMBLE)
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
@@ -294,7 +307,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
     routine((void *)BG_PLTT, source_, 128);
   }
-  if (mode == 3)
+  if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
     Palette_MirrorBgColors();
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
@@ -329,9 +342,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     s32 scrollX;
 
     if (frame == 80) {
-      if (mode == 0)
+      if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      else if (mode == 3)
+      else if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -361,9 +374,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       s32 half = BattleUnit_GetEffectHeightFar(args->targets[k]) / 2;
 
       if (frame == k * 20 + 71) {
-        if (mode == 0)
+        if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        else if (mode != 3)
+        else if (mode != GATHERING_LIGHTS_THORNY_GRAVE)
           Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
@@ -408,7 +421,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
-                if (mode == 3) {
+                if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
                   BattleEffect_StartActorMotion(args->targets[k], 1, 0x20000,
                                                 0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)

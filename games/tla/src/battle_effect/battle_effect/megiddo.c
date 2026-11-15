@@ -3,30 +3,29 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
-/* VIEW(summon_effects): tag struct ModelVertex as struct
- * ModelVertex__summon_effects; battle_effect/ability_effects has another
- * definition; not tried: struct ModelVertex__summon_effects was not found. */
-struct ModelVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
+/* VIEW(megiddo): tag struct RenderModel as struct
+ * RenderModel__megiddo; render_model.h has another definition; tried with
+ * the definition the rest of the object has, BattleEffect_RunMegiddo
+ * moves: 1 of 1354 instructions in tla-en. */
+struct RenderModel__megiddo {
+  s32 kind;
+  s32 flags;
+  const u16 *mesh;
+  u8 *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
 };
 
-void Render_DrawModelList(struct Model *model);
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-// Megiddo: the caster rises in a column of light, a winged figure gathers
-// above and dives in a storm of feathers and rings onto the target.
+/// Megiddo: the caster rises in a column of light, a winged figure gathers
+/// above and dives in a storm of feathers and rings onto the target.
+///
+/// Abilities: Megiddo.
 void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -53,7 +52,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
   s32 m;
-  struct RenderModel *model;
+  struct RenderModel__megiddo *model;
   void *verts;
   struct Particle *p;
   struct ScreenPoint pos;
@@ -64,7 +63,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   u8 req[8];
   struct ModelTexture scratchTexture;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   transition = Ram_HeapSlots->battleBackground;
@@ -314,7 +313,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
@@ -345,13 +344,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       pair[1] = v;
       *(s32 *)req = v;
       place[3] = zero;
-      place[1] = 0xff0000;
+      place[1] = px(255);
       place[0] = x;
       place[2] = z;
       obj = work->sprites[0];
       obj[23] = 32;
       obj[22] = zero;
-      if ((u32)(place[2] + 0x340000) <= 0xfbffff) {
+      if ((u32)(place[2] + px(52)) <= 0xfbffff) {
         Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }
     }
@@ -389,7 +388,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         Transform_Reset();
         SceneTransform_ApplyScale3(half, Q16_ONE, half);
       }
-      SceneTransform_ApplyPosition3(x - 0x7e0000, z - 0x4c0000, 0);
+      SceneTransform_ApplyPosition3(x - px(126), z - px(76), 0);
       SceneTransform_ApplyUniformScale(46536);
       SceneTransform_ApplyUniformScale(scale);
       Render_TransformVertices(ring, transformed, 66);
@@ -401,7 +400,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       model->kind = 7;
       model->mesh = meshB;
       tint = -24;
-      model->unk04 = 3;
+      model->flags = 3;
       model->shade = tint;
       model->scrollV = zero;
       if (frame > 142) {
@@ -424,7 +423,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-0x20000, -0x200000, 0);
+          SceneTransform_ApplyPosition3(-px(2), -px(32), 0);
           SceneTransform_ApplyScale3(82000, 0x35208, Q16_ONE);
           SceneTransform_ApplyUniformScale(scale);
           Transform_ApplyRoll(TRIG_TURN / 2);
@@ -519,10 +518,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           model->shade = shade;
           Transform_Reset();
           if (i <= 1) {
-            SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
-                                          (pos.y - 48) << 16, 0);
+            SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y - 48),
+                                          0);
           } else {
-            SceneTransform_ApplyPosition3(0, 0x100000, 0);
+            SceneTransform_ApplyPosition3(0, px(16), 0);
           }
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(gMegiddo_FlashPitches[i]);
@@ -557,13 +556,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         model->shade = shade;
         Transform_Reset();
         if (!args->side) {
-          SceneTransform_ApplyPosition3(
-              (pos.x / 2 + gMegiddo_RayX[i] - 64) << 16,
-              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
+          SceneTransform_ApplyPosition3(px(pos.x / 2 + gMegiddo_RayX[i] - 64),
+                                        px(gMegiddo_RayY[i] + pos.y - 54), 0);
         } else {
-          SceneTransform_ApplyPosition3(
-              (pos.x / 2 - gMegiddo_RayX[i] - 62) << 16,
-              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
+          SceneTransform_ApplyPosition3(px(pos.x / 2 - gMegiddo_RayX[i] - 62),
+                                        px(gMegiddo_RayY[i] + pos.y - 54), 0);
         }
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (!args->side) {

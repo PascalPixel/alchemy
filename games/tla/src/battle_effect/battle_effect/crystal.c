@@ -3,27 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
-
-struct Model;
-
-/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunCrystal moves: 1 of 487 instructions in
- * tla-ja. */
-struct ModelTexture__f16c274 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
-struct BattleObjectPosition {
-  u8 unk00[8];
-  s32 x;
-};
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define CRYSTAL_FRAMES 103
@@ -46,14 +26,14 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 center[3];
   s32 other[3];
   struct ScreenPoint screen;
-  struct ModelTexture__f16c274 texture;
+  struct ModelTexture texture;
   s32 frame;
   s32 i;
   s32 size;
   s32 offset;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   discOffsets = (u16 *)(work->sheet + 0x2710);
   cells = (s32)gMapGridCellBuffer;
@@ -66,15 +46,17 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 32, center,
-                                 other);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
+      center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + 0x65c0, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        128);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {
@@ -85,7 +67,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   draw[0] = BLITTER;
   {
     void *camera;
-    struct BattleObjectPosition *target;
+    struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -100,7 +82,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
-          SET_POSITION(shard, target->x + ((Trig_Sin(angle) * radius) >> 1),
+          SET_POSITION(shard,
+                       target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
                        px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
           shard->velocityY = (Random16() & 0xffff) + 0x40000;
@@ -188,8 +171,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
           }
           model->shade = 0;
           Transform_ApplyPitch(-0xbb8);
-          SceneTransform_ApplyPosition3((center[0] / 2 - 64) << 16, 0x280000,
-                                        0);
+          SceneTransform_ApplyPosition3(px(center[0] / 2 - 64), px(40), 0);
           SceneTransform_ApplyUniformScale(scale >> 1);
           Transform_ApplyYaw(frame << 9);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,

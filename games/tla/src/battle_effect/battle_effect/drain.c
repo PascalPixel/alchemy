@@ -4,15 +4,8 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-// Break's ice shards (effect kind 43).
-
-#include "battle/battle_action.h"
-
-#include "field/particle.h"
-
-#include "system/heap_release.h"
+// Break's ice shards.
 
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
@@ -34,7 +27,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -132,15 +125,22 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Drain, Psy Drain (kind 42).
-void BattleEffect_RunDrain(u8 *args) {
-  s32 value = *(s32 *)(args + 24);
+/// Motes of light burst from each target in turn and are pulled into the user,
+/// more of them for the stronger variant.
+///
+/// Abilities: Drain, Psy Drain.
+void BattleEffect_RunDrain(struct BattleEffectParams *args) {
+  s32 variant = args->variant;
 
-  BattleEffect_RunDrainMotes(args, (u32)(-value | value) >> 31);
+  // 1 for any variant past the basic one, as the sign of -variant | variant.
+  BattleEffect_RunDrainMotes(args, (u32)(-variant | variant) >> 31);
 }
 
-/// Abilities: True Collide (kind 451).
-void BattleEffect_RunTrueCollide(u8 *args) {
+/// Motes of light burst from each target in turn and are pulled into the user,
+/// in True Collide's own style.
+///
+/// Abilities: True Collide.
+void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
   BattleEffect_RunDrainMotes(args, 2);
 }
 
@@ -168,7 +168,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   s32 palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;

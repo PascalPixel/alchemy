@@ -4,29 +4,15 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-// The packed preparer word: kind | side << 4 | anchor << 5.
-#define PREPARE_KIND(packed) ((packed) & 7)
-#define PREPARE_SIDE(packed) (((packed) >> 4) & 1)
-#define PREPARE_ANCHOR(packed) (((packed) >> 5) & 15)
-
-// The anchor that keeps the effect short (40 frames, no palette fade) and
-// brightens the backdrop from frame 24.
-#define ANCHOR_BRIGHTEN 6
-// The anchor whose effect runs 54 frames.
-#define ANCHOR_SHORT 8
-
-// The opening every Djinn effect shares: sparks gather from around the
-// caster, spin about a point travelling from the caster to the anchor, and
-// fall into it; a small Djinn (the kind) appears there at frame 54 and
-// bursts into motes at frame 64. The anchor's screen point goes to screen
-// and its world point to world.
+/// Sparks swirl around a point that travels from the user to the anchor and
+/// gather into a Djinni, which sways for 16 frames and bursts into motes.
+/// packed is DJINNI_ENTRANCE's; the anchor's screen point goes to screen and
+/// its world point to world.
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
                                     s32 *screen, s32 *world) {
-  s32 base[3];
+  s32 center[3];
   s32 goal[3];
   s32 step[3];
   s32 point[3];
@@ -35,49 +21,49 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   void *canvas;
   DrawRectangle draw[2];
   u8 *sheet;
-  s32 total;
+  s32 frameCount;
   struct MotionObject *target;
   struct MotionObject *actor;
   u8 *palette;
   s32 resource;
   s32 frame;
   s32 i;
-  s32 kind;
+  s32 element;
   s32 side;
   s32 anchor;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  kind = PREPARE_KIND(packed);
-  side = PREPARE_SIDE(packed);
-  anchor = PREPARE_ANCHOR(packed);
-  if (anchor == ANCHOR_BRIGHTEN) {
-    total = 40;
-  } else if (anchor == ANCHOR_SHORT) {
+  element = DJINNI_ENTRANCE_ELEMENT(packed);
+  side = DJINNI_ENTRANCE_SIDE(packed);
+  anchor = DJINNI_ENTRANCE_ANCHOR(packed);
+  if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING) {
+    frameCount = 40;
+  } else if (anchor == DJINNI_ANCHOR_OVER_TARGET_SHORT) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    total = 54;
+    frameCount = 54;
   } else {
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    if (kind > 3) {
-      kind -= 4;
-      total = 84;
+    if (element > ELEMENT_JUPITER) {
+      element -= DJINNI_ENTRANCE_LONG;
+      frameCount = 84;
     } else {
-      total = 55;
+      frameCount = 55;
     }
   }
 
   // The Djinn's palette, then its small picture.
-  switch (kind) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     resource = (s32)&ResourceId_BlastSheet;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     resource = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
@@ -86,14 +72,14 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   }
   palette = Resource_GetTableEntry(resource);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  switch (kind) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     resource = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
@@ -109,7 +95,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // Additive and max blitters, clipped (flipped for side 1).
-  if (side == 1) {
+  if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -131,7 +117,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     s32 angle = Random16() & 0xffff;
     s32 speed = (Random16() & 255) + 128;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(angle) * speed) >> 5;
@@ -140,83 +126,83 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The spin's centre moves from the caster to the anchor over frames 6-45.
-  base[0] = actor->x;
-  base[1] = 0;
-  base[2] = actor->z;
+  center[0] = actor->x;
+  center[1] = 0;
+  center[2] = actor->z;
   switch (anchor) {
-  case 0:
+  case DJINNI_ANCHOR_OVER_TARGET:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = target->z;
     break;
-  case 8:
+  case DJINNI_ANCHOR_OVER_TARGET_SHORT:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = target->z;
     break;
-  case 1:
+  case DJINNI_ANCHOR_TARGET_X:
     goal[0] = target->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 9:
+  case DJINNI_ANCHOR_HIGH_TARGET_X:
     goal[0] = target->x;
-    goal[1] = 0x780000;
+    goal[1] = px(120);
     goal[2] = 0;
     break;
-  case 2:
+  case DJINNI_ANCHOR_OVER_USER:
     goal[0] = actor->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = actor->z;
     break;
-  case 3:
+  case DJINNI_ANCHOR_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 4:
-  case 6:
+  case DJINNI_ANCHOR_CENTRE:
+  case DJINNI_ANCHOR_CENTRE_BRIGHTENING:
     goal[0] = 0;
-    goal[1] = 0x3c0000;
+    goal[1] = px(60);
     goal[2] = 0;
     break;
-  case 7:
+  case DJINNI_ANCHOR_LOW_CENTRE:
     goal[0] = 0;
-    goal[1] = 0x140000;
+    goal[1] = px(20);
     goal[2] = 0;
     break;
-  case 5:
+  case DJINNI_ANCHOR_HIGH_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x500000;
+    goal[1] = px(80);
     goal[2] = 0;
     break;
-  case 10:
+  case DJINNI_ANCHOR_LOW_USER_X:
     goal[0] = actor->x;
-    goal[1] = 0x1e0000;
+    goal[1] = px(30);
     goal[2] = 0;
     break;
   }
-  step[0] = (goal[0] - base[0]) / 40;
-  step[1] = (goal[1] - base[1]) / 40;
-  step[2] = (goal[2] - base[2]) / 40;
+  step[0] = (goal[0] - center[0]) / 40;
+  step[1] = (goal[1] - center[1]) / 40;
+  step[2] = (goal[2] - center[2]) / 40;
 
-  for (frame = 0; frame != total; frame++) {
+  for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame > 75)
       REG_BLDALPHA = (168 - frame * 2) | 0x1000;
-    if (anchor == ANCHOR_BRIGHTEN && frame > 23)
+    if (anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING && frame > 23)
       Palette_BrightenBattleBg(2, 2, 2);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= 6 && frame <= 45) {
-      base[0] += step[0];
-      base[1] += step[1];
-      base[2] += step[2];
+      center[0] += step[0];
+      center[1] += step[1];
+      center[2] += step[2];
     }
-    SceneTransform_ApplyPosition(base);
+    SceneTransform_ApplyPosition(center);
     if (frame == 0)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -302,7 +288,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = screen[0] << 15;
-        mote->y = screen[1] << 16;
+        mote->y = px(screen[1]);
         mote->velocityX = (Trig_Sin(angle) * speed) >> 6;
         mote->velocityY = (Trig_Cos(angle) * speed) >> 5;
         mote->variant = (Random16() & 15) + 8;
@@ -335,105 +321,154 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)
+/// Abilities: Slash, Wind Slash, Sonic Slash.
+void BattleEffect_RunSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SLASH);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunShuriken, BattleEffect_RunProjectileVolley,
-                   1)
+/// Abilities: Shuriken.
+void BattleEffect_RunShuriken(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SHURIKEN);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunCrazyVoice, BattleEffect_RunProjectileVolley,
-                   2)
+/// Abilities: Crazy Voice.
+void BattleEffect_RunCrazyVoice(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CRAZY_VOICE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingFlutter,
-                   BattleEffect_RunProjectileVolley, 3)
+/// Abilities: Wing Flutter.
+void BattleEffect_RunWingFlutter(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_FLUTTER);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingStroke, BattleEffect_RunProjectileVolley,
-                   11)
+/// Abilities: Wing Stroke.
+void BattleEffect_RunWingStroke(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_STROKE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
-                   4)
+/// Abilities: Wing Beat.
+void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_WING_BEAT);
+}
 
+/// From the user's action pose, one large comet in ice colours flies at each
+/// target and bursts into 80 sparks.
+///
+/// Abilities: Cutting Edge.
 void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 5);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CUTTING_EDGE);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, seven fireballs trailing embers fly at each
+/// target, two frames apart, each bursting into 40 sparks.
+///
+/// Abilities: Heat Wave.
 void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 6);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_HEAT_WAVE);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
+/// Abilities: Sleet.
+void BattleEffect_RunSleet(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_SLEET);
+}
 
+/// From the user's action pose, sixty ice chips stream at each target, one a
+/// frame, scattered up and down, without knocking it back.
+///
+/// Abilities: Blizzard.
 void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 9);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_BLIZZARD);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Steel, Blaze Rush.
 void BattleEffect_RunBlazeRush(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 12);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_BLAZE_RUSH);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Hydro Slash.
 void BattleEffect_RunHydroSlash(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 13);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_HYDRO_SLASH);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
+/// From the user's action pose, the projectile volley's shots fly at each
+/// target.
+///
+/// Abilities: Diamond Dust.
 void BattleEffect_RunDiamondDust(struct BattleEffectParams *args) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolley(args, 14);
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_DIAMOND_DUST);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunBeastNeedle,
-                   BattleEffect_RunProjectileVolley, 15)
+/// Abilities: Beast Needle.
+void BattleEffect_RunBeastNeedle(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_BEAST_NEEDLE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonSting,
-                   BattleEffect_RunProjectileVolley, 16)
+/// Abilities: Poison Sting.
+void BattleEffect_RunPoisonSting(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_POISON_STING);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunStunSting, BattleEffect_RunProjectileVolley,
-                   17)
+/// Abilities: Stun Sting.
+void BattleEffect_RunStunSting(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_STUN_STING);
+}
 
 /// Kind 402: Ice Breath and Blue Dragon.
-DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing,
-                   BattleEffect_RunProjectileVolley, 10)
+void BattleEffect_RunIceBlessing(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_ICE_BLESSING);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
-                   BattleEffect_RunProjectileVolley, 18)
+/// Abilities: Chill Breath.
+void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CHILL_BREATH);
+}
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-// The particle buffer at the map cell buffer: flashes from 0, sparks from
-// 100, smoke from 512, the falling-streak particles from 960.
+/// The particle buffer at the map cell buffer: flashes from 0, sparks from
+/// 100, smoke from 512, the falling-streak particles from 960.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define PTCL_SPARKS 100
 #define PTCL_SMOKE 512
@@ -441,20 +476,20 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define PTCL_MAX 1024
 
 // The five bytes of a mode in gProjectileVolley_Modes.
-#define VOLLEY_SHOTS 0   // shots at each target
-#define VOLLEY_STEPS 1   // frames a shot takes to reach its target
-#define VOLLEY_STAGGER 2 // frames between shots
-#define VOLLEY_DELAY 3   // frames between targets
-#define VOLLEY_SPARKS 4  // sparks on impact
+#define VOLLEY_SHOTS 0   ///< shots at each target
+#define VOLLEY_STEPS 1   ///< frames a shot takes to reach its target
+#define VOLLEY_STAGGER 2 ///< frames between shots
+#define VOLLEY_DELAY 3   ///< frames between targets
+#define VOLLEY_SPARKS 4  ///< sparks on impact
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
+/// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a
+/// heap slot.
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// The second blitter, loaded again for each draw that needs its own.
+/// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
-// Frees the second blitter after a draw.
+/// Frees the second blitter after a draw.
 #define RELEASE_DRAW_BLITTER()                                                 \
   do {                                                                         \
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);                                    \
@@ -463,6 +498,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
 
+/// Shots fly from the user to each target and burst into a flash and sparks
+/// when they pass it. The hit sound plays at most once every 8 frames.
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                       s32 mode) {
   struct ScreenPoint screen;
@@ -490,7 +527,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // Set up: the work, canvas, camera and sprite sheet, the canvas layer and
   // the Djinn's place when it circles first.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
@@ -498,19 +535,23 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   kind = args->variant;
   BattleEffect_StartCanvasLayer(1);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, 1 | args->side << 4 | 2 << 5, &screen,
-                                   &world);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
+        &screen, &world);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // A 128x128 blitter, mirrored for the other side.
-  if (mode == 5 || mode == 12 || mode == 13) {
-    if (args->side == 1)
+  if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+      mode == PROJECTILE_VOLLEY_BLAZE_RUSH ||
+      mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
+    if (args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
@@ -522,10 +563,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // The shot pictures.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == 0 || mode == 5 || mode == 8) {
-    if (mode == 5)
+  if (mode == PROJECTILE_VOLLEY_SLASH ||
+      mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+      mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
       kind = 2;
-    if (mode == 8)
+    if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
       kind = 0;
     if (kind == 0)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
@@ -536,7 +579,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
                                  work->sheet + 0x1000, 1, 1);
-    if (mode == 5) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
@@ -544,21 +587,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
                                work->sheet + 0x2000, 1, 0);
-    if (mode == 5) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, 128);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  } else if (mode >= 15 && mode <= 17) {
+  } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+             mode <= PROJECTILE_VOLLEY_STUN_STING) {
     for (i = 0; i != 8; i++)
       work->sheet[i] = 60;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FF, work->sheet, 1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-    if (mode == 15) {
+    if (mode == PROJECTILE_VOLLEY_BEAST_NEEDLE) {
       REG_BLDCNT = 0;
-    } else if (mode == 16) {
+    } else if (mode == PROJECTILE_VOLLEY_POISON_STING) {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry((s32)&ResourceId_LimePalette),
                            128);
@@ -571,31 +615,34 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                  work->sheet + 0x22, 1, 0);
     }
-  } else if (mode == 1) {
+  } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
     Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
                                1);
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (mode == 2) {
+  } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry((s32)&ResourceId_CometSheetA),
                          128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  } else if (mode == 3 || mode == 4 || mode == 11) {
+  } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+             mode == PROJECTILE_VOLLEY_WING_BEAT ||
+             mode == PROJECTILE_VOLLEY_WING_STROKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
                                1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  } else if (mode == 6 || mode == 12) {
+  } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE ||
+             mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
                                1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  } else if (mode == 14) {
+  } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1,
                                1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (mode == 13) {
+  } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
     // The beam is unpacked once and then halved, every second byte, into
     // place at 0x1000.
     u8 *beam;
@@ -636,79 +683,81 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       for (j = 0; j != shots; j++) {
         struct Particle *shot = &work->particles[i * shots + j];
 
-        if (mode >= 12 && mode <= 14)
+        if (mode >= PROJECTILE_VOLLEY_BLAZE_RUSH &&
+            mode <= PROJECTILE_VOLLEY_DIAMOND_DUST)
           shot->x = user->x * 2;
         else
           shot->x = user->x;
-        if (mode == 7)
-          shot->y = user->y + ((Random16() & 15) << 16) + 0x3a0000;
-        else if (mode == 10)
+        if (mode == PROJECTILE_VOLLEY_SLEET)
+          shot->y = user->y + px(Random16() & 15) + px(58);
+        else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->y = user->y + height / 2;
-        else if (mode == 18)
-          shot->y = user->y + 0x320000;
-        else if (mode == 6)
+        else if (mode == PROJECTILE_VOLLEY_CHILL_BREATH)
+          shot->y = user->y + px(50);
+        else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->y = user->y + height / 2;
-        else if (mode >= 12 && mode <= 14)
-          shot->y = user->y + height / 2 + ((Random16() % 80 - 16) << 16);
-        else if (mode == 9)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
-        else if (mode == 3 || mode == 4)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
-        else if (mode == 11)
-          shot->y = user->y + height / 2 + ((32 - (Random16() & 63)) << 16);
-        else if (mode == 5)
+        else if (mode >= PROJECTILE_VOLLEY_BLAZE_RUSH &&
+                 mode <= PROJECTILE_VOLLEY_DIAMOND_DUST)
+          shot->y = user->y + height / 2 + px(Random16() % 80 - 16);
+        else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
+          shot->y = user->y + height / 2 + px(16 - (Random16() & 31));
+        else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+                 mode == PROJECTILE_VOLLEY_WING_BEAT)
+          shot->y = user->y + height / 2 + px(16 - (Random16() & 31));
+        else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
+          shot->y = user->y + height / 2 + px(32 - (Random16() & 63));
+        else if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->y = user->y + height / 2;
-        else if (mode >= 15 && mode <= 17)
-          shot->y = user->y + ((Random16() % 24) << 16);
+        else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+                 mode <= PROJECTILE_VOLLEY_STUN_STING)
+          shot->y = user->y + px(Random16() % 24);
         else
           shot->y = user->y + height;
         shot->z = user->z;
         shot->velocityX = (target->x - shot->x) / steps;
         shot->velocityZ = (target->z - shot->z) / steps;
-        if (mode == 7) {
+        if (mode == PROJECTILE_VOLLEY_SLEET) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) /
-              steps;
-        } else if (mode == 8) {
+              (s32)(target->y + px(Random16() & 63) - shot->y - px(12)) / steps;
+        } else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 7) << 16) - shot->y + 0x160000) /
-              steps;
-        } else if (mode == 14) {
+              (s32)(target->y + px(Random16() & 7) - shot->y + px(22)) / steps;
+        } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
           shot->velocityY =
-              (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
-              steps;
-        } else if (mode == 9) {
+              (s32)(target->y + px(64 - (Random16() & 63)) - shot->y) / steps;
+        } else if (mode == PROJECTILE_VOLLEY_BLIZZARD) {
           shot->velocityY =
-              (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
-              steps;
-        } else if (mode >= 15 && mode <= 17) {
+              (s32)(target->y + px(64 - (Random16() & 63)) - shot->y) / steps;
+        } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+                   mode <= PROJECTILE_VOLLEY_STUN_STING) {
           shot->velocityY = shot->y / 32;
-        } else if (mode == 10) {
+        } else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
           // These start two steps along their flight.
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
-              steps;
+              (s32)(target->y + px(Random16() & 31) - shot->y + px(4)) / steps;
           shot->x += shot->velocityX * 2;
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
-        } else if (mode == 18) {
+        } else if (mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
-              steps;
+              (s32)(target->y + px(Random16() & 31) - shot->y + px(4)) / steps;
           shot->x += shot->velocityX * 2;
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
-        } else if (mode == 3 || mode == 4 || mode == 11 || mode == 5 ||
-                   mode == 12) {
+        } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+                   mode == PROJECTILE_VOLLEY_WING_BEAT ||
+                   mode == PROJECTILE_VOLLEY_WING_STROKE ||
+                   mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+                   mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
           shot->velocityY = 0;
-        } else if (mode == 6) {
+        } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
           shot->velocityY = (s32)(target->y + targetHeight / 2 +
-                                  ((Random16() & 15) << 16) - shot->y) /
+                                  px(Random16() & 15) - shot->y) /
                             steps;
         } else {
-          shot->velocityY = (s32)(target->y + targetHeight -
-                                  ((Random16() & 15) << 16) - shot->y) /
-                            steps;
+          shot->velocityY =
+              (s32)(target->y + targetHeight - px(Random16() & 15) - shot->y) /
+              steps;
         }
         shot->variant = 0;
       }
@@ -721,16 +770,20 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     for (i = 0; i != 64; i++) {
       struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
 
-      SET_POSITION(p, (origin.x / 2) << 16, px(80), 0);
+      SET_POSITION(p, px(origin.x / 2), px(80), 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
       p->velocityY = ((Random16() & 255) - 128) << 9;
       p->velocityZ = 0;
       p->variant = -1;
     }
 
-    if (mode == 6 || mode == 7)
+    if (mode == PROJECTILE_VOLLEY_HEAT_WAVE || mode == PROJECTILE_VOLLEY_SLEET)
       total = (args->targetCount - 1) * delay + shots * stagger + 52;
-    else if (mode == 2 || mode == 12 || mode == 13 || mode == 14 || mode == 16)
+    else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE ||
+             mode == PROJECTILE_VOLLEY_BLAZE_RUSH ||
+             mode == PROJECTILE_VOLLEY_HYDRO_SLASH ||
+             mode == PROJECTILE_VOLLEY_DIAMOND_DUST ||
+             mode == PROJECTILE_VOLLEY_POISON_STING)
       total = (args->targetCount - 1) * delay + shots * stagger + 48;
     else
       total = (args->targetCount - 1) * delay + shots * stagger + 32;
@@ -742,18 +795,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       if (seWait > 0)
         seWait--;
-      if (mode == 6 || mode == 12 || mode == 13 || mode == 14) {
+      if (mode == PROJECTILE_VOLLEY_HEAT_WAVE ||
+          mode == PROJECTILE_VOLLEY_BLAZE_RUSH ||
+          mode == PROJECTILE_VOLLEY_HYDRO_SLASH ||
+          mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
         if (frame == 4)
           Sound_PlayFar(CUE_FIRE);
         if (frame == 32)
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      } else if (mode == 2) {
+      } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
         if (frame == 32)
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
-      } else if (mode == 7) {
+      } else if (mode == PROJECTILE_VOLLEY_SLEET) {
         if (frame == 48)
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
-      } else if (mode != 5) {
+      } else if (mode != PROJECTILE_VOLLEY_CUTTING_EDGE) {
         if (frame == 16)
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
       }
@@ -766,7 +822,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         if (frame > 69)
           djinnY = djinnY - frame * 2 + 138;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -796,7 +852,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           if (j * stagger + targetDelay >= frame)
             continue;
           shot = &work->particles[i * shots + j];
-          if (mode >= 15 && mode <= 17 && shot->variant == 1)
+          if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+              mode <= PROJECTILE_VOLLEY_STUN_STING && shot->variant == 1)
             continue;
 
           // The screen position (the canvas is half as wide).
@@ -806,15 +863,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->x += shot->velocityX;
           shot->y += shot->velocityY;
           shot->z += shot->velocityZ;
-          if (mode == 6 || mode == 12) {
+          if (mode == PROJECTILE_VOLLEY_HEAT_WAVE ||
+              mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
             // Two puffs of smoke behind the fireball.
             shift = 0;
             for (k = PTCL_SMOKE; k != PTCL_STREAKS; k++) {
               struct Particle *p = &PARTICLES[k];
 
               if (p->variant == 0) {
-                p->x = position.x << 16;
-                p->y = position.y << 16;
+                p->x = px(position.x);
+                p->y = px(position.y);
                 p->velocityX = ((Random16() & 255) - 128) << 11;
                 p->velocityY = ((Random16() & 255) - 128) << 11;
                 p->variant = (Random16() & 7) + 32;
@@ -854,14 +912,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               struct Particle *flash = &PARTICLES[index];
 
               shot->variant = 1;
-              if (mode == 5) {
+              if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
                 EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-              } else if (mode != 6 && mode != 12 && mode != 13 && mode != 14 &&
+              } else if (mode != PROJECTILE_VOLLEY_HEAT_WAVE &&
+                         mode != PROJECTILE_VOLLEY_BLAZE_RUSH &&
+                         mode != PROJECTILE_VOLLEY_HYDRO_SLASH &&
+                         mode != PROJECTILE_VOLLEY_DIAMOND_DUST &&
                          seWait == 0) {
                 seWait = 8;
                 Sound_PlayFar(CUE_IMPACT);
               }
-              if (mode == 2) {
+              if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
                 // The pellet bounces off.
                 s32 kick = ((Random16() & 31) + 32) << 12;
 
@@ -873,18 +934,27 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               }
               flash->variant = 1;
               SET_POSITION(flash, pos->x, pos->y, 0);
-              if (mode != 7)
+              if (mode != PROJECTILE_VOLLEY_SLEET)
                 work->shakeFrames = 2;
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 8);
-              if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
-                  mode != 14 && mode != 15 && mode != 16 && mode != 17) {
-                if (mode == 5)
-                  BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+              if (mode != PROJECTILE_VOLLEY_SLEET &&
+                  mode != PROJECTILE_VOLLEY_BLIZZARD &&
+                  mode != PROJECTILE_VOLLEY_ICE_BLESSING &&
+                  mode != PROJECTILE_VOLLEY_CHILL_BREATH &&
+                  mode != PROJECTILE_VOLLEY_DIAMOND_DUST &&
+                  mode != PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+                  mode != PROJECTILE_VOLLEY_POISON_STING &&
+                  mode != PROJECTILE_VOLLEY_STUN_STING) {
+                if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
+                  BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                                 KNOCKBACK_HURL);
                 else
-                  BattleMotion_ApplyKnockbackFar(args->targets[i], 5);
+                  BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                                 KNOCKBACK_SKID);
               }
-              if (mode == 16 || mode == 17) {
+              if (mode == PROJECTILE_VOLLEY_POISON_STING ||
+                  mode == PROJECTILE_VOLLEY_STUN_STING) {
                 // The streak lets its particle loose.
                 s32 n;
                 s32 held;
@@ -894,15 +964,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   __asm__("" : "+r"(held));
                   PARTICLES[PTCL_STREAKS + j + n].variant = held;
                 }
-              } else if (mode != 15) {
+              } else if (mode != PROJECTILE_VOLLEY_BEAST_NEEDLE) {
                 // Sparks.
-                shift = mode == 5 ? 12 : 11;
+                shift = mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
                 for (k = PTCL_SPARKS; k != PTCL_SMOKE; k++) {
                   struct Particle *p = &PARTICLES[k];
 
                   if (p->variant == 0) {
-                    p->x = position.x << 16;
-                    p->y = position.y << 16;
+                    p->x = px(position.x);
+                    p->y = px(position.y);
                     p->velocityX = ((Random16() & 255) - 128) << shift;
                     p->velocityY = ((Random16() & 255) - 128) << shift;
                     p->variant = (Random16() & 7) + 16;
@@ -915,10 +985,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             }
           }
         draw_shot:
-          if (mode == 0 || mode == 5 || mode == 8) {
+          if (mode == PROJECTILE_VOLLEY_SLASH ||
+              mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+              mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
             // Only the comet's upper half is drawn; the lower half is the
             // same picture flipped.
-            if (args->side == 1)
+            if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                   BLITTER_MAX);
@@ -929,7 +1001,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                            pos->y - gProjectileVolley_CometHeights[kind], 32,
                            gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-            if (args->side == 1)
+            if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   BLITTER_MAX);
@@ -940,26 +1012,30 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
                            32, gProjectileVolley_CometHeights[kind]);
             RELEASE_DRAW_BLITTER();
-          } else if (mode == 1) {
+          } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
             if (ABS(shot->x) <= ABS(target->x))
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
                       pos->y - 12, 32, 24);
-          } else if (mode == 7 || mode == 9 || mode == 10 || mode == 18) {
+          } else if (mode == PROJECTILE_VOLLEY_SLEET ||
+                     mode == PROJECTILE_VOLLEY_BLIZZARD ||
+                     mode == PROJECTILE_VOLLEY_ICE_BLESSING ||
+                     mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
             draw[0](canvas,
                     work->sheet + gProjectileVolley_PelletPictures[j & 3],
                     pos->x - 4, pos->y - 4, 8, 8);
-          } else if (mode == 2) {
+          } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
             draw[0](canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8,
                     8, 16);
-          } else if (mode == 3) {
+          } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
             draw[0](canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
-          } else if (mode == 4) {
+          } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
             draw[0](canvas, work->sheet, pos->x - 6, pos->y - 4, 12, 8);
-          } else if (mode >= 15 && mode <= 17) {
+          } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
+                     mode <= PROJECTILE_VOLLEY_STUN_STING) {
             draw[0](canvas, work->sheet, pos->x - 8, pos->y - 1, 17, 2);
-          } else if (mode == 13) {
+          } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
             draw[0](canvas, work->sheet, pos->x - 12, pos->y - 12, 24, 24);
-          } else if (mode == 14) {
+          } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
             // Five crystals, each turning through three cels.
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
             u32 width;
@@ -973,7 +1049,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             height = gPrism_ShardHeights[cel];
             top = pos->y - (height >> 1);
             draw[0](canvas, picture, left, top, width, height);
-          } else if (mode == 11) {
+          } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
             draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
                     23);
           } else {
@@ -984,7 +1060,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // The comets' flashes, 12 frames: half the picture, then the same
       // half flipped (odd flashes use the picture turned on its side).
-      if (mode == 0 || mode == 5 || mode == 8) {
+      if (mode == PROJECTILE_VOLLEY_SLASH ||
+          mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+          mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
         for (i = 0; i != args->targetCount * shots; i++) {
           struct Particle *flash = &PARTICLES[i];
 
@@ -1070,7 +1148,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(p->x) - size / 2,
                   Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
-          if (mode == 13)
+          if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH)
             BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 4);
           else
             BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 16);
@@ -1095,7 +1173,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         }
       }
 
-      if (mode == 16) {
+      if (mode == PROJECTILE_VOLLEY_POISON_STING) {
         // Smoke billows up where each streak landed: six cels, four frames
         // each.
         for (i = 0; i != 64; i++) {
@@ -1109,7 +1187,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             p->variant++;
           }
         }
-      } else if (mode == 17) {
+      } else if (mode == PROJECTILE_VOLLEY_STUN_STING) {
         // Glints of water spray scatter about each landed streak, each with
         // a random palette.
         for (i = 0; i != 64; i++) {
@@ -1151,6 +1229,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
+/// Sends a unit back to its place (its anchor) with a hop.
 void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObj *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;

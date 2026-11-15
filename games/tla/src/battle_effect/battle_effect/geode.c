@@ -3,30 +3,19 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 struct MeshTriangle;
-struct Model;
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-struct ModelVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unk03;
-};
 
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 
-// Abilities: Geode.
-//
-// The Venus Djinni tears up the battlefield itself: the screen is copied
-// into a texture and peeled up into a spinning dome over the target as the
-// palette fades, the Djinni flies across to it, and at frame 48 the dome
-// slams down in rings of dust before the backdrop fades back in.
+/// The Venus Djinni tears up the battlefield itself: the screen is copied
+/// into a texture and peeled up into a spinning dome over the target as the
+/// palette fades, the Djinni flies across to it, and at frame 48 the dome
+/// slams down in rings of dust before the backdrop fades back in.
+///
+/// Abilities: Geode.
 void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -40,7 +29,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   s32 row;
   s32 curl;
   s32 pitch;
-  u8 *battle;
+  struct BattleWork *battle;
   u8 *picture;
   void *caster;
   s32 screenB[3];
@@ -54,20 +43,22 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(2);
-  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0xc0, screenA,
-                                 screenB);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_VENUS, args->side,
+                      DJINNI_ANCHOR_CENTRE_BRIGHTENING),
+      screenA, screenB);
   BattleEffect_ConfigureEffectDisplay();
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
                WINOUT_WINOBJ_ALL;
   transition[4] = 1;
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   } else {
@@ -85,7 +76,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   vertices = (struct ModelVertex *)(work->sheet + 0x800);
   mesh = work->sheet + 0xc00;
   pitch = 0;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   caster = BattleObject_GetFar(args->user)->object;
   gBgScroll[1].x = -56;
   // The battlefield's picture, later the dome's texture.
@@ -121,7 +112,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
 
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
-      u16 *from = (u16 *)(battle + 0x56c);
+      u16 *from = battle->palette;
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
@@ -183,7 +174,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     }
     if ((u32)(frame - 34) <= 5) {
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         REG_WIN0H = WIN_RANGE(32, 240);
         REG_WIN1H = WIN_RANGE(32, 240);
       } else {
@@ -208,7 +199,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       y = (t << 6) / 12 + 16;
       gBgScroll[1].x = 64 - x;
       gBgScroll[1].y = t * -46 / 12 + 78;
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x = x / 2 + 20;
       } else {
         x = x / 2 - 20;
@@ -276,7 +267,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       texture.logWidth = 8;
       texture.logHeight = 7;
       texture.pixels = picture;
-      model->unk04 = 3;
+      model->flags = 3;
       model->kind = 8;
       model->texture = &texture;
       model->mesh = mesh;
@@ -334,8 +325,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         }
         rings->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
-                                      gGeode_WaveHeights[i] << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x / 2 - 64),
+                                      px(gGeode_WaveHeights[i]), 0);
         SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
         Transform_ApplyPitch(1000);
         if (i & 1) {
@@ -354,12 +345,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0);
     }
     if (frame == 62) {
-      BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), -1);
+      BattleBackground_LoadFar(1, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
-      *(s32 *)(battle + 0x66c) = (frame << 13) - 0x7c000;
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)(BG_PLTT + 96),
-                           *(s32 *)(battle + 0x66c), 128);
+      battle->brightness = (frame << 13) - 0x7c000;
+      ColorBuffer_ScaleFar(battle->palette, (void *)(BG_PLTT + 96),
+                           battle->brightness, 128);
     }
     if (frame == 48) {
       work->shakeFrames = 16;

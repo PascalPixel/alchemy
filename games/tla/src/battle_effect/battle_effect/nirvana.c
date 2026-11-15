@@ -3,11 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
-
-// Nirvana's ring of sparks.
 
 /// A mote leaves the first target and is drawn as a ring of 24 sparks
 /// turning about it while it is pulled back to the user.
@@ -23,7 +19,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
@@ -112,28 +108,27 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The pixel half of a 16.16 fixed-point value.
+/// The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
   /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define ROCKS 21
 
-// Stone Justice: 21 boulders rise in a column beside the user and tumble
-// across the screen into the target, while the battle background slides
-// with them.
-//
-// Setup: canvas layer 1 at full width, the boulder sheet, one transparent
-// blitter, and the user's sprite group set apart (48) for the length of
-// the effect.
-// Frame loop (107 frames): the boulders are thrown at frame 0 and spin as
-// they fly; from frame 64 the background scrolls after them and each
-// boulder turns toward the target; every boulder that reaches the target
-// shakes the screen and knocks the target back.
+/// Stone Justice: 21 boulders rise in a column beside the user and tumble
+/// across the screen into the target, while the battle background slides
+/// with them.
+///
+/// Setup: canvas layer 1 at full width, the boulder sheet, one transparent
+/// blitter, and the user's sprite group set apart (48) for the length of
+/// the effect.
+/// Frame loop (107 frames): the boulders are thrown at frame 0 and spin as
+/// they fly; from frame 64 the background scrolls after them and each
+/// boulder turns toward the target; every boulder that reaches the target
+/// shakes the screen and knocks the target back.
+///
+/// Abilities: Bane, Stone Justice.
 void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -150,10 +145,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   s32 hit;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -179,7 +173,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     if (frame == 0) {
       for (i = 0; i != ROCKS; i++) {
         rock = &work->particles[i];
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           rock->x = px(Random16() % 40 + 8);
         else
           rock->x = px(120 - Random16() % 40);
@@ -197,7 +191,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 
     // From frame 64 the background follows the boulders, ever faster.
     if (frame > 64) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         scroll += scrollSpeed;
       else
         scroll -= scrollSpeed;
@@ -224,7 +218,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
            Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
            gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           if (targetPosition.x >
               Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
             rock->variant = 1;
@@ -241,7 +235,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       BattleEffectKernels_IntegrateVector2(rock, 60, 0);
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           rock->velocityX -= px(1) / 2;
         else
           rock->velocityX += px(1) / 2;
@@ -303,7 +297,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -334,7 +328,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 0xff) + 256;
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
-          spark->x = position.x << 16;
+          spark->x = px(position.x);
           spark->y = px(96 - (Random16() & 31));
           spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
@@ -509,59 +503,23 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct FxPartyList;
-struct Model;
-struct ModelVertex;
-struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
- * tla-ja. */
-struct ModelTexture__f16d130 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
-/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
- * tla-ja. */
-struct RenderModel__f16d130 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f16d130 *texture;
-  const void *shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
+/// A point projected onto the screen: x, y and depth.
 struct ProjectedPoint {
   s32 x, y, depth;
 };
 
-void Render_ProjectVertices__ability_effects(
-    struct ModelVertex *vertices, struct ProjectedVertex *screen,
-    s32 count) __asm__("Render_ProjectVertices");
-#define Render_ProjectVertices Render_ProjectVertices__ability_effects
-
-// One model vertex: signed byte coordinates, padded to a word.
-
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
 
-// Abilities: Serac.
-//
-// The Mercury Djinni drops onto the target, dust bursting where it lands;
-// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
-// first frame) grows up around the target in rings of mist while the
-// camera circles, the caster closes in at frame 56, and at 64 the spire
-// shatters into 64 tumbling shards.
+/// The Mercury Djinni drops onto the target, dust bursting where it lands;
+/// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
+/// first frame) grows up around the target in rings of mist while the
+/// camera circles, the caster closes in at frame 56, and at 64 the spire
+/// shatters into 64 tumbling shards.
+///
+/// Abilities: Serac.
 void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -572,15 +530,18 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   u8 *mistSheet;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     BattleEffect_StartTiledCanvasFilled(0x2000);
   } else {
     BattleEffect_StartTiledCanvas(0x2000);
   }
-  BattleEffect_RunDjinniEntrance(args, (args->side << 4) | 0x101, screenA,
-                                 screenB);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side,
+                      DJINNI_ANCHOR_OVER_TARGET_SHORT),
+      screenA, screenB);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -607,8 +568,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     s32 world[3];
     struct ProjectedPoint point;
     struct ProjectedPoint dropScreen;
-    struct ModelTexture__f16d130 texture;
-    struct RenderModel__f16d130 *model;
+    struct ModelTexture texture;
+    struct RenderModel *model;
     void *vertices;
     u8 color[1];
     s32 savedScrollX;
@@ -690,12 +651,12 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         } else {
           turn = 1600 - frame * 20;
         }
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           camera->yaw -= turn;
         } else {
           camera->yaw += turn;
         }
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           if ((s16)camera->yaw < -14000) {
             camera->yaw = -14000;
           }
@@ -722,7 +683,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         screen.x = 176;
       }
       gCameraSceneParameters[3] = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, 0x30000);
+      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, px(3));
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -760,7 +721,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       // The Djinni falls.
       if (frame <= 29) {
         point.x = target->x;
-        point.y = 0x3c0000 - (frame << 17);
+        point.y = px(60) - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
         Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
@@ -848,7 +809,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           }
         } else {
           model->kind = 2;
-          model->unk04 = 0;
+          model->flags = 0;
           model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
           for (i = 0; i != 64; i++) {
@@ -887,7 +848,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = (const u8 *)work->sheet;
           model->kind = 6;
-          model->unk04 = 3;
+          model->flags = 3;
           model->vertices = vertices;
           model->scrollU = 0;
           model->texture = &texture;
@@ -901,7 +862,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             scale = 60000;
           }
           model->shade = (const void *)spireShade;
-          SceneTransform_ApplyPosition3(target->x, -0x40000, target->z);
+          SceneTransform_ApplyPosition3(target->x, -px(4), target->z);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapGridCellBuffer, vertices, 64);
           Render_DrawModelList(model);
@@ -910,7 +871,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = 7;
           model->scrollU = 0;
           model->scrollV = (frame / 2) & 31;
-          model->unk04 = 2;
+          model->flags = 2;
           Render_DrawModelList(model);
           Transform_Pop();
 
@@ -921,7 +882,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->kind = 7;
           model->texture = &texture;
           model->mesh = gBattleEffect_CylinderMesh;
-          model->unk04 = 0;
+          model->flags = 0;
           model->vertices = vertices;
           model->scrollU = 0;
           model->scrollV = 0;
@@ -943,8 +904,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             }
             Transform_Push();
             model->shade = (const void *)shade;
-            SceneTransform_ApplyPosition3(
-                target->x, gSerac_RingHeights[i] << 16, target->z);
+            SceneTransform_ApplyPosition3(target->x, px(gSerac_RingHeights[i]),
+                                          target->z);
             SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);
@@ -964,11 +925,15 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Heavy Divide (kind 101).
-void BattleEffect_RunHeavyDivide(s32 a0) { BattleEffect_RunHeavyBlow(a0, 0); }
+/// Abilities: Heavy Divide.
+void BattleEffect_RunHeavyDivide(struct BattleEffectParams *args) {
+  BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_HEAVY_DIVIDE);
+}
 
-/// Abilities: Strong Hit (kind 469).
-void BattleEffect_RunStrongHit(s32 a0) { BattleEffect_RunHeavyBlow(a0, 1); }
+/// Abilities: Strong Hit.
+void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
+  BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_STRONG_HIT);
+}
 #undef BLITTER
 #undef ROCKS
 #undef SPARK_OFFSET

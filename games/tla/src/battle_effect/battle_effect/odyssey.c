@@ -4,11 +4,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
-
-struct Model;
 
 #define KIND125_FRAMES 114
 
@@ -27,7 +23,7 @@ union BattleBackgroundId {
 // address of its pixels.
 
 // A model for the ARM renderer (Render_DrawModelList). A textured model (kind
-// 7) takes a shade; a flat one (kind 3) the address of its colour.
+// 7) takes a shade; a flat one the address of its colour.
 /* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
@@ -35,7 +31,7 @@ union BattleBackgroundId {
  * member named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;
-  s32 unk04;
+  s32 flags;
   const u16 *mesh;
   void *vertices;
   struct ModelTexture *texture;
@@ -45,15 +41,15 @@ struct RenderModel__f190b74 {
   } look;
 };
 
-void Render_DrawModelList(struct Model *model);
-
-// Effect kind 125, 114 frames. The screen turns to a scrolling red haze
-// with only the caster and the target on it (frame 2); two textured flashes
-// rise from the caster, two claws strike the target from above and below
-// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86
-// a great slash crosses the screen and at 90 the target is struck and 128
-// flat shards scatter, tumbling; from frame 100 everything fades to white,
-// and at the end the battle backdrop returns.
+/// 114 frames. The screen turns to a scrolling red haze
+/// with only the caster and the target on it (frame 2); two textured flashes
+/// rise from the caster, two claws strike the target from above and below
+/// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86
+/// a great slash crosses the screen and at 90 the target is struck and 128
+/// flat shards scatter, tumbling; from frame 100 everything fades to white,
+/// and at the end the battle backdrop returns.
+///
+/// Abilities: Odyssey.
 void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   struct ScreenPoint to;
   struct ScreenPoint from;
@@ -76,7 +72,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   s32 flatKind;
   u8 *pixels;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -87,7 +83,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                              work->sheet + 0x2f10, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -182,10 +178,10 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           angle += TRIG_TURN / 2;
         shard->x = px(to.x / 2);
-        shard->y = to.y << 16;
+        shard->y = px(to.y);
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
@@ -199,7 +195,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame > 85) {
       s32 x;
 
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x = 2872 - frame * 32;
         if (x < -38)
           x = -38;
@@ -209,7 +205,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           x = 0;
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
       else
@@ -249,7 +245,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
 
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             if (i != 0)
               angle += TRIG_TURN / 4;
           } else if (i == 0) {
@@ -259,7 +255,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           }
           spark = &work->particles[i * 32 + k];
           spark->x = px(to.x / 2);
-          spark->y = to.y << 16;
+          spark->y = px(to.y);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           spark->variant = (Random16() & 7) + 17;
@@ -275,7 +271,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 y;
 
         if (age <= 8) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             x = to.x / 2 - age * 10 + 80;
           else
             x = to.x / 2 + age * 10 - 80;
@@ -285,14 +281,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
             y = 168 - age * 16;
         } else {
           // DEAD: both arms alike; the ROM keeps the test of effect->side.
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             x = to.x / 2;
           else
             x = to.x / 2;
           y = i == 0 ? 8 : 40;
         }
         if (i == 1) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                 BLITTER_MAX);
@@ -336,7 +332,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
@@ -362,7 +358,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         model->look.shade = 0;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
+        SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
         Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
@@ -383,7 +379,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((to.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3(px(to.x / 2 - 64), 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
@@ -442,13 +438,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The swirl runs until A is pressed, at most this many frames.
+/// The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
 
+/// Copies the swirl's colours into background palette entries 96 on.
 static inline s32 Swirl_CopyPalette(const void *source) {
   return Iwram_CopyWordsEntry((void *)&BG_PLTT[96], source, 128);
 }
 
+/// Draws a size by size square of the swirl at x along the top of the buffer.
 static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
                              const void *canvas, s32 x, s32 size) {
   return draw(buffer, canvas, x, 0, size, size);
@@ -475,7 +473,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(3);
@@ -588,7 +586,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
    * frame's outgoing argument word at sp+0. */
   if (0)
@@ -639,6 +637,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
+/// An actor's child sprite, as Actor_SetActiveChildParam sets its mode.
 struct ChildObject {
   u8 unk00[5];
   u8 mode;
@@ -646,6 +645,7 @@ struct ChildObject {
   s32 active;
 };
 
+/// An actor's group of child sprites.
 struct ChildGroup {
   u8 unk00[25];
   u8 dirty;
@@ -765,8 +765,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// camera at (120, 120), reloads the battle palette and redraws the battle's
 /// own backdrop over the summon's.
 void Iris_RestoreBattle(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->battleBackground;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -778,7 +777,7 @@ void Iris_RestoreBattle(void) {
 
     SET_POSITION(object, 0, px(120), 0);
     object->verticalMotionStrength = 0xab85;
-    BattleMotion_ApplyKnockbackFar(work->args->targets[i], 1);
+    BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->active = 0;
   gCameraSceneParameters[3] = 120;

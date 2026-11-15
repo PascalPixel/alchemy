@@ -4,9 +4,14 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
+
+/// The particle streams' modes (BattleEffect_RunParticleStreams).
+enum ParticleStreamsMode {
+  PARTICLE_STREAMS_METEOR,     ///< one spawned sprite falls
+  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated sprites
+                               ///< fall in the lightning bolt's colours
+};
 
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
@@ -37,21 +42,19 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 // Unused: a second copy of Nereid's summon effect.
 
-struct FxPartyList;
-
-// The map cell buffer holds the embers.
+/// The map cell buffer holds the embers.
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define EMBER_COUNT 1024
-#define PILLAR_SHEET 0x6e4 // the fire pillar after the spray in the sheet
+#define PILLAR_SHEET 0x6e4 ///< the fire pillar after the spray in the sheet
 
 #define FORMATION 649
 #define FORMATION_SIZE 12
 
 #define SCENE_FRAMES 124
-#define SKIP_FROM_FRAME 32 // A or B jumps from here...
-#define SKIP_TO_FRAME 98   // ...to here
+#define SKIP_FROM_FRAME 32 ///< A or B jumps from here...
+#define SKIP_TO_FRAME 98   ///< ...to here
 #define FIRST_SPOUT_FRAME 28
-#define SPOUT_FRAME 32 // the embers spout and the pillars rise until frame 79
+#define SPOUT_FRAME 32 ///< the embers spout and the pillars rise until frame 79
 #define SPOUT_END_FRAME 80
 #define RESULTS_FRAME 120
 
@@ -77,7 +80,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   u8 *palette;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -293,8 +296,7 @@ extern const struct Scale gFormationObjects_LargeScale;
 /// formations, the last three (4: eleven objects from signed columns, 5: twelve
 /// in a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct Scale normal = gFormationObjects_Scale;
   struct Scale big = gFormationObjects_LargeScale;
   s32 pos[4];
@@ -321,36 +323,36 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos[0] = (gHelmSplitter_TwelveX[i] << 16) + x - px(16);
-      pos[2] = (gHelmSplitter_TwelveZ[i] << 16) + z - px(32);
+      pos[0] = px(gHelmSplitter_TwelveX[i]) + x - px(16);
+      pos[2] = px(gHelmSplitter_TwelveZ[i]) + z - px(32);
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gHelmSplitter_RightEightX[i] << 16) + x + px(16);
-      pos[2] = (gHelmSplitter_RightEightZ[i] << 16) + z;
+      pos[0] = px(gHelmSplitter_RightEightX[i]) + x + px(16);
+      pos[2] = px(gHelmSplitter_RightEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 6:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gFormationObjects_X[i] << 16) + x;
-      pos[2] = (gFormationObjects_Z[i] << 16) + z;
+      pos[0] = px(gFormationObjects_X[i]) + x;
+      pos[2] = px(gFormationObjects_Z[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 3:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gHelmSplitter_SmallEightX[i] << 16) + x;
-      pos[2] = (gHelmSplitter_SmallEightZ[i] << 16) + z;
+      pos[0] = px(gHelmSplitter_SmallEightX[i]) + x;
+      pos[2] = px(gHelmSplitter_SmallEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &big.x, 0);
     }
     break;
   case 4:
     for (i = 0; i != 11; i++) {
-      pos[0] = (gFormationObjects_WideX[i] << 16) + x;
-      pos[2] = (gFormationObjects_WideZ[i] << 16) + z;
+      pos[0] = px(gFormationObjects_WideX[i]) + x;
+      pos[2] = px(gFormationObjects_WideZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
@@ -359,6 +361,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 #define SHARD_E 0x59d8
 
+/// Opens an impact flash and scatters sparks and fragments, keeping the
+/// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -370,7 +374,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   orgX = x;
@@ -611,11 +615,14 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
+void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
+  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
+}
 
 /// The particle streams in mode 1.
-DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
-                   1)
+void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
+  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
+}
 
 #undef EMBERS
 
@@ -623,23 +630,23 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 // SUMMON_EFFECT_NONE) and the outer space scene run, with its nested helpers
 // AddFlame and AddMote (unused).
 
-// The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
-// tiles), then, in the second act, the flashes and the embers.
+/// The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
+/// tiles), then, in the second act, the flashes and the embers.
 #define FLASHES ((struct Particle *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-// The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
+/// The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
 #define HEAT_LINES(work) ((u16 *)((u8 *)(work) + 0x7640))
 
-// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
-// the COMPOSITE_ flags in the low one.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+/// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
+/// the COMPOSITE_ flags in the low one.
 
 #define STREAM_FRAMES 192
 #define BLAST_FRAMES 54
-#define BLAST_FLASH_FRAME 16 // the flashes rise from here
+#define BLAST_FLASH_FRAME 16 ///< the flashes rise from here
 #define BLAST_HIT_FRAME 48
 
+/// A flame sprite as the particle streams set its priority and flags.
 struct FxAnimObject {
   u8 unk00[9];
   u8 unk09_0 : 2;
@@ -649,19 +656,9 @@ struct FxAnimObject {
   u8 flags;
 };
 
-// Meteor: the screen goes dark and the ground dissolves away from the top;
-// a sun (or, in mode 1, two great flames the user throws) climbs over a
-// spinning ring of seven orbs while burning drops rain and the sky glows from
-// a heat palette under every scanline; then the scene bursts: embers fountain
-// up, flashes rise from the target, and the sun swells over the enemies.
-//
-// Act one (192 frames, A or B ends it after frame 4, or 16 in mode 1): the
-// dark backdrop, a noise of 256 bright pixels on the canvas, the ground
-// eaten away row by row, the HBlank heat palette and the BG2 scroll; each
-// frame the heat lines, the objects, a new mote, the orbs, the drops (each
-// becomes a flame where it lands) and the motes. Act two (54 frames): the
-// blast pictures, 32 motes, 128 flashes and 512 embers; the palette
-// brightens from frame 36, the hit at 48.
+/// Meteor's scene: the ground dissolves, a sun climbs over a ring of orbs while
+/// burning drops rain, then embers fountain up and the sun swells over the
+/// enemies.
 void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   u8 offsets[128];
@@ -714,9 +711,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  work = Ram_HeapSlots->battleEffect;
+  EFFECT_START_NARROW_CANVAS(0x2000);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
   /* FAKEMATCH(temporary): mode tested through its copy in direction. */
@@ -728,7 +724,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     user->verticalMotionStrength = 0x91eb;
     BattleEffect_TintBattler(args->user, TINT_KEEP, 2, TINT_KEEP, 0);
     Sound_PlayFar(SE_CRASH);
-    direction = args->side == 1 ? mode : -1;
+    direction = args->side == EFFECT_SIDE_PARTY ? mode : -1;
   } else {
     direction = -1;
   }
@@ -743,7 +739,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
-  if (mode == 1) {
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct FxAnimObject *flame = Sprite_CreateFar(638 + i * 0x2001);
 
@@ -758,7 +754,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     BattleEffect_SpawnObjects(1, 650, 3);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
-  if (mode == 1)
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
@@ -883,7 +879,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       asm("" : "=r"(base) : "0"(base), "r"(count) : "r1", "r3");
       line = HEAT_LINES(base);
 
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
@@ -945,13 +941,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         x = 64 - frame / 4;
       y = 96 - frame;
       position[3] = 0;
-      position[1] = 0xff0000;
-      if (mode == 1) {
+      position[1] = px(255);
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x500000;
-        position[2] = (64 - y) << 16;
+        position[0] = px(x) + px(80);
+        position[2] = px(64 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
         Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
@@ -960,8 +956,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + TRIG_TURN;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x600000;
-        position[2] = (96 - y) << 16;
+        position[0] = px(x) + px(96);
+        position[2] = px(96 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
       }
@@ -989,9 +985,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
-        vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
-        vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
+        vector[0] = px(gParticleStreams_OrbitPoints[i][0] / 2);
+        vector[1] = px(gParticleStreams_OrbitPoints[i][1] + frame);
+        vector[2] = px(gParticleStreams_OrbitPoints[i][2] / 2);
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
         pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
@@ -1013,8 +1009,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                gParticleStreams_FireballPoints[i][0] + x - 12, drop - 12, 24,
                24);
         else if (drop <= 95)
-          AddFlame((gParticleStreams_FireballPoints[i][0] + x) << 16,
-                   drop << 16, 1);
+          AddFlame(px(gParticleStreams_FireballPoints[i][0] + x), px(drop), 1);
       }
 
       // The motes drift up and away, six pictures each.
@@ -1099,7 +1094,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     if (frame == 40)
       Sound_PlayFar(SE_CRASH);
     if (frame == BLAST_HIT_FRAME) {
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         Sprite_DestroyFar(work->sprites[0]);
         Sprite_DestroyFar(work->sprites[1]);
         BattleObject_PutFar();
@@ -1194,19 +1189,19 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     y = 64 - frame * 2;
     grow = (frame << 8) + 0x20000;
     position[3] = 0;
-    position[1] = 0xff0000;
-    if (mode == 1) {
+    position[1] = px(255);
+    if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
+      position[0] = px(x) + px(96);
+      position[2] = px(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
       Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
+      position[0] = px(x) + px(96);
+      position[2] = px(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
     }
     work->shakeFrames = 1;
@@ -1216,7 +1211,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  if (mode == 0)
+  if (mode == PARTICLE_STREAMS_METEOR)
     Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }

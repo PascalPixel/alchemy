@@ -3,20 +3,11 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-struct HalfPair {
-  u16 x;
-  u16 y;
-};
-
+/// Two corners of a wing, each signed x, y and z.
 struct WingVertex {
   s8 x;
   s8 y;
@@ -30,19 +21,22 @@ struct WingVertex {
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
 extern struct WingVertex Data_020104f0[];
-extern const struct HalfPair gHaures_FeatherPoints[];
+extern const u16 gHaures_FeatherPoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
 static __inline__ void PLACE(s32 x, s32 y) {
-  SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
+  SceneTransform_ApplyPosition3(px(x), px(y), 0);
 }
-/// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
-/// vortex and dives through the foes, scattering into black feathers.
+/// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
+/// a violet glow and a rune flashes; the demon rears in a burning cave, then
+/// charges through the foes in streaks of fire that end in a white flash.
+///
+/// Abilities: Haures.
 void BattleEffect_RunHaures(struct BattleEffectParams *args) {
-  u8 *battle;
+  struct BattleWork *battle;
   u8 *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
@@ -74,7 +68,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   shades = Data_02010fa0;
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(0);
@@ -223,7 +217,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         position.y = px(120);
         velocity.x = 0;
         velocity.y = 0;
-        Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
+        Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle->palette,
+                             256);
         {
           u8 *q = shades;
 
@@ -358,7 +353,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0, 0x240000, 0);
+          SceneTransform_ApplyPosition3(0, px(36), 0);
           Transform_ApplyPitch(4000);
           Transform_ApplyYaw(-t << 8);
           s = t << 10;
@@ -377,7 +372,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->vertices = verts;
           model->shade = sh;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0, 0x240000, 0);
+          SceneTransform_ApplyPosition3(0, px(36), 0);
           s = (t * 3 << 8) + 1024;
           if (s > 38768) {
             s = 38768;
@@ -414,7 +409,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               Data_020104f0[i].x = i * 4 - 64;
             }
           }
-          model->unk04 = 0;
+          model->flags = 0;
           model->kind = 1;
           model->mesh = strip;
           model->vertices = buffer;
@@ -453,7 +448,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           req.y = px(1);
           for (i = 0; i != 2; i++) {
             bodyPlace[0] = position.x;
-            bodyPlace[1] = 0x1100000 - (position.y + i * 0x200000);
+            bodyPlace[1] = px(272) - (position.y + i * px(32));
             bodyPlace[2] = 0x1000000;
             Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                               (s32 *)&req, 0);
@@ -489,7 +484,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             req.y = px(2);
           }
           bodyPlace[0] = position.x;
-          bodyPlace[1] = 0x780000 - position.y;
+          bodyPlace[1] = px(120) - position.y;
           bodyPlace[2] = 0x800000;
           Render_ApplyProjectedPlacementFar(work->sprites[18], bodyPlace,
                                             (s32 *)&req, 0);
@@ -538,7 +533,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(0, -0x40000, 0);
+        SceneTransform_ApplyPosition3(0, -px(4), 0);
         s = 0x1d8f0;
         if (frame > 268) {
           s = (frame << 12) - 0xef710;
@@ -563,7 +558,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             burstTexture.pixels = buffer;
             model->mesh = gHaures_BurstMesh;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(0, -0x40000, 0);
+            SceneTransform_ApplyPosition3(0, -px(4), 0);
             SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
@@ -601,8 +596,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               s32 x = q[0] >> 1;
               s32 y = q[1];
 
-              p->x = x << 16;
-              p->y = y << 16;
+              p->x = px(x);
+              p->y = px(y);
               {
                 s32 velocityY = (60 - y) << 10;
 
@@ -633,9 +628,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               velocity.x; // velocity.x, not velocity.y, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.x;
+          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
@@ -694,8 +689,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
                 (p->y >> 16) >= -16 && (p->y >> 16) <= 136) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000,
-                                            0);
+              SceneTransform_ApplyPosition3(p->x - px(64), p->y - px(64), 0);
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               switch (i & 3) {
               case 0:
@@ -833,8 +827,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         s32 angle;
         s32 speed;
 
-        p->x = (((Random16() & 63) - 16) << 16) + position.x / 2;
-        p->y = ((Random16() & 31) << 16) + position.y;
+        p->x = px((Random16() & 63) - 16) + position.x / 2;
+        p->y = px(Random16() & 31) + position.y;
         angle = Random16();
         speed = (Random16() & 127) + 128;
         p->velocityX = Trig_Sin(angle) * speed >> 7;
@@ -851,18 +845,18 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       if ((u32)t <= 19) {
         openingScale.x = -0x10001;
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = position.x - (gHaures_FeatherPoints[i].x << 16);
+          bodyPlace[0] = position.x - px(gHaures_FeatherPoints[i][0]);
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       } else {
         for (i = 0; i != 11; i++) {
-          bodyPlace[0] = (gHaures_FeatherPoints[i].x << 16) + position.x;
+          bodyPlace[0] = px(gHaures_FeatherPoints[i][0]) + position.x;
           bodyPlace[1] =
-              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.y);
+              px(272) - (px(gHaures_FeatherPoints[i][1]) + position.y);
           bodyPlace[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
@@ -940,10 +934,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           x = m * 20 - 16;
           Transform_Reset();
           if (i == 0) {
-            SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
+            SceneTransform_ApplyPosition3(px(x), px(y), 0);
             Transform_ApplyRoll(-TRIG_TURN / 8);
           } else {
-            SceneTransform_ApplyPosition3((x - 16) << 16, y << 16, 0);
+            SceneTransform_ApplyPosition3(px(x - 16), px(y), 0);
             Transform_ApplyRoll(0x27d0);
           }
           SceneTransform_ApplyScale3(Q16_ONE * 3, amp, Q16_ONE * 2);
@@ -999,11 +993,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The two rings sit at y = -36 and y = -18.
+/// The two rings sit at y = -36 and y = -18.
 #define FIRST_RING_Y -36
 #define RING_SPACING 18
 
-// Each side of the band shows an 8 x 16 column of the texture.
+/// Each side of the band shows an 8 x 16 column of the texture.
 #define COLUMN_WIDTH 8
 #define COLUMN_HEIGHT 16
 
@@ -1015,12 +1009,12 @@ struct MeshTriangle {
   u8 unk0a[2];
 };
 
-// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
-// `segments` vertices of radius 96 around the y axis, and two textured
-// triangles for each side of the band, joining the first ring (texture row 0)
-// to the second (row 15). A triangle whose three vertices are 0 ends the list.
-// Coatlicue builds it with 32 segments into the buffers at 0x02014400 and
-// 0x02014800.
+/// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
+/// `segments` vertices of radius 96 around the y axis, and two textured
+/// triangles for each side of the band, joining the first ring (texture row 0)
+/// to the second (row 15). A triangle whose three vertices are 0 ends the list.
+/// Coatlicue builds it with 32 segments into the buffers at 0x02014400 and
+/// 0x02014800.
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments) {
   s32 ring;

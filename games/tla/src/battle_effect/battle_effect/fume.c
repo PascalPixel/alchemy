@@ -3,67 +3,26 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
+/// One corner of the plume: signed x, y and depth.
 struct Corner {
   s8 x;
   s8 y;
   s8 z;
 };
 
-/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunFume moves: 2 of 625 instructions in tla-ja.
- */
-struct RenderModel__f17c6ac {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
-struct StarTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-// Columns of gFume_Levels, one row per Fume level (effect->variant): the
-// plume's width, the frame its tail starts, its arc's height, the sparks'
-// spread, count and lift.
-enum {
-  FUME_WIDTH,
-  FUME_TAIL_START,
-  FUME_HEIGHT,
-  FUME_SPREAD,
-  FUME_SPARKS,
-  FUME_LIFT,
-  FUME_COLUMNS
-};
-
-extern const u16 gFume_Levels[][FUME_COLUMNS];
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 
-// Abilities: Fume.
-//
-// A band of smoke arcs from the caster to the target (33 segments of two
-// vertices each, a scrolling textured strip), its head growing 44 units a
-// frame and its tail following from the level's start frame; a claw strikes
-// at the arc's end until frame 22, when the target is hit, pushed back and
-// sparks burst from it. The camera shakes harder at higher levels.
+/// A band of smoke arcs from the caster to the target (33 segments of two
+/// vertices each, a scrolling textured strip), its head growing 44 units a
+/// frame and its tail following from the level's start frame; a claw strikes
+/// at the arc's end until frame 22, when the target is hit, pushed back and
+/// sparks burst from it. The camera shakes harder at higher levels.
+///
+/// Abilities: Fume, Serpent Fume, Dragon Fume.
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -84,7 +43,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct ScreenPoint caster;
   struct ScreenPoint target;
   struct ModelTexture texture;
-  struct RenderModel__f17c6ac *model;
+  struct RenderModel *model;
   struct Particle *spark;
   struct Particle *particle;
   s32 i;
@@ -92,7 +51,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   u8 *strip;
   struct Corner *corners;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -238,10 +197,10 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
-          SceneTransform_ApplyPosition3((caster.x / 2 - 64) << 16,
-                                        (caster.y << 16) + 0xffc00000, 0);
+          SceneTransform_ApplyPosition3(px(caster.x / 2 - 64),
+                                        px(caster.y) + 0xffc00000, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 1) {
+          if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           SceneTransform_ApplyUniformScale(Q16_ONE * 4);
@@ -255,7 +214,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
             texture.logHeight = 6;
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
-            SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
+            SceneTransform_ApplyPosition3(px(endX), px(endY), 0);
             Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
             SceneTransform_ApplyUniformScale(width * 28 / 32);
             Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);

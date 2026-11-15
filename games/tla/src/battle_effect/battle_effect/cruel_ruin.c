@@ -4,20 +4,15 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "resource_ids.h"
-#include "macros.h"
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // The battle background's id, read through a union whose s32 member gives
@@ -34,22 +29,17 @@ union BattleBackgroundId__f13eb70 {
 #define BACKGROUND(battle)                                                     \
   (((union BattleBackgroundId__f13eb70 *)&(battle)->background)->id)
 
-// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
-// the map cell buffer.
+/// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
+/// the map cell buffer.
 #define PLOT(x, y)                                                             \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
 
 // The target's picture shatters, for the scenes.
 
-// A grey circle spreads from (96, 60) over the battle background, 32 pixels
-// of radius a frame for four frames, while the picture in the canvas breaks
-// into 33 pieces that fly outward and fall. Colours 6 to 13 start white and
-// step back to the battle background's own colours from frame 8; colour 1
-// brightens from black to white. At frame 51 a flash sheet replaces the
-// pieces, and 32 flashes rise from x 32-63, y 80-111, one more every four
-// frames. At the end the background and the display are put back.
-
+/// The screen turns white and the picture breaks into 33 pieces that fly apart
+/// and fall, while a grey disc grows over it and the battle background's
+/// colours return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -100,9 +90,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;
@@ -138,8 +127,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     s32 x, y, vx, vy;
 
     piece = &work->particles[i];
-    x = gDeathPlunge_PieceStartX[i] << 16;
-    y = gDeathPlunge_PieceStartY[i] << 16;
+    x = px(gDeathPlunge_PieceStartX[i]);
+    y = px(gDeathPlunge_PieceStartY[i]);
     piece->x = x;
     piece->y = y;
     vx = (x - 0x200000) >> 2;
@@ -387,19 +376,13 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 // sparks' four blitters are loaded through BattleEffect_BuildBlitter directly,
 // with all five arguments.
 
-// The rising sparkles live in the map cell buffer.
+/// The rising sparkles live in the map cell buffer.
 #define gSparkles ((struct Particle *)Ram_MapCellBuffer)
 
 // Light gathering on the user and bursting, for the scenes.
 
-// For the first 15 frames four sparks flare at the user's corners, each
-// mirrored to face the middle; 64 motes spiral in from a ring around the
-// user, shrinking as they come. At frame 26 the first target flashes with a
-// sound, and from frame 28 to 48 a 48x48 burst plays out over seven
-// pictures. effect->kind picks the colours (yellow, ice, red or violet). The
-// last 6 frames fade out. The 128 sparkles set up in the map cell buffer are
-// never drawn.
-
+/// Sparks in an element's colours flare at four corners around a unit and motes
+/// spiral in, then a burst of light plays over it.
 void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   struct ScreenPoint ground;
   struct BattleEffectWork *work;
@@ -610,11 +593,11 @@ void BattleEffect_DrawStreaks(void) {
 void BattleEffect_DimBackgroundStep(void) {
   struct BattleFxFadeWork *work =
       (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
-  u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
   if (work->framesLeft > 0) {
     work->step++;
-    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+    ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                          0x10000 - work->step * 1092, 128);
     work->framesLeft--;
   }
@@ -625,9 +608,8 @@ void BattleEffect_DimBackgroundStep(void) {
 // The battle background's id.
 #define BACKGROUND(battle) ((battle)->background)
 
-// Raises the light-streak backdrop in colour set kind (yellow, crystal,
-// ember, violet or dust).
-
+/// Starts the element streaks, which then draw by themselves while the battle
+/// runs on.
 void BattleEffect_StartElementStreaks(s32 kind) {
   struct StreakSceneWork *work;
   void *canvas;
@@ -661,9 +643,8 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   wait(1);
   BattleEffect_SetupCanvasWindows();
   REG_BG2PA = Q_8_8(1);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
 
   i = 0;
@@ -721,19 +702,15 @@ void BattleEffect_EndElementStreaks(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-struct Model;
-
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode2)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
-// Forwarded so that a constant size reaches the call's register at each call.
-
-// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
-// rains ruin in six blasts while the ground splits, then a black sphere
-// bursts over the foes.
+/// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
+/// rains ruin in six blasts while the ground splits, then a black sphere
+/// bursts over the foes.
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   s32 place[4];
@@ -764,7 +741,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   s32 u;
   struct RuinObject *obj;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
@@ -1007,7 +984,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               s32 sc = 0x80000 - s;
 
               Transform_Reset();
-              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-px(4), -px(44), 0);
               SceneTransform_ApplyScale3(sc / 2, sc, sc);
               Transform_ApplyYaw(gCruelRuin_DiscYaws[i]);
               Transform_ApplyPitch(gCruelRuin_DiscPitches[i]);
@@ -1026,7 +1003,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           }
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
+          SceneTransform_ApplyPosition3(-px(4), -px(44), 0);
           SceneTransform_ApplyScale3(sc >> 1, sc, sc);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -1051,7 +1028,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             texture.pixels = gData_02014000;
             t <<= 9;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
+            SceneTransform_ApplyPosition3(-px(4), -px(44), 0);
             SceneTransform_ApplyScale3(sc, sc / 3, sc >> 1);
             Transform_ApplyRoll(t);
             if (shade > -64) {
@@ -1069,7 +1046,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               }
               model->shade = shade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-px(4), -px(44), 0);
               SceneTransform_ApplyScale3(sc, sc >> 1, sc >> 1);
               Transform_ApplyRoll(t);
               Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -1078,7 +1055,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           }
         }
         if (frame > 123) {
-          ((struct ModelTextureB *)&texture)->logWidth = 5;
+          texture.logWidth = 5;
           texture.logHeight = 2;
           texture.pixels = work->sheet + 0x3648;
           model->mesh = gBattleEffect_SmallSquareMesh;
@@ -1095,7 +1072,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                 sy = 80000;
               }
               Transform_Reset();
-              SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
+              SceneTransform_ApplyPosition3(-px(4), -px(44), 0);
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyRoll(p->z);
               SceneTransform_ApplyScale3(30384, sy, Q16_ONE / 2);
@@ -1132,8 +1109,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             model->shade = shade;
             texture.pixels = work->sheet + 0x3688;
             Transform_Reset();
-            SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000,
-                                          0);
+            SceneTransform_ApplyPosition3(q->x - px(63), q->y - px(64), 0);
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyRoll(0xa000);
             SceneTransform_ApplyScale3(r * 9400, Q16_ONE * 2, Q16_ONE / 2);
@@ -1361,7 +1337,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         if (frame == 0) {
           p->y = frame;
           p->variant = frame;
-          p->x = gCruelRuin_StreakX[i] << 16;
+          p->x = px(gCruelRuin_StreakX[i]);
         }
         if (frame >= start && frame < start + 32) {
           s32 size = 0;
@@ -1371,16 +1347,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           s32 scale = 0;
           size = gCruelRuin_StreakSizes[i];
 
-          if (p->y < gCruelRuin_StreakEndY[i] << 16) {
-            p->x -= gCruelRuin_StreakStepX[i] << 16;
-            p->y += gCruelRuin_StreakStepY[i] << 16;
+          if (p->y < px(gCruelRuin_StreakEndY[i])) {
+            p->x -= px(gCruelRuin_StreakStepX[i]);
+            p->y += px(gCruelRuin_StreakStepY[i]);
           } else {
             p->variant++;
           }
           p->x += px(8);
           Transform_Reset();
-          px = p->x + -0x400000;
-          py = p->y + -0x400000;
+          px = p->x - px(64);
+          py = p->y - px(64);
           SceneTransform_ApplyPosition3(px, py, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           angle = gCruelRuin_StreakRolls[i];
@@ -1444,16 +1420,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Transform_Reset();
             x = -0x180000;
             if (t >= 0) {
-              x = (t << 16) + -0x180000;
+              x = px(t) - px(24);
             }
             if (i == 0) {
               if (t > 31) {
-                x += (t * 7 - 224) << 16;
+                x += px(t * 7 - 224);
               }
             } else if (t > 15) {
-              x += (t * 7 - 112) << 16;
+              x += px(t * 7 - 112);
             }
-            SceneTransform_ApplyPosition3(x, -0x100000, 0);
+            SceneTransform_ApplyPosition3(x, -px(16), 0);
             SceneTransform_ApplyScale3(45536, Q16_ONE, Q16_ONE / 2);
             if (i == 0) {
               Transform_ApplyRoll(-0xbe8);
@@ -1469,7 +1445,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       Heap_Release(verts);
       req = gCruelRuin_UnitScale;
       place[3] = 0;
-      place[1] = 0xff0000;
+      place[1] = px(255);
       scrollX += 0x180000;
       if (scrollX > 0x1fffff) {
         phase = (phase + 7) % 8;
@@ -1485,7 +1461,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           s32 k_ = 64;
           s32 tile = i + k_ + phase;
           place[0] = (i << 21) + scrollX;
-          place[2] = 0x790000 + (j << 21);
+          place[2] = px(121) + (j << 21);
           /* FAKEMATCH(dead): a store both arms below overwrite. */
           if (i == 300 && row == j && last == 0)
             u = 0;
@@ -1523,7 +1499,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             obj->attr.all = x | v;
           }
           if (place[0] > 0xffffff) {
-            place[0] += -0x1200000;
+            place[0] += -px(288);
           }
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], place,
                                             (s32 *)&req, 0);
@@ -1683,7 +1659,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                               Q_16_16_UPPER_HALF(q->y), r);
           }
           Transform_Reset();
-          SceneTransform_ApplyPosition3(q->x + -0x3f0000, q->y + -0x400000, 0);
+          SceneTransform_ApplyPosition3(q->x - px(63), q->y - px(64), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(0xa000);
           SceneTransform_ApplyScale3(r * 9400, Q16_ONE * 2, Q16_ONE / 2);

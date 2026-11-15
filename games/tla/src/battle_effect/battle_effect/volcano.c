@@ -3,19 +3,17 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
-#include "macros.h"
 
 #define PILLAR_FRAMES 96
 
-// One, two or four pillars of fire rise in front of the targets, one after
-// another; each burns for the rest of the first 64 frames, scrolling its
-// flames upward, throws a burst of sparks when it starts and a few more
-// every frame after its sixteenth, and strikes every target as it starts.
+/// One, two or four columns of fire rise among the targets, each erupting in a
+/// fountain of sparks and knocking the targets back.
+///
+/// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
+/// Storm.
 void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -30,7 +28,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the pillar sheet, the particle sprites, the
   // variant's palette and two max blitters, the second mirrored.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -38,13 +36,13 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
-  } else if (args->variant == 2) {
+  } else if (args->variant == EFFECT_VARIANT_STRONGEST) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -68,8 +66,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     struct Particle *base = &work->particles[i];
     s32 x;
 
-    x = ((Random16() & 15) + 72) << 16;
-    SET_POSITION(base, x, 0, gVolcano_Depths[args->variant][i] << 16);
+    x = px((Random16() & 15) + 72);
+    SET_POSITION(base, x, 0, px(gVolcano_Depths[args->variant][i]));
     if (object->x < 0)
       base->x = -x;
   }
@@ -79,8 +77,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (frame = 0; frame != PILLAR_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
-    if (args->variant == 2 && frame < 64) {
-      if (args->side == 0)
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
+      if (args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
@@ -158,7 +156,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           for (i = 0; i != args->targetCount; i++) {
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                      POSE_DAMAGE, i, 8);
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
           }
         }
       }
@@ -204,3 +202,4 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+#undef PILLAR_FRAMES

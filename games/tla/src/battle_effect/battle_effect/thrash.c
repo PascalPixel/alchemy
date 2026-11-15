@@ -6,87 +6,80 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Battle effects: sparks after approaching the target (type 4).
-
 /// Jumps the user toward the first target and emits type 4 sparks after 29
 /// frames.
-/// effect: effect arguments.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 12.2.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
   wait(29);
   args->variant = 4;
-  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
+  BattleEffect_RunSparkGroups(
+      args, SPARK_GROUPS_RISING); // 2: from the user's position.
 }
 
+/// The user leaps at the first target, waits 26 frames, and the spark groups
+/// burst below it as the strongest variant.
+///
+/// Abilities: Mighty Press.
 void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 0x18, 0xc3333);
   wait(26);
   args->variant = 5;
-  BattleEffect_RunSparkGroups(args, 2);
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
-
-// Battle effects: sparks after approaching the target (type 3).
 
 /// Jumps the user toward the first target and emits type 3 sparks after 12
 /// frames.
-/// effect: effect arguments.
 void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
   wait(12);
   args->variant = 3;
-  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
+  BattleEffect_RunSparkGroups(
+      args, SPARK_GROUPS_RISING); // 2: from the user's position.
 }
 
-/// Abilities: Quick Strike (kind 52).
-void BattleEffect_RunQuickStrike(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 1);
+/// Abilities: Quick Strike.
+void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 1);
 }
 
-/// Abilities: Vorpal Slash (kind 65).
-void BattleEffect_RunVorpalSlash(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 2);
+/// Abilities: Vorpal Slash.
+void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 2);
 }
 
-/// Abilities: Lunar Slash (kind 118).
-void BattleEffect_RunLunarSlash(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 3);
+/// Abilities: Lunar Slash.
+void BattleEffect_RunLunarSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 3);
 }
 
-/// Abilities: Boost Hack (kind 109).
-void BattleEffect_RunBoostHack(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 4);
+/// Abilities: Boost Hack.
+void BattleEffect_RunBoostHack(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 4);
 }
 
-/// Abilities: Twin Shear (kind 425).
-void BattleEffect_RunTwinShear(s32 a0) {
-  BattleEffect_RunFlashingStrike(a0, 5);
+/// Abilities: Twin Shear.
+void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
+  BattleEffect_RunFlashingStrike(args, 5);
 }
 
 #undef RESULTS_FRAME
 
-// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
-// variant's are half as tall.
+/// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
+/// variant's are half as tall.
 #define PICTURE_SIZE 120
 #define PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE)
 #define HALF_PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
 
 #define REVEAL_FRAMES 21
-#define FLOOD_FRAME 16 // the pictures end and the canvas floods
+#define FLOOD_FRAME 16 ///< the pictures end and the canvas floods
 #define RESULTS_FRAME 18
 #define HIT_FRAME 20
 
-// A picture flashes up over the target (four pictures, four frames each), the
-// canvas floods with one colour, and the target is struck.
-//
-// Setup: open the canvas, load the variant's four pictures (two into the
-// sheet, two into the map cell buffer), move the user up to the target, and
-// build the blitters. Each frame shows the current picture for its time,
-// floods the canvas from frame 16 to 19, and shakes the camera; results at
-// frame 18, the hit at 20.
+/// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                                     s32 variant) {
   struct BattleEffectWork *work;
@@ -94,7 +87,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   DrawRectangle draw[2];
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   if ((u32)(variant - 3) > 2)
@@ -161,7 +154,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -169,7 +162,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
   else
@@ -223,7 +216,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);

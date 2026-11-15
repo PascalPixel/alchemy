@@ -4,23 +4,21 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
-struct Model;
+/// The leaping strike's modes (BattleEffect_RunLeapingStrike).
+enum LeapingStrikeMode {
+  LEAPING_STRIKE_PLANET_DIVER,
+  LEAPING_STRIKE_PLANETARY
+};
+
 struct StripQuad;
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 extern const struct Scale gTrident_UnitScale;
 
-// Abilities: Trident (Poseidon).
-//
-// Poseidon (four objects) rises behind the targets as rings of foam
-// spread across the water; seven spinning tridents fly in from frame 18,
-// spray bursts up around them, and at 64 the waters strike every target.
+/// Poseidon (four objects) rises behind the targets as rings of foam
+/// spread across the water; seven spinning tridents fly in from frame 18,
+/// spray bursts up around them, and at 64 the waters strike every target.
 void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -48,16 +46,15 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   s32 paletteBase;
   DrawRectangle draw;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(4, 664, 1);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(16, 136);
@@ -175,8 +172,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         placement[3] = 0;
         placement[1] = px(255);
         for (i = 0; i != 4; i++) {
-          placement[0] = (left << 17) + 0x100000;
-          placement[2] = (rise + 40 + i * 32) << 16;
+          placement[0] = (left << 17) + px(16);
+          placement[2] = px(rise + 40 + i * 32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&source, 0);
         }
@@ -209,7 +206,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           s32 sine;
 
           sine = Trig_Sin(heading) * speed;
-          x = centerX << 16;
+          x = px(centerX);
           p->x = (sine >> 4) + x;
           p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
           angle += TRIG_TURN * 3 / 4;
@@ -244,7 +241,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       texture.pixels = (void *)cells;
       model->kind = 7;
       model->texture = &texture;
-      model->unk04 = 0;
+      model->flags = 0;
       model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;
@@ -268,8 +265,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      gTrident_RingHeights[i] << 16, 0);
+        SceneTransform_ApplyPosition3(px(centerX - 64),
+                                      px(gTrident_RingHeights[i]), 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -315,14 +312,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           }
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((centerX - 64) << 16, 0x200000, 0);
+          SceneTransform_ApplyPosition3(px(centerX - 64), px(32), 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           spinner->z += spinner->velocityZ;
           SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
-          Render_TransformVertices(gTrident_ProngCorners + x * 16, vertices, 4);
+          Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
       }
@@ -336,7 +333,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       const u8 *cellTable;
 
       if (frame == 64) {
-        for (i = 0, p = work->particles, x = centerX << 16; i != 32; i++, p++) {
+        for (i = 0, p = work->particles, x = px(centerX); i != 32; i++, p++) {
           s32 angle = Random16();
           s32 speed = (Random16() & 511) + 512;
           s32 velocityY;
@@ -346,7 +343,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->velocityY = velocityY;
           if (i > 15) {
             p->x = (p->velocityX << 2) + x;
-            p->y = (velocityY << 2) + 0x640000;
+            p->y = (velocityY << 2) + px(100);
             p->variant = (16 - i) / 4;
           } else {
             p->x = x;
@@ -431,23 +428,25 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Planet Diver (kind 60).
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, BattleEffect_RunLeapingStrike,
-                   0)
+/// Abilities: Planet Diver.
+void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
+  BattleEffect_RunLeapingStrike(args, LEAPING_STRIKE_PLANET_DIVER);
+}
 
-/// Abilities: Planetary (kind 128).
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
+/// Abilities: Planetary.
+void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
+  BattleEffect_RunLeapingStrike(args, LEAPING_STRIKE_PLANETARY);
+}
 
 #define LEAP_FRAMES 88
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
 
-// The leaping strike family (BattleEffect_RunPlanetDiver is mode 0,
-// BattleEffect_RunPlanetary mode 1; effect kinds 60 and 128). The caster
-// flashes and sixteen flames ring it (frames 2-15), leaps up at frame 4 and
-// comes down on the target at frame 16, sliding to it over the frames after; on
-// landing 256 sparks burst from it. In mode 0 the caster then shows a fireball
-// and one target is struck; in mode 1 a claw slashes in 3D, three rings and two
-// pillars spread, every target is struck and at frame 50 all are thrown back.
+/// The caster flashes and sixteen flames ring it (frames 2-15), leaps up at
+/// frame 4 and comes down on the target at frame 16, sliding to it over the
+/// frames after; on landing 256 sparks burst from it. For Planet Diver the
+/// caster then shows a fireball and one target is struck; for Planetary a claw
+/// slashes in 3D, three rings and two pillars spread, every target is struck
+/// and at frame 50 all are thrown back.
 void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint pos;
   struct ModelTexture texture;
@@ -466,7 +465,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
@@ -475,7 +474,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  if (mode == 0) {
+  if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                                work->sheet + 0x3000, 1, 0);
   } else {
@@ -490,14 +489,14 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        128);
   // The blitter faces the caster's side.
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (mode == 0)
+  if (mode == LEAPING_STRIKE_PLANET_DIVER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -545,7 +544,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         caster->velocityX = -px(8);
       else
         caster->velocityX = px(8);
-      if (mode == 1)
+      if (mode == LEAPING_STRIKE_PLANETARY)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
       work->shakeFrames = 4;
@@ -558,7 +557,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       s32 slide = 16;
 
       caster->verticalMotionStrength = 0;
-      if (mode == 0)
+      if (mode == LEAPING_STRIKE_PLANET_DIVER)
         caster->z = target->z;
       else
         caster->z = 0;
@@ -592,7 +591,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             angle = Random16() & 0xffff;
 
             speed += 32;
-            spark->x = pos.x << 16;
+            spark->x = px(pos.x);
             spark->y = px(pos.y - 24);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -600,15 +599,16 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             spark++;
           }
           work->shakeFrames = 4;
-          if (mode == 0) {
+          if (mode == LEAPING_STRIKE_PLANET_DIVER) {
             EFFECT_SHOW_DAMAGE(SE_CRASH);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
           } else {
             Sound_PlayFar(SE_CRASH);
             for (i = 0; i != args->targetCount; i++) {
-              BattleMotion_ApplyKnockbackFar(args->targets[i], 3);
+              BattleMotion_ApplyKnockbackFar(args->targets[i],
+                                             KNOCKBACK_LAUNCH);
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 16);
             }
@@ -616,7 +616,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         }
       }
 
-      if (mode == 0) {
+      if (mode == LEAPING_STRIKE_PLANET_DIVER) {
         // The fireball over the caster while it is in the air.
         if (caster->y > 0)
           draw[0](canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52, 40, 64);
@@ -645,10 +645,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         model->shade = shade;
         if (frame <= 45) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
-                                        0);
+          SceneTransform_ApplyPosition3(px(pos.x - 60), px(pos.y - 80), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(-0x3388);
           } else {
             Transform_ApplyYaw(TRIG_TURN / 2);
@@ -683,7 +682,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               Transform_Reset();
               model->scrollV = (frame * 8 + i * 16) & 63;
               SceneTransform_ApplyPosition3(
-                  (pos.x - 60) << 16, gLeapingStrike_WaveHeights[i] << 16, 0);
+                  px(pos.x - 60), px(gLeapingStrike_WaveHeights[i]), 0);
               SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -730,7 +729,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               model->scrollU = scroll << 4;
               Transform_Reset();
               SceneTransform_ApplyPosition3(
-                  (base->x - 60) << 16, gLeapingStrike_RingHeights[i] << 16, 0);
+                  px(base->x - 60), px(gLeapingStrike_RingHeights[i]), 0);
               SceneTransform_ApplyScale3(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
               Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
@@ -744,7 +743,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (mode == 1 && frame == 50) {
+    if (mode == LEAPING_STRIKE_PLANETARY && frame == 50) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++)
         BattleEffect_StartActorMotion(args->targets[i], 1, 0x40000, 0x100000,
@@ -793,8 +792,6 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
-
-// The triangles of a grid mesh.
 
 /// Fills a grid of columns by rows vertices with two triangles a cell, each
 /// cell cellWidth by cellHeight texels of the texture, and ends the list with

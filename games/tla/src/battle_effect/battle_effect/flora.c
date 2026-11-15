@@ -3,29 +3,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-// Flora, the blossom spirit's summon.
+// Flora's summon.
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
-/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunFlora moves: 2 of 2567 instructions in
- * tla-ja. */
-struct ModelTexture__f179f18 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
+/// A sprite as Flora reads it: its tile, flags and resource.
 struct FloraObject {
   u8 unk0[8];
   u16 tile : 10;
@@ -53,14 +37,17 @@ struct FloraWork {
 #define w ((struct FloraWork *)petals)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
+/// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the sheet's address through this inline. */
   return owner->sheet;
 }
 
-/// Flora: petals swirl in on the wind, the blossom spirit rises among them,
-/// her spiral of light and its rings sweep the field, and a storm of petals
-/// strikes the foes.
+/// Flora: after a flash, petals blow across a violet sky and Flora drifts in
+/// among them while rings of light spin about her; then a storm of petals
+/// sweeps over the foes.
+///
+/// Abilities: Flora.
 void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -86,7 +73,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u32 u;
   s32 place[4];
   struct Scale req;
-  struct ModelTexture__f179f18 texture;
+  struct ModelTexture texture;
   struct RenderModel *model;
   void *verts;
   struct Particle *p;
@@ -102,7 +89,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   struct ScreenPoint fadeRingPoint;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   petals = (s32)&gData_02014000;
@@ -281,7 +268,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dy = 0;
     place[3] = 0;
     dx = 0;
-    place[1] = 0xff0000;
+    place[1] = px(255);
     if (frame <= 119) {
       posX = Trig_Sin(0xcd00) * 24 + 0x980000;
       posY = Trig_Cos(0xcd00) * 20 + 0x2c0000;
@@ -339,8 +326,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     if (frame > 111) {
       for (i = 0; i != 12; i++) {
-        place[0] = posX + ((i % 3 * 32 + dx) << 16);
-        place[2] = posY + ((i / 3 * 32 + dy) << 16);
+        place[0] = posX + px(i % 3 * 32 + dx);
+        place[2] = posY + px(i / 3 * 32 + dy);
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
@@ -459,8 +446,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == start) {
-          w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+          w->x[i] = px(Random16() & 7) + px(92);
+          w->y[i] = px(Random16() & 7) + px(104);
           w->vx[i] = (Random16() & 0xffff) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
@@ -468,8 +455,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             w->x[i] += w->vx[i];
             w->y[i] += w->vy[i];
           } else if (frame <= 251) {
-            w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-            w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+            w->x[i] = px(Random16() & 7) + px(92);
+            w->y[i] = px(Random16() & 7) + px(104);
           }
         }
       } else if (i <= 31) {
@@ -480,16 +467,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
+          w->x[i] = px(Random16() & 7) + px(168);
+          w->y[i] = px(Random16() & 7) + px(92);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+          w->x[i] = px(Random16() & 7) + px(92);
+          w->y[i] = px(Random16() & 7) + px(104);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
@@ -513,8 +500,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->tiles[Data_02014002[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {
-      place[0] = w->x[i] + -0x80000;
-      place[2] = w->y[i] + -0x80000;
+      place[0] = w->x[i] - px(8);
+      place[2] = w->y[i] - px(8);
       Render_ApplyProjectedPlacementFar(work->sprites[12 + i], place,
                                         (s32 *)&req, 0);
     }
@@ -543,8 +530,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(gFlora_BloomX[i] << 16,
-                                        gFlora_BloomY[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(gFlora_BloomX[i]),
+                                        px(gFlora_BloomY[i]), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(gFlora_BloomRolls[i]);
           Transform_ApplyPitch(gFlora_BloomPitches[i]);
@@ -813,7 +800,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           s->variant = 15;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
         }
@@ -844,9 +831,9 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
       object->velocityY += px(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
-      x = object->x + 0xf0000;
+      x = object->x + px(15);
     else
-      x = object->x - 0xf0000;
+      x = object->x - px(15);
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
@@ -856,12 +843,12 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
 }
 
 #define DAGGER_FRAMES 96
-#define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn
-#define DAGGER_FALL_FRAME 80 // the daggers turn and fall on the target
+#define DAGGER_COUNT 8       ///< of the 32 steps set up, the first 8 are drawn
+#define DAGGER_FALL_FRAME 80 ///< the daggers turn and fall on the target
 #define DAGGER_LAST_HIT 90
 
-// A dagger's texture: log2 of its width and height in the first word (32x32
-// here), then its pixels.
+/// A dagger's texture: log2 of its width and height in the first word (32x32
+/// here), then its pixels.
 struct DaggerTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -869,6 +856,7 @@ struct DaggerTexture {
   void *pixels;
 };
 
+/// One entry of the model list Flora draws its dagger with.
 struct RenderPrimitive {
   s32 kind;
   s32 unk04;
@@ -878,15 +866,16 @@ struct RenderPrimitive {
   s32 unk14;
 };
 
-// Crossed daggers. The canvas is moved over the target. Eight daggers rise
-// spinning from below it, and the target is struck eight times, six frames
-// apart from frame 20: each strike shakes the screen, flashes the target and
-// knocks it up. At frame 80 the daggers turn point down in a fan above the
-// target and plunge into it; the last strike, at frame 90, starts the
-// result phase.
+/// Crossed daggers. The canvas is moved over the target. Eight daggers rise
+/// spinning from below it, and the target is struck eight times, six frames
+/// apart from frame 20: each strike shakes the screen, flashes the target and
+/// knocks it up. At frame 80 the daggers turn point down in a fan above the
+/// target and plunge into it; the last strike, at frame 90, starts the
+/// result phase.
+///
+/// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct DaggerTexture texture;
   struct ScreenPoint target;
   struct Particle *dagger;
@@ -918,7 +907,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
 
       for (i = 0, zero = 0, y = px(128), dagger = work->particles; i != 32;
            i++, dagger++) {
-        SET_POSITION(dagger, ((Random16() & 63) + 32) << 16, y, Random16());
+        SET_POSITION(dagger, px((Random16() & 63) + 32), y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
@@ -1009,6 +998,7 @@ struct FxSlot {
   u8 hidden;
 };
 
+/// A sprite record as Flora sets its priority.
 struct FxRecord {
   u8 unk00[9];
   u8 low : 2;
@@ -1030,18 +1020,20 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 }
 
 #define STAR_FRAMES 60
-#define STAR_LEAP_FRAME 16  // the caster leaps at the target
-#define STAR_BURST_FRAME 32 // and strikes it
+#define STAR_LEAP_FRAME 16  ///< the caster leaps at the target
+#define STAR_BURST_FRAME 32 ///< and strikes it
 #define SMOKE_COUNT 32
 #define STAR_COUNT 16
-#define STAR_CELS 0x3e80 // the pink star's six 16x16 cels, after the smoke's
+#define STAR_CELS 0x3e80 ///< the pink star's six 16x16 cels, after the smoke's
 
-// A pink star burst. Smoke puffs from the caster for its first 24 frames
-// while the caster stands just past the target; at frame 16 it leaps at
-// the target, and at frame 32 the palette turns pink, the caster lands
-// beside the target, which is knocked back and flashes, and sixteen pink
-// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
-// whole effect.
+/// A pink star burst. Smoke puffs from the caster for its first 24 frames
+/// while the caster stands just past the target; at frame 16 it leaps at
+/// the target, and at frame 32 the palette turns pink, the caster lands
+/// beside the target, which is knocked back and flashes, and sixteen pink
+/// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
+/// whole effect.
+///
+/// Abilities: Backstab.
 void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -1056,7 +1048,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct Particle *step;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

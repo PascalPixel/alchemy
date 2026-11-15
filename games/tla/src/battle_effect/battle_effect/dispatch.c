@@ -4,9 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-
-// Battle effects: repeat an empty effect.
 
 /// Calls the empty BattleEffect_DoNothing cnt times without waiting for frames.
 /// cnt: call count.
@@ -31,7 +28,7 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   if (args->kind == SUMMON_EFFECT_NONE) {
@@ -140,7 +137,7 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   gBattleEffect_Handlers[args->kind - 1](args);
@@ -149,6 +146,8 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
+/// Builds window 0's right edge for every line and restarts the DMA that writes
+/// it.
 void BattleEffect_BuildWindowEdgeTable(void) {
   u16 *edge;
   u16 *line;
@@ -182,14 +181,14 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 }
 
 /// Spawns the battle objects of each unit in the list that has HP left.
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {
+void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party) {
   s16 list[14];
   s32 count = 0;
   s32 i;
 
-  for (i = 0; i != party->count; i++) {
-    if (((struct FxUnit *)Unit_Get(party->ids[i]))->hp > 0)
-      list[count++] = party->ids[i];
+  for (i = 0; i != party->targetCount; i++) {
+    if (((struct BattleUnit *)Unit_Get(party->targets[i]))->hp > 0)
+      list[count++] = party->targets[i];
   }
   list[count] = 0xff;
   BattleActor_SpawnObjectsForListFar(list, 0);

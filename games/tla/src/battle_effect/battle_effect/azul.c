@@ -4,24 +4,13 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
 struct MeshTriangle;
-struct Model;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-struct AzulVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unk3;
-};
-
+/// One face of the serpent's mesh: its three corners and their texture
+/// coordinates.
 struct AzulFace {
   u8 corner[3];
   u8 unk3;
@@ -29,8 +18,8 @@ struct AzulFace {
   u8 unkA[2];
 };
 
-// A sprite object as Azul edits it: its tile number in the low ten bits of
-// the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
+/// A sprite object as Azul edits it: its tile number in the low ten bits of
+/// the halfword at 8, its priority bits in the byte at 9 and its shape at 18.
 struct AzulObject {
   u8 unk0[8];
   u16 tile : 10;
@@ -40,7 +29,7 @@ struct AzulObject {
   u16 shape;
 };
 
-// Clamps a sprite's projected y to the screen's band.
+/// Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
   do {                                                                         \
     if ((place)[2] < -0x10000)                                                 \
@@ -49,10 +38,11 @@ struct AzulObject {
       (place)[2] = 0xa00000;                                                   \
   } while (0)
 
-// Azul: the sea rises into a wall of water, a great serpent coils out of it
-// and swallows the foes, then the wave breaks over them in a spray.
-/// Azul: the sea rises into a wall of water, a great serpent coils out of it
-/// and swallows the foes, then the wave breaks over them in a spray.
+/// Azul: water and bubbles rush over the foes, the winged serpent swims in
+/// from the right and closes them in a great sphere of water, and the sphere
+/// bursts over the field in a wave of foam.
+///
+/// Abilities: Azul.
 void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -60,11 +50,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   DrawRectangle blit2;
   DrawRectangle blit;
   s32 frame;
-  u8 *battle;
+  struct BattleWork *battle;
   struct Point2D base;
   struct Point2D pos;
   struct Point2D vel;
-  struct AzulVertex *verts;
+  struct ModelVertex *verts;
   struct AzulFace *faces;
   u8 *sphere;
   u8 *grid;
@@ -87,7 +77,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   s32 stripEnd;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
@@ -99,8 +89,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  battle = (u8 *)Ram_HeapSlots->battleWork;
-  verts = (struct AzulVertex *)work->sheet;
+  battle = Ram_HeapSlots->battleWork;
+  verts = (struct ModelVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
   sphere = work->sheet + 0x800;
   grid = work->sheet + 0xc00;
@@ -153,7 +143,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame <= 8) {
       s32 fade = 24 - frame * 3;
 
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+      ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            0x10000 - fade * 1092, 128);
     }
     if (frame == 186) {
@@ -309,47 +299,46 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if ((frame < 54 || frame > 167) && frame < 214) {
       place[3] = 0;
-      place[1] = 0xff0000;
+      place[1] = px(255);
       if (frame > 167) {
         pos.y -= px(6);
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
-          place[0] = ((40 - gAzul_ObjectX[i]) << 16) + base.x;
-          place[2] = ((128 - gAzul_ObjectZ[i] * 31 / 32) << 16) + base.y;
+          place[0] = px(40 - gAzul_ObjectX[i]) + base.x;
+          place[2] = px(128 - gAzul_ObjectZ[i] * 31 / 32) + base.y;
           if (i > 8) {
-            place[2] += -0xf00000;
+            place[2] += -px(240);
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                            (s32 *)gAzul_UnitScale, 0);
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
         for (i = 0; i != 16; i++) {
-          place[0] = ((39 - gAzul_ObjectX[(i & 3) + 5]) << 16) + base.x;
-          place[2] =
-              ((-(gAzul_ObjectZ[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
-              base.y + 0x420000;
+          place[0] = px(39 - gAzul_ObjectX[(i & 3) + 5]) + base.x;
+          place[2] = px(-(gAzul_ObjectZ[(i & 3) + 5] * 30 / 32) - i / 4 * 60) +
+                     base.y + px(66);
           // CLAMP_Y written out: the macro's once-only block holds the clamp's
           // constant after the store (4 of 2209 differ).
-          if (place[2] < -0x10000)
-            place[2] = -0x10000;
+          if (place[2] < -px(1))
+            place[2] = -px(1);
           if (place[2] > 0x9fffff)
-            place[2] = 0xa00000;
+            place[2] = px(160);
           obj = work->sprites[i + 12];
           obj->tile = ((struct AzulObject *)work->sprites[(i & 3) + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
       } else {
         for (i = 0; i != 12; i++) {
-          place[0] = (gAzul_ObjectX[i] << 16) + base.x;
-          place[2] = (gAzul_ObjectZ[i] << 16) + base.y;
+          place[0] = px(gAzul_ObjectX[i]) + base.x;
+          place[2] = px(gAzul_ObjectZ[i]) + base.y;
           if (i > 8) {
-            place[2] += 0x1000000;
+            place[2] += px(256);
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                            (s32 *)gAzul_UnitScale, 0);
+                                            (s32 *)&gAzul_UnitScale, 0);
         }
         i = 0;
         xs = gAzul_ObjectX;
@@ -357,13 +346,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           s32 m = i & 3;
           s32 row = m + 5;
 
-          place[0] = (xs[row] << 16) + base.x + -0x10000;
-          place[2] =
-              ((gAzul_ObjectZ[row] + i / 4 * 64) << 16) + base.y + 0x400000;
+          place[0] = px(xs[row]) + base.x - px(1);
+          place[2] = px(gAzul_ObjectZ[row] + i / 4 * 64) + base.y + px(64);
           CLAMP_Y(place);
           obj = work->sprites[i + 12];
           obj->tile = ((struct AzulObject *)work->sprites[m + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
         }
       }
@@ -384,7 +372,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         vel.x = px(8);
       }
       place[3] = 0;
-      place[1] = 0xff0000;
+      place[1] = px(255);
       vel.x = vel.x * 56 / 64;
       vel.y = vel.y * 56 / 64;
       if (frame <= 137) {
@@ -397,10 +385,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         y = (Trig_Cos(frame << 9) << 3) + base.y;
       }
       for (i = 0; i != 8; i++) {
-        place[0] = (gAzul_LateObjectX[i] << 16) + x;
-        place[2] = (gAzul_LateObjectZ[i] << 16) + y;
+        place[0] = px(gAzul_LateObjectX[i]) + x;
+        place[2] = px(gAzul_LateObjectZ[i]) + y;
         Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                          (s32 *)gAzul_LateUnitScale, 0);
+                                          (s32 *)&gAzul_LateUnitScale, 0);
       }
     }
     if ((u32)(frame - 138) <= 29) {
@@ -434,7 +422,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
 
-        SET_POSITION(p, cx << 16, cy << 16, 0);
+        SET_POSITION(p, px(cx), px(cy), 0);
         p->velocityX = (cx - 60) << 12;
         p->velocityY = (cy - 60) << 10;
         p->velocityZ = ((Random16() & 127) << 2) + 512;
@@ -492,7 +480,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         p = &work->particles[i];
         model->mesh = &faces[i * 3];
         Transform_Reset();
-        SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000, 0);
+        SceneTransform_ApplyPosition3(p->x - px(64), p->y - px(64), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         switch (i & 3) {
         case 0:
@@ -533,10 +521,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (; k != 16; angle += 0x888, offset += 64, k++) {
         s32 y = -Trig_Cos(angle) * 48 >> 16;
         s32 radius = Trig_Sin(angle) * 48 >> 16;
-        struct AzulVertex *v;
+        struct ModelVertex *v;
 
         j = 0;
-        v = (struct AzulVertex *)(sphere + offset);
+        v = (struct ModelVertex *)(sphere + offset);
         for (; j != 16; j++) {
           SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
                        Trig_Cos(j << 12) * radius >> 16);
@@ -614,10 +602,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       model->scrollU = shade;
       model->scrollV = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(pos.x / 2 + -0x440000, pos.y + -0x500000,
-                                    0);
+      SceneTransform_ApplyPosition3(pos.x / 2 - px(68), pos.y - px(80), 0);
       SceneTransform_ApplyScale3(scale, scale * 2, scale);
-      SceneTransform_ApplyPosition3(-0x280000, 0, 0);
+      SceneTransform_ApplyPosition3(-px(40), 0, 0);
       Transform_ApplyPitch(frame << 10);
       Transform_ApplyYaw(frame << 10);
       Render_TransformVertices(sphere, verts, 256);
@@ -639,7 +626,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           } while (0);
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0x2c0000, 0, 0);
+          SceneTransform_ApplyPosition3(px(44), 0, 0);
           Transform_ApplyYaw(0x3448);
           SceneTransform_ApplyUniformScale(size);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -656,7 +643,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         model->shade = shade;
         model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
+        SceneTransform_ApplyPosition3(-px(16), pos.y - px(80), 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         Transform_ApplyRoll(frame << 11);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -676,7 +663,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
           drop->velocityX = Trig_Sin(angle) * r >> 5;
           vy = Trig_Cos(angle) * r >> 4;
-          drop->x = drop->velocityX * 6 + 0x300000;
+          drop->x = drop->velocityX * 6 + px(48);
           drop->y = vy * 5;
           drop->velocityY = vy;
           drop->variant = (Random16() & 31) + 32;
@@ -698,13 +685,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
     }
     if (frame == 186) {
-      BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+      BattleBackground_LoadFar(1, battle->background, 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
@@ -731,6 +716,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Moves a particle one frame in three dimensions.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 vx = step->velocityX;
@@ -744,6 +730,7 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                vz * damping / 64);
 }
 
+/// Moves a particle one frame on the screen.
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   s32 x = step->x;
@@ -756,6 +743,8 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
   step->velocityY = (vy + gravity) * damping / 64;
 }
 
+/// Projects a 16.16 point onto the screen through the current transform, 16
+/// pixels higher; returns Render_ProjectPoint's result.
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct ScreenPoint *position) {
   s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
@@ -763,28 +752,32 @@ s32 EffectPosition_ProjectPoint(const void *point,
   return result;
 }
 
+/// Projects a unit's sprite onto the screen, raised by half its height, 16
+/// pixels higher.
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position) {
   BattleUnit_ProjectToScreen(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
+/// Projects a unit's place onto the screen at its scale, 16 pixels higher.
 void EffectPosition_ProjectScaledBattler(s32 id, struct ScreenPoint *position) {
   BattleMotion_ProjectScaledPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
+/// Projects a unit's place onto the screen, 16 pixels higher.
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position) {
   BattleMotion_ProjectPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
-// Midpoint between the first and last targets.
+/// Midpoint between the first and last targets.
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   struct BattleEffectWork *work;
   struct ScreenPoint first;
   struct ScreenPoint last;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   EffectPosition_ProjectBattler(work->args->targets[0], &first);
   EffectPosition_ProjectBattler(
       work->args->targets[work->args->targetCount - 1], &last);

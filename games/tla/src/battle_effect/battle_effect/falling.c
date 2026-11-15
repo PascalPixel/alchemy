@@ -4,17 +4,11 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
-
-// Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
 
 // Shards of ice fall in a slanting column onto the targets' side. Each one
 // flies down at 8 pixels a frame until it reaches the ground line, then
@@ -23,9 +17,11 @@
 // Window 0 is narrowed line by line through an HBlank DMA table into a
 // slanting band, so the shards appear only over the targets.
 
-// Particles 0-31 are the shards and 32-63 the puffs. A particle's variant is
-// its age: -1 is a shard still falling or a free puff.
-
+/// Ice shards rain down diagonally onto the targets' side of the field and
+/// shatter into puffs of sparkle, flashing and shaking each target as they
+/// land.
+///
+/// Abilities: Ice, Ice Horn, Ice Missile.
 void BattleEffect_RunIce(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -38,20 +34,18 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2001);
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Line the shards up above the screen, each 8 pixels higher and further
   // out than the one before, with a little scatter.
@@ -64,7 +58,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
       shard = &work->particles[i];
       x = (Random16() & 63) + (Random16() & 7) + 24;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         x = x + slant + 24;
       else
         x = x - slant + 80;
@@ -78,7 +72,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
                         BLITTER_ADDITIVE);
@@ -93,7 +87,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -117,7 +111,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (args->variant == 1)
+  if (args->variant == EFFECT_VARIANT_STRONGER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -136,10 +130,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(canvas, work->sheet,
-                                                          x, y, 32, 32);
+        ((DrawRectangle)
+             draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
+            canvas, work->sheet, x, y, 32, 32);
         if (shard->y <= 0x27f) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             shard->x -= 64;
           else
             shard->x += 64;
@@ -162,7 +157,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 y = shard->y / 8;
 
         if (shard->variant >= 1 && shard->variant <= 14) {
-          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)
+               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -192,7 +188,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
-          ((DrawRectangle)draw[args->variant == 2 ? 1 : 0])(
+          ((DrawRectangle)
+               draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas, graphics + gBattleEffect_SparklePictures[image], x, y,
               gBattleEffect_SparkleSizes[image],
               gBattleEffect_SparkleSizes[image]);
@@ -223,8 +220,6 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 #define DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
 #define FRAME_COUNT(variant) gFalling_Counts[(variant) * 4 + 3]
 
-// Douse, Drench and Deluge (effect kind 9, variants 0 to 2).
-
 // Drops of water fall in a slanting column onto the targets' side, 8 pixels
 // down and 4 across a frame. At the ground line each one flashes every
 // target and bursts: its splash pictures play for eight frames while a spray
@@ -232,10 +227,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 // line by line through an HBlank DMA table into a slanting band over the
 // targets. Deluge throws its droplets higher.
 
-// Particles hold the drops; the splash droplets live in the map cell buffer
-// after the line table. A variant of -1 is a drop still falling or a free
-// droplet.
-
+/// Blue bolts streak down diagonally onto the targets' side of the field, each
+/// bursting into a fountain of falling sparks where it lands, while the targets
+/// flash.
+///
+/// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   void **heapCache;
   struct BattleEffectWork *work;
@@ -253,17 +249,15 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   canvas = heapCache[24];
 
   // Set up the canvas, the drop pictures and the droplets.
-  BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2001);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Drops draw at their maximum; droplets add their light.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
@@ -283,7 +277,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     drop = &work->particles[i];
     x = Random16() & 63;
     y = -(i * DROP_SPACING(args->variant) + 16);
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
@@ -294,7 +288,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Window 0's left and right edge for each line: a band slanting with the
   // drops' fall, then the targets' width, then nothing.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
@@ -318,9 +312,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (args->variant == 1) {
+  } else if (args->variant == EFFECT_VARIANT_STRONGER) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -342,7 +336,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         // Falling: draw the drop and move it on, or land it.
         draw[0](canvas, work->sheet + 0x604, x, y, 24, 24);
         if (drop->y <= 0x27f) {
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
           else
             drop->x += 32;
@@ -355,9 +349,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             splash =
                 &gDropSplashes->splashes[i * SPLASH_COUNT(args->variant) + k];
             splash->x = px(x + 12);
-            splash->y = y << 16;
+            splash->y = px(y);
             splash->velocityX = ((Random16() & 255) - 128) << 9;
-            if (args->variant == 2)
+            if (args->variant == EFFECT_VARIANT_STRONGEST)
               splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
             else
               splash->velocityY = ((Random16() & 255) - 255) << 10;
@@ -403,3 +397,5 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
   BattleEffect_ConfigureEffectDisplay();
 }
+#undef SHARD_COUNT
+#undef DROP_COUNT

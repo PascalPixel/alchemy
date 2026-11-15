@@ -3,70 +3,31 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
-
-struct Model;
 
 #define LUNGE_FRAMES 60
-#define LUNGE_STREAK_FRAMES 15 // the streak follows the caster
-#define LUNGE_HIT_FRAME 8      // the caster reaches the target
-#define LUNGE_FLASH_FRAMES 12  // the flash at the target grows and fades
+#define LUNGE_STREAK_FRAMES 15 ///< the streak follows the caster
+#define LUNGE_HIT_FRAME 8      ///< the caster reaches the target
+#define LUNGE_FLASH_FRAMES 12  ///< the flash at the target grows and fades
 #define SPARK_COUNT 64
-#define BURST_COUNT 16 // mode 5's flame bursts
+#define BURST_COUNT 16 ///< mode 5's flame bursts
 
-// A texture: log2 of its width and height in the first word, then its
-// pixels.
-/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:243: structure has
- * no member named `logWidth'. */
-struct Texture__f17e0c0 {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
-  void *pixels;
-};
-
-// One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
-// quads.
-/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:214: structure has
- * no member named `brightness'. */
-struct RenderPrimitive__f17e0c0 {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct Texture__f17e0c0 *texture;
-  s32 brightness;
-};
-
-// A lunge. The caster runs 80 percent of the way to the target in ten
-// frames behind a glowing streak (a 32x32 flare and its reflection); on
-// frame 8 it strikes: the target flashes and is knocked back, a 128x128
-// flash stretched four times taller grows over it and fades in twelve
-// frames, and 64 sparks fly out of it to the caster's side and burn down.
-// Mode 5 adds sixteen rising flame bursts. The mode also picks the palette:
-// fire pillar, ice block, pink burst, blast (modes 3 and 5) or orange.
+/// The user rushes at the first target; a ring flares where it hits and sparks
+/// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
-  struct Texture__f17e0c0 texture;
+  struct ModelTexture texture;
   DrawRectangle draw[2];
   u8 *flashPixels = Ram_MapCellBuffer;
   s32 height;
   struct ScreenPoint target;
   struct ScreenPoint caster;
   struct ScreenPoint screen;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   s32 *camera = Ram_HeapSlots->cameraWork;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
-  struct RenderPrimitive__f17e0c0 *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 i;
   s32 row;
@@ -92,17 +53,17 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x800, 1, 0);
   switch (mode) {
-  case 0:
+  case RUSHING_STRIKE_BONE_CHARGE:
     resource = (s32)&ResourceId_FirePillarSheetB;
     break;
-  case 1:
+  case RUSHING_STRIKE_BRUTE_FORCE:
     resource = (s32)&ResourceId_IceBlockSheet;
     break;
-  case 2:
+  case RUSHING_STRIKE_ONSLAUGHT:
     resource = (s32)&ResourceId_PinkBurstSheet;
     break;
-  case 3:
-  case 5:
+  case RUSHING_STRIKE_HEADBUTT:
+  case RUSHING_STRIKE_LIVING_ARMOR:
     resource = (s32)&ResourceId_BlastSheet;
     break;
   default:
@@ -167,19 +128,18 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
     texture.pixels = work->sheet;
     quad->texture = &texture;
-    quad->faces = gBattleEffect_TallMesh;
+    quad->mesh = gBattleEffect_TallMesh;
     quad->kind = 6;
     quad->vertices = vertices;
-    quad->brightness = brightness;
+    quad->shade = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3((caster.x - 128) << 16,
-                                    (caster.y - 88) << 16, 0);
+      SceneTransform_ApplyPosition3(px(caster.x - 128), px(caster.y - 88), 0);
       SceneTransform_ApplyScale3(gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode]);
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         Transform_ApplyYaw(TRIG_TURN / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
@@ -190,27 +150,25 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     flashFrame = frame - LUNGE_HIT_FRAME;
     if (frame >= LUNGE_HIT_FRAME &&
         frame < LUNGE_HIT_FRAME + LUNGE_FLASH_FRAMES) {
-      if (mode == 4)
+      if (mode == RUSHING_STRIKE_STUN_MUSCLE)
         scale = (flashFrame << 12) + Q16_ONE / 16;
       else
         scale = flashFrame * 3048 + 3048;
       brightness = 32 - flashFrame * 8;
       if (brightness > 0)
         brightness = 0;
-      quad->brightness = brightness;
+      quad->shade = brightness;
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = flashPixels;
       quad->kind = 7;
-      quad->faces = gBattleEffect_LargeSquareMesh;
+      quad->mesh = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      if (args->side == 0)
-        SceneTransform_ApplyPosition3((target.x - 144) << 16,
-                                      (target.y - 84) << 16, 0);
+      if (args->side == EFFECT_SIDE_ENEMIES)
+        SceneTransform_ApplyPosition3(px(target.x - 144), px(target.y - 84), 0);
       else
-        SceneTransform_ApplyPosition3((target.x - 112) << 16,
-                                      (target.y - 84) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x - 112), px(target.y - 84), 0);
       SceneTransform_ApplyScale3(scale, scale << 2, scale);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
@@ -220,10 +178,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, LUNGE_HIT_FRAME);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
-      if (mode == 5)
+      EFFECT_STRIKE_TARGET(args, 0, LUNGE_HIT_FRAME, KNOCKBACK_HURL);
+      if (mode == RUSHING_STRIKE_LIVING_ARMOR)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -257,7 +213,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Mode 5's flame bursts rise through six 32x64 cels in 24 frames.
-      if (mode == 5) {
+      if (mode == RUSHING_STRIKE_LIVING_ARMOR) {
 
         for (i = 0; i != BURST_COUNT; i++) {
           struct Particle *burst = &work->particles[i];
@@ -286,17 +242,25 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Spasm (kind 348).
-void BattleEffect_RunSpasm(s32 a0) { BattleEffect_RunMirroredWall(a0, 0); }
+/// Abilities: Spasm.
+void BattleEffect_RunSpasm(struct BattleEffectParams *args) {
+  BattleEffect_RunMirroredWall(args, MIRRORED_WALL_SPASM);
+}
 
-/// Abilities: Berserk (kind 353).
-void BattleEffect_RunBerserk(s32 a0) { BattleEffect_RunMirroredWall(a0, 1); }
+/// Abilities: Berserk.
+void BattleEffect_RunBerserk(struct BattleEffectParams *args) {
+  BattleEffect_RunMirroredWall(args, MIRRORED_WALL_BERSERK);
+}
 
-/// Abilities: Recovery (kind 389).
-void BattleEffect_RunRecovery(s32 a0) { BattleEffect_RunMirroredWall(a0, 2); }
+/// Abilities: Recovery.
+void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
+  BattleEffect_RunMirroredWall(args, MIRRORED_WALL_RECOVERY);
+}
 
-/// Abilities: Sack (kind 431).
-void BattleEffect_RunSack(s32 a0) { BattleEffect_RunMirroredWall(a0, 3); }
+/// Abilities: Sack.
+void BattleEffect_RunSack(struct BattleEffectParams *args) {
+  BattleEffect_RunMirroredWall(args, MIRRORED_WALL_SACK);
+}
 #undef LUNGE_FRAMES
 #undef LUNGE_STREAK_FRAMES
 #undef LUNGE_HIT_FRAME

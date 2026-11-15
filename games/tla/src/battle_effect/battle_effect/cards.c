@@ -3,61 +3,19 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-
-#define TASK_PASS_FRAME 0xc80
-
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
 #define CARD (gMapGridCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
-// The four cards, as the wrappers pass them.
-enum {
-  CARD_SLEEP,  // Sleep Card, kind 92: sheep jump from the card.
-  CARD_BAFFLE, // Baffle Card, kind 90: butterflies, and the screen waves.
-  CARD_DEATH,  // Death Card, kind 93: a skeleton reaps the target.
-  CARD_SWORD,  // Sword Card, kind 91: a dagger strikes, and shards fly.
-};
-
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunCards moves: 1 of 1232 instructions in
- * tla-ja. */
-struct ModelTexture__f18ad40 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/cards.c:323: structure has no
- * member named `vertices'. */
-struct Model__f18ad40 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture__f18ad40 *texture;
-  s32 alpha;
-  s32 tail;
-};
-
-// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
-// the user to above the targets' middle for 48 frames, spinning upright and
-// growing, the background scrolling with it as far as it can. Then it shows
-// its picture: sheep jump out for the Sleep Card, butterflies flutter and
-// the screen waves for the Baffle Card, and for the Death and Sword cards the
-// card dissolves into the background's colours while a skeleton reaps the
-// target or a dagger strikes it and breaks into shards. The screen fades in
-// the last eight frames.
+/// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
+/// the user to above the targets' middle for 48 frames, spinning upright and
+/// growing, the background scrolling with it as far as it can. Then it shows
+/// its picture: sheep jump out for the Sleep Card, butterflies flutter and
+/// the screen waves for the Baffle Card, and for the Death and Sword cards the
+/// card dissolves into the background's colours while a skeleton reaps the
+/// target or a dagger strikes it and breaks into shards. The screen fades in
+/// the last eight frames.
 void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -70,9 +28,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   struct ScreenPoint card;
   struct ScreenPoint middle;
-  struct ModelTexture__f18ad40 texture;
+  struct ModelTexture texture;
   struct Particle *step;
-  struct Model__f18ad40 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   s32 j;
@@ -80,20 +38,20 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   s32 first;
   s32 slot;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up a tiled canvas, filled on the user's side, and a clipped MAX
   // blitter (additive for the Sword Card), mirrored to face the targets.
   BattleEffect_StartTiledCanvas(0x2001);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
     else
@@ -101,7 +59,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           BLITTER_ADDITIVE);
   } else {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     else
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -162,7 +120,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectSprite(args->user, &card);
       BattleEffect_GetTargetsMidpoint(&middle);
       if (mode == CARD_DEATH) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           middle.x += 32;
         else
           middle.x -= 32;
@@ -272,15 +230,15 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
-      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
+      SceneTransform_ApplyPosition3(px(overflow), px(card.y) - px(64), 0);
       if (frame <= 47) {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll((frame << 10) - 0xd000);
         else
           Transform_ApplyRoll((52 - frame) << 10);
         Transform_ApplyPitch((52 - frame) << 10);
       } else {
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll(-TRIG_TURN / 16);
         else
           Transform_ApplyRoll(TRIG_TURN / 16);

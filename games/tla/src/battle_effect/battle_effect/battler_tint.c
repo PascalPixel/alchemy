@@ -5,20 +5,13 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
-
-/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
- * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the
- * object declares it, BattleEffect_SetupBlendedDisplay moves: 1 of 57
- * instructions in tla-ja. */
-extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
  * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
  * Iwram_FillWords(destination, size, value); }; not tried: FillWords_'s
  * definition holds a FAKEMATCH tag. */
+/// Fills words through the IWRAM fill, in a once-only block.
 static __inline__ void FillWords___f14cca8(void *destination, s32 size,
                                            u32 value) {
   /* FAKEMATCH(dead): the call in a once-only block. */
@@ -27,13 +20,14 @@ static __inline__ void FillWords___f14cca8(void *destination, s32 size,
   } while (0);
 }
 
+/// Shows the battle background behind a cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
-  u8 *battle = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll__f14cca8[0].y = 32;
-  BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  gBgScroll[1].y = 32;
+  BattleBackground_LoadFar(1, battle->background, 24);
   /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);
   FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
@@ -46,6 +40,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
+/// The sprite group behind a battler, as the tint reads its entries.
 struct FxGroup {
   u8 unk00[27];
   u8 count;
@@ -53,6 +48,7 @@ struct FxGroup {
   struct FxGroupEntry *entries[4];
 };
 
+/// How many sprites an effect group holds.
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
 /// Updates every effect group of one unit's battle object: its palette, its
@@ -65,7 +61,7 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
   s32 groupIndex;
 
   set = BattleObject_GetFar(setId);
-  state = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(set->object, groupIndex)) != NULL) {

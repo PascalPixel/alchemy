@@ -3,13 +3,24 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-#include "macros.h"
+
+/// The lobbed shells' styles (BattleEffect_RunLobbedShells), each named for the
+/// effect that plays it, and its row of gLobbedShells_Styles.
+enum LobbedShellsMode {
+  LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
+  LOBBED_SHELLS_STICKY_GOO,    ///< the spider web's colours, smoke
+  LOBBED_SHELLS_STICKY_POISON, ///< lime, smoke
+  LOBBED_SHELLS_ROTTEN_BLOOD,  ///< green, shards
+  LOBBED_SHELLS_MAD_SPATTER,   ///< gold, shards
+  LOBBED_SHELLS_DECOMPOSE,     ///< green, smoke
+  LOBBED_SHELLS_POISON_INK,    ///< Mars Djinn colours, smoke
+  LOBBED_SHELLS_MUD,
+  LOBBED_SHELLS_RISING_VENOM,
+  LOBBED_SHELLS_FORMIC_ACID
+};
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
@@ -49,25 +60,30 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
   }
 }
 
-/// Abilities: Revive, Water of Life, Lich (kind 25); Quartz (kind 201).
-DEFINE_EFFECT_KIND(BattleEffect_RunRevive, BattleEffect_RunDjinnBeams, 0)
+/// Abilities: Revive, Water of Life, Lich; Quartz.
+void BattleEffect_RunRevive(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, ELEMENT_VENUS);
+}
 
-/// Abilities: Dew (kind 209).
-DEFINE_EFFECT_KIND(BattleEffect_RunDew, BattleEffect_RunDjinnBeams, 1)
+/// Abilities: Dew.
+void BattleEffect_RunDew(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, ELEMENT_MERCURY);
+}
 
-/// Abilities: Spark (kind 255).
-DEFINE_EFFECT_KIND(BattleEffect_RunSpark, BattleEffect_RunDjinnBeams, 2)
+/// Abilities: Spark.
+void BattleEffect_RunSpark(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, ELEMENT_MARS);
+}
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
-#define PIC_MOTE 0x2710  // the crescent motes, 24 x 24
-#define PIC_DJINN 0x65c0 // the Djinn, 40 x 40
-#define MOTES 8          // per target
+#define PIC_MOTE 0x2710  ///< the crescent motes, 24 x 24
+#define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
+#define MOTES 8          ///< per target
 
-// Member beam (kinds through three wrappers; the mode picks the Djinn:
-// 0 Venus, 1 Mercury, 2 Mars): with a prelude, the Djinn appears, sways and
-// rises away; for each target in turn, sixteen frames apart, eight motes
-// drift down swaying; from frame 72 a beam of light falls on each target,
-// flashing it, and narrows from frame 88.
+/// With a prelude the Djinni of the mode's element appears, sways and rises
+/// away; then for each target in turn, sixteen frames apart, eight motes drift
+/// down swaying, and from frame 72 a beam of light falls on each target,
+/// flashing it, and narrows from frame 88.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   s32 djinn[3];
   s32 djinnSize[3];
@@ -84,7 +100,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   // heap holds the heap slots from here for the second blitter's read, so the
   heap = Ram_HeapSlots;
@@ -93,16 +109,19 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   // the motes and the mode's Djinn, each with its palette.
   BattleEffect_StartCanvasLayer(0);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(
-        args, (args->side ^ args->prelude) << 4 | mode, djinn, djinnSize);
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(mode,
+                                                   args->side ^ args->prelude,
+                                                   DJINNI_ANCHOR_OVER_TARGET),
+                                   djinn, djinnSize);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
                              work->sheet + PIC_MOTE, 1, 1);
-  if (mode == 0)
+  if (mode == ELEMENT_VENUS)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + PIC_DJINN, 1, 1);
-  else if (mode == 1)
+  else if (mode == ELEMENT_MERCURY)
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + PIC_DJINN, 1, 1);
   else
@@ -121,7 +140,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &one);
     offsetX = 64 - one.x;
   } else {
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       offsetX = -112;
     else
       offsetX = 0;
@@ -254,36 +273,55 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Mad Spatter (kind 347).
-DEFINE_EFFECT_KIND(BattleEffect_RunMadSpatter, BattleEffect_RunLobbedShells, 4)
+/// Abilities: Mad Spatter.
+void BattleEffect_RunMadSpatter(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
+}
 
-/// Abilities: Mud (kind 237).
-DEFINE_EFFECT_KIND(BattleEffect_RunMud, BattleEffect_RunLobbedShells, 7)
+/// Abilities: Mud.
+void BattleEffect_RunMud(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_MUD);
+}
 
-/// Abilities: Decompose (kind 350).
-DEFINE_EFFECT_KIND(BattleEffect_RunDecompose, BattleEffect_RunLobbedShells, 5)
+/// Abilities: Decompose.
+void BattleEffect_RunDecompose(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
+}
 
-/// Abilities: Bone Chiller (kind 309).
-DEFINE_EFFECT_KIND(BattleEffect_RunBoneChiller, BattleEffect_RunLobbedShells, 0)
+/// Abilities: Bone Chiller.
+void BattleEffect_RunBoneChiller(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
+}
 
-/// Abilities: Sticky Goo (kind 315).
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyGoo, BattleEffect_RunLobbedShells, 1)
+/// Abilities: Sticky Goo.
+void BattleEffect_RunStickyGoo(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
+}
 
-/// Abilities: Poison Ink (kind 340).
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonInk, BattleEffect_RunLobbedShells, 6)
+/// Abilities: Poison Ink.
+void BattleEffect_RunPoisonInk(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
+}
 
-/// Abilities: Sticky Poison (kind 322).
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyPoison, BattleEffect_RunLobbedShells,
-                   2)
+/// Abilities: Sticky Poison.
+void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
+}
 
-/// Abilities: Rotten Blood (kind 330).
-DEFINE_EFFECT_KIND(BattleEffect_RunRottenBlood, BattleEffect_RunLobbedShells, 3)
+/// Abilities: Rotten Blood.
+void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
+}
 
-/// Abilities: Rising Venom (kind 430).
-DEFINE_EFFECT_KIND(BattleEffect_RunRisingVenom, BattleEffect_RunLobbedShells, 8)
+/// Abilities: Rising Venom.
+void BattleEffect_RunRisingVenom(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_RISING_VENOM);
+}
 
-/// Abilities: Formic Acid (kind 453).
-DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
+/// Abilities: Formic Acid.
+void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_FORMIC_ACID);
+}
 
 // The shots live in the map buffer, 16 for each target, and the bursts
 // after them, 32 for each target.
@@ -295,15 +333,14 @@ DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
 #define RECORD_SHOTS 2
 #define RECORD_FRAMES 3
 
-#define SMOKE_SHEET 0x3e80 // the smoke, after the gold shells
-#define SHARD_SHEET 0x1e00 // the shards, among the gold shells
+#define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
+#define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
 
-// Shell shot (the body of ten kinds; the mode picks the colours and the
-// record above the rest): shots arc from the caster to each target, one or
-// four per target eight frames apart, turning as they fly; each bursts where
-// it lands into smoke or shards, flashing the target. Mode 7 prepares a
-// canvas for its prelude first; modes 3 and 5 hand the canvas to a summon
-// canvas effect at the end.
+/// Shots arc from the caster to each target, one or four per target eight
+/// frames apart, turning as they fly; each bursts where it lands into smoke or
+/// shards, flashing the target. The mode picks the colours and its row of
+/// gLobbedShells_Styles. Mud prepares a canvas for its prelude first; Rotten
+/// Blood and Decompose hand the canvas to a summon canvas effect at the end.
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   s32 preludeSize[3];
@@ -320,16 +357,19 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   u8 *palette;
   s32 height;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 
   // Set up: the canvas (mode 7 with its prelude), the gold shells and the
   // smoke with their palettes, then the mode's palette.
-  if (mode == 7) {
+  if (mode == LOBBED_SHELLS_MUD) {
     BattleEffect_StartCanvasLayer(0);
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 0x44, preludeOrigin,
-                                   preludeSize);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_VENUS + DJINNI_ENTRANCE_LONG, args->side,
+                        DJINNI_ANCHOR_OVER_USER),
+        preludeOrigin, preludeSize);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   } else {
@@ -340,21 +380,21 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                              work->sheet + SMOKE_SHEET, 1, 1);
-  if (mode == 0)
+  if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
-  else if (mode == 1)
+  else if (mode == LOBBED_SHELLS_STICKY_GOO)
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
-  else if (mode == 2)
+  else if (mode == LOBBED_SHELLS_STICKY_POISON)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  else if (mode == 8)
+  else if (mode == LOBBED_SHELLS_RISING_VENOM)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  else if (mode == 3)
+  else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  else if (mode == 4 || mode == 7)
+  else if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
     palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-  else if (mode == 6)
+  else if (mode == LOBBED_SHELLS_POISON_INK)
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-  else if (mode == 9)
+  else if (mode == LOBBED_SHELLS_FORMIC_ACID)
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
@@ -365,9 +405,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
-  if (mode == 7)
+  if (mode == LOBBED_SHELLS_MUD)
     height = 0x280000;
-  else if (mode == 8)
+  else if (mode == LOBBED_SHELLS_RISING_VENOM)
     height = 0x140000;
   else
     height = 0x40000;
@@ -393,7 +433,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  if (mode == 4 || mode == 7) {
+  if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
   } else {
@@ -512,11 +552,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   EFFECT_RELEASE_BLITTERS();
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
-  if (mode == 3 || mode == 5) {
+  if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    if (mode == 3)
+    if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
       BattleEffect_RunImpair(args);
     else
       BattleEffect_RunDull(args);
@@ -524,3 +564,5 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
+#undef MOTES
+#undef RECORD_FRAMES

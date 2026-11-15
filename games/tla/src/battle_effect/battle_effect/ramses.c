@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 #define RAMSES_FRAMES 320
@@ -18,7 +17,7 @@
 /// The sparks of the strike, in the map cell buffer.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
-extern struct SpriteScale gRamses_UnitScale; // one to one
+extern struct SpriteScale gRamses_UnitScale; ///< one to one
 
 /// In a desert the giant statue of Ramses pounds the ground with its fist while
 /// rocks rain down, then launches the fist at the targets, which strikes them
@@ -39,7 +38,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   s32 k;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -66,9 +65,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
   wait(1);
@@ -221,7 +219,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     if (frame == RAMSES_STRIKE_FRAME) {
       // The strike: every target recoils and flashes white.
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
       }

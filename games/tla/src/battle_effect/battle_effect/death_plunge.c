@@ -3,52 +3,12 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-#define TASK_PASS_FRAME 0xc80
-
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(flags, mode) ((mode) << 4 | (flags))
-
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunDeathPlunge moves: 1 of 632 instructions in
- * tla-ja. */
-struct ModelTexture__f188714 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-/* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/death_plunge.c:249: structure has
- * no member named `vertices'. */
-struct Model__f188714 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture__f188714 *texture;
-  s32 alpha;
-  s32 tail;
-};
-
-// Death Plunge (effect kind 53): the user runs nine tenths of the way to the
-// target, and both leap; at frame 11 they turn upside down, lifted by their
-// own heights. At frame 54 the target flashes and both are thrown back, the
-// user to his place, and at frame 64 they land the right way up.
-// Variant 0: a large flash at the user for two frames, then 16
-// flashes that spread in a rising ring for twelve frames.
-// Variant 1, in the colours of effect palette 2:
-// 32 sparks burst from the target at frame 56 (of which the first 16 are
-// drawn), and Triple Chomp's jaw closes on the target twice, at 45 and 135
-// degrees, growing and fading from frame 56.
+/// The user runs at the first target, both leap and turn upside down, and on
+/// the hit they bounce apart while a ball of fire swells over them.
+///
+/// Abilities: Death Plunge, Death Leap.
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -66,14 +26,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct ScreenPoint targetScreen;
   s32 point[3];
   struct ScreenPoint screen;
-  struct ModelTexture__f188714 texture;
+  struct ModelTexture texture;
   struct Particle *spark;
-  struct Model__f188714 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   u8 *pixels; // The jaw's texture, held for the whole effect.
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
@@ -83,7 +43,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
                              1);
   pixels = Ram_MapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
-  if (args->variant == 1) {
+  if (args->variant == EFFECT_VARIANT_STRONGER) {
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
@@ -151,7 +111,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
     }
 
-    if (args->variant == 0) {
+    if (args->variant == EFFECT_VARIANT_BASIC) {
       // The flash, and the ring of flashes, at the user.
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
@@ -205,7 +165,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       }
     }
 
-    if (args->variant == 1) {
+    if (args->variant == EFFECT_VARIANT_STRONGER) {
       // The jaw, twice, a quarter turn apart: it grows from frame 56 and
       // fades out from frame 64.
       vertices = Heap_AllocEwram(512);
@@ -226,12 +186,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = vertices;
           texture.pixels = pixels;
-          model->alpha = alpha;
+          model->shade = alpha;
           for (i = 0, angle = TRIG_TURN / 8; i != 2;
                angle += TRIG_TURN / 4, i++) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3((targetScreen.x / 2 - 64) << 16,
-                                          px(32), 0);
+            SceneTransform_ApplyPosition3(px(targetScreen.x / 2 - 64), px(32),
+                                          0);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -254,7 +214,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       Actor_SelectAnimationFar(user, 0);
     }
     if (frame == 54) {
-      if (args->variant == 0)
+      if (args->variant == EFFECT_VARIANT_BASIC)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_CRASH);

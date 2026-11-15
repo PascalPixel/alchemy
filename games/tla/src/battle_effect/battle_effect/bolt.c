@@ -3,20 +3,24 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 
 #define BOLT_INTERVAL 8
 
 #define SPARKS_PER_TARGET 128
+#define SPARK_COUNT 1024 ///< the sparks the map cell buffer holds
 #define GROUND_Y 104
 #define CUE_THUNDER 138
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.
 
-// The second blitter, loaded again for each glint.
+/// The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
+/// A bolt of lightning strikes each target in turn, and sparks fly up from
+/// where it lands while glints flicker there.
+///
+/// Abilities: Bolt, Flash Bolt, Blue Bolt.
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -30,7 +34,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the bolt and spark sheets, and every spark
   // and particle free.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -64,9 +68,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 6);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 6);
+        EFFECT_STRIKE_TARGET(args, i, 6, KNOCKBACK_BOUNCE);
       }
 
       // The bolt, 24 wide, grows 64 pixels a frame down to the ground.
@@ -88,8 +90,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
-            spark->x = pos.x << 16;
-            spark->y = GROUND_Y << 16;
+            spark->x = px(pos.x);
+            spark->y = px(GROUND_Y);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -138,7 +140,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
-        if (spark->y > GROUND_Y << 16) {
+        if (spark->y > px(GROUND_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
@@ -157,3 +159,5 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   // Tear down: stop the transfer, free the blitter, close the layer.
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+#undef SPARK_COUNT
+#undef SPARKS

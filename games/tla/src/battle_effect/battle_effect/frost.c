@@ -4,7 +4,6 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 
@@ -13,13 +12,10 @@
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
 
-// Setup: each mote gets an angle, a radius of 56-119 and a height of -64 to
-// -33 pixels. Frame loop: until the burst the motes close in and climb five
-// pixels a frame while they turn, and from frame 36 a pillar rises every
-// three frames. At the burst the motes spread and fall, 32 chips leap up
-// from below, and smoke rises half a pixel a frame through the height the
-// motes and chips cover. The variant chooses the number of motes and
-// pillars and the frame of the burst.
+/// Motes of ice spiral down and in while mounds of ice spring up; at the burst
+/// the motes spread and rise, chips fly up and sparkles rise.
+///
+/// Abilities: Frost, Tundra, Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -36,11 +32,10 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct Particle *mote;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   dots = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
@@ -55,7 +50,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -0x7000;
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
@@ -91,7 +86,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cel = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
+          if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
             struct ScreenPoint *pos;
             u32 width;
             u32 height;
@@ -159,8 +154,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &CHIPS[i];
 
-        SET_POSITION(chip, (Random16() & 127) << 16,
-                     ((Random16() & 15) + 80) << 16,
+        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
@@ -199,7 +193,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
         puff->velocityX = px(Random16() & 127);
         if (ymax == ymin)
-          puff->velocityY = ymin << 16;
+          puff->velocityY = px(ymin);
         else
           puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         puff->variant = (Random16() & 15) + 20;
@@ -237,3 +231,4 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+#undef CHIPS

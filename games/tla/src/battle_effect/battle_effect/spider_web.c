@@ -4,7 +4,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 /* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32
@@ -12,6 +11,7 @@
  * Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the rest
  * of the object declares it, EffectSprite_Acquire moves: 1 of 46 instructions
  * in tla-ja. */
+/// Animation_ApplyChildArgumentFar as Ulysses's part sees it: returning a word.
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
     "Animation_ApplyChildArgumentFar");
 
@@ -22,21 +22,21 @@ extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__(
  * member named `kind'. */
 struct EffectSprite__f15b3b0 {
   u8 unk00[0x0c];
-  s32 unk0c;
-  u8 unk10;
-  u8 unk11_0 : 1;
-  u8 unk11_1 : 7;
-  u16 unk12;
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 otherFlags : 7;
+  u16 rotation;
   u8 width;
   u8 height;
-  u8 unk16;
-  u8 unk17;
-  u8 unk18[2];
-  u8 unk1a;
-  u8 unk1b;
-  u8 unk1c[0x0c];
+  u8 offsetX;
+  u8 offsetY;
+  u8 lastNoAndDirty[2];
+  u8 flags;
+  u8 count;
+  u8 shadow[0x0c];
   struct AnimationEntry *entry;
-  u8 unk2c[0x0c];
+  u8 moreEntries[0x0c];
 };
 
 /// Takes the first free effect sprite of the 64 with a new animation entry.
@@ -58,13 +58,13 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->height = height;
-  sprite->unk0c = 0x10000;
-  sprite->unk11_0 = 0;
-  sprite->unk17 = 0;
-  sprite->unk16 = 0;
-  sprite->unk1b = 1;
-  sprite->unk1a = 0;
-  sprite->unk12 = 0;
+  sprite->scale = 0x10000;
+  sprite->retainCacheEntry = 0;
+  sprite->offsetY = 0;
+  sprite->offsetX = 0;
+  sprite->count = 1;
+  sprite->flags = 0;
+  sprite->rotation = 0;
   Animation_ApplyChildArgumentFar__f15b3b0(sprite, 0);
   return found;
 }
@@ -174,15 +174,14 @@ void Palette_MirrorBgColors(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
-// A frame callback of Ulysses (BattleEffect_RunUlysses adds and removes it):
-// places effect object 7 at the last particle's point (x across, y in depth)
-// at a scale of one, moves the particle by its velocity (its depth speed
-// grows for 20 frames, then shrinks, and its sideways speed grows from frame
-// 12), and steps the object's animation through cels 7 to 14, seven frames
-// each.
+/// A frame callback of Ulysses (BattleEffect_RunUlysses adds and removes it):
+/// places effect object 7 at the last particle's point (x across, y in depth)
+/// at a scale of one, moves the particle by its velocity (its depth speed
+/// grows for 20 frames, then shrinks, and its sideways speed grows from frame
+/// 12), and steps the object's animation through cels 7 to 14, seven frames
+/// each.
 void Ulysses_MoveLastParticle(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct SpriteScale scale = gUlysses_ParticleScale;
   struct SpritePlacement place;
 
@@ -206,36 +205,15 @@ void Ulysses_MoveLastParticle(void) {
   work->frame++;
 }
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
-
-/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunUlysses moves: 1 of 1912 instructions in
- * tla-ja. */
-struct RenderModel__f15b3b0 {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
-void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
-    "Render_DrawModelList");
-#define Render_DrawModelList Render_DrawModelList__ability_effects
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 extern const struct Scale gUlysses_ShipScale;
 
-// Ulysses: the hero's ship sails out of a whirlpool, its crew of six
-// warriors leap at the foe and the ship's broadside lands as a storm of
-// explosions.
+/// Ulysses: the field goes dark, a ring of red runes opens and the robed
+/// Ulysses steps out of it, violet and then red fire pours from it over the
+/// foes, and it flares and fades.
+///
+/// Abilities: Ulysses.
 void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   u8 *canvas;
   s32 *transition;
@@ -259,11 +237,11 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct ModelTexture quadTexture;
   struct Scale req;
-  u8 *battle;
+  struct BattleWork *battle;
   s32 mask;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   dmaArmed = 0;
@@ -519,12 +497,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       q = (struct Particle *)(work->sheet + 0x4b98);
       for (i = 0; i != 6; i++, src += 5) {
         p = &work->particles[i];
-        p->x = src[0] << 16;
+        p->x = px(src[0]);
         p->variant = -8 * i;
         /* FAKEMATCH(barrier): an empty asm parts the particle's first stores
          * from the rest. */
         __asm__("");
-        p->y = src[1] << 16;
+        p->y = px(src[1]);
         p->z = src[2] << 6;
         p->velocityX = src[3] << 15;
         p->velocityY = src[4] << 15;
@@ -545,7 +523,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
     if ((u32)(frame - 133) <= 132) {
       void *verts;
-      struct RenderModel__f15b3b0 *model;
+      struct RenderModel *model;
       struct Particle *sparks;
       u8 *portraits = gMapGridCellBuffer;
       struct Particle *q;
@@ -611,7 +589,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 vx;
           s32 x = step->x;
           s32 mx = x - 0x400000;
-          s32 my = step->y - 0x400000;
+          s32 my = step->y - px(64);
           s32 u = t - 59;
 
           if (u < 0) {
@@ -703,7 +681,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
     if (draw && frame <= 131) {
       void *verts;
-      struct RenderModel__f15b3b0 *model;
+      struct RenderModel *model;
       s32 j;
 
       verts = Heap_AllocEwram(32);
@@ -730,7 +708,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 sc;
 
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0x80000, 0, 0);
+          SceneTransform_ApplyPosition3(px(8), 0, 0);
           Transform_ApplyPitch(TRIG_TURN / 4);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
@@ -771,8 +749,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (draw) {
         place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
-          place[0] = (gUlysses_ObjectX[i] << 16) + ship.x - 0x200000;
-          place[2] = (gUlysses_ObjectZ[i] << 16) + ship.z - 0x200000;
+          place[0] = px(gUlysses_ObjectX[i]) + ship.x - px(32);
+          place[2] = px(gUlysses_ObjectZ[i]) + ship.z - px(32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                             (s32 *)&req, 0);
         }
@@ -845,7 +823,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   gCameraSceneParameters[4] = 120;
   Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
-  BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
+  BattleBackground_LoadFar(2, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
@@ -855,7 +833,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   wait(1);
   for (frame = 0; frame != 40; frame++) {
-    u16 *src = (u16 *)(battle + 0x56c);
+    u16 *src = battle->palette;
     volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++, src++, dst++) {
@@ -901,16 +879,17 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   }
 }
 
-/// Abilities: Poison Beat (kind 382).
-void BattleEffect_RunPoisonBeat(void *object) {
-  BattleEffect_RunSwirlSwipe(object, 0);
+/// Abilities: Poison Beat.
+void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunSwirlSwipe(args, 0);
 }
 
-/// Abilities: Spinning Beat (kind 383).
-void BattleEffect_RunSpinningBeat(void *object) {
-  BattleEffect_RunSwirlSwipe(object, 1);
+/// Abilities: Spinning Beat.
+void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunSwirlSwipe(args, 1);
 }
 
+/// A swirl sweeps across the first target from the user's side.
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -928,9 +907,8 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   slots = Ram_HeapSlots;
   work = (struct BattleEffectWork *)slots->battleEffect;
   canvas = slots->battleCanvas;
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
-  if (args->side == 1) {
+  EFFECT_START_NARROW_CANVAS(0);
+  if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->ramCode;
@@ -954,7 +932,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   // BG2 is placed on the first target.
   object = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectScaledBattler(args->targets[0], &position);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
     REG_BG2X = (112 - position.x) << 8;
@@ -981,7 +959,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     if (frame == 8) {
       if (mode == 0) {
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 1);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       } else {
         Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -1011,12 +989,11 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-// Builds the transparent blitter for one quarter.
+/// Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
-  BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE,                                 \
-                           BLITTER(BLITTER_TRANSPARENT, flags))
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_TRANSPARENT)
 
-// Draws one quarter of the web with the blitter just built.
+/// Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
   ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet, x, y, size, size)
 
@@ -1029,6 +1006,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 #define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_SLOT_RAM_CODE)
 #endif
 
+/// A spider web spreads over the targets in four mirrored quarters.
+///
+/// Abilities: Spider Web.
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint middle;
   void *canvas;
@@ -1040,9 +1020,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(2);
-  REG_BG2PA = Q_8_8(1);
+  work = Ram_HeapSlots->battleEffect;
+  EFFECT_START_NARROW_CANVAS(2);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;

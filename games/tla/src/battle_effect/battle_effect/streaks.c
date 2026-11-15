@@ -3,66 +3,56 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-/// Abilities: Sonic Wave (kind 300).
-void BattleEffect_RunSonicWave(void *object) {
-  BattleEffect_RunStreakVolley(object, 0);
+/// Abilities: Sonic Wave.
+void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 0);
 }
 
-/// Abilities: Shriek, Harpy (kind 301).
-void BattleEffect_RunShriek(void *object) {
-  BattleEffect_RunStreakVolley(object, 1);
+/// Abilities: Shriek, Harpy.
+void BattleEffect_RunShriek(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 1);
 }
 
-/// Abilities: Banshee Howl (kind 302).
-void BattleEffect_RunBansheeHowl(void *object) {
-  BattleEffect_RunStreakVolley(object, 2);
+/// Abilities: Banshee Howl.
+void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 2);
 }
 
-/// Abilities: War Cry (kind 304).
-void BattleEffect_RunWarCry(void *object) {
-  BattleEffect_RunStreakVolley(object, 4);
+/// Abilities: War Cry.
+void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 4);
 }
 
-/// Abilities: Wicked Howl (kind 305).
-void BattleEffect_RunWickedHowl(void *object) {
-  BattleEffect_RunStreakVolley(object, 3);
+/// Abilities: Wicked Howl.
+void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 3);
 }
 
 /// The streak volley in lime (mode 1). UNUSED: no effect table entry
 /// points here.
-void BattleEffect_RunLimeStreaks(void *object) {
-  BattleEffect_RunStreakVolley(object, 1);
+void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, 1);
 }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 #define RECORD(mode, field) gStreaks_Styles[(mode) * 4 + (field)]
-#define RECORD_ANIMATE 0 // cycle the streak through its three pictures
-#define RECORD_HIT 1     // sound the hit and flash the target
-#define RECORD_MOTION 2  // the target's recoil motion, or -1
-#define RECORD_SHAKE 3   // tremble the target after the hit
+#define RECORD_ANIMATE 0 ///< cycle the streak through its three pictures
+#define RECORD_HIT 1     ///< sound the hit and flash the target
+#define RECORD_MOTION 2  ///< the target's recoil motion, or -1
+#define RECORD_SHAKE 3   ///< tremble the target after the hit
 
-#define STREAK_MAX 3 // streaks for each target
+#define STREAK_MAX 3 ///< streaks for each target
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
 
-// Three streaks rise 20 pixels above the user and fly at each target in turn,
-// 6 frames apart, reaching it in 24 frames; each target starts 32 frames
-// after the one before. A streak is a 20x40 picture drawn twice, its upper
-// half mirrored, and the canvas wobbles line by line on a sine wave while the
-// transfer halves the old picture each frame into a trail. The mode chooses
-// the colour, whether the streak animates, the hit's sound and flash, a
-// recoil, and a tremble of the target.
-
+/// Fires the streaks at each target in turn from above the user; each leaves a
+/// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   struct HeapSlots *heap;
@@ -91,7 +81,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     drawUpper = heap->ramCode;
@@ -215,7 +205,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
-            struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
+            struck->x += px(gStreaks_Tremble[(frame - k * 32 - 30) % 8]);
             if (struck->x > 0)
               struck->x += px(1) / 2;
             else
@@ -253,38 +243,33 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Sleep Star (kind 349).
-void BattleEffect_RunSleepStar(void *object) {
-  BattleEffect_RunMoteFountain(object, 1);
+/// The mote fountain's modes (BattleEffect_RunMoteFountain).
+enum MoteFountainMode {
+  MOTE_FOUNTAIN_FOUNTAIN_HEALING, ///< Soothing Star
+  MOTE_FOUNTAIN_DRIFTING,         ///< Sleep Star
+  MOTE_FOUNTAIN_SLAVER            ///< Slaver
+};
+
+/// Abilities: Sleep Star.
+void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
 }
 
-/// Abilities: Soothing Star (kind 344).
-void BattleEffect_RunSoothingStar(void *object) {
-  BattleEffect_RunMoteFountain(object, 0);
+/// Abilities: Soothing Star.
+void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 
-/// Abilities: Slaver (kind 395).
-void BattleEffect_RunSlaver(void *object) {
-  BattleEffect_RunMoteFountain(object, 2);
+/// Abilities: Slaver.
+void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_SLAVER);
 }
 
-// The motes live in the map cell buffer.
+/// The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
 
-// Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
-// Slaver (mode 2, kind 395).
-
-// 256 motes burst from 5 pixels above the user and spread in every
-// direction; the first 128 are drawn, a quarter of them starting every 8
-// frames, each swaying on a sine wave and sized by its depth. Soothing Star's
-// burst is half as wide and sounds as it touches each target; Sleep Star's
-// drifts away from the user's side. From frame 48 the targets flash one
-// after another, 8 frames apart, and the first flash lets the battle show its
-// results. Slaver instead throws green drops up in a half-circle fan, turned
-// by the user's side, with a sound at the start; they fall back and bounce
-// on the ground for 96 frames, and then Impair's canvas effect runs on the
-// targets.
-
+/// Motes burst out of the user and float upwards, wobbling, and each target
+/// reacts in turn.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 point[3];
   struct ScreenPoint position;
@@ -301,11 +286,11 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 group = 32; // motes that start together
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  if (mode == MODE_SOOTHING_STAR)
+  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
@@ -318,9 +303,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == MODE_SOOTHING_STAR)
+  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;
-  else if (mode == MODE_SLEEP_STAR)
+  else if (mode == MOTE_FOUNTAIN_DRIFTING)
     resource = (s32)&ResourceId_EarthWallSheet;
   else
     resource = (s32)&ResourceId_GreenPalette;
@@ -336,22 +321,22 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     s32 angle;
 
     mote = &EFFECT_STEPS[i];
-    if (mode == MODE_SLAVER) {
-      if (args->side == 0)
+    if (mode == MOTE_FOUNTAIN_SLAVER) {
+      if (args->side == EFFECT_SIDE_ENEMIES)
         angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
         angle = Random16() & 0x7fff;
       speed = (Random16() & 0x3ff) + 0x800;
-      mote->y = source->y + (Random16() << 4) + 0x50000;
+      mote->y = source->y + (Random16() << 4) + px(5);
     } else {
       angle = Random16();
       speed = (Random16() & 0x3ff) + 32;
-      mote->y = source->y + 0x50000;
+      mote->y = source->y + px(5);
     }
     mote->x = source->x;
     mote->z = source->z;
     mote->velocityX = Trig_Sin(angle) * speed >> 8;
-    if (mode == MODE_SLAVER) {
+    if (mode == MOTE_FOUNTAIN_SLAVER) {
       mote->velocityY = ((Random16() & 255) + 128) << 10;
       mote->velocityZ = -(Trig_Cos(angle) * speed) >> 9;
     } else {
@@ -359,19 +344,19 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       mote->velocityZ = -(Trig_Cos(angle) * speed << 1) >> 8;
     }
     mote->variant = (Random16() & 31) + 48;
-    if (mode == MODE_SOOTHING_STAR) {
+    if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
       mote->velocityZ /= 2;
     }
   }
 
   frames = 96;
-  if (mode != MODE_SLAVER)
+  if (mode != MOTE_FOUNTAIN_SLAVER)
     frames = 128;
   for (frame = 0; frame != frames; frame++) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
-    if (mode == MODE_SLAVER && frame == 0)
+    if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
       Sound_PlayFar(SE_CURSE);
 
     for (i = 0; i != 128; i++) {
@@ -396,14 +381,14 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
-        if (mode == MODE_SLAVER) {
+        if (mode == MOTE_FOUNTAIN_SLAVER) {
           BattleEffectKernels_IntegrateVector3(mote, 62, -px(1) / 8);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
           BattleEffectKernels_IntegrateVector3(mote, 62, px(1) / 64);
         }
-        if (mode == MODE_SLEEP_STAR) {
+        if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
             mote->velocityX += px(1) / 8;
           else
@@ -414,7 +399,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     }
 
     // From frame 48, flash the targets one after another, 8 frames apart.
-    if (mode == MODE_SLEEP_STAR) {
+    if (mode == MOTE_FOUNTAIN_DRIFTING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           EFFECT_SHOW_DAMAGE(-1);
@@ -422,7 +407,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                                    POSE_DAMAGE, i, 8);
         }
       }
-    } else if (mode == MODE_SOOTHING_STAR) {
+    } else if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
@@ -437,7 +422,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  if (mode == MODE_SLAVER) {
+  if (mode == MOTE_FOUNTAIN_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
@@ -447,3 +432,4 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
+#undef EFFECT_STEPS

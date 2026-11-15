@@ -3,19 +3,20 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
 #undef BLITTER
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-// The shards live in the map cell buffer, 21 for each boulder.
+/// The shards live in the map cell buffer, 21 for each boulder.
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 #define SHARDS_PER_ROCK 21
-// A boulder shatters this many frames after it starts to fall.
+/// A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
+/// Boulders drop along the row of targets, centred on it, and shatter into
+/// tumbling shards, hitting every target as each lands.
+///
+/// Abilities: Spire, Clay Spire, Stone Spire.
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -33,10 +34,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   u32 height;
 
   // Setup: the canvas on BG2, the sheet, a transparent blitter.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -64,7 +64,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       struct Particle *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
       seed->x = px(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
-      seed->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
+      seed->y = px(gSpire_ShardOffsets[j * 2 + 1]);
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
       seed->z = 32;
@@ -129,24 +129,4 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
 
   // Teardown.
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
-}
-
-// Effects: burst effect entry points.
-
-/// Each entry passes a burst type to BattleEffect_RunBurstScene.
-/// step: effect arguments.
-void BattleEffect_RunGust(struct Particle *step) {
-  if (step->variant == 0) {
-    BattleEffect_RunBurstScene(step, 6);
-    return;
-  }
-  if (step->variant == 1) {
-    BattleEffect_RunBurstScene(step, 7);
-    return;
-  }
-  BattleEffect_RunBurstScene(step, 8);
-}
-
-void BattleEffect_RunBearClaw(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 0);
 }

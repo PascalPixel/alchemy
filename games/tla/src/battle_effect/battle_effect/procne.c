@@ -3,24 +3,28 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 #include "system/mul_q16.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-// frame / 4 % 3, as the source writes it: the multiply-high routine with the
-// reciprocal of 3, where a plain % calls __modsi3.
+/// Who breathes the dragon's fire (BattleEffect_RunDragonFire).
+enum DragonFireMode {
+  DRAGON_FIRE_TIAMAT,       ///< Tiamat lands beside the targets and breathes
+                            ///< the fire
+  DRAGON_FIRE_DRAGON_DRIVER ///< no dragon is drawn: the breath starts just in
+                            ///< front of the targets
+};
+
+/// frame / 4 % 3, as the source writes it: the multiply-high routine with the
+/// reciprocal of 3, where a plain % calls __modsi3.
 #define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
 
-#define WHIRLWIND_CEL (48 * 64) // one of the whirlwind's three frames
-#define DUST_SHEET 0x2400       // the dust motes, after the whirlwind
-#define COMET_SHEET 0x3600      // the violet comets
+#define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
+#define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
+#define COMET_SHEET 0x3600      ///< the violet comets
 #define COMETS 9
 #define FORMATION_RESOURCE 646
 
@@ -62,7 +66,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up: the max and additive pair, the whirlwind with its palette, the
@@ -308,9 +312,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         place[3] = 0;
         index = 0;
         do {
-          place[0] = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
-          place[1] = 0xff0000 + index * 0x400000;
-          place[2] = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
+          place[0] = px(gProcne_GridX[index]) + wave.x + px(40);
+          place[1] = px(255) + index * px(64);
+          place[2] = px(gProcne_GridY[index] + index * 64) + wave.y;
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
@@ -530,25 +534,26 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   }
 }
 
-/// Abilities: Dragon Driver (kind 385).
-DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, BattleEffect_RunDragonFire, 1)
+/// Abilities: Dragon Driver.
+void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
+  BattleEffect_RunDragonFire(args, DRAGON_FIRE_DRAGON_DRIVER);
+}
 
-/// Abilities: Tiamat (scene kind 7).
-DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
+/// Abilities: Tiamat.
+void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
+  BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
+}
 
 #undef FORMATION_RESOURCE
 
-// The rising grains live in the map buffer.
-
-#define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
+#define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
-// Tiamat (mode 0) and Dragon Driver (mode 1, the same scene cast from the
-// caster's side, without the formation): streaks rain down and splash, sparks
-// and grains rise from where the formation stands, a burst of flashes at frame
-// 128, then the screen whitens and the canvas fades away. In mode 0 a formation
-// of eight drops in at frame 40 and bursts at the end. A or B skips frames
-// 49 to 159.
+/// Streaks rain down and splash, sparks and grains rise from where the
+/// formation stands, flashes burst at frame 128, then the screen whitens and
+/// the canvas fades away. For Tiamat a formation of eight drops in at frame 40
+/// and bursts at the end; Dragon Driver is the same scene cast from the
+/// caster's side, without the formation. A or B skips frames 49 to 159.
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   DrawRectangle draw[2];
@@ -561,7 +566,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
 
   // Set up: half-and-half blending, the max and additive pair, the flashes
@@ -576,7 +581,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              work->sheet + STREAK_SHEET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == 1) {
+  if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     const void *lightning =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -600,17 +605,17 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     // Mode 1 on the far side mirrors everything sideways, and starts from
     // the caster.
-    if (mode == 0)
+    if (mode == DRAGON_FIRE_TIAMAT)
       dir = 1;
-    else if (args->side == 1)
+    else if (args->side == EFFECT_SIDE_PARTY)
       dir = -1;
     else
       dir = 1;
-    if (mode == 1) {
+    if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
       EffectPosition_ProjectScaledBattler(args->user, &origin);
       origin.x /= 2;
       origin.y = 66;
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         origin.x = 76;
       else
         origin.x = 44;
@@ -637,7 +642,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     for (i = 0; i != 512; i++)
       PARTICLES[i].variant = -1;
-    if (mode == 0) {
+    if (mode == DRAGON_FIRE_TIAMAT) {
       BattleEffect_SelectLivingTargets(work->args);
       wait(1);
       BattleEffect_SpawnObjects(8, FORMATION_RESOURCE, 2);
@@ -645,7 +650,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     for (frame = 0; frame != 208; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
-        if (mode == 0) {
+        if (mode == DRAGON_FIRE_TIAMAT) {
           Animation_ApplyChildArgumentFar(work->sprites[0], 8);
           Animation_ApplyChildArgumentFar(work->sprites[1], 9);
           Animation_ApplyChildArgumentFar(work->sprites[3], 10);
@@ -654,7 +659,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                    POSE_DAMAGE, TINT_KEEP, 0);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
         frame = 160;
       }
@@ -716,7 +721,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
               s32 speed = (Random16() & 255) + 128;
               s32 angle = (Random16() & 0x1fff) + 20000;
 
-              if (mode == 0) {
+              if (mode == DRAGON_FIRE_TIAMAT) {
                 if (alternate == 1) {
                   spark->x = px((Random16() & 7) + 78);
                   spark->y = px(78);
@@ -726,7 +731,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                 }
               } else {
                 spark->x = px((Random16() & 7) + origin.x - 8);
-                spark->y = origin.y << 16;
+                spark->y = px(origin.y);
               }
               spark->velocityX = speed * Trig_Sin(angle) >> 9;
               spark->velocityY = speed * Trig_Cos(angle) >> 9;
@@ -754,7 +759,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 speed = (Random16() & 255) + 128;
             s32 angle = (Random16() & 0x1fff) - 20000;
 
-            if (mode == 0) {
+            if (mode == DRAGON_FIRE_TIAMAT) {
               if (alternate == 1) {
                 flash->x = px(72);
                 flash->y = px(72);
@@ -763,8 +768,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                 flash->y = px(64);
               }
             } else {
-              flash->x = origin.x << 16;
-              flash->y = origin.y << 16;
+              flash->x = px(origin.x);
+              flash->y = px(origin.y);
             }
             flash->velocityX = speed * Trig_Sin(angle) >> 6;
             flash->velocityY = speed * Trig_Cos(angle) >> 6;
@@ -845,13 +850,13 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       // turns to face the targets from 128 to 175.
       if (frame == 128)
         work->shakeFrames = 48;
-      if (mode == 0 && frame == 48)
+      if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
         work->shakeFrames = 8;
       if (frame >= 40 && frame <= 47) {
         focus.x += -px(8);
         focus.y += px(16);
       }
-      if (mode == 0) {
+      if (mode == DRAGON_FIRE_TIAMAT) {
         if (frame == 128) {
           Animation_ApplyChildArgumentFar(work->sprites[0], 8);
           Animation_ApplyChildArgumentFar(work->sprites[1], 9);
@@ -875,7 +880,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                    POSE_DAMAGE, TINT_KEEP, 0);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
       }
 
@@ -919,14 +924,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    if (mode == 0) {
+    if (mode == DRAGON_FIRE_TIAMAT) {
       if (alternate == 1)
         BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT_ALTERNATE, focus.x,
                                     focus.y);
       else
         BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     }
-    if (mode == 0) {
+    if (mode == DRAGON_FIRE_TIAMAT) {
       for (i = 0; i != 8; i++)
         Sprite_DestroyFar(work->sprites[i]);
     }

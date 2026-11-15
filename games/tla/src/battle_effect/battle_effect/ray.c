@@ -3,26 +3,21 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
-
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 #define SPARK_COUNT 1024
 
-#define BOLT_SHEET 0x60e // the bolt pictures in the sheet
-#define BOLT_SIZE 2880   // one 24x120 bolt
+#define BOLT_SHEET 0x60e ///< the bolt pictures in the sheet
+#define BOLT_SIZE 2880   ///< one 24x120 bolt
 #define BOLT_COUNT 4
 
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
 
-// Setup: 1,024 sparks wait at the canvas center. Frame loop: for 16
-// frames the bolts circle in, their radius shrinking a pixel a frame, the
-// canvas wiped every five frames, and each bolt throws the variant's
-// number of sparks; the sparks fall and bounce off y = 120 until frame 64.
-// The targets are hit from frame 4, four frames apart.
+/// Four bolts close in, turning towards the centre and scattering sparks from
+/// their roots.
+///
+/// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -35,15 +30,15 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct ScreenPoint midpoint;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   xOffset = 0;
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(0x2001);
   else
     BattleEffect_StartTiledCanvas(0x2001);
-  if (args->variant == 2)
+  if (args->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5); // twice as wide
   else
     REG_BG2PA = Q_8_8(1);
@@ -58,8 +53,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
   // Scroll the canvas: a fixed offset for the wide variant, else onto the
   // targets' midpoint.
-  if (args->variant == 2) {
-    if (work->args->side == 1)
+  if (args->variant == EFFECT_VARIANT_STRONGEST) {
+    if (work->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -0x1000;
     else
       REG_BG2X = 0x1000;
@@ -109,7 +104,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -((Trig_Cos(angle) << 3) >> 16) - 8;
-        if (args->variant == 0)
+        if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
                   xOffset + x + (Random16() & 7) - 16, y, 24, 120);
@@ -128,7 +123,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
             speed = (Random16() & 0x1ff) + 128;
             spread = (Random16() & 0x7fff) - 0x4000;
-            spark->x = x << 16;
+            spark->x = px(x);
             spark->y = px(y + 112);
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;

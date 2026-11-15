@@ -3,28 +3,12 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
 struct MeshTriangle;
-struct Model;
 struct StripQuad;
 
-/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in
- * tla-ja. */
-struct ModelTexture__f18df5c {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const u8 *pixels;
-};
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-// One star of the opening sky: a point on a sphere and its cell kind.
+/// One star of the opening sky: a point on a sphere and its cell kind.
 struct MeteorStar {
   s32 x;
   s32 y;
@@ -33,6 +17,21 @@ struct MeteorStar {
 };
 
 extern const struct Scale gMeteorBlow_DoubleScale;
+
+/* VIEW(meteor_blow): tag struct RenderModel as struct
+ * RenderModel__meteor_blow; render_model.h has another definition; tried with
+ * the definition the rest of the object has, BattleEffect_RunMeteorBlow
+ * moves: 1 of 1545 instructions in tla-en. */
+struct RenderModel__meteor_blow {
+  s32 kind;
+  s32 flags;
+  const u16 *mesh;
+  s16 *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
@@ -73,18 +72,17 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 point[3];
   s32 place[4];
   s32 summonPlace[4];
-  struct ModelTexture__f18df5c waveTexture;
+  struct ModelTexture waveTexture;
   struct Scale summonScale;
   s32 req[2];
-  struct ModelTexture__f18df5c texture;
+  struct ModelTexture texture;
 
   canvas = Ram_HeapSlots->battleCanvas;
   map = gMapGridCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   work->args = args;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
@@ -296,7 +294,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x20000, -0x400000, 0);
+        SceneTransform_ApplyPosition3(-px(2), -px(64), 0);
         SceneTransform_ApplyScale3(42000, 0x24650, Q16_ONE);
         SceneTransform_ApplyScale3(scale, scale, scale);
         Transform_ApplyRoll(TRIG_TURN / 2);
@@ -357,7 +355,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     req[1] = size;
     req[0] = size;
     place[3] = 0;
-    place[1] = 0xff0000;
+    place[1] = px(255);
     place[0] = x;
     place[2] = z;
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
@@ -412,9 +410,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2Y = -0x1000;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 |
                WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
   REG_WIN0V = WIN_RANGE(16, 124);
@@ -443,7 +440,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    struct RenderModel *model;
+    struct RenderModel__meteor_blow *model;
     s32 angle;
     s32 back;
     s32 shade;
@@ -457,8 +454,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       summonScale = gMeteorBlow_DoubleScale;
       summonPlace[3] = 0;
       summonPlace[1] = 0xff0000;
-      summonPlace[0] = hx << 16;
-      summonPlace[2] = hz << 16;
+      summonPlace[0] = px(hx);
+      summonPlace[2] = px(hz);
       if (frame <= 15) {
         hx -= 1;
         hz += 9;
@@ -477,7 +474,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
       p = (struct Particle *)gMapGridCellBuffer;
       i = 0;
-      half = (hx / 2) << 16;
+      half = px(hx / 2);
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
        * here. */
       hx++;
@@ -501,7 +498,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
       }
@@ -537,7 +534,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(x0 << 16, 0x280000, 0);
+          SceneTransform_ApplyPosition3(px(x0), px(40), 0);
           SceneTransform_ApplyScale3(s, s * gMeteorBlow_WaveStretch[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
@@ -570,8 +567,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(half << 16,
-                                        gMeteorBlow_RingHeights[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(half),
+                                        px(gMeteorBlow_RingHeights[i]), 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);

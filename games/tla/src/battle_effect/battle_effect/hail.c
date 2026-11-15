@@ -3,17 +3,16 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-// The canvas preparer's packed arguments.
-#define PREPARE(kind, side, anchor) ((kind) | (side) << 4 | (anchor) << 5)
-
-// The ice chips live in the map cell buffer.
+/// The ice chips live in the map cell buffer.
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
+/// After a Mercury Djinni enters, ice chips burst out of the first target and
+/// waves of water rise along the bottom of the screen.
+///
+/// Abilities: Hail.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -27,11 +26,13 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   s32 rise;
 
   // Setup: the canvas, the blitter pair for the caster's side, the water.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, PREPARE(1, args->side, 2), screen,
-                                 otherPoint);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
+      screen, otherPoint);
   BattleEffect_FetchRectangleBlitters(args->side, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -106,9 +107,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame == 8) {
       work->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 16);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 3);
+      EFFECT_STRIKE_TARGET(args, 0, 16, KNOCKBACK_LAUNCH);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -116,7 +115,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
-    if (args->side == 0) {
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
                 32, 32);
@@ -134,7 +133,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
+// BattleEffect_RunGround: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from
 // frame 17. Six rocks leave the caster one after another, every two
@@ -147,7 +146,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 // a small Venus Djinn hovers over the anchor point, drawn twice as bright
 // for the first four frames, and rises off from frame 17.
 
-// Setup: the battle effect canvas and the canvas preparer (kind 0, anchor
+// Setup: the battle effect canvas and the canvas preparer (anchor
 // 2, for the caster's side), a max blitter for the side, the portal sheet
 // and the Djinn sheet in the effect work, the transfer callback, and the
 // eight rocks' starting points and velocities at the caster.
@@ -157,9 +156,13 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
-// The chips' shapes and flips live in particles[32..63].
+/// The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
+/// After a Venus Djinni enters, six glowing portals leave the user, swirl and
+/// close in on the first target, each striking it as it arrives.
+///
+/// Abilities: Ground.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -174,14 +177,15 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   s32 j;
 
   // Setup: the canvas, a max blitter for the side, the two sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, PREPARE(0, args->side, 2), screen,
-                                 otherPoint);
+  BattleEffect_RunDjinniEntrance(
+      args, DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
+      screen, otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
@@ -203,8 +207,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
       SET_POSITION(rock, actor->x, px(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
-      rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
-      rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
+      rock->velocityY = (s32)px((Random16() & 127) - 64) >> 6;
+      rock->velocityZ = (s32)px((Random16() & 255) - 127) >> 5;
       if (rock->x > 0)
         rock->velocityX = -rock->velocityX;
       rock->variant = 1;
@@ -224,7 +228,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
         if (frame > 16)
           y = y - frame * 2 + 32;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_ADDITIVE);
@@ -314,7 +318,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           // and slowed until frame 2i + 85; below y 20 it hits.
           if (frame > i * 2 + 16) {
             rock->velocityX += (target->x - rock->x) >> 8;
-            rock->velocityY += (0x140000 - rock->y) >> 8;
+            rock->velocityY += (px(20) - rock->y) >> 8;
             rock->velocityZ += (target->z - rock->z) >> 8;
             if (frame < i * 2 + 85) {
               rock->velocityX = rock->velocityX * 60 / 64;
@@ -325,9 +329,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
-              BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                       POSE_DAMAGE, 0, 4);
-              BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+              EFFECT_STRIKE_TARGET(args, 0, 4, KNOCKBACK_HURL);
             }
           }
         }
@@ -356,7 +358,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work;
   s32 *remainingFrames;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   remainingFrames = &work->shakeFrames;
   if (*remainingFrames > 0) {
     s32 randomX = (rangeX - 1) & Random16();
@@ -400,5 +402,3 @@ void Camera_ApplyVerticalShake(s32 range) {
 
 // Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
 // violet bolts strike the foes.
-
-struct FxPartyList;

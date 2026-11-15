@@ -3,9 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
@@ -36,7 +34,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   u8 *graphics;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);

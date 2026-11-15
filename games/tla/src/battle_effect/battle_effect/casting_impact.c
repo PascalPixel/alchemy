@@ -4,11 +4,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-// Steps the 64 background colours one shade toward the resource's palette.
+/// Steps background colours 0 to 63 one level towards a palette resource.
 void BattleEffect_StepPaletteToResource(s32 resource) {
   u16 dst[64];
   u16 *col = (u16 *)BG_PLTT;
@@ -42,6 +40,7 @@ void BattleEffect_StepPaletteToResource(s32 resource) {
   Dma_Set(dst, (void *)BG_PLTT, DMA_COPY_HALFWORDS(64), REG_DMA3);
 }
 
+/// The battle effect work as the casting impacts lay it out, the sheet in two.
 struct SummonWork {
   struct Particle particle[64];
   u8 frames[0x5100];
@@ -61,31 +60,12 @@ struct SummonWork {
 
 typedef s32 (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
 
+/// The two blitters an impact draws with.
 struct DrawFuncs {
   DrawFunc draw[2];
 };
 
-/* VIEW(ability_effects): tag struct Texture as struct Texture__ability_effects;
- * module/battle_effect/battle_effect.h has another definition; not tried:
- * struct Texture__ability_effects was not found. */
-struct Texture {
-  u8 width;
-  u8 height;
-  u16 unk2;
-  u8 *pixels;
-};
-
-struct Model {
-  s32 kind;
-  s32 unk4;
-  const void *mesh;
-  void *matrix;
-  struct Texture *texture;
-  long fade;
-  u8 unk18;
-  u8 frame;
-};
-
+/// The heap slots as the casting impacts read them.
 struct IwramPointers {
   u8 unk00[0x30];
   void *bg;
@@ -205,6 +185,8 @@ enum CastingImpact {
   CASTING_IMPACT_LAST_DJINNI = 37
 };
 
+/// Gathers sparks around the caster, launches the Djinni and draws the
+/// impact on the first target.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                    s32 kind) {
   u8 *buffer;
@@ -225,11 +207,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   s32 point[3];
   s32 targetPoint[3];
   struct DrawFuncs drawFuncs;
-  struct Texture stunBoltTexture;
-  struct Texture reverseStarTexture;
-  struct Texture boscaHitTexture;
-  struct Texture stunJipTexture;
-  struct Texture armorCrushTexture;
+  struct ModelTexture stunBoltTexture;
+  struct ModelTexture reverseStarTexture;
+  struct ModelTexture boscaHitTexture;
+  struct ModelTexture stunJipTexture;
+  struct ModelTexture armorCrushTexture;
   s32 step;
   s32 i;
   u8 *src;
@@ -554,7 +536,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     s32 fade;
     s32 scale;
     void *matrix;
-    struct Model *model;
+    struct RenderModel *model;
     const u8 *table;
     s32 k;
     struct Particle *p;
@@ -575,7 +557,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
      * filled. */
     vec = origin;
     vec[0] = object->x;
-    vec[1] = object->y + 0x500000;
+    vec[1] = object->y + px(80);
     vec[2] = object->z;
     savedVelocityX = object->velocityX;
     savedVelocityY = object->velocityY;
@@ -641,19 +623,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
 
     if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       REG_BG2PA = Q_8_8(1);
-      if (action->side == 0)
+      if (action->side == EFFECT_SIDE_ENEMIES)
         REG_BG2X = (frame - target[0]) << 8;
       else
         REG_BG2X = (96 - target[0]) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
       REG_BG2PA = Q_8_8(1);
-      if (action->side == 0)
+      if (action->side == EFFECT_SIDE_ENEMIES)
         REG_BG2X = (64 - target[0]) << 8;
       else
         REG_BG2X = (64 - target[0]) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       REG_BG2PA = Q_8_8(1);
-      if (action->side == 0) {
+      if (action->side == EFFECT_SIDE_ENEMIES) {
         scrollA = 0xffc00000;
         scrollB = 0x20000;
       } else {
@@ -664,7 +646,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     } else if (kind == CASTING_IMPACT_IMPACT_ASURA ||
                kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
       REG_BG2PA = Q_8_8(1);
-      if (action->side == 0) {
+      if (action->side == EFFECT_SIDE_ENEMIES) {
         scrollA = 0xff800000;
         scrollB = 0xc0000;
       } else {
@@ -683,7 +665,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
     if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
       REG_BG2PA = Q_8_8(1);
-      if (action->side == 0)
+      if (action->side == EFFECT_SIDE_ENEMIES)
         REG_BG2X = (32 - target[0]) << 8;
       else
         REG_BG2X = (96 - target[0]) << 8;
@@ -700,11 +682,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       EFFECT_RELEASE_BLITTERS();
       Actor_SelectAnimationFar(object, 3);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
-        BattleEffect_RunProjectileVolley(action, 9);
+        BattleEffect_RunProjectileVolley(action, PROJECTILE_VOLLEY_BLIZZARD);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME)
         BattleEffect_RunMysticFlame(action);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS)
-        BattleEffect_RunProjectileVolley(action, 8);
+        BattleEffect_RunProjectileVolley(action,
+                                         PROJECTILE_VOLLEY_IMPACT_COMETS);
       return;
     }
     Actor_SetAnimationSpeedFar(object, 16);
@@ -721,7 +704,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       EFFECT_RELEASE_BLITTERS();
       action->variant = 3;
-      BattleEffect_RunSparkGroups(action, 2);
+      BattleEffect_RunSparkGroups(action, SPARK_GROUPS_RISING);
       return;
     }
     Iwram_ClearWords(screen, 0x3c00);
@@ -735,7 +718,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     targetObject = BattleObject_GetFar(action->targets[0])->object;
     {
       center[0] = (targetObject->x - origin[0]) / 6;
-      center[1] = (targetObject->y - origin[1] + 0x1e0000) / 6;
+      center[1] = (targetObject->y - origin[1] + px(30)) / 6;
       center[2] = (targetObject->z - origin[2]) / 6;
     }
     for (i = 0; i != 64; i++)
@@ -1061,7 +1044,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           kind != CASTING_IMPACT_IMPACT_FLASH_PUNCH &&
           kind != CASTING_IMPACT_IMPACT_MOTHER_EARTH &&
           kind != CASTING_IMPACT_IMPACT_WILD_WOLF && frame < 12) {
-        if (action->side == 0)
+        if (action->side == EFFECT_SIDE_ENEMIES)
           drawFuncs.draw[0](screen, work->frames + (frame / 2) * 0xd80,
                             base[0] - 28, base[1] - 40, 48, 72);
         else
@@ -1605,7 +1588,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 m;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         EFFECT_RELEASE_BLITTERS();
-        if (action->side == 0)
+        if (action->side == EFFECT_SIDE_ENEMIES)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               BLITTER_TRANSPARENT);
         else
@@ -1623,14 +1606,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame >= 4 && frame < 8)
           Iwram_FillWords(screen, 0x4000, 0x01010101);
         if (frame > 3) {
-          if (action->side == 0)
+          if (action->side == EFFECT_SIDE_ENEMIES)
             drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
           else
             drawFuncs.draw[0](screen, buffer, 0, 21, 96, 88);
         }
         m = frame / 2;
         if (m < 10) {
-          if (action->side == 0)
+          if (action->side == EFFECT_SIDE_ENEMIES)
             drawFuncs.draw[0](screen,
                               buffer + gCastingImpact_RaidensWrathPictures[m],
                               gCastingImpact_RaidensWrathX[m],
@@ -1660,7 +1643,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 15)
           Sound_PlayFar(SE_HEAVY_IMPACT);
         EFFECT_RELEASE_BLITTERS();
-        if (action->side == 0)
+        if (action->side == EFFECT_SIDE_ENEMIES)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               BLITTER_TRANSPARENT);
         else
@@ -1682,7 +1665,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 5)
           Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
         if (frame >= 0 && (m = frame / 3) < 7) {
-          if (action->side == 0)
+          if (action->side == EFFECT_SIDE_ENEMIES)
             drawFuncs.draw[0](screen,
                               buffer + gCastingImpact_ApocalypsePictures[m],
                               gCastingImpact_ApocalypseX[m],
@@ -1703,7 +1686,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           t = frame - 8 - i * 2;
           if (t >= 0 && t <= 8) {
             m = t / 3;
-            if (action->side == 0)
+            if (action->side == EFFECT_SIDE_ENEMIES)
               drawFuncs.draw[0](
                   screen, buffer + gCastingImpact_ApocalypseBurstPictures[m],
                   gCastingImpact_ApocalypseBurstPoints[i][0] -
@@ -1739,18 +1722,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame >= 4 && frame < 6)
           Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
         if (frame < 4) {
-          if (action->side == 1)
+          if (action->side == EFFECT_SIDE_PARTY)
             drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
           else
             drawFuncs.draw[0](screen, work->frames, 48, 24, 80, 104);
         } else {
           if (frame < 8) {
-            if (action->side == 1)
+            if (action->side == EFFECT_SIDE_PARTY)
               drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
             else
               drawFuncs.draw[0](screen, work->frames, 48, 24, 80, 104);
           }
-          if (action->side == 1)
+          if (action->side == EFFECT_SIDE_PARTY)
             drawFuncs.draw[0](screen, work->frames + 0x1e00, 16, 16, 80, 104);
           else
             drawFuncs.draw[0](screen, work->frames + 0x1e00, 32, 16, 80, 104);
@@ -1839,7 +1822,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 0) {
           p->x = px(target[0] / 2);
           p->y = px(target[1] + 48);
-          if (action->side == 0)
+          if (action->side == EFFECT_SIDE_ENEMIES)
             p->velocityX = -0x30000;
           else
             p->velocityX = 0x30000;
@@ -1873,7 +1856,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 x;
         s32 y;
         if (frame < 6) {
-          if (action->side == 0) {
+          if (action->side == EFFECT_SIDE_ENEMIES) {
             x = target[0] / 2 + (6 - frame) * 3 * 2;
             y = target[1] - (6 - frame) * 3 * 4 + 24;
           } else {
@@ -1889,7 +1872,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BLDALPHA = (48 - frame) | 0x1000;
         if (frame < 14) {
           struct Particle *p;
-          if (action->side == 0) {
+          if (action->side == EFFECT_SIDE_ENEMIES) {
             x = target[0] / 2 + (14 - frame) * 3 * 2;
             y = target[1] - (14 - frame) * 3 * 4 + 24;
           } else {
@@ -1945,8 +1928,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BG2PA = Q_8_8(1);
           p = work->particle;
           for (i = 0; i != 32; i++, p++) {
-            SET_POSITION(p, ((Random16() & 31) + 48) << 16,
-                         ((Random16() & 31) + 64) << 16, Random16());
+            SET_POSITION(p, px((Random16() & 31) + 48),
+                         px((Random16() & 31) + 64), Random16());
             p->velocityX = ((Random16() & 63) - 32) << 12;
             p->velocityY = -((Random16() & 127) + 16) << 12;
             p->velocityZ = (Random16() & 15) + 16;
@@ -1962,7 +1945,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         i = 0;
         particle = work->particle;
         if (frame < 14) {
-          if (action->side == 0) {
+          if (action->side == EFFECT_SIDE_ENEMIES) {
             x = target[0] + (14 - frame) * 3 * 2;
             y = target[1] - (14 - frame) * 3 * 4 + 24;
           } else {
@@ -2037,15 +2020,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         }
         if (frame > 3) {
           struct Particle *p;
-          struct Model *model;
+          struct RenderModel *model;
           matrix = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
-          stunBoltTexture.width = 5;
-          stunBoltTexture.height = 7;
+          stunBoltTexture.logWidth = 5;
+          stunBoltTexture.logHeight = 7;
           model->kind = 6;
           model->texture = &stunBoltTexture;
           model->mesh = gBattleEffect_ColumnMesh;
-          model->matrix = matrix;
+          model->vertices = matrix;
           for (i = 0; i != 20; i++) {
             struct Particle *p;
             p = &RINGS[i];
@@ -2055,15 +2038,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 fade = -16;
               else if (frame >= i + 4)
                 fade = -((frame - i - 4) * 16);
-              model->fade = fade;
+              model->shade = fade;
               {
                 s32 life = p->variant;
                 stunBoltTexture.pixels = buffer + 0xc56 + (life << 12);
                 p->variant = (life + 1) & 3;
               }
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                            (target[1] - 64) << 16, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                            px(target[1] - 64), 0);
               Transform_ApplyRoll(p->z);
               p->z += p->velocityZ;
               SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
@@ -2079,7 +2062,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                  kind == CASTING_IMPACT_IMPACT_FLASH_FORCE ||
                  kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
         void *matrix;
-        struct Model *model;
+        struct RenderModel *model;
         s32 fade;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
@@ -2088,17 +2071,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           fade = (40 - frame) * 4;
         else
           work->shakeFrames = 1;
-        reverseStarTexture.width = 6;
-        reverseStarTexture.height = 6;
+        reverseStarTexture.logWidth = 6;
+        reverseStarTexture.logHeight = 6;
         reverseStarTexture.pixels = buffer;
         model->kind = 7;
         model->texture = &reverseStarTexture;
         model->mesh = gBattleEffect_SquareMesh;
-        model->matrix = matrix;
-        model->fade = fade;
+        model->vertices = matrix;
+        model->shade = fade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                      (target[1] - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                      px(target[1] - 64), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
           Sound_PlayFar(SE_104);
@@ -2151,13 +2134,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        boscaHitTexture.width = 7;
-        boscaHitTexture.height = 7;
+        boscaHitTexture.logWidth = 7;
+        boscaHitTexture.logHeight = 7;
         boscaHitTexture.pixels = buffer;
         model->texture = &boscaHitTexture;
         model->kind = 7;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->matrix = matrix;
+        model->vertices = matrix;
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
             kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
           s32 fade;
@@ -2168,11 +2151,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               fade = 0;
               if (t > 7)
                 fade = (8 - t) * 8;
-              model->fade = fade;
+              model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                              px(target[1] - 64), 0);
                 SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -2192,11 +2175,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             fade = 0;
             if (t > 7)
               fade = (8 - t) * 8;
-            model->fade = fade;
+            model->shade = fade;
             if (fade >= -63) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                            (target[1] - 64) << 16, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                            px(target[1] - 64), 0);
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyPitch(TRIG_TURN / 4);
               SceneTransform_ApplyUniformScale(angle);
@@ -2213,11 +2196,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               fade = 0;
               if (t > 7)
                 fade = (8 - t) * 8;
-              model->fade = fade;
+              model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                              px(target[1] - 64), 0);
                 SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -2271,13 +2254,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        stunJipTexture.width = 7;
-        stunJipTexture.height = 7;
+        stunJipTexture.logWidth = 7;
+        stunJipTexture.logHeight = 7;
         stunJipTexture.pixels = buffer;
         model->kind = 7;
         model->texture = &stunJipTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->matrix = matrix;
+        model->vertices = matrix;
         t = frame - 4;
         if (t >= 0) {
           s32 fade;
@@ -2285,11 +2268,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           fade = 0;
           if (t > 7)
             fade = (8 - t) * 8;
-          model->fade = fade;
+          model->shade = fade;
           if (fade >= -63) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16, 0x280000,
-                                          0);
+            SceneTransform_ApplyPosition3(px(target[0] / 2 - 64), px(40), 0);
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyPitch(1000);
             SceneTransform_ApplyUniformScale(angle);
@@ -2298,8 +2280,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             Render_DrawModelList(model);
           }
         }
-        stunJipTexture.width = 7;
-        stunJipTexture.height = 4;
+        stunJipTexture.logWidth = 7;
+        stunJipTexture.logHeight = 4;
         stunJipTexture.pixels = buffer + 0x4000;
         model->mesh = gCastingImpact_BandMesh;
         for (i = 0; i != 2; i++) {
@@ -2313,11 +2295,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               scale =
                   (frame - start) * gCastingImpact_StunJipBandGrowth[i] * 1500 +
                   0x4180;
-              model->fade = fade;
+              model->shade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3(
-                  (target[0] / 2 - 60) << 16,
-                  gCastingImpact_StunJipBandHeights[i] << 16, 0);
+                  px(target[0] / 2 - 60),
+                  px(gCastingImpact_StunJipBandHeights[i]), 0);
               SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -2335,22 +2317,22 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 4)
           work->shakeFrames = 8;
       } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-        struct Texture *tex;
+        struct ModelTexture *tex;
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
         /* FAKEMATCH(temporary): tex holds &armorCrushTexture. */
         tex = &armorCrushTexture;
-        tex->width = 6;
-        tex->height = 6;
+        tex->logWidth = 6;
+        tex->logHeight = 6;
         model->texture = tex;
-        model->matrix = matrix;
+        model->vertices = matrix;
         tex->pixels = buffer;
         model->kind = 7;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
-          model->frame = (frame * 8 + i * 32) & 127;
+          model->scrollV = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
             Sound_PlayFar(SE_104);
           if (frame > start) {
@@ -2361,10 +2343,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               scale = (frame - start) * gCastingImpact_ArmorCrushWaveGrowth[i] *
                           2000 +
                       Q16_ONE / 4;
-              model->fade = fade;
+              model->shade = fade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
-                                            0x280000, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 60), 0x280000,
+                                            0);
               SceneTransform_ApplyScale3(
                   scale, gCastingImpact_ArmorCrushWaveStretch[i] * scale * 2,
                   scale / 4);
@@ -2626,7 +2608,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
             kind == CASTING_IMPACT_IMPACT_FLASH_EDGE ||
             kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
-          BattleMotion_ApplyKnockbackFar(action->targets[0], 4);
+          BattleMotion_ApplyKnockbackFar(action->targets[0], KNOCKBACK_HURL);
           work->shakeFrames = 12;
         } else if (kind == CASTING_IMPACT_IMPACT_ECHO ||
                    kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
@@ -2635,11 +2617,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         } else if (kind == CASTING_IMPACT_IMPACT_BROIL ||
                    kind == CASTING_IMPACT_IMPACT_AQUA_SOCK ||
                    kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM) {
-          BattleMotion_ApplyKnockbackFar(action->targets[0], 1);
+          BattleMotion_ApplyKnockbackFar(action->targets[0], KNOCKBACK_HOP);
           work->shakeFrames = 2;
         } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH ||
                    kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-          BattleMotion_ApplyKnockbackFar(action->targets[0], 3);
+          BattleMotion_ApplyKnockbackFar(action->targets[0], KNOCKBACK_LAUNCH);
           work->shakeFrames = 16;
         } else if (kind == CASTING_IMPACT_IMPACT_ROC ||
                    kind == CASTING_IMPACT_IMPACT_CALL_ZOMBIE ||
@@ -2649,7 +2631,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                    kind == CASTING_IMPACT_IMPACT_BOSCA_HIT ||
                    kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
                    kind == CASTING_IMPACT_IMPACT_SCORPIONFISH) {
-          BattleMotion_ApplyKnockbackFar(action->targets[0], 0);
+          BattleMotion_ApplyKnockbackFar(action->targets[0], KNOCKBACK_NUDGE);
           work->shakeFrames = 12;
         }
       }

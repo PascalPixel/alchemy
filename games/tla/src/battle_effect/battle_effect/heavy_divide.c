@@ -4,22 +4,16 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
-// a great sword (with four fading after-images, each a dimmer copy of the
-// sheet) swings down from over the caster, striking at frame
-// gHeavyBlow_StrikeFrames[0]. Strong Hit: an axe is thrown, spinning, from the
-// caster to the target. Either way chips of stone fly from the target and
-// bounce on the ground.
+/// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
+/// a great sword (with four fading after-images, each a dimmer copy of the
+/// sheet) swings down from over the caster, striking at frame
+/// gHeavyBlow_StrikeFrames[0]. Strong Hit: an axe is thrown, spinning, from the
+/// caster to the target. Either way chips of stone fly from the target and
+/// bounce on the ground.
 void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -38,7 +32,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   s32 zero; // One constant, rebuilt at each store.
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 4);
@@ -48,7 +42,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   caster = BattleObject_GetFar(args->user)->object;
-  if (mode == 0) {
+  if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
     frames = 80;
     Resource_LoadAndDecompress((s32)&ResourceId_GreatSwordSheet, work->sheet, 1,
                                1);
@@ -94,7 +88,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       if (frame == 8) {
         BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
       }
@@ -111,7 +105,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     model->texture = &texture;
     model->vertices = vertices;
     model->shade = zero;
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       s32 size;
       s32 angle;
 
@@ -151,17 +145,17 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           }
           texture.pixels = work->sheet + i * 0x1000;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((source.x / 2 - 64) << 16,
-                                        (source.y - 88) << 16, 0);
+          SceneTransform_ApplyPosition3(px(source.x / 2 - 64),
+                                        px(source.y - 88), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(TRIG_TURN / 2 - step->variant);
           } else {
             Transform_ApplyRoll(step->variant + TRIG_TURN / 2);
           }
           SceneTransform_ApplyPosition3(0, 0xfff00000, 0);
           SceneTransform_ApplyScale3(size << 15, size * 13192, size << 13);
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
@@ -179,7 +173,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           work->particles[i].velocityX = (target.x / 2 - source.x / 2) << 11;
           work->particles[i].velocityY = (target.y - source.y) << 11;
           work->particles[i].z = zero;
-          if (args->side == 0) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
             work->particles[i].velocityZ = -(px(1) / 16);
           } else {
             work->particles[i].velocityZ = px(1) / 16;
@@ -191,11 +185,11 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(work->particles[0].x - 0x400000,
-                                      work->particles[0].y - 0x400000, 0);
+        SceneTransform_ApplyPosition3(work->particles[0].x - px(64),
+                                      work->particles[0].y - px(64), 0);
         SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE / 2);
         Transform_ApplyRoll(work->particles[0].z);
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -208,7 +202,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
     if (frame == gHeavyBlow_StrikeFrames[mode]) {
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       work->shakeFrames = 8;
@@ -241,7 +235,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         } while (i != gHeavyBlow_ChipCounts[mode]);
       }
     }
-    if (mode == 0) {
+    if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       BattleCamera_Shake(4, 16);
     } else {
       BattleCamera_Shake(8, 8);
@@ -254,7 +248,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
+/// The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
 #define SLIM_COLUMN_OFFSET 0x870
 #define SPARK_OFFSET 0x3060
 
@@ -283,10 +277,9 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -354,9 +347,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
           if (age == 2) {
             s32 member = i % args->targetCount;
 
-            BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, member, 3);
-            BattleMotion_ApplyKnockbackFar(args->targets[member], 0);
+            EFFECT_STRIKE_TARGET(args, member, 3, KNOCKBACK_NUDGE);
             Sound_PlayFar(SE_POWER_UP);
             work->shakeFrames = 3;
           }
@@ -441,8 +432,6 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 // Wyrd Curse: drops fall on the target and bounce away, feeding a glow that
 // grows over it, then splashes rise and the target is struck six times.
 
-// splashes' mesh
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 
 #define WYRD_FRAMES 120
@@ -474,13 +463,13 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   s32 size;
   s32 width;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -631,7 +620,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
         last->variant = level - 24;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(last->x - 0x400000, last->y - 0x400000, 0);
+      SceneTransform_ApplyPosition3(last->x - px(64), last->y - px(64), 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
       Transform_ApplyPitch(-TRIG_TURN / 8);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
@@ -653,7 +642,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       model->shade = zero;
       texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
       Transform_Reset();
-      SceneTransform_ApplyPosition3(drop->x - 0x400000, drop->y - 0x300000, 0);
+      SceneTransform_ApplyPosition3(drop->x - px(64), drop->y - px(48), 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
       Transform_ApplyPitch(-TRIG_TURN / 4);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
@@ -674,7 +663,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     for (i = 0; i != 6; i++) {
       if (frame == i * 4 + 80) {
         work->shakeFrames = 2;
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 2);
         if (i == 0) {
@@ -695,24 +684,21 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
 #undef BLITTER
 
-struct Model;
-
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define FLAMES 32
 
-// Radiant Fire: eight bursts of fire bloom one after another around the
-// target, each a shaded disc that swells and shrinks under a spinning
-// square of flame, with a white flash of the canvas as the first lands.
-//
-// Setup: canvas layer 0 at half blend; one max blitter; the flame texture
-// (resource 0x0c2) and the orange palette; 32 shaded discs of 2 to 64
-// pixels drawn into the map cell buffer, their offsets kept in the work
-// sheet.
-// Frame loop (66 frames): at frame 0 the bursts are placed at random
-// around the target and the user closes in; from frame 8 burst i lands at
-// frame 16 + 4i and burns for 24 frames.
+/// Radiant Fire: eight bursts of fire bloom one after another around the
+/// target, each a shaded disc that swells and shrinks under a spinning
+/// square of flame, with a white flash of the canvas as the first lands.
+///
+/// Setup: canvas layer 0 at half blend; one max blitter; the flame texture
+/// (resource 0x0c2) and the orange palette; 32 shaded discs of 2 to 64
+/// pixels drawn into the map cell buffer, their offsets kept in the work
+/// sheet.
+/// Frame loop (66 frames): at frame 0 the bursts are placed at random
+/// around the target and the user closes in; from frame 8 burst i lands at
+/// frame 16 + 4i and burns for 24 frames.
+///
+/// Abilities: Chill, Radiant Fire.
 void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   struct ModelTexture texture;
@@ -733,7 +719,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   s32 cells;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -795,7 +781,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
       EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -811,7 +797,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
         if (burst->variant == 8) {
           Sound_PlayFar(SE_CLATTER);
           work->shakeFrames = 8;
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
@@ -850,8 +836,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
             brightness = (16 - square->variant) * 8;
           model->shade = brightness;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((square->x - 64) << 16,
-                                        (square->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3(px(square->x - 64), px(square->y - 64),
+                                        0);
           Transform_ApplyRoll(square->velocityZ);
           Transform_ApplyPitch(square->velocityY);
           SceneTransform_ApplyUniformScale(roll);
@@ -870,27 +856,29 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The map cell buffer holds 1,024 more particles while an effect runs.
+/// The map cell buffer holds 1,024 more particles while an effect runs.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
 #define STREAKS 64
 
-// The splash: six 24x48 pictures in the work sheet after the streak.
+/// The splash: six 24x48 pictures in the work sheet after the streak.
 #define SPLASH_OFFSET 0x3200
 #define SPLASH_SIZE (24 * 48)
 
-// Hurricane: driving rain slants down over the target, each drop bursting
-// into a splash where it lands, while the target is struck eight times; the
-// user rushes in at frame 32. The canvas then hands over to the summon
-// canvas effect in mode 3.
-//
-// Setup: canvas layer 1 at half blend and full width, centred on the
-// target; one additive blitter; the cyan palette; a 4x64 streak drawn into
-// the work sheet as a slanted line, leaning with the wind; the splash
-// pictures after it.
-// Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
-// fall in turn, one more each frame; a streak that falls below line 48
-// starts its splash.
+/// Hurricane: driving rain slants down over the target, each drop bursting
+/// into a splash where it lands, while the target is struck eight times; the
+/// user rushes in at frame 32. The canvas then hands over to the summon
+/// canvas effect in mode 3.
+///
+/// Setup: canvas layer 1 at half blend and full width, centred on the
+/// target; one additive blitter; the cyan palette; a 4x64 streak drawn into
+/// the work sheet as a slanted line, leaning with the wind; the splash
+/// pictures after it.
+/// Frame loop (68 frames): 64 streaks start above the screen at frame 0 and
+/// fall in turn, one more each frame; a streak that falls below line 48
+/// starts its splash.
+///
+/// Abilities: Scorch, Hurricane.
 void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -903,7 +891,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   s32 i;
 
   size = 0x3c00;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -926,7 +914,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   // every 16 rows against the wind.
   Iwram_ClearWordsEntry(work->sheet, 256);
   for (i = 0; i != STREAKS; i++) {
-    if (args->side == 0)
+    if (args->side == EFFECT_SIDE_ENEMIES)
       work->sheet[i * 4 - i / 16 + 3] = 24;
     else
       work->sheet[i * 4 + i / 16] = 24;
@@ -944,7 +932,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       for (i = 0; i != STREAKS; i++) {
         streak = &work->particles[i];
         streak->y = px((Random16() & 31) - 64);
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           streak->x = px((Random16() & 63) + 40);
           streak->velocityX = -px(1);
         } else {
@@ -959,7 +947,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(3));
     if (frame == 46) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
 
     // Each splash rises and spreads through its six pictures, four frames
@@ -1036,11 +1024,15 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   BattleEffect_RunDull(args);
 }
 
-/// Abilities: Earth Force (kind 459).
-void BattleEffect_RunEarthForce(s32 a0) { BattleEffect_RunBoltTrail(a0, 1); }
+/// Abilities: Earth Force.
+void BattleEffect_RunEarthForce(struct BattleEffectParams *args) {
+  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_EARTH_FORCE);
+}
 
-/// Abilities: Thunder Mine (kind 86).
-void BattleEffect_RunThunderMine(s32 a0) { BattleEffect_RunBoltTrail(a0, 0); }
+/// Abilities: Thunder Mine.
+void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
+  BattleEffect_RunBoltTrail(args, BOLT_TRAIL_THUNDER_MINE);
+}
 #undef BLITTER
 #undef SLIM_COLUMN_OFFSET
 #undef SPARK_OFFSET

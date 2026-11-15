@@ -3,166 +3,185 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-/// Abilities: Numbing Sting, Paralytail (kind 313).
-void BattleEffect_RunNumbingSting(void *object) {
-  BattleEffect_RunTargetStrike(object, 6);
+/// One slash strikes the first target among glints, in lightning colours.
+///
+/// Abilities: Numbing Sting, Paralytail.
+void BattleEffect_RunNumbingSting(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
 
-/// Abilities: Cannibal Fang (kind 316).
-void BattleEffect_RunCannibalFang(void *object) {
-  BattleEffect_RunTargetStrike(object, 3);
+/// Fangs bite the first target three times while motes stream out of it and
+/// back into the user.
+///
+/// Abilities: Cannibal Fang.
+void BattleEffect_RunCannibalFang(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES);
 }
 
-/// Abilities: Poisonous Bite (kind 318); Poison Fang (kind 323).
-void BattleEffect_RunPoisonousBite(void *object) {
-  BattleEffect_RunTargetStrike(object, 1);
+/// Fangs bite the first target once, in lime, with smoke.
+///
+/// Abilities: Poisonous Bite; Poison Fang.
+void BattleEffect_RunPoisonousBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_BITE);
 }
 
-/// Abilities: Rabid Fang (kind 336).
-void BattleEffect_RunRabidFang(void *object) {
-  BattleEffect_RunTargetStrike(object, 10);
+/// Fangs bite the first target once, with smoke, in Mars Djinn colours.
+///
+/// Abilities: Rabid Fang.
+void BattleEffect_RunRabidFang(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_BITE);
 }
 
-/// Abilities: Electric Bite (kind 324).
-void BattleEffect_RunElectricBite(void *object) {
-  BattleEffect_RunTargetStrike(object, 5);
+/// Fangs bite the first target three times among glints, in lightning
+/// colours.
+///
+/// Abilities: Electric Bite.
+void BattleEffect_RunElectricBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES);
 }
 
-/// Abilities: Poison Tail (kind 325); Poison Sting (kind 440).
-void BattleEffect_RunPoisonTail(void *object) {
-  BattleEffect_RunTargetStrike(object, 9);
+/// One lime slash strikes the first target, with smoke.
+///
+/// Abilities: Poison Tail; Poison Sting.
+void BattleEffect_RunPoisonTail(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
 
-/// Abilities: Vampiric Fang (kind 327).
-void BattleEffect_RunVampiricFang(void *object) {
-  BattleEffect_RunTargetStrike(object, 4);
+/// Fangs bite the first target three times, draining motes back into the user,
+/// in Mars Djinn colours.
+///
+/// Abilities: Vampiric Fang.
+void BattleEffect_RunVampiricFang(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_BITES);
 }
 
-/// Abilities: Double Fang (kind 332).
-void BattleEffect_RunDoubleFang(void *object) {
-  BattleEffect_RunTargetStrike(object, 0);
+/// Fangs bite the first target twice, in blue, with sparks.
+///
+/// Abilities: Double Fang.
+void BattleEffect_RunDoubleFang(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITES);
 }
 
-/// Abilities: Mortal Blow (kind 333).
-void BattleEffect_RunMortalBlow(void *object) {
-  BattleEffect_RunTargetStrike(object, 8);
+/// One heavy slash strikes the first target in Mars Djinn colours, throwing
+/// sparks.
+///
+/// Abilities: Mortal Blow.
+void BattleEffect_RunMortalBlow(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH);
 }
 
-/// Abilities: Twin Beaks, Gryphon (kind 335).
-void BattleEffect_RunTwinBeaks(void *object) {
-  BattleEffect_RunTargetStrike(object, 7);
+/// Two slashes strike the first target, throwing sparks, in lightning colours.
+///
+/// Abilities: Twin Beaks, Gryphon.
+void BattleEffect_RunTwinBeaks(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args,
+                               TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
 
-/// Abilities: Acid Bite (kind 337).
-void BattleEffect_RunAcidBite(void *object) {
-  BattleEffect_RunTargetStrike(object, 2);
+/// Fangs bite the first target three times, in pink, with smoke.
+///
+/// Abilities: Acid Bite.
+void BattleEffect_RunAcidBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_BITES);
 }
 
-/// Abilities: Drain Fang (kind 386).
-void BattleEffect_RunDrainFang(void *object) {
-  BattleEffect_RunTargetStrike(object, 11);
+/// Fangs bite the first target three times, draining motes back into the user,
+/// added in Mars Djinn colours.
+///
+/// Abilities: Drain Fang.
+void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args,
+                               TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES);
 }
 
-/// Abilities: Angle Spike (kind 399).
-void BattleEffect_RunAngleSpike(void *object) {
-  BattleEffect_RunTargetStrike(object, 16);
+/// One orange slash strikes the first target with a flash and sparks.
+///
+/// Abilities: Angle Spike.
+void BattleEffect_RunAngleSpike(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args,
+                               TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH);
 }
 
-/// Abilities: Heat Stun (kind 458).
-void BattleEffect_RunHeatStun(void *object) {
-  BattleEffect_RunTargetStrike(object, 14);
+/// One orange slash strikes the first target with a flash, glints and sparks.
+///
+/// Abilities: Heat Stun.
+void BattleEffect_RunHeatStun(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args,
+                               TARGET_STRIKE_STYLE_ORANGE_FLASH_GLINT_SLASH);
 }
 
-/// Abilities: Maneater (kind 421).
-void BattleEffect_RunManeater(void *object) {
-  BattleEffect_RunTargetStrike(object, 15);
+/// Fangs bite the first target three times, draining motes back into the user,
+/// added in Mars Djinn colours.
+///
+/// Abilities: Maneater.
+void BattleEffect_RunManeater(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MANEATER);
 }
 
-/// Effect kind 438: the target strike in style 17.
-void BattleEffect_RunTargetStrikeMode17(void *object) {
-  BattleEffect_RunTargetStrike(object, 17);
+/// Unused: no ability's effect names kind 438, so the player never sees it:
+/// fangs bite the first target once, hard, throwing sparks, in Mars Djinn
+/// colours.
+void BattleEffect_RunUnusedHeavyBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_BITE);
 }
 
-/// Effect kind 439: the target strike in style 18.
-void BattleEffect_RunTargetStrikeMode18(void *object) {
-  BattleEffect_RunTargetStrike(object, 18);
+/// Unused: no ability's effect names kind 439, so the player never sees it:
+/// fangs bite the first target once with a flash and sparks, in orange.
+void BattleEffect_RunUnusedFlashBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_ORANGE_FLASH_BITE);
 }
 
-/// Abilities: Kill Sting (kind 441).
-void BattleEffect_RunKillSting(void *object) {
-  BattleEffect_RunTargetStrike(object, 19);
+/// One slash strikes the first target while a star swells on it, in Mars Djinn
+/// colours.
+///
+/// Abilities: Kill Sting.
+void BattleEffect_RunKillSting(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_STAR_SLASH);
 }
 
-/// Effect kind 456: the target strike in style 20.
-void BattleEffect_RunTargetStrikeMode20(void *object) {
-  BattleEffect_RunTargetStrike(object, 20);
+/// Unused: no ability's effect names kind 456, so the player never sees it:
+/// fangs bite the first target once, in blue, with sparks.
+void BattleEffect_RunUnusedSparkBite(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITE);
 }
 
-/// Abilities: Mad Zephyr (kind 117).
-void BattleEffect_RunMadZephyr(u8 *object) {
-  BattleEffect_SetApproachMotion(*(s32 *)(object + 8), *(s16 *)(object + 36), 4,
-                                 20);
+/// Abilities: Mad Zephyr.
+void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
+  BattleEffect_SetApproachMotion(args->user, args->targets[0], 4, 20);
   wait(2);
-  if (*(s32 *)(object + 24) == 0)
-    BattleEffect_RunTargetStrike(object, 12);
+  if (args->variant == EFFECT_VARIANT_BASIC)
+    BattleEffect_RunTargetStrike(
+        args, TARGET_STRIKE_STYLE_LIGHTNING_FOUR_SPARK_SLASHES);
   else
-    BattleEffect_RunTargetStrike(object, 13);
+    BattleEffect_RunTargetStrike(
+        args, TARGET_STRIKE_STYLE_LIGHTNING_EIGHT_SPARK_SLASHES);
 }
 
 #undef RECORD
-
-// The body of 21 strike and column effects.
-
-struct Model;
 
 #define gBlitter ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
 #define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
-#define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
-#define RECORD_COUNT 1   // strikes or columns
-#define RECORD_FLAGS 2   // the parts drawn (FLAG_*)
-#define RECORD_PALETTE 3 // the colours
-#define RECORD_RATE 4    // frames for each picture
-#define RECORD_BLEND 5   // the columns' blitter mode
-#define RECORD_FRAMES 6  // the effect's length
 
-#define FLAG_WISPS 1  // smoke wisps rise from the target
-#define FLAG_MOTES 2  // motes leave the target and fly back to the user
-#define FLAG_GLINTS 4 // glints flicker around the target
-#define FLAG_SPARKS 8 // the hits throw sparks
-#define FLAG_HEAVY 16 // the hits shake harder and knock the target back
-#define FLAG_FLASH 32 // as heavy, with flash pictures for wisps
-#define FLAG_STAR 64  // a star model swells on the target
-
-// The motes live in the map cell buffer, the sparks 0x3800 bytes on.
+/// The motes live in the map cell buffer, the sparks 0x3800 bytes on.
 #define gMotes ((struct Particle *)Ram_MapCellBuffer)
 #define gSparks ((struct Particle *)(Ram_MapCellBuffer + 0x3800))
-
-void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
-    "Render_DrawModelList");
-#define Render_DrawModelList Render_DrawModelList__battle_effect
 
 #define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \
     BattleEffect_BuildBlitter(slot, width, height, flags, mode);               \
   } while (0)
 
-/// Strikes (kind 0) are six-picture slashes across the first target, one
-/// every six pictures' time; columns (kind 1) are a pair of mirrored 18x48
-/// pillars that rise and fall on it. Each hit flashes and shakes the target,
-/// starts eight wisps of smoke and a burst of sparks, and the battle moves on
-/// at the first. Around them the mode's flags add rising wisps, motes that
-/// stream back to the user, glints, sparks, a flash or a star.
+/// Strikes the first target with slashes or a bite of closing fangs, with the
+/// extras its flags choose. Each hit flashes and shakes the target and the
+/// battle moves on at the first; the style (enum TargetStrikeStyle) adds smoke,
+/// motes that stream back to the user, glints, sparks, a flash or a star.
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint ground;
   struct ScreenPoint targetPosition;
@@ -182,16 +201,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
-  if (mode == 8)
+  if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (mode == 8) {
+  if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
   }
@@ -200,41 +219,41 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   // colours and the wisps (smoke, flash or star).
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-  if (RECORD(mode, RECORD_KIND) == 0)
+  if (RECORD(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 0xc80,
                                0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
-  switch (RECORD(mode, RECORD_PALETTE)) {
-  case 0:
+  switch (RECORD(mode, TARGET_STRIKE_COLOR)) {
+  case STRIKE_COLOR_BLUE:
     resource = (s32)&ResourceId_BlueBeamSheet;
     break;
-  case 1:
+  case STRIKE_COLOR_LIME:
     resource = (s32)&ResourceId_LimePalette;
     break;
-  case 2:
+  case STRIKE_COLOR_PINK:
     resource = (s32)&ResourceId_PinkPalette;
     break;
-  case 3:
+  case STRIKE_COLOR_EMBER:
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
-  case 4:
+  case STRIKE_COLOR_MARS:
     resource = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case 5:
+  case STRIKE_COLOR_LIGHTNING:
   default:
     resource = (s32)&ResourceId_LightningBoltSheet;
     break;
-  case 6:
+  case STRIKE_COLOR_ORANGE:
     resource = (s32)&ResourceId_OrangePaletteB;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)
+  if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x3200, 1, 0);
-  else if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR)
+  else if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet,
                                work->sheet + 0x3200, 1, 0);
   else
@@ -248,7 +267,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 64; i++) {
       struct Particle *step = &work->particles[i];
 
-      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
+      SET_POSITION(step, px(ground.x / 2), px(80), 0);
       step->velocityX = ((Random16() & 255) - 128) << 9;
       step->velocityY = ((Random16() & 255) - 128) << 9;
       step->velocityZ = 0;
@@ -270,17 +289,17 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // away from the user, the others towards the middle of the field.
     for (i = 0; i != 256; i++) {
       SET_POSITION(&gSparks[i], target->x, px(20), target->z);
-      if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
+      if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
         s32 angle = Random16();
         s32 speed = Random16() & 255;
 
         gSparks[i].velocityX = (Random16() & 0x1ff) << 11;
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           gSparks[i].velocityX = -gSparks[i].velocityX;
         gSparks[i].velocityY = Trig_Sin(angle) * speed >> 4;
         gSparks[i].velocityZ = Trig_Cos(angle) * speed >> 4;
       } else {
-        if (RECORD(mode, RECORD_KIND) == 1) {
+        if (RECORD(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_BITE) {
           gSparks[i].velocityX = ((Random16() & 255) - 128) << 11;
           gSparks[i].velocityY = ((Random16() & 255) - 128) << 11;
           gSparks[i].velocityZ = ((Random16() & 255) - 128) << 11;
@@ -297,7 +316,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   }
 
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR)
+  if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
     work->transferValue = 50;
   else
     work->transferValue = 75;
@@ -308,18 +327,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   EffectPosition_ProjectBattler(args->targets[0], &alternate);
   targetPosition.y += (alternate.y - targetPosition.y) / 2;
 
-  for (frame = 0; frame != RECORD(mode, RECORD_FRAMES); frame++) {
-    s32 span = RECORD(mode, RECORD_COUNT) * RECORD(mode, RECORD_RATE);
+  for (frame = 0; frame != RECORD(mode, TARGET_STRIKE_FRAMES); frame++) {
+    s32 span = RECORD(mode, TARGET_STRIKE_HITS) *
+               RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES);
     s32 length = span * 4;
     s32 glint = 0;
 
-    if (RECORD(mode, RECORD_KIND) == 0) {
+    if (RECORD(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH) {
       // Strikes: six pictures each, crossing the target from the user's
       // side.
       if (frame < span * 6) {
-        s32 picture = frame / RECORD(mode, RECORD_RATE) % 6;
+        s32 picture = frame / RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) % 6;
 
-        if (frame % (RECORD(mode, RECORD_RATE) * 6) == 0 &&
+        if (frame % (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) == 0 &&
             (u32)(mode - 12) <= 1) {
           EffectPosition_ProjectScaledBattler(args->targets[0],
                                               &targetPosition);
@@ -327,7 +347,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           targetPosition.y += (alternate.y - targetPosition.y) / 2;
           targetPosition.y += (Random16() & 15) - 8;
         }
-        if (args->side == 1) {
+        if (args->side == EFFECT_SIDE_PARTY) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
@@ -349,16 +369,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
         // A star sounds four frames before its hit.
-        if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
-                RECORD(mode, RECORD_RATE) * 4 - 4 &&
-            (RECORD(mode, RECORD_FLAGS) & FLAG_STAR))
+        if (frame % (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) ==
+                RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4 - 4 &&
+            (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR))
           Sound_PlayFar(SE_POWER_UP);
 
         // The hit, on the strike's fifth picture.
-        if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
-            RECORD(mode, RECORD_RATE) * 4) {
+        if (frame % (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) ==
+            RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) {
           if (mode == 12) {
-            if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
+            if (frame / RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) / 6 <= 2)
               Sound_PlayFar(SE_IMPACT);
             else
               EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -368,31 +388,27 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             else
               EFFECT_SHOW_DAMAGE(SE_IMPACT);
           } else if (mode == 13) {
-            if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
+            if (frame / RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) / 6 > 6)
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
             else
               Sound_PlayFar(SE_HEAVY_IMPACT);
-          } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
-                     (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
+          } else if ((RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR) ||
+                     (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)) {
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
-          } else if (mode == 8) {
+          } else if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
 
-          if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
+          if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
-          } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
+          } else if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+            EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
@@ -401,7 +417,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                      POSE_DAMAGE, 0, 8);
             for (i = 0; i != 32; i++) {
               struct Particle *step =
-                  &gSparks[frame / (RECORD(mode, RECORD_RATE) * 6) * 32 + i];
+                  &gSparks[frame /
+                               (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) *
+                                6) *
+                               32 +
+                           i];
 
               step->variant = (Random16() & 15) + 7;
             }
@@ -409,18 +429,22 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (mode == 16) {
             for (i = 0; i != 4; i++) {
               struct Particle *step =
-                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) *
-                                       16 +
-                                   i];
+                  &work->particles
+                       [frame /
+                            (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) *
+                            16 +
+                        i];
 
               step->variant = 0;
             }
           } else {
             for (i = 0; i != 8; i++) {
               struct Particle *step =
-                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) *
-                                       16 +
-                                   i];
+                  &work->particles
+                       [frame /
+                            (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) *
+                            16 +
+                        i];
 
               step->variant = 0;
             }
@@ -434,7 +458,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       s32 stage;
 
       if (frame < length) {
-        s32 picture = frame / RECORD(mode, RECORD_RATE);
+        s32 picture = frame / RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES);
 
         while (picture > 4)
           picture -= 4;
@@ -442,13 +466,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       } else {
         stage = 3;
       }
-      BUILD_BLITTER(HEAP_SLOT_RAM_CODE, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
+      BUILD_BLITTER(HEAP_SLOT_RAM_CODE, 7, 7, CLIP,
+                    RECORD(mode, TARGET_STRIKE_COMPOSITE));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
                                 CLIP | COMPOSITE_FLIP_X,
-                                RECORD(mode, RECORD_BLEND));
+                                RECORD(mode, TARGET_STRIKE_COMPOSITE));
       do {
         /* FAKEMATCH(dead): an empty once-only block. */
       } while (0);
@@ -457,56 +482,60 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
       // The hit, on each column's fourth picture.
-      if (frame % (RECORD(mode, RECORD_RATE) * 4) ==
-          RECORD(mode, RECORD_RATE) * 3) {
+      if (frame % (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) ==
+          RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 3) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
-        if ((RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) ||
-            (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY))
+        if ((RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) ||
+            (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY))
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
-        else if (frame > (RECORD(mode, RECORD_COUNT) * 4 - 4) *
-                             RECORD(mode, RECORD_RATE))
+        else if (frame > (RECORD(mode, TARGET_STRIKE_HITS) * 4 - 4) *
+                             RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES))
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
           Sound_PlayFar(SE_IMPACT);
-        if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
+        if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
-        } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
+        } else if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+          EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         }
         for (i = 0; i != 64; i++) {
           struct Particle *step =
-              &gSparks[frame / (RECORD(mode, RECORD_RATE) * 6) * 64 + i];
+              &gSparks[frame /
+                           (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) *
+                           64 +
+                       i];
 
           step->variant = (Random16() & 15) + 7;
         }
         for (i = 0; i != 8; i++) {
           struct Particle *step =
-              &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+              &work->particles[frame /
+                                   (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) *
+                                    6) *
+                                   16 +
                                i];
 
           step->variant = 0;
         }
         for (i = 0; i != 16; i++)
-          gMotes[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i].variant = 0;
+          gMotes[frame / (RECORD(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) * 16 +
+                 i]
+              .variant = 0;
       }
       if (stage == 3)
         glint = 1;
     }
 
     // Three glints a frame around the target's middle.
-    if ((RECORD(mode, RECORD_FLAGS) & FLAG_GLINTS) && glint) {
+    if ((RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) && glint) {
       EffectPosition_ProjectScaledBattler(args->targets[0], &center);
       EffectPosition_ProjectBattler(args->targets[0], &alternate);
       center.y += (alternate.y - center.y) / 2;
@@ -548,7 +577,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       source = BattleObject_GetFar(args->user)->object;
 
       // Wisps of smoke rise and spread for 24 frames.
-      if (RECORD(mode, RECORD_FLAGS) & FLAG_WISPS) {
+      if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != 64; i++) {
           struct Particle *step = &work->particles[i];
 
@@ -565,7 +594,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Flashes rise twice as fast, 32x64.
-      if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
+      if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
         for (i = 0; i != 64; i++) {
           struct Particle *step = &work->particles[i];
 
@@ -581,7 +610,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Motes burst out, then stream back to the user, who flashes.
-      if (RECORD(mode, RECORD_FLAGS) & FLAG_MOTES) {
+      if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 
         if (mode == 11)
@@ -605,7 +634,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x - step->x) >> 8;
-              s32 dy = (source->y - step->y + 0x140000) >> 8;
+              s32 dy = (source->y - step->y + px(20)) >> 8;
               s32 dz = (source->z - step->z) >> 8;
 
               step->velocityX += dx;
@@ -620,7 +649,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       }
 
       // Sparks fall away, shrinking.
-      if (RECORD(mode, RECORD_FLAGS) & FLAG_SPARKS) {
+      if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_SPARKS) {
         for (i = 0; i != 256; i++) {
           struct Particle *step = &gSparks[i];
           s32 size = step->variant;
@@ -642,7 +671,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
     // The star: a textured square, swelling on a sine from frame 8 to 17
     // over the target's middle (the canvas is cleared to colour 0x3f first).
-    if (RECORD(mode, RECORD_FLAGS) & FLAG_STAR) {
+    if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR) {
       void *corners = Heap_AllocEwram(32);
       struct ModelDraw *model = Render_AllocateModelList(1);
 
@@ -661,8 +690,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
         Transform_Reset();
-        SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
-                                      (targetPosition.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(targetPosition.x / 2 - 64),
+                                      px(targetPosition.y - 64), 0);
         Transform_ApplyPitch(TRIG_TURN / 4);
         Transform_ApplyYaw(TRIG_TURN / 8);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
@@ -673,7 +702,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       Heap_Release(corners);
     }
 
-    if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY)
+    if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY)
       BattleCamera_Shake(8, 8);
     else
       BattleCamera_Shake(2, 4);
@@ -684,14 +713,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// A rain of daggers on the first target (unused).
-
-// Sixteen daggers fall 8 pixels a frame, one every 4 frames, from columns
-// 16 to 111, drifting towards the middle (x 64) the further out they start,
-// and stick in the ground where they stop. The canvas fades in over 16
-// frames and out from frame 104; from frame 24 to 84 the target flashes and
-// the screen shakes every 4 frames, with a sound every 8.
-
+/// Sixteen swords fall slanting in on the first target, one every 4 frames, and
+/// stick in the ground.
 void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   BlitterPair draw;
@@ -702,10 +725,9 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
@@ -815,20 +837,14 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
 
-// The flecks live in the map cell buffer.
+/// The flecks live in the map cell buffer.
 #define gFlecks ((struct Particle *)Ram_MapCellBuffer)
 
 // A pillar of ice rising at the user's feet with flecks spiralling up
 // around it, for the scenes.
 
-// The pillar is two mirrored halves of a 17x64 picture with a 24x43 glow,
-// drawn at their maximum: four pillar pictures two frames apart and three
-// glow pictures four frames apart. 32 flecks spiral up around it, one more
-// each frame, turning 0x400 and rising 5 pixels a frame while the spiral
-// widens. effect->kind picks the colours (yellow, ice, red or violet) and
-// effect->variant + 1, from 1 to 4, the flecks' size. At frame 16 the first
-// target flashes; the last 6 frames fade out.
-
+/// A pillar of light in an element's colours stands at a unit's feet while
+/// motes spiral up around it.
 void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   struct ScreenPoint ground;
   struct ScreenPoint pos;
@@ -1006,9 +1022,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;
@@ -1072,20 +1087,20 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 #undef RECORD
 #undef gBlitter
 #undef gBlitterAlternate
-#undef RECORD_KIND
-#undef RECORD_COUNT
-#undef RECORD_FLAGS
-#undef RECORD_PALETTE
-#undef RECORD_RATE
-#undef RECORD_BLEND
-#undef RECORD_FRAMES
-#undef FLAG_WISPS
-#undef FLAG_MOTES
-#undef FLAG_GLINTS
-#undef FLAG_SPARKS
-#undef FLAG_HEAVY
-#undef FLAG_FLASH
-#undef FLAG_STAR
+#undef TARGET_STRIKE_KIND
+#undef TARGET_STRIKE_HITS
+#undef TARGET_STRIKE_FLAGS
+#undef TARGET_STRIKE_COLOR
+#undef TARGET_STRIKE_PICTURE_FRAMES
+#undef TARGET_STRIKE_COMPOSITE
+#undef TARGET_STRIKE_FRAMES
+#undef STRIKE_SMOKE
+#undef STRIKE_ABSORB
+#undef STRIKE_GLINTS
+#undef STRIKE_SPARKS
+#undef STRIKE_HEAVY
+#undef STRIKE_FLASH
+#undef STRIKE_STAR
 #undef gMotes
 #undef gSparks
 #undef BUILD_BLITTER

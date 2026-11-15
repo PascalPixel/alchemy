@@ -5,21 +5,18 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-struct FxPartyList;
-struct Model;
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define OCEAN_FIST_FRAMES 92
 #define OCEAN_DROPS 512
 
-// Abilities: Ocean Fist.
-//
-// A column of water (three pictures of the work's sheet, each halved in
-// brightness from frame 32 to 43) rises at the target and is drawn top-down
-// for 42 frames; spray bursts at its foot, and drops of the map cell
-// buffer's 512 fly up from the target for the first 32 frames, with a
-// fountain of 256 at frame 28. The target is struck at frame 32 and pushed
-// back.
+/// A column of water (three pictures of the work's sheet, each halved in
+/// brightness from frame 32 to 43) rises at the target and is drawn top-down
+/// for 42 frames; spray bursts at its foot, and drops of the map cell
+/// buffer's 512 fly up from the target for the first 32 frames, with a
+/// fountain of 256 at frame 28. The target is struck at frame 32 and pushed
+/// back.
+///
+/// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   u8 *spraySheet = gData_02014000;
   void *canvas;
@@ -37,7 +34,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);

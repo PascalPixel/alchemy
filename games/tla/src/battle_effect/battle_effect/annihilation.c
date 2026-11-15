@@ -4,32 +4,24 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
 #undef HIT_FRAME
 
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES (48 * 72)
 #define BURST_PICTURE_BYTES (40 * 80)
-#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) // the stronger variant's
+#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) ///< the stronger variant's
 
 #define SHARDS_FRAMES 64
-#define STREAK_FRAME 6 // the user's fire streak, six frames
+#define STREAK_FRAME 6 ///< the user's fire streak, six frames
 #define HIT_FRAME 8
 #define FLASH_FRAME 14
-#define BURST_FRAME 16 // the burst on the target, until frame 47
+#define BURST_FRAME 16 ///< the burst on the target, until frame 47
 
-// The user lunges, a streak of fire leaves them, and the target bursts into
-// flame, throwing 64 burning shards away from the user.
-//
-// Setup: open the canvas, load the streak, burst and shard pictures, dash
-// the user four frames toward the target, and seed the shards at the target
-// with random speeds (flipped to fly away from the user's side). Each frame:
-// the streak's six pictures at the user from frame 6; the hit at frame 8
-// (the damage shown, the stronger variant's cue, the canvas flooded, the target
-// knocked back); the burst's three pictures (two frames each, then held) on
-// the target from frame 16 to 47; from frame 4 the shards in 3D, their
-// picture shrinking with their life.
+/// The user closes on the first target and fire bursts from it in a shower of
+/// shards.
+///
+/// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -46,7 +38,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   s32 size;
   u8 *burst;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
   view = Ram_HeapSlots->cameraWork;
@@ -85,13 +77,13 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (args->variant != 0 && frame == HIT_FRAME)
+    if (args->variant != EFFECT_VARIANT_BASIC && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
 
     // The streak, drawn from the user toward the target.
     EffectPosition_ProjectScaledBattler(args->user, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
       else
@@ -99,7 +91,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2 - 24, user.y - 24, 48, 72);
@@ -119,7 +111,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (step > 2)
         step = 2;
-      if (args->variant == 0)
+      if (args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
@@ -158,7 +150,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
     // The hit's knock-back, and the target's flashes.
     if (frame == HIT_FRAME) {
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)

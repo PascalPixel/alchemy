@@ -4,29 +4,24 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 
-struct Model;
-
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
 
-// Where the quads' texture and the Djinn sit in the sheet.
+/// Where the quads' texture and the Djinn sit in the sheet.
 #define SHEET_TEXTURE 0x2710
 #define SHEET_DJINN 0x65c0
 
-// Sixteen textured quads tumble down over the targets (or, from the first
-// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
-// circles over the canvas and a fan of light lines spreads from it. At
-// frame 56 every target flashes.
-// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
+/// Sixteen textured quads tumble down over the targets (or, from the first
+/// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
+/// circles over the canvas and a fan of light lines spreads from it. At
+/// frame 56 every target flashes.
+/// Balm, Tinder and Phoenix run it in their modes.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
   s32 size[3];
@@ -46,14 +41,17 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 height;
   s32 fade;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
 
   // The mode's canvas, sheets and palette.
-  if (mode == QUADS_MERCURY) {
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 33, anchor,
-                                   size);
+  if (mode == TUMBLING_QUADS_BALM) {
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_MERCURY,
+                                                   args->side ^ 1,
+                                                   DJINNI_ANCHOR_TARGET_X),
+                                   anchor, size);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D0,
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
@@ -61,9 +59,11 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
-  } else if (mode == QUADS_MARS) {
-    BattleEffect_RunDjinniEntrance(args, (args->side ^ 1) << 4 | 2, anchor,
-                                   size);
+  } else if (mode == TUMBLING_QUADS_TINDER) {
+    BattleEffect_RunDjinniEntrance(args,
+                                   DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1,
+                                                   DJINNI_ANCHOR_OVER_TARGET),
+                                   anchor, size);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
@@ -79,7 +79,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - anchor[0]) << 8;
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
@@ -101,7 +101,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         quad->x = Random16() & 0xffff;
         Random16();
         quad->z = px(1);
-        if (mode == QUADS_RISING)
+        if (mode == TUMBLING_QUADS_PHOENIX)
           quad->y = px(32);
         else
           quad->y = height;
@@ -186,7 +186,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
           Transform_Reset();
           Transform_ApplyPitch(3000);
-          if (mode == QUADS_RISING)
+          if (mode == TUMBLING_QUADS_PHOENIX)
             quad->y -= quad->velocityY;
           else
             quad->y += quad->velocityY;
@@ -222,19 +222,15 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define ZAGAN_PARTS 12
 
-// Abilities: Zagan.
-//
-// The screen slides over to a white field and petals blow across it; Zagan
-// (twelve objects) gallops in from the right as the backdrop darkens, rears,
-// and at frame 157 swings its axe across the targets, striking four times
-// while the screen shakes and rings of dust spread. Holding A or B draws
-// only every other frame.
+/// The screen slides over to a white field and petals blow across it; Zagan
+/// (twelve objects) gallops in from the right as the backdrop darkens, rears,
+/// and at frame 157 swings its axe across the targets, striking four times
+/// while the screen shakes and rings of dust spread. Holding A or B draws
+/// only every other frame.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
-  u8 *battle;
+  struct BattleWork *battle;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -261,9 +257,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
   none = 0;
   ringPixels = gData_02014000; // the rings' texture, for the whole function
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
@@ -347,7 +343,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame == 161 || frame == 165 || frame == 169) {
     strike:
       for (i = 0; i != args->targetCount; i++) {
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 4);
       }
@@ -379,7 +375,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
     // The backdrop darkens toward the battle's palette.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
-      u16 *from = Resource_GetTableEntry(*(u16 *)(battle + 0x670));
+      u16 *from = Resource_GetTableEntry(battle->background);
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
@@ -491,18 +487,15 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (!(frame & 1) || !skip) {
       if (frame > 156) {
         for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-          placement[0] =
-              (gZagan_ChargePoints[i][0] << 16) + position.x - 0x200000;
-          placement[2] =
-              (gZagan_ChargePoints[i][1] << 16) + position.y + 0x100000;
+          placement[0] = px(gZagan_ChargePoints[i][0]) + position.x - px(32);
+          placement[2] = px(gZagan_ChargePoints[i][1]) + position.y + px(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
       } else {
         for (i = 0; i != ZAGAN_PARTS; i++) {
-          placement[0] = (gZagan_GallopPoints[i][0] << 16) + position.x;
-          placement[2] =
-              (gZagan_GallopPoints[i][1] << 16) + position.y - 0x100000;
+          placement[0] = px(gZagan_GallopPoints[i][0]) + position.x;
+          placement[2] = px(gZagan_GallopPoints[i][1]) + position.y - px(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
@@ -579,8 +572,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x100000, gZagan_RingHeights[k] << 16,
-                                      0);
+        SceneTransform_ApplyPosition3(-px(16), px(gZagan_RingHeights[k]), 0);
         SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
         Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
@@ -625,8 +617,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 /// A task: turns the camera by the effect's delta, the whole
 /// delta on phase 1 and half of it on the frames in between.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
   if (work->cameraPhase == 1) {

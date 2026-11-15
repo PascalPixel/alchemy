@@ -3,43 +3,24 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-#define TASK_PASS_FRAME 0xc80
-
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(flags, mode) ((mode) << 4 | (flags))
-
-// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
+/// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-/* VIEW(f189b14): tag struct Model as struct Model__f189b14; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/legend.c:225: structure has no
- * member named `vertices'. */
-struct Model__f189b14 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
-// Legend (effect kind 122): a fan of eight blades opens over the target for
-// 50 frames while a rune, mirrored from one corner, rises and turns behind
-// it. Then one sword for each step of the variant (variant + 1 in all, 16
-// frames apart) falls on the target from above the user's side: it strikes
-// at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
-// while a flash grows and fades where it lands. The effect lasts 86 frames
-// and 16 more for each further sword.
+/// Legend: a fan of eight blades opens over the target for
+/// 50 frames while a rune, mirrored from one corner, rises and turns behind
+/// it. Then one sword for each step of the variant (variant + 1 in all, 16
+/// frames apart) falls on the target from above the user's side: it strikes
+/// at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
+/// while a flash grows and fades where it lands. The effect lasts 86 frames
+/// and 16 more for each further sword.
+///
+/// Abilities: Legend.
 void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -54,7 +35,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   s32 j;
   u8 *cells = Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -63,7 +44,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   // sword and the flash.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
   else
@@ -86,7 +67,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
     // target, on the user's side, toward it.
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->targets[0], &target);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         start.x = target.x + 80;
       else
         start.x = target.x - 80;
@@ -94,7 +75,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       for (i = 0; i != 3; i++) {
         step = &work->particles[i];
         step->x = start.x << 15;
-        step->y = start.y << 16;
+        step->y = px(start.y);
         step->velocityX = (target.x - start.x) << 11;
         step->velocityY = (target.y - start.y) << 12;
         step->variant = 0;
@@ -175,7 +156,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
     // This frame's models: one quad, retextured for each part.
     {
-      struct Model__f189b14 *model;
+      struct RenderModel *model;
       void *vertices;
       s32 scale;
 
@@ -204,12 +185,12 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           alpha = -((frame - args->variant * 16) * 4 + -240);
         if (scale > Q16_ONE * 2)
           scale = Q16_ONE * 2;
-        model->alpha = alpha;
+        model->shade = alpha;
         Transform_Reset();
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
+        SceneTransform_ApplyPosition3(px(start.x - 128), px(height), 0);
         Transform_ApplyPitch(0x5900);
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyYaw(0x1900);
         else
           Transform_ApplyYaw(-0x1900);
@@ -231,12 +212,12 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             alpha = 0;
           if (alpha > -64) {
             scale = age * 12384 + Q16_ONE / 2;
-            model->alpha = alpha;
+            model->shade = alpha;
             Transform_Reset();
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(48), 0);
+            SceneTransform_ApplyPosition3(px(start.x - 128), -px(48), 0);
             Transform_ApplyPitch(0x5900);
-            if (args->side == 0)
+            if (args->side == EFFECT_SIDE_ENEMIES)
               Transform_ApplyYaw(0x1900);
             else
               Transform_ApplyYaw(-0x1900);
@@ -255,10 +236,10 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         texture.pixels = work->sheet + 0x5000;
         model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != 8; i++) {
-          model->alpha = 0;
+          model->shade = 0;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(80), 0);
+          SceneTransform_ApplyPosition3(px(start.x - 128), -px(80), 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - Q16_ONE / 4;
@@ -283,43 +264,33 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Bramble Card (kind 88).
-DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
+/// Abilities: Bramble Card.
+void BattleEffect_RunBrambleCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, CARD_BRAMBLE);
+}
 
-/// Abilities: Frost Card (kind 87).
-DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, BattleEffect_RunElementCards, 1)
+/// Abilities: Frost Card.
+void BattleEffect_RunFrostCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, CARD_FROST);
+}
 
-/// Abilities: Flame Card (kind 79).
-DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, BattleEffect_RunElementCards, 2)
+/// Abilities: Flame Card.
+void BattleEffect_RunFlameCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, CARD_FLAME);
+}
 
-/// Abilities: Thunder Card (kind 89).
-DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, BattleEffect_RunElementCards, 3)
+/// Abilities: Thunder Card.
+void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, CARD_THUNDER);
+}
 
-// The four cards, as the wrappers pass them.
-enum {
-  CARD_BRAMBLE, // Bramble Card, kind 88: vines grow from the card.
-  CARD_FROST,   // Frost Card, kind 87: the card throws crystal shards.
-  CARD_FLAME,   // Flame Card, kind 79: the card throws smoke and flashes.
-  CARD_THUNDER, // Thunder Card, kind 89: bolts strike from the card.
-};
-
-// How each card's sparks move: the kernel's gravity and damping, and how
-// many steps (each drawn) a frame.
-struct SparkMotion {
-  s32 gravity;
-  s32 damping;
-  s32 steps;
-};
-
-extern struct SparkMotion gElementCards_SparkMotions[];
-
-// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
-// the user, spinning and growing, for 48 frames, then shows its picture.
-// From frame 48 the background takes the card's colours; the Frost and
-// Flame cards throw shards or smoke at the targets, and the Bramble and
-// Thunder cards spread four pictures over the field. Each target is struck
-// every five frames for a while, reeling, flashing and throwing up sparks.
-// From frame 96 the card shrinks away.
+/// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
+/// the user, spinning and growing, for 48 frames, then shows its picture.
+/// From frame 48 the background takes the card's colours; the Frost and
+/// Flame cards throw shards or smoke at the targets, and the Bramble and
+/// Thunder cards spread four pictures over the field. Each target is struck
+/// every five frames for a while, reeling, flashing and throwing up sparks.
+/// From frame 96 the card shrinks away.
 void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -331,13 +302,13 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint targets[8];
   struct ScreenPoint aim;
   struct ModelTexture texture;
-  struct Model__f189b14 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   s32 firstHit;
   s32 lastHit;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -445,7 +416,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step = &work->particles[frame % 56];
 
           step->x = card.x << 15;
-          step->y = card.y << 16;
+          step->y = px(card.y);
           step->velocityX = (aim.x - card.x) << 11;
           step->velocityY = (aim.y - card.y) << 11;
           step->z = 32;
@@ -575,11 +546,11 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3((card.x << 16) - px(128),
-                                    (card.y << 16) - px(64), 0);
+      SceneTransform_ApplyPosition3(px(card.x) - px(128), px(card.y) - px(64),
+                                    0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
-        if (args->side == 0)
+        if (args->side == EFFECT_SIDE_ENEMIES)
           SceneTransform_ApplyPosition3(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
           SceneTransform_ApplyPosition3(Trig_Sin(frame * 682) << 7, 0, 0);
@@ -606,7 +577,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         alpha = frame * -4 + 384;
       texture.logWidth = 5;
       texture.logHeight = 7;
-      model->alpha = alpha;
+      model->shade = alpha;
       model->texture = &texture;
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;
@@ -652,10 +623,9 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet + step->z;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((step->x - 60) << 16,
-                                      (step->y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(step->x - 60), px(step->y - 64), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        if (args->side == 1)
+        if (args->side == EFFECT_SIDE_PARTY)
           Transform_ApplyYaw(TRIG_TURN / 2);
         Transform_ApplyRoll(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
@@ -710,17 +680,25 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Sleep Card (kind 92).
-DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)
+/// Abilities: Sleep Card.
+void BattleEffect_RunSleepCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, CARD_SLEEP);
+}
 
-/// Abilities: Baffle Card (kind 90).
-DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, BattleEffect_RunCards, 1)
+/// Abilities: Baffle Card.
+void BattleEffect_RunBaffleCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, CARD_BAFFLE);
+}
 
-/// Abilities: Death Card (kind 93).
-DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
+/// Abilities: Death Card.
+void BattleEffect_RunDeathCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, CARD_DEATH);
+}
 
-/// Abilities: Sword Card (kind 91).
-DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
+/// Abilities: Sword Card.
+void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, CARD_SWORD);
+}
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

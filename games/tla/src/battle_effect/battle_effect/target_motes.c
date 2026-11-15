@@ -4,54 +4,83 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
-#include "macros.h"
 
-// Battle effects: particle effect entry points.
+/// Where Paralyze unpacks the tornado's glints in the sheet.
+#define TORNADO_GLINT_SHEET 0x2580
+
+/// The target motes' styles (BattleEffect_RunTargetMotes), each named for the
+/// effect that plays it.
+enum TargetMotesMode {
+  TARGET_MOTES_TAINT,       ///< lime smoke closing in
+  TARGET_MOTES_PINK_SMOKE,  ///< pink smoke closing in; Taint's stronger variant
+  TARGET_MOTES_DELUDE,      ///< cyan smoke rising
+  TARGET_MOTES_PARALYZE,    ///< smoke rising, with glints
+  TARGET_MOTES_HEARTRENDER, ///< hearts closing in
+  TARGET_MOTES_MYSTIC_FLAME, ///< glowing orbs closing in
+  TARGET_MOTES_DROWN,        ///< vortex motes closing in
+  TARGET_MOTES_DEMON_FIRE ///< orbs in Mars Djinn colours rising, then a strike
+};
 
 /// Each entry passes a particle type (color and count) to
-/// BattleEffect_RunTargetMotes. effect: effect arguments.
+/// BattleEffect_RunTargetMotes.
 void BattleEffect_RunTaint(struct BattleEffectParams *args) {
-  if (args->variant == 0) {
-    BattleEffect_RunTargetMotes(args, 0);
+  if (args->variant == EFFECT_VARIANT_BASIC) {
+    BattleEffect_RunTargetMotes(args, TARGET_MOTES_TAINT);
     return;
   }
-  BattleEffect_RunTargetMotes(args, 1);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonGel, BattleEffect_RunTargetMotes, 1)
+/// Abilities: Poison Gel.
+void BattleEffect_RunPoisonGel(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDelude, BattleEffect_RunTargetMotes, 2)
+/// Abilities: Delude, Confuse, Mist, Mucous Gel.
+void BattleEffect_RunDelude(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DELUDE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunParalyze, BattleEffect_RunTargetMotes, 3)
+/// Abilities: Paralyze.
+void BattleEffect_RunParalyze(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PARALYZE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunHeartrender, BattleEffect_RunTargetMotes, 4)
+/// Abilities: Heartrender.
+void BattleEffect_RunHeartrender(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_HEARTRENDER);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunMysticFlame, BattleEffect_RunTargetMotes, 5)
+/// Abilities: Mystic Flame.
+void BattleEffect_RunMysticFlame(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_MYSTIC_FLAME);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonFire, BattleEffect_RunTargetMotes, 7)
+/// Abilities: Demonfire.
+void BattleEffect_RunDemonFire(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DEMON_FIRE);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
+/// Abilities: Drown.
+void BattleEffect_RunDrown(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DROWN);
+}
 
 #define MOTE_MAX 512
 
 // The motes live in the map cell buffer, 64 for each target.
 
-// Modes whose motes close in on the target and start again; the others
-// drift up and are thrown back at random. Mode 7 closes in once.
+/// Modes whose motes close in on the target and start again; the others
+/// drift up and are thrown back at random. Mode 7 closes in once.
 #define CONVERGES(mode)                                                        \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-// Motes swirl around each target in turn, eight frames apart, over a
-// rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
-// in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
-// the caster at the first target for the final blow.
+/// Around each target in turn, motes (smoke, hearts, orbs) close in on it or
+/// rise, and the target flashes.
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -68,26 +97,26 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   s32 i;
 
   // Set up: the canvas layer and the mode's sheet and palette.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   count = 16;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  if (mode == 0) {
+  if (mode == TARGET_MOTES_TAINT) {
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  } else if (mode == 1) {
+  } else if (mode == TARGET_MOTES_PINK_SMOKE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-  } else if (mode == 2) {
+  } else if (mode == TARGET_MOTES_DELUDE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
-  } else if (mode == 3) {
+  } else if (mode == TARGET_MOTES_PARALYZE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
-  } else if (mode == 4) {
+  } else if (mode == TARGET_MOTES_HEARTRENDER) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  } else if (mode == 5) {
+  } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
     palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
-  } else if (mode == 7) {
+  } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = 24;
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
@@ -98,11 +127,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  if (mode == 4)
+  if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
-  if (mode == 3)
+  if (mode == TARGET_MOTES_PARALYZE)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                               work->sheet + RENDER_MODE_TORNADO, 1, 0);
+                               work->sheet + TORNADO_GLINT_SHEET, 1, 0);
 
   // Scatter the motes around the origin.
   for (i = 0; i != MOTE_MAX; i++) {
@@ -124,7 +153,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 64;
   else
     total = args->targetCount * 8 + 32;
-  if (!(mode <= 1 || mode == 3))
+  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
@@ -135,12 +164,12 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // Mode 7 sends the caster at the first target 46 frames before the
     // end and strikes it 14 frames later; the others let the battle show the
     // damage.
-    if (mode == 7) {
+    if (mode == TARGET_MOTES_DEMON_FIRE) {
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
       if (frame == total - 32) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
@@ -158,7 +187,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
-      if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
+      if (mode == TARGET_MOTES_PARALYZE && frame > member * 8 &&
+          frame < member * 8 + 32) {
         EffectPosition_ProjectScaledBattler(args->targets[member], &base);
 
         for (i = 0; i != 2; i++) {
@@ -198,7 +228,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           ((DrawRectangle)Ram_HeapSlots->ramCode2)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
-                  RENDER_MODE_TORNADO,
+                  TORNADO_GLINT_SHEET,
               x, y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
@@ -221,7 +251,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       // From its turn on, the target's motes turn around it.
       if (frame > member * 8) {
         Transform_ApplyYaw(frame << 9);
-        if (mode <= 1 || mode == 4)
+        if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
           Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
           struct Particle *mote = &PARTICLES[member * 64 + i];
@@ -238,13 +268,14 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
               screen.x >>= 1;
-              if (mode == 5 || mode == 7)
+              if (mode == TARGET_MOTES_MYSTIC_FLAME ||
+                  mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
                         screen.y - 20, 40, 40);
-              else if (mode == 6)
+              else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
-              else if (mode == 4)
+              else if (mode == TARGET_MOTES_HEARTRENDER)
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else
@@ -292,7 +323,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (!(mode <= 1 || mode == 3))
+  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
@@ -303,9 +334,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SHEEP_FRAMES 98
 #define GROUND_Y px(92)
 
-// A flock of sheep cards drops in over the targets, one every four frames,
-// and bounces on the ground, tumbling through eight cels; at frame 80 the
-// next phase begins, and each target turns back to its own palette in turn.
+/// Twelve sheep drop onto the targets' side, tumbling, and each target falls
+/// asleep in turn.
+///
+/// Abilities: Sleep.
 void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -323,11 +355,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
   sheep = (struct Particle *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
@@ -418,13 +449,13 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define MARKER_FRAMES 72 // how long each marker stays
+#define MARKER_FRAMES 72 ///< how long each marker stays
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-// A small flame
-// burns above each target in turn, MARKER_STAGGER frames apart, for up to
-// MARKER_FRAMES frames each, over a marker at its feet.
+/// A small flame burns above each target in turn, over a marker at its feet.
+///
+/// Abilities: Curse; Lucid Prophecy.
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -440,13 +471,12 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // Set up: the canvas layer, unscaled; for side 1 the canvas shows the
   // right half of the field.
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  work = Ram_HeapSlots->battleEffect;
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
-  if (args->side == 1) {
+  if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -477,7 +507,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           // The marker at the target's feet, then the flame, six frames a cel.
           marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
-          if (args->side == 1) {
+          if (args->side == EFFECT_SIDE_PARTY) {
             pos.x -= 112;
           }
           y = pos.y;
@@ -501,9 +531,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// A Djinn rides a swarm of sparks from the caster to the first target: 32
-// sparks spin around it in four planes while it travels, then it hovers
-// over the targets while puffs of sparkle gather on each in turn.
+/// A Djinni rides a swarm of sparks from the user to the first target, then
+/// hovers over the targets while sparkles gather on each in turn.
 void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -525,7 +554,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the Djinn and the particle sprites, and the
   // blitter pair for the side the Djinn faces.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -542,7 +571,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
     spark->velocityX = (Trig_Sin(heading) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
@@ -739,19 +768,19 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Balm (kind 230).
+/// Abilities: Balm.
 void BattleEffect_RunBalm(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 0);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_BALM);
 }
 
-/// Abilities: Tinder (kind 231).
+/// Abilities: Tinder.
 void BattleEffect_RunTinder(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 1);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_TINDER);
 }
 
-/// Abilities: Phoenix, Regen Dance (kind 436).
+/// Abilities: Phoenix, Regen Dance.
 void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 2);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_PHOENIX);
 }
 #undef BLITTER
 #undef GROUND_Y
@@ -763,3 +792,4 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef MARKER_FRAMES
 #undef MARKER_STAGGER
 #undef MARKER_CELS
+#undef PARTICLES

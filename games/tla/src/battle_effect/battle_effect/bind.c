@@ -4,9 +4,7 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
 
 #define PIXEL_BUFFER Ram_MapCellBuffer
@@ -95,18 +93,17 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-#define FLARE_SHEET 0x1000 // the flares, after the rune picture
-#define DJINN_SHEET 0x2000 // the Jupiter Djinn, after the flares
+#define FLARE_SHEET 0x1000 ///< the flares, after the rune picture
+#define DJINN_SHEET 0x2000 ///< the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40
 
 #define CORNERS 3
-#define EDGE_STEPS 24 // flares drawn along each edge
+#define EDGE_STEPS 24 ///< flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as
-// BattleEffect_RunUnusedTriangleStrike, a triangle of flares spins down onto
-// the target and leaves the rune picture where it lands; when the effect has a
-// prelude, the Jupiter Djinn also circles above its place for the first frames
-// and rises away after frame 32.
+/// A triangle of light spins and shrinks onto the first target, changing colour
+/// and leaving a fading trail, then a rune stands on the target.
+///
+/// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 origin[3];
   s32 originSize[3];
@@ -130,7 +127,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -142,8 +139,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   // frame.
   BattleEffect_StartCanvasLayer(1);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, args->side << 4 | 3, origin,
-                                   originSize);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
+        origin, originSize);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -258,10 +257,11 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Triangle strike (kind 67): a triangle of flares spins down onto the
-// target, shrinking, for 64 frames; then the rune picture is stamped in two
-// halves where it landed. The caster approaches the target at frame 46, the
-// palette pulses throughout and the trail fades a step every 16 frames.
+/// Unused: no row of gAbilityBattleEffects in either game names its kind, and
+/// the handler table is reached with no other kind (BattleEffect_RunFromTable),
+/// so the player never sees it. Its frame loop is BattleEffect_RunBind's,
+/// without the Djinni prelude, and on frame 46 it starts the user's approach to
+/// the first target.
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   s32 vector[3];
@@ -283,7 +283,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
@@ -292,8 +292,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,

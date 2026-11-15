@@ -3,14 +3,12 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-// The seven panels of the counter picture: the first two in the work sheet,
-// the rest in the map buffer.
+/// The seven panels of the counter picture: the first two in the work sheet,
+/// the rest in the map buffer.
 #define PANEL_B 0x15d2
 #define PANEL_C 0x3081
 #define PANEL_D 0x0000
@@ -18,10 +16,11 @@
 #define PANEL_F 0x4b00
 #define PANEL_G 0x58d2
 
-// Counter reveal (kind 40): a shimmering image circles in, fades out and in
-// again twice as it closes on the target, then splits into its panels one
-// after another with a white flash at frame 72, when the target is thrown
-// and the screen shakes. The background waves while the image fades.
+/// A shimmering image circles in, fading out and in as it closes on the first
+/// target, then splits into its panels with a white flash, and the target is
+/// thrown back while the screen shakes.
+///
+/// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -36,7 +35,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   u8 *cells;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
   zero = 0;
@@ -63,7 +62,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
   // The image starts off to the side, above the field.
   visible = 1;
-  if (args->side == 1)
+  if (args->side == EFFECT_SIDE_PARTY)
     curve[0] = -0x500000;
   else
     curve[0] = 0x700000;
@@ -86,7 +85,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // It jumps closer at frame 24 and onto the target at frame 48, hidden
     // for the frame of each jump.
     if (frame == 24) {
-      if (args->side == 1)
+      if (args->side == EFFECT_SIDE_PARTY)
         curve[0] = -0x200000;
       else
         curve[0] = 0x480000;
@@ -99,10 +98,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     if (frame == 48) {
       EffectPosition_ProjectScaledBattler(args->targets[0], pos);
-      if (args->side == 1)
-        curve[0] = (pos[0].x - 128) << 16;
+      if (args->side == EFFECT_SIDE_PARTY)
+        curve[0] = px(pos[0].x - 128);
       else
-        curve[0] = (pos[0].x - 64) << 16;
+        curve[0] = px(pos[0].x - 64);
       curve[1] = 0;
       visible = 0;
     }
@@ -191,7 +190,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 68)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 72) {
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
     }

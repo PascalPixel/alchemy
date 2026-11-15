@@ -3,9 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
 #define STAR_MINE_FRAMES 144
 #define STARS 6
@@ -13,12 +11,12 @@
 #define STAR_DROPS 192
 #define DROPS ((struct Particle *)Ram_MapCellBuffer)
 
-// Abilities: Star Mine.
-//
-// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
-// halves) are thrown from the caster, each one at a target in turn; from
-// frame 8 * i + 11 each is drawn toward its target and bursts once it has
-// passed it, into four sparks and 32 drops, pushing the target back.
+/// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
+/// halves) are thrown from the caster, each one at a target in turn; from
+/// frame 8 * i + 11 each is drawn toward its target and bursts once it has
+/// passed it, into four sparks and 32 drops, pushing the target back.
+///
+/// Abilities: Star Mine.
 void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -36,7 +34,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -80,11 +78,12 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       struct Particle *thrown;
 
       for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
-        struct StarTarget *caster = BattleObject_GetFar(args->user)->object;
+        struct Actor *caster = BattleObject_GetFar(args->user)->object;
         s32 height = BattleUnit_GetEffectHeightFar(args->user) / 2;
         s32 velocity;
 
-        SET_POSITION(thrown, caster->x, caster->y + height, caster->z);
+        SET_POSITION(thrown, caster->x.fixed, caster->y.fixed + height,
+                     caster->z.fixed);
         velocity = ((Random16() & 255) - 128) << 8;
         // DEAD: both stores are overwritten by the 0 below; the ROM keeps them.
         thrown->velocityX = velocity;
@@ -109,7 +108,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
          star++, delay += 8, firstDrop += 32, i++) {
       s32 k;
-      struct StarTarget *target;
+      struct Actor *target;
       s32 height;
       s32 picture;
       s32 dx;
@@ -133,9 +132,9 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       if (frame <= delay + 10) {
         continue;
       }
-      dx = (target->x - star->x) >> 10;
-      dy = (target->y + height - star->y) >> 10;
-      dz = (target->z - star->z) >> 10;
+      dx = (target->x.fixed - star->x) >> 10;
+      dy = (target->y.fixed + height - star->y) >> 10;
+      dz = (target->z.fixed - star->z) >> 10;
       star->velocityX += dx;
       star->velocityY += dy;
       star->velocityZ += dz;
@@ -143,7 +142,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       if (a < 0) {
         a = -a;
       }
-      b = target->x;
+      b = target->x.fixed;
       if (b < 0) {
         b = -b;
       }
@@ -154,8 +153,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       // Passed its target: the burst.
       for (k = 0; k != 4; k++) {
         particle = &work->particles[STARS + delay + k];
-        particle->x = pos.x << 16;
-        particle->y = pos.y << 16;
+        particle->x = px(pos.x);
+        particle->y = px(pos.y);
         particle->velocityX = ((Random16() & 127) - 64) << 12;
         particle->velocityY = (192 - (Random16() & 255)) << 10;
         particle->variant = 0;
@@ -165,8 +164,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         s32 speed;
 
         drop = &DROPS[firstDrop + k];
-        drop->x = pos.x << 16;
-        drop->y = pos.y << 16;
+        drop->x = px(pos.x);
+        drop->y = px(pos.y);
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         drop->velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -232,27 +231,9 @@ void BattleEffect_BuildRepeatingTilemap(void) {
   }
 }
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
-/* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunRisingDragonEnemy moves: 5 of 1028
- * instructions in tla-ja. */
-struct RenderModel__f17d174 {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
+/// Two corners of a row of the strip.
 struct CornerRow {
   struct Corner corners[2];
 };
@@ -260,11 +241,11 @@ struct CornerRow {
 
 #define SEGMENTS 33
 
-// Abilities: Rising Dragon, the enemy's.
-//
-// The dragon bursts up under the target and carries it into the sky: the
-// backdrop changes to a red haze scrolling past as the target is lifted,
-// swaying, then is dropped back to the field at frame 166 and lands at 179.
+/// The dragon bursts up under the target and carries it into the sky: the
+/// backdrop changes to a red haze scrolling past as the target is lifted,
+/// swaying, then is dropped back to the field at frame 166 and lands at 179.
+///
+/// Abilities: Rising Dragon.
 void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -283,7 +264,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct ScreenPoint source;
   struct ScreenPoint target;
   struct ModelTexture texture;
-  struct RenderModel__f17d174 *model;
+  struct RenderModel *model;
   struct ModelTexture *tex;
   s32 zero;
   s32 burstFrame;
@@ -298,7 +279,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   vertices = Data_02011000;
   strip = Data_02012000;
   cells = (struct CornerRow *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
@@ -420,7 +401,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
       gCameraSceneParameters[4] = 240;
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         yaw = TRIG_TURN / 4;
         camera->yaw = yaw;
       } else {
@@ -467,7 +448,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       victim[3] = (frame * 9 << 16) - px(18);
     } else if (frame > 59) {
       victim[2] = 0;
-      victim[3] = (294 - height) << 16;
+      victim[3] = px(294 - height);
       victim[4] = -(Trig_Sin(frame << 10) << 3);
       if (frame == 60) {
         EffectPosition_ProjectBattler(args->targets[0], &source);
@@ -517,8 +498,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     Transform_Reset();
     SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
-    SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
-    if (args->side == 1) {
+    SceneTransform_ApplyPosition3(px(source.x - 128), px(height), 0);
+    if (args->side == EFFECT_SIDE_PARTY) {
       Transform_ApplyYaw(TRIG_TURN / 2);
     }
     SceneTransform_ApplyUniformScale(0x21770);
@@ -532,8 +513,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SquareMesh;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
-      SceneTransform_ApplyPosition3((target.x - 124) << 16,
-                                    (height - 144) << 16, 0);
+      SceneTransform_ApplyPosition3(px(target.x - 124), px(height - 144), 0);
       Transform_ApplyRoll(TRIG_TURN / 4);
       SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -598,7 +578,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         y = height - 80;
       }
       first = slot * 2;
-      for (i = 0, startY = y << 16, trail = &SPARKS[128 + first]; i != 2;
+      for (i = 0, startY = px(y), trail = &SPARKS[128 + first]; i != 2;
            i++, trail++) {
         s32 random;
         s32 angle;
@@ -606,7 +586,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 x = source.x / 2;
 
         trail->y = startY;
-        trail->x = x << 16;
+        trail->x = px(x);
         random = Random16() & 0x7fff;
         angle = random + TRIG_TURN / 4;
         if (frame > 59) {
@@ -660,30 +640,34 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Bone Charge (kind 311).
-void BattleEffect_RunBoneCharge(s32 a0) {
-  BattleEffect_RunRushingStrike(a0, 4);
+/// Abilities: Bone Charge.
+void BattleEffect_RunBoneCharge(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
-/// Abilities: Brute Force, Troll (kind 314).
-void BattleEffect_RunBruteForce(s32 a0) {
-  BattleEffect_RunRushingStrike(a0, 1);
+/// Abilities: Brute Force, Troll.
+void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
 }
 
-/// Abilities: Onslaught (kind 326).
-void BattleEffect_RunOnslaught(s32 a0) { BattleEffect_RunRushingStrike(a0, 2); }
-
-/// Abilities: Headbutt (kind 339).
-void BattleEffect_RunHeadbutt(s32 a0) { BattleEffect_RunRushingStrike(a0, 3); }
-
-/// Abilities: Stun Muscle (kind 433).
-void BattleEffect_RunStunMuscle(s32 a0) {
-  BattleEffect_RunRushingStrike(a0, 4);
+/// Abilities: Onslaught.
+void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
 }
 
-/// Abilities: Living Armor, Minotaur, Power Crush (kind 457).
-void BattleEffect_RunLivingArmor(s32 a0) {
-  BattleEffect_RunRushingStrike(a0, 5);
+/// Abilities: Headbutt.
+void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
+}
+
+/// Abilities: Stun Muscle.
+void BattleEffect_RunStunMuscle(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
+}
+
+/// Abilities: Living Armor, Minotaur, Power Crush.
+void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_LIVING_ARMOR);
 }
 #undef STAR_MINE_FRAMES
 #undef STARS

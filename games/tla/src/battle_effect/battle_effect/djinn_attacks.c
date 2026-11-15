@@ -3,10 +3,7 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-
-// Tiles: copy a byte image rotated 90 degrees clockwise.
 
 /// Rotates w-by-h src clockwise into h-by-w dst.
 /// The top row of src becomes the rightmost column of dst.
@@ -41,9 +38,9 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   }
 }
 
-// The Mercury Djinn's flames (effect kind 281).
+// The Mercury Djinn's flames.
 
-// The dots live in the map cell buffer: 32 for each of the five flames.
+/// The dots live in the map cell buffer: 32 for each of the five flames.
 #define DOTS ((struct Particle *)Ram_MapCellBuffer)
 #define DOTS_PER_FLAME 32
 #define FLAME_COUNT 5
@@ -120,8 +117,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_FLAME + j];
             direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = flame->x << 16;
-            dot->y = flame->y << 16;
+            dot->x = px(flame->x);
+            dot->y = px(flame->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 8;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 7;
             // Each dot lives 32 to 47 frames.
@@ -153,9 +150,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         // Six frames later every target flashes and recoils.
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -190,6 +185,11 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
+/// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
+/// flameballs fall from the top right onto the targets, 4 frames apart; each
+/// bursts into 32 motes and hits every target.
+///
+/// Abilities: Jupiter.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -204,7 +204,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 angle;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -260,8 +260,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_BALL + j];
             direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = ball->x << 16;
-            dot->y = ball->y << 16;
+            dot->x = px(ball->x);
+            dot->y = px(ball->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             // Each dot lives 32 to 47 frames.
@@ -271,9 +271,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -303,8 +301,6 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Resources: decompress a resource with a palette.
-
 /// Decompress resource id into dst. If the first 128 bytes are a palette,
 /// copy_pal copies it to the start of BG palettes; skip_pal skips it on
 /// decoding.
@@ -321,12 +317,14 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   Decompress_TaggedLz(res, dst);
 }
 
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 
+/// The Venus Djinni drops in from above the targets, swaying and trailing
+/// yellow, while ten columns of yellow fire shoot up from the ground beneath
+/// them one after another, each bursting into motes and hitting every target.
+///
+/// Abilities: Venus.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   struct HeapSlots *slots;
   struct BattleEffectWork *work;
@@ -401,7 +399,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_COLUMN + j];
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = column->x << 16;
+            dot->x = px(column->x);
             dot->y = px(column->y + 16);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
@@ -412,9 +410,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], 6);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
         column->y -= 12;
@@ -445,11 +441,16 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The sparks live in the map cell buffer: sixteen under each of nine puffs.
+/// The sparks live in the map cell buffer: sixteen under each of nine puffs.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
 
+/// A fireball blooms high over the targets and burns out, the Mars Djinni
+/// appears where it was and dives onto them, nine flames erupt in a row along
+/// the ground beneath them and embers stream up.
+///
+/// Abilities: Mars.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -464,7 +465,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 diveY;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -583,9 +584,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
       for (member = 0; member != args->targetCount; member++) {
-        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, member, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[member], 6);
+        EFFECT_STRIKE_TARGET(args, member, 16, KNOCKBACK_BOUNCE);
       }
     }
 

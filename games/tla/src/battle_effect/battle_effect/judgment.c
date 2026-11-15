@@ -3,12 +3,11 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-// Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
-// then the sigil's beam strikes and the ground erupts in a ring of
-// shockwaves and debris.
+/// The battle wipes away to a violet sky where Judgment flies forward while
+/// motes gather into it; it bursts in a flash, and the blast falls on the land
+/// below and spreads in rings of light.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 anchor[3];
   struct ScreenPoint pos;
@@ -35,12 +34,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   cells = Ram_MapCellBuffer;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
@@ -312,7 +310,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-0x40000, 0x180000, 0);
+      SceneTransform_ApplyPosition3(-px(4), px(24), 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -396,9 +394,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == 300) {
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+        EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_HOP);
       }
       EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
@@ -586,7 +582,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-0x40000, 0x80000, 0);
+      SceneTransform_ApplyPosition3(-px(4), px(8), 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -736,7 +732,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           scale[1] = scale[0];
           drift[0] = p->x;
           drift[1] = 0xff0000;
-          drift[2] = p->y + 0xff0000;
+          drift[2] = p->y + px(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;
           if (p->y <= 0xfffff) {
@@ -750,7 +746,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             } else if (frame > 245) {
               p->y = px(96);
             } else {
-              p->y = 0xc00000 - p->x;
+              p->y = px(192) - p->x;
             }
           }
         }

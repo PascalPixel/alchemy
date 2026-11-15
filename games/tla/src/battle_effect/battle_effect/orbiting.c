@@ -3,17 +3,14 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "macros.h"
 
 #define STARS ((struct Particle *)Ram_MapCellBuffer)
 
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
 
-// Setup: 256 stars are scattered up to 127 pixels each way. Frame loop
-// (160 frames): four stars a frame join, each turning about one of four
-// axes as fast as its number, sized by depth; thirty frames after joining
-// a star accelerates toward the center by 1/256 of its distance a frame.
+/// Swirling stars: stars spin about a point above the field, each on its own
+/// axis, then are drawn back towards it.
 void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -24,16 +21,15 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
-    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16);
+    SET_POSITION(star, px((Random16() & 0xff) - 127),
+                 px((Random16() & 0xff) - 127), px((Random16() & 0xff) - 127));
     star->velocityX = 0;
     star->velocityY = 0;
     star->velocityZ = 0;
@@ -105,14 +101,10 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
+#define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
 
-// Bursts of smoke rise from each target in turn, eight frames apart.
-
-// Setup: 64 puffs, six a target, each but the sixth thrown out at a random
-// heading. Frame loop (96 frames): for 40 frames from its start a
-// target's puffs rise 40 pixels above it through six 24x48 pictures; the
-// sixth, drawn ADDITIVE, is the burst itself and falls faster.
+/// Target bursts: on each target in turn a burst flares while puffs of smoke
+/// scatter around it.
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -125,7 +117,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 record[3];
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
@@ -208,17 +200,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef TRAILS
 
-#include "graphics/vram_tab.h"
-
-// The second blitter slot read as what it holds, a drawing routine.
-#define ALTERNATE_BLITTER_SLOT                                                 \
-  (((struct {                                                                  \
-     u8 before[188];                                                           \
-     DrawRectangle draw;                                                       \
-   } *)Ram_HeapSlots)                                                          \
-       ->draw)
-
-// A sprite object as EffectSprite_CreateWithTiles returns it.
+/// A sprite object as EffectSprite_CreateWithTiles returns it.
 struct SpriteObject {
   u8 unk00[9];
   u8 tileHigh : 2;
@@ -227,3 +209,4 @@ struct SpriteObject {
   u8 unk0a[6];
   u8 slot; // its row of gVramCacheEntries
 };
+#undef STARS

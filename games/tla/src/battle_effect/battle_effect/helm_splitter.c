@@ -4,14 +4,12 @@
 
 #include "../battle_effect_internal.h"
 
-// Effect kind 51: the caster dashes at the target while a swirl of flame grows
-// over seven frames, then bursts into sparks that fall and bounce on the
-// ground. Variant 0: the swirl rises at the caster and throws pink
-// stars. Variant 1: the swirl, recoloured into the blue flame's
-// palette, rises at the target and throws 32 skulls.
+/// The user leaps at the first target and strikes through a fire swirl; the
+/// target reels and sparks scatter, bouncing off the ground.
+///
+/// Abilities: Helm Splitter, Skull Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   struct ScreenPoint position;
@@ -24,12 +22,12 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   // Set up the canvas and load the swirl and the spark sheets.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
                              1);
-  if (args->variant == 0) {
+  if (args->variant == EFFECT_VARIANT_BASIC) {
     Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                                work->sheet + 0x3e80, 1, 0);
     work->transferValue = 50;
@@ -68,9 +66,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != 70; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
-    if (args->variant == 0) {
+    if (args->variant == EFFECT_VARIANT_BASIC) {
       EffectPosition_ProjectBattler(args->user, &position);
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         REG_BG2X = (80 - position.x) << 8;
       else
         REG_BG2X = (32 - position.x) << 8;
@@ -79,7 +77,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
         if (cell > 6)
           cell = 6;
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   gHelmSplitter_PictureBiasX[cell] + 30,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 60,
@@ -101,7 +99,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
         if (cell > 6)
           cell = 6;
-        if (args->side == 0) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   position.x / 2 + gHelmSplitter_PictureBiasX[cell] - 16,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 92,
@@ -123,16 +121,14 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     if (frame == 18) {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 6);
+      EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
       for (i = 0; i != args->variant * 16 + 16; i++) {
         s32 force = (Random16() & 255) + 256;
         s32 angle = Random16() & 0xffff;
 
         spark = &sparks[i];
-        if (args->variant == 0)
+        if (args->variant == EFFECT_VARIANT_BASIC)
           spark->x = px(64);
         else
           spark->x = px(position.x / 2);
@@ -155,7 +151,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           s32 sx = spark->x >> 16;
           s32 sy = spark->y >> 16;
 
-          if (args->variant == 0)
+          if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),
                     sx - 8, sy - 8, 16, 16);
           else
@@ -172,12 +168,12 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
-// 128 thrown up at the start and 128 shed by the head.
+/// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
+/// 128 thrown up at the start and 128 shed by the head.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
-// The pillar sheet's cell is 24 x 39; the faded copies follow it.
+/// The pillar sheet's cell is 24 x 39; the faded copies follow it.
 #define PILLAR_CELL_SIZE 936
 
 // Returns the fixed IWRAM word copy entry, so the call loads its address before

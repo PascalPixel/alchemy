@@ -3,10 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-// Heap slots 104 and 188 (byte offsets from 0x03000000) hold the blitters.
+/// Heap slots 104 and 188 (byte offsets from 0x03000000) hold the blitters.
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
@@ -19,7 +18,7 @@
 #define STORM_LIGHTNING_FRAMES 128
 #define STORM_BOLTS 18
 
-/// Thor (scene kind 12). In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
+/// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
 /// lightning part (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the
@@ -47,11 +46,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct Particle *spark;
 
   view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
                              work->sheet + 0x1800, 0, 0);
@@ -184,8 +182,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, (gThor_Points[i][0] - 96) << 16, 0,
-                   (gThor_Points[i][1] - 96) << 16);
+        SET_VECTOR(point, px(gThor_Points[i][0] - 96), 0,
+                   px(gThor_Points[i][1] - 96));
         EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -362,8 +360,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 s32 angle;
                 speed &= Random16();
                 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-                spark->x = pillarX << 16;
-                spark->y = pillarY << 16;
+                spark->x = px(pillarX);
+                spark->y = px(pillarY);
                 speed += 32;
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                 spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
@@ -379,9 +377,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       if (frame == 10) {
         for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 8);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_HURL);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet
@@ -430,7 +426,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 BattleEffect_TintBattler(args->targets[j],
                                          gThor_TargetPalettes[Random16() & 3],
                                          POSE_DAMAGE, j, 4);
-                BattleMotion_ApplyKnockbackFar(args->targets[j], 4);
+                BattleMotion_ApplyKnockbackFar(args->targets[j],
+                                               KNOCKBACK_HURL);
               }
             }
           }
@@ -452,8 +449,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             s32 angle;
             speed &= Random16();
             angle = Random16() & 0xffff;
-            spark->x = mirrorX << 16;
-            spark->y = moteY << 16;
+            spark->x = px(mirrorX);
+            spark->y = px(moteY);
             speed += 64;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;

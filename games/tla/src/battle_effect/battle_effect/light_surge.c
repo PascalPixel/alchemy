@@ -3,47 +3,19 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
-
-/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in
- * tla-ja. */
-struct RenderModel__f171430 {
-  s32 kind;
-  s32 unk04;
-  const u8 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-struct SurgeTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
 
-// Abilities: Light Surge.
-//
-// The camera swings around the target while 14 bolts of light rain onto
-// it, four frames apart; each lands with a flash and a ring of light (two
-// rings of shaded circles), and four pillars of light rise and sway over
-// the target.
+/// The camera swings around the target while 14 bolts of light rain onto
+/// it, four frames apart; each lands with a flash and a ring of light (two
+/// rings of shaded circles), and four pillars of light rise and sway over
+/// the target.
+///
+/// Abilities: Light Surge.
 void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -59,7 +31,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 unused7;
   struct BattleCamera *camera;
   s16 savedYaw;
-  struct SurgeTarget *target;
+  struct Actor *target;
   s16 *circles;
   s32 x;
   s32 y;
@@ -68,7 +40,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 head[3];
   struct ScreenPoint center;
   struct ModelTexture texture;
-  struct RenderModel__f171430 *model;
+  struct RenderModel *model;
   struct Particle *fall;
   struct Particle *bolt;
   struct Particle *ring;
@@ -81,7 +53,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   u8 *sprites;
   s32 cells;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -143,12 +115,12 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         fall->z = Trig_Cos(angle) * radius;
         fall->y = px(110);
         radius = (Random16() & 31) + 4;
-        fall->velocityX = target->x + Trig_Sin(angle) * radius;
-        z = target->z + Trig_Cos(angle) * radius;
+        fall->velocityX = target->x.fixed + Trig_Sin(angle) * radius;
+        z = target->z.fixed + Trig_Cos(angle) * radius;
         fall->velocityZ = z;
-        fall->velocityY = -(px(8));
+        fall->velocityY = -px(8);
         fall->velocityX = (fall->velocityX - fall->x) / 6;
-        fall->velocityY = (-0x80000 - fall->y) / 6;
+        fall->velocityY = (-px(8) - fall->y) / 6;
         fall->velocityZ = (z - fall->z) / 6;
         fall->variant = -i * 4;
       }
@@ -161,7 +133,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       } else {
         turn = 0xa00 - (frame << 5);
       }
-      if (args->side == 0) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         camera->yaw += turn;
       } else {
         camera->yaw -= turn;
@@ -278,7 +250,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         flash->variant = 0;
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 2);
       }
@@ -300,7 +272,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
-        s32 x = ((center.x / 2 - 64) << 16) -
+        s32 x = px(center.x / 2 - 64) -
                 (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);
         s32 z = -((gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
@@ -341,20 +313,30 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Whorl (kind 232).
-void BattleEffect_RunWhorl(s32 a0) { BattleEffect_RunWaterColumn(a0, 0); }
+/// Abilities: Whorl.
+void BattleEffect_RunWhorl(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_WHORL);
+}
 
-/// Abilities: Gale (kind 233).
-void BattleEffect_RunGale(s32 a0) { BattleEffect_RunWaterColumn(a0, 1); }
+/// Abilities: Gale.
+void BattleEffect_RunGale(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_GALE);
+}
 
-/// Abilities: Lethe Albion (kind 107).
-void BattleEffect_RunLetheAlbion(s32 a0) { BattleEffect_RunWaterColumn(a0, 2); }
+/// Abilities: Lethe Albion.
+void BattleEffect_RunLetheAlbion(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_LETHE_ALBION);
+}
 
-/// Abilities: Poison Flow (kind 81).
-void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
+/// Abilities: Poison Flow.
+void BattleEffect_RunPoisonFlow(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_POISON_FLOW);
+}
 
-/// Abilities: Raging Flood (kind 392).
-void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
+/// Abilities: Raging Flood.
+void BattleEffect_RunRagingFlood(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, WATER_COLUMN_RAGING_FLOOD);
+}
 #undef BLITTER
 #undef LIGHT_SURGE_FRAMES
 #undef SURGE_BOLTS

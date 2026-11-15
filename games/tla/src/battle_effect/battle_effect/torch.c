@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-// The disc: a 128 x 128 picture of each pixel's distance from the centre,
-// which the 63-colour ramp turns into rings.
+/// The disc: a 128 x 128 picture of each pixel's distance from the centre,
+/// which the 63-colour ramp turns into rings.
 #define DISC_SIZE 128
 #define DISC_RINGS 63
 
@@ -16,7 +16,7 @@
 
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
-/// Abilities: Torch (kind 214).
+/// Abilities: Torch.
 ///
 /// Setup: open the canvas, draw the distance map into the sheet and a warm
 /// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
@@ -52,8 +52,11 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
   // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(0x2000);
-  BattleEffect_RunDjinniEntrance(args, 6 | args->side << 4 | 2 << 5, screenX,
-                                 screenY);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
+                      DJINNI_ANCHOR_OVER_USER),
+      screenX, screenY);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
@@ -133,7 +136,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame == RIPPLE_HIT_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
-      BattleMotion_ApplyKnockbackFar(args->targets[0], 0);
+      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
@@ -150,7 +153,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     } else {
       ramp[1] = ramp[DISC_RINGS];
       Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
-              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 | 62, REG_DMA3);
+              px(DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) | 62, REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
                           DMA_COPY_HALFWORDS(63));
     }
@@ -163,12 +166,16 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Kite (kind 217).
+/// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
   s32 b[3];
   s32 a[3];
 
   BattleEffect_StartCanvasLayer(0);
-  BattleEffect_RunDjinniEntrance(args, ((args->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_RunDjinniEntrance(
+      args,
+      DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side ^ 1,
+                      DJINNI_ANCHOR_OVER_TARGET),
+      b, a);
   BattleEffect_EndCanvasLayer();
 }

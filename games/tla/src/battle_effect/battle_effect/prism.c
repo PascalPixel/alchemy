@@ -4,20 +4,19 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/battle.h"
-#include "module/battle_effect/battle_effect.h"
 #include "resource_ids.h"
 
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
 #define GROUND_Y px(56)
-#define SHATTERED 1 // a crystal's z once it has hit the ground
+#define SHATTERED 1 ///< a crystal's z once it has hit the ground
 
-// Crystals fall one after another, eight frames apart, onto the targets'
-// ground and shatter into sixteen spinning shards each; the screen darkens
-// over the last eight frames.
+/// Crystals drop out of the sky onto the targets' side and shatter on the
+/// ground into spinning shards, flashing the targets and shaking the screen.
+///
+/// Abilities: Prism, Hail Prism, Freeze Prism.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -35,7 +34,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the two sheets and the blitter pair.
   shards = (struct Particle *)Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -50,11 +49,11 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -px(64);
-    if (args->side == 1) {
-      x = ((Random16() & 31) + 80) << 16;
+    if (args->side == EFFECT_SIDE_PARTY) {
+      x = px((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = ((Random16() & 31) + 8) << 16;
+      x = px((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;
@@ -65,7 +64,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gPrism_Counts[args->variant * 3 + 1]; frame++) {
     // The strongest variant turns the camera, slowing from frame 96.
-    if (args->variant == 2 && frame <= 103) {
+    if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 103) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
       s32 speed;
 
@@ -73,7 +72,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         speed = 192;
       else
         speed = 2496 - frame * 24;
-      if (args->side == 0)
+      if (args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
         camera->yaw += speed;
@@ -115,8 +114,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             cry->y = GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-              shard->x = ((gPrism_ShardStarts[j * 2] - 40) << 16) + cry->x;
-              shard->y = gPrism_ShardStarts[j * 2 + 1] << 16;
+              shard->x = px(gPrism_ShardStarts[j * 2] - 40) + cry->x;
+              shard->y = px(gPrism_ShardStarts[j * 2 + 1]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {
@@ -147,6 +146,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 #undef SPARK_COUNT
 #undef GROUND_Y
 
+/// Rebuilds the background palette's first ramp as a grey whose channels sway
+/// with the frame, so the effect shimmers through colours.
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase) {
   u16 palette[64];

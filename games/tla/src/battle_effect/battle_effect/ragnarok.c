@@ -5,14 +5,18 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The falling sword's modes (BattleEffect_RunFallingSword).
+enum FallingSwordMode {
+  FALLING_SWORD_TITAN_BLADE,
+  FALLING_SWORD_ACHERONS_GRIEF
+};
+
 #undef RESULTS_FRAME
 
-// The sheet holds the blade (64 x 128) and then the flash pictures.
+/// The sheet holds the blade (64 x 128) and then the flash pictures.
 #define FLASH_SHEET (64 * 128)
 
-// The map cell buffer holds each column's sparks.
-
-// The sparks, in the map cell buffer.
+/// The sparks, in the map cell buffer.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_COLUMN 340
 #define SPARKS_DRAWN 256
@@ -20,23 +24,16 @@
 #define FLASHES_DRAWN 12
 
 #define BLADE_FRAMES 80
-#define BLADE_SWING_FRAMES 10 // the blade comes down
-#define BLADE_HOLD_FRAME 20   // then holds, then creeps on
+#define BLADE_SWING_FRAMES 10 ///< the blade comes down
+#define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
-#define FIRST_STRIKE_FRAME 16 // each column strikes 8 frames after the last
+#define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
 #define RESULTS_FRAME 40
 
-// A blade of fire swings down over the targets and strikes twice, each
-// strike a flash and a fountain of sparks that bounce on the ground.
-//
-// Setup: open the canvas on BG1, pose the user, place the strike columns
-// under the first target, load the blade, flash and spark pictures, and
-// prepare each column's 16 flashes (a ring) and 340 sparks. Each frame: the
-// blade comes down over 10 frames, holds until frame 20, then creeps on and is
-// gone after frame 39; from frame 16 the palette steps toward the blast
-// colours; each column strikes 8 frames after the last (shake, its flash, its
-// targets flashed) and 6 frames later throws its sparks and knocks the
-// targets back.
+/// A huge flaming blade swings down over the targets and light bursts over
+/// them twice.
+///
+/// Abilities: Ragnarok.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -49,7 +46,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 
@@ -61,7 +58,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, 2);
   Actor_SetAnimationSpeedFar(user, 48);
   EffectPosition_ProjectBattler(args->targets[0], &target);
-  if (args->side == 0)
+  if (args->side == EFFECT_SIDE_ENEMIES)
     baseX = target.x / 2 - 24;
   else
     baseX = target.x / 2 - 92;
@@ -127,7 +124,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 top;
 
       height = 128;
-      if (args->side == 1) {
+      if (args->side == EFFECT_SIDE_PARTY) {
         if (frame < BLADE_SWING_FRAMES) {
           x = frame * 10 - 8;
           top = frame * 16 - 128;
@@ -238,9 +235,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
         if (frame == start + 6) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+          EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_HURL);
         }
       }
       col++;
@@ -255,12 +250,15 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Titan Blade (kind 61).
-DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, BattleEffect_RunFallingSword, 0)
+/// Abilities: Titan Blade.
+void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
+  BattleEffect_RunFallingSword(args, FALLING_SWORD_TITAN_BLADE);
+}
 
-/// Abilities: Acheron's Grief (kind 104).
-DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
-                   1)
+/// Abilities: Acheron's Grief.
+void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
+  BattleEffect_RunFallingSword(args, FALLING_SWORD_ACHERONS_GRIEF);
+}
 
 #undef FLASH_SHEET
 
@@ -268,23 +266,20 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 #define FLASH_SHEET (221 << 4)
 #define SWORD_SHEET 20000
 
-// The map cell buffer: 684 motes of dust, then the sword's sparks.
+/// The map cell buffer: 684 motes of dust, then the sword's sparks.
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define SPARK                                                                  \
   ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
 
-// A great sword falls from the sky onto the target, a pillar of fire and dust
-// spouting under it, and drives into the ground in a burst of flashes and
-// sparks.
-//
-// Setup: open the canvas on BG1, load the pillar, flash, sword and spark
-// pictures (mode 1 turns the BG colours first), place 32 flash rings and 340
-// sparks under the target, and empty the dust. Each frame (102): the sword
-// comes down 16 pixels a frame for 10 frames, holds, sinks slowly from 33 and
-// plunges after 60; a fountain of dust at frame 28 and 16 more a frame from 32
-// to 63, while the pillar rises; the flashes from 56 and the sparks from 60,
-// bouncing on the ground; the canvas floods at frames 9 and 60; every target
-// is struck at frame 68.
+/// A great sword falls from the sky onto the target, a pillar of fire and dust
+/// spouting under it, and drives into the ground in a burst of flashes and
+/// sparks.
+///
+/// The sword comes down 16 pixels a frame for 10 frames, holds, sinks slowly
+/// from 33 and plunges after 60; a fountain of dust at frame 28 and 16 more a
+/// frame from 32 to 63, while the pillar rises; the flashes from 56 and the
+/// sparks from 60, bouncing on the ground; the canvas floods at frames 9 and
+/// 60; every target is struck at frame 68.
 void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -297,7 +292,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   s32 origin;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 
@@ -324,7 +319,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
   // to red.
-  if (mode == 1) {
+  if (mode == FALLING_SWORD_ACHERONS_GRIEF) {
     u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
@@ -359,7 +354,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // The sparks wait at the target's feet.
   i = 0;
-  origin = centerX << 16;
+  origin = px(centerX);
   do {
     struct Particle *spark = &SPARK[i];
     s32 speed;
@@ -378,10 +373,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   frame = 0;
   do {
-    if (mode == 0) {
+    if (mode == FALLING_SWORD_TITAN_BLADE) {
       if (frame >= 41 && frame <= 63)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
-    } else if (mode == 1) {
+    } else if (mode == FALLING_SWORD_ACHERONS_GRIEF) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
@@ -402,7 +397,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (frame == 32)
       Sound_PlayFar(SE_SCATTER);
     if (frame == 60) {
-      if (mode == 1)
+      if (mode == FALLING_SWORD_ACHERONS_GRIEF)
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -596,9 +591,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     // The hit, and the canvas flooded at frames 9 and 60.
     if (frame == 68) {
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 7);
+        EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_JOLT);
       }
     }
 
@@ -618,9 +611,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-struct Model;
 struct StripQuad;
 
+/// A sprite as Judgment reads it: its priority and resource.
 struct JudgmentObject {
   u8 unk0[9];
   u8 flagsLow : 2;
@@ -639,6 +632,7 @@ extern const struct Scale gJudgment_UnitScale;
  * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
  * the object has, BattleEffect_RunJudgment moves: 684 of 2634 instructions in
  * tla-ja. */
+/// Fills words through the IWRAM fill, in a once-only block.
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {
     Iwram_FillWordsEntry(dst, size, value);
@@ -648,7 +642,7 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
   ((DrawRectangle)Ram_HeapSlots->ramCode2)(canvas, sheet, x, y, w, h);         \
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
-// The same draw, the routine read through a pointer to its slot.
+/// The same draw, the routine read through a pointer to its slot.
 #define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
   BattleEffect_LoadBlitter(HEAP_SLOT_RAM_CODE_2, mode);                        \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
@@ -683,6 +677,7 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
     IRQ_UNLOCK(saved);                                                         \
   }
 
+/// Hands back the buffer it is given.
 static inline u8 *PassBuffer(u8 *buffer) {
   /* FAKEMATCH(wrapper): the second queue's source base passed through this
    * inline. */

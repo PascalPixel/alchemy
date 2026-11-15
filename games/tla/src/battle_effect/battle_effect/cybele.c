@@ -4,32 +4,21 @@
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "actor.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "battle/battle.h"
-#include "battle_display.h"
 #include "gamepak/far_call/battle.h"
-#include "graphics/graphics.h"
-#include "module/battle_effect/battle_effect.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
-#include "graphics/render_placement.h"
 #include "module/window/screens.h"
 #include "resource_ids.h"
-#include "system/scene.h"
-#include "system/system.h"
 
+/// The menu work as Cybele reads it: its busy flag.
 struct MenuFlagWork {
   u8 unk000[0x506];
   u8 busy;
 };
 
+/// A row of gData_080eff28, as Cybele reads its id.
 struct DescriptorEntry {
   s16 id;
   u8 unk02[6];
@@ -37,23 +26,15 @@ struct DescriptorEntry {
 
 extern struct DescriptorEntry gData_080eff28[];
 
+/// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();
 }
 
-#include "fixed_math.h"
-#include "system/task.h"
-#include "system/input.h"
-#include "system/iwram_call.h"
-#include "battle/motobj.h"
-#include "system/transform.h"
-#include "battle/battle_effect.h"
-#include "battle_effect_work.h"
-#include "graphics/resource.h"
+#define FORMATION_THORN_VINES 645 ///< eight objects
 
-#define FORMATION_THORN_VINES 645 // eight objects
-
+/// Runs the impact burst at (x, y) in a formation.
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
@@ -82,7 +63,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   // Set up: the formation's eight objects, then the order in which the
   // picture is erased: eight shuffled runs of 0..127.
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_SpawnObjects(8, FORMATION_THORN_VINES, 1);
 
@@ -104,8 +85,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   // The canvas, unscaled and moved 32 pixels left, the vine sheet and two
   // transparent blitters, the second mirrored.
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
@@ -171,7 +151,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
       for (i = 0; i != args->targetCount; i++)
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 6);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
       Sound_PlayFar(SE_WHOOSH);
@@ -537,16 +517,14 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#include "bg_scroll.h"
+#define FORMATION_ICE_BLOCKS 643 ///< nine objects in a 3x3 block
 
-#define FORMATION_ICE_BLOCKS 643 // nine objects in a 3x3 block
-
-// Rocks, spray and puffs live in the map cell buffer; the spray's trails
-// follow the first 128 particles.
+/// Rocks, spray and puffs live in the map cell buffer; the spray's trails
+/// follow the first 128 particles.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 #define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 0xe00))
 
-// An object's sprite attributes, as far as this scene sets them.
+/// An object's sprite attributes, as far as this scene sets them.
 struct SpriteAttributes {
   u8 unk00[9];
   u8 tileHi : 2;

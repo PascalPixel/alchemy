@@ -3,7 +3,6 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "module/battle_effect/battle_effect.h"
 
 /// Puts the battle screen back into the display state the effects start
 /// from and end with: no blending, window 0 and window 1 both covering the
@@ -29,10 +28,11 @@ void BattleEffect_ConfigureEffectDisplay(void) {
   wait(1);
 }
 
+/// Scrolls BG1 a step every few VBlanks.
 void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
 
   if (++work->scrollTimer == work->scrollInterval) {
     gBgScroll[1].x += work->scrollStepX;
@@ -46,7 +46,7 @@ void BattleEffect_AdvanceScrollOnInterval(void) {
 void BattleEffect_AdvanceBg2OnInterval(void) {
   struct BattleEffectWork *work;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
 
   if (++work->scrollTimer == work->scrollInterval) {
     REG_BG2X = work->bg2x;

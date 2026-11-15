@@ -3,14 +3,9 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
 #define EMBERS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
@@ -42,7 +37,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   s32 i;
 
   buffer = Ram_MapCellBuffer;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(1);
@@ -115,7 +110,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         }
         EFFECT_SHOW_DAMAGE(SE_CRASH);
         for (i = 0; i != args->targetCount; i++) {
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 0);
+          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
@@ -185,11 +180,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         Transform_Reset();
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (i == 0) {
-          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
-                                        (baseY << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3(px(centerX) - px(128),
+                                        px(baseY) - px(64), 0);
         } else {
-          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
-                                        ((baseY + 8) << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3(px(centerX) - px(128),
+                                        px(baseY + 8) - px(64), 0);
         }
         Transform_ApplyPitch(2000);
         if (frame <= 47) {
@@ -233,8 +228,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 
 #define RING_FRAMES 122
 #define RING_CUE_FRAME 16
-#define RING_RISE_FRAME 8   // the ring starts to rise over the caster
-#define RING_THROW_FRAME 64 // it flies at the targets
+#define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
+#define RING_THROW_FRAME 64 ///< it flies at the targets
 #define RING_HIT_FRAME 88
 #define SPARK_COUNT 768
 
@@ -249,25 +244,26 @@ enum {
   RING_BLITTER    // which of the pair draws the flames
 };
 
-// The transform entry, typed as its callers use it.
+/// The transform entry, typed as its callers use it.
 #define TransformVector                                                        \
   ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
 
-// A ring of small flames. The flames circle the caster in a ring that rises
-// over its head from frame 8, each turning its own way through four cels.
-// At frame 64 the ring flies at the targets' midpoint, slowing as it
-// nears; at frame 88 it strikes: every target is knocked back and flashes,
-// sparks burst from each, and the screen shakes. The variant sets the
-// ring's rise, its flames and sparks and the shake; variant 2 also takes
-// the orange palette.
+/// A ring of small flames. The flames circle the caster in a ring that rises
+/// over its head from frame 8, each turning its own way through four cels.
+/// At frame 64 the ring flies at the targets' midpoint, slowing as it
+/// nears; at frame 88 it strikes: every target is knocked back and flashes,
+/// sparks burst from each, and the screen shakes. The variant sets the
+/// ring's rise, its flames and sparks and the shake; variant 2 also takes
+/// the orange palette.
+///
+/// Abilities: Juggle, Heat Juggle, Fiery Juggle.
 void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   struct ScreenPoint caster;
   struct ScreenPoint midpoint;
   s32 vector[3];
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
@@ -283,7 +279,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
-  if (args->variant == 2) {
+  if (args->variant == EFFECT_VARIANT_STRONGEST) {
     void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
@@ -316,19 +312,19 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     if (lift > gJuggle_Styles[args->variant][RING_LIFT_MAX])
       lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
     if (frame < RING_THROW_FRAME) {
-      ring->x = caster.x << 16;
+      ring->x = px(caster.x);
       ring->y = px(caster.y - lift - 32);
     } else {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
-        ring->x = caster.x << 16;
+        ring->x = px(caster.x);
         ring->y = px(caster.y - lift - 32);
         ring->velocityX = 0;
         ring->velocityY = 0;
-        ring->z = ((midpoint.x << 16) - ring->x) / 64;
-        ring->velocityZ = (((midpoint.y - 32) << 16) - ring->y) / 64;
+        ring->z = (px(midpoint.x) - ring->x) / 64;
+        ring->velocityZ = (px(midpoint.y - 32) - ring->y) / 64;
       }
       ring->x += ring->velocityX;
       ring->y += ring->velocityY;
@@ -357,7 +353,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       place = vector;
       place[0] = 0;
       place[1] = 0;
-      place[2] = lift << 16;
+      place[2] = px(lift);
       TransformVector(place, place);
       x = place[0] >> 17;
       place[0] = x + 64;
@@ -372,7 +368,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++) {
         EffectPosition_ProjectSprite(args->targets[i], &target);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], 4);
+        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {
@@ -382,7 +378,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
           s32 speed;
 
           spark->x = px(target.x / 2);
-          spark->y = target.y << 16;
+          spark->y = px(target.y);
           angle = Random16();
           speed = (Random16() & 255) + 127;
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;

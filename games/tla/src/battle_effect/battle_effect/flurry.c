@@ -1,86 +1,134 @@
 /// @file
-/// Ransack, the rush bursts and Flying Attack, and the burst scene they play.
+/// Gust, Flying Attack, the rush bursts and the claws: the flurry of strikes
+/// they all play.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
 #include "sounds.h"
-#include "macros.h"
 
-void BattleEffect_RunRansack(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 0);
-}
-
-void BattleEffect_RunBacteriaRush(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 1);
-}
-
-void BattleEffect_RunFreebiteRush(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 2);
-}
-
-void BattleEffect_RunFlyingAttack(struct Particle *step) {
-  if (step->variant == 0) {
-    BattleEffect_RunBurstScene(step, 3);
-    return;
+/// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
+/// effect's variant (enum EffectVariant) says.
+#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
+  void name(struct BattleEffectParams *args) {                                 \
+    if (args->variant == EFFECT_VARIANT_BASIC) {                               \
+      BattleEffect_RunFlurry(args, basic);                                     \
+      return;                                                                  \
+    }                                                                          \
+    if (args->variant == EFFECT_VARIANT_STRONGER) {                            \
+      BattleEffect_RunFlurry(args, stronger);                                  \
+      return;                                                                  \
+    }                                                                          \
+    BattleEffect_RunFlurry(args, strongest);                                   \
   }
-  if (step->variant == 1) {
-    BattleEffect_RunBurstScene(step, 4);
-    return;
-  }
-  BattleEffect_RunBurstScene(step, 5);
+
+/// The user strikes the first target once, twice or three times as the
+/// variant grows with a double or triple blow, and each strike fills the
+/// canvas with light.
+///
+/// Abilities: Gust; Rapid Smash, Sonic Smash, Slice.
+FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE,
+                         FLURRY_GUST_TRIPLE)
+
+/// The user strikes the first target five times.
+///
+/// Abilities: Bear Claw; Counterstrike.
+void BattleEffect_RunBearClaw(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-void BattleEffect_RunUrFlash(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 9);
+/// Ransack plays the same five strikes as Bear Claw.
+///
+/// Abilities: Ransack; Mad Dash.
+void BattleEffect_RunRansack(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_BEAR_CLAW);
 }
 
-void BattleEffect_RunClawAttack(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 12);
+/// Seven strikes land on the first target in the lime palette.
+///
+/// Abilities: Bacteria Rush.
+void BattleEffect_RunBacteriaRush(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_BACTERIA_RUSH);
 }
 
-void BattleEffect_RunCrusherGrip(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 10);
+/// Nine strikes land on the first target in the blue palette.
+///
+/// Abilities: Freebite Rush.
+void BattleEffect_RunFreebiteRush(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_FREEBITE_RUSH);
 }
 
-void BattleEffect_RunVanishClaw(struct Particle *step) {
-  BattleEffect_RunBurstScene(step, 11);
+/// One, two or three strikes land on the first target as the variant grows
+/// with a double or triple blow.
+///
+/// Abilities: Flying Attack; Swift Strike.
+FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunFlyingAttack, FLURRY_FLYING_ATTACK,
+                         FLURRY_FLYING_ATTACK_DOUBLE,
+                         FLURRY_FLYING_ATTACK_TRIPLE)
+
+/// Three strikes land on the first target in the Mars Djinni's colours.
+///
+/// Abilities: Ur Flash.
+void BattleEffect_RunUrFlash(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_UR_FLASH);
 }
 
-void BattleEffect_RunDoublestep(struct Particle *step) {
-  if (step->variant == 0) {
-    BattleEffect_RunBurstScene(step, 6);
-    return;
-  }
-  if (step->variant == 1) {
-    BattleEffect_RunBurstScene(step, 7);
-    return;
-  }
-  BattleEffect_RunBurstScene(step, 8);
+/// The user lunges further at the first target and strikes once, in the
+/// embers' colours.
+///
+/// Abilities: Claw Attack.
+void BattleEffect_RunClawAttack(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_CLAW_ATTACK);
 }
 
-// The motes live in the map cell buffer, then the wave's, the smoke's and
-// the packed orb's cels.
+/// One strike lands on the first target while glints flicker around it.
+///
+/// Abilities: Crusher Grip.
+void BattleEffect_RunCrusherGrip(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_CRUSHER_GRIP);
+}
+
+/// One strike lands on the first target while the battle ripples and smoke
+/// rises from its feet.
+///
+/// Abilities: Vanish Claw.
+void BattleEffect_RunVanishClaw(struct BattleEffectParams *args) {
+  BattleEffect_RunFlurry(args, FLURRY_VANISH_CLAW);
+}
+
+/// Doublestep plays Gust's one, two or three strikes as the variant grows.
+///
+/// Abilities: Doublestep.
+FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
+                         FLURRY_GUST_DOUBLE, FLURRY_GUST_TRIPLE)
+
+/// The motes, in the map cell buffer; the wave, smoke and flash pictures follow
+/// them there.
 #define MOTES ((struct Particle *)Ram_MapCellBuffer)
-#define WAVE_CELS (Ram_MapCellBuffer + 0x2400)
-#define SMOKE_CELS (Ram_MapCellBuffer + 0x3788)
-#define ORB_CELS (Ram_MapCellBuffer + 0x5288)
-#define MOTE_COUNT 256
+#define FLURRY_MOTE_COUNT 256
+/// The wave pictures, past the motes.
+#define FLURRY_WAVE_PICTURES (Ram_MapCellBuffer + 0x2400)
+/// The smoke pictures, past the waves.
+#define FLURRY_SMOKE_PICTURES (Ram_MapCellBuffer + 0x3788)
+/// The flash pictures, packed to half width past the smoke.
+#define FLURRY_FLASH_PICTURES (Ram_MapCellBuffer + 0x5288)
 
-// A variant's record.
-#define RECORD(field) gBurstScene_Styles[variant * 8 + (field)]
-enum {
-  RECORD_ARC_SHEET,
-  RECORD_PALETTE,
-  RECORD_BLOWS,
-  RECORD_MOTES,
-  RECORD_INTERVAL,
-  RECORD_FRAMES,
-  RECORD_FILL,
-  RECORD_EXTRA
+/// The bytes of a gFlurry_Styles row, one row a mode.
+enum FlurryColumn {
+  FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)
+  FLURRY_PALETTE,   ///< whose palette (enum FlurryPalette)
+  FLURRY_STRIKES,
+  FLURRY_MOTES,    ///< motes thrown by each strike, at most the 32 of
+                   ///< its run of MOTES
+  FLURRY_INTERVAL, ///< frames between strikes
+  FLURRY_FRAMES,   ///< frames in the whole effect
+  FLURRY_FLASH,    ///< 1 fills the canvas with level 47 on each hit
+  FLURRY_EXTRA     ///< what else plays around the target (enum FlurryExtra)
 };
-enum { EXTRA_NONE, EXTRA_GLINTS, EXTRA_RIPPLE };
 
-void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
+/// The user closes on the first target and strikes it again and again, each
+/// strike an arc or a wave with a flash and a spray of motes; the last knocks
+/// the target back.
+void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint actorPos;
   struct ScreenPoint targetPos;
   s32 screen[3];
@@ -101,15 +149,18 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   s32 i;
   s32 j;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, PREPARE(7, args->side, 2), screen,
-                                   otherPoint);
+    BattleEffect_RunDjinniEntrance(
+        args,
+        DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side,
+                        DJINNI_ANCHOR_OVER_USER),
+        screen, otherPoint);
 
   // The pictures and the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -117,7 +168,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   // canvas is shown twice as wide.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
-  cels = WAVE_CELS;
+  cels = FLURRY_WAVE_PICTURES;
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 dst = row * 20 + col / 2;
@@ -128,22 +179,24 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   }
   // The glints' sheet takes the orb's place.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
-  if (RECORD(RECORD_ARC_SHEET) == 0)
+  if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA,
                                work->sheet + 0xc80, 1, 1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB,
                                work->sheet + 0xc80, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, WAVE_CELS, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, SMOKE_CELS, 1, 0);
-  switch (RECORD(RECORD_PALETTE)) {
-  case 0:
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_PICTURES,
+                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, FLURRY_SMOKE_PICTURES,
+                             1, 0);
+  switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
+  case FLURRY_PALETTE_MARS_DJINNI:
     resource = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case 1:
+  case FLURRY_PALETTE_LIME:
     resource = (s32)&ResourceId_LimePalette;
     break;
-  case 2:
+  case FLURRY_PALETTE_BLUE_ARC:
     resource = (s32)&ResourceId_BlueArcSheetB;
     break;
   default:
@@ -152,8 +205,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
 
-  // The caster closes in; variant 12 lunges further and waits.
-  if (variant == 12) {
+  // The user closes in; Claw Attack lunges further and waits.
+  if (mode == FLURRY_CLAW_ATTACK) {
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(6));
     wait(7);
   } else {
@@ -164,16 +217,16 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   EffectPosition_ProjectScaledBattler(args->targets[0], &targetPos);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
+  if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.
   target = BattleObject_GetFar(args->targets[0])->object;
-  for (i = 0; i != MOTE_COUNT; i++) {
+  for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
     struct Particle *mote = &MOTES[i];
 
-    SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
+    SET_POSITION(mote, target->x, target->y + px(25), target->z);
     mote->velocityX = (Random16() & 255) << 12;
     mote->velocityY = ((Random16() & 255) - 127) << 12;
     mote->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -185,29 +238,29 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   for (i = 0; i != 64; i++) {
     struct Particle *puff = &work->particles[i];
 
-    SET_POSITION(puff, (targetPos.x / 2) << 16, px(88), 0);
+    SET_POSITION(puff, px(targetPos.x / 2), px(88), 0);
     puff->velocityX = ((Random16() & 255) - 128) << 9;
     puff->velocityY = ((Random16() & 255) - 128) << 9;
     puff->variant = -i;
     puff->velocityZ = 0;
   }
 
-  for (frame = 0; frame != RECORD(RECORD_FRAMES); frame++) {
+  for (frame = 0; frame != gFlurry_Styles[mode][FLURRY_FRAMES]; frame++) {
     s32 *lines;
-    s32 blows;
+    s32 strikes;
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     lines = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
-    if (variant == 10 && frame == 8)
+    if (mode == FLURRY_CRUSHER_GRIP && frame == 8)
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
-    blows = RECORD(RECORD_BLOWS);
+    strikes = gFlurry_Styles[mode][FLURRY_STRIKES];
     EffectPosition_ProjectScaledBattler(args->user, &actorPos);
     actorPos.x /= 2;
 
-    // The arcs and waves, mirrored on odd blows.
-    if (args->side == 0) {
+    // The arcs and waves, mirrored on odd strikes.
+    if (args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
@@ -223,15 +276,16 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
                 DrawRectangle draw;
               } *)Ram_HeapSlots)
                   ->draw;
-    for (i = 0; i != blows; i++) {
-      s32 start = i * RECORD(RECORD_INTERVAL);
+    for (i = 0; i != strikes; i++) {
+      s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 || RECORD(RECORD_ARC_SHEET) == 1) {
+        if ((i & 3) <= 1 ||
+            gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           // The arc: six 48x72 cels.
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
                         targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
           else
@@ -239,36 +293,36 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
                         targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
         } else {
           // The wave: six 48x16 cels.
-          if (args->side == 0)
-            draw[i & 1](canvas, WAVE_CELS + step * 768, targetPos.x / 2 - 16,
-                        actorPos.y - 8, 48, 16);
+          if (args->side == EFFECT_SIDE_ENEMIES)
+            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
+                        targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, WAVE_CELS + step * 768, targetPos.x / 2 - 32,
-                        actorPos.y - 8, 48, 16);
+            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
+                        targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
-      // The hit; the last blow ends the run.
+      // The hit; the last strike knocks the target back.
       if (frame == start + 2) {
-        if (RECORD(RECORD_FILL) == 1)
+        if (gFlurry_Styles[mode][FLURRY_FLASH] == 1)
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 4);
-        if (i == blows - 1) {
-          BattleMotion_ApplyKnockbackFar(args->targets[0], 4);
+        if (i == strikes - 1) {
+          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           work->shakeFrames = 8;
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           if (i & 1)
-            BattleMotion_ApplyKnockbackFar(args->targets[0], 7);
+            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_JOLT);
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != RECORD(RECORD_MOTES); j++)
+        for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
           MOTES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The orb: six 20x48 cels, two frames each.
       if (frame >= start + 2 && frame < start + 14)
-        draw[0](canvas, ORB_CELS + ((frame - start - 2) / 2) * 960,
+        draw[0](canvas, FLURRY_FLASH_PICTURES + ((frame - start - 2) / 2) * 960,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     EFFECT_RELEASE_BLITTERS();
@@ -285,7 +339,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
                 DrawRectangle draw;
               } *)Ram_HeapSlots)
                   ->draw;
-    for (i = 0; i != MOTE_COUNT; i++) {
+    for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
       struct Particle *mote = &MOTES[i];
       s32 size = mote->variant;
 
@@ -307,7 +361,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
     if (frame > 3) {
       // The glints: three a frame around the target, each with its own
       // random flip, until frame 31.
-      if (RECORD(RECORD_EXTRA) == EXTRA_GLINTS && frame <= 31) {
+      if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_GLINTS &&
+          frame <= 31) {
         EffectPosition_ProjectScaledBattler(args->targets[0], &spot);
         for (i = 0; i != 3; i++) {
           s32 angle = Random16() & 0xffff;
@@ -323,7 +378,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
           do {
           } while (0);
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_2, 7, 7,
-                                    gBurstScene_GlintFlips[flip & 3] |
+                                    gFlurry_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     BLITTER_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->ramCode2)(
@@ -335,7 +390,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
       }
       // The smoke: sixteen puffs rise from the target's feet, six cels of
       // four frames each.
-      if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE) {
+      if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
         draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -343,7 +398,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
           struct Particle *puff = &work->particles[i];
 
           if ((u32)puff->variant <= 23) {
-            draw[0](canvas, SMOKE_CELS + (puff->variant / 4) * 0x480,
+            draw[0](canvas, FLURRY_SMOKE_PICTURES + (puff->variant / 4) * 0x480,
                     Q_16_16_UPPER_HALF(puff->x) - 12,
                     Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
             BattleEffectKernels_IntegrateVector2(puff, 62, -px(1) / 16);
@@ -358,8 +413,14 @@ void BattleEffect_RunBurstScene(struct BattleEffectParams *args, s32 variant) {
   }
 
   // Teardown.
-  if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE)
+  if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef FLURRY_DEFINE_BY_VARIANT
+#undef FLURRY_MOTE_COUNT
+#undef FLURRY_WAVE_PICTURES
+#undef FLURRY_SMOKE_PICTURES
+#undef FLURRY_FLASH_PICTURES

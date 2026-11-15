@@ -40,7 +40,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -54,9 +54,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->args);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
@@ -303,7 +302,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
               burst->y += up << 13;
               burst->variant = (Random16() & 15) + 8;
             }
-            BattleMotion_ApplyKnockbackFar(args->targets[i], 1);
+            BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
             Sound_PlayFar(SE_HEAVY_IMPACT);
           }
         }
@@ -377,8 +376,8 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 // Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
 // the serpent's tiles and the window's column noise).
 
-#define SCENE_FRAMES 244  // act one; A or B ends it after frame 16
-#define PILLAR_FRAMES 144 // act two
+#define SCENE_FRAMES 244  ///< act one; A or B ends it after frame 16
+#define PILLAR_FRAMES 144 ///< act two
 #define RESULTS_FRAME 96
 
 /* VIEW(ability_effects): tag struct SpriteObject as struct

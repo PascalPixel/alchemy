@@ -4,29 +4,24 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
-#include "macros.h"
 
-struct FxPartyList;
-struct Model;
+struct RenderModel;
 
-// Moloch's frames, and the frame A or B skips to.
+/// Moloch's frames, and the frame A or B skips to.
 #define MOLOCH_FRAMES 296
 #define MOLOCH_SKIP_TO 232
 
-void Render_DrawModelList(struct Model *model);
-
-// Moloch. A shower of 256 motes drifts down the screen and, from frame
-// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
-// and from frame 136 four textured rings spread out from the summoned
-// objects. At frames 212 to 268 the targets are struck in turn, and the
-// scene closes with a glow of the whole palette. A or B skips to frame 232.
-//
-// The work's particles 0-11 are the flames (velocityZ picks the blitter, 2
-// retires the column), particles 24-39 the embers of the closing glow; the
-// map cell buffer holds the motes (variant counts down the frames before a
-// mote appears, 0 is a live mote).
+/// Moloch. A shower of 256 motes drifts down the screen and, from frame
+/// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
+/// and from frame 136 four textured rings spread out from the summoned
+/// objects. At frames 212 to 268 the targets are struck in turn, and the
+/// scene closes with a glow of the whole palette. A or B skips to frame 232.
+///
+/// The work's particles 0-11 are the flames (velocityZ picks the blitter, 2
+/// retires the column), particles 24-39 the embers of the closing glow; the
+/// map cell buffer holds the motes (variant counts down the frames before a
+/// mote appears, 0 is a live mote).
 void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
@@ -42,7 +37,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   s32 k;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -103,7 +98,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           flame->x = px(54);
           flame->y = px(56);
           flame->variant = i * -2;
-          flame->velocityX = -(((Random16() & 3) << 16) + px(2));
+          flame->velocityX = -(px(Random16() & 3) + px(2));
           flame->velocityY = -(Random16() & 3) << 15;
         }
       }
@@ -125,7 +120,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(mote->y) <= 113) {
               s32 dx;
 
-              mote->velocityX = ((Random16() & 63) << 16) + px(56);
+              mote->velocityX = px(Random16() & 63) + px(56);
               dx = mote->velocityX - mote->x;
               mote->velocityX = dx / ((px(114) - mote->y) / (size << 14));
             }
@@ -137,9 +132,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
               if (distance < 0)
                 distance = -distance;
-              pull = (mote->y / 2 - distance + (s32)((Random16() & 31) << 16) +
-                      px(96)) /
-                     32;
+              pull =
+                  (mote->y / 2 - distance + (s32)px(Random16() & 31) + px(96)) /
+                  32;
               if (mote->x < px(96) && pull > 0)
                 pull = -pull;
               if (mote->x > px(96) && pull < 0)
@@ -226,7 +221,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             if (++flame->variant == 24) {
               flame->x = px(54);
               flame->y = px(56);
-              flame->velocityX = -(((Random16() & 3) << 16) + px(2));
+              flame->velocityX = -(px(Random16() & 3) + px(2));
               flame->variant = 0;
             }
           }
@@ -262,8 +257,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(16), gMoloch_RingHeights[i] << 16,
-                                        0);
+          SceneTransform_ApplyPosition3(px(16), px(gMoloch_RingHeights[i]), 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
@@ -340,8 +334,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 void Iris_ChangeBackdrop(void) {
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->battleBackground;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s16 list[14];
   u16 *palette;
   s32 i;
@@ -401,7 +394,7 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   s32 i;
   s32 trailY;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
@@ -431,8 +424,6 @@ next:
   if (trailY <= 112)
     goto next;
 }
-
-// One model vertex: signed byte coordinates, padded to a word.
 
 extern const struct ModelVertex gIris_PillarVertices[6];
 
@@ -468,7 +459,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[4].y = height;
 
   Transform_Reset();
-  SET_POSITION(&position, (x << 16) - px(63), (63 - height) << 16, 0);
+  SET_POSITION(&position, px(x) - px(63), px(63 - height), 0);
   SceneTransform_ApplyPosition(&position);
 
   model->kind = 4;
@@ -499,12 +490,9 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 
 struct StripQuad;
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-
-#define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HALF(p, n) (((s16 *)(p))[n])
 
-// The spark objects' work, in the map cell buffer at 0x1f40.
+/// The spark objects' work, in the map cell buffer at 0x1f40.
 struct IrisSparks {
   s16 life[36]; // high byte: frames left; 0 frees the slot
   u16 tiles[15];
@@ -515,7 +503,7 @@ struct IrisSparks {
   s32 vy[36];
 };
 
-// A point of a streak: the head moves, the other nine trail it.
+/// A point of a streak: the head moves, the other nine trail it.
 struct IrisPoint {
   s32 x;
   s32 y;
@@ -524,7 +512,7 @@ struct IrisPoint {
   s32 unk10;
 };
 
-// The opening's circle of light and its fifteen streaks, at 0x2ee0.
+/// The opening's circle of light and its fifteen streaks, at 0x2ee0.
 struct IrisScene {
   union {
     s32 x;
@@ -552,6 +540,7 @@ struct IrisScene {
   struct IrisPoint streaks[15][10];
 };
 
+/// A sprite as Iris reads its tile and resource.
 struct IrisSprite {
   u8 unk00[8];
   u16 tile : 10;
@@ -560,6 +549,7 @@ struct IrisSprite {
   u8 resource;
 };
 
+/// A sprite as Iris sets its priority.
 struct IrisSpriteFlags {
   u8 unk00[9];
   u8 unk09_0 : 2;
@@ -567,10 +557,12 @@ struct IrisSpriteFlags {
   u8 unk09_4 : 4;
 };
 
+/// The five widths a rising pillar takes.
 struct FiveWidths {
   s32 w[5];
 };
 
+/// The seven widths a widening pillar takes.
 struct SevenWidths {
   s32 w[7];
 };
@@ -598,7 +590,7 @@ extern const struct FourSpans gIris_RightStripSpans;
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
-// The 128 background colours the scene fades (entries 96 to 223).
+/// The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
 #define Iwram_FillWords(dest, size, value)                                     \
@@ -611,12 +603,11 @@ extern const struct FourSpans gIris_RightStripSpans;
     Decompress_TaggedLz(src, dest);                                            \
   } while (0)
 
-// A splash where a drop lands: rings spread from (x, y) for twice the
-// splash's duration, then a smaller pair of rings and a column of spray
-// rises while the screen shakes; the drop itself is drawn last.
+/// A splash where a drop lands: rings spread from (x, y) for twice the
+/// splash's duration, then a smaller pair of rings and a column of spray
+/// rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle drawAlt;
   DrawRectangle draw;
@@ -761,17 +752,16 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   }
 }
 
-// Iris: a circle of light opens over a dark field while fifteen
-// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
-// of sprites and bursts into sparks; drops fall and splash in rings; pillars
-// of light climb, the scene fills with rising motes, rays turn about the
-// centre, and the screen whitens as she heals the party.
+/// Iris: a circle of light opens over a dark field while fifteen
+/// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
+/// of sprites and bursts into sparks; drops fall and splash in rings; pillars
+/// of light climb, the scene fills with rising motes, rays turn about the
+/// centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
   struct IrisPoint(*streaks)[10] = Data_02012ef4;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisSparks *sparks = &Data_02011f40;
@@ -809,7 +799,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (sparks->life[i] != 0) {
         scale.x = scale.y = sparks->life[i] * 2;
         place[3] = 0;
-        place[1] = 0xff0000;
+        place[1] = px(255);
         place[0] = sparks->x[i];
         place[2] = sparks->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], place, (s32 *)&scale, 0);
@@ -888,8 +878,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           texture.logHeight = 6;
           texture.pixels = work->sheet + 0x1810 + offset;
           Transform_ResetMatrix();
-          place[0] = work->particles[i].x - 0x400000;
-          place[1] = work->particles[i].y - 0x400000;
+          place[0] = work->particles[i].x - px(64);
+          place[1] = work->particles[i].y - px(64);
           place[2] = 0;
           SceneTransform_ApplyPosition(place);
           place[1] = place[0] = work->particles[i].velocityZ;
@@ -981,7 +971,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedZoom = camera[27];
-  if (args->side == 0) {
+  if (args->side == EFFECT_SIDE_ENEMIES) {
     s32 yaw = TRIG_TURN / 4;
 
     camera[27] = yaw;
@@ -1070,8 +1060,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
 
-        s->x = gIris_StreakX[i] << 16;
-        s->y = gIris_StreakY[i] << 16;
+        s->x = px(gIris_StreakX[i]);
+        s->y = px(gIris_StreakY[i]);
         s->angle = gIris_StreakAngles[i];
         s->speed = gIris_StreakSpeeds[i];
         s->unk10 = 0;
@@ -1225,27 +1215,27 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         objects[i]->tile = sparks->tiles[sparks->frames[i]];
       }
       for (i = 0; i != 18; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + 0x390000;
-        sparks->y[i] = (Random16() % 15 << 16) + 0x4f0000;
+        sparks->x[i] = (Random16() % 15 << 16) + px(57);
+        sparks->y[i] = (Random16() % 15 << 16) + px(79);
         sparks->vx[i] = ((Random16() & 63) - 32) << 12;
         sparks->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       for (; i != 36; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + 0xa90000;
-        sparks->y[i] = (Random16() % 15 << 16) + 0x4f0000;
+        sparks->x[i] = (Random16() % 15 << 16) + px(169);
+        sparks->y[i] = (Random16() % 15 << 16) + px(79);
         sparks->vx[i] = ((Random16() & 63) - 32) << 12;
         sparks->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       for (i = 0; i != 6; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + 0x210000;
-        work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
+        work->particles[i].x = (Random16() % 15 << 16) + px(33);
+        work->particles[i].y = (Random16() % 15 << 16) + px(57);
         work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
       for (; i != 12; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + 0x510000;
-        work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
+        work->particles[i].x = (Random16() % 15 << 16) + px(81);
+        work->particles[i].y = (Random16() % 15 << 16) + px(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
@@ -1253,7 +1243,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 177) <= 216) {
       scale = gIris_UnitScale;
       pos[3] = 0;
-      pos[1] = 0xff0000;
+      pos[1] = px(255);
       lift = 0;
       if (frame > 350) {
         u16 *pal = (u16 *)(PLTT + 0x200);
@@ -1286,8 +1276,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != 4; j++) {
           for (column = 0; column != 4; column++) {
-            pos[0] = 0x480000 + column * 0x200000;
-            pos[2] = lift + 0x380000 + j * 0x200000;
+            pos[0] = px(72) + column * px(32);
+            pos[2] = lift + px(56) + j * px(32);
             Render_ApplyProjectedPlacementFar(work->sprites[j * 4 + column],
                                               pos, (s32 *)&scale, 0);
           }
@@ -1324,9 +1314,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 177) <= 46) {
       for (i = 0; i != 36; i++) {
-        shrink.x = shrink.y = 0x10000 - ((frame - 177) >> 1 << 11);
+        shrink.x = shrink.y = px(1) - ((frame - 177) >> 1 << 11);
         pos[3] = 0;
-        pos[1] = 0xff0000;
+        pos[1] = px(255);
         pos[0] = sparks->x[i];
         pos[2] = sparks->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], pos, (s32 *)&shrink, 0);
@@ -1451,7 +1441,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
               sparks->life[s] = 0x7900;
               sparks->x[s] = gIris_SplashX[j] << 17;
-              sparks->y[s] = (gIris_SplashY[j] << 16) + 0x200000;
+              sparks->y[s] = px(gIris_SplashY[j]) + px(32);
               sparks->vx[s] = ((Random16() & 31) - 16) << 12;
               sparks->vy[s] = -(Random16() & 31) << 12;
             }
@@ -1733,7 +1723,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             sparks->x[s] = (leftSpans.p[(r + 1) >> 5].left +
                             Random16() % leftSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = (r << 16) + 0x100000;
+            sparks->y[s] = px(r) + px(16);
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
             sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1763,7 +1753,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             sparks->x[s] = (rightSpans.p[(r + 1) >> 5].left +
                             Random16() % rightSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = (r << 16) + 0x100000;
+            sparks->y[s] = px(r) + px(16);
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
             sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1943,8 +1933,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       texture2.logHeight = 5;
       texture2.pixels = work->sheet + 0x5810;
       Transform_ResetMatrix();
-      place[0] = 0x200000;
-      place[1] = -0x180000;
+      place[0] = px(32);
+      place[1] = -px(24);
       place[2] = 0;
       SceneTransform_ApplyPosition(place);
       Transform_ApplyRoll(0x9800);
@@ -1977,7 +1967,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           s32 spin = Random16() & 3;
 
           work->particles[n].x = px(96);
-          work->particles[n].y = ((Random16() & 7) << 16) + 0x240000;
+          work->particles[n].y = px(Random16() & 7) + px(36);
           work->particles[n].z = frame;
           work->particles[n].velocityX =
               Iwram_MulQ16((spin + 2) << 15, Trig_Sin(0x9800));
@@ -1987,7 +1977,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
         n = FindFreeParticle();
         if (n != -1) {
-          work->particles[n].x = ((Random16() & 31) << 16) + 0x600000;
+          work->particles[n].x = px(Random16() & 31) + px(96);
           work->particles[n].y = px(Random16() & 31);
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
@@ -2049,7 +2039,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Swaps two integers without a temporary.
+/// Swaps two integers without a temporary.
 #define XOR_SWAP(a, b)                                                         \
   {                                                                            \
     (a) ^= (b);                                                                \
@@ -2057,8 +2047,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     (a) ^= (b);                                                                \
   }
 
-// A triangle of the model: where its three corners start in the vertex
-// buffer (in words) and its colour.
+/// A triangle of the model: where its three corners start in the vertex
+/// buffer (in words) and its colour.
 struct SolidFace {
   s32 corner[3];
   u8 unk0c[12];
@@ -2066,8 +2056,8 @@ struct SolidFace {
   u8 unk19[3];
 };
 
-// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
-// keeping the brighter of each pixel's colour and color.
+/// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
+/// keeping the brighter of each pixel's colour and color.
 #define FILL_SPAN(row, xa, xb)                                                 \
   {                                                                            \
     s32 left = (xa) >> 16;                                                     \
@@ -2086,13 +2076,13 @@ struct SolidFace {
     }                                                                          \
   }
 
-// An unused solid renderer, the filled twin of Func_08196248. Transforms the
-// vertexCount points in the sheet block by the current matrix, then fills
-// every face of the effect work's list that faces the camera into the
-// canvas, centred at (64, 64), keeping the brighter colour where faces
-// overlap. Each triangle is sorted by y and filled in two halves, top to
-// middle and middle to bottom, along 16.16 edge slopes.
-void Func_0819574c(s32 vertexCount, s32 faceCount) {
+/// An unused solid renderer, the filled twin of Render_DrawMeshWireframe.
+/// Transforms the vertexCount points in the sheet block by the current matrix,
+/// then fills every face of the effect work's list that faces the camera into
+/// the canvas, centred at (64, 64), keeping the brighter colour where faces
+/// overlap. Each triangle is sorted by y and filled in two halves, top to
+/// middle and middle to bottom, along 16.16 edge slopes.
+void Render_FillMesh(s32 vertexCount, s32 faceCount) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleEffect;
@@ -2183,8 +2173,8 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
   }
 }
 
-// One mesh face: its three corners as word offsets into the vertex buffer
-// (vertex index * 3), padded to an effect step's 28 bytes.
+/// One mesh face: its three corners as word offsets into the vertex buffer
+/// (vertex index * 3), padded to an effect step's 28 bytes.
 struct MeshFace {
   s32 vertex[3];
   s32 unk0c[4];
@@ -2192,8 +2182,8 @@ struct MeshFace {
 
 #define DIFF_ABS(v) ((v) >= 0 ? (v) : -(v))
 
-// One textured scanline at canvas row y, from xA to xB, keeping the brighter
-// of the canvas and texture colour.
+/// One textured scanline at canvas row y, from xA to xB, keeping the brighter
+/// of the canvas and texture colour.
 #define DRAW_SPAN(y)                                                           \
   {                                                                            \
     u8 *row = work->sheet;                                                     \
@@ -2220,7 +2210,7 @@ struct MeshFace {
     }                                                                          \
   }
 
-// The texture steps along a scanline, from the middle corner's row.
+/// The texture steps along a scanline, from the middle corner's row.
 #define STEP_RIGHTWARD()                                                       \
   {                                                                            \
     width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));        \
@@ -2240,14 +2230,14 @@ struct MeshFace {
                                         (uv[1][1] - uv[0][1]));                \
   }
 
-// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
-// buffer) in place, then draws each front-facing face of the mesh at the
-// start of the effect work as an affine-textured triangle: uvs gives each
-// face's three texture corners (16.16), the texture is the effect sheet,
-// textureShift its row length as a power of two. Coordinates are offset by
-// 64 pixels into the canvas.
-void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
-                   s32 textureShift) {
+/// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
+/// buffer) in place, then draws each front-facing face of the mesh at the
+/// start of the effect work as an affine-textured triangle: uvs gives each
+/// face's three texture corners (16.16), the texture is the effect sheet,
+/// textureShift its row length as a power of two. Coordinates are offset by
+/// 64 pixels into the canvas.
+void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
+                             s32 textureShift) {
   s32 i;
   s32 *vertices;
   u8 *canvas;
@@ -2277,19 +2267,19 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     cy = &vertices[vertexCount + 7];
     ay = &vertices[vertexCount + 1];
     by = &vertices[vertexCount + 4];
-    Dma_Set(&vertices[faces[i].vertex[0]], ax,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[1]], bx,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[2]], cx,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[0]], ax, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[1]], bx, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[2]], cx, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
 
     // Back faces are skipped.
     if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
             Iwram_MulQ16(*cx - *ax, *by - *ay) >=
         0) {
-      work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-      Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+      work = Ram_HeapSlots->battleEffect;
+      Dma_Set(uvs[i], uv, px(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
       *ax += 64 << 16;
       *ay += 64 << 16;
       *bx += 64 << 16;
@@ -2398,15 +2388,8 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
   }
 }
 
-// A point of the wireframe model, 16.16 fixed point.
-struct WirePoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-// A triangle of the wireframe model: where its three corners start in the
-// vertex buffer (in words) and the colour its edges are drawn in.
+/// A triangle of the wireframe model: where its three corners start in the
+/// vertex buffer (in words) and the colour its edges are drawn in.
 struct WireFace {
   s32 corner[3];
   u8 unk0c[12];
@@ -2414,12 +2397,12 @@ struct WireFace {
   u8 unk19[3];
 };
 
-// An unused wireframe renderer. Transforms the vertexCount points in the
-// sheet block by the current matrix, then draws the three edges of every
-// face of the effect work's list that faces the camera (its corners run
-// counter-clockwise on screen) as clipped lines into the canvas, centred at
-// (64, 64).
-void Func_08196248(s32 vertexCount, s32 faceCount) {
+/// An unused wireframe renderer. Transforms the vertexCount points in the
+/// sheet block by the current matrix, then draws the three edges of every
+/// face of the effect work's list that faces the camera (its corners run
+/// counter-clockwise on screen) as clipped lines into the canvas, centred at
+/// (64, 64).
+void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleEffect;
   s32 i;
@@ -2496,6 +2479,7 @@ static __inline__ void CopyWords2(const void *source, void *destination) {
 CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
             "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
             "and r1 to the allocator")
+/// Copies three words from source to destination with one block load and store.
 static __inline__ void CopyWords3(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2507,6 +2491,7 @@ static __inline__ void CopyWords3(const void *source, void *destination) {
 
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
+/// Copies four words from source to destination with one block load and store.
 static __inline__ void CopyWords4(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2557,6 +2542,8 @@ static __inline__ void CopyWords4(const void *source, void *destination) {
     *(site) |= BRANCH_FIELD(site, dst);                                        \
   } while (0)
 
+/// Writes a drawing routine for the canvas into heap slot `slot`, built from
+/// the template gBlitterTemplate for one clip, mirroring and blend mode.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode) {
   const u32 *src;
@@ -2847,14 +2834,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   Heap_Release(routine);
 }
 
-/// One projected vertex, as Render_ProjectPoint leaves it.
-struct ProjectedVertex {
-  s16 x;     ///< screen pixels
-  s16 y;     ///< screen pixels
-  s16 depth; ///< projected depth
-  s16 unk06;
-};
-
 /// Projects count model vertices through Render_ProjectPoint into screen
 /// coordinates.
 void Render_ProjectVertices(struct ModelVertex *vertices,
@@ -2862,7 +2841,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   s32 point[3];
 
   for (; count != 0; count--) {
-    SET_VECTOR(point, vertices->x << 16, vertices->y << 16, vertices->z << 16);
+    SET_VECTOR(point, px(vertices->x), px(vertices->y), px(vertices->z));
     Render_ProjectPoint(point, point);
     screen->x = point[0];
     screen->y = point[1];
@@ -2872,6 +2851,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   }
 }
 
+/// A block of the render pool, as Render_AllocateModelList hands it out.
 struct PoolEntry {
   s32 head;
   s32 next;
@@ -2922,26 +2902,10 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   return 1;
 }
 
-/* VIEW(summon_effects): tag struct Model as struct Model__summon_effects;
- * battle_effect/ability_effects has another definition; not tried: struct
- * Model__summon_effects was not found. */
-/// One entry of a model list. Render_AllocateModelList allocates the list with
-/// a cleared entry after the last.
-struct Model {
-  s32 kind; ///< the rasterizer kernel that draws it; 0 ends the list
-  s32 flags;
-  const void *mesh;
-  void *matrix;
-  struct Texture *texture;
-  s32 fade;
-  u8 unk18;
-  u8 frame;
-};
-
 /// The texture stays where it is, even when IWRAM has room for a copy.
 #define MODEL_TEXTURE_IN_PLACE 4
 
-typedef void (*ModelKernel)(struct Model *model);
+typedef void (*ModelKernel)(struct RenderModel *model);
 
 /// Copies a kernel whose DMA control is a word of its own.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
@@ -2962,7 +2926,7 @@ typedef void (*ModelKernel)(struct Model *model);
 /// rasterizer into IWRAM once, and it is freed when the kind changes. Before
 /// a textured model is drawn, its texture is copied into IWRAM where there is
 /// room, and the copy is freed after the model is drawn.
-void Render_DrawModelList(struct Model *model) {
+void Render_DrawModelList(struct RenderModel *model) {
   ModelKernel code = NULL;
   s32 lastKind = 0;
   struct Texture copy;
@@ -3043,7 +3007,7 @@ void Render_DrawModelList(struct Model *model) {
     }
     lastKind = model->kind;
     if (model->texture == &copy) {
-      Heap_Release((void *)(model->texture->pixels & ~3));
+      Heap_Release((void *)((u32)model->texture->pixels & ~3));
       model->texture = texture;
     }
     model++;

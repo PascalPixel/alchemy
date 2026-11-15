@@ -3,40 +3,19 @@
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
-#include "fixed_math.h"
 #include "sounds.h"
 
-#define TASK_PASS_FRAME 0xc80
-
-// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
-#define BLITTER(flags, mode) ((mode) << 4 | (flags))
-
-// The sparks live in the map cell buffer's second 16 KB.
+/// The sparks live in the map cell buffer's second 16 KB.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
 
-// Each bite's anchor, where its jaw is drawn: the first three particles.
+/// Each bite's anchor, where its jaw is drawn: the first three particles.
 #define BITE_ANCHOR(bite) (&work->particles[bite])
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-/* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/triple_chomp.c:133: structure has
- * no member named `vertices'. */
-struct Model__f18b868 {
-  s32 kind;
-  s32 next;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
-// Triple Chomp (effect kind 426): the caster lunges 80% of the way to the
+// Triple Chomp: the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
@@ -49,7 +28,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   DrawRectangle draw[2]; // Unused: [1] gives the stack frame its 4 bytes.
   u8 *graphics;
   void *vertices;
-  struct Model__f18b868 *model;
+  struct RenderModel *model;
   struct ModelTexture texture;
   struct ScreenPoint position;
   struct Particle *drawn;
@@ -57,7 +36,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   s32 j;
   u8 *pixels = Ram_MapCellBuffer;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -113,7 +92,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           force = (Random16() & 255) + 32;
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
-          if (args->side == 0)
+          if (args->side == EFFECT_SIDE_ENEMIES)
             spark->velocityX += -(px(1) / 2);
           else
             spark->velocityX += px(1) / 2;
@@ -142,11 +121,11 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
         if (alpha > 0)
           alpha = 0;
         if (alpha > -64) {
-          model->alpha = alpha;
+          model->shade = alpha;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((BITE_ANCHOR(i)->x - 128) << 16,
-                                        (BITE_ANCHOR(i)->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3(px(BITE_ANCHOR(i)->x - 128),
+                                        px(BITE_ANCHOR(i)->y - 64), 0);
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           SceneTransform_ApplyUniformScale(scale);
@@ -189,23 +168,27 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
-DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)
+/// Abilities: Beam, Cycle Beam, Searing Beam.
+void BattleEffect_RunBeam(struct BattleEffectParams *args) {
+  BattleEffect_RunBreaths(args, BREATH_BEAM);
+}
 
-/// Abilities: Rolling Flame (kind 434).
+/// Abilities: Rolling Flame.
 void BattleEffect_RunRollingFlame(struct BattleEffectParams *args) {
   args->variant = 2;
-  BattleEffect_RunBreaths(args, 1);
+  BattleEffect_RunBreaths(args, BREATH_ROLLING_FLAME);
 }
 
-/// Abilities: Ghost Soldier, Pike Assault (kind 449).
+/// Abilities: Ghost Soldier, Pike Assault.
 void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
   args->variant = 2;
-  BattleEffect_RunBreaths(args, 2);
+  BattleEffect_RunBreaths(args, BREATH_PIKE);
 }
 
-/// Abilities: Blast Breath (kind 414).
-DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
+/// Abilities: Blast Breath.
+void BattleEffect_RunBlastBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunBreaths(args, BREATH_BLAST);
+}
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

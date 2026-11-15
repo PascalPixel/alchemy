@@ -5,27 +5,35 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-#include "battle/battle_effect_params.h"
+/// The eruption's modes (BattleEffect_RunEruption).
+enum EruptionMode {
+  ERUPTION_BLAST,     ///< fire streak colours; the variant picks the counts and
+                      ///< the targets recoil
+  ERUPTION_SMOKE_BOMB ///< greys
+};
 
-/// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
-DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
+/// Abilities: Smoke Bomb, Sleep Bomb.
+void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args) {
+  BattleEffect_RunEruption(args, ERUPTION_SMOKE_BOMB);
+}
 
-/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
-DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
+/// Abilities: Blast, Mad Blast, Fiery Blast.
+void BattleEffect_RunBlast(struct BattleEffectParams *args) {
+  BattleEffect_RunEruption(args, ERUPTION_BLAST);
+}
 
-#define MOTE_SHEET 0x3200 // the mote pictures in the sheet
+#define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.
 
-// Setup: mode 1 builds a grey ramp in the first 64 background colors and
-// always plays variant 1; mode 0 copies the fire palette and plays the
-// effect's variant. The puffs and motes all start at the side's edge with
-// random velocities. Frame loop: the motes fly and fall under gravity,
-// sized by depth; the puffs set out one a frame from frame 3 and grow
-// through seven pictures. The targets are hit from frame 6, a frame apart;
-// in mode 0 they also recoil. The variant chooses the number of motes and
-// puffs and the length.
+/// Puffs and motes burst from the side's edge: the motes fly and fall under
+/// gravity, sized by depth, and the puffs set out one a frame from frame 3 and
+/// grow through seven pictures. The targets are hit from frame 6, a frame
+/// apart. Smoke Bomb builds a grey ramp in the first 64 background colours and
+/// always plays the second variant; Blast copies the fire palette, plays the
+/// effect's variant (the number of motes and puffs and the length) and the
+/// targets recoil.
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -36,12 +44,12 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
-  if (mode == 1) {
+  if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
 
@@ -59,7 +67,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 32; i++) {
     struct Particle *puff = &work->particles[i];
 
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       puff->x = 200 << 14;
     else
       puff->x = -(200 << 14);
@@ -73,7 +81,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 1024; i++) {
     struct Particle *mote = &MOTES[i];
 
-    if (args->side == 1)
+    if (args->side == EFFECT_SIDE_PARTY)
       mote->x = 200 << 14;
     else
       mote->x = -(200 << 14);
@@ -149,12 +157,10 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Hit the targets a frame apart; in mode 0 they recoil too.
-    if (mode == 0) {
+    if (mode == ERUPTION_BLAST) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], 2);
+          EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_LEAP);
         }
       }
     } else {
@@ -173,14 +179,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#include "field_sprite.h"
-
 /// Creates entryCount sprites of one resource in the effect work's object
 /// slots, each showing its own animation at the given priority (The Broken
 /// Seal's BattleEffect_SpawnObjects).
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 entryIndex = 0;
 
   if (entryCount == 0)
@@ -198,4 +201,5 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   } while (entryIndex != entryCount);
 }
 
+/// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
 void BattleEffect_DoNothing(void) {}

@@ -194,7 +194,10 @@ struct PushTarget {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-s32 Ride_SetEntry(s32 index, s32 value);
+#ifdef MODERN
+// Ride_SetEntry, defined below, is called with no prototype in scope.
+void Ride_SetEntry(s32 index, s32 value);
+#endif
 s32 Ride_GetEntryFlags(s32 index);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
@@ -1801,13 +1804,6 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_advance_counter.h"
 
-/* VIEW(ride): routine Ride_SetEntry as void Ride_SetEntry(s32 index, s32
- * value); scene/mars_lighthouse_room_f.h has s32 Ride_SetEntry(s32 index, s32
- * value); tried as the definition's void Ride_SetEntry(s32 index, s32 value),
- * it does not compile in tla-ja: games/tla/src/scene/shared/ride_set_entry.h:2:
- * conflicting types for `Ride_SetEntry'. */
-void Ride_SetEntry__ride(s32 index, s32 value) __asm__("Ride_SetEntry");
-#define Ride_SetEntry Ride_SetEntry__ride
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
@@ -1823,8 +1819,6 @@ s32 Ride_GetEntryFlags(s32 index) {
 #include "shared/party_take_fall_damage.h"
 
 #include "../field/field_effect_advance_spin.c"
-
-#undef Ride_SetEntry
 
 #include "shared/actor_blink.h"
 
@@ -2353,8 +2347,6 @@ s32 Actor_Park(struct Actor *object) {
 #undef WORK
 #undef MapLayer
 #undef Camera_SetBounds
-#undef Ride_SetEntry
-
 void Actor_StartScript(struct Actor *object, const void *script);
 extern s32 gFieldEffect_DurationScripts[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

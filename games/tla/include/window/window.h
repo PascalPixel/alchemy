@@ -529,4 +529,8 @@ enum PauseMenuEntry {
 /// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
 #define HIGHLIGHT_LIGHTEN_STEPS 9
 
+/// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
+/// above the window options, as ☀️'s.
+#define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+
 #endif

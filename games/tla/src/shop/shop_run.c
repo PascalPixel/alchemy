@@ -210,11 +210,11 @@ void Sound_WaitForJingle(void) {
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 resolvedMessage;
-  s32 portraitResource;
+  s32 voice;
   s8 shopType;
 
   resolvedMessage = messageId;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_GENERAL_STORE)
@@ -223,7 +223,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   if (shopType == SHOP_TYPE_ITEMS)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -232,7 +233,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
 /// Shows a shopkeeper's line as Shop_ShowKeeperMessage does, hiding the hand
 /// cursor while it shows and putting back its motion after.
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
-  s32 portraitResource;
+  s32 voice;
   s32 resolvedMessage;
   s8 shopType;
   u8 savedCursorMode;
@@ -243,7 +244,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_GENERAL_STORE)
     resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
@@ -253,7 +254,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

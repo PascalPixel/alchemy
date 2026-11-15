@@ -83,13 +83,13 @@ s32 Sanctum_GetServiceMessage(s32 messageId) {
 /// Shows the keeper's line for the current service and waits for its window.
 void Sanctum_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop;
-  s32 portraitResource;
+  s32 voice;
 
   shop = Ram_HeapSlots->menuWork;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -99,17 +99,17 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   struct ShopWork *shop;
   struct WindowSprite **cursorSlot;
-  s32 portraitResource;
+  s32 voice;
   u8 savedCursorMode;
 
   shop = Ram_HeapSlots->menuWork;
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   messageId = Sanctum_GetServiceMessage(messageId);
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

@@ -303,6 +303,13 @@ enum BattleCastKind {
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
+/// Plays the effect on the side opposite its targets. Unused: no entry of
+/// gAbilityBattleEffects in either game sets it and no code adds it.
+#define EFFECT_OTHER_SIDE 0x20000
+/// The camera takes the other side's view (an enemy's cast a view of its
+/// own), or turns right round.
+#define EFFECT_VIEW_ACROSS 0x40000
+#define EFFECT_VIEW_REVERSED 0x80000
 
 /// The scripted battles' snapshot (ScriptedBattle_SaveUnits).
 extern struct Snapshot Data_0200ff58;
@@ -363,5 +370,18 @@ extern const u16 gBattleUnit_WeaponAnimationsPiers[];
 u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
+
+/// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
+#define BATTLE_BG_PALETTE_COLORS (8 * 16)
+
+/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
+/// BattleBackground_Load, the element glow): each level takes 1092 from the
+/// 16.16 brightness, so level 60 is almost black.
+#define BACKGROUND_LEVEL_STEP 1092
+
+/// BattleActionRecord.target of a held unit's lost action (COMMAND_NONE, from
+/// Battle_BuildEnemyActions): as a place code, place 0 of the other side, the
+/// party's for an enemy and the enemies' for a party member.
+#define TARGET_NONE_ENEMY PLACE_PARTY
 
 #endif

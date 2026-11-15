@@ -802,7 +802,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
              !(gInput.pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
-    GameFlag_Set(337);
+    GameFlag_Set(FLAG_MENU_INFO_KEPT);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->motion = ICON_SHOWN;
@@ -1014,13 +1014,13 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
   green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
   red = palette[WINDOW_BACKGROUND_COLOR] & 31;
-  blue += 9;
+  blue += HIGHLIGHT_LIGHTEN_STEPS;
   if (blue > RGB_LEVEL_MAX)
     blue = RGB_LEVEL_MAX;
-  green += 9;
+  green += HIGHLIGHT_LIGHTEN_STEPS;
   if (green > RGB_LEVEL_MAX)
     green = RGB_LEVEL_MAX;
-  red += 9;
+  red += HIGHLIGHT_LIGHTEN_STEPS;
   if (red > RGB_LEVEL_MAX)
     red = RGB_LEVEL_MAX;
   palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);

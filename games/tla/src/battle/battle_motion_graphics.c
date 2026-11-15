@@ -655,7 +655,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   s32 isDjinni;
   s32 targetIndex;
 
-  if (plan->battleEffect & 0x40000) {
+  if (plan->battleEffect & EFFECT_VIEW_ACROSS) {
     if (plan->unitId <= ALLY_MAX)
       transition->targetYaw = YAW_ENEMY_ACTION;
     else
@@ -682,7 +682,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     if (transition->targetYaw != targetYaw)
       transition->targetYaw = targetYaw;
   }
-  if (plan->battleEffect & 0x80000) {
+  if (plan->battleEffect & EFFECT_VIEW_REVERSED) {
     if (plan->unitId <= ALLY_MAX)
       transition->targetYaw = YAW_ENEMY_ACTION;
     else

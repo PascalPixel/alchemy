@@ -316,16 +316,16 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
         definition = Item_GetDirectFar(itemId);
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
-        icon->sentinel = 252;
+        icon->sentinel = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           highlightFrame = 10;
           icon->animStep = highlightFrame;
-          icon->sentinel = 253;
+          icon->sentinel = OAM_DEPTH_FRONT - 2;
         }
         icon =
             Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
-        icon->sentinel = 251;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
       }
     }
   }

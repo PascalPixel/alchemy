@@ -15,6 +15,14 @@
 
 #define SAVE_NO_FREE_FILE 999
 
+/// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
+#define PLAY_TIME_HOURS_MAX 999
+#define MINUTES_PER_HOUR 60
+
+/// The file list shows the chosen file's party as standing sprites in a row,
+/// and four Djinn sprites, one for each element, over the file's Djinn counts.
+#define FILE_LIST_SPRITE_SPACING 3
+
 /// What the file list is choosing a file for, which decides the files the
 /// cursor may stop on.
 enum FileMenuMode {
@@ -253,11 +261,13 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 *textCursor;
 
   totalMinutes = (u32)frames / (60 * 60);
-  if (totalMinutes > 999 * 60 + 59)
-    totalMinutes = 999 * 60 + 59;
+  if (totalMinutes >
+      PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
+    totalMinutes =
+        PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
 
-  hours = totalMinutes / 60;
-  minutes = totalMinutes % 60;
+  hours = totalMinutes / MINUTES_PER_HOUR;
+  minutes = totalMinutes % MINUTES_PER_HOUR;
 
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
@@ -796,7 +806,8 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
     }
 
     state->partyMemberIcons[i] = object;
-    state->partyMemberX[i] = (x + (s16)origin->x + i * 3) * 8 + 0x10;
+    state->partyMemberX[i] =
+        (x + (s16)origin->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 0x10;
     state->partyMemberY[i] = (y + (s16)origin->y) * 8 + 0x10;
     state->partyMemberScale[i] = Q16_ONE;
   }
@@ -863,7 +874,8 @@ void FileList_DrawDjinnCounts(struct RenderInput *win,
 
   if (win != 0) {
     for (i = 0; i < 4; i++)
-      Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, win, i * 24, 16);
+      Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, win,
+                              i * FILE_LIST_SPRITE_SPACING * 8, 16);
   }
 }
 

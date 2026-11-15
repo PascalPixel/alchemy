@@ -6,6 +6,14 @@
 #include "menu_internal.h"
 #include "sounds.h"
 
+/// The steps of the Status menu (StatusScreen_RunPages).
+enum StatusScreenStep {
+  STATUS_STEP_MEMBER = 0,   ///< choose a party member
+  STATUS_STEP_STATUS = 1,   ///< their status page
+  STATUS_STEP_PSYNERGY = 2, ///< their Psynergy page
+  STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
+};
+
 // A bit over the page mode of StatusScreen_DrawStatusAilments and
 // ItemMenu_DrawMemberStatus: draw without clearing the window first, as for a
 // window just opened.
@@ -176,14 +184,14 @@ s32 ItemMenu_SelectItem(void);
 s32 StatusScreen_RunPages(void) {
   struct StatusScreenWork *state =
       (struct StatusScreenWork *)Ram_HeapSlots->menuWork;
-  s32 step = 0;
+  s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
   u32 changed;
 
   while (!finished && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     switch (step) {
-    case 0:
+    case STATUS_STEP_MEMBER:
       state->selectedSlots[0] = finished;
       Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
       MenuIcon_SetActive(1);
@@ -193,23 +201,23 @@ s32 StatusScreen_RunPages(void) {
         result = step;
         finished = 1;
       }
-      step = 1;
+      step = STATUS_STEP_STATUS;
       break;
-    case 1:
+    case STATUS_STEP_STATUS:
       MenuIcon_SetActive(1);
       result = StatusScreen_SelectCommand();
       changed = ~result;
       step = (-changed | changed) >> 31;
       step <<= 1;
       break;
-    case 2:
+    case STATUS_STEP_PSYNERGY:
       MenuIcon_SetActive(0);
       result = PsynergyMenu_SelectAction();
-      step = 0;
+      step = STATUS_STEP_MEMBER;
       if (result != -1)
-        step = 3;
+        step = STATUS_STEP_EQUIPMENT;
       break;
-    case 3:
+    case STATUS_STEP_EQUIPMENT:
       MenuIcon_SetActive(0);
       result = ItemMenu_SelectItem();
       changed = ~result;

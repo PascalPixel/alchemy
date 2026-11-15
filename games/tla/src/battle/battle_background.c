@@ -11,6 +11,13 @@
 #include "battle/presentation.h"
 #include "system/system_bank.h"
 
+/// Lines outside the plane read the padded map in this screen block.
+#define BACKGROUND_PADDED_SCREEN 31
+/// The screen lines the plane covers, 0 to 135, above the status window.
+#define BACKGROUND_PLANE_LINES 136
+/// The plane's top lines, left off except while commands are chosen.
+#define BACKGROUND_PLANE_HIDDEN_LINES 16
+
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
@@ -37,11 +44,13 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
-            REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else {
     ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                      screen->brightness = Q16_ONE - level * 1092, 128);
+                      screen->brightness =
+                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                      BATTLE_BG_PALETTE_COLORS);
   }
   {
     u32 saved = *slot;
@@ -71,14 +80,14 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
 
-  if (fade == 0x80) {
+  if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     struct BattleWork *work;
     u16 *palette;
 
     work = Ram_HeapSlots->battleWork;
     palette = work->palette;
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
-            REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *work;
     u16 *source;
@@ -110,7 +119,8 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     }
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
+  BattleTransition_BuildTilemap(
+      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
 /// Allocates the zoomed background's scanline work.
@@ -225,14 +235,14 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
       (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
-    for (; scanline < 16; scanline++)
+    for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
       *line++ = 0x3f8e;
   }
-  if (groundEndLine > 136)
-    groundEndLine = 136;
+  if (groundEndLine > BACKGROUND_PLANE_LINES)
+    groundEndLine = BACKGROUND_PLANE_LINES;
   for (; scanline < groundEndLine; scanline++)
     *line++ = wrap | 0x478a;
-  for (; scanline < 136; scanline++)
+  for (; scanline < BACKGROUND_PLANE_LINES; scanline++)
     *line++ = wrap | 0x478e;
   for (; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ = 0x3f8e;
@@ -1000,7 +1010,8 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
         ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                          *brightness = Q16_ONE - frame * 1092, 128);
+                          *brightness = Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
+                          BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
       work->originY = (STAR_FIELD_CENTER - pos->y) << 8;

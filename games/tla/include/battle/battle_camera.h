@@ -84,6 +84,10 @@ enum BattleBackgroundMode {
   BATTLE_BACKGROUND_ZOOMED
 };
 
+/// BattleBackground_SetMode's fade that restores the saved palette instead of
+/// taking from each colour channel.
+#define BATTLE_BACKGROUND_FADE_RESTORE 128
+
 /// Where the battle centres its projection on the screen: across the middle,
 /// and 120 pixels down, below the screen's middle.
 #define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)

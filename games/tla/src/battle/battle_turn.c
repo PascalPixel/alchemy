@@ -195,7 +195,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       if (unit->sleep != 0 || unit->stun != 0) {
         entry->command = COMMAND_NONE;
         entry->parameter = 0;
-        entry->target = 0x100;
+        entry->target = TARGET_NONE_ENEMY;
       } else {
         BattleAI_ChooseAction(entry, 0);
       }

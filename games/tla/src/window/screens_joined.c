@@ -230,7 +230,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
       Oam_AddSpriteAtDepth(secondEntry, 250);
 #else
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(firstEntry, 250);
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(secondEntry, 250);
+      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(secondEntry,
+                                                   OAM_DEPTH_FRONT - 5);
 #endif
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&

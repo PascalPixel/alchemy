@@ -147,7 +147,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                           &gainedCount, &lostCount);
     Iwram_CopyWordsEntry(unit, original, 332);
     pageCounts[1] = pageCounts[0];
-    page = 0;
+    page = DJINN_COMPARE_PAGE_GIVER;
     Heap_Release(original);
     Heap_Release(diffWork);
   }
@@ -285,11 +285,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       addPairSlot = 1;
       if (mode <= DJINN_COMPARE_GIVE) {
         Window_ClearInteriorTilesFar(help, 128, 16, 224, 24);
-        if (page == 1) {
+        if (page == DJINN_COMPARE_PAGE_RECEIVER) {
           Text_DrawMessageAsTilesFar((s32)MsgDjinnStatusHelp, help, 128, 16);
         } else {
-          MessageArgument_PushFar(menu->shownMember[page != 2],
-                                  MESSAGE_ARGUMENT_ACTOR);
+          MessageArgument_PushFar(
+              menu->shownMember[page != DJINN_COMPARE_PAGE_BOTH],
+              MESSAGE_ARGUMENT_ACTOR);
           Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
@@ -311,7 +312,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       default:
         DjinnMenu_DrawPairPreview(mode, 0);
         break;
-      case 1:
+      case DJINN_COMPARE_PAGE_RECEIVER:
         if (mode == DJINN_COMPARE_GIVE)
           previewMode = DJINN_PREVIEW_ADD;
         DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1],
@@ -320,7 +321,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   menu->shownMember[1], page, 0, previewMode,
                                   selectedPages[1] + 1, 0);
         break;
-      case 0:
+      case DJINN_COMPARE_PAGE_GIVER:
         if (mode == DJINN_COMPARE_GIVE) {
           previewMode = DJINN_PREVIEW_UNSET;
           addPairSlot = 0;
@@ -335,7 +336,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       work->holdTilemapUpload = 0;
     }
 
-    if (page <= 1) {
+    if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
         for (index = 0; index < pageCounts[page]; index++) {
@@ -423,7 +424,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     } else if ((repeat & KEY_LEFT) != 0) {
-      if (page <= 1) {
+      if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
@@ -432,7 +433,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         redraw = 1;
       }
     } else if ((repeat & KEY_RIGHT) != 0) {
-      if (page <= 1) {
+      if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;

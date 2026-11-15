@@ -41,23 +41,27 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  step = ((phase + 12) % 24) * 4;
-  offset = brightness - 7;
-  red = gPaletteGlow_WaveTable[(step % 96)] + offset;
-  green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
-  blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
+  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
+  red = gPaletteGlow_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
+  green = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
+                                 WINDOW_COLOR_WHEEL_STEPS] +
+          offset;
+  blue = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+                                WINDOW_COLOR_WHEEL_STEPS] +
+         offset;
   if (red < 0)
     red = 0;
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
   if (green < 0)
     green = 0;
-  if (green > 31)
-    green = 31;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
   if (blue < 0)
     blue = 0;
-  if (blue > 31)
-    blue = 31;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
@@ -403,7 +407,7 @@ s32 SettingsMenu_Run(void) {
 
       for (i = 0; i <= 2; i++) {
         icon = work->choiceIcons[0][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -413,7 +417,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -423,7 +427,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -715,7 +719,7 @@ s32 PauseMenu_Choose(s32 initial) {
         pauseIcons = gMenu_WorkspaceIcons;
         do {
           icon = work->icon[i];
-          icon->sentinel = 251;
+          icon->sentinel = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;

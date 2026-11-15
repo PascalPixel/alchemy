@@ -1573,7 +1573,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   mode &= 1;
   IconMenu_Open();
   work = Ram_HeapSlots->iconMenu;
-  if (mode == 0) {
+  if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
     IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
     IconMenu_AddIcon(COMMAND_ICON_LINK);
   } else {
@@ -1582,7 +1582,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     IconMenu_AddIcon(COMMAND_ICON_BRONZE);
   }
   IconMenu_Center(17, ENTRY_WIDTH, 0);
-  if (mode != 0) {
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
@@ -1619,7 +1619,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
                                       7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
-  if (mode != 0)
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
     Task_Remove(Menu_DrawModeLabel);
   else
     Task_Remove(Menu_DrawModeIndicator);

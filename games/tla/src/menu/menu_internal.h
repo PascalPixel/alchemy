@@ -547,4 +547,15 @@ enum UnitStatus {
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringAtOffsetFar
 #endif
 
+/// The info window holds a message the next selection must not draw over.
+#define FLAG_MENU_INFO_KEPT 0x151
+
+/// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// first two also index its per-member page counts.
+enum DjinnComparePage {
+  DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
+  DJINN_COMPARE_PAGE_RECEIVER = 1, ///< the receiver's stats and Psynergy
+  DJINN_COMPARE_PAGE_BOTH = 2      ///< both party members' stats, shown first
+};
+
 #endif

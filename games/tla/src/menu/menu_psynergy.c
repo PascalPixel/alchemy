@@ -7,6 +7,8 @@
 #include "flags.h"
 #include "sounds.h"
 
+#define PSYNERGY_PROMPT_TILES_SIZE 8192
+
 /// A Psynergy shortcut, and the field's Psynergy request packed the same way:
 /// its party member above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
@@ -74,7 +76,8 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles,
+                  PSYNERGY_PROMPT_TILES_SIZE);
   Ram_HeapSlots->windowWork[6] = 0;
   Heap_Release(savedTiles);
   wait(1);
@@ -1134,7 +1137,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           icon = menu->entryIcons[state.selectedIndex];
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animStep = 0;
-          icon->sentinel = 250;
+          icon->sentinel = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++)
           Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);

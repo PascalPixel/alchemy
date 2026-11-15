@@ -487,6 +487,11 @@ enum PartyStatusFlag {
   PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
   PARTY_STATUS_CLOSED = 9,      ///< erase the window
   PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
+  /// BattleWork.partyStatus while the party cannot summon.
+  PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
+  /// BattleWork.partyStatus while it can, drawn only while a Djinni is on
+  /// standby.
+  PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 };
 
 /// Where the windows are drawn (WindowWork.battleMode).
@@ -533,5 +538,18 @@ enum PauseMenuEntry {
 /// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
 /// in front of the field's and the battle's.
 #define OAM_DEPTH_WINDOW 240
+#define OAM_DEPTH_FRONT 255
+
+#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+
+/// The brightness that adds nothing to the hue's colour.
+#define WINDOW_BRIGHTNESS_NEUTRAL 7
+
+/// Steps round gPaletteGlow_WaveTable's colour wheel; each hue is four.
+#define WINDOW_COLOR_WHEEL_STEPS 96
+
+/// How many levels HIGHLIGHT_PALETTE lightens each channel of
+/// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
+#define HIGHLIGHT_LIGHTEN_STEPS 9
 
 #endif

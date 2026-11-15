@@ -290,7 +290,7 @@ s32 Battle_Run(s32 enemyGroup) {
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
   if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
-    battle->partyStatus = 3;
+    battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = 1;
   if (enemyGroup == 75 || enemyGroup == 76)
@@ -329,9 +329,9 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
     if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
-      battle->partyStatus = 3;
+      battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
-      battle->partyStatus = 1;
+      battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
     transition->targetYaw = TRIG_TURN * 5 / 32;
     transition->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);

@@ -466,6 +466,10 @@ void BattleUnit_ClearStatuses(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
+/// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
+/// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
+#define ADVANCE_ARROW_ATTR0 0xa400
+
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
@@ -495,7 +499,7 @@ void BattleMessage_WaitForAdvance(void) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-    ((u32 *)prompt)[1] = 0xa400;
+    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;

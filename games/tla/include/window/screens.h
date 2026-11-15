@@ -90,6 +90,12 @@ enum FieldMenuCommand {
 /// The places of the transfer method menu.
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
 
+/// What IconMenu_ChooseSendOption offers.
+enum ResourceLayoutMode {
+  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
+  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+};
+
 /// What YesNoMenu_Run and YesNoMenu_RunAt return.
 enum YesNo { YES = 0, NO = 1 };
 

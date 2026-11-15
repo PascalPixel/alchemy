@@ -84,23 +84,6 @@ struct OwnerElementStats {
   s16 res;
 };
 
-struct SummonChargeState {
-  u8 unk00[0x10];
-  u16 classIds[6];
-  u32 usedMasks[6];
-  s8 channels[6];
-  u8 unk3a[6];
-  u8 count;
-};
-
-struct BattleActorDefinition {
-  u8 name[14];
-  u8 unk0e[0x11b];
-  u8 unavailable;
-  u8 unk12a[0x20];
-  u16 classId;
-};
-
 struct AIState {
   unsigned initialized : 1;
   unsigned selection : 3;

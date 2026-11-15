@@ -49,7 +49,7 @@ s32 Enemy_HasSpriteRoom(s32 classId);
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
 s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
-s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
+UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);
 s32 BattleEnemy_LetterFirstOfKind(s32 classId);
 void Enemy_Update(void);
 

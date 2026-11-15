@@ -260,50 +260,56 @@ void BattleUnit_Strengthen(s32 unitId) {
   Heap_Release(saved);
 }
 
-// The letters cycle through CH_CNT values: 26 in the Japanese release, 9
-// elsewhere, as String_FindFirstDigit reads them back.
+/// The name letters an enemy can take: the alphabet in Japanese, nine digits
+/// elsewhere, as String_FindFirstDigit reads them back.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define CH_CNT 26
+#define ENEMY_NAME_SUFFIX_COUNT 26
 #else
-#define CH_CNT 9
+#define ENEMY_NAME_SUFFIX_COUNT 9
 #endif
 
 /// Gives an enemy of the class its name letter, which tells it from others of
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
 /// classes are already listed.
-s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
-  struct SummonChargeState *w;
-  s32 num;
-  s32 i;
-  s32 retry;
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
+  struct BattleKindsView *battle;
+  s32 classCount;
+  s32 classIndex;
+  s32 attempt;
 
-  w = (struct SummonChargeState *)Ram_HeapSlots->battleWork;
-  num = w->count;
-  for (i = 0; i < num; i++) {
-    if (w->classIds[i] == no)
+  battle = (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  classCount = battle->enemyKindCount;
+  for (classIndex = 0; classIndex < classCount; classIndex++) {
+    if (battle->enemyKinds[classIndex] == classId)
       break;
   }
-  if (i != num) {
-    retry = 0;
-    if (w->channels[i] < 0) {
-      w->channels[i] = 1;
-      w->usedMasks[i] = 3;
+  if (classIndex != classCount) {
+    attempt = 0;
+    // The second of its class: letters 0 and 1 both taken.
+    if (battle->lastNameLetter[classIndex] < 0) {
+      battle->lastNameLetter[classIndex] = 1;
+      battle->nameLetterMasks[classIndex] = 3;
       return ENEMY_LETTER_FIRST_TOO | 1;
     }
-    for (; retry <= 31; retry++) {
-      w->channels[i] = (w->channels[i] + 1) % CH_CNT;
-      if ((w->usedMasks[i] & (1 << w->channels[i])) == 0)
+    // The next letter after the last given that is free; after 32 tries the
+    // last one tried is reused.
+    for (; attempt <= 31; attempt++) {
+      battle->lastNameLetter[classIndex] =
+          (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
+      if ((battle->nameLetterMasks[classIndex] &
+           (1 << battle->lastNameLetter[classIndex])) == 0)
         break;
     }
-    w->usedMasks[i] |= 1 << w->channels[i];
-    return w->channels[i];
+    battle->nameLetterMasks[classIndex] |=
+        1 << battle->lastNameLetter[classIndex];
+    return battle->lastNameLetter[classIndex];
   }
-  if (num <= 4) {
-    w->channels[num] = -1;
-    w->classIds[num] = no;
-    w->usedMasks[num] = 0;
-    w->count = num + 1;
-    return CH_CNT;
+  if (classCount <= 4) {
+    battle->lastNameLetter[classCount] = -1;
+    battle->enemyKinds[classCount] = classId;
+    battle->nameLetterMasks[classCount] = 0;
+    battle->enemyKindCount = classCount + 1;
+    return ENEMY_NAME_SUFFIX_COUNT;
   }
   return -1;
 }
@@ -311,37 +317,39 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 /// Frees a departing enemy's name letter for the next of its class.
-s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
-  struct SummonChargeState *state =
-      (struct SummonChargeState *)Ram_HeapSlots->battleWork;
-  struct BattleActorDefinition *actor;
-  s32 count = state->count;
+UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
+  struct BattleKindsView *battle =
+      (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  struct Unit *unit;
+  s32 count = battle->enemyKindCount;
   s32 index;
   s32 nameLength;
-  s32 bit;
+  s32 suffixIndex;
   s32 classId;
 
-  actor = Unit_Get(actorId);
-  if (actor->unavailable != CLASS_NONE)
+  unit = Unit_Get(unitId);
+  if (unit->classId != CLASS_NONE)
     return;
 
-  classId = actor->classId;
+  classId = unit->enemyId;
   for (index = 0; index < count; index++) {
-    if (state->classIds[index] == classId)
+    if (battle->enemyKinds[index] == classId)
       break;
   }
-  if (index == count || state->usedMasks[index] == 0)
+  if (index == count || battle->nameLetterMasks[index] == 0)
     return;
 
-  for (nameLength = 0; nameLength <= 13; nameLength++) {
-    if (actor->name[nameLength] == 0)
+  for (nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
+    if (unit->name[nameLength] == 0)
       break;
   }
 
-  bit = 32;
+  // An empty name uses a shift of 32, which emits zero on ARM. A name with
+  // no suffix instead uses its last character as a suffix.
+  suffixIndex = 32;
   if (nameLength > 0)
-    bit = actor->name[nameLength - 1] - LIST_MARKER_CHAR;
-  state->usedMasks[index] &= ~(1 << bit);
+    suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+  battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),

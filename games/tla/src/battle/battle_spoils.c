@@ -141,11 +141,12 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     spoils->queueCount++;
   classSlot = 0;
   classIndex = 0;
-  if (((u16 *)battle->unk010)[0] != unit->enemyId) {
+  if (((struct BattleKindsView *)battle)->enemyKinds[0] != unit->enemyId) {
     do {
       if (++classIndex > (ENEMY_BATTLE_SIZE - 1))
         break;
-    } while (((u16 *)battle->unk010)[classIndex] != unit->enemyId);
+    } while (((struct BattleKindsView *)battle)->enemyKinds[classIndex] !=
+             unit->enemyId);
   }
   if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;

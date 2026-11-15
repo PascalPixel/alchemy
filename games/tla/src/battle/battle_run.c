@@ -27,16 +27,6 @@
 /// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
 #define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
-/* VIEW(battle_kinds): tag struct BattleWork as struct BattleKindsView;
- * battle/battle_work.h has u8 unk010[12] where The Broken Seal has u16
- * enemyKinds[6]; tried as u16 enemyKinds[6], BattleParty_ChooseReserve moves:
- * 363 bytes in tla-en. */
-struct BattleKindsView {
-  s32 formation;
-  s16 spriteSlots[6];
-  u16 enemyKinds[6]; ///< the kinds of enemy in the formation
-};
-
 /// With the front line down and someone living, sends the reserve members in
 /// to take the fallen ones' places, as many as there are of both.
 void BattleParty_SwapInReserves(void) {

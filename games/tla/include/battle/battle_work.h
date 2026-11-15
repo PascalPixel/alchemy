@@ -77,11 +77,11 @@ struct BattleWork {
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
   // XXX: The Broken Seal's enemyKinds (u16[6]: the kinds of enemy, for the
   // letters that tell two of a kind apart), which BattleEnemy_RecordDefeat
-  // reads so, as does BattleEnemy_ClaimNameLetter through its
-  // SummonChargeState view; declared so, or as a union with these bytes,
-  // BattleParty_ChooseReserve allocates its registers otherwise (r8 for the
-  // reserve list in place of a stack slot).
-  u8 unk010[12];
+  // reads so, as do Battle_Run and the name letters through struct
+  // BattleKindsView (battle_internal.h); declared so, or as a union with these
+  // bytes, BattleParty_ChooseReserve allocates its registers otherwise (r8 for
+  // the reserve list in place of a stack slot).
+  u8 enemyKindBytes[12];
   u32 nameLetterMasks[6];    ///< for each kind, the name letters already given
   s8 lastNameLetter[6];      ///< for each kind, the last name letter given
   u8 unusedAfterChannels[2]; ///< no code names it

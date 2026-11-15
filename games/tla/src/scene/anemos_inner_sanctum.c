@@ -390,8 +390,8 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
   params.part = *((u8 *)object + 98);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, px(1),
                     0, 0x30000, &params);
-  x = (object->bounce >> 20) + 64;
-  y = object->gravity >> 20;
+  x = FIELD_CELL(object->bounce) + 64;
+  y = FIELD_CELL(object->gravity);
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
   return 0;
 }
@@ -875,9 +875,10 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
       GameFlag_Set(0xa84);
     if (x == 91 && z == 59) {
       if (!Event_GetFlag(0xa84)) {
-        s32 fromX = (Actor_Get(12)->x.fixed >> 16) << 16;
+        s32 fromX = FIELD_PIXEL(Actor_Get(12)->x.fixed) << 16;
 
-        Actor_SetPositionFixed(13, fromX, (Actor_Get(12)->z.fixed >> 16) << 16);
+        Actor_SetPositionFixed(13, fromX,
+                               FIELD_PIXEL(Actor_Get(12)->z.fixed) << 16);
         Actor_SetPosition(12, 728, 472);
       }
       GameFlag_Set(0xa85);
@@ -905,14 +906,15 @@ void AnemosInnerSanctum_StepOnTile(void) {
   s32 id;
 
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
-    MapGrid_CopyCellsTo(17, 71, leader->x.fixed >> 20,
-                        (leader->z.fixed >> 20) + 64, 1, 1);
+    MapGrid_CopyCellsTo(17, 71, FIELD_CELL(leader->x.fixed),
+                        FIELD_CELL(leader->z.fixed) + 64, 1, 1);
   else
-    MapGrid_CopyCellsTo(54, 87, leader->x.fixed >> 20,
-                        (leader->z.fixed >> 20) + 64, 1, 1);
+    MapGrid_CopyCellsTo(54, 87, FIELD_CELL(leader->x.fixed),
+                        FIELD_CELL(leader->z.fixed) + 64, 1, 1);
   Event_PlaySound(SE_DRIP);
-  object = FieldActor_Create(0x15d, ((leader->x.fixed >> 20) << 20) + 0x80000,
-                             0, ((leader->z.fixed >> 20) << 20) + 0x80000);
+  object =
+      FieldActor_Create(0x15d, (FIELD_CELL(leader->x.fixed) << 20) + 0x80000, 0,
+                        (FIELD_CELL(leader->z.fixed) << 20) + 0x80000);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 4);
@@ -963,8 +965,8 @@ void AnemosInnerSanctum_RaisePlatform(void) {
     FieldEvent_SetExitRequest(11);
   }
   {
-    s32 x = ((leader->x.fixed >> 20) << 4) + 8;
-    s32 z = ((leader->z.fixed >> 20) << 4) + 8;
+    s32 x = (FIELD_CELL(leader->x.fixed) << 4) + 8;
+    s32 z = (FIELD_CELL(leader->z.fixed) << 4) + 8;
 
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, x, z);
   }
@@ -1076,7 +1078,7 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *dust;
   s32 kind;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed >> 16 > 248) {
+  if (FIELD_PIXEL(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) > 248) {
     self->update = 0;
     Event_ClearFlag(FLAG_SCENE_TEMP_00);
     self->x.fixed = (self->x.fixed & 0xfff00000) + 0x80000;

@@ -139,7 +139,7 @@ void Champa_SailorsSpotFelix(void) {
   Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgChampa49);
+  FieldEvent_SetMessageId((s32)MsgChampaWhoaYouYoure);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_Jump(32, 6, 20);
   // "Whoa! You... You're Felix!"
@@ -213,15 +213,15 @@ void Champa_TalkToPracticingBoy(s32 actor) {
 
   object->scaleY = Q16_ONE;
   object->scaleX = Q16_ONE;
-  FieldEvent_SetMessageId((s32)MsgChampa07);
+  FieldEvent_SetMessageId((s32)MsgChampaEoleoBriggssSonHasA);
   // "Eoleo, Briggs's son, has a really strange ability... I'll bet if I..."
   Event_ShowMessage(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_EAST);
-  Actor_SetMovementType(object, 8);
+  Actor_SetMovementType(object, MOVEMENT_TYPE_SQUASH);
 }
 
 void Champa_TellOfBriggsTreasure(s32 actor) {
-  s32 msg = (s32)&MsgChampa29;
+  s32 msg = (s32)&MsgChampaHeyYouJustCameTo;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -238,29 +238,29 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
 
 void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
-    FieldEvent_SetMessageId((s32)MsgChampa30);
+    FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime);
     // "Briggs took a long time to return to us. You want to know why?"
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
       FieldEvent_Wait(10);
-      FieldEvent_SetMessageId((s32)MsgChampa30 + 1);
+      FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime + 1);
     } else {
       FieldEvent_Wait(20);
-      FieldEvent_SetMessageId((s32)MsgChampa30 + 2);
+      FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime + 2);
     }
     Event_ShowMessage(actor, 0);
   } else {
-    FieldEvent_SetMessageId((s32)MsgChampa05);
+    FieldEvent_SetMessageId((s32)MsgChampaYouveTheLookOfA);
     // "You've the look of a traveler about you... Have you been to Ankohl..."
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
       FieldEvent_Wait(10);
-      FieldEvent_SetMessageId((s32)MsgChampa05 + 1);
+      FieldEvent_SetMessageId((s32)MsgChampaYouveTheLookOfA + 1);
     } else {
       FieldEvent_Wait(20);
-      FieldEvent_SetMessageId((s32)MsgChampa05 + 2);
+      FieldEvent_SetMessageId((s32)MsgChampaYouveTheLookOfA + 2);
     }
     Event_ShowMessage(actor, 0);
   }
@@ -270,16 +270,16 @@ void Champa_TellOfObaba(s32 a0) {
 
   if (!Event_GetFlag(FLAG_TOLD_OF_OBABA)) {
     Event_SetFlag(FLAG_TOLD_OF_OBABA);
-    FieldEvent_SetMessageId((s32)MsgChampa35);
+    FieldEvent_SetMessageId((s32)MsgChampaObabaIsTheLastPossessor);
   } else {
-    FieldEvent_SetMessageId((s32)MsgChampa36);
+    FieldEvent_SetMessageId((s32)MsgChampaYoudThinkObabaWouldBe);
   }
   // "You'd think Obaba would be glad that Briggs was back. She acts like..."
   Event_ShowMessage(a0, 0);
 }
 
 void Champa_SailorsNotWelcome(s32 actor) {
-  s32 msg = (s32)&MsgChampa11;
+  s32 msg = (s32)&MsgChampaTheChampaSailorsArentWell;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -330,7 +330,7 @@ void Champa_FeizhiArrives(void) {
       Event_SetFlag(FLAG_FEIZHI_CAME);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      FieldEvent_SetMessageId((s32)MsgChampa52);
+      FieldEvent_SetMessageId((s32)MsgChampaSilence);
       {
         s32 angle = FACING_NORTH;
 
@@ -522,7 +522,7 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(21, 3);
     FieldActor_SetSpritePriority(22, 3);
     FieldActor_SetSpritePriority(19, 3);
-    Actor_SetMovementType(Actor_Get(18), 9);
+    Actor_SetMovementType(Actor_Get(18), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
     if (Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
       Actor_SetPosition(32, 0, 0);
       Actor_SetPosition(33, 0, 0);
@@ -642,7 +642,7 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
 }
 
 /// Near Obaba's cliff Alex waits: "I see you've caught up with me again"
-/// (MsgChampa25), and the party answers him.
+/// (MsgChampaISeeYouveCaughtUp), and the party answers him.
 void Champa_MeetAlex(void) {
 
   if (!Event_GetFlag(FLAG_NEAR_THE_CLIFF)) {
@@ -651,7 +651,7 @@ void Champa_MeetAlex(void) {
   Event_SetFlag(FLAG_CHAMPA_MET_ALEX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgChampa25);
+  FieldEvent_SetMessageId((s32)MsgChampaISeeYouveCaughtUp);
   Actor_SetSpeed(25, 0.8);
   Actor_SetSpeed(26, 1);
   Actor_SetSpeed(27, 1);
@@ -1495,7 +1495,7 @@ struct Trigger gChampa_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgChampa53))},
+     FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -1503,42 +1503,43 @@ struct Trigger gChampa_Triggers[] = {
     {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
     {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
     {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa01)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampa02)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampa03)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgChampa04)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampaOhImSoHungryAnd)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampaWhenIsBriggsGoingTo)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampaHowDidYouFindYour)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     MSGNO(MsgChampaChampaIsImpoverishedButSoon)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Champa_AskAboutAnkohlRuins)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgChampa06)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgChampaTheRuinsAtAnkohlAre)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Champa_TalkToPracticingBoy)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampa08)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampa09)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgChampa10)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampaOnceBriggsComesBackI)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampaTheCliffCavesAreA)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgChampaOurMatriarchIsTheLast)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Champa_SailorsNotWelcome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgChampa12)},
+     MSGNO(MsgChampaWhereCouldBriggsBeWasting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgChampa13)},
+     MSGNO(MsgChampaBriggsPromisedToBringEnough)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgChampa14)},
+     MSGNO(MsgChampaChampaIsAllAloneOn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgChampa15)},
+     MSGNO(MsgChampaIBetBriggsHasAlready)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgChampa16)},
+     MSGNO(MsgChampaIWantSomeoneToSolve)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgChampa17)},
+     MSGNO(MsgChampaTheySayTheChamberAt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgChampa18)},
+     MSGNO(MsgChampaIfICouldPickUp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgChampa19)},
+     MSGNO(MsgChampaEoleosSoMuchYoungerThan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgChampa20)},
+     MSGNO(MsgChampaWhyHaventBriggsAndHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgChampa21)},
+     MSGNO(MsgChampaObabasLockedHerselfInHer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgChampa22)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampa23)},
+     MSGNO(MsgChampaIfBriggsWouldJustBring)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampaIBetYoureWonderingWhy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgChampa24)},
+     MSGNO(MsgChampaStandingHereStaringAcrossThe)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Champa_TakeFeizhisGift)},
     {TRIGGER_TABLE_END},
 };
@@ -1566,7 +1567,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgChampa53))},
+     FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -1576,42 +1577,43 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
     {TRIGGER_STEP, 26, FLAG_SAILORS_SPOTTED_FELIX,
      EVENT(Champa_SailorsSpotFelix)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampa26)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampa27)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampa28)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgChampaBriggsCameBackWithA)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgChampaDontTalkToMeAbout)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgChampaLetsSeeThemCallChampa)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Champa_TellOfBriggsTreasure)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Champa_AskAboutAnkohlRuins)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgChampa31)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgChampa32)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampa33)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampa34)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgChampaBriggsLooksSoReliableSo)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgChampaThoseBagsAreFullOf)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgChampaIWantToPlayWith)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgChampaBriggsFoughtTheOddsTo)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Champa_TellOfObaba)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgChampa37)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgChampaNowNobodyHasToDo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgChampa38)},
+     MSGNO(MsgChampaBriggsIsSoGenerousHe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgChampa39)},
+     MSGNO(MsgChampaErrrrgIWasSoFull)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgChampa40)},
+     MSGNO(MsgChampaGoshHowMuchAreAll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgChampa41)},
+     MSGNO(MsgChampaThingsAreGoingToBe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgChampa42)},
+     MSGNO(MsgChampaWereLuckyBriggsHadntFound)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgChampa43)},
+     MSGNO(MsgChampaBriggsWasAlwaysSuchA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgChampa44)},
+     MSGNO(MsgChampaAllOfOurStockhousesAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgChampa45)},
+     MSGNO(MsgChampaEoleoSaidHeCouldntPlay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgChampa46)},
+     MSGNO(MsgChampaIfChampaGetsEnoughMoney)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgChampa47)},
+     MSGNO(MsgChampaIsObabaInAGood)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgChampa48)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampa50)},
+     MSGNO(MsgChampaNobodyReallyLikesToPlay)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgChampaWhenBriggsSetSailWe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgChampa51)},
+     MSGNO(MsgChampaIWasJustGazingOut)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Champa_TakeFeizhisGift)},
     {TRIGGER_TABLE_END},
 };

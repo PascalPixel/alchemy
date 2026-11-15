@@ -366,7 +366,8 @@ void AlhafranCave_SetUpCave(void) {
   object->y.fixed = 0;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
-  Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE),
+                        MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
      * MapGrid_CopyCellPictureCellsRect_. */
@@ -809,7 +810,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldActor_Stop(ACTOR_FELIX);
   Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
-  Actor_SetMovementType(Actor_Get(ACTOR_JAILER), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_JAILER),
+                        MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }

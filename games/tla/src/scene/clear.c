@@ -1742,12 +1742,12 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
       out[statsOffset + 6] = stats[i * 4 + 1] >> 8;
       out[statsOffset + 7] = stats[i * 4 + 1];
       out[statsOffset + 7] |= stats[i * 4 + 2] >> 28;
-      out[statsOffset + 8] = stats[i * 4 + 2] >> 20;
+      out[statsOffset + 8] = FIELD_CELL(stats[i * 4 + 2]);
       out[statsOffset + 9] = stats[i * 4 + 2] >> 12;
       out[statsOffset + 10] = stats[i * 4 + 2] >> 4;
       out[statsOffset + 11] = stats[i * 4 + 2] << 4;
       out[statsOffset + 11] |= stats[i * 4 + 3] >> 28;
-      out[statsOffset + 12] = stats[i * 4 + 3] >> 20;
+      out[statsOffset + 12] = FIELD_CELL(stats[i * 4 + 3]);
       out[statsOffset + 13] = stats[i * 4 + 3] >> 12;
       out[statsOffset + 14] = stats[i * 4 + 3] >> 4;
       statsOffset += 15;
@@ -1756,10 +1756,10 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
   out[0] = levels;
   out[1] = levels >> 8;
   out[2] = levels >> 16;
-  out[3] = ((levels >> 20) & 0xf0) | (djinn & 15);
+  out[3] = (FIELD_CELL(levels) & 0xf0) | (djinn & 15);
   out[4] = djinn >> 4;
   out[5] = djinn >> 12;
-  out[6] = djinn >> 20;
+  out[6] = FIELD_CELL(djinn);
   out[7] = flags;
   if (mode != 0)
     out[8] = found;

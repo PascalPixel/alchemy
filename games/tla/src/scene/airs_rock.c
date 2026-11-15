@@ -146,14 +146,15 @@ void Blocks_MarkCells(u16 *ids) {
     object = Actor_Get(*ids);
     blocked = &object->blockMarked;
     *blocked = 0;
-    if (MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20) &
+    if (MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                              FIELD_CELL(object->z.fixed)) &
         0x40) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
-      z = (object->z.fixed - object->y.fixed) >> 20;
-      x = object->x.fixed >> 20;
+      z = FIELD_CELL(object->z.fixed - object->y.fixed);
+      x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
       cell->collisionCode = 255;
@@ -175,8 +176,8 @@ void Blocks_UnmarkCells(struct MarkedBlock *unk) {
       struct MapCell **cells = &map->layers[2].cells;
       /* FAKEMATCH(dead): cell's initial value, overwritten unread. */
       struct MapCell *cell = *cells;
-      s32 x = unk->x >> 20;
-      s32 row = (unk->z - unk->y) >> 20;
+      s32 x = FIELD_CELL(unk->x);
+      s32 row = FIELD_CELL(unk->z - unk->y);
 
       cell = *cells;
       cell += x + ((row + 1) << 7);
@@ -258,7 +259,7 @@ void AirsRock_MoveFirstPillar(void) {
   object = Actor_Get(10);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((object->x.fixed >> 20) == 0x1f) {
+  if (FIELD_CELL(object->x.fixed) == 0x1f) {
     Event_SetFlag(FLAG_AREA_TEMP_10);
   } else {
     Event_ClearFlag(FLAG_AREA_TEMP_10);
@@ -279,7 +280,7 @@ void AirsRock_MoveSecondPillar(void) {
   value = MapCell_GetAttributes(3, 70, 67);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((object->x.fixed >> 20) == 32) {
+  if (FIELD_CELL(object->x.fixed) == 32) {
     Event_SetFlag(FLAG_AREA_TEMP_11);
     value &= 0xff;
     MapCell_SetAttributes(4, 70, 67, value);
@@ -481,8 +482,8 @@ void AirsRock_BlowGust(void) {
   }
   Actor_SetSpriteColor(effect->target, 0);
   Sound_Play(SE_WHOOSH);
-  cell.x = effect->target->x.fixed >> 20;
-  cell.z = effect->target->z.fixed >> 20;
+  cell.x = FIELD_CELL(effect->target->x.fixed);
+  cell.z = FIELD_CELL(effect->target->z.fixed);
   angle = (leader->facing + 0x2000) & 0xc000;
   delta.x = Trig_Cos(angle) >> 16;
   delta.z = Trig_Sin(angle) >> 16;
@@ -545,8 +546,8 @@ void AirsRock_BlowGust(void) {
       }
       if ((gFrameCount & 3) == 0) {
         s32 sourceX;
-        cell.x = gAirsRock_GustTargets[hit][2] + (gust->x.fixed >> 20);
-        cell.z = gAirsRock_GustTargets[hit][3] + (gust->z.fixed >> 20);
+        cell.x = gAirsRock_GustTargets[hit][2] + FIELD_CELL(gust->x.fixed);
+        cell.z = gAirsRock_GustTargets[hit][3] + FIELD_CELL(gust->z.fixed);
         cellX = cell.x;
         cellZ = cell.z;
         if (hit & 1) {
@@ -556,9 +557,9 @@ void AirsRock_BlowGust(void) {
           MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
                                      gAirsRock_GustTargets[hit][1], 1, 2, cellX,
                                      cellZ);
-          MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
-                                     gAirsRock_GustTargets[hit][1], 1, 2,
-                                     gust->x.fixed >> 20, gust->z.fixed >> 20);
+          MapGrid_CopyCellAttributes(
+              gAirsRock_GustTargets[hit][0], gAirsRock_GustTargets[hit][1], 1,
+              2, FIELD_CELL(gust->x.fixed), FIELD_CELL(gust->z.fixed));
         } else {
           sourceX = (u16)gAirsRock_GustTargets[hit][0];
           MapGrid_CopyCellsTo((s16)sourceX, gAirsRock_GustTargets[hit][1],
@@ -566,9 +567,9 @@ void AirsRock_BlowGust(void) {
           MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
                                      gAirsRock_GustTargets[hit][1], 1, 1, cellX,
                                      cellZ);
-          MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
-                                     gAirsRock_GustTargets[hit][1], 1, 1,
-                                     gust->x.fixed >> 20, gust->z.fixed >> 20);
+          MapGrid_CopyCellAttributes(
+              gAirsRock_GustTargets[hit][0], gAirsRock_GustTargets[hit][1], 1,
+              1, FIELD_CELL(gust->x.fixed), FIELD_CELL(gust->z.fixed));
         }
         MapGrid_CenterOnFollowedPoint();
       }
@@ -877,7 +878,7 @@ void AirsRock_RideWhirlwind(void) {
       moved = 1;
     }
     if (moved &&
-        MapCell_GetAttributes(2, (ride->x.fixed + dx) >> 20,
+        MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
                               (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
                 8 !=
             255)
@@ -888,7 +889,7 @@ void AirsRock_RideWhirlwind(void) {
     dx = 0;
     leader->facing = FACING_NORTH;
     dz = 0xfff00000;
-    if ((u32)(MapCell_GetAttributes(2, ride->x.fixed >> 20,
+    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
                                     (ride->z.fixed - ride->y.fixed + dz) >> 20)
               << 8) >>
             16 !=
@@ -897,7 +898,7 @@ void AirsRock_RideWhirlwind(void) {
     dx = 0x100000;
     dz = 0;
     leader->facing = dz;
-    if ((u32)(MapCell_GetAttributes(2, (ride->x.fixed + dx) >> 20,
+    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
                                     (ride->z.fixed - ride->y.fixed) >> 20)
               << 8) >>
             16 !=
@@ -982,7 +983,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     return;
   }
   Actor_SetAnimationSpeed(shot, 16);
-  if (MapCell_GetAttributes(2, shot->x.fixed >> 20,
+  if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
       212) {
@@ -1004,11 +1005,11 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
-          leader->z.fixed >> 20 == shot->z.fixed >> 20)
+          FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         i = 1;
     } else {
       if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
-          leader->y.fixed >> 20 == shot->y.fixed >> 20)
+          FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         i = 1;
     }
     if (i && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -1028,11 +1029,11 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     other = *objects++;
     if (other->script != 0) {
       launcher = shot->watchedActor;
-      if (launcher->x.fixed >> 20 != other->x.fixed >> 20 ||
-          launcher->y.fixed >> 20 != other->y.fixed >> 20 ||
-          launcher->z.fixed >> 20 != other->z.fixed >> 20) {
+      if (FIELD_CELL(launcher->x.fixed) != FIELD_CELL(other->x.fixed) ||
+          FIELD_CELL(launcher->y.fixed) != FIELD_CELL(other->y.fixed) ||
+          FIELD_CELL(launcher->z.fixed) != FIELD_CELL(other->z.fixed)) {
         if (Position_FlatDistance(&other->x.fixed, &shot->x.fixed) <= 8 &&
-            other->y.fixed >> 20 == shot->y.fixed >> 20)
+            FIELD_CELL(other->y.fixed) == FIELD_CELL(shot->y.fixed))
           goto end;
       }
     }
@@ -1128,8 +1129,8 @@ void AirsRock_PlacePillar(void) {
     object->motionFlags = 0;
     object->layer = 0;
   }
-  x = object->x.fixed >> 20;
-  z = object->z.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed);
   if (x == 16 && z == 43)
     Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST);
   else if (x == 45 && z == 45)

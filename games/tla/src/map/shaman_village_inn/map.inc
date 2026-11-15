@@ -53,9 +53,9 @@ Tileset_ShamanVillageInnTilesD:
 	.byte 0x84, 0xb0, 0xa3	@ PACKER: left in the buffer by Tileset_ShamanVillageInnTilesC+0x11b9
 	.global Tileset_PaletteShamanVillageInnA
 Tileset_PaletteShamanVillageInnA:
-	.incbin "games/tla/src/graphics/tileset/palettes/shaman_village_4_a.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/palettes/shaman_village_inn_a.gbapal.lz"
 	.byte 0xce, 0xe0, 0x07	@ PACKER: left in the buffer by Tileset_ShamanVillageInnTilesD+0x1e5
 	.global Tileset_PaletteShamanVillageInnB
 Tileset_PaletteShamanVillageInnB:
-	.incbin "games/tla/src/graphics/tileset/palettes/shaman_village_4_b.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/palettes/shaman_village_inn_b.gbapal.lz"
 	.byte 0xf2	@ PACKER: left in the buffer by Tileset_PaletteShamanVillageInnA+0x18f

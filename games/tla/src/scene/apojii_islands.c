@@ -439,7 +439,8 @@ void ApojiiIslands_ClearFirstBush(void) {
     ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
     if (Event_GetFlag(n5) == 0) {                                              \
       Actor_SetPosition(n6, n7, n8);                                           \
-      if (leader->x.fixed >> 20 == n9 && leader->z.fixed >> 20 == n10) {       \
+      if (FIELD_CELL(leader->x.fixed) == n9 &&                                 \
+          FIELD_CELL(leader->z.fixed) == n10) {                                \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
         Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,                \
@@ -611,11 +612,11 @@ void Scroll_HBlank(void) {
 
 void Layer_TrackScroll(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
-  s16 y = layer->y >> 16;
+  s16 y = FIELD_PIXEL(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;
-  gApojiiIslands_UpperScrollX = layer->x >> 16;
-  gApojiiIslands_LowerScrollX = (s16)(layer->x >> 16) - (gFrameCount >> 2);
+  gApojiiIslands_UpperScrollX = FIELD_PIXEL(layer->x);
+  gApojiiIslands_LowerScrollX = (s16)FIELD_PIXEL(layer->x) - (gFrameCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
@@ -874,11 +875,11 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
   s32 left = layer->offsetX + map->minX;
   s32 top = layer->offsetY + map->minZ;
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;
-  s32 width = (map->maxX - map->minX) >> 20;
-  s32 height = (map->maxZ - map->minZ) >> 20;
+  s32 width = FIELD_CELL(map->maxX - map->minX);
+  s32 height = FIELD_CELL(map->maxZ - map->minZ);
   struct CellMarker *entry = &markers->markers[markers->count];
   s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
-  s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;
   s16 x, z;
   u32 value;

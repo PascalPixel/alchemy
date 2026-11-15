@@ -347,7 +347,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     moved = 0;
-    if ((object->x.fixed >> 20) == 7 && (object->z.fixed >> 20) == 23) {
+    if (FIELD_CELL(object->x.fixed) == 7 && FIELD_CELL(object->z.fixed) == 23) {
       Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;

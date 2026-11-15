@@ -462,8 +462,8 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
 /// then it writes both cells back and moves the object's height
 /// (MapGrid_SetCellHeight).
 void AirsRockInside_SetConeCells(struct Actor *object) {
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 ground = MapCell_GetAttributes(0, x, z);
   s32 cell = MapCell_GetAttributes(2, x, z);
   s32 height =
@@ -657,7 +657,7 @@ void AirsRockInside_RideWhirlwind(void) {
       moved = 1;
     }
     if (moved &&
-        MapCell_GetAttributes(2, (ride->x.fixed + dx) >> 20,
+        MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
                               (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
                 8 !=
             255)
@@ -669,7 +669,7 @@ void AirsRockInside_RideWhirlwind(void) {
     dx = 0;
     dz = 0xfff00000;
     leader->facing = FACING_NORTH;
-    if ((u32)(MapCell_GetAttributes(2, ride->x.fixed >> 20,
+    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
                                     (ride->z.fixed - ride->y.fixed + dz) >> 20)
               << 8) >>
             16 !=
@@ -678,7 +678,7 @@ void AirsRockInside_RideWhirlwind(void) {
     dx = 0x100000;
     dz = 0;
     leader->facing = 0;
-    if ((u32)(MapCell_GetAttributes(2, (ride->x.fixed + dx) >> 20,
+    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
                                     (ride->z.fixed - ride->y.fixed) >> 20)
               << 8) >>
             16 !=
@@ -776,7 +776,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     return;
   }
   Actor_SetAnimationSpeed(shot, 16);
-  if (MapCell_GetAttributes(2, shot->x.fixed >> 20,
+  if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
       212) {
@@ -795,11 +795,11 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
-          leader->z.fixed >> 20 == shot->z.fixed >> 20)
+          FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         near = 1;
     } else {
       if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
-          leader->y.fixed >> 20 == shot->y.fixed >> 20)
+          FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -899,7 +899,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     return;
   }
   Actor_SetAnimationSpeed(shot, 16);
-  if (MapCell_GetAttributes(2, shot->x.fixed >> 20,
+  if (MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                             (shot->z.fixed - shot->y.fixed) >> 20) >>
           8 ==
       212) {
@@ -923,11 +923,11 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
-          leader->z.fixed >> 20 == shot->z.fixed >> 20)
+          FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         near = 1;
     } else {
       if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
-          leader->y.fixed >> 20 == shot->y.fixed >> 20)
+          FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -1270,15 +1270,15 @@ void AirsRockInside_BlowGust(void) {
   }
   Actor_SetSpriteColor(TARGET(effect), 0);
   Sound_Play(SE_WHOOSH);
-  cell.x = TARGET(effect)->x.fixed >> 20;
-  cell.z = TARGET(effect)->z.fixed >> 20;
-  if (leader->x.fixed >> 20 < cell.x) {
+  cell.x = FIELD_CELL(TARGET(effect)->x.fixed);
+  cell.z = FIELD_CELL(TARGET(effect)->z.fixed);
+  if (FIELD_CELL(leader->x.fixed) < cell.x) {
     dir.x = 1;
     dir.z = 0;
-  } else if (leader->x.fixed >> 20 > cell.x) {
+  } else if (FIELD_CELL(leader->x.fixed) > cell.x) {
     dir.x = -1;
     dir.z = 0;
-  } else if (leader->z.fixed >> 20 < cell.z) {
+  } else if (FIELD_CELL(leader->z.fixed) < cell.z) {
     dir.x = 0;
     dir.z = 1;
   } else {
@@ -1301,8 +1301,8 @@ void AirsRockInside_BlowGust(void) {
     s32 z;
 
     steps -= 2;
-    x = (TARGET(effect)->x.fixed >> 16) + ((steps * dir.x) << 3);
-    z = (TARGET(effect)->z.fixed >> 16) + ((steps * dir.z) << 3);
+    x = FIELD_PIXEL(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
+    z = FIELD_PIXEL(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
     ((struct FieldSprite *)gust->sprite)->priority = 1;
     cell.x = x;
     cell.z = z;
@@ -1320,13 +1320,15 @@ void AirsRockInside_BlowGust(void) {
         PICK_UP(object, 0x270025);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
       object = Actor_GetById(9);
-      if (gust->x.fixed >> 20 == object->x.fixed >> 20 &&
-          gust->z.fixed >> 20 == object->z.fixed >> 20 && carried == 0)
+      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(object->x.fixed) &&
+          FIELD_CELL(gust->z.fixed) == FIELD_CELL(object->z.fixed) &&
+          carried == 0)
         PICK_UP(object, 0x290069);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
       object = Actor_GetById(10);
-      if (gust->x.fixed >> 20 == object->x.fixed >> 20 &&
-          gust->z.fixed >> 20 == object->z.fixed >> 20 && carried == 0)
+      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(object->x.fixed) &&
+          FIELD_CELL(gust->z.fixed) == FIELD_CELL(object->z.fixed) &&
+          carried == 0)
         PICK_UP(object, 0xf0033);
     }
     if ((gFrameCount & 1) == 0) {
@@ -1382,8 +1384,8 @@ void AirsRockInside_BlowGust(void) {
   if (hit == 255) {
     Sound_Play(SE_WHOOSH);
   } else {
-    cell.x = (gust->x.fixed >> 16) + dir.x * 48;
-    cell.z = (gust->z.fixed >> 16) + dir.z * 48;
+    cell.x = FIELD_PIXEL(gust->x.fixed) + dir.x * 48;
+    cell.z = FIELD_PIXEL(gust->z.fixed) + dir.z * 48;
     gust->speedLimit = px(1) / 2;
     gust->acceleration = px(1) / 2;
     Call4((void (*)())Actor_SetMoveTarget, (s32)(gust), (s32)(cell.x << 16),
@@ -1412,16 +1414,16 @@ void AirsRockInside_BlowGust(void) {
       if ((gFrameCount & 3) == 0) {
         if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_4) {
           GameFlag_Set(FLAG_AREA_TEMP_00);
-          cell.x = (gust->x.fixed >> 20) + 64;
-          cell.z = gust->z.fixed >> 20;
+          cell.x = FIELD_CELL(gust->x.fixed) + 64;
+          cell.z = FIELD_CELL(gust->z.fixed);
           MapGrid_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
           MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.next ==
                    SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
-          cell.x = gust->x.fixed >> 20;
-          cell.z = ((gust->z.fixed - gust->y.fixed) >> 20) + 64;
+          cell.x = FIELD_CELL(gust->x.fixed);
+          cell.z = FIELD_CELL(gust->z.fixed - gust->y.fixed) + 64;
           if (hit == 0) {
             GameFlag_Set(FLAG_AREA_TEMP_04);
             MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
@@ -1437,7 +1439,7 @@ void AirsRockInside_BlowGust(void) {
         } else if (gMainRoutineWork.next ==
                    SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
           GameFlag_Set(FLAG_AREA_TEMP_06);
-          cell.x = gust->x.fixed >> 20;
+          cell.x = FIELD_CELL(gust->x.fixed);
           Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
           Call6(Map_CopyCellAttributeRect, 15, 80, 1, 1, 15, 79);
           Call6(Map_CopyCellAttributeRect, 17, 15, 2, 1, 15, 15);
@@ -1580,8 +1582,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 void AirsRockInside_RestoreCellBehindLeader(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
@@ -1624,9 +1626,9 @@ void AirsRockInside_StartRestoringCells(void) {
 /// puts them back once he has left.
 void AirsRockInside_StampCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
-  s32 x = actor->x.fixed >> 20;
-  s32 y = actor->y.fixed >> 20;
-  s32 z = actor->z.fixed >> 20;
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 y = FIELD_CELL(actor->y.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 cell = (x << 16) + z;
   s32 scene;
 
@@ -1657,9 +1659,9 @@ void AirsRockInside_StampCellUnderLeader(void) {
 
 void AirsRockInside_StampOtherCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
-  s32 x = actor->x.fixed >> 20;
-  s32 y = actor->y.fixed >> 20;
-  s32 z = actor->z.fixed >> 20;
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 y = FIELD_CELL(actor->y.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 cell = (x << 16) + z;
   s32 scene;
 
@@ -1690,9 +1692,9 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
 #define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
-    s32 x = object->x.fixed >> 20;                                             \
-    s32 y = object->y.fixed >> 20;                                             \
-    s32 z = object->z.fixed >> 20;                                             \
+    s32 x = FIELD_CELL(object->x.fixed);                                       \
+    s32 y = FIELD_CELL(object->y.fixed);                                       \
+    s32 z = FIELD_CELL(object->z.fixed);                                       \
     s32 key = (x << 16) + z;                                                   \
                                                                                \
     if (key != gAirsRockInside_StampedCell) {                                  \
@@ -1970,8 +1972,8 @@ void AirsRockInside_StepOntoLedge(void) {
   s32 width;
   s32 height;
 
-  if (MapCell_GetAttributes(1, leader->x.fixed >> 20,
-                            (leader->z.fixed >> 20) - 1) >>
+  if (MapCell_GetAttributes(1, FIELD_CELL(leader->x.fixed),
+                            FIELD_CELL(leader->z.fixed) - 1) >>
           8 !=
       30)
     return;
@@ -2111,15 +2113,15 @@ void AirsRockInside_FinishPushingPillar(void) {
       GameFlag_Clear(FLAG_SCENE_TEMP_01);
     if (x == 77 && z == 19)
       GameFlag_Clear(FLAG_SCENE_TEMP_02);
-    MapCell_SetAttributes(2, Actor_GetById(8)->x.fixed >> 20,
-                          Actor_GetById(8)->z.fixed >> 20, 0);
-    MapCell_SetAttributes(2, Actor_GetById(9)->x.fixed >> 20,
-                          Actor_GetById(9)->z.fixed >> 20, 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(8)->x.fixed),
+                          FIELD_CELL(Actor_GetById(8)->z.fixed), 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(9)->x.fixed),
+                          FIELD_CELL(Actor_GetById(9)->z.fixed), 0);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     if (x == 45 && z == 33)
       GameFlag_Set(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED);
-    MapCell_SetAttributes(2, Actor_GetById(10)->x.fixed >> 20,
-                          Actor_GetById(10)->z.fixed >> 20, 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(10)->x.fixed),
+                          FIELD_CELL(Actor_GetById(10)->z.fixed), 0);
   }
   Event_End();
 }
@@ -2353,7 +2355,8 @@ void AirsRockInside_StepOnVanishingStone(void) {
   s32 cell, row = 54;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  cell = MapCell_GetAttributes(2, leader->x.fixed >> 20, leader->z.fixed >> 20);
+  cell = MapCell_GetAttributes(2, FIELD_CELL(leader->x.fixed),
+                               FIELD_CELL(leader->z.fixed));
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into
   // 858 - 4 * counter.
@@ -2375,9 +2378,9 @@ void AirsRockInside_StepOnVanishingStone(void) {
 /// the cells kept at (70, 74) in their place.
 void AirsRockInside_StampWideCellUnderLeader(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = object->x.fixed >> 20;
-  s32 y = object->y.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 y = FIELD_CELL(object->y.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 key = (x << 16) + z;
 
   if (key != gAirsRockInside_StampedCell) {
@@ -2730,7 +2733,7 @@ void AirsRockInside_ReadRevealTablet(void) {
                                FIELD_AT(object, s16, 18));
     Actor_WaitForMoveById(ACTOR_SHEBA);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
-    Actor_SetMovementType(Actor_GetById(8), 9);
+    Actor_SetMovementType(Actor_GetById(8), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
     Event_End();
   }
 }
@@ -2814,8 +2817,8 @@ void AirsRockInside_TradePairedStatues(void) {
 search:
   id = *pair;
   first = Actor_GetById(id);
-  if (first->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      first->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(first->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(first->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     second = Actor_GetById(id - ((id & 1) << 1) + 1);
     goto found;
   }
@@ -3352,7 +3355,7 @@ s32 Scene_Initialize(void) {
     object = Actor_GetById(8);
     Actor_GetById(8)->groundHeight = px(16);
     object->y.fixed = px(16);
-    Actor_SetMovementType(Actor_GetById(8), 9);
+    Actor_SetMovementType(Actor_GetById(8), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     AirsRockInside_StartRestoringCells();
     Tightrope_Initialize();
@@ -3419,10 +3422,10 @@ s32 Scene_Initialize(void) {
     }
     Actor_SetSpritePriority(9, 2);
     Actor_PlaceBlocks(gAirsRockInside_Room8Pillars);
-    MapCell_SetAttributes(2, Actor_GetById(8)->x.fixed >> 20,
-                          Actor_GetById(8)->z.fixed >> 20, 0);
-    MapCell_SetAttributes(2, Actor_GetById(9)->x.fixed >> 20,
-                          Actor_GetById(9)->z.fixed >> 20, 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(8)->x.fixed),
+                          FIELD_CELL(Actor_GetById(8)->z.fixed), 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(9)->x.fixed),
+                          FIELD_CELL(Actor_GetById(9)->z.fixed), 0);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN))
       Actor_SetSpriteColor(Actor_GetById(11), 6);
     else
@@ -3433,8 +3436,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(264));
     Actor_PlaceBlocks(gAirsRockInside_Room9Pillars);
-    MapCell_SetAttributes(2, Actor_GetById(10)->x.fixed >> 20,
-                          Actor_GetById(10)->z.fixed >> 20, 0);
+    MapCell_SetAttributes(2, FIELD_CELL(Actor_GetById(10)->x.fixed),
+                          FIELD_CELL(Actor_GetById(10)->z.fixed), 0);
     Actor_GetById(10)->steeringFlags = 0;
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN))
       Actor_SetSpriteColor(Actor_GetById(10), 6);

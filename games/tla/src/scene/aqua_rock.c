@@ -296,9 +296,9 @@ void AquaRock_SinkOrFlow(struct Actor *object) {
     object->y.fixed += px(2);
   else
     object->z.fixed -= px(2);
-  if (object->y.fixed >> 20 == 23)
+  if (FIELD_CELL(object->y.fixed) == 23)
     Actor_Release(object);
-  if (object->z.fixed >> 20 == 48)
+  if (FIELD_CELL(object->z.fixed) == 48)
     Actor_Release(object);
 }
 
@@ -560,8 +560,8 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
 
     struct Actor *first = Actor_GetById(24);
 
-    column = first->x.fixed >> 20;
-    row = first->z.fixed >> 20;
+    column = FIELD_CELL(first->x.fixed);
+    row = FIELD_CELL(first->z.fixed);
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
     GameFlag_ClearBit_(0x320);
@@ -573,7 +573,7 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
   } else if (id == 25) {
     struct Actor *object = Actor_GetById(25);
 
-    if (object->x.fixed >> 20 == 32) {
+    if (FIELD_CELL(object->x.fixed) == 32) {
       wait(30);
       object->z.fixed += px(1);
       GameFlag_Set(0x950);
@@ -684,13 +684,13 @@ void AquaRock_StepIntoCurrent(void) {
   s32 row;
 
   if (gMainRoutineWork.movementMode == 2) {
-    col = object->x.fixed >> 20;
-    row = (object->z.fixed - object->y.fixed - px(12)) >> 20;
+    col = FIELD_CELL(object->x.fixed);
+    row = FIELD_CELL(object->z.fixed - object->y.fixed - px(12));
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->raisedTrigger = 44;
   } else {
-    col = object->x.fixed >> 20;
-    row = (object->z.fixed - object->y.fixed) >> 20;
+    col = FIELD_CELL(object->x.fixed);
+    row = FIELD_CELL(object->z.fixed - object->y.fixed);
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       AquaRock_FlowWithStream();
   }
@@ -750,7 +750,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeThirdPuddle, 44, 44, 46, 0x223)
 #define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, n1, n2)                          \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
-    s32 column = object->x.fixed >> 20;                                        \
+    s32 column = FIELD_CELL(object->x.fixed);                                  \
                                                                                \
     if (column == 53) {                                                        \
       wait(30);                                                                \
@@ -1361,9 +1361,9 @@ void AquaRock_DrawRisingCellMarkers(void) {
         entry->y += 2 << 16;
       else
         entry->z -= 2 << 16;
-      if (entry->y >> 20 == 23)
+      if (FIELD_CELL(entry->y) == 23)
         entry->x = 0;
-      if (entry->z >> 20 == 48)
+      if (FIELD_CELL(entry->z) == 48)
         entry->x = 0;
       entry->age++;
       x = entry->x - viewX;
@@ -1423,9 +1423,9 @@ void AquaRock_DrawFallingCellMarkers(void) {
         bubble->y -= px(2);
       else
         bubble->z += px(2);
-      if (bubble->y >> 20 == -4)
+      if (FIELD_CELL(bubble->y) == -4)
         bubble->x = 0;
-      if (bubble->z >> 20 == 50)
+      if (FIELD_CELL(bubble->z) == 50)
         bubble->x = 0;
       bubble->age++;
       z = bubble->z;

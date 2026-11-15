@@ -104,8 +104,8 @@ void AncientLemuria_StartMovingStatue(void) {}
 
 void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   if (x == 8 && z == 36)
     GameFlag_Set(0x961);

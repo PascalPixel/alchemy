@@ -24,6 +24,14 @@ struct Vector3;
 
 typedef s32 (*HandlerFn)(void);
 
+#ifndef FIELD_CELL
+/// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
+/// axis: a map grid cell is 16 pixels square.
+#define FIELD_CELL(coordinate) ((coordinate) >> 20)
+/// The whole pixels of a 16.16 coordinate or distance, px() undone.
+#define FIELD_PIXEL(coordinate) ((coordinate) >> 16)
+#endif
+
 /// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
 struct MotionView {
   u8 pad[84];

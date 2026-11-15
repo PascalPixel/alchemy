@@ -423,8 +423,8 @@ void DehkanPlateau_DropRoom1PillarIntoGap(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM1_PILLAR);
   s32 x;
 
-  x = object->x.fixed >> 20;
-  if (x == 56 && (object->z.fixed >> 20) == 32) {
+  x = FIELD_CELL(object->x.fixed);
+  if (x == 56 && FIELD_CELL(object->z.fixed) == 32) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_DropAndWait(object);
@@ -443,7 +443,7 @@ void DehkanPlateau_LiftRoom2Pillar(void) {
 /// good (FLAG_ROOM2_PILLAR_PLACED).
 void DehkanPlateau_PlaceRoom2Pillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM2_PILLAR);
-  s32 x = object->x.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 52) {
@@ -466,7 +466,7 @@ void DehkanPlateau_LiftRoom3Pillar(void) {
 /// Move lets go of the third room's stone pillar: at the gap it drops in.
 void DehkanPlateau_PlaceRoom3Pillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM3_PILLAR);
-  s32 x = object->x.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 47) {
@@ -496,7 +496,7 @@ void DehkanPlateau_SetRoom3SecondPillarInPlace(void) {
 /// Move on the third room's second stone pillar: one column on, it falls into
 /// place.
 void DehkanPlateau_MoveRoom3SecondPillar(void) {
-  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed >> 20) == 37)
+  if (FIELD_CELL(Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed) == 37)
     DehkanPlateau_SetRoom3SecondPillarInPlace();
 }
 
@@ -505,7 +505,7 @@ void DehkanPlateau_MoveRoom3SecondPillar(void) {
 void DehkanPlateau_PushRoom3SecondPillar(void) {
   u8 *flags;
 
-  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed >> 20) == 38) {
+  if (FIELD_CELL(Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed) == 38) {
     flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -630,8 +630,8 @@ extern s32 gDehkanPlateau_CrackZ;
 void DehkanPlateau_StepOnCrack(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 cellX = ((leader->x.fixed >> 20) << 1) + 1;
-  s32 cellZ = ((leader->z.fixed >> 20) << 1) + 1;
+  s32 cellX = (FIELD_CELL(leader->x.fixed) << 1) + 1;
+  s32 cellZ = (FIELD_CELL(leader->z.fixed) << 1) + 1;
   s32 n, flag;
   u16 *record, *next;
 
@@ -802,8 +802,8 @@ void DehkanPlateau_StepOnCrack(void) {
       s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateauPoundCube) ||
           scene == SCENE(DehkanPlateau3)) {
-        gDehkanPlateau_CrackX = leader->x.fixed >> 20;
-        gDehkanPlateau_CrackZ = leader->z.fixed >> 20;
+        gDehkanPlateau_CrackX = FIELD_CELL(leader->x.fixed);
+        gDehkanPlateau_CrackZ = FIELD_CELL(leader->z.fixed);
       }
     }
     Event_End();
@@ -819,8 +819,8 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
 
   if (Flag_Test(FLAG_STANDING_ON_OPENED_CRACK) != 0) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (gDehkanPlateau_CrackX != (object->x.fixed >> 20) ||
-        gDehkanPlateau_CrackZ != (object->z.fixed >> 20))
+    if (gDehkanPlateau_CrackX != FIELD_CELL(object->x.fixed) ||
+        gDehkanPlateau_CrackZ != FIELD_CELL(object->z.fixed))
       GameFlag_Clear(FLAG_STANDING_ON_OPENED_CRACK);
   }
 }
@@ -900,7 +900,7 @@ void DehkanPlateau_PlaceRaisedPillar(struct Actor *object) {
   u8 *cell;
 
   HeldActor_RaiseCell(object);
-  x = object->x.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
   if (x == 12) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -1695,7 +1695,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Pillars_Raise(gDehkanPlateau_Room3RaisedPillars);
   value = Actor_GetById(ACTOR_ROOM3_FOURTH_RAISED_PILLAR)->x.fixed;
   zero = 0;
-  if ((value >> 20) == 54) {
+  if (FIELD_CELL(value) == 54) {
     struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[0].cells;
 
     cell += Actor_GetCellIndex__room3();

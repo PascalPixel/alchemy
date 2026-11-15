@@ -56,7 +56,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AlhafraManor_AskAboutAlhafra(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor02;
+  s32 msg = (s32)&MsgAlhafraManorWhatDoYouThinkOf;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -71,7 +71,7 @@ void AlhafraManor_AskAboutAlhafra(s32 actor) {
 }
 
 void AlhafraManor_PointOutAirsRock(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor09;
+  s32 msg = (s32)&MsgAlhafraManorLookeeHereCantYouSee;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -93,7 +93,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
 }
 
 void AlhafraManor_AskIfTheHeroes(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor14;
+  s32 msg = (s32)&MsgAlhafraManorAreYouTheBraveHero;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -113,7 +113,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   GameFlag_Set(FLAG_GRUMBLED_ABOUT_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor18);
+  Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActorById(18, gMainRoutineWork.leaderActorId, 0);
@@ -136,7 +136,7 @@ void AlhafraManor_DefendTheMayor(void) {
   GameFlag_Set(FLAG_DEFENDED_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor23);
+  Event_SetMessageId((s32)&MsgAlhafraManorImSureTheMayorHas);
   if (*(s16 *)((u8 *)work + 0x166) != 0)
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
@@ -182,7 +182,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   GameFlag_Set(FLAG_TOLD_OF_THE_EASTERN_SEA);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor24);
+  Event_SetMessageId((s32)&MsgAlhafraManorBriggsTellsMeThereAre);
   Event_Wait(20);
   Actor_RunRepeatedMotion(9, 2);
   Event_Wait(10);
@@ -250,7 +250,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
-    Event_SetMessageId((s32)&MsgAlhafraManor10);
+    Event_SetMessageId((s32)&MsgAlhafraManorFromHereItJustLooks);
     // "From here, it just looks like a regular old rock, but from up close..."
     Event_ShowMessageAndWait(14, 0);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -307,7 +307,7 @@ void AlhafraManor_CountAnswer(void);
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgAlhafraManor29);
+  Event_SetMessageId(MsgAlhafraManorThankYouAgainMayorYou);
   Actor_SetPosition(9, 344, 96);
   Actor_SetPosition(8, 408, 136);
   Actor_SetPosition(13, 312, 104);
@@ -808,43 +808,51 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(0x8a7), MSGNO(MsgAlhafraManor30)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x8a7),
+     MSGNO(MsgAlhafraManorEveryoneInTownIsTalking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x8a7),
-     MSGNO(MsgAlhafraManor31)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor01)},
+     MSGNO(MsgAlhafraManorIDontKnowWhatThe)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorYouShouldGoToThe)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(AlhafraManor_AskAboutAlhafra)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor03)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor04)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorOurTownWasRifeWith)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMountainsToTheEast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor05)},
+     MSGNO(MsgAlhafraManorThereAreNumerousTalesAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor06)},
+     MSGNO(MsgAlhafraManorWhyDoTheyAlwaysTell)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor07)},
+     MSGNO(MsgAlhafraManorThosePiratesNeverDidUs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor08)},
+     MSGNO(MsgAlhafraManorTheresNoWayToCross)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(AlhafraManor_PointOutAirsRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor11)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor12)},
+     MSGNO(MsgAlhafraManorTheLongerISitHere)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIdBeenSayingIndraWasnt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor13)},
+     MSGNO(MsgAlhafraManorISatAndGazedAt)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(AlhafraManor_AskIfTheHeroes)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor15)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIHeardThePiratesTalking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor16)},
+     MSGNO(MsgAlhafraManorIWishSomeoneWouldGo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor17)},
+     MSGNO(MsgAlhafraManorIHopeTheWarriorsWho)},
     {TRIGGER_TALK, 18, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
      EVENT(AlhafraManor_GrumbleAboutTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_GRUMBLED_ABOUT_THE_MAYOR, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor19)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor20)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorImStartingToThinkThe)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorHesAlreadyBeenPaidTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor21)},
+     MSGNO(MsgAlhafraManorIfWeLeaveTheBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor22)},
+     MSGNO(MsgAlhafraManorTheMoneyBriggsUsedTo)},
     {TRIGGER_TALK, 8, FLAG_DEFENDED_THE_MAYOR,
      EVENT(AlhafraManor_DefendTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT,
@@ -853,13 +861,15 @@ struct Trigger gSceneEvents[] = {
      EVENT(AlhafraManor_TellOfTheEasternSea)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_TOLD_OF_THE_EASTERN_SEA, EVENT(AlhafraManor_TellOfTheEasternSea)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor25)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor26)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIAmPlanningAGlorious)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMayorWontHelpFix)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor27)},
+     MSGNO(MsgAlhafraManorThisIsSuchAFantastic)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor28)},
+     MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
     {TRIGGER_TABLE_END},
 };

@@ -280,7 +280,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1) {
-    if (object->x.fixed >> 20 == 4) {
+    if (FIELD_CELL(object->x.fixed) == 4) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
     }
@@ -290,7 +290,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
-    if (object->x.fixed >> 20 == 32) {
+    if (FIELD_CELL(object->x.fixed) == 32) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
       Event_SetFlag(0x9c7);
     }
@@ -298,18 +298,18 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
-      if (object->x.fixed >> 20 == 2)
+      if (FIELD_CELL(object->x.fixed) == 2)
         Event_SetFlag(0x9c8);
     }
     if (id == 18) {
       MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
-      if (object->x.fixed >> 20 == 39)
+      if (FIELD_CELL(object->x.fixed) == 39)
         Event_SetFlag(0x9c9);
     }
     if (id == 19) {
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
-      if (object->x.fixed >> 20 == 38) {
+      if (FIELD_CELL(object->x.fixed) == 38) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
         Event_SetFlag(0x9ca);
       }
@@ -319,7 +319,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
-    if (object->x.fixed >> 20 == 17) {
+    if (FIELD_CELL(object->x.fixed) == 17) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
       Event_SetFlag(0x9cb);
     }
@@ -331,7 +331,7 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   struct Actor *object = Actor_Get(id);
   s16 frames = 60;
 
-  if (object->z.fixed >> 20 == 31) {
+  if (FIELD_CELL(object->z.fixed) == 31) {
     object->motionFlags = 3;
     Actor_SetSpritePriorityDirect(object, 3);
     Event_PlaySound(SE_DUST_PUFF);
@@ -435,8 +435,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
 /// AnkohlRuins_PlaceFacePiece does for object 8.
 void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 column = object->x.fixed >> 20;
-  s32 row = object->z.fixed >> 20;
+  s32 column = FIELD_CELL(object->x.fixed);
+  s32 row = FIELD_CELL(object->z.fixed);
   s32 toColumn;
   s32 lowRow;
   s32 highRow;
@@ -492,8 +492,8 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
 /// AnkohlRuins_PourSand place four objects between them.
 void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
-  s32 column = pillar->x.fixed >> 20;
-  s32 row = pillar->z.fixed >> 20;
+  s32 column = FIELD_CELL(pillar->x.fixed);
+  s32 row = FIELD_CELL(pillar->z.fixed);
 
   if (id != 8 || column != 12 || row != 5)
     return;
@@ -531,8 +531,8 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
 
 void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   if (id == 10 && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
@@ -575,7 +575,7 @@ void AnkohlRuins_FlowWithSand(void) {
     ground = map->layers[0].cells;
     upper = map->layers[2].cells;
   }
-  index = (leader->x.fixed >> 20) + ((leader->z.fixed >> 20) << 7);
+  index = FIELD_CELL(leader->x.fixed) + (FIELD_CELL(leader->z.fixed) << 7);
   ground += index;
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
@@ -1057,7 +1057,7 @@ void AnkohlRuins_RideRaftDown(void) {
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && work->stepTrigger != 40)
     return;
   raft->z.fixed += 0xcccc;
-  column = leader->x.fixed >> 20;
+  column = FIELD_CELL(leader->x.fixed);
   if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
      * before the leader's in the second test. */
@@ -1074,7 +1074,7 @@ void AnkohlRuins_RideRaftDown(void) {
       rider->z.fixed = raft->z.fixed - px(16);
     }
   }
-  row = raft->z.fixed >> 20;
+  row = FIELD_CELL(raft->z.fixed);
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
     Event_SetFlag(0x146);
@@ -1095,7 +1095,7 @@ void AnkohlRuins_RideRaftDown(void) {
 }
 
 void AnkohlRuins_BoardRaft(void) {
-  s32 z = Actor_Get(9)->z.fixed >> 20;
+  s32 z = FIELD_CELL(Actor_Get(9)->z.fixed);
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
     s32 found = Task_Find(AnkohlRuins_RideRaftDown);
@@ -1122,7 +1122,7 @@ void AnkohlRuins_BoardRaft(void) {
 }
 
 void AnkohlRuins_BoardRaftAgain(void) {
-  s32 z = Actor_Get(9)->z.fixed >> 20;
+  s32 z = FIELD_CELL(Actor_Get(9)->z.fixed);
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
     void (*func)(void) = AnkohlRuins_RideRaftDown;
@@ -1151,7 +1151,7 @@ extern struct Trigger gAnkohlRuins_Room8Triggers[];
 void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *object = Actor_Get(9);
 
-  if (object->x.fixed >> 20 == 26 && object->z.fixed >> 20 == 35) {
+  if (FIELD_CELL(object->x.fixed) == 26 && FIELD_CELL(object->z.fixed) == 35) {
     Event_SetFlag(0x9db);
     Event_PlaySound(SE_DUST_PUFF);
     AnkohlRuins_SettleObject(9, 0);

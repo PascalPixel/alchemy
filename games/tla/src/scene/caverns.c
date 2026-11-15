@@ -193,10 +193,11 @@ loop:
       (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  cell = MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20);
+  cell = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                               FIELD_CELL(object->z.fixed));
   object->riseBaseY = cell;
-  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
-                        cell | 0x80);
+  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
+                        FIELD_CELL(object->z.fixed), cell | 0x80);
   ids++;
   if (*ids != 0xffff)
     goto loop;
@@ -285,9 +286,9 @@ void Caverns_StartMovingAngaraBlock(void) {
       goto search_done;
   search:
     object = Actor_GetById(*ids);
-    if (position[0] >> 20 == object->x.fixed >> 20 &&
+    if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
         position[1] / 0x10000 == object->y.fixed / 0x10000 &&
-        position[2] >> 20 == object->z.fixed >> 20)
+        position[2] >> 20 == FIELD_CELL(object->z.fixed))
       goto search_done;
     ids++;
     object = NULL;
@@ -303,8 +304,8 @@ void Caverns_StartMovingAngaraBlock(void) {
       (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) - 2;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
-                        object->riseBaseY);
+  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
+                        FIELD_CELL(object->z.fixed), object->riseBaseY);
 }
 
 /// A dust puff's step: drifts, slows, grows and turns.
@@ -448,11 +449,11 @@ void Caverns_FinishMovingAngaraBlock(void) {
       (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  value =
-      MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20);
+  value = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                                FIELD_CELL(object->z.fixed));
   object->riseBaseY = value;
-  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
-                        value | 128);
+  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
+                        FIELD_CELL(object->z.fixed), value | 128);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -500,7 +501,7 @@ void Caverns_InitializeIndra(void) {
   object->motionFlags = 0;
 
   arg = 10;
-  Map_CopyCellAttributeRect(16, arg, 1, 1, object->x.fixed >> 20, arg);
+  Map_CopyCellAttributeRect(16, arg, 1, 1, FIELD_CELL(object->x.fixed), arg);
 }
 
 void Caverns_MoveIndraPillar(s32 unused, s32 id) {
@@ -508,7 +509,7 @@ void Caverns_MoveIndraPillar(s32 unused, s32 id) {
 
   object->motionFlags = 0;
   Map_CopyCellAttributeRect(13, 12, 2, 1, 13, 10);
-  Map_CopyCellAttributeRect(16, 10, 1, 1, object->x.fixed >> 20, 10);
+  Map_CopyCellAttributeRect(16, 10, 1, 1, FIELD_CELL(object->x.fixed), 10);
 }
 
 s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {

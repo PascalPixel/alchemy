@@ -190,14 +190,14 @@ void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
   for (i = 9; i <= 14; i++) {
     struct Actor *object = Actor_GetById(i);
 
-    if (object->x.fixed >> 20 != *x)
+    if (FIELD_CELL(object->x.fixed) != *x)
       return;
     {
       s32 cellZ = *z;
 
       z += 2;
       x += 2;
-      if (object->z.fixed >> 20 != cellZ)
+      if (FIELD_CELL(object->z.fixed) != cellZ)
         return;
     }
   }
@@ -228,7 +228,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   s32 shift = 0x1300000;
   s32 i;
 
-  if (object->z.fixed >> 20 <= 9)
+  if (FIELD_CELL(object->z.fixed) <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
   if (!GameFlag_Get(FLAG_SCENE_TEMP_00))

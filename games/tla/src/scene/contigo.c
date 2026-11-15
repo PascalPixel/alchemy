@@ -500,7 +500,7 @@ void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix examined the wall. There are characters carved into it...."
-  FieldMessage_Show((s32)MsgContigo110, 1);
+  FieldMessage_Show((s32)MsgContigoExaminedTheWallThereAre, 1);
   Event_End();
 }
 
@@ -508,7 +508,7 @@ void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix examined the sign. The characters from the wall are translated..."
-  FieldMessage_Show((s32)MsgContigo111, 1);
+  FieldMessage_Show((s32)MsgContigoExaminedTheSignTheCharacters, 1);
   Event_End();
 }
 
@@ -516,7 +516,7 @@ void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Turn the slot and get a prize! The lottery slots are over here."
-  FieldMessage_Show((s32)MsgContigo112, 1);
+  FieldMessage_Show((s32)MsgContigoTurnTheSlotAndGet, 1);
   Event_End();
 }
 
@@ -524,7 +524,7 @@ void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Drop some cash and double up! The hi-lo dice are over here!"
-  FieldMessage_Show((s32)MsgContigo113, 1);
+  FieldMessage_Show((s32)MsgContigoDropSomeCashAndDouble, 1);
   Event_End();
 }
 
@@ -532,7 +532,7 @@ void Contigo_ReadSuperDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "You never know what the dice will do next! Come and give our dice a..."
-  FieldMessage_Show((s32)MsgContigo114, 1);
+  FieldMessage_Show((s32)MsgContigoYouNeverKnowWhatThe, 1);
   Event_End();
 }
 
@@ -541,7 +541,7 @@ void Contigo_ReadSuperDiceSign(void) {
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo35);
+  Event_SetMessageId((s32)MsgContigoDoYouKnowAnythingAbout);
   // "Do you know anything about a legend about these people who could..."
   Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
@@ -622,10 +622,10 @@ void Contigo_BabyThinks(void) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Get(0x9b2))
     // "The baby's forehead is furrowed, like it's thinking."
-    FieldMessage_Show((s32)MsgContigo163, 1);
+    FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowedLike, 1);
   else
     // "The baby's forehead is furrowed, like it's thinking."
-    FieldMessage_Show((s32)MsgContigo64, 1);
+    FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
   Actor_SetAnimationById(17, 3);
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x204084, 1);
@@ -671,9 +671,9 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
   if (GameFlag_Get(0x9b2))
-    Event_SetMessageId((s32)MsgContigo164);
+    Event_SetMessageId((s32)MsgContigoGooGooGaaGaaWaaa);
   else
-    Event_SetMessageId((s32)MsgContigo65);
+    Event_SetMessageId((s32)MsgContigoBabuBawabaBibaw);
   Actor_RunRepeatedMotion(17, 2);
   // "Babu bawaba bibaw."
   Event_ShowMessageAndWait(17, 0);
@@ -715,9 +715,9 @@ void Contigo_TalkToItemMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo176);
+      Event_SetMessageId((s32)MsgContigoItsAlwaysSuchALetdown);
     else
-      Event_SetMessageId((s32)MsgContigo74);
+      Event_SetMessageId((s32)MsgContigoTheVillagersAreWorkingTheir);
     // "The villagers are working their hardest to complete the wings and..."
     Event_ShowMessageAndWait(13, 0);
     Event_End();
@@ -731,9 +731,9 @@ void Contigo_TalkToWeaponMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo172);
+      Event_SetMessageId((s32)MsgContigoACannonYeahIThink);
     else
-      Event_SetMessageId((s32)MsgContigo70);
+      Event_SetMessageId((s32)MsgContigoItWasALongstandingTradition);
     // "It was a longstanding tradition that people in Atteka would take a..."
     Event_ShowMessageAndWait(18, 0);
     Event_End();
@@ -747,9 +747,9 @@ void Contigo_TalkToArmorMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo174);
+      Event_SetMessageId((s32)MsgContigoNowThatTheWingsAre);
     else
-      Event_SetMessageId((s32)MsgContigo72);
+      Event_SetMessageId((s32)MsgContigoMiningMaterialsInTheRuins);
     // "Mining materials in the ruins is dangerous work, so my armor is..."
     Event_ShowMessageAndWait(19, 0);
     Event_End();
@@ -763,11 +763,11 @@ void Contigo_TalkToInnkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo178);
+      Event_SetMessageId((s32)MsgContigoAllOfOurWorkAnd);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
-      Event_SetMessageId((s32)MsgContigo128);
+      Event_SetMessageId((s32)MsgContigoYouHaveToHurryI);
     else
-      Event_SetMessageId((s32)MsgContigo76);
+      Event_SetMessageId((s32)MsgContigoWeveHadSoManyPeople);
     // "We've had so many people coming to Contigo lately that we're full..."
     Event_ShowMessageAndWait(20, 0);
     Event_End();
@@ -781,11 +781,11 @@ void Contigo_TalkToHealer(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo186);
+      Event_SetMessageId((s32)MsgContigoItWasAMiracleThat);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
-      Event_SetMessageId((s32)MsgContigo136);
+      Event_SetMessageId((s32)MsgContigoAFlyingShipSurelyIt);
     else
-      Event_SetMessageId((s32)MsgContigo88);
+      Event_SetMessageId((s32)MsgContigoTheRealMiracleWillBe);
     // "The real miracle will be if these wings actually make a boat fly...."
     Event_ShowMessageAndWait(28, 0);
     Event_End();
@@ -795,7 +795,7 @@ void Contigo_TalkToHealer(void) {
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo26);
+  Event_SetMessageId((s32)MsgContigoSoTellMePalHave);
   // "So, tell me, pal... Have you ever played Superdice before?"
   Event_AskYesNoAndShowResponse(10, 0);
   Event_End();
@@ -806,7 +806,7 @@ void Contigo_ExplainSuperDice(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo25;
+  msg = (s32)MsgContigoSuperLuckyDiceTheRules;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -824,7 +824,7 @@ void Contigo_ExplainLuckyDice(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo06;
+  msg = (s32)MsgContigoLuckyDice;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -837,7 +837,7 @@ void Contigo_ExplainLuckyDiceAgain(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo07;
+  msg = (s32)MsgContigoLuckyDiceB;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -859,7 +859,7 @@ void Contigo_ExplainLuckyWheels(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo20;
+  msg = (s32)MsgContigoLuckyWheelsRules;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -874,7 +874,7 @@ void Contigo_ListLuckyWheelsPrizes(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo21;
+  msg = (s32)MsgContigoLuckyWheelsPrizes;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -890,7 +890,7 @@ void Contigo_ListLuckyWheelsPrizes(void) {
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo102);
+  Event_SetMessageId((s32)MsgContigoHaveYouTakenAGood);
   // "Have you taken a good look at the Anemos geoglyph?"
   Event_AskYesNoAndShowResponse(14, 0);
   Event_End();
@@ -916,18 +916,18 @@ void Contigo_TalkToWanderer(void) {
   if (work->psynergy == 0) {
     Actor_FaceActorById(14, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo203);
+      Event_SetMessageId((s32)MsgContigoIveSeenALotOf);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
-      Event_SetMessageId((s32)MsgContigo199);
+      Event_SetMessageId((s32)MsgContigoThatCraterBehindTheVillage);
     else
-      Event_SetMessageId((s32)MsgContigo41);
+      Event_SetMessageId((s32)MsgContigoIfYouWantToGet);
   } else {
     if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo205);
+      Event_SetMessageId((s32)MsgContigoWaitTheCityOfAnemos);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
-      Event_SetMessageId((s32)MsgContigo201);
+      Event_SetMessageId((s32)MsgContigoCitiesFlyingUpIntoThe);
     else
-      Event_SetMessageId((s32)MsgContigo49);
+      Event_SetMessageId((s32)MsgContigoTheAnemosGeoglyphsAreThe);
   }
   Event_ShowMessageAndWait(14, 0);
   if (work->psynergy == 0)
@@ -954,14 +954,14 @@ void Contigo_TalkAboutTheShip(void) {
   if (event->psynergy == 0) {
     Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo143);
+      Event_SetMessageId((s32)MsgContigoItWasntWhatIExpected);
     else
-      Event_SetMessageId((s32)MsgContigo42);
+      Event_SetMessageId((s32)MsgContigoOurPeopleHaveLaboredFor);
   } else {
     if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo149);
+      Event_SetMessageId((s32)MsgContigoAllOfThoseLegendsDid);
     else
-      Event_SetMessageId((s32)MsgContigo50);
+      Event_SetMessageId((s32)MsgContigoWeBuiltTheWingsOf);
   }
   Event_ShowMessageAndWait(15, 0);
   if (event->psynergy == 0)
@@ -997,7 +997,8 @@ void Contigo_ClearBushesBySalt(void) {
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
     Actor_SetPosition(66, 280, 664);
-    if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 41) {
+    if (FIELD_CELL(leader->x.fixed) == 17 &&
+        FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -1108,8 +1109,8 @@ void Contigo_ForceFreesDjinni(void) {
   Actor_MoveToAndWait(17, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      object->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(object->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
@@ -1191,7 +1192,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
 
   ObjectTable_Snapshot();
   if (spoken == 0) {
-    s32 message = (s32)MsgContigo10;
+    s32 message = (s32)MsgContigoStepRightUpAndTry;
 
     Event_SetMessageId(message);
     Event_ShowMessageAndWait(18, 0);
@@ -1217,29 +1218,29 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
     }
     if (room <= 6 && Event_AskYesNoWithActorAnimation(
                          gMainRoutineWork.leaderActorId, 0) == 1) {
-      Event_SetMessageId((s32)MsgContigo12);
+      Event_SetMessageId((s32)MsgContigoThenGetRidOfSome);
       // "Then get rid of some items and come again."
       Event_ShowMessageAndWait(18, 0);
       return;
     }
   } else {
     if (tickets == 0) {
-      Event_SetMessageId((s32)MsgContigo18);
+      Event_SetMessageId((s32)MsgContigoTooBadComeBackAfter);
       // "Too bad... Come back after you get some tickets."
       Event_ShowMessageAndWait(18, 0);
       return;
     }
-    Event_SetMessageId((s32)MsgContigo19);
+    Event_SetMessageId((s32)MsgContigoTooBadWouldYouLike);
     // "Too bad... Would you like to use your tickets to keep playing?"
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-      Event_SetMessageId((s32)MsgContigo17);
+      Event_SetMessageId((s32)MsgContigoComeAgain);
       // "Come again!"
       Event_ShowMessageAndWait(18, 0);
       return;
     }
   }
-  Event_SetMessageId((s32)MsgContigo13);
+  Event_SetMessageId((s32)MsgContigoStepRightUpAndEnjoy);
   // "Step right up and enjoy yourself."
   Event_ShowMessageAndWait(18, 0);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -1282,12 +1283,12 @@ void Contigo_SendToLuckyDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
-    Event_SetMessageId((s32)MsgContigo03);
+    Event_SetMessageId((s32)MsgContigoHeyYaDontHaveEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
     FieldMessage_ShowAtActor(14, 0);
     return;
   }
-  Event_SetMessageId((s32)MsgContigo01);
+  Event_SetMessageId((s32)MsgContigoHeyBuddyWannaTryYer);
   MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
   // Then take the dice." No: "No? Oh, well. Who's next?"
@@ -1321,12 +1322,12 @@ void Contigo_SendToSuperLuckyDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
-    Event_SetMessageId((s32)MsgContigo34);
+    Event_SetMessageId((s32)MsgContigoSorryPalButYouveGotta);
     // "Sorry, pal, but you've gotta have more coins to play."
     FieldMessage_ShowAtActor(14, 0);
     return;
   }
-  Event_SetMessageId((s32)MsgContigo23);
+  Event_SetMessageId((s32)MsgContigoWelcomeWelcomeStepRightUp);
   // "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
   // Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!"
   FieldMessage_ShowAtActor(8, 0);
@@ -2327,21 +2328,21 @@ void Contigo_InitializeRoom2(void) {
 // The lines the prize counter speaks: the Spanish text numbers them
 // differently.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-#define MSG_COINS_WON ((s32)MsgContigo03 + 1)
-#define MSG_COINS_LOST ((s32)MsgContigo03 + 2)
-#define MSG_READ_SIGN ((s32)MsgContigo04)
-#define MSG_CONGRATULATIONS ((s32)MsgContigo05)
-#define MSG_FIRST_PRIZE ((s32)MsgContigo11)
-#define MSG_NEXT_PRIZE ((s32)MsgContigo14)
-#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#define MSG_COINS_WON ((s32)MsgContigoHeyYaDontHaveEnough + 1)
+#define MSG_COINS_LOST ((s32)MsgContigoHeyYaDontHaveEnough + 2)
+#define MSG_READ_SIGN ((s32)MsgContigoYaWonCoinTalkAbout)
+#define MSG_CONGRATULATIONS ((s32)MsgContigoYaLostCoinBetterLuck)
+#define MSG_FIRST_PRIZE ((s32)MsgContigoTheRulesAreListedOn)
+#define MSG_NEXT_PRIZE ((s32)MsgContigoCongratulations)
+#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
 #else
-#define MSG_COINS_WON ((s32)MsgContigo04)
-#define MSG_COINS_LOST ((s32)MsgContigo05)
-#define MSG_READ_SIGN ((s32)MsgContigo11)
-#define MSG_CONGRATULATIONS ((s32)MsgContigo14)
-#define MSG_FIRST_PRIZE ((s32)MsgContigo15)
-#define MSG_NEXT_PRIZE ((s32)MsgContigo16)
-#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#define MSG_COINS_WON ((s32)MsgContigoYaWonCoinTalkAbout)
+#define MSG_COINS_LOST ((s32)MsgContigoYaLostCoinBetterLuck)
+#define MSG_READ_SIGN ((s32)MsgContigoTheRulesAreListedOn)
+#define MSG_CONGRATULATIONS ((s32)MsgContigoCongratulations)
+#define MSG_FIRST_PRIZE ((s32)MsgContigoYouWonHereYouGo)
+#define MSG_NEXT_PRIZE ((s32)MsgContigoAndYouWonHereYou)
+#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
 #endif
 
 struct ContigoPrizes {
@@ -3057,39 +3058,39 @@ struct Trigger gContigo_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, 0x9e7, EVENT(Contigo_ForceFreesDjinni)},
     {TRIGGER_TALK, 17, IF_FLAG_SET(0x9e7), EVENT(Contigo_FreedDjinniJoinsParty)},
     {TRIGGER_TALK, 8, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
-    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigo119)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo138)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigo123)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo144)},
-    {TRIGGER_TALK, 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo36)},
-    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigo120)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo139)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigo124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo145)},
-    {TRIGGER_TALK, 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo37)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo121)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo140)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo125)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo146)},
-    {TRIGGER_TALK, 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo38)},
-    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigo122)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo141)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigo126)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo147)},
-    {TRIGGER_TALK, 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo39)},
-    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigo198)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo202)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo47)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigo200)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo204)},
-    {TRIGGER_TALK, 13, 0x9b2, MSGNO(MsgContigo40)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo142)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo148)},
+    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigoAreYouLookingForHe)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
+    {TRIGGER_TALK, 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheBeaconWithinJupiterLighthouse)},
+    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigoEveryonesLeftTownForThe)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoEveryonesBeenGoingOnAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoSurelySomeoneWillComeSoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigoThePropheciesAreAllComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoSomePeopleWereTalkingAbout)},
+    {TRIGGER_TALK, 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIGuessThePeopleOf)},
+    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigoIsThatYourBoatIt)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoItMustBeSoExciting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePowerOfTheWind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigoItsJustLikeTheLegends)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoICouldntFlyInThe)},
+    {TRIGGER_TALK, 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePeopleOfAnemosPossessed)},
+    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigoJupiterLighthouseHasBeenLit)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWasTellingUsThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThereWereTwoSiblingsBorn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigoWhatDoesItMeanWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoIHeardThatTheWorld)},
+    {TRIGGER_TALK, 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoWhenThePowerOfAnemos)},
+    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigoTheLegendsTellUsThat)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIfAShipCanRise)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIThinkJupiterLighthouseWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigoTheAncientCityOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoTheCityOfTheAnemos)},
+    {TRIGGER_TALK, 13, 0x9b2, MSGNO(MsgContigoTheAnemosGeoglyphsShowA)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoISawTheShipFly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigoItsHardToBelieveBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoTheShipLookedLikeIt)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
@@ -3108,36 +3109,36 @@ struct Trigger gContigo_Room4Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterLuckyWheels)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSuperLuckyDice)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo90)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo96)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo91)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo97)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo92)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo188)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo98)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo189)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo93)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo99)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo94)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo100)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo95)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo101)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIveBeenReallyBusyLately)},
+    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigoTheWingsWillBeFinished)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoICantBelieveThatA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigoWhatDoWeDoIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThatFlyingShipLookedSo)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoWhichPartGoesWhereDoes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoThereAreTooManyParts)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoYouveGottaWatchOutCause)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIStartGettingIrritated)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoJustAFewMoreTouches)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoHowLongHaveWeBeen)},
     {TRIGGER_TALK, 14, 0x9b2, EVENT(Contigo_AskAboutGeoglyph)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigo190)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigo106)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo194)},
-    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigo103)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo191)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigo107)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo195)},
-    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigo104)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigo192)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigo108)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigo196)},
-    {TRIGGER_TALK, 17, 0x9b2, MSGNO(MsgContigo105)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigo193)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo109)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo197)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigoICantEvenImagineHow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
+    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigoThatSignHasATranslation)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigoIDontKnowIfAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
+    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigoIWantToGetA)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
+    {TRIGGER_TALK, 17, 0x9b2, MSGNO(MsgContigoTheMerchantHammetTookThe)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoWasSupposedToBeA)},
     {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealSteps)},
@@ -3153,98 +3154,98 @@ struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
-    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigo51)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo150)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigo54)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo153)},
-    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigo52)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo151)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigo55)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo154)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo53)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo152)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo56)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo155)},
-    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigo57)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo156)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigo59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo158)},
-    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigo58)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo157)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigo60)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo159)},
+    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWillStayWithUs)},
+    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigoImSureTheYoungerBrother)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoDoesntRememberHisMotherBecause)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigoSMotherLeftHimIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIWonderHowFeelsNow)},
+    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigoMyFatherDoesntApproveOf)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoFromTheLookOnS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigoIWishICouldHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoSomedayImGonnaFightAnd)},
+    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigoLongAgoThePeopleOf)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoBrrrBrrrItsBeenReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigoForALongTimeNow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoJupiterLighthouseHasBeenCalled)},
+    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigoALongTimeAgoThe)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoWinterJustEndedButIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigoEverybodyThinksThePeopleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoHammaSaysThatIfFails)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo75)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo177)},
-    {TRIGGER_TALK, 14, 0x9b2, MSGNO(MsgContigo61)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigo160)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigo66)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo165)},
-    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigo62)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo161)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigo67)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo166)},
-    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigo63)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigo162)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigo68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigo167)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigoOhHowIWantTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatTheWingsAreDone)},
+    {TRIGGER_TALK, 14, 0x9b2, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigoIJustKnowBecameBig)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoHasThePowerOfProphecy)},
+    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigoThePowerOfTheAnemos)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoItsUpToThePeople)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigoATerribleMisfortuneFellOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatIThinkAbout)},
+    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigoIDontHaveAnyPowers)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoMomAndDadHaveBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigoWheneverMySisterFurrowsHer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoItsTimeToFixThose)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_BabyThinks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo69)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo168)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigoBawabaItsHotIWant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoGooItsGettingColderGagoo)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x9b2, MSGNO(MsgContigo71)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo173)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x9b2, MSGNO(MsgContigoOfCourseTheyreHereTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoIdSureLikeToSee)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x9b2, MSGNO(MsgContigo73)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigo175)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x9b2, MSGNO(MsgContigoNothingElseAroundHereIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigoWellIfThereArentGoing)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_TalkToInnkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo115)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x9b2, MSGNO(MsgContigo132)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigo182)},
-    {TRIGGER_TALK, 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo77)},
-    {TRIGGER_TALK, 21, 0x9b2, MSGNO(MsgContigo129)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgContigo179)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo116)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x9b2, MSGNO(MsgContigo133)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgContigo183)},
-    {TRIGGER_TALK, 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo78)},
-    {TRIGGER_TALK, 22, 0x9b2, MSGNO(MsgContigo130)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgContigo180)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo117)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x9b2, MSGNO(MsgContigo134)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgContigo184)},
-    {TRIGGER_TALK, 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo79)},
-    {TRIGGER_TALK, 23, 0x9b2, MSGNO(MsgContigo131)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgContigo181)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo118)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x9b2, MSGNO(MsgContigo135)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgContigo185)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgContigo80)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgContigo82)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgContigo81)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgContigo83)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgContigo84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigo86)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigo85)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigo87)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoItsGoodToHaveThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x9b2, MSGNO(MsgContigoOnceAllOurCustomersLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigoItsGoingToBeA)},
+    {TRIGGER_TALK, 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoAllTheWorkOnThe)},
+    {TRIGGER_TALK, 21, 0x9b2, MSGNO(MsgContigoFirstTheLighthouseIsLit)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnHasBecomeSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoOnceTheWingsAreFinished)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x9b2, MSGNO(MsgContigoICantBelieveItAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnIsBoundTo)},
+    {TRIGGER_TALK, 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoGottaMakeAllTheBeds)},
+    {TRIGGER_TALK, 22, 0x9b2, MSGNO(MsgContigoTheBossSaidItWas)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgContigoGoshWeWereSoBusy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIveGotSoMuchTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x9b2, MSGNO(MsgContigoAllTheseYearsIThought)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgContigoWhatAreWeGoingTo)},
+    {TRIGGER_TALK, 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfIDontMakeDinner)},
+    {TRIGGER_TALK, 23, 0x9b2, MSGNO(MsgContigoTheyveFinishedPuttingTheWings)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgContigoNowsMyChanceToExperiment)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIMustBeTheGreatest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x9b2, MSGNO(MsgContigoItWasKindOfImpressive)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgContigoSeeingThatShipTakeFlight)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgContigoDidYouJustArriveIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgContigoIWorkedMyselfHalfTo)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgContigoThePropheciesOfTheAnemos)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsOfAnemosAre)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgContigoImAfraidImTooOld)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigoIThrewMyBackOut)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIsThatMiracleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigoIWantToSeeThe)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Contigo_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo89)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0x9b2, MSGNO(MsgContigo137)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigo187)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo206))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo207))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo208))},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfISeeTheWings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0x9b2, MSGNO(MsgContigoPerhapsIfISeeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigoItWasAShockTo)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gContigo_Room2ReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo170)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo171)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
     {TRIGGER_STEP, 20, 0x9d1, EVENT(Contigo_ReturnToNewHome)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo206))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo207))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo208))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
@@ -3253,24 +3254,24 @@ struct Trigger gContigo_Room3Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo29)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo31)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo27)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo32)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThisKidsGotUnluckyWritten)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouLoseTheHi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoItsToughToKnowWhen)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIAlmostAlwaysGetAt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoICanWinICan)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo08)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoHmmIWonderIfThese)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},

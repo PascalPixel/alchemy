@@ -279,7 +279,7 @@ void ChampaCliffCaves_TalkToBriggs(s32 actor) {
   // "Aw, come on! I'm not doing anything! Leave me alone!"
   Event_ShowMessageAndWait(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_NORTH_NORTHEAST);
-  Actor_SetMovementType(Actor_GetById(actor), 8);
+  Actor_SetMovementType(Actor_GetById(actor), MOVEMENT_TYPE_SQUASH);
 }
 
 void ChampaCliffCaves_OpenWall(void) {
@@ -295,8 +295,8 @@ void ChampaCliffCaves_CloseWall(void) {
   MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  x = object->x.fixed >> 20;
-  z = object->z.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed);
   if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER && x == 41 &&
       (u32)(z - 13) <= 4)
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 664, 280);
@@ -714,7 +714,7 @@ void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   /* FAKEMATCH(dead): each owner stored and never read. */
   s32 owner;
 
-  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 20) <= 41)
+  if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed) <= 41)
     goto first;
   gFieldWork->fieldMenu = 1;
   return;

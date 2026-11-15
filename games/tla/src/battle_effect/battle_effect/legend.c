@@ -14,7 +14,7 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-/// Legend (effect kind 122): a fan of eight blades opens over the target for
+/// Legend: a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
 /// it. Then one sword for each step of the variant (variant + 1 in all, 16
 /// frames apart) falls on the target from above the user's side: it strikes
@@ -266,24 +266,24 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Bramble Card (kind 88).
+/// Abilities: Bramble Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
 
-/// Abilities: Frost Card (kind 87).
+/// Abilities: Frost Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, BattleEffect_RunElementCards, 1)
 
-/// Abilities: Flame Card (kind 79).
+/// Abilities: Flame Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, BattleEffect_RunElementCards, 2)
 
-/// Abilities: Thunder Card (kind 89).
+/// Abilities: Thunder Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, BattleEffect_RunElementCards, 3)
 
 // The four cards, as the wrappers pass them.
 enum {
-  CARD_BRAMBLE, // Bramble Card, kind 88: vines grow from the card.
-  CARD_FROST,   // Frost Card, kind 87: the card throws crystal shards.
-  CARD_FLAME,   // Flame Card, kind 79: the card throws smoke and flashes.
-  CARD_THUNDER, // Thunder Card, kind 89: bolts strike from the card.
+  CARD_BRAMBLE, // Bramble Card: vines grow from the card.
+  CARD_FROST,   // Frost Card: the card throws crystal shards.
+  CARD_FLAME,   // Flame Card: the card throws smoke and flashes.
+  CARD_THUNDER, // Thunder Card: bolts strike from the card.
 };
 
 /// How each card's sparks move: the kernel's gravity and damping, and how
@@ -692,16 +692,16 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Sleep Card (kind 92).
+/// Abilities: Sleep Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)
 
-/// Abilities: Baffle Card (kind 90).
+/// Abilities: Baffle Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, BattleEffect_RunCards, 1)
 
-/// Abilities: Death Card (kind 93).
+/// Abilities: Death Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
 
-/// Abilities: Sword Card (kind 91).
+/// Abilities: Sword Card.
 DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
 #undef BLITTER
 #undef SPARKS

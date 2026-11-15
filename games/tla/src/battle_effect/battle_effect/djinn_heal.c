@@ -230,7 +230,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 /// while the screen shakes and rings of dust spread. Holding A or B draws
 /// only every other frame.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
-  u8 *battle;
+  struct BattleWork *battle;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -257,7 +257,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
   none = 0;
   ringPixels = gData_02014000; // the rings' texture, for the whole function
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
@@ -375,7 +375,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
     // The backdrop darkens toward the battle's palette.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
-      u16 *from = Resource_GetTableEntry(*(u16 *)(battle + 0x670));
+      u16 *from = Resource_GetTableEntry(battle->background);
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {

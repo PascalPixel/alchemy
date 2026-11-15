@@ -569,7 +569,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Purgatory (kind 114).
+/// Abilities: Purgatory.
 /* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -577,10 +577,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
  * member named `size'. */
 DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
 
-/// Abilities: Djinn Blast (kind 461).
+/// Abilities: Djinn Blast.
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
 
-/// Abilities: Djinn Storm (kind 462).
+/// Abilities: Djinn Storm.
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
 #define GEYSER_FRAMES 54
@@ -603,10 +603,10 @@ static inline void CopyPalette(const void *palette) {
 /// A geyser between the targets. A textured column, its texture scrolling
 /// upward, stands on the floor at the targets' midpoint, and drops burst
 /// from its foot, fall back under gravity and bounce once on the floor.
-/// Mode 0 (kind 114): the cross texture in orange; the column rises and
-/// falls on a sine and 200 drops burst at once. Mode 1 (kind 462): the
+/// Mode 0: the cross texture in orange; the column rises and
+/// falls on a sine and 200 drops burst at once. Mode 1: the
 /// column keeps widening and fades from frame 32, with 200 drops and 16 more
-/// each frame to frame 23. Mode 2 (kind 461): a thin column with 100 drops
+/// each frame to frame 23. Mode 2: a thin column with 100 drops
 /// and 2 more each frame. In modes 1 and 2 the palette also steps through
 /// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
 /// back and the result phase starts.
@@ -811,10 +811,10 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Djinn Stun (kind 465).
+/// Abilities: Djinn Stun.
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 
-/// Abilities: Mystic Call (kind 466).
+/// Abilities: Mystic Call.
 DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
 #define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
@@ -1114,7 +1114,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Coatlicue, the serpent goddess's summon.
+// Coatlicue's summon.
 
 struct MeshTriangle;
 struct MeshVertex;
@@ -1201,8 +1201,11 @@ struct SpriteView {
     }                                                                          \
   } while (0)
 
-/// Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
-/// a spiral of stone, her coils sweep the field and her light heals the party.
+/// Coatlicue: under water among rising bubbles a ring of light spins and
+/// crosses a second; they settle into a ripple and burst in a froth of
+/// bubbles, Coatlicue rises among them, and a wash of light heals the party.
+///
+/// Abilities: Coatlicue.
 void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;

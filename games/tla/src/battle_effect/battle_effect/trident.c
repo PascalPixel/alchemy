@@ -422,11 +422,11 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Planet Diver (kind 60).
+/// Abilities: Planet Diver.
 DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, BattleEffect_RunLeapingStrike,
                    0)
 
-/// Abilities: Planetary (kind 128).
+/// Abilities: Planetary.
 DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
 
 #define LEAP_FRAMES 88
@@ -784,8 +784,6 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
-
-// The triangles of a grid mesh.
 
 /// Fills a grid of columns by rows vertices with two triangles a cell, each
 /// cell cellWidth by cellHeight texels of the texture, and ends the list with

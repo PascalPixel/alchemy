@@ -5,41 +5,41 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
-/// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
+/// Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge
+///; Kindle; kind 46 is used by no ability.
 DEFINE_EFFECT_KIND(BattleEffect_RunImpact, BattleEffect_RunStatBoost, 0)
 
-/// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
+/// Abilities: Guard, Protect, Guardian, Protector; Corona.
 DEFINE_EFFECT_KIND(BattleEffect_RunGuard, BattleEffect_RunStatBoost, 1)
 
-/// Abilities: Iron (kind 220).
+/// Abilities: Iron.
 DEFINE_EFFECT_KIND(BattleEffect_RunIron, BattleEffect_RunStatBoost, 6)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunStatBoostMode7, BattleEffect_RunStatBoost, 7)
 
-/// Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
+/// Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze (kind
 /// 215).
 DEFINE_EFFECT_KIND(BattleEffect_RunWard, BattleEffect_RunStatBoost, 2)
 
-/// Abilities: Steam (kind 221).
+/// Abilities: Steam.
 DEFINE_EFFECT_KIND(BattleEffect_RunSteam, BattleEffect_RunStatBoost, 11)
 
-/// Abilities: Granite (kind 200).
+/// Abilities: Granite.
 DEFINE_EFFECT_KIND(BattleEffect_RunGranite, BattleEffect_RunStatBoost, 3)
 
-/// Abilities: Flash (kind 213).
+/// Abilities: Flash.
 DEFINE_EFFECT_KIND(BattleEffect_RunFlash, BattleEffect_RunStatBoost, 5)
 
-/// Abilities: Shade (kind 222).
+/// Abilities: Shade.
 DEFINE_EFFECT_KIND(BattleEffect_RunShade, BattleEffect_RunStatBoost, 8)
 
-/// Abilities: Guard Aura (kind 460).
+/// Abilities: Guard Aura.
 DEFINE_EFFECT_KIND(BattleEffect_RunGuardAura, BattleEffect_RunStatBoost, 12)
 
-/// Abilities: Zephyr (kind 216).
+/// Abilities: Zephyr.
 DEFINE_EFFECT_KIND(BattleEffect_RunZephyr, BattleEffect_RunStatBoost, 4)
 
-/// Abilities: Coal (kind 224).
+/// Abilities: Coal.
 DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering

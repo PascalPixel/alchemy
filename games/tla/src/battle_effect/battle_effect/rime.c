@@ -209,54 +209,54 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Gasp (kind 242).
+/// Abilities: Gasp.
 DEFINE_EFFECT_KIND(BattleEffect_RunGasp, BattleEffect_RunGaspFamily, 0)
 
-/// Abilities: Reflux (kind 248).
+/// Abilities: Reflux.
 DEFINE_EFFECT_KIND(BattleEffect_RunReflux, BattleEffect_RunGaspFamily, 2)
 
-/// Abilities: Djinn Counter (kind 249).
+/// Abilities: Djinn Counter.
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnCounter, BattleEffect_RunGaspFamily, 3)
 
-/// Abilities: Counter-rush (kind 396).
+/// Abilities: Counter-rush.
 DEFINE_EFFECT_KIND(BattleEffect_RunCounterRush, BattleEffect_RunGaspFamily, 7)
 
-/// Abilities: Mold (kind 250).
+/// Abilities: Mold.
 DEFINE_EFFECT_KIND(BattleEffect_RunMold, BattleEffect_RunGaspFamily, 4)
 
-/// Abilities: Meld (kind 251).
+/// Abilities: Meld.
 DEFINE_EFFECT_KIND(BattleEffect_RunMeld, BattleEffect_RunGaspFamily, 4)
 
-/// Abilities: Shine (kind 252).
+/// Abilities: Shine.
 DEFINE_EFFECT_KIND(BattleEffect_RunShine, BattleEffect_RunGaspFamily, 5)
 
-/// Abilities: Lull (kind 241).
+/// Abilities: Lull.
 DEFINE_EFFECT_KIND(BattleEffect_RunLull, BattleEffect_RunGaspFamily, 6)
 
-/// Abilities: Demon Eye (kind 445).
+/// Abilities: Demon Eye.
 DEFINE_EFFECT_KIND(BattleEffect_RunDemonEye, BattleEffect_RunGaspFamily, 8)
 
-/// Abilities: Emu, Call Demon, Claw Slash, Mega Slash, Vital Moon (kind 446).
+/// Abilities: Emu, Call Demon, Claw Slash, Mega Slash, Vital Moon.
 DEFINE_EFFECT_KIND(BattleEffect_RunEmu, BattleEffect_RunGaspFamily, 9)
 
-/// Abilities: Call Dullahan, Formina Sage (kind 448).
+/// Abilities: Call Dullahan, Formina Sage.
 void BattleEffect_RunCallDullahan(struct BattleEffectParams *args) {
   BattleEffect_RunGaspFamily(args, 10);
 }
 
-/// Abilities: Beat Dance (kind 455).
+/// Abilities: Beat Dance.
 DEFINE_EFFECT_KIND(BattleEffect_RunBeatDance, BattleEffect_RunGaspFamily, 11)
 
-/// Abilities: Clarion Cry (kind 467).
+/// Abilities: Clarion Cry.
 DEFINE_EFFECT_KIND(BattleEffect_RunClarionCry, BattleEffect_RunGaspFamily, 14)
 
-/// Abilities: Element Swap (kind 464).
+/// Abilities: Element Swap.
 DEFINE_EFFECT_KIND(BattleEffect_RunElementSwap, BattleEffect_RunGaspFamily, 12)
 
-/// Abilities: Psy Boost (kind 468).
+/// Abilities: Psy Boost.
 DEFINE_EFFECT_KIND(BattleEffect_RunPsyBoost, BattleEffect_RunGaspFamily, 15)
 
-/// Abilities: Cage (kind 435).
+/// Abilities: Cage.
 DEFINE_EFFECT_KIND(BattleEffect_RunCage, BattleEffect_RunGaspFamily, 13)
 #undef BLITTER
 #undef DJINNI_OFFSET

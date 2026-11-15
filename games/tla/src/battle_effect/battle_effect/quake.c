@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Battle effect kind 1, the quake: rock pillars rise under the targets.
-
 #define PILLAR_W 40        ///< pixels
 #define ROCK_OFFSET 0x1e00 ///< the rock picture in the sheet, after the band
 

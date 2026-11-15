@@ -318,10 +318,10 @@ void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height) {
   }
 }
 
-/// Abilities: Dreamtide (kind 106).
+/// Abilities: Dreamtide.
 DEFINE_EFFECT_KIND(BattleEffect_RunDreamtide, BattleEffect_RunWaterSheet, 0)
 
-/// Abilities: Watery Grave (kind 391).
+/// Abilities: Watery Grave.
 DEFINE_EFFECT_KIND(BattleEffect_RunWateryGrave, BattleEffect_RunWaterSheet, 1)
 
 struct StripQuad;
@@ -712,10 +712,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Waft (kind 234).
+/// Abilities: Waft.
 DEFINE_EFFECT_KIND(BattleEffect_RunWaft, BattleEffect_RunWindFunnel, 0)
 
-/// Abilities: Aroma (kind 247).
+/// Abilities: Aroma.
 DEFINE_EFFECT_KIND(BattleEffect_RunAroma, BattleEffect_RunWindFunnel, 1)
 
 #define WAFT_SEGMENTS 33

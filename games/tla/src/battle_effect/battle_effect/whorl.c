@@ -553,10 +553,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Core (kind 236).
+/// Abilities: Core.
 DEFINE_EFFECT_KIND(BattleEffect_RunCore, BattleEffect_RunDjinniCharge, 0)
 
-/// Abilities: Cannon (kind 246).
+/// Abilities: Cannon.
 DEFINE_EFFECT_KIND(BattleEffect_RunCannon, BattleEffect_RunDjinniCharge, 1)
 #undef BLITTER
 #undef MAP_CELLS

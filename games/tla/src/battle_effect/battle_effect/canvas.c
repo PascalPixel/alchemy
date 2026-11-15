@@ -15,17 +15,13 @@
 
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
 
-// Forwarded so that a constant size reaches the call's register at each call.
-
-/// Eclipse: the battlefield scrolls up, thirty-two objects (31 with
-/// Summon_GoldenDragonTiles, 1 with Summon_GoldenDragonHeadTiles) rise over
-/// the foes, a ring flares and collapses, then a beam strikes and a sphere
-/// bursts.
+/// Eclipse: after a flash the golden dragon (thirty-two sprites, its head one
+/// of them) looms over a blue sky while shafts of light fall about it; it
+/// breathes a blast of light that whites out the field, and the blast lands
+/// on the land far below and spreads in rings before a last white flash.
 ///
 /// Abilities: Eclipse.
 void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
-  // XXX: what the player sees in each stage; a render of the summon would
-  // settle it.
   u8 *canvas;
   struct BattleEffectWork *work;
   // Unused: blit[1] gives the stack frame its 4 bytes.
@@ -34,7 +30,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 savedScroll;
   s32 *transition;
   u8 *sprites;
-  u8 *battle;
+  struct BattleWork *battle;
   s32 i;
   s32 j;
   s32 k;
@@ -67,11 +63,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  // The battle flashes away; at frame 27 the sky and the dragon's sprites load.
   scroll = -80;
   for (frame = 0; frame != 52; frame++) {
     if (frame == 27) {
@@ -79,7 +76,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
       list[0] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
-      VramCache_FreeEntry(*(s32 *)(battle + 84));
+      VramCache_FreeEntry(battle->arrowTiles);
       VramBlock_Reset93Far();
       gCameraSceneParameters[4] = 240;
       BattleBackground_LoadFar(1, (s32)&ResourceId_EarthHorizonBackdrop, 0);
@@ -131,6 +128,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   {
     const u8 *texturePixels = (const u8 *)FLASHES;
 
+    // The dragon looms over the horizon while shafts of light fall about it,
+    // then breathes its blast; A or B cuts it short.
     for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B));
          frame++) {
       if (frame == 0) {
@@ -394,7 +393,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   VramBlock_Load93Far();
-  *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
+  battle->arrowTiles = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->args);
   for (i = 0; i != args->targetCount; i++) {
     BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP,
@@ -405,7 +404,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = 32;
-  BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  BattleBackground_LoadFar(1, battle->background, 24);
   // Two empty once-only blocks before the fills: without them, 18 differ.
   do {
   } while (0);
@@ -437,6 +436,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       work->sheet[j * 120 + i] = v;
     }
   }
+  // The blast whites out the battlefield.
   fade = 0;
   for (frame = 0; frame != 48; frame++) {
     if (frame > 39) {
@@ -510,6 +510,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     }
     EFFECT_END_FRAME(work);
   }
+  // The blast lands on the land far below and spreads in rings of light.
   count = -1;
   transition[4] = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
@@ -715,7 +716,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gCameraSceneParameters[4] = 120;
-  BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  BattleBackground_LoadFar(1, battle->background, 24);
   wait(1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();
@@ -727,7 +728,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
+/// Unused: two empty functions after Eclipse; nothing calls them.
 void BattleEffect_ReservedNoOpA(void) {}
 
 /// Does nothing; nothing calls it.
@@ -1254,16 +1255,16 @@ void Display_ApplyBg2Reference(void) {
 void Palette_StepFadeTransfer(void) {
   u8 *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
-  u8 *battle;
+  struct BattleWork *battle;
 
   framesLeft = (s32 *)(work + 0x77b4);
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
 
   if (*framesLeft > 0) {
     s32 *step = (s32 *)(work + 0x77b8);
 
     (*step)++;
-    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+    ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                          0x10000 - *step * 1092, 128);
     (*framesLeft)--;
   }

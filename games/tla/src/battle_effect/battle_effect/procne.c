@@ -526,15 +526,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   }
 }
 
-/// Abilities: Dragon Driver (kind 385).
+/// Abilities: Dragon Driver.
 DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, BattleEffect_RunDragonFire, 1)
 
-/// Abilities: Tiamat (scene kind 7).
+/// Abilities: Tiamat.
 DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 
 #undef FORMATION_RESOURCE
-
-// The rising grains live in the map buffer.
 
 #define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647

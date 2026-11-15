@@ -5,10 +5,10 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
+/// Abilities: Smoke Bomb, Sleep Bomb.
 DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
 
-/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
+/// Abilities: Blast, Mad Blast, Fiery Blast.
 DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
 
 #define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet

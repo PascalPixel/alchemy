@@ -209,9 +209,11 @@ struct StripQuad;
 
 extern const struct Scale gUlysses_ShipScale;
 
-/// Ulysses: the hero's ship sails out of a whirlpool, its crew of six
-/// warriors leap at the foe and the ship's broadside lands as a storm of
-/// explosions.
+/// Ulysses: the field goes dark, a ring of red runes opens and the robed
+/// Ulysses steps out of it, violet and then red fire pours from it over the
+/// foes, and it flares and fades.
+///
+/// Abilities: Ulysses.
 void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   u8 *canvas;
   s32 *transition;
@@ -235,7 +237,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct ModelTexture quadTexture;
   struct Scale req;
-  u8 *battle;
+  struct BattleWork *battle;
   s32 mask;
 
   canvas = Ram_HeapSlots->battleCanvas;
@@ -821,7 +823,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   gCameraSceneParameters[4] = 120;
   Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
-  BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
+  BattleBackground_LoadFar(2, battle->background, -1);
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
@@ -831,7 +833,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   wait(1);
   for (frame = 0; frame != 40; frame++) {
-    u16 *src = (u16 *)(battle + 0x56c);
+    u16 *src = battle->palette;
     volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++, src++, dst++) {
@@ -877,12 +879,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   }
 }
 
-/// Abilities: Poison Beat (kind 382).
+/// Abilities: Poison Beat.
 void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args) {
   BattleEffect_RunSwirlSwipe(args, 0);
 }
 
-/// Abilities: Spinning Beat (kind 383).
+/// Abilities: Spinning Beat.
 void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
   BattleEffect_RunSwirlSwipe(args, 1);
 }

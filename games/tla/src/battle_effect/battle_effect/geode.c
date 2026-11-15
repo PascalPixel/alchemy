@@ -29,7 +29,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   s32 row;
   s32 curl;
   s32 pitch;
-  u8 *battle;
+  struct BattleWork *battle;
   u8 *picture;
   void *caster;
   s32 screenB[3];
@@ -76,7 +76,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   vertices = (struct ModelVertex *)(work->sheet + 0x800);
   mesh = work->sheet + 0xc00;
   pitch = 0;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   caster = BattleObject_GetFar(args->user)->object;
   gBgScroll[1].x = -56;
   // The battlefield's picture, later the dome's texture.
@@ -112,7 +112,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
 
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
-      u16 *from = (u16 *)(battle + 0x56c);
+      u16 *from = battle->palette;
       u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
@@ -345,12 +345,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0);
     }
     if (frame == 62) {
-      BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), -1);
+      BattleBackground_LoadFar(1, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
-      *(s32 *)(battle + 0x66c) = (frame << 13) - 0x7c000;
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)(BG_PLTT + 96),
-                           *(s32 *)(battle + 0x66c), 128);
+      battle->brightness = (frame << 13) - 0x7c000;
+      ColorBuffer_ScaleFar(battle->palette, (void *)(BG_PLTT + 96),
+                           battle->brightness, 128);
     }
     if (frame == 48) {
       work->shakeFrames = 16;

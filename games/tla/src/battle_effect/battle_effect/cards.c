@@ -12,10 +12,10 @@
 
 // The four cards, as the wrappers pass them.
 enum {
-  CARD_SLEEP,  // Sleep Card, kind 92: sheep jump from the card.
-  CARD_BAFFLE, // Baffle Card, kind 90: butterflies, and the screen waves.
-  CARD_DEATH,  // Death Card, kind 93: a skeleton reaps the target.
-  CARD_SWORD,  // Sword Card, kind 91: a dagger strikes, and shards fly.
+  CARD_SLEEP,  // Sleep Card: sheep jump from the card.
+  CARD_BAFFLE, // Baffle Card: butterflies, and the screen waves.
+  CARD_DEATH,  // Death Card: a skeleton reaps the target.
+  CARD_SWORD,  // Sword Card: a dagger strikes, and shards fly.
 };
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from

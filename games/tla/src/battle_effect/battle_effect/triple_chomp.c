@@ -17,7 +17,7 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-// Triple Chomp (effect kind 426): the caster lunges 80% of the way to the
+// Triple Chomp: the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
@@ -170,22 +170,22 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
+/// Abilities: Beam, Cycle Beam, Searing Beam.
 DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)
 
-/// Abilities: Rolling Flame (kind 434).
+/// Abilities: Rolling Flame.
 void BattleEffect_RunRollingFlame(struct BattleEffectParams *args) {
   args->variant = 2;
   BattleEffect_RunBreaths(args, 1);
 }
 
-/// Abilities: Ghost Soldier, Pike Assault (kind 449).
+/// Abilities: Ghost Soldier, Pike Assault.
 void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
   args->variant = 2;
   BattleEffect_RunBreaths(args, 2);
 }
 
-/// Abilities: Blast Breath (kind 414).
+/// Abilities: Blast Breath.
 DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
 #undef BLITTER
 #undef SPARKS

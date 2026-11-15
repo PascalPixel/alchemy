@@ -8,8 +8,6 @@
 struct MeshTriangle;
 struct StripQuad;
 
-// BattleEffect_RunDjinniEntrance
-
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 /// the target. For Core it pulls back, then drives in and strikes four times
 /// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
@@ -387,9 +385,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Rime (kind 240).
+/// Abilities: Rime.
 DEFINE_EFFECT_KIND(BattleEffect_RunRime, BattleEffect_RunDjinniSign, 0)
 
-/// Abilities: Haze (kind 238).
+/// Abilities: Haze.
 DEFINE_EFFECT_KIND(BattleEffect_RunHaze, BattleEffect_RunDjinniSign, 1)
 #undef BLITTER

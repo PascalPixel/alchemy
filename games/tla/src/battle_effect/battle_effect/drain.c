@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Break's ice shards (effect kind 43).
+// Break's ice shards.
 
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)

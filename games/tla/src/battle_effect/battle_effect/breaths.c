@@ -12,10 +12,10 @@
 
 // The four breaths, as the wrappers pass them.
 enum {
-  BREATH_BEAM,          // Beam, kind 73: a beam of fading rings.
-  BREATH_ROLLING_FLAME, // Rolling Flame, kind 434: a ball rolls to the target.
-  BREATH_PIKE,          // Ghost Soldier and Pike Assault, kind 449.
-  BREATH_BLAST,         // Blast Breath, kind 414: a blast and a jet.
+  BREATH_BEAM,          // Beam: a beam of fading rings.
+  BREATH_ROLLING_FLAME, // Rolling Flame: a ball rolls to the target.
+  BREATH_PIKE,          // Ghost Soldier and Pike Assault.
+  BREATH_BLAST,         // Blast Breath: a blast and a jet.
 };
 
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
@@ -460,17 +460,17 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Human Hunt (kind 437).
+/// Abilities: Human Hunt.
 DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, BattleEffect_RunCrescentSlash, 0)
 
-/// Abilities: Echo Cut (kind 390).
+/// Abilities: Echo Cut.
 DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
 
-/// The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
+/// The crescent slash of Human Hunt (mode 0) and Echo Cut (kind 390,
 /// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
 /// in five steps of three frames: the star crescent, a blank frame, the two
 /// halves of the grey crescent and the star crescent's last cell. Echo Cut

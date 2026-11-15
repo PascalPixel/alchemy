@@ -7,27 +7,27 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Abilities: Sonic Wave (kind 300).
+/// Abilities: Sonic Wave.
 void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, 0);
 }
 
-/// Abilities: Shriek, Harpy (kind 301).
+/// Abilities: Shriek, Harpy.
 void BattleEffect_RunShriek(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, 1);
 }
 
-/// Abilities: Banshee Howl (kind 302).
+/// Abilities: Banshee Howl.
 void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, 2);
 }
 
-/// Abilities: War Cry (kind 304).
+/// Abilities: War Cry.
 void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, 4);
 }
 
-/// Abilities: Wicked Howl (kind 305).
+/// Abilities: Wicked Howl.
 void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, 3);
 }
@@ -243,17 +243,17 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Sleep Star (kind 349).
+/// Abilities: Sleep Star.
 void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, 1);
 }
 
-/// Abilities: Soothing Star (kind 344).
+/// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, 0);
 }
 
-/// Abilities: Slaver (kind 395).
+/// Abilities: Slaver.
 void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, 2);
 }
@@ -261,8 +261,8 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
 /// The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
 
-// Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1, kind 349) and
-// Slaver (mode 2, kind 395).
+// Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1) and
+// Slaver (mode 2).
 
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.

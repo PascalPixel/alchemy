@@ -6,11 +6,8 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Battle effects: sparks after approaching the target (type 4).
-
 /// Jumps the user toward the first target and emits type 4 sparks after 29
 /// frames.
-/// effect: effect arguments.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 12.2.
@@ -31,11 +28,8 @@ void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, 2);
 }
 
-// Battle effects: sparks after approaching the target (type 3).
-
 /// Jumps the user toward the first target and emits type 3 sparks after 12
 /// frames.
-/// effect: effect arguments.
 void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.
@@ -45,27 +39,27 @@ void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
 }
 
-/// Abilities: Quick Strike (kind 52).
+/// Abilities: Quick Strike.
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, 1);
 }
 
-/// Abilities: Vorpal Slash (kind 65).
+/// Abilities: Vorpal Slash.
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, 2);
 }
 
-/// Abilities: Lunar Slash (kind 118).
+/// Abilities: Lunar Slash.
 void BattleEffect_RunLunarSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, 3);
 }
 
-/// Abilities: Boost Hack (kind 109).
+/// Abilities: Boost Hack.
 void BattleEffect_RunBoostHack(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, 4);
 }
 
-/// Abilities: Twin Shear (kind 425).
+/// Abilities: Twin Shear.
 void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, 5);
 }

@@ -168,10 +168,10 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
-/// (kind 15).
+///.
 DEFINE_EFFECT_KIND(BattleEffect_RunNova, BattleEffect_RunSparkGroups, 0)
 
-/// Abilities: Dynamite, Angry Mine (kind 338).
+/// Abilities: Dynamite, Angry Mine.
 DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 
 #define FLASH_POINTS 16 ///< flash points kept for each group

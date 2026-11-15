@@ -432,8 +432,6 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 // Wyrd Curse: drops fall on the target and bounce away, feeding a glow that
 // grows over it, then splashes rise and the target is struck six times.
 
-// splashes' mesh
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 
 #define WYRD_FRAMES 120
@@ -1027,10 +1025,10 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   BattleEffect_RunDull(args);
 }
 
-/// Abilities: Earth Force (kind 459).
+/// Abilities: Earth Force.
 DEFINE_EFFECT_KIND(BattleEffect_RunEarthForce, BattleEffect_RunBoltTrail, 1)
 
-/// Abilities: Thunder Mine (kind 86).
+/// Abilities: Thunder Mine.
 DEFINE_EFFECT_KIND(BattleEffect_RunThunderMine, BattleEffect_RunBoltTrail, 0)
 #undef BLITTER
 #undef SLIM_COLUMN_OFFSET

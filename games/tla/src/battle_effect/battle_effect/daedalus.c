@@ -32,8 +32,6 @@ struct BurstTexture {
   void *pixels;
 };
 
-// One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
-
 /// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
@@ -137,8 +135,6 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Tiles: pack each horizontal pair of bytes into one byte.
-
 /// Copies 288 rows of 40 bytes, reducing each horizontal pair to one byte.
 /// The second byte, from the odd column, survives.
 /// stride: source bytes per row; destination uses half as many.
@@ -228,7 +224,8 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
-/// Daedalus: the great machine glides in over the field and fires on the foes,
+/// Daedalus: over a forest the great machine rises into the sky among birds,
+/// turns and fires its rockets, and they fall on the foes in bursts of fire;
 /// then the second scene (BattleEffect_RunDaedalusAlt) plays.
 ///
 /// Abilities: Daedalus.

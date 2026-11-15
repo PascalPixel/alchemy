@@ -8,10 +8,8 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-// Battle effects: particle effect entry points.
-
 /// Each entry passes a particle type (color and count) to
-/// BattleEffect_RunTargetMotes. effect: effect arguments.
+/// BattleEffect_RunTargetMotes.
 void BattleEffect_RunTaint(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     BattleEffect_RunTargetMotes(args, 0);
@@ -731,17 +729,17 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Balm (kind 230).
+/// Abilities: Balm.
 void BattleEffect_RunBalm(struct BattleEffectParams *args) {
   BattleEffect_RunTumblingQuads(args, 0);
 }
 
-/// Abilities: Tinder (kind 231).
+/// Abilities: Tinder.
 void BattleEffect_RunTinder(struct BattleEffectParams *args) {
   BattleEffect_RunTumblingQuads(args, 1);
 }
 
-/// Abilities: Phoenix, Regen Dance (kind 436).
+/// Abilities: Phoenix, Regen Dance.
 void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
   BattleEffect_RunTumblingQuads(args, 2);
 }

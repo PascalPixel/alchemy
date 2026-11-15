@@ -23,7 +23,7 @@ union BattleBackgroundId {
 // address of its pixels.
 
 // A model for the ARM renderer (Render_DrawModelList). A textured model (kind
-// 7) takes a shade; a flat one (kind 3) the address of its colour.
+// 7) takes a shade; a flat one the address of its colour.
 /* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74;
  * render_model.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:

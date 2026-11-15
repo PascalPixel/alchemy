@@ -425,8 +425,6 @@ next:
     goto next;
 }
 
-// One model vertex: signed byte coordinates, padded to a word.
-
 extern const struct ModelVertex gIris_PillarVertices[6];
 
 /// Iris: draws one rising pillar, a textured strip of six vertices whose
@@ -491,8 +489,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 }
 
 struct StripQuad;
-
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 
 #define HALF(p, n) (((s16 *)(p))[n])
 

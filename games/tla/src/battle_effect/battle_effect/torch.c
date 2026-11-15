@@ -16,7 +16,7 @@
 
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
-/// Abilities: Torch (kind 214).
+/// Abilities: Torch.
 ///
 /// Setup: open the canvas, draw the distance map into the sheet and a warm
 /// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
@@ -166,7 +166,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Kite (kind 217).
+/// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
   s32 b[3];
   s32 a[3];

@@ -639,28 +639,28 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Bone Charge (kind 311).
+/// Abilities: Bone Charge.
 void BattleEffect_RunBoneCharge(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, 4);
 }
 
-/// Abilities: Brute Force, Troll (kind 314).
+/// Abilities: Brute Force, Troll.
 void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, 1);
 }
 
-/// Abilities: Onslaught (kind 326).
+/// Abilities: Onslaught.
 DEFINE_EFFECT_KIND(BattleEffect_RunOnslaught, BattleEffect_RunRushingStrike, 2)
 
-/// Abilities: Headbutt (kind 339).
+/// Abilities: Headbutt.
 DEFINE_EFFECT_KIND(BattleEffect_RunHeadbutt, BattleEffect_RunRushingStrike, 3)
 
-/// Abilities: Stun Muscle (kind 433).
+/// Abilities: Stun Muscle.
 void BattleEffect_RunStunMuscle(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, 4);
 }
 
-/// Abilities: Living Armor, Minotaur, Power Crush (kind 457).
+/// Abilities: Living Armor, Minotaur, Power Crush.
 void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, 5);
 }

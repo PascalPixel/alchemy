@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "gamepak/far_call/battle.h"
 
-// Battle effects: repeat an empty effect.
-
 /// Calls the empty BattleEffect_DoNothing cnt times without waiting for frames.
 /// cnt: call count.
 void BattleEffect_CallDoNothing(s32 cnt) {

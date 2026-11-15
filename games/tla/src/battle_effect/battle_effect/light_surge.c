@@ -313,19 +313,19 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Abilities: Whorl (kind 232).
+/// Abilities: Whorl.
 DEFINE_EFFECT_KIND(BattleEffect_RunWhorl, BattleEffect_RunWaterColumn, 0)
 
-/// Abilities: Gale (kind 233).
+/// Abilities: Gale.
 DEFINE_EFFECT_KIND(BattleEffect_RunGale, BattleEffect_RunWaterColumn, 1)
 
-/// Abilities: Lethe Albion (kind 107).
+/// Abilities: Lethe Albion.
 DEFINE_EFFECT_KIND(BattleEffect_RunLetheAlbion, BattleEffect_RunWaterColumn, 2)
 
-/// Abilities: Poison Flow (kind 81).
+/// Abilities: Poison Flow.
 DEFINE_EFFECT_KIND(BattleEffect_RunPoisonFlow, BattleEffect_RunWaterColumn, 3)
 
-/// Abilities: Raging Flood (kind 392).
+/// Abilities: Raging Flood.
 DEFINE_EFFECT_KIND(BattleEffect_RunRagingFlood, BattleEffect_RunWaterColumn, 4)
 #undef BLITTER
 #undef LIGHT_SURGE_FRAMES

@@ -136,8 +136,10 @@ extern const struct Scale gCharon_PulseScale;
 extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
 
-/// Charon: the ferryman of the dead rises from the dark water in a swarm of
-/// souls and strikes the foes.
+/// Charon: over a red wasteland a violet whirlpool turns about a red dome that
+/// rises out of it; in a white flash among dark shards Charon appears and
+/// slashes across the vortex, and a black shadow sweeps from the left over the
+/// foes.
 ///
 /// Abilities: Charon.
 void BattleEffect_RunCharon(struct BattleEffectParams *arg) {

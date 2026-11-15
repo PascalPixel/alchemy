@@ -8,8 +8,6 @@
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
 
-// Embers spray out of the user, two a frame, then home in on the targets.
-
 /// Embers burst from the top of the user and home in on the targets, and each
 /// that lands shows an impact flare as its target flinches.
 ///

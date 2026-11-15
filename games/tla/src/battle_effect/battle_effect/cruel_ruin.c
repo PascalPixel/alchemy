@@ -593,11 +593,11 @@ void BattleEffect_DrawStreaks(void) {
 void BattleEffect_DimBackgroundStep(void) {
   struct BattleFxFadeWork *work =
       (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
-  u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
   if (work->framesLeft > 0) {
     work->step++;
-    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+    ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                          0x10000 - work->step * 1092, 128);
     work->framesLeft--;
   }
@@ -707,8 +707,6 @@ void BattleEffect_EndElementStreaks(void) {
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
-
-// Forwarded so that a constant size reaches the call's register at each call.
 
 /// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 /// rains ruin in six blasts while the ground splits, then a black sphere

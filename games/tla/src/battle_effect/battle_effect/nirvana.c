@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Nirvana's ring of sparks.
-
 /// A mote leaves the first target and is drawn as a ring of 24 sparks
 /// turning about it while it is pulled back to the user.
 void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
@@ -928,10 +926,10 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Heavy Divide (kind 101).
+/// Abilities: Heavy Divide.
 DEFINE_EFFECT_KIND(BattleEffect_RunHeavyDivide, BattleEffect_RunHeavyBlow, 0)
 
-/// Abilities: Strong Hit (kind 469).
+/// Abilities: Strong Hit.
 DEFINE_EFFECT_KIND(BattleEffect_RunStrongHit, BattleEffect_RunHeavyBlow, 1)
 #undef BLITTER
 #undef ROCKS

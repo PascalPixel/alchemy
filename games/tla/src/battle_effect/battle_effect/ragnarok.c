@@ -10,8 +10,6 @@
 /// The sheet holds the blade (64 x 128) and then the flash pictures.
 #define FLASH_SHEET (64 * 128)
 
-// The map cell buffer holds each column's sparks.
-
 /// The sparks, in the map cell buffer.
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_COLUMN 340
@@ -246,10 +244,10 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Abilities: Titan Blade (kind 61).
+/// Abilities: Titan Blade.
 DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, BattleEffect_RunFallingSword, 0)
 
-/// Abilities: Acheron's Grief (kind 104).
+/// Abilities: Acheron's Grief.
 DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
                    1)
 

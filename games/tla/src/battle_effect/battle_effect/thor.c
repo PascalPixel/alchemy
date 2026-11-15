@@ -18,7 +18,7 @@
 #define STORM_LIGHTNING_FRAMES 128
 #define STORM_BOLTS 18
 
-/// Thor (scene kind 12). In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
+/// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
 /// lightning part (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the

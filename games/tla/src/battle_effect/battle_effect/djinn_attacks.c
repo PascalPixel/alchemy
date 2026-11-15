@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Tiles: copy a byte image rotated 90 degrees clockwise.
-
 /// Rotates w-by-h src clockwise into h-by-w dst.
 /// The top row of src becomes the rightmost column of dst.
 void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
@@ -40,7 +38,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   }
 }
 
-// The Mercury Djinn's flames (effect kind 281).
+// The Mercury Djinn's flames.
 
 /// The dots live in the map cell buffer: 32 for each of the five flames.
 #define DOTS ((struct Particle *)Ram_MapCellBuffer)
@@ -302,8 +300,6 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   // Teardown.
   EFFECT_FINISH_CANVAS();
 }
-
-// Resources: decompress a resource with a palette.
 
 /// Decompress resource id into dst. If the first 128 bytes are a palette,
 /// copy_pal copies it to the start of BG palettes; skip_pal skips it on

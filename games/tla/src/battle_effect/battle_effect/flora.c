@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// Flora, the blossom spirit's summon.
+// Flora's summon.
 
 struct StripQuad;
 
@@ -42,9 +42,11 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   return owner->sheet;
 }
 
-/// Flora: petals swirl in on the wind, the blossom spirit rises among them,
-/// her spiral of light and its rings sweep the field, and a storm of petals
-/// strikes the foes.
+/// Flora: after a flash, petals blow across a violet sky and Flora drifts in
+/// among them while rings of light spin about her; then a storm of petals
+/// sweeps over the foes.
+///
+/// Abilities: Flora.
 void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;

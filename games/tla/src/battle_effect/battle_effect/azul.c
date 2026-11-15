@@ -36,10 +36,11 @@ struct AzulObject {
       (place)[2] = 0xa00000;                                                   \
   } while (0)
 
-// Azul: the sea rises into a wall of water, a great serpent coils out of it
-// and swallows the foes, then the wave breaks over them in a spray.
-/// Azul: the sea rises into a wall of water, a great serpent coils out of it
-/// and swallows the foes, then the wave breaks over them in a spray.
+/// Azul: water and bubbles rush over the foes, the winged serpent swims in
+/// from the right and closes them in a great sphere of water, and the sphere
+/// bursts over the field in a wave of foam.
+///
+/// Abilities: Azul.
 void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -47,7 +48,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   DrawRectangle blit2;
   DrawRectangle blit;
   s32 frame;
-  u8 *battle;
+  struct BattleWork *battle;
   struct Point2D base;
   struct Point2D pos;
   struct Point2D vel;
@@ -86,7 +87,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   verts = (struct ModelVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
   sphere = work->sheet + 0x800;
@@ -140,7 +141,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame <= 8) {
       s32 fade = 24 - frame * 3;
 
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+      ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            0x10000 - fade * 1092, 128);
     }
     if (frame == 186) {
@@ -682,7 +683,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
     }
     if (frame == 186) {
-      BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+      BattleBackground_LoadFar(1, battle->background, 24);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != args->targetCount; i++) {

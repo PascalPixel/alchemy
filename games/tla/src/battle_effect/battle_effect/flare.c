@@ -7,8 +7,6 @@
 
 #define FLAME_COUNT 9
 
-// Nine flames puff up along a half-circle arc, four frames apart.
-
 /// Nine flames rise one after another along half an ellipse.
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm.

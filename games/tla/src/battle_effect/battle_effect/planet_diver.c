@@ -237,17 +237,17 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Abilities: Demon Night (kind 50).
+/// Abilities: Demon Night.
 DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, BattleEffect_RunGatheringLights,
                    0)
 
-/// Abilities: Rumble (kind 308).
+/// Abilities: Rumble.
 DEFINE_EFFECT_KIND(BattleEffect_RunRumble, BattleEffect_RunGatheringLights, 1)
 
-/// Abilities: Haunting (kind 351).
+/// Abilities: Haunting.
 DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, BattleEffect_RunGatheringLights, 2)
 
-/// Abilities: Thorny Grave (kind 127).
+/// Abilities: Thorny Grave.
 DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, BattleEffect_RunGatheringLights,
                    3)
 

@@ -34,10 +34,13 @@ extern const struct HalfPair gHaures_FeatherPoints[];
 static __inline__ void PLACE(s32 x, s32 y) {
   SceneTransform_ApplyPosition3(px(x), px(y), 0);
 }
-/// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
-/// vortex and dives through the foes, scattering into black feathers.
+/// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
+/// a violet glow and a rune flashes; the demon rears in a burning cave, then
+/// charges through the foes in streaks of fire that end in a white flash.
+///
+/// Abilities: Haures.
 void BattleEffect_RunHaures(struct BattleEffectParams *args) {
-  u8 *battle;
+  struct BattleWork *battle;
   u8 *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
@@ -218,7 +221,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         position.y = px(120);
         velocity.x = 0;
         velocity.y = 0;
-        Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
+        Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle->palette,
+                             256);
         {
           u8 *q = shades;
 

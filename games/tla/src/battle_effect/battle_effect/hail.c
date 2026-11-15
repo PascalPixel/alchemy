@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-// The canvas preparer's packed arguments.
-
 /// The ice chips live in the map cell buffer.
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
@@ -135,7 +133,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
+// BattleEffect_RunGround: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from
 // frame 17. Six rocks leave the caster one after another, every two
@@ -148,7 +146,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 // a small Venus Djinn hovers over the anchor point, drawn twice as bright
 // for the first four frames, and rises off from frame 17.
 
-// Setup: the battle effect canvas and the canvas preparer (kind 0, anchor
+// Setup: the battle effect canvas and the canvas preparer (anchor
 // 2, for the caster's side), a max blitter for the side, the portal sheet
 // and the Djinn sheet in the effect work, the transfer callback, and the
 // eight rocks' starting points and velocities at the caster.

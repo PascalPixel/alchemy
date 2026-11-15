@@ -103,8 +103,6 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 
 #define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
 
-// Bursts of smoke rise from each target in turn, eight frames apart.
-
 /// Target bursts: on each target in turn a burst flares while puffs of smoke
 /// scatter around it.
 void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {

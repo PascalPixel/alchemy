@@ -150,7 +150,7 @@ void BattleEffect_RunUnusedSparkBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITE);
 }
 
-/// Abilities: Mad Zephyr (kind 117).
+/// Abilities: Mad Zephyr.
 void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 4, 20);
   wait(2);
@@ -712,8 +712,6 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-
-// A rain of daggers on the first target (unused).
 
 /// Sixteen swords fall slanting in on the first target, one every 4 frames, and
 /// stick in the ground.

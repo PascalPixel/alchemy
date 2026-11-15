@@ -22,12 +22,12 @@ static __inline__ void FillWords___f14cca8(void *destination, s32 size,
 
 /// Shows the battle background behind a cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
-  u8 *battle = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = 32;
-  BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  BattleBackground_LoadFar(1, battle->background, 24);
   /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);
   FillWords___f14cca8((void *)BG_CHAR_BLOCK(1), 0x4000, 0);

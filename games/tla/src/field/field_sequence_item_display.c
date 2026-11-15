@@ -332,9 +332,12 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0] & FIELD_PIXEL_MASK;
   s32 originZ = origin[1] & FIELD_PIXEL_MASK;
-  s32 result[3];
-  /* FAKEMATCH(volatile): headerWord lives at sp+4, stored once. */
-  volatile s32 headerWord;
+  // One object in the frame: a word of the map header, then the point
+  // SceneItem_FindPosition fills for each row.
+  struct {
+    s32 headerWord;
+    s32 position[3];
+  } found;
   struct Actor *object;
   s16 type;
   s32 id;
@@ -348,7 +351,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
 
   // DEAD: the map header's second word is never read; the ROM keeps its load
   // and store.
-  headerWord = (*(s32 **)map)[1];
+  found.headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
   for (i = 0; i <= 15 && (type = *entry++) != 0 && !(type & 0x4000); i++) {
@@ -357,7 +360,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
     entry += 3;
     if (type != 128 && flag != -1 && GameFlag_Get(flag))
       continue;
-    if (SceneItem_FindPosition(id, result))
+    if (SceneItem_FindPosition(id, found.position))
       continue;
     object = TreasureSpot_GetActor(i + 64);
     if (object == NULL)

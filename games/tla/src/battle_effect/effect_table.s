@@ -854,8 +854,8 @@ gBattleEffect_Handlers:
 	.4byte BattleEffect_RunCage                @ 435
 	.4byte BattleEffect_RunPhoenix             @ 436
 	.4byte BattleEffect_RunHumanHunt           @ 437
-	.4byte BattleEffect_RunTargetStrikeMode17                   @ 438
-	.4byte BattleEffect_RunTargetStrikeMode18                   @ 439
+	.4byte BattleEffect_RunUnusedHeavyBite                   @ 438
+	.4byte BattleEffect_RunUnusedFlashBite                   @ 439
 	.4byte BattleEffect_RunPoisonTail          @ 440
 	.4byte BattleEffect_RunKillSting           @ 441
 	.4byte BattleEffect_RunBeastNeedle @ 442
@@ -872,7 +872,7 @@ gBattleEffect_Handlers:
 	.4byte BattleEffect_RunFormicAcid          @ 453
 	.4byte BattleEffect_RunClawAttack   @ 454
 	.4byte BattleEffect_RunBeatDance           @ 455
-	.4byte BattleEffect_RunTargetStrikeMode20                   @ 456
+	.4byte BattleEffect_RunUnusedSparkBite                   @ 456
 	.4byte BattleEffect_RunLivingArmor         @ 457
 	.4byte BattleEffect_RunHeatStun            @ 458
 	.4byte BattleEffect_RunEarthForce          @ 459

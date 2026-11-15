@@ -435,6 +435,66 @@ extern u8 gVortices_Shapes[];
 #define MOTE_SET_BYTES 770
 
 /// Clips overflow on all four sides.
+/// The columns of gTargetStrike_Styles, one row a style.
+enum TargetStrikeColumn {
+  TARGET_STRIKE_KIND,           ///< STRIKE_KIND_SLASH or STRIKE_KIND_BITE
+  TARGET_STRIKE_HITS,           ///< slashes or bites
+  TARGET_STRIKE_FLAGS,          ///< the extras (STRIKE_SMOKE and on)
+  TARGET_STRIKE_COLOR,          ///< the background's palette (STRIKE_COLOR_)
+  TARGET_STRIKE_PICTURE_FRAMES, ///< frames each picture shows
+  TARGET_STRIKE_COMPOSITE,      ///< the bites' blitter mode
+  TARGET_STRIKE_FRAMES          ///< the effect's length
+};
+
+// The two kinds of target strike (gTargetStrike_Styles).
+#define STRIKE_KIND_SLASH 0 ///< sideways slashes
+/// Rows of fangs above and below the target that close on it.
+#define STRIKE_KIND_BITE 1
+
+// A target strike style's extras.
+#define STRIKE_SMOKE 1  ///< each hit raises smoke puffs from the target's feet
+#define STRIKE_ABSORB 2 ///< motes fly out of the target and back into the user
+#define STRIKE_GLINTS 4 ///< glints sparkle around the target
+#define STRIKE_SPARKS 8 ///< each hit scatters sparks
+#define STRIKE_HEAVY 16 ///< one heavy hit: a big shake and the target recoils
+#define STRIKE_FLASH 32 ///< as heavy, with flash pictures for the smoke
+#define STRIKE_STAR 64  ///< a star swells on the target
+
+// The palettes a target strike's background takes (TARGET_STRIKE_COLOR).
+#define STRIKE_COLOR_BLUE 0      ///< BlueBeamSheet's
+#define STRIKE_COLOR_LIME 1      ///< LimePalette
+#define STRIKE_COLOR_PINK 2      ///< PinkPalette
+#define STRIKE_COLOR_EMBER 3     ///< EmberStreakSheet's
+#define STRIKE_COLOR_MARS 4      ///< MarsDjinnSheet's
+#define STRIKE_COLOR_LIGHTNING 5 ///< LightningBoltSheet's
+#define STRIKE_COLOR_ORANGE 6    ///< OrangePaletteB
+
+/// The target strike styles, rows of gTargetStrike_Styles: The Broken Seal's
+/// twelve, then this game's own.
+enum TargetStrikeStyle {
+  TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
+  TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
+  TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
+  TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
+  TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
+  TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
+  TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
+  TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES,
+  TARGET_STRIKE_STYLE_LIGHTNING_FOUR_SPARK_SLASHES,
+  TARGET_STRIKE_STYLE_LIGHTNING_EIGHT_SPARK_SLASHES,
+  TARGET_STRIKE_STYLE_ORANGE_FLASH_GLINT_SLASH,
+  TARGET_STRIKE_STYLE_MANEATER, ///< the same row as MARS_ADDITIVE_DRAIN_BITES
+  TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH,
+  TARGET_STRIKE_STYLE_MARS_HEAVY_BITE,
+  TARGET_STRIKE_STYLE_ORANGE_FLASH_BITE,
+  TARGET_STRIKE_STYLE_MARS_STAR_SLASH,
+  TARGET_STRIKE_STYLE_BLUE_SPARK_BITE,
+};
+
 /// Window 0 shows the battle view: BG0 to BG2, the sprites and blending.
 #define EFFECT_WIN0_LAYERS                                                     \
   (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |         \

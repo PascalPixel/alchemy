@@ -562,7 +562,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 point[3];
   DrawRectangle callbacks[2];
   s32 i;
-  s32 palette;
+  void *palette;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -572,17 +572,14 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
   if (mode == STAT_REDUCTION_UNUSED)
-    palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == STAT_REDUCTION_DULL) {
-    palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(barrier): an empty asm. */
-    asm("");
-  } else if (mode == STAT_REDUCTION_IMPAIR)
-    palette = (s32)&ResourceId_GlowOrbSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  else if (mode == STAT_REDUCTION_DULL)
+    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+  else if (mode == STAT_REDUCTION_IMPAIR)
+    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
   else
-    palette = (s32)&ResourceId_PinkBurstSheet;
-  Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(palette),
-                       SHEET_PALETTE_BYTES);
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 

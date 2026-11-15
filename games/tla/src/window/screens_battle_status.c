@@ -133,8 +133,6 @@ enum BattleSummaryPage {
           DJINN_PER_ELEMENT +                                                  \
       ((entry) & STATUS_DJINN_NUMBER)
 
-#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
-
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_NivString[];
 extern const u8 gOwnerStatus_NvString[];
@@ -226,7 +224,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   figureList[1] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(figureList, 1);
   portraitSlot = VramCache_AllocEntry(0x200);
-  navigation = NAVIGATION;
+  navigation = BATTLE_MENU_WORK;
   navigation->timerHidden = redraw;
   if (navigation->timerWindow != NULL) {
     Window_Close(navigation->timerWindow, 1);
@@ -604,7 +602,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
     if (page == STATUS_PAGE_ITEMS) {
       // Items: those the member can use in battle first.
-      u16 *entries = NAVIGATION->listAbilities;
+      u16 *entries = BATTLE_MENU_WORK->listAbilities;
       s32 count;
       s32 index;
       s32 item;
@@ -677,7 +675,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     } else if (page == STATUS_PAGE_PSYNERGY) {
       // Battle Psynergy: grey when it cannot be used in battle, red when the
       // PP are short, another colour while Psynergy is sealed.
-      u16 *entries = NAVIGATION->listAbilities;
+      u16 *entries = BATTLE_MENU_WORK->listAbilities;
       s32 count;
       s32 shownRow;
       s32 index;
@@ -1210,7 +1208,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       }
     }
-    if (NAVIGATION->timer == 0 || (gInput.pressed & KEY_B))
+    if (BATTLE_MENU_WORK->timer == 0 || (gInput.pressed & KEY_B))
       break;
     if (listCount != 0) {
       if (keys & KEY_R) {
@@ -1250,7 +1248,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
   PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
-  NAVIGATION->timerHidden = 0;
+  BATTLE_MENU_WORK->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleObject_PutFar();
   wait(1);
@@ -1265,5 +1263,4 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #undef SUMMARY_PSYNERGY_TEXT_LENGTH
 #undef SUMMARY_HELP_TEXT_LENGTH
 #undef SUMMARY_STAT_VALUE_X
-#undef NAVIGATION
 #undef SUMMARY_DRAW_PAGE_MARKS

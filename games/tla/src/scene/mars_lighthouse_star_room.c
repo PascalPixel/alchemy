@@ -1215,8 +1215,8 @@ void Actor_StartScript(struct Actor *object, const void *script);
 #include "shared/actor_reset_scripted.h"
 
 void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],
+                                           position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
@@ -1243,8 +1243,8 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
 #define DEFINE_RIDE_SPAWN_BACKWARD(name, call1)                                \
   void name(s32 *position, s32 speed, s32 flag) {                              \
-    struct Actor *object =                                                     \
-        FieldActor_Create(366, position[0], position[1], position[2]);         \
+    struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],  \
+                                             position[1], position[2]);        \
                                                                                \
     if (object != NULL) {                                                      \
       object->bounce = 0;                                                      \
@@ -1261,8 +1261,8 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnBackward, Flame_UpdateForward)
 
 void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position[0], position[1], position[2]);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],
+                                           position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;

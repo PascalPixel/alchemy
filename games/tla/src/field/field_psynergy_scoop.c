@@ -13,6 +13,8 @@
 #include "window/window.h"
 #include "system/bg_scroll.h"
 
+#include "sprite_ids.h"
+
 /// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
 /// tiles, the picture that ripples as the ground is dug, 64 particles, the
 /// sprite that digs and the one left where it dug, and the stage of the cast.
@@ -217,7 +219,7 @@ void FieldPsynergy_Scoop(void) {
     Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
-  object = Actor_Spawn(353, 0, 0, 0);
+  object = Actor_Spawn(SPRITE_SCOOP_HAND, 0, 0, 0);
   work->object = object;
   if (object == NULL)
     goto end;

@@ -12,6 +12,8 @@
 #include "system/io_reg.h"
 #include "system/heap_release.h"
 
+#include "sprite_ids.h"
+
 struct ObjectMetadata {
   u8 unused[8]; ///< no code names it
   s8 height;
@@ -133,7 +135,7 @@ void FieldPsynergy_Blaze(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Actor_Spawn(366, pos[0], pos[1], pos[2]);
+    object = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = 0;
@@ -150,7 +152,7 @@ void FieldPsynergy_Blaze(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Actor_Spawn(367, pos[0], pos[1], pos[2]);
+    object = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
     ((u8 *)object)[85] = mode;

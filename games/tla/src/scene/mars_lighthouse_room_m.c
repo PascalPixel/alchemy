@@ -1225,8 +1225,8 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 void Ride_SpawnForward(struct MarsLighthouseRoomMVector *position, s32 value,
                        s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
+                                           position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1253,8 +1253,8 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 void Ride_SpawnBackward(struct MarsLighthouseRoomMVector *position, s32 value,
                         s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
+                                           position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1270,8 +1270,8 @@ void Ride_SpawnBackward(struct MarsLighthouseRoomMVector *position, s32 value,
 
 void Ride_SpawnLandingForward(struct MarsLighthouseRoomMVector *position,
                               s32 value, s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
+                                           position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;
@@ -1287,8 +1287,8 @@ void Ride_SpawnLandingForward(struct MarsLighthouseRoomMVector *position,
 
 void Ride_SpawnLandingBackward(struct MarsLighthouseRoomMVector *position,
                                s32 value, s32 flag) {
-  struct Actor *object =
-      FieldActor_Create(366, position->x, position->y, position->z);
+  struct Actor *object = FieldActor_Create(SPRITE_BLAZE_FLAME, position->x,
+                                           position->y, position->z);
 
   if (object != 0) {
     object->bounce = 0;

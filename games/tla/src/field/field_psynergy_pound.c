@@ -9,6 +9,8 @@
 #include "sounds.h"
 #include "macros.h"
 
+#include "sprite_ids.h"
+
 /// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
 /// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
 /// its fall.
@@ -207,7 +209,7 @@ void FieldPsynergy_Pound(void) {
 
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
-  shine = Actor_Spawn(352, 0, 0, 0);
+  shine = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
   work->object = shine;
   if (shine == NULL)
     goto end;

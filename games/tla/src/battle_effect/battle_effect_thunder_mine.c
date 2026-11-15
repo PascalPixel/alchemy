@@ -5,6 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#include "sprite_ids.h"
+
 struct StripQuad;
 
 /// The sparks, after the map cells.
@@ -398,7 +400,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     if (frame == 108) {
       Sprite_DestroyFar(work->sprites[0]);
       Sprite_DestroyFar(work->sprites[1]);
-      BattleEffect_SpawnObjects(11, 656, 2);
+      BattleEffect_SpawnObjects(11, SPRITE_MEGAERA, 2);
     }
 
     // Megaera swoops, trailing sparkles.

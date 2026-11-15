@@ -7,6 +7,8 @@
 #include "sounds.h"
 #include "field/field_sequence.h"
 
+#include "sprite_ids.h"
+
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
   struct Actor *actor = object;
@@ -89,7 +91,7 @@ void Field_PlaceTreasureSpots(void) {
       else if (type == 130)
         kind = 265;
       else if (type == 132)
-        kind = 322;
+        kind = SPRITE_STONE_TABLET;
       else if (type == 131)
         kind = 489;
       else {

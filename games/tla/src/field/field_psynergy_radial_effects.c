@@ -12,6 +12,8 @@
 #include "gamepak/far_call/field.h"
 #include "macros.h"
 
+#include "sprite_ids.h"
+
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
@@ -722,7 +724,7 @@ void FieldPsynergy_Lash(void) {
     scene->z += px(4);
   }
   FieldPsynergy_FadeToCastColor();
-  object = Actor_Spawn(363, 0, 0, 0);
+  object = Actor_Spawn(SPRITE_LASH_HAND, 0, 0, 0);
   if (object != 0) {
     object->facing = caster->facing;
     object->motionFlags = 0;

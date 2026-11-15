@@ -443,10 +443,19 @@ enum SuperLuckyDiceState {
 #define DICE_FADE_FRAMES 16
 #define DICE_FACE_COUNT 6
 #define DICE_THROW_SPIN 300
+/// Each bounce takes this off a die's spin, as in Lucky Dice.
+#define DICE_BOUNCE_SPIN_LOSS 20
+/// Two dice whose centres come closer than this push each other apart.
+#define DICE_TOUCH_DISTANCE 70
+/// The round dome's radius: a die beyond it is turned back inward.
+#define DICE_DOME_RADIUS 200
 #define DICE_NEAREST_DEPTH 350
 #define DICE_FARTHEST_DEPTH 650
 #define DICE_ROLL_PER_TILE 1024
-#define DICE_ROLL_PER_FACE (3 * DICE_ROLL_PER_TILE)
+/// A die's roll angle crosses a face in DICE_TILES_PER_FACE tiles, as Lucky
+/// Dice's.
+#define DICE_TILES_PER_FACE 3
+#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
 #define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
@@ -866,19 +875,29 @@ void SuperLuckyDice_Run(void) {
             separationZ = FIELD_PIXEL(die->z - other->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
-                0x1323) {
+                DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
+// UB: a negative separation is shifted, and two dice at one place divide by
+// zero, as in Lucky Dice.
+#ifdef UBFIX
+              if (separation != 0) {
+                die->velocityX += separationX * (Q16_ONE / 2) / separation;
+                die->velocityY += separationY * (Q16_ONE / 2) / separation;
+                die->velocityZ += separationZ * (Q16_ONE / 2) / separation;
+              }
+#else
               die->velocityX += (separationX << 15) / separation;
               die->velocityY += (separationY << 15) / separation;
               die->velocityZ += (separationZ << 15) / separation;
+#endif
             }
           }
         }
         wallX = FIELD_PIXEL(die->x);
         wallZ = FIELD_PIXEL(die->z);
-        if (Iwram_Sqrt(wallX * wallX + wallZ * wallZ) > 199) {
+        if (Iwram_Sqrt(wallX * wallX + wallZ * wallZ) > DICE_DOME_RADIUS - 1) {
           if (die->x > 0)
             die->velocityX = -ABS(die->velocityX);
           else
@@ -906,8 +925,8 @@ void SuperLuckyDice_Run(void) {
             die->velocityX = die->velocityX * 56 / 64;
             die->velocityZ = die->velocityZ * 56 / 64;
           }
-          if (spinRate[index] > 19)
-            spinRate[index] -= 20;
+          if (spinRate[index] >= DICE_BOUNCE_SPIN_LOSS)
+            spinRate[index] -= DICE_BOUNCE_SPIN_LOSS;
           if (die->velocityY < px(3)) {
             s32 spin;
             s32 facing;
@@ -917,11 +936,11 @@ void SuperLuckyDice_Run(void) {
             die->velocityZ = 0;
             spinRate[index] = 0;
             spin = die->variant;
-            facing = spin / 1024 % 3;
+            facing = spin / DICE_ROLL_PER_TILE % DICE_TILES_PER_FACE;
             if (facing == 1)
-              die->variant = spin + 0x800;
+              die->variant = spin + 2 * DICE_ROLL_PER_TILE;
             else if (facing == 2)
-              die->variant = spin + 0x400;
+              die->variant = spin + DICE_ROLL_PER_TILE;
           }
         }
         die->velocityX = die->velocityX * 63 / 64;

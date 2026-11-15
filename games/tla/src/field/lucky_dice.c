@@ -815,9 +815,23 @@ void LuckyDice_Run(void) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
+// UB: signed separation components may be negative; touching
+// dice are at most 49 pixels apart, so multiplication fits.
+// Coincident dice also need to avoid division by zero.
+#ifdef UBFIX
+              if (separation != 0) {
+                rollingDie->velocityX +=
+                    separationX * (Q16_ONE / 2) / separation;
+                rollingDie->velocityY +=
+                    separationY * (Q16_ONE / 2) / separation;
+                rollingDie->velocityZ +=
+                    separationZ * (Q16_ONE / 2) / separation;
+              }
+#else
               rollingDie->velocityX += (separationX << 15) / separation;
               rollingDie->velocityY += (separationY << 15) / separation;
               rollingDie->velocityZ += (separationZ << 15) / separation;
+#endif
             }
           }
         }

@@ -729,21 +729,21 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             continue;
           if (age > 7)
             pair[args->side](canvas, work->sheet + VOLLEY_B_PICTURE,
-                             Q_16_16_UPPER_HALF(shot->x) - 16,
-                             Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
+                             FIXED_INTEGER_PART(shot->x) - 16,
+                             FIXED_INTEGER_PART(shot->y) - 32, 32, 64);
         } else if (mode == BURST_SHOWER_MODE_FURY) {
           if (i & 1)
             continue;
           if (age > 2)
             pair[0](canvas, work->sheet + VOLLEY_B_PICTURE,
-                    Q_16_16_UPPER_HALF(shot->x) - 16,
-                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
+                    FIXED_INTEGER_PART(shot->x) - 16,
+                    FIXED_INTEGER_PART(shot->y) - 32, 32, 64);
         } else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
                    mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
           if (age > 1)
             pair[0](canvas, work->sheet + VOLLEY_B_BEAM,
-                    Q_16_16_UPPER_HALF(shot->x) - 12,
-                    Q_16_16_UPPER_HALF(shot->y) - 24, 24, 48);
+                    FIXED_INTEGER_PART(shot->x) - 12,
+                    FIXED_INTEGER_PART(shot->y) - 24, 24, 48);
         } else if (mode == BURST_SHOWER_MODE_FUGUE ||
                    mode == BURST_SHOWER_MODE_DJINNFEST) {
           cel = i / 2 % 3;
@@ -753,20 +753,20 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
             pair[1](canvas, work->sheet + cel * 1024,
-                    Q_16_16_UPPER_HALF(shot->x) - 16, (FIXEDtoINT(y)) - 16, 32,
+                    FIXED_INTEGER_PART(shot->x) - 16, (FIXEDtoINT(y)) - 16, 32,
                     32);
           }
         } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
           s32 cel = i % 5 * 3 + age % 3;
           u32 width = gSpire_ShardWidths[cel];
-          s32 x = Q_16_16_UPPER_HALF(shot->x);
+          s32 x = FIXED_INTEGER_PART(shot->x);
           u32 half = width >> 1;
           const u8 *shardHeights = gSpire_ShardHeights;
           u32 height;
           s32 y;
           x -= half;
           height = shardHeights[cel];
-          y = Q_16_16_UPPER_HALF(shot->y) - (height >> 1);
+          y = FIXED_INTEGER_PART(shot->y) - (height >> 1);
 
           pair[0](canvas,
                   work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
@@ -778,26 +778,26 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           y = FIXEDtoINT(shot->y + (wobble << 5));
 
           pair[1](canvas, work->sheet + cel * 1152,
-                  Q_16_16_UPPER_HALF(shot->x) - 12, y - 24, 24, 48);
+                  FIXED_INTEGER_PART(shot->x) - 12, y - 24, 24, 48);
         } else if (mode == BURST_SHOWER_MODE_HEAT_KISS) {
           if (age > 1)
-            pair[0](canvas, work->sheet, Q_16_16_UPPER_HALF(shot->x) - 11,
-                    Q_16_16_UPPER_HALF(shot->y) - 21, 22, 42);
+            pair[0](canvas, work->sheet, FIXED_INTEGER_PART(shot->x) - 11,
+                    FIXED_INTEGER_PART(shot->y) - 21, 22, 42);
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (age > 5)
             pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 2048,
-                    Q_16_16_UPPER_HALF(shot->x) - 16,
-                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
+                    FIXED_INTEGER_PART(shot->x) - 16,
+                    FIXED_INTEGER_PART(shot->y) - 32, 32, 64);
         } else if (mode == BURST_SHOWER_MODE_CHAR) {
           if (age > 1)
             pair[1](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 1152,
-                    Q_16_16_UPPER_HALF(shot->x) - 12,
-                    Q_16_16_UPPER_HALF(shot->y) - 24, 24, 48);
+                    FIXED_INTEGER_PART(shot->x) - 12,
+                    FIXED_INTEGER_PART(shot->y) - 24, 24, 48);
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (age > 1)
             pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 2048,
-                    Q_16_16_UPPER_HALF(shot->x) - 16,
-                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
+                    FIXED_INTEGER_PART(shot->x) - 16,
+                    FIXED_INTEGER_PART(shot->y) - 32, 32, 64);
         }
         shot->x += shot->velocityX;
         shot->y += shot->velocityY;

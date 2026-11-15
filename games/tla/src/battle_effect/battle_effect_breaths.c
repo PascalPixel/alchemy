@@ -202,8 +202,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             else if (args->variant == EFFECT_VARIANT_STRONGEST)
               size = (i & 3) + 3;
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                        Q_16_16_UPPER_HALF(step->x) - size / 2,
-                        Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                        FIXED_INTEGER_PART(step->x) - size / 2,
+                        FIXED_INTEGER_PART(step->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(step, 60, 0);
             step->variant--;
           }
@@ -254,8 +254,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                  frame >= gBreaths_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
         step = &work->particles[0];
-        draw[0](canvas, work->sheet, Q_16_16_UPPER_HALF(step->x) - 16,
-                Q_16_16_UPPER_HALF(step->y) - 24, 32, 48);
+        draw[0](canvas, work->sheet, FIXED_INTEGER_PART(step->x) - 16,
+                FIXED_INTEGER_PART(step->y) - 24, 32, 48);
         BattleEffectKernels_IntegrateVector2(step, 56, 0);
         step->velocityX += step->z;
         step->velocityY += step->velocityZ;

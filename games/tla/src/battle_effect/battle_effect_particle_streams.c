@@ -246,8 +246,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             size = 10;
           draw[ember->velocityY > 0](
               canvas, cells + gBattleEffect_MotePictures[size - 1],
-              Q_16_16_UPPER_HALF(ember->x) - size / 2,
-              Q_16_16_UPPER_HALF(ember->y) - size, size, size * 2);
+              FIXED_INTEGER_PART(ember->x) - size / 2,
+              FIXED_INTEGER_PART(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
@@ -257,7 +257,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           ember->velocityX = ember->velocityX * 62 / DAMPING_SCALE;
           ember->velocityY = ember->velocityY * 62 / DAMPING_SCALE;
           ember->variant++;
-          if (ember->velocityY > 0 && Q_16_16_UPPER_HALF(ember->y) > 104)
+          if (ember->velocityY > 0 && FIXED_INTEGER_PART(ember->y) > 104)
             ember->variant = -1;
         }
       }
@@ -477,8 +477,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         p->variant--;
         BattleEffectKernels_IntegrateVector2(p, 60, 0);
         size = p->variant / 16 + 3;
-        px = Q_16_16_UPPER_HALF(p->x);
-        py = Q_16_16_UPPER_HALF(p->y);
+        px = FIXED_INTEGER_PART(p->x);
+        py = FIXED_INTEGER_PART(p->y);
         additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
@@ -494,8 +494,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         p->variant--;
         BattleEffectKernels_IntegrateVector2(p, 60, 0);
         size = p->variant / 16 + 1;
-        px = Q_16_16_UPPER_HALF(p->x);
-        py = Q_16_16_UPPER_HALF(p->y);
+        px = FIXED_INTEGER_PART(p->x);
+        py = FIXED_INTEGER_PART(p->y);
         additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
@@ -512,8 +512,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
         BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE, 0);
         cell = (frame - 36) / 7;
-        px = Q_16_16_UPPER_HALF(shard->x);
-        py = Q_16_16_UPPER_HALF(shard->y);
+        px = FIXED_INTEGER_PART(shard->x);
+        py = FIXED_INTEGER_PART(shard->y);
         maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12,
                  IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
       }
@@ -1007,8 +1007,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         vector[1] = INTtoFIXED(gParticleStreams_OrbitPoints[i][1] + frame);
         vector[2] = INTtoFIXED(gParticleStreams_OrbitPoints[i][2] / 2);
         EffectPosition_ProjectPoint(vector, pos = &spot);
-        pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
-        pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
+        pos->x = FIXED_INTEGER_PART(pos->x) + 128;
+        pos->y = FIXED_INTEGER_PART(pos->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, pos->x - 4, pos->y - 4, 8,
              PARTICLE_STREAMS_SMALL_GLOW_SIZE);
       }
@@ -1037,8 +1037,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
         if (mote->variant >= 0) {
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
-               Q_16_16_UPPER_HALF(mote->x) - 16,
-               Q_16_16_UPPER_HALF(mote->y) - 16, WATER_WAVE_WIDTH,
+               FIXED_INTEGER_PART(mote->x) - 16,
+               FIXED_INTEGER_PART(mote->y) - 16, WATER_WAVE_WIDTH,
                WATER_WAVE_HEIGHT);
           mote->x -= direction * 0x14000;
           mote->y -= toFIXED(5);

@@ -287,7 +287,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->sheet + gDeathPlunge_PiecePictures[i],
-                Q_16_16_UPPER_HALF(piece->x), Q_16_16_UPPER_HALF(piece->y),
+                FIXED_INTEGER_PART(piece->x), FIXED_INTEGER_PART(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           BattleEffectKernels_IntegrateVector2(piece, PARTICLE_DAMPING_NONE,
@@ -343,8 +343,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           if (cell > 5)
             cell = 5;
           draw[1](canvas, work->sheet + (cell << 11),
-                  Q_16_16_UPPER_HALF(piece->x) - 16,
-                  Q_16_16_UPPER_HALF(piece->y) - 32, FLASH_BURST_WIDTH,
+                  FIXED_INTEGER_PART(piece->x) - 16,
+                  FIXED_INTEGER_PART(piece->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(piece, 60, -toFIXED(1) / 16);
           piece->variant++;
@@ -1153,8 +1153,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               q->x += -toFIXED(8);
               q->y += toFIXED(16);
               BattleEffect_DrawShadedCircles(work->sheet, r, FIXED_ONE);
-              Canvas_BlitAtFoot(work->sheet, Q_16_16_UPPER_HALF(q->x),
-                                Q_16_16_UPPER_HALF(q->y), r);
+              Canvas_BlitAtFoot(work->sheet, FIXED_INTEGER_PART(q->x),
+                                FIXED_INTEGER_PART(q->y), r);
             }
             model->kind = MODEL_SHADED_MAX;
             shade = 0;
@@ -1425,8 +1425,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Matrix_Scale(scale, FIXED_ONE * 2, FIXED_ONE / 2);
           Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
           BattleEffect_DrawShadedCircles(work->sheet, size, FIXED_ONE);
-          Canvas_BlitAtFoot(work->sheet, Q_16_16_UPPER_HALF(p->x) - 1,
-                            Q_16_16_UPPER_HALF(p->y), size);
+          Canvas_BlitAtFoot(work->sheet, FIXED_INTEGER_PART(p->x) - 1,
+                            FIXED_INTEGER_PART(p->y), size);
           Render_DrawModelList(model);
         }
       }
@@ -1716,8 +1716,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             BattleEffect_DrawShadedCircles(
                 work->sheet + CRUEL_RUIN_BURST_CIRCLE, r, FIXED_ONE);
             Canvas_BlitAtFoot(work->sheet + CRUEL_RUIN_BURST_CIRCLE,
-                              Q_16_16_UPPER_HALF(q->x),
-                              Q_16_16_UPPER_HALF(q->y), r);
+                              FIXED_INTEGER_PART(q->x),
+                              FIXED_INTEGER_PART(q->y), r);
           }
           Matrix_Initialize();
           Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);

@@ -603,8 +603,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                             TARGET_STRIKE_SMOKE_PICTURES,
-                        Q_16_16_UPPER_HALF(step->x) - 12,
-                        Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
+                        FIXED_INTEGER_PART(step->x) - 12,
+                        FIXED_INTEGER_PART(step->y) - 24, SMOKE_PUFF_WIDTH,
                         SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 64);
             step->variant++;
@@ -619,8 +619,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
           if (step->variant >= 0 && step->variant <= 23) {
             draw[0](canvas, work->sheet + (step->variant / 4 << 11) + 0x3200,
-                    Q_16_16_UPPER_HALF(step->x) - 16,
-                    Q_16_16_UPPER_HALF(step->y) - 32, FLASH_BURST_WIDTH,
+                    FIXED_INTEGER_PART(step->x) - 16,
+                    FIXED_INTEGER_PART(step->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);
             BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);

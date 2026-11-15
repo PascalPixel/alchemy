@@ -784,7 +784,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
-                Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
+                FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -toFIXED(1) / 16;
         p->variant++;
@@ -1073,8 +1073,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
         if (frame >= i / 8 && puff->variant <= 23) {
           draw[0](canvas,
                   work->sheet + (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
-                  Q_16_16_UPPER_HALF(puff->x) - 12,
-                  Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                  FIXED_INTEGER_PART(puff->x) - 12,
+                  FIXED_INTEGER_PART(puff->y) - 24, SMOKE_PUFF_WIDTH,
                   SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(puff, 48, -toFIXED(1) / 8);
           puff->variant++;
@@ -1134,8 +1134,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
         if (star->variant >= 0) {
           draw[0](canvas,
                   work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
-                  Q_16_16_UPPER_HALF(star->x) - 8,
-                  Q_16_16_UPPER_HALF(star->y) - 8, 16, 16);
+                  FIXED_INTEGER_PART(star->x) - 8,
+                  FIXED_INTEGER_PART(star->y) - 8, 16, 16);
           BattleEffectKernels_IntegrateVector2(star, 56, 0);
           star->variant--;
         }

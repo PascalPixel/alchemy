@@ -127,8 +127,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         s32 py;
 
         cell = particle->variant / 3;
-        px = Q_16_16_UPPER_HALF(particle->x);
-        py = Q_16_16_UPPER_HALF(particle->y);
+        px = FIXED_INTEGER_PART(particle->x);
+        py = FIXED_INTEGER_PART(particle->y);
         if (cell > 6)
           cell = 6;
         picture =
@@ -278,8 +278,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         step->variant--;
         BattleEffectKernels_IntegrateVector2(step, 60, toFIXED(1) / 8);
         draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(step->x) - size / 2,
-                Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(step->x) - size / 2,
+                FIXED_INTEGER_PART(step->y) - size, size, size * 2);
       }
     }
 
@@ -295,8 +295,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         draw[0](canvas,
                 work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES +
                     picture * PICTURE_BYTES(FLASH_BURST),
-                Q_16_16_UPPER_HALF(step->x) - FLASH_BURST_WIDTH / 2,
-                Q_16_16_UPPER_HALF(step->y) - FLASH_BURST_HEIGHT / 2,
+                FIXED_INTEGER_PART(step->x) - FLASH_BURST_WIDTH / 2,
+                FIXED_INTEGER_PART(step->y) - FLASH_BURST_HEIGHT / 2,
                 FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
@@ -688,12 +688,12 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
-            Q_16_16_UPPER_HALF(position->depth) > 10) {
-          s32 x = Q_16_16_UPPER_HALF(position->x);
+            FIXED_INTEGER_PART(position->depth) > 10) {
+          s32 x = FIXED_INTEGER_PART(position->x);
           s32 y;
 
           position->x = x + 64;
-          y = Q_16_16_UPPER_HALF(position->y);
+          y = FIXED_INTEGER_PART(position->y);
           position->y = y + 64;
           blit[0](canvas,
                   work->sheet + WATER_SHEET_SMOKE_PUFFS +
@@ -1179,8 +1179,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         cell = i % 5 * 3 + shard->variant / 96 % 3;
         pixels = work->sheet + 0x800 + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];
-        x = Q_16_16_UPPER_HALF(shard->x) - (width >> 1);
-        y = Q_16_16_UPPER_HALF(shard->y);
+        x = FIXED_INTEGER_PART(shard->x) - (width >> 1);
+        y = FIXED_INTEGER_PART(shard->y);
         // The heights table through a local: as gPrism_ShardHeights[cell] the
         // width moves to the stack one place early.
         heights = gPrism_ShardHeights;
@@ -1189,7 +1189,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         blit[0](canvas, pixels, x, y, width, height);
         BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
                                              toFIXED(1) / 4);
-        if (Q_16_16_UPPER_HALF(shard->y) > 104) {
+        if (FIXED_INTEGER_PART(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }
         shard->variant += shard->z;

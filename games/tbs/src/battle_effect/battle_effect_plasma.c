@@ -337,13 +337,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           s32 y;
 
           point = &work->particles[i * SPARK_GROUPS_FLASHES] + j;
-          y = Q_16_16_UPPER_HALF(point->y) + originY;
+          y = FIXED_INTEGER_PART(point->y) + originY;
           if (work->args->side == EFFECT_SIDE_PARTY)
-            x = Q_16_16_UPPER_HALF(point->x) + originX -
+            x = FIXED_INTEGER_PART(point->x) + originX -
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] +
                 28;
           else
-            x = Q_16_16_UPPER_HALF(point->x) + originX +
+            x = FIXED_INTEGER_PART(point->x) + originX +
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)

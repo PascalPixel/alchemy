@@ -345,11 +345,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
           s32 y;
 
           point = &work->particles[i * FLASH_POINTS + j];
-          y = Q_16_16_UPPER_HALF(point->y) + originY;
+          y = FIXED_INTEGER_PART(point->y) + originY;
           if (args->side == EFFECT_SIDE_PARTY)
-            x = Q_16_16_UPPER_HALF(point->x) + originX - GROUP_X(i) + 28;
+            x = FIXED_INTEGER_PART(point->x) + originX - GROUP_X(i) + 28;
           else
-            x = Q_16_16_UPPER_HALF(point->x) + originX + GROUP_X(i) - 28;
+            x = FIXED_INTEGER_PART(point->x) + originX + GROUP_X(i) - 28;
           if (point->variant >= 0 && point->variant < FLASH_FRAMES)
             draw[0](canvas,
                     work->sheet +

@@ -131,8 +131,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
           blitters[0](canvas,
                       (u8 *)((spray->variant / 3) * PICTURE_BYTES(FLASH_BURST) +
                              (s32)sheet),
-                      Q_16_16_UPPER_HALF(spray->x) - FLASH_BURST_WIDTH / 2,
-                      Q_16_16_UPPER_HALF(spray->y) - FLASH_BURST_HEIGHT / 2,
+                      FIXED_INTEGER_PART(spray->x) - FLASH_BURST_WIDTH / 2,
+                      FIXED_INTEGER_PART(spray->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(spray, 62, -toFIXED(1) / 8);
         }
@@ -183,8 +183,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 
           blitters[i & 1](canvas,
                           sprites + gBattleEffect_MotePictures[size - 1],
-                          Q_16_16_UPPER_HALF(drop->x) - size / 2,
-                          Q_16_16_UPPER_HALF(drop->y) - size, size, size * 2);
+                          FIXED_INTEGER_PART(drop->x) - size / 2,
+                          FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
           if (frame > 31) {
             BattleEffectKernels_IntegrateVector2(drop, 62, toFIXED(1) / 4);
           } else {

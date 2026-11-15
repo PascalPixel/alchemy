@@ -408,7 +408,7 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   // XXX (no evidence): what the sum is for; nothing calls this in either game.
   u32 previous = entries[0].value;
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(entries);
   entries[0].sum = previous + entries[0].value;
 }

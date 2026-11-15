@@ -271,8 +271,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           s32 size = (i & 3) + 5;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(dust->x) - size / 2,
-                  Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(dust->x) - size / 2,
+                  FIXED_INTEGER_PART(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = toFIXED(96);

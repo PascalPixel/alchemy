@@ -185,8 +185,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         s32 size = dot->variant / 16 + 2;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(dot->x) - size / 2,
-                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(dot->x) - size / 2,
+                FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
@@ -314,8 +314,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         s32 size = dot->variant / 16 + 1;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(dot->x) - size / 2,
-                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(dot->x) - size / 2,
+                FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
@@ -459,8 +459,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
         s32 size = dot->variant / 16 + 2;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(dot->x) - size / 2,
-                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(dot->x) - size / 2,
+                FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
@@ -610,9 +610,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = Q_16_16_UPPER_HALF(spark->x) + (FIXEDtoINT(Trig_Sin(spark->z) * 4));
+        x = FIXED_INTEGER_PART(spark->x) + (FIXEDtoINT(Trig_Sin(spark->z) * 4));
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
+                x - ((u32)size >> 1), FIXED_INTEGER_PART(spark->y) - size, size,
                 size * 2);
         BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
                                              -toFIXED(1) / 8);

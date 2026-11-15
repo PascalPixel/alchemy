@@ -2,7 +2,7 @@
 @ use the second: a copy of credits_background_decode.s whose decoder writes
 @ 64 rows a band and steps 4 KB, the pictures' map strips.
 @
-@ EndingPicture_DotProduct: Vector_DotProduct again. Nothing calls it.
+@ EndingPicture_InnerProduct: Vector_InnerProduct again. Nothing calls it.
 @
 @ EndingPicture_Decode(source, destination, offset): decodes a picture's packed
 @ map (r0) into the map buffer (r1). EndingPicture_Show (credits.c) copies it
@@ -12,8 +12,8 @@
 @ Why assembly: as credits_background_decode.s's routines.
 .syntax unified
 	.arm
-	.global EndingPicture_DotProduct
-EndingPicture_DotProduct:
+	.global EndingPicture_InnerProduct
+EndingPicture_InnerProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}

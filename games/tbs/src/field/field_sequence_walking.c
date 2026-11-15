@@ -144,9 +144,9 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
     condition = region->condition;
     exitValue = region->value;
     if (GameFlag_IsConditionActive(condition) != 0 &&
-        fixedY >= REGION_FIXED(minY) && fixedY < REGION_FIXED(maxY) &&
-        fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
-        fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
+        fixedY >= INTtoFIXED(minY) && fixedY < INTtoFIXED(maxY) &&
+        fixedX >= INTtoFIXED(minX) && fixedX < INTtoFIXED(maxX) &&
+        fixedZ >= INTtoFIXED(minZ) && fixedZ < INTtoFIXED(maxZ)) {
       work->exit = exitValue;
       Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();

@@ -410,8 +410,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     FLURRY_SMOKE_PICTURES +
                         (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
-                    Q_16_16_UPPER_HALF(puff->x) - 12,
-                    Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                    FIXED_INTEGER_PART(puff->x) - 12,
+                    FIXED_INTEGER_PART(puff->y) - 24, SMOKE_PUFF_WIDTH,
                     SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(puff, 62, -toFIXED(1) / 16);
           }

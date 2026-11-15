@@ -323,9 +323,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         for (i = 0; i != 256; i++, s++) {
           s32 kind = s->kind;
 
-          point[0] = Q_16_16_UPPER_HALF(s->x);
-          point[1] = Q_16_16_UPPER_HALF(s->y);
-          point[2] = Q_16_16_UPPER_HALF(s->z);
+          point[0] = FIXED_INTEGER_PART(s->x);
+          point[1] = FIXED_INTEGER_PART(s->y);
+          point[2] = FIXED_INTEGER_PART(s->z);
           Render_ProjectPoint(point, screen);
           if (screen[2] > 0) {
             if (kind == 7) {
@@ -581,8 +581,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           s32 n = (p->variant >> 2) + 1;
 
           blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                  Q_16_16_UPPER_HALF(p->x) - n / 2,
-                  Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+                  FIXED_INTEGER_PART(p->x) - n / 2,
+                  FIXED_INTEGER_PART(p->y) - n, n, n * 2);
           p->variant--;
           BattleEffectKernels_IntegrateVector2(p, 56, toFIXED(1) / 8);
         }

@@ -148,9 +148,9 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The whole pixels of a stored 16.16 value, read as its upper halfword.
 // UB: the s32 is read through an s16.
 #ifdef UBFIX
-#define Q_16_16_UPPER_HALF(v) ((s32)(v) >> 16)
+#define FIXED_INTEGER_PART(v) ((s32)(v) >> 16)
 #else
-#define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
+#define FIXED_INTEGER_PART(v) (((s16 *)&(v))[1])
 #endif
 
 /// The canvas added to the battle under it: both blend weights whole.

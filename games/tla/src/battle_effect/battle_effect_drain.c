@@ -111,12 +111,12 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
             size = i % 3 + 1;
             draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                 Q_16_16_UPPER_HALF(shard->x) - size / 2,
-                 Q_16_16_UPPER_HALF(shard->y) - size, size, size * 2);
+                 FIXED_INTEGER_PART(shard->x) - size / 2,
+                 FIXED_INTEGER_PART(shard->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(shard, 62,
                                                  gDrain_Gravities[i & 3]);
             shard->variant++;
-            if (shard->velocityY > 0 && Q_16_16_UPPER_HALF(shard->y) > 112)
+            if (shard->velocityY > 0 && FIXED_INTEGER_PART(shard->y) > 112)
               shard->variant = -1;
           }
           shard++;

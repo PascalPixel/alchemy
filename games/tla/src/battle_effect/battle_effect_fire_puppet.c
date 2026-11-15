@@ -341,8 +341,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
           s32 size = (spark->variant >> 3) + 1;
 
           draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(spark->x) - size / 2,
-                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(spark->x) - size / 2,
+                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           if (i & 1)
             BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 8);
           else

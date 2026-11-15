@@ -233,8 +233,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
       if (frame >= start) {
         struct Particle *shaft = &work->particles[i];
-        s32 x = Q_16_16_UPPER_HALF(shaft->x);
-        s32 y = Q_16_16_UPPER_HALF(shaft->y);
+        s32 x = FIXED_INTEGER_PART(shaft->x);
+        s32 y = FIXED_INTEGER_PART(shaft->y);
 
         if (frame == i * 8 + 84)
           Sound_PlayFar(SE_POWER_UP);

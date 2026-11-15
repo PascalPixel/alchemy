@@ -96,9 +96,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           shard = &SHARDS[i * SHARDS_PER_ROCK + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
           blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
-               Q_16_16_UPPER_HALF(shard->x) -
+               FIXED_INTEGER_PART(shard->x) -
                    ((width = gSpire_ShardWidths[cel]) >> 1),
-               Q_16_16_UPPER_HALF(shard->y) -
+               FIXED_INTEGER_PART(shard->y) -
                    ((height = gSpire_ShardHeights[cel]) >> 1),
                width, height);
           BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
@@ -113,7 +113,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 47,
-               Q_16_16_UPPER_HALF(rock->y), SPIRE_ROCK_WIDTH,
+               FIXED_INTEGER_PART(rock->y), SPIRE_ROCK_WIDTH,
                SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])

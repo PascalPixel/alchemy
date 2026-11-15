@@ -1,6 +1,6 @@
 @ Two ARM routines in bank 09, beside the credits slides that use the second.
 @
-@ Vector_DotProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
+@ Vector_InnerProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
 @ ax*bx + ay*by + az*bz, the last two arguments on the stack, summed in 64
 @ bits and returned shifted right 16. Nothing in the game calls it.
 @
@@ -12,7 +12,7 @@
 @ commands (credits_background_expand.s) for wherever the copy landed.
 @
 @ Why assembly:
-@ Why Vector_DotProduct is assembly:
+@ Why Vector_InnerProduct is assembly:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
@@ -31,8 +31,8 @@
 .syntax unified
 .text
 	.arm
-	.global Vector_DotProduct
-Vector_DotProduct:
+	.global Vector_InnerProduct
+Vector_InnerProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}

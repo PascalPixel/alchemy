@@ -12,8 +12,8 @@
 @ load-multiple patterns.
 .syntax unified
 	.arm
-	.global RelocatedQ16DotProduct
-RelocatedQ16DotProduct:
+	.global RelocatedInnerProduct
+RelocatedInnerProduct:
 	smull	r12, r0, r1, r0
 	smlal	r12, r0, r2, r3
 	ldmia	sp, {r2, r3}

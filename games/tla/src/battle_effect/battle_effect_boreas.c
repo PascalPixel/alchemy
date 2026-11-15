@@ -286,8 +286,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           else
             picture = i & 3;
           drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[picture],
-                  Q_16_16_UPPER_HALF(PARTICLES[i].x),
-                  Q_16_16_UPPER_HALF(PARTICLES[i].y),
+                  FIXED_INTEGER_PART(PARTICLES[i].x),
+                  FIXED_INTEGER_PART(PARTICLES[i].y),
                   gBoreas_DebrisWidths[picture],
                   gBoreas_DebrisHeights[picture]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
@@ -314,8 +314,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayPictures[picture],
-                 Q_16_16_UPPER_HALF(PARTICLES[i].x),
-                 Q_16_16_UPPER_HALF(PARTICLES[i].y),
+                 FIXED_INTEGER_PART(PARTICLES[i].x),
+                 FIXED_INTEGER_PART(PARTICLES[i].y),
                  gBoreas_SprayWidths[picture], gBoreas_SprayHeights[picture]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
@@ -346,8 +346,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           s32 size = gBattleEffect_SparkleSizes[picture];
 
           draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-               Q_16_16_UPPER_HALF(trail->x) - size / 2,
-               Q_16_16_UPPER_HALF(trail->y) - size / 2, size, size);
+               FIXED_INTEGER_PART(trail->x) - size / 2,
+               FIXED_INTEGER_PART(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
             trail->x = spray->x;
             trail->y = spray->y;
@@ -432,16 +432,16 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       for (i = 0; i != count; i++) {
         struct Particle *crystal = &work->particles[i];
 
-        y = Q_16_16_UPPER_HALF(crystal->y);
+        y = FIXED_INTEGER_PART(crystal->y);
         if (y <= 135) {
           s32 picture = i % 3;
 
           draw(canvas, work->sheet + gBoreas_FallPictures[picture],
-               Q_16_16_UPPER_HALF(crystal->x), y - gBoreas_FallHeights[picture],
+               FIXED_INTEGER_PART(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
           BattleEffectKernels_IntegrateVector2(crystal, PARTICLE_DAMPING_NONE,
                                                toFIXED(1));
-          if (Q_16_16_UPPER_HALF(crystal->y) > 120 &&
+          if (FIXED_INTEGER_PART(crystal->y) > 120 &&
               crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
             crystal->y = toFIXED(120);
@@ -453,8 +453,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // Crystals rain down.
     if (frame <= 71) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        draw(canvas, work->sheet, Q_16_16_UPPER_HALF(work->particles[i].x) - 12,
-             Q_16_16_UPPER_HALF(work->particles[i].y) - 24, 24,
+        draw(canvas, work->sheet, FIXED_INTEGER_PART(work->particles[i].x) - 12,
+             FIXED_INTEGER_PART(work->particles[i].y) - 24, 24,
              BOREAS_CRYSTAL_HEIGHT);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;

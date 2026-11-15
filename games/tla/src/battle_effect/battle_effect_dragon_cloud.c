@@ -200,8 +200,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           s32 size = (step->variant >> 4) + 1;
 
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                      Q_16_16_UPPER_HALF(step->x) - size / 2,
-                      Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                      FIXED_INTEGER_PART(step->x) - size / 2,
+                      FIXED_INTEGER_PART(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
           if (step->y > INTtoFIXED((i & 3) + 108))
             step->velocityY = -step->velocityY / 2;
@@ -369,8 +369,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           s32 size = (spark->variant >> 4) + 1;
 
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                      Q_16_16_UPPER_HALF(spark->x) - size / 2,
-                      Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
+                      FIXED_INTEGER_PART(spark->x) - size / 2,
+                      FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
           spark->variant--;
         }

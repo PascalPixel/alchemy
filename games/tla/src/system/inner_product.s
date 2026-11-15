@@ -12,11 +12,11 @@
 @ never run.
 .syntax unified
 	.thumb
-	.global Math_DotProductQ16Code
-Math_DotProductQ16Code:
-	.global Math_DotProductQ16
+	.global Math_InnerProductCode
+Math_InnerProductCode:
+	.global Math_InnerProduct
 	.thumb_func
-Math_DotProductQ16:
+Math_InnerProduct:
 	bx	pc
 AlchemyUncredited_08017cea:
 	.2byte	0x0200

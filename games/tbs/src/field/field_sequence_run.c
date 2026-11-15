@@ -448,21 +448,21 @@ void Scene_ApplyEntrance(void) {
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gMainRoutineWork.x = REGION_FIXED(entranceEntry->x);
-    gMainRoutineWork.y = REGION_FIXED(entranceEntry->y);
-    gMainRoutineWork.z = REGION_FIXED(entranceEntry->z);
+    gMainRoutineWork.x = INTtoFIXED(entranceEntry->x);
+    gMainRoutineWork.y = INTtoFIXED(entranceEntry->y);
+    gMainRoutineWork.z = INTtoFIXED(entranceEntry->z);
     gMainRoutineWork.heading = entranceEntry->facing;
     gMainRoutineWork.layer = 0;
   }
 
   if (entranceEntry->cameraLeft != -1)
-    grid->minX = REGION_FIXED(entranceEntry->cameraLeft);
+    grid->minX = INTtoFIXED(entranceEntry->cameraLeft);
   if (entranceEntry->cameraTop != -1)
-    grid->minY = REGION_FIXED(entranceEntry->cameraTop);
+    grid->minY = INTtoFIXED(entranceEntry->cameraTop);
   if (entranceEntry->cameraRight != -1)
-    grid->maxX = REGION_FIXED(entranceEntry->cameraRight);
+    grid->maxX = INTtoFIXED(entranceEntry->cameraRight);
   if (entranceEntry->cameraBottom != -1)
-    grid->maxY = REGION_FIXED(entranceEntry->cameraBottom);
+    grid->maxY = INTtoFIXED(entranceEntry->cameraBottom);
 
   if (grid->minX + toFIXED(DISPLAY_WIDTH) > grid->maxX)
     grid->minX = grid->maxX - toFIXED(DISPLAY_WIDTH);

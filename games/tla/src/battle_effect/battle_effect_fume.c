@@ -110,8 +110,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           blit[0](canvas,
                   work->sheet + FUME_FLASH_BURST_PICTURES +
                       ((particle->variant / 4) << 11),
-                  Q_16_16_UPPER_HALF(particle->x) - 16,
-                  Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
+                  FIXED_INTEGER_PART(particle->x) - 16,
+                  FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
         }
         BattleEffectKernels_IntegrateVector2(

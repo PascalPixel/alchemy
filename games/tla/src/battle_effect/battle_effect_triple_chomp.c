@@ -147,12 +147,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
         s32 size = (left >> 2) + 3;
 
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(drawn->x) - size / 2,
-                Q_16_16_UPPER_HALF(drawn->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(drawn->x) - size / 2,
+                FIXED_INTEGER_PART(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(drawn->x) - size / 2,
-                Q_16_16_UPPER_HALF(drawn->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(drawn->x) - size / 2,
+                FIXED_INTEGER_PART(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         drawn->variant--;
       }

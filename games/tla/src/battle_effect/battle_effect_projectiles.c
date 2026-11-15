@@ -1180,8 +1180,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           s32 size = (p->variant >> 3) + 1;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(p->x) - size / 2,
-                  Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(p->x) - size / 2,
+                  FIXED_INTEGER_PART(p->y) - size, size, size * 2);
           if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH)
             BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 4);
           else
@@ -1200,8 +1200,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           s32 size = (p->variant >> 4) + 1;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(p->x) - size / 2,
-                  Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(p->x) - size / 2,
+                  FIXED_INTEGER_PART(p->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
           p->variant--;
         }
@@ -1217,7 +1217,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             draw[0](
                 canvas,
                 work->sheet + 0x22 + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
+                FIXED_INTEGER_PART(p->x) - 12, FIXED_INTEGER_PART(p->y) - 24,
                 SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 64);
             p->variant++;
@@ -1234,10 +1234,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
             s32 angle = Random16() & TRIG_ANGLE_MASK;
             s32 radius = (Random16() & 31) + 4;
-            s32 glintX = Q_16_16_UPPER_HALF(p->x) +
+            s32 glintX = FIXED_INTEGER_PART(p->x) +
                          ((Trig_Sin(angle) * radius) >> 17) -
                          (gBattleEffect_GlintPictureWidths[glint] >> 1);
-            s32 glintY = Q_16_16_UPPER_HALF(p->y) -
+            s32 glintY = FIXED_INTEGER_PART(p->y) -
                          ((Trig_Cos(angle) * radius) >> 17) -
                          (gBattleEffect_GlintPictureHeights[glint] >> 1);
 

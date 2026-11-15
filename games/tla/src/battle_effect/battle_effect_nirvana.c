@@ -428,8 +428,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
         if (frame >= i / 2 + 8 && spark->variant <= 28) {
           s32 cell = spark->variant / 3;
-          s32 x = Q_16_16_UPPER_HALF(spark->x);
-          s32 y = Q_16_16_UPPER_HALF(spark->y);
+          s32 x = FIXED_INTEGER_PART(spark->x);
+          s32 y = FIXED_INTEGER_PART(spark->y);
 
           if (cell > 6)
             cell = 6;

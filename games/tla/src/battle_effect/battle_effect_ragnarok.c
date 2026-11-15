@@ -178,8 +178,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           s32 life;
           s32 y;
 
-          y = Q_16_16_UPPER_HALF(flash->y);
-          x = Q_16_16_UPPER_HALF(flash->x) +
+          y = FIXED_INTEGER_PART(flash->y);
+          x = FIXED_INTEGER_PART(flash->x) +
               gRagnarok_StrikeColumns[col + args->side * 3] + baseX;
           life = flash->variant;
           if (life >= 0 && life <= 17)
@@ -417,8 +417,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
         s32 life;
         s32 y;
 
-        y = Q_16_16_UPPER_HALF(flash->y);
-        x = Q_16_16_UPPER_HALF(flash->x) + centerX;
+        y = FIXED_INTEGER_PART(flash->y);
+        x = FIXED_INTEGER_PART(flash->x) + centerX;
         life = flash->variant;
         if (life >= 0 && life <= 17)
           draw[0](canvas,
@@ -516,8 +516,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           if (frame > 76)
             size = 10;
           draw[0](canvas, cells + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(dust->x) - size / 2,
-                  Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(dust->x) - size / 2,
+                  FIXED_INTEGER_PART(dust->y) - size, size, size * 2);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -528,7 +528,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
           dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
-          if (dust->velocityY > 0 && Q_16_16_UPPER_HALF(dust->y) > 108)
+          if (dust->velocityY > 0 && FIXED_INTEGER_PART(dust->y) > 108)
             dust->variant = -1;
         }
         i++;

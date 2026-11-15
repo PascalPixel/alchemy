@@ -100,7 +100,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             xyz[2] = mote->z * Trig_Cos(mote->x);
             EffectPosition_ProjectPoint(xyz, pos = &screen);
             pos->x = (pos->x >> 17) + 64;
-            pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
+            pos->y = FIXED_INTEGER_PART(pos->y) + 60;
             draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
                     pos->x - ((width = gFrost_MoteWidths[cel]) >> 1),
                     pos->y - ((height = gFrost_MoteHeights[cel]) >> 1), width,
@@ -173,7 +173,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cel = i % 8;
 
           draw[1](canvas, work->sheet + gFrost_ChipCells[cel],
-                  Q_16_16_UPPER_HALF(chip->x), Q_16_16_UPPER_HALF(chip->y),
+                  FIXED_INTEGER_PART(chip->x), FIXED_INTEGER_PART(chip->y),
                   gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
@@ -215,9 +215,9 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           u32 size;
 
           draw[1](canvas, dots + gBattleEffect_SparklePictures[cel],
-                  Q_16_16_UPPER_HALF(puff->velocityX) -
+                  FIXED_INTEGER_PART(puff->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[cel]) >> 1),
-                  Q_16_16_UPPER_HALF(puff->velocityY) - (size >> 1) - rise,
+                  FIXED_INTEGER_PART(puff->velocityY) - (size >> 1) - rise,
                   size, size);
         }
         puff->variant--;

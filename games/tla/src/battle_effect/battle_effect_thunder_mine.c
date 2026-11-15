@@ -488,8 +488,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           s32 which = i & 1;
           u8 *smoke = work->sheet + 0x4800 + (row << 11);
 
-          rects[which](canvas, smoke, Q_16_16_UPPER_HALF(p->x) - 16,
-                       Q_16_16_UPPER_HALF(p->y) - 32, 32, 64);
+          rects[which](canvas, smoke, FIXED_INTEGER_PART(p->x) - 16,
+                       FIXED_INTEGER_PART(p->y) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 4);
         }
         p->variant++;
@@ -541,8 +541,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
         k = (p->variant / 2) % 9;
         blitters[0](
             canvas, (PICTURES + 0x2e16) + gBattleEffect_SparklePictures[k],
-            Q_16_16_UPPER_HALF(p->x) - gBattleEffect_SparkleSizes[k] / 2,
-            Q_16_16_UPPER_HALF(p->y) - gBattleEffect_SparkleSizes[k] / 2,
+            FIXED_INTEGER_PART(p->x) - gBattleEffect_SparkleSizes[k] / 2,
+            FIXED_INTEGER_PART(p->y) - gBattleEffect_SparkleSizes[k] / 2,
             gBattleEffect_SparkleSizes[k], gBattleEffect_SparkleSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
@@ -650,11 +650,11 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           size = i % 3 + 1;
           blitters[p->velocityY > 0](
               canvas, sprites + gBattleEffect_MotePictures[size - 1],
-              Q_16_16_UPPER_HALF(p->x) - size / 2,
-              Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
+              FIXED_INTEGER_PART(p->x) - size / 2,
+              FIXED_INTEGER_PART(p->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(p, 62, toFIXED(1) / 4);
           p->variant++;
-          if (p->velocityY > 0 && Q_16_16_UPPER_HALF(p->y) > 104) {
+          if (p->velocityY > 0 && FIXED_INTEGER_PART(p->y) > 104) {
             p->variant = -1;
           }
         }

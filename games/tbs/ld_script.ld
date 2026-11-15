@@ -161,7 +161,7 @@ SECTIONS
         "*/games/tbs/src/system/math_table.o"(.rodata)
         "*/games/tbs/src/graphics/palettes/palettes.o"(.rodata)
         "*/games/tbs/src/system/number_text.o"(.rodata)
-        "*/games/tbs/src/system/q16_dot_product.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/system/inner_product.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/savedata.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/flashtab.o"(.rodata)
         "*/games/tbs/src/gamepak/flash/flash.o"(.rodata)

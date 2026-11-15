@@ -13,7 +13,7 @@ struct ProjectedPoint {
   s32 z;
 };
 
-// gCurrentMatrix contains twelve s32 values in Q16 (1.0 = 0x10000).
+// gCurrentMatrix contains twelve s32 values in 16.16 (1.0 = 0x10000).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
 // Iwram_MultiplyMatrix multiplies the supplied matrix into the current one.
 
@@ -25,12 +25,13 @@ struct ProjectedPoint {
 /// An empty routine.
 void Render_EmptyHook(void) {}
 
-/// Allocates the matrix-save storage and sets the current matrix to identity.
+/// Allocates the matrix-save storage and sets the current matrix to the unit
+/// matrix.
 void Matrix_Initialize(void) {
   gMatrixStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_MATRIX_STACK, sizeof(gCurrentMatrix));
   gMatrixStackDepth = 0;
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetCurrentUnit();
 }
 
@@ -69,16 +70,17 @@ void Matrix_Pop(void) {
   }
 }
 
-/// Resets gCurrentMatrix to identity. Reached through the far-call table.
+/// Resets gCurrentMatrix to the unit matrix. Reached through the far-call
+/// table.
 void Matrix_ResetUnit(void) {
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetCurrentUnit();
 }
 
 /// Rotates gCurrentMatrix by `angles` about the X, Y and Z axes.
 void Matrix_Rotate(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
 
@@ -104,9 +106,9 @@ void Matrix_Rotate(s32 *angles) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// The identity store of transform.h's Matrix_SetUnit in ⚓️'s order,
+/// The unit matrix store of matrix.h's Matrix_SetUnit in ⚓️'s order,
 /// the 1.0 built before the zeros, as ⚓️'s Matrix_SetCurrentUnit builds it.
-static __inline__ void Render_SetIdentity(void *matrix) {
+static __inline__ void Matrix_StoreUnit(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")
   __asm__ volatile(
       "mov r0, %0\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"
@@ -121,11 +123,11 @@ static __inline__ void Render_SetIdentity(void *matrix) {
 
 /// Applies a rotation about the X axis.
 void Matrix_RotateX(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine, cosine;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   cosine = COS(angle);
   matrix[4] = cosine;
   matrix[8] = cosine;
@@ -137,11 +139,11 @@ void Matrix_RotateX(s32 angle) {
 
 /// Applies a rotation about the Y axis.
 void Matrix_RotateY(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine, cosine;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   cosine = COS(angle);
   matrix[0] = cosine;
   matrix[8] = cosine;
@@ -156,8 +158,8 @@ void Matrix_SetRotateY(s32 angle) {
   s32 *matrix = gCurrentMatrix;
   s32 sine, cosine;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   cosine = COS(angle);
   matrix[0] = cosine;
   matrix[8] = cosine;
@@ -168,11 +170,11 @@ void Matrix_SetRotateY(s32 angle) {
 
 /// Applies a rotation about the Z axis.
 void Matrix_RotateZ(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine, cosine;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   cosine = COS(angle);
   matrix[0] = cosine;
   matrix[4] = cosine;
@@ -182,24 +184,24 @@ void Matrix_RotateZ(s32 angle) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a translation by position, X, Y and Z in Q16.
+/// Applies a translation by position, X, Y and Z in 16.16.
 void Matrix_TranslateVector(const s32 *position) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   matrix[MATRIX_TRANSLATION_X] = position[0];
   matrix[MATRIX_TRANSLATION_Y] = position[1];
   matrix[MATRIX_TRANSLATION_Z] = position[2];
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a translation by x, y and z in Q16.
+/// Applies a translation by x, y and z in 16.16.
 void Matrix_Translate(s32 x, s32 y, s32 z) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   matrix[MATRIX_TRANSLATION_X] = x;
   matrix[MATRIX_TRANSLATION_Y] = y;
   matrix[MATRIX_TRANSLATION_Z] = z;
@@ -213,24 +215,24 @@ void Matrix_SetTranslation(const s32 *position) {
   gCurrentMatrix[MATRIX_TRANSLATION_Z] = position[2];
 }
 
-/// Applies a scale by scale's X, Y and Z factors in Q16.
+/// Applies a scale by scale's X, Y and Z factors in 16.16.
 void Matrix_ScaleVector(const s32 *scale) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   matrix[0] = scale[0];
   matrix[4] = scale[1];
   matrix[8] = scale[2];
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a scale by x, y and z in Q16.
+/// Applies a scale by x, y and z in 16.16.
 void Matrix_Scale(s32 x, s32 y, s32 z) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   matrix[0] = x;
   matrix[4] = y;
   matrix[8] = z;
@@ -239,10 +241,10 @@ void Matrix_Scale(s32 x, s32 y, s32 z) {
 
 /// Applies the same scale on all three axes.
 void Matrix_ScaleUniform(s32 scale) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store above")
-  Render_SetIdentity(matrix);
+  CAMELOT_ASM("the fixed-register unit matrix store above")
+  Matrix_StoreUnit(matrix);
   matrix[0] = scale;
   matrix[4] = scale;
   matrix[8] = scale;
@@ -252,7 +254,7 @@ void Matrix_ScaleUniform(s32 scale) {
 /// matrix. Reached through the far-call table.
 void Matrix_RotateTranslate(s32 *angles, s32 *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
 
@@ -283,7 +285,7 @@ void Matrix_RotateTranslate(s32 *angles, s32 *position) {
 void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
   {
@@ -327,7 +329,7 @@ void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
 #define Math_SqrtFX(v) (Iwram_Sqrt(v) << 8)
 /// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
-#define RelocatedQ16DotProduct Math_DotProductQ16Code
+#define RelocatedInnerProduct Math_InnerProductCode
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
@@ -358,7 +360,7 @@ void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
     dot = (Dot3Fn)dst;
     mul = Iwram_MulFX;
     divide = Iwram_UnsignedDivideEntry;
-    Dma_Set(RelocatedQ16DotProduct, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
+    Dma_Set(RelocatedInnerProduct, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
             REG_DMA3);
   }
 
@@ -420,7 +422,7 @@ void Matrix_SetLookAt(s32 *eye, s32 *target) {
 
 /// Multiplies the camera at `eye` looking at `target` into gCurrentMatrix.
 void Matrix_LookAt(s32 *eye, s32 *target) {
-  s32 work[MATRIX_WORDS];
+  MATRIX work;
 
   Matrix_BuildLookAt(eye, target, work);
   Iwram_MultiplyMatrix(work);
@@ -494,4 +496,4 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 #undef MATRIX_DMA
 #undef COS
 #undef Math_SqrtFX
-#undef RelocatedQ16DotProduct
+#undef RelocatedInnerProduct

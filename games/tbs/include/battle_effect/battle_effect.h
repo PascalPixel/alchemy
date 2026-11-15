@@ -249,9 +249,9 @@ typedef struct {
 /// the impact burst, Neptune and the spark groups' ring flashes read them.
 // UB: the s32 is read through an s16.
 #ifdef UBFIX
-#define Q_16_16_UPPER_HALF(v) ((s32)(v) >> 16)
+#define FIXED_INTEGER_PART(v) ((s32)(v) >> 16)
 #else
-#define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
+#define FIXED_INTEGER_PART(v) (((s16 *)&(v))[1])
 #endif
 
 /// Two-dimensional {x, y} pair for position or velocity, a local of the

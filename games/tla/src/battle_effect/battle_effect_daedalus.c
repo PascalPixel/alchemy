@@ -1528,8 +1528,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
         for (i = 0, mote = sparks; i != DAEDALUS_SPARKS; i++, mote++) {
           if ((u32)mote->variant <= 17) {
             draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
-                    Q_16_16_UPPER_HALF(mote->x) - 16,
-                    Q_16_16_UPPER_HALF(mote->y) - 48, FLASH_BURST_WIDTH,
+                    FIXED_INTEGER_PART(mote->x) - 16,
+                    FIXED_INTEGER_PART(mote->y) - 48, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(mote, 62, -toFIXED(1) / 32);
             mote->variant++;

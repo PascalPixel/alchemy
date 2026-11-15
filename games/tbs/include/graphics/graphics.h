@@ -41,7 +41,7 @@ extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 extern u8 gPageArrowTiles[];
 /// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
-extern const u32 RelocatedQ16DotProduct[];
+extern const u32 RelocatedInnerProduct[];
 /// Decompress_MoveToFrontLzCommands through its command loop, which
 /// Decompress_MoveToFrontLz copies to the heap.
 extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];

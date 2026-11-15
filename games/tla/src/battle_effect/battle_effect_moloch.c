@@ -124,13 +124,13 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             s32 size = gMoloch_MoteSizes[i & 7];
 
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                    Q_16_16_UPPER_HALF(mote->x) - (size >> 1),
-                    Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
+                    FIXED_INTEGER_PART(mote->x) - (size >> 1),
+                    FIXED_INTEGER_PART(mote->y) - size, size, size * 2);
 
             // Frames 91-119: motes still at rest head for a random point of
             // the middle, timed to arrive as they reach the ground.
             if ((u32)(frame - 91) <= 28 && mote->velocityX == 0 &&
-                Q_16_16_UPPER_HALF(mote->y) <= 113) {
+                FIXED_INTEGER_PART(mote->y) <= 113) {
               s32 dx;
 
               mote->velocityX = INTtoFIXED(Random16() & 63) + toFIXED(56);
@@ -195,7 +195,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
                   canvas,
                   work->sheet +
                       (flame->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
-                  Q_16_16_UPPER_HALF(flame->x), Q_16_16_UPPER_HALF(flame->y),
+                  FIXED_INTEGER_PART(flame->x), FIXED_INTEGER_PART(flame->y),
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
@@ -230,8 +230,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               draw[0](canvas,
                       work->sheet +
                           (flame->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
-                      Q_16_16_UPPER_HALF(flame->x),
-                      Q_16_16_UPPER_HALF(flame->y), FLASH_BURST_WIDTH,
+                      FIXED_INTEGER_PART(flame->x),
+                      FIXED_INTEGER_PART(flame->y), FLASH_BURST_WIDTH,
                       FLASH_BURST_HEIGHT);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
@@ -2243,7 +2243,7 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
 
       top = FIXEDtoINT(ax[1]);
       middle = FIXEDtoINT(ax[4]);
-      bottom = Q_16_16_UPPER_HALF(ax[7]);
+      bottom = FIXED_INTEGER_PART(ax[7]);
       if (top != middle)
         slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
       if (top != bottom)
@@ -2537,14 +2537,14 @@ void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
       *x2 += toFIXED(64);
       *y2 += toFIXED(64);
       BattleEffect_DrawClippedCanvasLine(
-          Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
-          Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1), color);
+          FIXED_INTEGER_PART(*x0), FIXED_INTEGER_PART(*y0),
+          FIXED_INTEGER_PART(*x1), FIXED_INTEGER_PART(*y1), color);
       BattleEffect_DrawClippedCanvasLine(
-          Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1),
-          Q_16_16_UPPER_HALF(*x2), Q_16_16_UPPER_HALF(*y2), color);
+          FIXED_INTEGER_PART(*x1), FIXED_INTEGER_PART(*y1),
+          FIXED_INTEGER_PART(*x2), FIXED_INTEGER_PART(*y2), color);
       BattleEffect_DrawClippedCanvasLine(
-          Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
-          Q_16_16_UPPER_HALF(*x2), Q_16_16_UPPER_HALF(*y2), color);
+          FIXED_INTEGER_PART(*x0), FIXED_INTEGER_PART(*y0),
+          FIXED_INTEGER_PART(*x2), FIXED_INTEGER_PART(*y2), color);
     }
   }
 }

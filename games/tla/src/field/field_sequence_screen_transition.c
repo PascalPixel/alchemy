@@ -51,7 +51,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 k;
   s32 lineCount;
   s32 value;
-  s32 radiusSquaredQ16;
+  s32 radiusSquaredFixed;
   s32 delta;
   u32 horizontalExtent;
   s32 left;
@@ -137,15 +137,15 @@ void ScreenTransition_UpdateScanlineTable(void) {
             scanlineData += 2;
           }
         } else {
-          radiusSquaredQ16 = span->x0;
+          radiusSquaredFixed = span->x0;
           left = span->y0;
           delta = span->x1;
           right = span->y1;
           for (k = 0; k < lineCount; k++) {
-            scanlineData[0] =
-                ((radiusSquaredQ16 + (delta - radiusSquaredQ16) * k / lineCount)
-                 << 8) +
-                (left + (right - left) * k / lineCount);
+            scanlineData[0] = ((radiusSquaredFixed +
+                                (delta - radiusSquaredFixed) * k / lineCount)
+                               << 8) +
+                              (left + (right - left) * k / lineCount);
             scanlineData += 2;
           }
         }
@@ -182,11 +182,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value = TRANSITION_CLOSED - value;
     }
     value *= 5;
-    radiusSquaredQ16 = (value * value) << 16;
+    radiusSquaredFixed = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - DISPLAY_HEIGHT / 2;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((value * value) << 16)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - ((value * value) << 16)) >> 8;
       left = DISPLAY_WIDTH / 2 - horizontalExtent;
       right = horizontalExtent + DISPLAY_WIDTH / 2;
       if (left < 0)
@@ -240,11 +240,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
     if (gFrameCount & 1)
       value = 0;
     value *= 5;
-    radiusSquaredQ16 = (value * value) << 16;
+    radiusSquaredFixed = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 15)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)
@@ -278,7 +278,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     else
       value &= TRANSITION_OPEN - 1;
     value *= 5;
-    radiusSquaredQ16 = (value * value) << 16;
+    radiusSquaredFixed = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       delta = i - centerY;
       if (delta < -120)
@@ -287,7 +287,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
         delta = 120;
       delta *= delta;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((delta * 3) << 15)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - ((delta * 3) << 15)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < right) {
@@ -332,11 +332,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
     else
       value &= TRANSITION_OPEN - 1;
     value *= 5;
-    radiusSquaredQ16 = (value * value) << 16;
+    radiusSquaredFixed = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 15)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)
@@ -371,11 +371,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
     else
       value &= TRANSITION_OPEN - 1;
     value *= 5;
-    radiusSquaredQ16 = (value * value) << 16;
+    radiusSquaredFixed = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 14)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 14)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)

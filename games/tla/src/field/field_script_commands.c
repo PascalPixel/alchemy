@@ -650,9 +650,9 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       } else {
         if (distance > moveStep) {
           s32 ratio = Iwram_RatioMulQ14(distance, dx);
-          s32 (*mulQ16)(s32, s32) = IwramMulFX;
-          dx = mulQ16(ratio, moveStep);
-          dz = mulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
+          s32 (*mulFX)(s32, s32) = IwramMulFX;
+          dx = mulFX(ratio, moveStep);
+          dz = mulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
         }
         camera->x.fixed += dx;
         camera->z.fixed += dz;

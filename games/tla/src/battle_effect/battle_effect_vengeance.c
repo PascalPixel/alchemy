@@ -256,9 +256,9 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
                                    POSE_DAMAGE, 0, 4);
           arrow->variant = 1;
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            arrow->x = pos.x / 2 - Q_16_16_UPPER_HALF(arrow->x);
+            arrow->x = pos.x / 2 - FIXED_INTEGER_PART(arrow->x);
           } else {
-            arrow->x = pos.x / 2 - Q_16_16_UPPER_HALF(arrow->x) + 128;
+            arrow->x = pos.x / 2 - FIXED_INTEGER_PART(arrow->x) + 128;
           }
         }
       }
@@ -266,50 +266,50 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
         if (arrow->variant == 0) {
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
                   (FIXEDtoINT(arrow->x)) - 111,
-                  Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                  FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
                   VENGEANCE_ARROW_HEIGHT);
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  Q_16_16_UPPER_HALF(arrow->x) + 17,
-                  Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
+                  FIXED_INTEGER_PART(arrow->x) + 17,
+                  FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
                   VENGEANCE_ARROW_HEIGHT);
           draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                  Q_16_16_UPPER_HALF(arrow->x) - 128,
-                  Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
+                  FIXED_INTEGER_PART(arrow->x) - 128,
+                  FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
                   VENGEANCE_FLAME_TIP_HEIGHT);
           draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                  Q_16_16_UPPER_HALF(arrow->x),
-                  Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
+                  FIXED_INTEGER_PART(arrow->x),
+                  FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
                   VENGEANCE_FLAME_TIP_HEIGHT);
         } else {
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  pos.x / 2 + arrow->x - 111, Q_16_16_UPPER_HALF(arrow->y) + 24,
+                  pos.x / 2 + arrow->x - 111, FIXED_INTEGER_PART(arrow->y) + 24,
                   VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  pos.x / 2 + arrow->x + 17, Q_16_16_UPPER_HALF(arrow->y) + 96,
+                  pos.x / 2 + arrow->x + 17, FIXED_INTEGER_PART(arrow->y) + 96,
                   VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         }
       } else if (arrow->variant == 0) {
         draw[1](canvas, work->sheet + VENGEANCE_ARROW, FIXEDtoINT(arrow->x),
-                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
                 VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_ARROW,
-                Q_16_16_UPPER_HALF(arrow->x) - 128,
-                Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
+                FIXED_INTEGER_PART(arrow->x) - 128,
+                FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
                 VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                Q_16_16_UPPER_HALF(arrow->x) + 51,
-                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
+                FIXED_INTEGER_PART(arrow->x) + 51,
+                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
                 VENGEANCE_FLAME_TIP_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                Q_16_16_UPPER_HALF(arrow->x) - 77,
-                Q_16_16_UPPER_HALF(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
+                FIXED_INTEGER_PART(arrow->x) - 77,
+                FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
                 VENGEANCE_FLAME_TIP_HEIGHT);
       } else {
         draw[1](canvas, work->sheet + VENGEANCE_ARROW, pos.x / 2 + arrow->x,
-                Q_16_16_UPPER_HALF(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
+                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
                 VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_ARROW,
-                pos.x / 2 + arrow->x - 128, Q_16_16_UPPER_HALF(arrow->y) + 96,
+                pos.x / 2 + arrow->x - 128, FIXED_INTEGER_PART(arrow->y) + 96,
                 VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
       }
     }
@@ -1131,9 +1131,9 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
         u32 height;
 
         draw[0](canvas, work->sheet + gBubbleColumn_Pictures[cel],
-                Q_16_16_UPPER_HALF(bubble->x) -
+                FIXED_INTEGER_PART(bubble->x) -
                     ((width = gBubbleColumn_PictureWidths[cel]) >> 1),
-                Q_16_16_UPPER_HALF(bubble->y) -
+                FIXED_INTEGER_PART(bubble->y) -
                     ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
                 width, height);
         BattleEffectKernels_IntegrateVector2(bubble, 63, -toFIXED(1) / 4);
@@ -1224,10 +1224,10 @@ struct MeshVertex;
                                                                                \
     {                                                                          \
       u8 *src_ = work->sheet + COATLICUE_BUBBLES + gCoatlicue_Pictures[n_];    \
-      s32 x0_ = Q_16_16_UPPER_HALF((p)->x);                                    \
+      s32 x0_ = FIXED_INTEGER_PART((p)->x);                                    \
       u8 w_ = gCoatlicue_PictureWidths[n_];                                    \
       s32 x_ = x0_ - (w_ >> 1);                                                \
-      s32 y_ = Q_16_16_UPPER_HALF((p)->y);                                     \
+      s32 y_ = FIXED_INTEGER_PART((p)->y);                                     \
       u8 h_ = gCoatlicue_PictureHeights[n_];                                   \
                                                                                \
       blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
@@ -1714,7 +1714,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           }
           q = &pos;
           EffectPosition_ProjectPoint(p, q);
-          q->depth = Q_16_16_UPPER_HALF(q->depth) - 228;
+          q->depth = FIXED_INTEGER_PART(q->depth) - 228;
           n = q->depth * 6 / 50 + gCoatlicue_PictureBias[p->variant];
           if (n < 0) {
             n = 0;
@@ -1723,9 +1723,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             n = 14;
           }
           {
-            s32 x = Q_16_16_UPPER_HALF(q->x);
+            s32 x = FIXED_INTEGER_PART(q->x);
 
-            q->y = Q_16_16_UPPER_HALF(q->y);
+            q->y = FIXED_INTEGER_PART(q->y);
             q->x = x + 60;
           }
           if (frame > 539) {
@@ -1755,7 +1755,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         struct Particle *step = &work->particles[k * 7 + i];
 
         if (work->particles[k * 7 + 6].variant >= 0) {
-          s32 n = 14 - Q_16_16_UPPER_HALF(step->z);
+          s32 n = 14 - FIXED_INTEGER_PART(step->z);
           s32 x = FIXEDtoINT(step->x +
                              (Trig_Sin((frame - (i % 7) * 8) << 10) << 2));
 

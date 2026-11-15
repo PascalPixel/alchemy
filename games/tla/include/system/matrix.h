@@ -13,9 +13,13 @@ enum {
   MATRIX_WORDS = 12
 };
 
+/// A matrix, as SGL types one: twelve 16.16 words, the rotation's nine and
+/// then the translation's three.
+typedef s32 MATRIX[MATRIX_WORDS];
+
 /// The current 3D transform. Iwram_MultiplyMatrix multiplies the matrix it is
 /// given into it.
-extern s32 gCurrentMatrix[MATRIX_WORDS];
+extern MATRIX gCurrentMatrix;
 
 /// Matrices saved by Matrix_Push, 0 or 1: the save area holds one.
 extern s32 gMatrixStackDepth;
@@ -31,8 +35,8 @@ void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out);
 void Matrix_SetLookAt(s32 *eye, s32 *target);
 void Matrix_LookAt(s32 *eye, s32 *target);
 
-/// Sets a twelve-word matrix to identity: FIXED_ONE (1.0) on the rotation's
-/// diagonal, the rest 0.
+/// Sets a twelve-word matrix to the unit matrix: FIXED_ONE (1.0) on the
+/// rotation's diagonal, the rest 0.
 static __inline__ void Matrix_SetUnit(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")
   __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\t"
@@ -45,13 +49,13 @@ static __inline__ void Matrix_SetUnit(void *matrix) {
                    : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-/// The games order the identity-register setup differently before the same
+/// The games order the unit-matrix register setup differently before the same
 /// stores.
 #define MATRIX_UNIT_REGISTER_SETUP                                             \
   "mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"             \
   "mov %0, #0\n\tmov r4, #0\n\t"
 
-/// Resets the current matrix to identity.
+/// Resets the current matrix to the unit matrix.
 static __inline__ void Matrix_SetCurrentUnit(void) {
   s32 zero;
 

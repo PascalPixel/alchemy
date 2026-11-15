@@ -901,8 +901,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
-                    Q_16_16_UPPER_HALF(flash->x) - 16,
-                    Q_16_16_UPPER_HALF(flash->y) - 48, FLASH_BURST_WIDTH,
+                    FIXED_INTEGER_PART(flash->x) - 16,
+                    FIXED_INTEGER_PART(flash->y) - 48, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(flash, 62, -toFIXED(1) / 32);
             flash->variant++;

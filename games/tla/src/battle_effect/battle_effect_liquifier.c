@@ -126,8 +126,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
             for (; j != 2; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(step->x) - half,
-                  Q_16_16_UPPER_HALF(step->y) - size, size, twice);
+                  FIXED_INTEGER_PART(step->x) - half,
+                  FIXED_INTEGER_PART(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
                                                    0);
             }
@@ -177,8 +177,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
             for (; j != 4; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(step->x) - half,
-                  Q_16_16_UPPER_HALF(step->y) - size, size, twice);
+                  FIXED_INTEGER_PART(step->x) - half,
+                  FIXED_INTEGER_PART(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
                                                    0);
             }
@@ -622,8 +622,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
       if (mode == 0 || mode == 2 || mode == 3) {
         flame = work->particles;
         for (i = 0; i != 16; i++) {
-          s32 x = Q_16_16_UPPER_HALF(flame->x);
-          s32 y = Q_16_16_UPPER_HALF(flame->y);
+          s32 x = FIXED_INTEGER_PART(flame->x);
+          s32 y = FIXED_INTEGER_PART(flame->y);
 
           BattleEffectKernels_IntegrateVector2(flame, 60, 0);
           if ((u32)flame->variant <= 17)
@@ -646,8 +646,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           s32 size = (spark->variant >> 2) + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(spark->x) - size / 2,
-                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(spark->x) - size / 2,
+                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, 0);
           spark->variant--;
         }

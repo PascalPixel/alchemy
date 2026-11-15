@@ -12,12 +12,12 @@
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 /// Allocates the one-level save area (heap slot HEAP_SLOT_MATRIX_STACK),
-/// clears gMatrixStackDepth and resets gCurrentMatrix to identity.
+/// clears gMatrixStackDepth and resets gCurrentMatrix to the unit matrix.
 void Matrix_Initialize(void) {
   gMatrixStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_MATRIX_STACK, sizeof(gCurrentMatrix));
   gMatrixStackDepth = 0;
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetCurrentUnit();
 }
 
@@ -50,9 +50,10 @@ void Matrix_Pop(void) {
   }
 }
 
-/// Resets gCurrentMatrix to identity. Reached through the far-call table.
+/// Resets gCurrentMatrix to the unit matrix. Reached through the far-call
+/// table.
 void Matrix_ResetUnit(void) {
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetCurrentUnit();
 }
 
@@ -60,7 +61,7 @@ void Matrix_ResetUnit(void) {
 /// and Z axes, in that order, with one combined matrix.
 void Matrix_Rotate(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -89,11 +90,11 @@ void Matrix_Rotate(s32 *angles) {
 
 /// Rotates gCurrentMatrix about the X axis by `angle`.
 void Matrix_RotateX(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(matrix);
   matrix[4] = cosine;
   matrix[5] = sine;
@@ -104,11 +105,11 @@ void Matrix_RotateX(s32 angle) {
 
 /// Rotates gCurrentMatrix about the Y axis by `angle`.
 void Matrix_RotateY(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[2] = -sine;
@@ -119,11 +120,11 @@ void Matrix_RotateY(s32 angle) {
 
 /// Rotates gCurrentMatrix about the Z axis by `angle`.
 void Matrix_RotateZ(s32 angle) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(matrix);
   matrix[0] = cosine;
   matrix[1] = sine;
@@ -134,9 +135,9 @@ void Matrix_RotateZ(s32 angle) {
 
 /// Translates gCurrentMatrix by `position` (x, y, z in 16.16).
 void Matrix_TranslateVector(const s32 *position) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(matrix);
   matrix[MATRIX_TRANSLATION_X] = position[0];
   matrix[MATRIX_TRANSLATION_Y] = position[1];
@@ -146,9 +147,9 @@ void Matrix_TranslateVector(const s32 *position) {
 
 /// Scales gCurrentMatrix by `scale` (x, y, z factors in 16.16).
 void Matrix_ScaleVector(const s32 *scale) {
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
-  CAMELOT_ASM("the fixed-register identity store of transform.h")
+  CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
   Matrix_SetUnit(matrix);
   matrix[0] = scale[0];
   matrix[4] = scale[1];
@@ -160,7 +161,7 @@ void Matrix_ScaleVector(const s32 *scale) {
 /// matrix. Reached through the far-call table.
 void Matrix_RotateTranslate(s32 *angles, s32 *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -192,7 +193,7 @@ void Matrix_RotateTranslate(s32 *angles, s32 *position) {
 void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
-  s32 matrix[MATRIX_WORDS];
+  MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -245,7 +246,7 @@ void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // Copy the dot product routine to the stack and call it there
   dot = (Dot3Fn)code;
-  Dma_Set(RelocatedQ16DotProduct, code, DMA_COPY_WORDS(7), REG_DMA3);
+  Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(7), REG_DMA3);
 
   // The view axis d, pointing from the target back to the eye, normalized
   dx = target[0] - eye[0];
@@ -306,7 +307,7 @@ void Matrix_SetLookAt(s32 *eye, s32 *target) {
 
 /// Multiplies the camera at `eye` looking at `target` into gCurrentMatrix.
 void Matrix_LookAt(s32 *eye, s32 *target) {
-  s32 work[MATRIX_WORDS];
+  MATRIX work;
 
   Matrix_BuildLookAt(eye, target, work);
   Iwram_MultiplyMatrix(work);

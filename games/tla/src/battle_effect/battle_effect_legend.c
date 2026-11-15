@@ -125,8 +125,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       // From frame 50 plus its delay the sword falls, faster each frame,
       // until it sticks in the ground 12 frames later.
       if (frame >= i * 16 + 50) {
-        s32 x = Q_16_16_UPPER_HALF(step->x) - 20;
-        s32 y = Q_16_16_UPPER_HALF(step->y) - 50;
+        s32 x = FIXED_INTEGER_PART(step->x) - 20;
+        s32 y = FIXED_INTEGER_PART(step->y) - 50;
         s32 height = 80;
 
         if (y > 24)
@@ -149,8 +149,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         s32 size = (step->variant >> 2) + 1;
 
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                Q_16_16_UPPER_HALF(step->x) - size / 2,
-                Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                FIXED_INTEGER_PART(step->x) - size / 2,
+                FIXED_INTEGER_PART(step->y) - size, size, size * 2);
         if (step->y > toFIXED(104)) {
           step->y = toFIXED(104);
           step->velocityY = -step->velocityY / 2;
@@ -442,8 +442,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
             draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 0x1000,
-                    Q_16_16_UPPER_HALF(step->x) - gPrism_ShardWidths[cell] / 2,
-                    Q_16_16_UPPER_HALF(step->y) - gPrism_ShardHeights[cell] / 2,
+                    FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
+                    FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
                                                  0);
@@ -464,8 +464,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
               draw[0](canvas,
                       work->sheet + ELEMENT_CARDS_PICTURES +
                           step->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                      Q_16_16_UPPER_HALF(step->x) - 12,
-                      Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
+                      FIXED_INTEGER_PART(step->x) - 12,
+                      FIXED_INTEGER_PART(step->y) - 24, SMOKE_PUFF_WIDTH,
                       SMOKE_PUFF_HEIGHT);
             step->x += step->velocityX;
             step->y += step->velocityY;
@@ -673,8 +673,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           size += 3;
         for (j = 0; j != gElementCards_SparkMotions[mode].steps; j++) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(step->x) - size / 2,
-                  Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(step->x) - size / 2,
+                  FIXED_INTEGER_PART(step->y) - size, size, size * 2);
           if (step->y > toFIXED(104)) {
             step->y = toFIXED(104);
             step->velocityY = -step->velocityY / 2;

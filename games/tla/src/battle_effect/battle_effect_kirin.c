@@ -181,7 +181,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           s32 size = i % 3 + 1;
 
           blit(canvas, sheet + gBattleEffect_MotePictures[size - 1], fire->x,
-               Q_16_16_UPPER_HALF(fire->y) - size, size, size * 2);
+               FIXED_INTEGER_PART(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
           fire->velocityY = fire->velocityY * 48 / DAMPING_SCALE;
@@ -316,8 +316,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          EFFECT_DRAW_MOTE(blit, canvas, sheet, Q_16_16_UPPER_HALF(burst->x),
-                           Q_16_16_UPPER_HALF(burst->y), size);
+          EFFECT_DRAW_MOTE(blit, canvas, sheet, FIXED_INTEGER_PART(burst->x),
+                           FIXED_INTEGER_PART(burst->y), size);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;

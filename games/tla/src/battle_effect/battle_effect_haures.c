@@ -326,7 +326,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                       work->sprites[HAURES_DOTS + (i & 1)], wingPlace,
                       gHaures_UnitScale, 0);
                   BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 8);
-                  if (Q_16_16_UPPER_HALF(p->y) > 119) {
+                  if (FIXED_INTEGER_PART(p->y) > 119) {
                     p->variant = 1;
                   }
                 } else if (p->variant <= 23) {
@@ -708,7 +708,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           for (i = 0; i != HAURES_WING_QUADS; i++) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * 12;
-            if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
+            if ((u32)(FIXED_INTEGER_PART(p->x) + 16) <= 152 &&
                 (FIXEDtoINT(p->y)) >= -16 && (FIXEDtoINT(p->y)) <= 136) {
               Matrix_Initialize();
               Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
@@ -832,8 +832,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           s32 n = (p->variant >> 3) + 1;
 
           draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                  Q_16_16_UPPER_HALF(p->x) - n / 2,
-                  Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+                  FIXED_INTEGER_PART(p->x) - n / 2,
+                  FIXED_INTEGER_PART(p->y) - n, n, n * 2);
           BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 2);
           p->variant--;
         }

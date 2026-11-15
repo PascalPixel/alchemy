@@ -96,8 +96,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](
                 canvas, work->sheet + gPrism_ShardPictures[cell] + 0x800,
-                Q_16_16_UPPER_HALF(shard->x) - gPrism_ShardWidths[cell] / 2,
-                Q_16_16_UPPER_HALF(shard->y) - gPrism_ShardHeights[cell] / 2,
+                FIXED_INTEGER_PART(shard->x) - gPrism_ShardWidths[cell] / 2,
+                FIXED_INTEGER_PART(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
                                                  toFIXED(1) / 8);
@@ -107,8 +107,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           }
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
-          draw[i & 1](canvas, work->sheet, Q_16_16_UPPER_HALF(cry->x) - 16,
-                      Q_16_16_UPPER_HALF(cry->y), CRYSTAL_WIDTH,
+          draw[i & 1](canvas, work->sheet, FIXED_INTEGER_PART(cry->x) - 16,
+                      FIXED_INTEGER_PART(cry->y), CRYSTAL_WIDTH,
                       CRYSTAL_HEIGHT);
           BattleEffectKernels_IntegrateVector2(cry, PARTICLE_DAMPING_NONE,
                                                toFIXED(1));

@@ -282,7 +282,7 @@ void System_CopyBuildStamp(void);
 
 void System_VBlankHandler(void);
 
-extern const u32 Math_DotProductQ16Code[];
+extern const u32 Math_InnerProductCode[];
 
 s32 System_GetLanguage(void);
 

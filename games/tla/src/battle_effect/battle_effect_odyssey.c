@@ -205,8 +205,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           s32 size = (step->variant >> 2) + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_UPPER_HALF(step->x) - size / 2,
-                  Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
+                  FIXED_INTEGER_PART(step->x) - size / 2,
+                  FIXED_INTEGER_PART(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
         }

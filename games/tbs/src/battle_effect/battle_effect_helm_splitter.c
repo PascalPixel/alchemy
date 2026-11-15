@@ -325,8 +325,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 3;
-        drawX = Q_16_16_UPPER_HALF(particle->x);
-        drawY = Q_16_16_UPPER_HALF(particle->y);
+        drawX = FIXED_INTEGER_PART(particle->x);
+        drawY = FIXED_INTEGER_PART(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
@@ -341,8 +341,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 1;
-        drawX = Q_16_16_UPPER_HALF(particle->x);
-        drawY = Q_16_16_UPPER_HALF(particle->y);
+        drawX = FIXED_INTEGER_PART(particle->x);
+        drawY = FIXED_INTEGER_PART(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
@@ -358,8 +358,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
         Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
         picture = (frame - 36) / 7;
-        drawX = Q_16_16_UPPER_HALF(shard->x);
-        drawY = Q_16_16_UPPER_HALF(shard->y);
+        drawX = FIXED_INTEGER_PART(shard->x);
+        drawY = FIXED_INTEGER_PART(shard->y);
         maxBlend(canvas,
                  work->sheet +
                      picture * (IMPACT_BURST_FRAGMENT_WIDTH *

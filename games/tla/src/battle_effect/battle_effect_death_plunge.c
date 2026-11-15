@@ -164,8 +164,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         spark = &work->particles[i];
         if (spark->variant >= 0 && spark->variant <= 23) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
-                  Q_16_16_UPPER_HALF(spark->x) - 16,
-                  Q_16_16_UPPER_HALF(spark->y) - 32, FLASH_BURST_WIDTH,
+                  FIXED_INTEGER_PART(spark->x) - 16,
+                  FIXED_INTEGER_PART(spark->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
         }

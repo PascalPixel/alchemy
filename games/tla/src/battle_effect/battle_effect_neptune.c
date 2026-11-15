@@ -250,8 +250,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0, glint = work->particles; i != 32; i++, glint++) {
         if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
             frame < i / 4 + NEPTUNE_FLARES_FRAME + 32) {
-          s32 fx = Q_16_16_UPPER_HALF(glint->x) + 112;
-          s32 fy = Q_16_16_UPPER_HALF(glint->y) + 62;
+          s32 fx = FIXED_INTEGER_PART(glint->x) + 112;
+          s32 fy = FIXED_INTEGER_PART(glint->y) + 62;
           s32 r = (i & 3) + 5;
 
           glintSize = r * 2;
@@ -409,13 +409,13 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 k = i % 3 + 2;
 
           drawSpray(canvas, cells + gBattleEffect_MotePictures[k - 1],
-                    Q_16_16_UPPER_HALF(PARTICLES[i].x) - k / 2,
-                    Q_16_16_UPPER_HALF(PARTICLES[i].y) - k, k, k * 2);
+                    FIXED_INTEGER_PART(PARTICLES[i].x) - k / 2,
+                    FIXED_INTEGER_PART(PARTICLES[i].y) - k, k, k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
                                                gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 &&
-              Q_16_16_UPPER_HALF(PARTICLES[i].y) > 104)
+              FIXED_INTEGER_PART(PARTICLES[i].y) > 104)
             PARTICLES[i].variant = -1;
         }
       }

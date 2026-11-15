@@ -216,16 +216,16 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
         do {
           if (chip->variant >= 0) {
-            blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
-                    Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
-            blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
-                    Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
-            blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
-                    Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
+                    FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
-            if (Q_16_16_UPPER_HALF(chip->y) > 104) {
+            if (FIXED_INTEGER_PART(chip->y) > 104) {
               chip->velocityY = -chip->velocityY;
               chip->variant -= 8;
             }
@@ -401,8 +401,8 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
           if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
               spark->variant <= 28) {
             s32 cell = spark->variant / 3;
-            s32 x = Q_16_16_UPPER_HALF(spark->x);
-            s32 y = Q_16_16_UPPER_HALF(spark->y);
+            s32 x = FIXED_INTEGER_PART(spark->x);
+            s32 y = FIXED_INTEGER_PART(spark->y);
             u32 size;
             u8 *src;
 
@@ -577,12 +577,12 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
           s32 dropSize = drop->z;
 
           draw[0](canvas, sprites + gBattleEffect_MotePictures[dropSize - 1],
-                  Q_16_16_UPPER_HALF(drop->x) - dropSize / 2,
-                  Q_16_16_UPPER_HALF(drop->y) - dropSize, dropSize,
+                  FIXED_INTEGER_PART(drop->x) - dropSize / 2,
+                  FIXED_INTEGER_PART(drop->y) - dropSize, dropSize,
                   dropSize * 2);
           BattleEffectKernels_IntegrateVector2(drop, PARTICLE_DAMPING_NONE,
                                                toFIXED(1) / 2);
-          if (Q_16_16_UPPER_HALF(drop->y) > 111) {
+          if (FIXED_INTEGER_PART(drop->y) > 111) {
             drop->variant = 1;
             // DEAD: overwritten by the next store; the ROM keeps the call, its
             // arithmetic and the store.
@@ -975,8 +975,8 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       if (splash->variant >= 0 && splash->variant < 24) {
         blit[0](canvas,
                 work->sheet + SPLASH_OFFSET + splash->variant / 4 * SPLASH_SIZE,
-                Q_16_16_UPPER_HALF(splash->x) - 12,
-                Q_16_16_UPPER_HALF(splash->y) - 32, SMOKE_PUFF_WIDTH,
+                FIXED_INTEGER_PART(splash->x) - 12,
+                FIXED_INTEGER_PART(splash->y) - 32, SMOKE_PUFF_WIDTH,
                 SMOKE_PUFF_HEIGHT);
         BattleEffectKernels_IntegrateVector2(splash, 56, -toFIXED(1) / 4);
         splash->variant++;
@@ -1002,13 +1002,13 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       streak = &work->particles[i];
       if (frame < i)
         continue;
-      y = Q_16_16_UPPER_HALF(streak->y);
+      y = FIXED_INTEGER_PART(streak->y);
       if (y > 111)
         continue;
       height = 64;
       if (y > 48)
         height = 112 - y;
-      blit[0](canvas, work->sheet, Q_16_16_UPPER_HALF(streak->x), y, 4, height);
+      blit[0](canvas, work->sheet, FIXED_INTEGER_PART(streak->x), y, 4, height);
       x = streak->x + streak->velocityX;
       streak->x = x;
       streak->y += streak->velocityY;

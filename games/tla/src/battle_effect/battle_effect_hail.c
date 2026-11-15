@@ -104,9 +104,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         cel = (chip->z / 128) & 3;
         blit[i & 1](canvas,
                     work->sheet + HAIL_ICE_CHIP_PICTURES + gHail_Pictures[cel],
-                    Q_16_16_UPPER_HALF(chip->x) -
+                    FIXED_INTEGER_PART(chip->x) -
                         (width = gHail_PictureWidths[cel]) / 2,
-                    Q_16_16_UPPER_HALF(chip->y) -
+                    FIXED_INTEGER_PART(chip->y) -
                         (height = gHail_PictureHeights[cel]) / 2,
                     width, height);
         BattleEffectKernels_IntegrateVector3(chip, 63, toFIXED(1) / 16);

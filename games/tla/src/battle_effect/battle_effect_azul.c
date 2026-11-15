@@ -229,7 +229,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
           blit(canvas, work->sheet + AZUL_BEAM_DROP,
-               (FIXEDtoINT(p->x + (s << 4))) - 6, Q_16_16_UPPER_HALF(p->y) - 12,
+               (FIXEDtoINT(p->x + (s << 4))) - 6, FIXED_INTEGER_PART(p->y) - 12,
                12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 4);
         }
@@ -688,7 +688,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
           blit(canvas, work->sheet + AZUL_BEAM_DROP,
-               Q_16_16_UPPER_HALF(p->x) - 6, Q_16_16_UPPER_HALF(p->y) - 12, 12,
+               FIXED_INTEGER_PART(p->x) - 6, FIXED_INTEGER_PART(p->y) - 12, 12,
                24);
           BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1));
           if (p->y > toFIXED(96)) {

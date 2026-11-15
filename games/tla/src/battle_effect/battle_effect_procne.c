@@ -808,8 +808,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
           if (flash->variant >= 0) {
             draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11),
-                    Q_16_16_UPPER_HALF(flash->x) - 16,
-                    Q_16_16_UPPER_HALF(flash->y) - 32, FLASH_BURST_WIDTH,
+                    FIXED_INTEGER_PART(flash->x) - 16,
+                    FIXED_INTEGER_PART(flash->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
             flash->x += flash->velocityX * dir;
             flash->y += flash->velocityY;
@@ -826,8 +826,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         s32 size = 1;
 
         if (spark->variant >= 0) {
-          draw[1](canvas, gTiamat_SparkPixels, Q_16_16_UPPER_HALF(spark->x),
-                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
+          draw[1](canvas, gTiamat_SparkPixels, FIXED_INTEGER_PART(spark->x),
+                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
           spark->velocityY += -toFIXED(1) / 64;
@@ -848,8 +848,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 height = size * 2;
 
             draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                    Q_16_16_UPPER_HALF(grain->x) - size / 2,
-                    Q_16_16_UPPER_HALF(grain->y) - size, size, height);
+                    FIXED_INTEGER_PART(grain->x) - size / 2,
+                    FIXED_INTEGER_PART(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
             if (frame > DRAGON_FIRE_BREATH_FRAME) {

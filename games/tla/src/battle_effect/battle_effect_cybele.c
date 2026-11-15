@@ -197,7 +197,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
         if (frame >= i + 72 && thorn->y < toFIXED(104)) {
           s32 cel = (frame + i) / 4 % 5;
-          s32 x = Q_16_16_UPPER_HALF(thorn->x);
+          s32 x = FIXED_INTEGER_PART(thorn->x);
           s32 y = FIXEDtoINT(thorn->y);
           u8 *cell = work->sheet + gCybele_ThornPictures[cel];
           u32 width = gCybele_ThornWidths[cel];
@@ -295,7 +295,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           s32 cel = i % 5;
 
           draw[0](canvas, work->sheet + gCybele_ChipPictures[cel],
-                  Q_16_16_UPPER_HALF(chip->x), Q_16_16_UPPER_HALF(chip->y),
+                  FIXED_INTEGER_PART(chip->x), FIXED_INTEGER_PART(chip->y),
                   gCybele_ChipWidths[cel], gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;

@@ -91,13 +91,13 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
     {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
-/// Two 1.0s (Q16).
+/// Two 1.0s (16.16).
 const u32 gWorldMap_UnitScale[2] = {
     0x10000,
     0x10000,
 };
 
-/// The battle formation's placement scale (Q16).
+/// The battle formation's placement scale (16.16).
 const s32 gBattle_FormationPlacementScale[2] = {
     0x10000,
     0x10000,

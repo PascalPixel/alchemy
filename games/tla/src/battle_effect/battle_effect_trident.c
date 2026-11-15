@@ -240,8 +240,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           s32 index = drop - 2;
 
           if ((u32)index <= 61) {
-            s32 dropX = Q_16_16_UPPER_HALF(p->x);
-            s32 dropY = Q_16_16_UPPER_HALF(p->y);
+            s32 dropX = FIXED_INTEGER_PART(p->x);
+            s32 dropY = FIXED_INTEGER_PART(p->y);
             s32 tier = index >> 1;
 
             BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
@@ -389,8 +389,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           blit[0](canvas,
                   Ram_MapCellBuffer + TRIDENT_FLASH_BURST +
                       ((drawn->variant / 4) << 11),
-                  Q_16_16_UPPER_HALF(drawn->x) - 16,
-                  Q_16_16_UPPER_HALF(drawn->y) - 32, FLASH_BURST_WIDTH,
+                  FIXED_INTEGER_PART(drawn->x) - 16,
+                  FIXED_INTEGER_PART(drawn->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(drawn, 62, -toFIXED(1) / 4);
         }
@@ -408,8 +408,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         spark = (drawn->variant >> 3) + 1;
         at = (spark - 1) * 2;
         blit[0](canvas, sprites + *(const u16 *)(cellTable + at),
-                Q_16_16_UPPER_HALF(drawn->x) - spark / 2,
-                Q_16_16_UPPER_HALF(drawn->y) - spark, spark, spark * 2);
+                FIXED_INTEGER_PART(drawn->x) - spark / 2,
+                FIXED_INTEGER_PART(drawn->y) - spark, spark, spark * 2);
         drawn->variant--;
         BattleEffectKernels_IntegrateVector2(drawn, 56, toFIXED(1) / 8);
       }

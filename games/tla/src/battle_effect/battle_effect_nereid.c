@@ -196,8 +196,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             size = 10;
           draw[drop->velocityY > 0](
               canvas, graphics + gBattleEffect_MotePictures[size - 1],
-              Q_16_16_UPPER_HALF(drop->x) - size / 2,
-              Q_16_16_UPPER_HALF(drop->y) - size, size, size * 2);
+              FIXED_INTEGER_PART(drop->x) - size / 2,
+              FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           if (frame > 80)
@@ -207,7 +207,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
           drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
-          if (drop->velocityY > 0 && Q_16_16_UPPER_HALF(drop->y) > 104)
+          if (drop->velocityY > 0 && FIXED_INTEGER_PART(drop->y) > 104)
             drop->variant = -1;
         }
       }

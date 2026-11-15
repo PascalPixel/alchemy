@@ -284,8 +284,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
-                  overflow + Q_16_16_UPPER_HALF(step->x) - 16,
-                  Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
+                  overflow + FIXED_INTEGER_PART(step->x) - 16,
+                  FIXED_INTEGER_PART(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 16);
           if (step->y > toFIXED(96)) {
             step->velocityY = 0;
@@ -320,8 +320,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         if (step->variant >= 0 && step->variant <= 63) {
           draw[0](canvas,
                   Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
-                  overflow + Q_16_16_UPPER_HALF(step->x) - 16,
-                  Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
+                  overflow + FIXED_INTEGER_PART(step->x) - 16,
+                  FIXED_INTEGER_PART(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 8);
           step->variant++;
         }
@@ -380,9 +380,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
               canvas,
               work->sheet + CARDS_PALETTE_RAMP_PICTURES +
                   (fade * 696 + gStatChange_ShardPictures[cell]),
-              overflow + Q_16_16_UPPER_HALF(step->x) -
+              overflow + FIXED_INTEGER_PART(step->x) -
                   gStatChange_ShardWidths[cell] / 2,
-              Q_16_16_UPPER_HALF(step->y) - gStatChange_ShardHeights[cell] / 2,
+              FIXED_INTEGER_PART(step->y) - gStatChange_ShardHeights[cell] / 2,
               gStatChange_ShardWidths[cell], gStatChange_ShardHeights[cell]);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
         }

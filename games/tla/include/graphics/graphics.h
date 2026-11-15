@@ -31,7 +31,7 @@ extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 extern u8 gRomShiftedTilePair[];
 /// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
-extern const u32 RelocatedQ16DotProduct[];
+extern const u32 RelocatedInnerProduct[];
 extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one

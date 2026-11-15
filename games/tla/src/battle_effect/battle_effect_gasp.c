@@ -375,8 +375,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             s32 n = (p->variant >> 3) + 2;
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    Q_16_16_UPPER_HALF(p->x) - n / 2,
-                    Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+                    FIXED_INTEGER_PART(p->x) - n / 2,
+                    FIXED_INTEGER_PART(p->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 64);
             p->variant--;
           }
@@ -814,7 +814,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         if ((u32)p->variant <= 23) {
           draw[0](canvas,
                   work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                  Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
+                  FIXED_INTEGER_PART(p->x) - 12, FIXED_INTEGER_PART(p->y) - 24,
                   SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 16);
           p->variant++;
@@ -828,8 +828,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             s32 n = q->variant / 4 + 3;
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    Q_16_16_UPPER_HALF(q->x) - n / 2,
-                    Q_16_16_UPPER_HALF(q->y) - n, n, n * 2);
+                    FIXED_INTEGER_PART(q->x) - n / 2,
+                    FIXED_INTEGER_PART(q->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(q, 62, 0);
             q->variant--;
           }
@@ -1020,8 +1020,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               s32 n = p->variant / 8 + 1;
 
               draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      Q_16_16_UPPER_HALF(p->x) - n / 2,
-                      Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
+                      FIXED_INTEGER_PART(p->x) - n / 2,
+                      FIXED_INTEGER_PART(p->y) - n, n, n * 2);
               BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 32);
               if (p->y > toFIXED(104)) {
                 p->y = toFIXED(104);

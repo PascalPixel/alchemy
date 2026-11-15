@@ -48,7 +48,7 @@ const u16 gMath_TwoPiSteps[8] = {
     0, 6, 12, 18, 25, 31, 37, 43,
 };
 
-/// The sine at 0, 90, 180 and 270 degrees, in Q16.
+/// The sine at 0, 90, 180 and 270 degrees, in 16.16.
 const s32 gMath_QuadrantSin[4] = {
     0, 65536, 0, -65536,
 };

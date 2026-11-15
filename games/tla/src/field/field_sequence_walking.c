@@ -128,8 +128,6 @@ s32 Field_GetCollisionUnderLeader(void) {
   return cell->collisionCode;
 }
 
-#define REGION_FIXED(value) ((value) << 16)
-
 // The overlay's entry table; entry 11 returns the map's region list.
 
 /// Takes the exit of the first of the scene's exit regions that contains the
@@ -165,10 +163,9 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
     maxZ = region->maxZ;
     condition = region->condition;
     selectedValue = region->value;
-    if (GameFlag_IsConditionActive(condition) != 0 && y >= REGION_FIXED(minY) &&
-        y < REGION_FIXED(maxY) && x >= REGION_FIXED(minX) &&
-        x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
-        z < REGION_FIXED(maxZ)) {
+    if (GameFlag_IsConditionActive(condition) != 0 && y >= INTtoFIXED(minY) &&
+        y < INTtoFIXED(maxY) && x >= INTtoFIXED(minX) && x < INTtoFIXED(maxX) &&
+        z >= INTtoFIXED(minZ) && z < INTtoFIXED(maxZ)) {
       runtime->exit = (u16)selectedValue;
       Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();

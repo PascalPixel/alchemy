@@ -65,7 +65,7 @@ Glyph_DrawCodeSize = Tile_BuildCellPicturesCode - Glyph_DrawCode;
 BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
 Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
-Credits_DecodeBackgroundCodeSize = EndingPicture_DotProduct - Credits_DecodeBackgroundCode;
+Credits_DecodeBackgroundCodeSize = EndingPicture_InnerProduct - Credits_DecodeBackgroundCode;
 EndingPicture_DecodeCodeSize = EndingPicture_DecodeEnd - EndingPicture_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
@@ -125,7 +125,7 @@ SECTIONS
         "*/games/tla/src/system/mathtan.o"(.rodata)
         "*/games/tla/src/graphics/palettes/palettes.o"(.rodata)
         "*/games/tla/src/system/number_text.o"(.rodata)
-        "*/games/tla/src/system/q16_dot_product.o"(.text .rodata .data .padding)
+        "*/games/tla/src/system/inner_product.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/savedata.o"(.rodata)
         "*/games/tla/src/gamepak/flash/flashtab.o"(.rodata)
         "*/games/tla/src/gamepak/flash/flash.o"(.rodata)

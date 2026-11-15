@@ -91,14 +91,14 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     x = position[0];
     z = position[2];
     cell = Ram_MapBlocks +
-           ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
+           ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
   } else {
     s32 x, z;
 
     x = position[0];
     cell = (u8 *)map->layers[0].cells;
     z = position[2];
-    cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
+    cell += (((x / px(16)) + ((z / px(16)) << 7)) << 2);
   }
   return cell[2];
 }
@@ -118,12 +118,11 @@ s32 Field_GetCollisionUnderLeader(void) {
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gCellPictures it
     // loads
-    cell =
-        (struct MapCell *)Ram_MapBlocks +
-        (((position.x / 0x200000) & 31) + ((position.z / 0x200000) & 31) * 32);
+    cell = (struct MapCell *)Ram_MapBlocks +
+           (((position.x / px(32)) & 31) + ((position.z / px(32)) & 31) * 32);
   } else {
     cell = map->layers[0].cells;
-    cell += position.x / 0x100000 + position.z / 0x100000 * 128;
+    cell += position.x / px(16) + position.z / px(16) * 128;
   }
   return cell->collisionCode;
 }
@@ -217,8 +216,9 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
-    tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
-                                              (((z / 0x200000) & 31) << 5)];
+    tile =
+        &((struct MapCell *)
+              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
     event = tile->collisionCode;
     attributes = 0;
   } else {
@@ -226,7 +226,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)Ram_MapCellBuffer;
-    tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
+    tile = &tile[(x / px(16)) + ((z / px(16)) << 7)];
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }

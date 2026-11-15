@@ -664,11 +664,11 @@ void WorldMapPicture_UpdateScroll(void) {
     dx = x - SCROLL_X;
     dy = y - SCROLL_Y;
     // Near the target the whole-pixel distance is too coarse.
-    if (distance < 0x400000)
+    if (distance < px(64))
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy));
     step = distance / 4;
-    if (step > 0x80000)
-      step = 0x80000;
+    if (step > px(8))
+      step = px(8);
     if (distance >= 0x4000) {
       if (distance > step) {
         dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), step);

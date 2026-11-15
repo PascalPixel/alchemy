@@ -249,7 +249,7 @@ void FieldPsynergy_Scoop(void) {
   if (!(event->unkd4c & 1))
     Func_080dba5c();
   Sound_PlayFar(SE_ITEM_BREAK);
-  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
+  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
@@ -365,8 +365,8 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
-      SET_POSITION(particle, scene->x, scene->y + 0x280000, scene->z);
-      Vector_AddPolarOffset(Random16() * 4 + 0x30000, Random16(), &particle->x);
+      SET_POSITION(particle, scene->x, scene->y + px(40), scene->z);
+      Vector_AddPolarOffset(Random16() * 4 + px(3), Random16(), &particle->x);
       particle->timer = -i * 3 / 4;
       sprite++;
       particle++;
@@ -385,7 +385,7 @@ void FieldPsynergy_Scoop(void) {
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     pos[0] = object->x.fixed;
-    pos[1] = object->y.fixed + 0x200000;
+    pos[1] = object->y.fixed + px(32);
     pos[2] = object->z.fixed;
     Camera_WorldToScreen(pos);
     sprite->x = pos[0];

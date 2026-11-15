@@ -37,7 +37,6 @@
 
 #undef Actor_ApplyRandomChildValues
 #undef ScreenPoint
-#undef EffectWork
 
 #include "event_commands_cloak.c"
 

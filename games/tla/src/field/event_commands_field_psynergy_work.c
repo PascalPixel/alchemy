@@ -314,10 +314,10 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
 }
 
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
- * field/event_commands.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_field_psynergy_work.c: structure has no
- * member named `id'. */
+ * field/event_commands.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands_field_psynergy_work.c:327: structure has
+ * no member named `id'. */
 struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;

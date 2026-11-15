@@ -92,7 +92,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
 
   for (remaining = 0; remaining <= 23; remaining++) {
     position[0] = leader->x;
-    position[1] = leader->y + 0x780000;
+    position[1] = leader->y + px(120);
     position[2] = leader->z;
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
                                                  position[2]);
@@ -114,7 +114,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position[0] = leader->x;
-  position[1] = leader->y + 0x120000;
+  position[1] = leader->y + px(18);
   position[2] = leader->z;
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
@@ -159,14 +159,14 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
   if (state == 0) {
     position.x = source->x.fixed;
-    position.y = source->y.fixed + Random16() * 5 + 0xf0000;
+    position.y = source->y.fixed + Random16() * 5 + px(15);
     {
       struct EffectVector *p = &position;
 
       position.z = source->z.fixed;
       Camera_WorldToScreen(p);
     }
-    Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + px(2), Random16(), &position);
 
     {
       s32 accel = 0x30000;
@@ -174,10 +174,10 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->x = position.x;
-      effect->z = position.z - 0x640000;
+      effect->z = position.z - px(100);
       effect->acceleration = accel;
     }
-    effect->maxSpeed = Random16() * 3 + 0x30000;
+    effect->maxSpeed = Random16() * 3 + px(3);
     effect->scaleX = Q16_ONE;
     effect->scaleY = Q16_ONE;
     effect->limitTurnStep = state;

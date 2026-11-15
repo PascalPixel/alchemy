@@ -157,8 +157,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = (cell->x << 20) - owner->x.fixed + 0x80000;
-  s32 dz = (cell->z << 20) - owner->z.fixed + 0x80000;
+  s32 dx = (cell->x << 20) - owner->x.fixed + px(8);
+  s32 dz = (cell->z << 20) - owner->z.fixed + px(8);
   s32 heading = (u16)ArcTan2(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;
@@ -182,7 +182,7 @@ void ParticleBurst_Start(void) {
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
-    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
+    Vector_AddPolarOffset(Random16() * 8 + px(8), Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;
     particle->spin = (Random16() >> 6) + 384;

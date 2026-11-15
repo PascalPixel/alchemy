@@ -37,7 +37,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   // down the map by its height.
   minimumX = map->minX + 0x780000;
   objectZOffset = object->y.fixed;
-  minimumZ = map->minZ + objectZOffset + 0x600000;
+  minimumZ = map->minZ + objectZOffset + px(96);
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
   map->origin = &object->x.fixed;

@@ -807,7 +807,7 @@ void SuperLuckyDice_Run(void) {
           }
           if (spinRate[index] > 19)
             spinRate[index] -= 20;
-          if (die->velocityY < 0x30000) {
+          if (die->velocityY < px(3)) {
             s32 spin;
             s32 facing;
 

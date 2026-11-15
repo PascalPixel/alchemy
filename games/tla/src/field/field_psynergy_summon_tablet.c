@@ -153,20 +153,20 @@ void SummonTablet_UpdateMotes(void) {
   for (i = 47; i >= 0; i--, sprite++, mote++) {
     if (work->state == 0) {
       if (mote->timer >= 0) {
-        Motion_StepTowardTarget(mote, 0x40000);
+        Motion_StepTowardTarget(mote, px(4));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
-      Motion_StepTowardTarget(mote, 0x60000);
+      Motion_StepTowardTarget(mote, px(6));
       sprite->x = mote->x;
       sprite->y = mote->z;
       EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
       if (mote->x != work->targetX || mote->z != work->targetZ) {
-        Motion_StepTowardTarget(mote, 0x60000);
+        Motion_StepTowardTarget(mote, px(6));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);

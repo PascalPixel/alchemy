@@ -218,7 +218,7 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
 /* VIEW(world_map): variable gWorldMapWork as extern u8 gWorldMapWork[];
  * battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_world_map.c:281: `gWorldMapWork' has an incomplete
+ * games/tla/src/field/field_world_map.c:284: `gWorldMapWork' has an incomplete
  * type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
@@ -367,7 +367,7 @@ void WorldMap_ApplyAffinePage(void) {
 
 /* VIEW(world_map): variable gCellPictures as extern u8 gCellPictures[]; f0298c0
  * has extern u32 gCellPictures[]; tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/field/field_world_map.c:380:
+ * it does not compile in tla-ja: games/tla/src/field/field_world_map.c:386:
  * `gMapBlocks__world_map' undeclared (first use in this function). */
 extern u8 gMapBlocks__world_map[] __asm__("gCellPictures");
 
@@ -499,8 +499,8 @@ void WorldMap_UpdateView(void) {
       perspective->shakeY =
           Iwram_MulQ16(perspective->shakeY, perspective->shakeDecay);
     }
-    tileColumn = x / 0x100000;
-    tileRow = y / 0x100000;
+    tileColumn = x / px(16);
+    tileRow = y / px(16);
     if ((perspective->viewX ^ x) & 0x100000) {
       if (perspective->viewX < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);

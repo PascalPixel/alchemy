@@ -86,7 +86,7 @@ void FieldPsynergy_Blaze(void) {
   work->mode = 0;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;
-    work->origin[1] = scene->y + 0x100000;
+    work->origin[1] = scene->y + px(16);
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < 80; i++) {
@@ -122,7 +122,7 @@ void FieldPsynergy_Blaze(void) {
               ->height
           << 16;
     else
-      height = 0x140000;
+      height = px(20);
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + height;
     work->origin[2] = scene->z;

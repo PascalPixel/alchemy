@@ -70,7 +70,7 @@ void Teleport_PlayWhirl(void) {
   frame = 0;
   do {
     if (count != 0) {
-      radius = 0x500000;
+      radius = px(80);
       i = count;
       do {
         angle = Random16();
@@ -103,7 +103,7 @@ void Teleport_PlayWhirl(void) {
           sprite->y = position[2];
           EffectSprite_Draw(sprite);
           spark->angle += TRIG_TURN / 32;
-          spark->radius += -0x40000;
+          spark->radius += -px(4);
         }
         if (++spark->age == 20)
           spark->age = -1;
@@ -229,13 +229,13 @@ void Teleport_PlaySparks(void) {
         particle->velocityX = zero;
         particle->velocityY = -(px(4));
         particle->velocityZ = zero;
-        Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
+        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
                               &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
         particle->velocityY = px(5);
         particle->velocityZ = 0;
-        Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
+        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
                               &work->particles[next].velocityX);
       }
       next++;

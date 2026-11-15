@@ -92,6 +92,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIncreaseItemAndLevel_ActorPlacements;
 }
 
+#define ITEM_DEBUG_DETAILS_WIDTH 28
+#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
+#define ITEM_DEBUG_DETAILS_WIDTH 13
+#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
+#define DEBUG_ITEM_COUNT                                                       \
+  270 ///< The browser's item numbers, 0 to 269, wrapping.
+#define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
+#define LEVEL_EDITOR_SCALE (Q16_ONE * 8 / 5)
+#define LEVEL_EDITOR_SCALE (Q16_ONE * 17 / 10)
+
 /// Shows the name of the person talked to in a room of names: actor `actorId`
 /// says the message its room's list of names gives it. The first room's list
 /// starts at Master Poi, the third's at Alex.
@@ -166,12 +176,12 @@ static inline u32 Input_PressedFenced(u32 mask) {
 /// window and recalculates the original four heroes.
 void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
-  void *window;
+  struct Window *window;
   s32 redraw;
   s32 messageId;
 
   unit = Unit_Get(gMainRoutineWork.leaderActorId);
-  window = Window_Create(0, 0, 30, 9, 2);
+  window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = (s32)MsgRaiseEveryoneS;
   Text_DrawMessage(messageId, window, 0, 0);
@@ -254,10 +264,10 @@ void IncreaseItemAndLevel_SelectItem(void) {
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
   // over its text background.
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16), 0x80000010,
-          (volatile u32 *)0x040000d4);
-  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238), 0x80000001,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   wait(1);
   while (1) {
     if (redraw) {
@@ -282,7 +292,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
       }
     }
-    if (Input_PressedFenced(KEY_A)) {
+    if (gInput.pressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
         Sound_Play(SE_MENU_CANCEL);
         break;

@@ -256,13 +256,13 @@ void Actor_ResetForLeader(s32 table) {
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
-           ((object->x.fixed / 0x100000) + ((object->z.fixed / 0x100000) << 7));
+           ((object->x.fixed / px(16)) + ((object->z.fixed / px(16)) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
       gMainRoutineWork.movementMode = 2;
       height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                           object->z.fixed - 0x100000) -
+                                           object->z.fixed - px(16)) -
                0x200000;
       object->y.fixed += height;
       object->groundHeight = object->y.fixed;

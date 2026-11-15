@@ -22,13 +22,13 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
-    MapGrid_MarkRaisedIfOpen(object->x.fixed + 0x100000, object->z.fixed,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed + px(16), object->z.fixed,
                              object->layer, object->groundHeight);
-    MapGrid_MarkRaisedIfOpen(object->x.fixed - 0x100000, object->z.fixed,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed - px(16), object->z.fixed,
                              object->layer, object->groundHeight);
-    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed + 0x100000,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed + px(16),
                              object->layer, object->groundHeight);
-    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed - 0x100000,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed - px(16),
                              object->layer, object->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
@@ -132,7 +132,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
 /// Returns the index of object's cell in a 128-cell-wide map layer.
 s32 Actor_GetCellIndex(struct Actor *object) {
-  return object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
+  return object->x.fixed / px(16) + (object->z.fixed / px(16)) * 128;
 }
 
 /// Finds the tag (key, value) in the 4-byte entries at gMapGridShapes, or adds

@@ -30,7 +30,7 @@ struct SplashAnimation {
 /* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_grind.c:212: structure has no member named
+ * games/tla/src/field/field_psynergy_grind.c:201: structure has no member named
  * `callback'. */
 struct PendingEvent__f0e92b4 {
   u8 unk00[8];
@@ -71,7 +71,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 amplitude;
 
   shifts = 0;
-  radius = 0xe0000;
+  radius = px(14);
   animating = 0;
   spraying = 0;
   next = 0;
@@ -87,7 +87,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
   } else {
     scene->x = caster->x.fixed;
-    scene->z = caster->z.fixed + 0x80000;
+    scene->z = caster->z.fixed + px(8);
     scene->y = caster->y.fixed;
     Vector_AddPolarOffset(px(32), scene->angle, &scene->x);
   }
@@ -99,9 +99,9 @@ void FieldPsynergy_GrindOnTarget(void) {
   if (child == NULL)
     mode = 2;
   if (mode == 1)
-    radius = 0xe0000;
+    radius = px(14);
   if (mode == 2)
-    radius = 0x150000;
+    radius = px(21);
 
   FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
@@ -129,15 +129,15 @@ void FieldPsynergy_GrindOnTarget(void) {
   wait(1);
   Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
-  amplitude = 0x20000;
+  amplitude = px(2);
   phase = 0;
   timer = 0;
   do {
     if (spraying) {
       if (mode == 1) {
-        if (radius > 0x50000)
+        if (radius > px(5))
           radius += -0xa3d;
-      } else if (radius > 0x50000) {
+      } else if (radius > px(5)) {
         radius += -0x147a;
       }
     }
@@ -155,8 +155,8 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
       }
       particle->timer = 0;
-      SET_POSITION(particle, scene->x, scene->y + 0x50000, scene->z);
-      if (radius > 0x50000)
+      SET_POSITION(particle, scene->x, scene->y + px(5), scene->z);
+      if (radius > px(5))
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else
         Vector_AddPolarOffset(radius - (Random16() << 2), angle, &particle->x);
@@ -222,7 +222,7 @@ void FieldPsynergy_GrindOnTarget(void) {
       if (timer == 5 && mode != 0)
         spraying = 0;
       amplitude += -0x2666;
-      if (amplitude <= 0x20000) {
+      if (amplitude <= px(2)) {
         phase++;
         timer = -1;
       }
@@ -250,7 +250,7 @@ end:
 
 /// The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
-#define SWAY_PEAK 0x60000
+#define SWAY_PEAK px(6)
 #define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 

@@ -109,9 +109,9 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
       if (other == object)
         continue;
       delta = object->y.fixed - other->y.fixed;
-      dy = delta - 0x100000;
+      dy = delta - px(16);
       if (dy < 0)
-        dy = 0x100000 - delta;
+        dy = px(16) - delta;
       if (dy > withinHalfCell)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
@@ -396,7 +396,7 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dz = (*a - *b) >> 16;
   s32 radius = radius_a + radius_b;
 
-  if (!(dx > 0x400000) && !(dz > 0x400000) &&
+  if (!(dx > px(64)) && !(dz > px(64)) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;
   return -1;
@@ -409,7 +409,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
-  created = Actor_Create(14, object->x.fixed, object->y.fixed + 0x40000,
+  created = Actor_Create(14, object->x.fixed, object->y.fixed + px(4),
                          object->z.fixed);
   sprite = object->sprite;
   if (!(object->userValue & 1))
@@ -510,7 +510,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       if (other == object)
         continue;
       dy = object->y.fixed - other->y.fixed;
-      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
+      if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -727,7 +727,7 @@ counted:
       cells = ((struct MapWork *)map)->layers[object->layer].cells;
     else
       cells = gMapGridCellBuffer;
-    cells += object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
+    cells += object->x.fixed / px(16) + (object->z.fixed / px(16)) * 128;
     /* FAKEMATCH(temporary): the cell attribute read into a local before the
      * flags. */
     attribute = cells->attributeB;

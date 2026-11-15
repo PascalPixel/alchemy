@@ -411,13 +411,13 @@ void Actor_VanishInSparks(s32 objectId) {
     if (spawning != 0) {
       for (i = spawning; i != 0; i--) {
         s32 sparkAngle = Random16();
-        s32 radius = Random16() * 6 + 0xc0000;
+        s32 radius = Random16() * 6 + px(12);
 
         spark = &work->sparks[next];
 
         spark->age = 0;
         spark->x = object->x.fixed;
-        spark->y = object->y.fixed + 0x140000;
+        spark->y = object->y.fixed + px(20);
         spark->z = object->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
@@ -527,7 +527,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
   SET_VECTOR(position, object->x, offset, object->z + offset);
   position[3] = 0;
-  if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
+  if (object->x > -px(32) && object->x < 0x1100000 && object->z > -px(32) &&
       object->z < 0xe00000)
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
@@ -557,7 +557,7 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-    if (distance <= 0x80000) {
+    if (distance <= px(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
@@ -639,7 +639,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
     object->priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   unit = 0x10000;
-  effect->maxSpeed = 0x20000;
+  effect->maxSpeed = px(2);
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
   effect->originX = x;
   effect->originZ = z;

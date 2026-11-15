@@ -100,10 +100,10 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
 }
 
 /* VIEW(event_commands): routine Icon_DrawItemFar as void Icon_DrawItemFar(s32
- * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32
- * item); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/field/event_commands_actor_commands.c:199: too many
- * arguments to function `Icon_DrawItemFar'. */
+ * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32 item);
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands_actor_commands.c:207: too many arguments
+ * to function `Icon_DrawItemFar'. */
 extern void
 Func_08038248__event_commands(s32 resource,
                               u8 *buffer) __asm__("Icon_DrawItemFar");

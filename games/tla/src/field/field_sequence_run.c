@@ -31,7 +31,7 @@ s32 Field_GetSceneAttributes(s32 scene);
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
  * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:210: `PartyInventory_GiveItem'
+ * games/tla/src/field/field_sequence_run.c:214: `PartyInventory_GiveItem'
  * undeclared (first use in this function). */
 s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
     "PartyInventory_GiveItem");
@@ -497,7 +497,7 @@ done:
 /* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
  * scene/shared.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:508: structure has no member named
+ * games/tla/src/field/field_sequence_run.c:517: structure has no member named
  * `pos'. */
 struct Object__field_sequence {
   u8 pad0[6];
@@ -540,21 +540,21 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       x = probePosition.vector.x;
       z = probePosition.vector.z;
       cell = Ram_MapBlocks +
-             ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
+             ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
     } else {
       s32 x, z;
 
       cell = *(u8 **)(mapBytes + 0x138);
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
+      cell += (((x / px(16)) + ((z / px(16)) << 7)) << 2);
     }
     collisionCode = cell[2];
     if (collisionCode >= 242 && collisionCode <= 247) {
       terrainHeight = MapGrid_GetTerrainHeightFar(
           leader->kind, probePosition.vector.x, probePosition.vector.z);
       if (terrainHeight >= leader->pos.y &&
-          terrainHeight <= leader->pos.y + 0x100000) {
+          terrainHeight <= leader->pos.y + px(16)) {
         result = collisionCode;
       }
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {

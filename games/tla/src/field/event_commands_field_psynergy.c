@@ -30,14 +30,15 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    cells = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
-                                               (((z / 0x200000) & 31) << 5)];
+    cells =
+        &((struct MapCell *)
+              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   } else {
     if (layer <= 2)
       cells = map->layers[layer].cells;
     else
       cells = (struct MapCell *)Ram_MapCellBuffer;
-    cells = &cells[x / 0x100000 + (z / 0x100000) * 128];
+    cells = &cells[x / px(16) + (z / px(16)) * 128];
   }
   return cells;
 }
@@ -186,7 +187,7 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dz = (*a - *b) >> 16;
   s32 radius = radius_a + radius_b;
 
-  if (dx > 0x400000 || dz > 0x400000)
+  if (dx > px(64) || dz > px(64))
     return -1;
   if (dy > radius << 16)
     return -1;
@@ -206,7 +207,7 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   if (scene->angle != 0xc000)
     Actor_SetSpritePriorityDirectFar(object, 0);
   start[0] = mainActor->x.fixed;
-  start[1] = mainActor->y.fixed + 0x100000;
+  start[1] = mainActor->y.fixed + px(16);
   start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
@@ -257,7 +258,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
-    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + 0x80000,
+    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + px(8),
                                               Random16());
   }
   return object;

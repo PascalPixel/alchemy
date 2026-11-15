@@ -55,7 +55,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   s32 red;
 
   pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed + 0x100000;
+  pos[1] = actor->y.fixed + px(16);
   pos[2] = actor->z.fixed;
   if (work->orbiting != 0)
     Vector_AddPolarOffset(px(2), -(event->ringFrames << 11), pos);
@@ -106,7 +106,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[1] = timer;
         pos[0] = timer;
         Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
-        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
+        SET_POSITION(entry, pos[0], pos[1] + px(16), pos[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {
@@ -173,7 +173,7 @@ void FieldPsynergy_Unnamed28(void) {
     canvas->mode = angle;
     pos = position;
     pos[0] = scene->mainActor->x.fixed;
-    pos[1] = scene->mainActor->y.fixed + 0x100000;
+    pos[1] = scene->mainActor->y.fixed + px(16);
     pos[2] = scene->mainActor->z.fixed;
     Camera_WorldToScreen(pos);
     {
@@ -244,10 +244,10 @@ void FieldPsynergy_Unnamed28(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel(picture, 0x340000, radius, 243);
-          Canvas_PlotPolarPixel(picture, 0x350000, radius, 247);
-          Canvas_PlotPolarPixel(picture, 0x360000, radius, 251);
-          Canvas_PlotPolarPixel(picture, 0x370000, radius, 255);
+          Canvas_PlotPolarPixel(picture, px(52), radius, 243);
+          Canvas_PlotPolarPixel(picture, px(53), radius, 247);
+          Canvas_PlotPolarPixel(picture, px(54), radius, 251);
+          Canvas_PlotPolarPixel(picture, px(55), radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -257,7 +257,7 @@ void FieldPsynergy_Unnamed28(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + 0x100000,
+          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + px(16),
                        caster->z.fixed);
           Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
@@ -328,7 +328,7 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->angle = heading + TRIG_TURN / 4;
         place = position;
         place[0] = scene->mainActor->x.fixed;
-        place[1] = scene->mainActor->y.fixed + 0x100000;
+        place[1] = scene->mainActor->y.fixed + px(16);
         place[2] = scene->mainActor->z.fixed;
         Camera_WorldToScreen(place);
         Vector_AddPolarOffset(px(64), heading, place);
@@ -429,13 +429,12 @@ void FieldPsynergy_EndUnnamed28(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + 0x100000,
-                 actor->z.fixed);
-    Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
+    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + px(16), actor->z.fixed);
+    Vector_AddPolarOffset(Random16() * 4 + px(52), angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
     mote->vz = 0;
-    Vector_AddPolarOffset(Random16() * 3 + 0x20000, angle, &mote->vx);
+    Vector_AddPolarOffset(Random16() * 3 + px(2), angle, &mote->vx);
     mote->timer = -i / 4;
     EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.palette256 = 1;

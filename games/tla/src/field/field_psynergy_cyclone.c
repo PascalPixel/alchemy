@@ -28,11 +28,11 @@
 #include "system/frame.h"
 
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_sand.c: conflicting types for
+ * *position); field/event_commands.h has void Camera_WorldToScreen(struct
+ * EffectVector *position); tried as the definition's void
+ * Camera_WorldToScreen(struct EffectVector *position), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_psynergy_sand.c:136: conflicting types for
  * `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
@@ -203,7 +203,7 @@ void FieldPsynergy_Cyclone(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
-  s32 spread = 0x40000;
+  s32 spread = px(4);
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
   struct Actor *ring;
@@ -251,8 +251,8 @@ void FieldPsynergy_Cyclone(void) {
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring = Actor_Spawn(280, owner->x.fixed, owner->y.fixed - 0x60000,
-                     owner->z.fixed);
+  ring =
+      Actor_Spawn(280, owner->x.fixed, owner->y.fixed - px(6), owner->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = 0;
@@ -267,8 +267,8 @@ void FieldPsynergy_Cyclone(void) {
       Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
                       Random16(), offsets, pixels);
     spread += step;
-    if (spread > 0x1c0000)
-      spread = 0x1c0000;
+    if (spread > px(28))
+      spread = px(28);
     step = step * 123 / 128;
     canvas->angle += 0x400;
     canvas->command = 3;
@@ -312,7 +312,7 @@ void FieldPsynergy_Cyclone(void) {
     frame = 0;
     wait(1);
     work->to[0] = event->unkd40 << 16;
-    work->to[1] = owner->y.fixed + 0x200000;
+    work->to[1] = owner->y.fixed + px(32);
     work->to[2] = event->unkd42 << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
@@ -444,7 +444,7 @@ void Actor_DepartInRing(s32 actor) {
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
     spin += 0x400;
-    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - 0x60000,
+    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - px(6),
                        object->z.fixed);
     wait(1);
   }

@@ -188,7 +188,7 @@ void FieldPsynergy_Pound(void) {
     if (child->groundHeight == 300)
       lift = 0;
     scene->y = child->groundHeight;
-    lift = child->y.fixed - child->groundHeight + 0x200000;
+    lift = child->y.fixed - child->groundHeight + px(32);
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.

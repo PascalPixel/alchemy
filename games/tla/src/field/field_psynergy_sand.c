@@ -59,7 +59,7 @@ void FieldPsynergy_WatchSandGround(void) {
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
-    if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)
+    if (MapGrid_IsClimbableCell(x + px(8), z + back, 2) == 0)
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
@@ -150,7 +150,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 
     for (row = 0; row < height; row++) {
       s32 base = phase * 0x14ccc;
-      s32 rowOffset = row * 0x40000 - 0x7c0000;
+      s32 rowOffset = row * px(4) - px(124);
       s32 shift = base + rowOffset - wave;
 
       shift >>= 16;
@@ -209,7 +209,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   position[1] = y = mainActor->y.fixed;
   position[2] = mainActor->z.fixed;
   if (high) {
-    position[1] = y + 0x20000;
+    position[1] = y + px(2);
     Vector_AddPolarOffset(px(2), Random16(), position);
   } else {
     Vector_AddPolarOffset(px(4), Random16(), position);
@@ -325,7 +325,7 @@ void FieldPsynergy_EndSand(void) {
   // Set before the move: 63 is held in a saved register across both calls.
   mask = 63;
   Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed,
-                                     owner->y.fixed + 0xa0000, owner->z.fixed);
+                                     owner->y.fixed + px(10), owner->z.fixed);
   party = &gMainRoutineWork;
   Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
   ((u8 *)owner->sprite)[5] &= mask;

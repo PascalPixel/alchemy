@@ -104,8 +104,7 @@ void FieldPsynergy_UpdateBurst(void) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
-      Vector_AddPolarOffset(Random16() * 12 + 0x40000, Random16(),
-                            &particle->x);
+      Vector_AddPolarOffset(Random16() * 12 + px(4), Random16(), &particle->x);
       work->nextBurst = ++work->nextBurst % 32;
     }
     work->newBursts = 0;
@@ -370,7 +369,7 @@ void FieldPsynergy_Burst(void) {
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
     sprite->scaleY = sprite->scaleX = Q16_ONE;
-    radius = Random16() * 20 + 0x140000;
+    radius = Random16() * 20 + px(20);
     angle = Random16();
     particle->x = mul(Trig_Cos(angle), radius);
     particle->y = mul(Trig_Sin(angle), radius);

@@ -391,7 +391,7 @@ void Func_080dba5c(void) {
     sprite->layer = 0;
     sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
-    position[1] = mainActor->y.fixed + 0x1c0000;
+    position[1] = mainActor->y.fixed + px(28);
     position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);
     sprite->x = position[0];

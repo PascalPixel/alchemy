@@ -224,7 +224,7 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
  * has s32 Sprite_AddAnimation(struct ActorSpriteView *, s32); tried as the
  * definition's s32 Sprite_AddAnimation(struct MetadataSlotState *state, s32
  * id), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sprite_animation.c:248: conflicting types for
+ * games/tla/src/field/field_sprite_animation.c:225: conflicting types for
  * `Sprite_AddAnimation'. */
 s32 ResourceMetadata_Register__resource_slot(
     struct MetadataSlotState *state, s32 id) __asm__("Sprite_AddAnimation");
@@ -418,7 +418,7 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
  * has void Sprite_SetAnimationSpeed(struct ActorSpriteView *, s32); tried as
  * the definition's void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32
  * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sprite_animation.c:440: conflicting types for
+ * games/tla/src/field/field_sprite_animation.c:418: conflicting types for
  * `Sprite_SetAnimationSpeed'. */
 void Animation_ApplyChildValue__resource_slot(
     struct ChildGroup *group, s32 value) __asm__("Sprite_SetAnimationSpeed");

@@ -285,7 +285,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
       if (other == object)
         continue;
       dy = object->y.fixed - other->y.fixed;
-      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
+      if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -842,7 +842,7 @@ update_object:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  if (object->y.fixed >= 0x40000)
+  if (object->y.fixed >= px(4))
     Actor_SelectAnimation(object, 6);
   else if (collision != 0)
     Actor_SelectAnimation(object, 1);
@@ -900,7 +900,7 @@ update_object:
 
   kind = object->spriteStorageKind;
   if (kind == 1) {
-    if (object->y.fixed < 0x40000) {
+    if (object->y.fixed < px(4)) {
       if (object->timer == 0 && collision == 0) {
         ripple = Actor_Create(0x10d, object->x.fixed, 0, object->z.fixed);
         if (ripple != 0) {
@@ -933,7 +933,7 @@ update_object:
     object->y.fixed -= px(1) / 4;
   if (object->y.fixed <= 0 && flightWork->climbing != 0)
     ((struct FieldWork *)flightWork)->raisedTrigger = 254;
-  if (object->y.fixed >= 0xc0000)
+  if (object->y.fixed >= px(12))
     object->y.fixed = px(12);
   if (object->y.fixed <= 0)
     object->y.fixed = 0;

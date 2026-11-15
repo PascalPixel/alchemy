@@ -14,7 +14,7 @@
 /// Heap slot 0x74 while the motes run.
 /* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; event_commands.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/field/event_commands_motes.c:32:
+ * it does not compile in tla-ja: games/tla/src/field/event_commands_motes.c:31:
  * structure has no member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;

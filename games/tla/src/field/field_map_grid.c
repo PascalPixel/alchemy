@@ -298,9 +298,9 @@ void MapGrid_CenterOnFollowedPoint(void) {
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
         s32 left = (rect[0] << 16) - 0x780000;
-        s32 top = (rect[1] << 16) + height - 0x400000;
+        s32 top = (rect[1] << 16) + height - px(64);
         s32 right = (rect[2] << 16) + 0x780000;
-        s32 bottom = (rect[3] << 16) + height + 0x600000;
+        s32 bottom = (rect[3] << 16) + height + px(96);
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
           s32 nearX = left;
@@ -462,11 +462,11 @@ void MapGrid_UpdateLayerScroll(void) {
   layer = (struct MapLayerScroll *)work->layers;
   if (origin == 0)
     return;
-  baseX = *origin++ - 0x780000;
+  baseX = *origin++ - px(120);
   {
     s32 height = *origin++;
 
-    baseY = *origin - height - 0x600000;
+    baseY = *origin - height - px(96);
   }
   minX = work->minX + work->shakeX;
   maxX = work->maxX - work->shakeX - 0xf00000;
@@ -501,11 +501,11 @@ void MapGrid_UpdateLayerScroll(void) {
   {
     s32 step = work->viewZ - baseY;
 
-    if (step > 0x100000) {
+    if (step > px(16)) {
       baseY = work->viewZ - 0x100000;
       step = work->viewZ - baseY;
     }
-    if (step < -0x100000)
+    if (step < -px(16))
       baseY = work->viewZ + 0x100000;
   }
   work->viewX = baseX;
@@ -572,8 +572,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   struct MapLayerWindow *layer = (struct MapLayerWindow *)work->layers;
   u32 originX;
 
-  x -= 0x780000;
-  y -= 0x600000;
+  x -= px(120);
+  y -= px(96);
   if (x < work->minX)
     x = work->minX;
   if (x > work->maxX - 0xf00000)
@@ -602,8 +602,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       }
       x += layer->offsetX;
       y += layer->offsetY;
-      x /= 0x80000;
-      y /= 0x80000;
+      x /= px(8);
+      y /= px(8);
       screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;

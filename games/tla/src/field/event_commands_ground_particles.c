@@ -153,7 +153,7 @@ void RisingParticles_Start(void) {
     *sprite++ = 0x40000400;
     *sprite = 0xd400;
     x = Random16() * 200 + 0x1200000;
-    z = 0x500000 - Random16() * 20;
+    z = px(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);

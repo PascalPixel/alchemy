@@ -272,8 +272,8 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Rope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                  b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
+    Rope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed, b->x.fixed,
+                  b->y.fixed + px(8), b->z.fixed, mode);
 }
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
@@ -351,7 +351,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode **link = &slot->head;
   s32 angle = 0;
-  s32 radius = 0x40000;
+  s32 radius = px(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -368,7 +368,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
                  z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(0x60000, radius);
+    step = ArcTan2(px(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -430,15 +430,15 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
-      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                 x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
+                 y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
       slot->swinging = 0;
       wait(1);
-      Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                  x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
+                  y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                 to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
+                 to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                  Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += 0x1000;
       wait(6);
@@ -522,7 +522,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->swinging = 1;
-  slot->amplitude = 0x40000;
+  slot->amplitude = px(4);
   slot->phase = 0x4000;
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
@@ -545,8 +545,8 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->recoilFrom = from;
     work->recoilTo = to;
-    Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+    Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
+                to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                 Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += 0x1000;
   }
@@ -594,7 +594,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;
-    radius = 0x40000;
+    radius = px(4);
     for (i = 0; i <= segments; i++) {
       node = nodes[i];
       node->slot = 0;
@@ -608,7 +608,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
         node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
         lastZ = node->z;
         node->kind = 2;
-        step = ArcTan2(0x60000, radius);
+        step = ArcTan2(px(6), radius);
         angle += step;
         radius += step * 4;
       } else {
@@ -903,8 +903,8 @@ void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
 
     slot->first = firstId;
     slot->second = secondId;
-    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + 0x80000,
-                  first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + px(8),
+                  first->z.fixed, second->x.fixed, second->y.fixed + px(8),
                   second->z.fixed);
     Actor_SelectAnimationFar(first, 4);
     Actor_SelectAnimationFar(second, 4);
@@ -958,8 +958,8 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                       b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
+    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
+                       b->x.fixed, b->y.fixed + px(8), b->z.fixed, mode);
 }
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
@@ -1003,8 +1003,8 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 
     slot->first = from;
     slot->second = to;
-    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                      b->x.fixed, b->y.fixed + 0x80000, b->z.fixed);
+    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
+                      b->x.fixed, b->y.fixed + px(8), b->z.fixed);
   }
 }
 
@@ -1023,7 +1023,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 segments = length / 6 + 1;
   struct TightropeNode **link = &work->slots[index].head;
   s32 angle = 0;
-  s32 radius = 0x40000;
+  s32 radius = px(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -1039,7 +1039,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                  z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(0x60000, radius);
+    step = ArcTan2(px(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -1057,9 +1057,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
-    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + 0x80000,
-                    first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
-                    second->z.fixed, Trig_Sin(gTightrope_LashPhase) << 2);
+    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + px(8), first->z.fixed,
+                    second->x.fixed, second->y.fixed + px(8), second->z.fixed,
+                    Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
@@ -1140,7 +1140,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->wobbling = 1;
-  slot->amplitude = 0x40000;
+  slot->amplitude = px(4);
   slot->phase = 0x4000;
   Heap_Release(nodes);
   return 0;
@@ -1161,8 +1161,8 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     work->recoilFrom = first;
     work->recoilTo = second;
-    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + 0x80000,
-                     first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + px(8),
+                     first->z.fixed, second->x.fixed, second->y.fixed + px(8),
                      second->z.fixed, Trig_Sin(gTightrope_UntiePhase) << 2);
     gTightrope_UntiePhase += 0x1000;
   }
@@ -1208,7 +1208,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   wait(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame << 12;
-    dist = 0x40000;
+    dist = px(4);
     for (i = 0; i <= count; i++) {
       node = nodes[i];
       node->slot = 0;
@@ -1218,7 +1218,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
         z = node->z = z1 + Iwram_MulQ16(Trig_Sin(angle), dist);
         node->kind = 2;
         {
-          u16 step = ArcTan2(0x60000, dist);
+          u16 step = ArcTan2(px(6), dist);
 
           angle += step;
           dist += step * 4;
@@ -1796,7 +1796,7 @@ void HangingVine_Place(s32 id, s32 force) {
       zero = 0;
       object->z.fixed += 0xfff00000;
       y = object->y.fixed;
-      object->y.fixed = y + 0x400000;
+      object->y.fixed = y + px(64);
       HangingVine_Hang(id, zero);
     } else if (force) {
       HangingVine_Hang(id, 0);

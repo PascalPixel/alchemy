@@ -156,7 +156,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = px(5);
-    effect->maxSpeed = 0x50000;
+    effect->maxSpeed = px(5);
     effect->limitTurnStep = state;
     effect->state++;
 
@@ -187,7 +187,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    SET_POSITION(&position, owner->position.x, owner->position.y + 0x140000,
+    SET_POSITION(&position, owner->position.x, owner->position.y + px(20),
                  owner->position.z);
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(px(4), Random16(), &position);

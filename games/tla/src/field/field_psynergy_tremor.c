@@ -16,7 +16,7 @@
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
-#define SWAY_PEAK 0xc0000
+#define SWAY_PEAK px(12)
 #define SWAY_RAMP 0x1999   // 0.1 pixels a frame
 #define SWAY_SHAKE 0x40000 // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
@@ -200,7 +200,7 @@ release:
 #define VIEW_MOVE_WORK_SIZE 0x2154
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_PEAK 0x60000
+#define SWAY_PEAK px(6)
 #define SWAY_RAMP 0x2666 // 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake

@@ -1105,7 +1105,7 @@ void LuckyWheels_FinishFrame(void) {
         p->velocityY = px(6);
         p->variant = 0;
       }
-      if (p->y > 0x400000) {
+      if (p->y > px(64)) {
         p->y = px(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;

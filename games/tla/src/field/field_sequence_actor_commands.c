@@ -285,7 +285,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
  * routine takes a halfword, its callers pass a word; tried as the definition's
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32
  * z, s16 angle), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_actor_commands.c:248: conflicting
+ * tla-ja: games/tla/src/field/field_sequence_actor_commands.c:283: conflicting
  * types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
     s32 actorId, s32 x, s32 z,

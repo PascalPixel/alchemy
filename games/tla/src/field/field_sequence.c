@@ -40,7 +40,7 @@
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/include/game/game_flags.h:13: conflicting types for
+ * games/tla/include/game/game_flags.h:16: conflicting types for
  * `GameFlag_GetByte'. */
 u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__event_commands

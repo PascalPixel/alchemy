@@ -21,7 +21,7 @@
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
  * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:124: `gWorldMapWork' has an
+ * games/tla/src/field/field_tile_animation.c:144: `gWorldMapWork' has an
  * incomplete type. */
 extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 #define gWorldMapWork gWorldMapWork__tile_animation
@@ -72,7 +72,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     }
   }
   block = (struct WorldMapCell *)Ram_MapBlocks +
-          (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
+          (((x / px(32)) & 31) + (((y / px(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
   switch (value / 10) {
@@ -1171,7 +1171,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
  * gCellPictures[]; scene/shared.h has u32 gCellPictures[]; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:1118: request for member `unk2' in
+ * games/tla/src/field/field_tile_animation.c:1189: request for member `unk2' in
  * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
 
@@ -1277,7 +1277,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 
     s32 height = mover->height;
 
-    if (height < 0x40000) {
+    if (height < px(4)) {
       if ((u32)(collision - 1) > 3 && collision != 6)
         return -1;
       return 0;

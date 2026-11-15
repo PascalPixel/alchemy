@@ -10,6 +10,7 @@
 #include "fixed_math.h"
 #include "system/mul_q16.h"
 #include "system/frame.h"
+#include "system/vector3.h"
 
 struct FarCallVeneer {
   u32 stub;
@@ -32,14 +33,6 @@ struct FarCallRuntimeTrigView {
   struct FarCallVeneer squareRoots[2];
   struct FarCallTrigVeneer sin;
   struct FarCallTrigVeneer cos;
-};
-
-/* VIEW(world_map_lines): tag struct Vector3 as struct Vector3__world_map_lines;
- * vector3.h has another definition. */
-struct Vector3__world_map_lines {
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 /// One end of a World Map line as it is scanned: its position, its step and
@@ -74,8 +67,7 @@ s32 Transform_CallInThumb(s32 x, s32 y);
 /// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
 /// unchanged; affine receives each line's parameters twice, for BG2 and then
 /// BG3, as the HBlank DMA writes both.
-void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
-                              struct Vector3__world_map_lines *target,
+void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {
   u32 angle;

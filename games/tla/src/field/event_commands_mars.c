@@ -187,7 +187,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   actor->z = local.z;
   y = actor->y + 0xFFFF0000;
   actor->y = y;
-  if (y < other->y + 0x140000)
+  if (y < other->y + px(20))
     Actor_ReleaseFar(actor);
 }
 
@@ -227,7 +227,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;
-    effect->maxSpeed = 0x50000;
+    effect->maxSpeed = px(5);
     effect->limitTurnStep = state;
     effect->state++;
 

@@ -168,8 +168,7 @@ loaded:
       sprite->scaleY = 0x3333;
       particle = &work->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
-      Vector_AddPolarOffset(Random16() * 12 + 0x90000, Random16(),
-                            &particle->x);
+      Vector_AddPolarOffset(Random16() * 12 + px(9), Random16(), &particle->x);
       particle->sway = (Random16() << 5) >> 16;
       particle->swayRate = ((Random16() << 9) >> 16) + 256;
       particle->rise = Random16() + 0x3333;

@@ -31,7 +31,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
  * Field_RequestDjinnBattle(s32 flag, s32 no); tried as the definition's void
  * Field_RequestDjinnBattle(u32 flags, u32 djinn), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_requests.c:23: conflicting types for
+ * games/tla/src/field/field_sequence_requests.c:25: conflicting types for
  * `Field_RequestDjinnBattle'. */
 void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
@@ -133,7 +133,7 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
 /* VIEW(event_commands): tag struct EventWork1cc as struct
  * EventWork1cc__event_commands; scene/shared.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_requests.c:119: redefinition of
+ * tla-ja: games/tla/src/field/field_sequence_requests.c:133: redefinition of
  * `struct EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {

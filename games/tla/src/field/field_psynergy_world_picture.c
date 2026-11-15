@@ -116,7 +116,7 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
     x = ((x << 14) + 0x434000) / 853;
     z >>= 16;
     object->x.fixed = x << 16;
-    object->z.fixed = (((z << 14) + 0x1c0000) / 640) << 16;
+    object->z.fixed = (((z << 14) + px(28)) / 640) << 16;
     camera[0] = object->x.fixed;
     camera[2] = object->z.fixed;
   }

@@ -255,7 +255,7 @@ s32 Leader_CanPushObjectAhead(void) {
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   above[0] = target->x.fixed;
-  above[1] = target->y.fixed + 0x100000;
+  above[1] = target->y.fixed + px(16);
   above[2] = target->z.fixed;
   hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))

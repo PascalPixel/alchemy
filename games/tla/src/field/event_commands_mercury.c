@@ -27,7 +27,7 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
 /* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;
  * event_commands.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_mercury.c:61: structure has no member
+ * games/tla/src/field/event_commands_mercury.c:73: structure has no member
  * named `sprite'. */
 struct CaptureObject__f0d8740 {
   u8 unk00[6];

@@ -11,8 +11,8 @@
 /* VIEW(event_commands): tag struct GroundParticle as struct
  * GroundParticle__event_commands; ground_mask.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/event_commands_line_scroll.c:348: field
- * `particles' has incomplete type. */
+ * tla-ja: games/tla/src/field/event_commands_weather.c:15: field `particles'
+ * has incomplete type. */
 struct GroundParticle__event_commands {
   u8 unk00[4];
   u16 y : 8;
@@ -138,7 +138,7 @@ void Weather_UpdateRain(void) {
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;
 
-      x = focus[0] + (Random16() << 8) - 0x400000;
+      x = focus[0] + (Random16() << 8) - px(64);
       y = focus[2] + (Random16() << 8) - 0x800000;
       particle->posX = x;
       particle->posZ = y;

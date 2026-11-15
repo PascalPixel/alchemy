@@ -595,7 +595,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 /* VIEW(resource_slot): tag struct IconSprite as struct
  * IconSprite__resource_slot; item_icon.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_actors.c:579: dereferencing pointer to incomplete
+ * games/tla/src/field/field_actors.c:613: dereferencing pointer to incomplete
  * type. */
 struct IconSprite__resource_slot {
   u8 unk00[4];
@@ -775,15 +775,15 @@ void ActorSystem_PlaceSprites(void) {
       dx = object->x.fixed - viewX;
       dz = object->z.fixed - viewZ;
       screenTop = dz - object->y.fixed;
-      if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
+      if (dx > -px(32) && dx < 0x1100000 && screenTop > -px(32) &&
           screenTop < 0xe00000 &&
           (priorityFlags = &object->priorityFlags, !(*priorityFlags & 16))) {
         terrainId = &object->layer;
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
         if (*priorityFlags & 1) {
-          probeX = object->x.fixed - 0x70000;
-          feetZ = object->z.fixed + 0x20000;
+          probeX = object->x.fixed - px(7);
+          feetZ = object->z.fixed + px(2);
           objectHeight = object->groundHeight >> 16;
           priority = 0;
           leftPriority = 0;
@@ -797,38 +797,34 @@ void ActorSystem_PlaceSprites(void) {
                 object->groundHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
               height =
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
-                  16;
-              rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
-                   16) -
-                  16;
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
+              rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
+                      16) -
+                     16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
-            probeX += 0xd0000;
+            probeX += px(13);
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
               height =
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >>
-                  16;
-              rise =
-                  (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
-                   16) -
-                  16;
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
+              rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
+                      16) -
+                     16;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
-            probeX -= 0x60000;
+            probeX -= px(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
             height =
-                MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x100000) >> 16;
-            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + 0x200000) >>
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
+            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
                     16) -
                    16;
             if (rise > height)
@@ -839,11 +835,11 @@ void ActorSystem_PlaceSprites(void) {
             if (object->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            probeX += 0xd0000;
+            probeX += px(13);
             if (object->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-            probeX -= 0x60000;
+            probeX -= px(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
           }
           // An odd priority is preferred, left first.

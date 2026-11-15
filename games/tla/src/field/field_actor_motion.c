@@ -271,16 +271,15 @@ void Actor_UpdateAllThumb(void) {
                 continue;
               if (other == object)
                 continue;
-              if (((velocityX - other->x + 0x80000) >> 20) != 0)
+              if (((velocityX - other->x + px(8)) >> 20) != 0)
                 continue;
-              if (((velocityZ - other->z + 0x80000) >> 20) != 0)
+              if (((velocityZ - other->z + px(8)) >> 20) != 0)
                 continue;
               dy = y - other->y;
-              if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) >
-                  0x7ffff)
+              if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
                 continue;
               standing = 1;
-              ground = other->y + 0x100000;
+              ground = other->y + px(16);
               object->standingOn = other;
               break;
             }
@@ -289,7 +288,7 @@ void Actor_UpdateAllThumb(void) {
             ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX,
                                               velocityZ);
           velocityY = ground - object->groundHeight;
-          if (ground - y > -0x40000)
+          if (ground - y > -px(4))
             y += velocityY;
           if (velocityY < 0)
             velocityY = -velocityY;
@@ -449,7 +448,7 @@ void Actor_MoveWithCarriers(void) {
         if (carrier != NULL) {
           if (WORD_AT(carrier, 0x74) != 0) {
             if (y == object->groundHeight) {
-              object->groundHeight = carrier->y.fixed + 0x100000;
+              object->groundHeight = carrier->y.fixed + px(16);
               y = object->groundHeight;
             } else {
               object->groundHeight += WORD_AT(carrier, 0x74);
@@ -494,7 +493,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
-  if (distance < 0x100000) {
+  if (distance < px(16)) {
     dx = x - object->x.fixed;
     dy = y - object->y.fixed;
     dz = z - object->z.fixed;

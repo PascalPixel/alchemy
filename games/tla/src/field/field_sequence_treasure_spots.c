@@ -153,9 +153,9 @@ void Field_PlaceTreasureSpots(void) {
 }
 
 /* VIEW(field_sequence): tag struct ObjectSprite as struct
- * ObjectSprite__field_sequence; field/field.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:167: structure
+ * ObjectSprite__field_sequence; field/field.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:174: structure
  * has no member named `yOffset'. */
 struct ObjectSprite__field_sequence {
   u8 unk00[5];

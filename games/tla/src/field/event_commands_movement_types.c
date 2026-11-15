@@ -383,17 +383,17 @@ again:
         continue;
       if (entry == leader)
         continue;
-      if ((position[0] - entry->x.fixed + 0x80000) >> 20 != 0)
+      if ((position[0] - entry->x.fixed + px(8)) >> 20 != 0)
         continue;
-      if ((position[2] - entry->z.fixed + 0x80000) >> 20 != 0)
+      if ((position[2] - entry->z.fixed + px(8)) >> 20 != 0)
         continue;
       delta = position[1] - entry->y.fixed;
-      dy = delta - 0x100000;
+      dy = delta - px(16);
       if (dy >= 0) {
         if (dy <= bound)
           goto hit;
       } else {
-        dy = 0x100000 - delta;
+        dy = px(16) - delta;
         if (dy <= bound) {
         hit:
           canJump = 1;
@@ -408,8 +408,8 @@ again:
   for (i = 0; i < 64; i++, entry++) {
     if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
         entry != leader && entry->collisionFlags != 0 &&
-        (position[0] - entry->x.fixed + 0x80000) >> 20 == 0 &&
-        (position[2] - entry->z.fixed + 0x80000) >> 20 == 0) {
+        (position[0] - entry->x.fixed + px(8)) >> 20 == 0 &&
+        (position[2] - entry->z.fixed + px(8)) >> 20 == 0) {
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
@@ -543,14 +543,14 @@ s32 Field_ClimbDown(void) {
                                     (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - 0x100000;
+    position[1] = leader->y.fixed - px(16);
     position[2] = leader->z.fixed;
     if (MapGrid_IsWallAtFar(position) != 0)
       goto failure;
     radius = leader->radius - 2;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - 0x200000;
-    position[2] = leader->z.fixed + 0x100000;
+    position[1] = leader->y.fixed - px(32);
+    position[2] = leader->z.fixed + px(16);
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
@@ -570,7 +570,7 @@ s32 Field_ClimbDown(void) {
     spriteFlags &= 0xfe;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Actor_SelectAnimationFar(leader, 13);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed - 0x100000,
+    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed - px(16),
                            (gridZ << 16) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     gMainRoutineWork.movementMode = 2;
@@ -666,8 +666,8 @@ s32 Field_ClimbUp(void) {
     s32 i;
 
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed + 0x100000;
-    position[2] = leader->z.fixed - 0x100000;
+    position[1] = leader->y.fixed + px(16);
+    position[2] = leader->z.fixed - px(16);
     i = 0;
     entry = Ram_HeapSlots->actors;
     for (; i < 64; i++, entry++) {
@@ -681,7 +681,7 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
     Actor_SelectAnimationFar(leader, 11);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed + 0x80000,
+    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed + px(8),
                            (gridZ << 16) - 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 3;
@@ -783,7 +783,7 @@ s32 Leader_StepOffRope(void) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - 0x80000;
+  leader->groundHeight = leader->y.fixed - px(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
@@ -888,7 +888,7 @@ s32 Leader_StepOffTightrope(void) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - 0x80000;
+  leader->groundHeight = leader->y.fixed - px(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))

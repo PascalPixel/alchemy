@@ -78,7 +78,7 @@ void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16() + 0x20000;
+  radius = Random16() + px(2);
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -108,7 +108,7 @@ void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
   s32 dz;
 
   anchor = effect->anchor;
-  radius = 0x80000;
+  radius = px(8);
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -505,16 +505,16 @@ void FieldPsynergy_Catch(void) {
   s32 index;
   s32 steps = 11;
 
-  SET_POSITION(&origin, mainActor->x.fixed, mainActor->y.fixed + 0x100000,
+  SET_POSITION(&origin, mainActor->x.fixed, mainActor->y.fixed + px(16),
                mainActor->z.fixed);
   if (scene->enabled) {
-    SET_POSITION(&target, mainActor->x.fixed, mainActor->y.fixed + 0x200000,
+    SET_POSITION(&target, mainActor->x.fixed, mainActor->y.fixed + px(32),
                  mainActor->z.fixed);
     Vector_AddPolarOffset(px(32), scene->angle, &target.x);
   } else {
-    SET_POSITION(&target, scene->x, scene->y + 0x200000, scene->z);
+    SET_POSITION(&target, scene->x, scene->y + px(32), scene->z);
   }
-  SET_POSITION(&spawn, scene->x, scene->y + 0x200000, scene->z);
+  SET_POSITION(&spawn, scene->x, scene->y + px(32), scene->z);
   object = Actor_Spawn(278, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
@@ -595,10 +595,10 @@ void FieldPsynergy_UpdateLash(void) {
 
     particle = &work->particles[work->next];
     SET_POSITION(particle, object->x.fixed, object->y.fixed, object->z.fixed);
-    distance = Random16() * 12 + 0x40000;
+    distance = Random16() * 12 + px(4);
     Vector_AddPolarOffset(distance, Random16(), particle);
     particle->velocityX = 0;
-    particle->velocityY = 0x20000 - Random16() * 2;
+    particle->velocityY = px(2) - Random16() * 2;
     particle->velocityZ = 0;
     speed = Random16() + 0x18000;
     Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
@@ -653,7 +653,7 @@ void FieldPsynergy_UpdateLash(void) {
     if (work->timer == 0)
       work->flash = 1;
     Rope_GetEndNodePosition(event->targetX, &position);
-    SET_ACTOR_POSITION(object, position.x, position.y - 0x40000, position.z);
+    SET_ACTOR_POSITION(object, position.x, position.y - px(4), position.z);
     if (work->hit != 0) {
       work->phase++;
       work->timer = -1;
@@ -758,8 +758,7 @@ void FieldPsynergy_Lash(void) {
       particle++;
     }
 
-    FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000,
-                                 scene->z);
+    FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
     Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
@@ -974,7 +973,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   limit = particle->groundHeight + 0xA0000;
   source = particle->watchedActor;
   if (party->mapId == SCENE_CLEAR)
-    limit = particle->groundHeight + 0x40000;
+    limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -987,8 +986,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
-  SET_ACTOR_POSITION(particle, source->x.fixed, y - 0x20000,
-                     source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000);
+  SET_ACTOR_POSITION(particle, source->x.fixed, y - px(2),
+                     source->z.fixed + ((Q16_ONE - scale) * 5) + px(9));
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -1003,7 +1002,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   limit = particle->groundHeight + 0xA0000;
   source = particle->watchedActor;
   if (party->mapId == SCENE_CLEAR)
-    limit = particle->groundHeight + 0x40000;
+    limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -1016,8 +1015,8 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
-  SET_ACTOR_POSITION(particle, source->x.fixed, y - 0x20000,
-                     source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000);
+  SET_ACTOR_POSITION(particle, source->x.fixed, y - px(2),
+                     source->z.fixed - ((Q16_ONE - scale) * 5) + px(16));
 }
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
@@ -1032,7 +1031,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 zero;
 
   for (i = 0; i <= 1; i++) {
-    object = Actor_CreateFar(271, source->x, source->y + 0x400000, source->z);
+    object = Actor_CreateFar(271, source->x, source->y + px(64), source->z);
     objects[i] = object;
     if (object == NULL)
       continue;
@@ -1261,7 +1260,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c;
  * field_psynergy.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1237: structure has no
+ * games/tla/src/field/field_psynergy_radial_effects.c:1290: structure has no
  * member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
@@ -1776,8 +1775,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
     position[2] = z;
     if (kind == 1 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
-      points[count * 2] = x / 0x100000;
-      points[count * 2 + 1] = z / 0x100000;
+      points[count * 2] = x / px(16);
+      points[count * 2 + 1] = z / px(16);
       count++;
       work[0x1b34] = kind;
     }
@@ -1787,8 +1786,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
       event->unk_d3e = z >> 16;
       event->unk_d3c = (event->unk_d3c & 0xfff0) + 8;
       event->unk_d3e = (event->unk_d3e & 0xfff0) + 8;
-      points[count * 2] = x / 0x100000;
-      points[count * 2 + 1] = z / 0x100000;
+      points[count * 2] = x / px(16);
+      points[count * 2 + 1] = z / px(16);
       count++;
     }
     if (kind == 3 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
@@ -1797,8 +1796,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
       event->unk_d42 = z >> 16;
       event->unk_d40 = (event->unk_d40 & 0xfff0) + 8;
       event->unk_d42 = (event->unk_d42 & 0xfff0) + 8;
-      points[count * 2] = x / 0x100000;
-      points[count * 2 + 1] = z / 0x100000;
+      points[count * 2] = x / px(16);
+      points[count * 2 + 1] = z / px(16);
       count++;
     }
   }
@@ -1865,7 +1864,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map_grid.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1834: structure has no
+ * games/tla/src/field/field_psynergy_radial_effects.c:1898: structure has no
  * member named `unk02'. */
 struct MapCell__f0e150c {
   u8 unk00[2];
@@ -1923,7 +1922,7 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 /* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[];
  * f0e150c has extern struct TouchCopies gSceneLocalState; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1874: incompatible types
+ * games/tla/src/field/field_psynergy_radial_effects.c:1938: incompatible types
  * in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
@@ -1931,7 +1930,7 @@ extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
  * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
  * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_radial_effects.c:1865: conflicting types
+ * games/tla/src/field/field_psynergy_radial_effects.c:1929: conflicting types
  * for `MapGrid_GetCellAt'. */
 extern struct MapCell *
 MapGrid_GetCellAt__f0e2718(s32 x, s32 z,

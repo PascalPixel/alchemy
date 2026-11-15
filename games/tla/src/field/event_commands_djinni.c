@@ -153,7 +153,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_Jump(djinniId, 6, 5);
   wait(24);
   for (i = 0; i < 120; i++) {
-    if (ABS(djinni->y.fixed - leader->y.fixed) < 0x140000)
+    if (ABS(djinni->y.fixed - leader->y.fixed) < px(20))
       break;
     wait(1);
   }

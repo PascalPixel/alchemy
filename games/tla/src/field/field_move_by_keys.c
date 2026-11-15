@@ -74,20 +74,20 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         &map->layers[object->layer].cells[Actor_GetCellIndexFar(object)];
     destinationCell =
         &map->layers[object->layer]
-             .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];
+             .cells[position.x / px(16) + (position.z / px(16)) * 128];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
     } else if (gInput.held & 64) {
       terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
-                                               position.z - 0x100000);
-      if (terrainHeight - object->y.fixed < 0x100000)
+                                               position.z - px(16));
+      if (terrainHeight - object->y.fixed < px(16))
         goto refused;
     } else if (gInput.held & 128) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
-      if (terrainHeight - object->y.fixed > -0x80000) {
+      if (terrainHeight - object->y.fixed > -px(8)) {
       refused:
         collisionFlags = 1;
         animation = 12;
@@ -205,8 +205,8 @@ s32 Actor_CrossRope(struct Actor *object) {
     } else {
       slot->swinging = 1;
       slot->amplitude += 0x8000;
-      if (slot->amplitude > 0x20000)
-        slot->amplitude = 0x20000;
+      if (slot->amplitude > px(2))
+        slot->amplitude = px(2);
       object->watchedActor = (struct Actor *)best;
       SET_POSITION(&position, best->x, best->y, best->z);
       sprite->rotation = best->angle + turn;
@@ -310,8 +310,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
           slot = &tightrope->slots[best->slot - 1];
           slot->wobbling = 1;
           slot->amplitude += 0x8000;
-          if (slot->amplitude > 0x20000)
-            slot->amplitude = 0x20000;
+          if (slot->amplitude > px(2))
+            slot->amplitude = px(2);
           object->watchedActor = (struct Actor *)best;
         }
         /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
@@ -532,7 +532,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
     // Every 16th frame, a bit of rubble drops beside the climber.
     if ((gFrameCount & 15) == 0) {
-      SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + 0x30000,
+      SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + px(3),
                    actor->y.fixed, actor->z.fixed);
       effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
@@ -633,7 +633,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   collision |= 1;
   // Up against a face more than 8 pixels high: start climbing it.
-  if ((gInput.held & KEY_UP) && groundAhead > y + 0x80000) {
+  if ((gInput.held & KEY_UP) && groundAhead > y + px(8)) {
     cellX = (position.x & 0xfff00000) + 0x80000;
     cellZ = (position.z & 0xfff00000) + 0xfff80000;
 
@@ -718,7 +718,7 @@ counted:
   // zero path from skipping it.
   if (((u8 *)actor)[98] == 0 && collision == 0) {
     effect = Actor_Create(0x164, actor->x.fixed, actor->y.fixed,
-                          actor->z.fixed - 0x20000);
+                          actor->z.fixed - px(2));
     if (effect != NULL) {
       effect->groundHeight = actor->groundHeight;
       sprite = effect->sprite;
@@ -902,7 +902,7 @@ update_object:
   }
   if (*timer == 0 && collision == 0) {
     ripple = Actor_Create(0x164, object->x.fixed, object->y.fixed,
-                          object->z.fixed - 0x20000);
+                          object->z.fixed - px(2));
     if (ripple != 0) {
       ripple->groundHeight = object->groundHeight;
       rippleSprite = ripple->sprite;

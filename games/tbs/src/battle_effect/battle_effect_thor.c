@@ -7,12 +7,25 @@
 /// The sparks; the glint pictures that draw the crackles of lightning come
 /// before them.
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 3160))
+#define THOR_SPARK_COUNT 910
 
 /// The particle sprites, after the light fan pictures.
 #define THOR_SPRITE_PICTURES 6144
 
-/// The violet mote in the second part's sheet.
+/// The violet mote in the second part's sheet, a quarter drawn four times
+/// mirrored.
 #define THOR_MOTE_PICTURE 24576
+#define THOR_MOTE_PICTURE_WIDTH 12
+#define THOR_MOTE_PICTURE_HEIGHT 24
+/// The light fan, at the first part's sheet start, drawn twice mirrored.
+#define THOR_LIGHT_FAN_WIDTH 32
+#define THOR_LIGHT_FAN_HEIGHT 96
+/// The second part's sheet: the pillar of lightning in two pictures, then
+/// the bolts.
+#define THOR_PILLAR_WIDTH 48
+#define THOR_PILLAR_HEIGHT 112
+#define THOR_BOLT_WIDTH 72
+#define THOR_BOLT_HEIGHT 72
 
 #define THOR_DIMMED_DOTS 10000 ///< the darker copies of the dot pictures
 
@@ -20,7 +33,8 @@
 #define THOR_LAUNCH_SPARKS(spark, index, startX, startY, angleExpr, max)       \
   {                                                                            \
     s32 spawned = 0;                                                           \
-    for (index = 0, spark = THOR_PARTICLES; index != 910; index++, spark++) {  \
+    for (index = 0, spark = THOR_PARTICLES; index != THOR_SPARK_COUNT;         \
+         index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
         s32 speed = (Random16() & 0x3ff) + 32;                                 \
         s32 angle = angleExpr;                                                 \
@@ -108,7 +122,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -284,14 +298,16 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 32,
-                                            (frame - 151) * 20 - 12, 32, 96);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+          canvas, work->sheet, 32, (frame - 151) * 20 - 12,
+          THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 64,
-                                            (frame - 151) * 20 - 12, 32, 96);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
+          canvas, work->sheet, 64, (frame - 151) * 20 - 12,
+          THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
     EFFECT_PRESENT_CANVAS(work);
@@ -319,14 +335,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 thorSpeedX;
     s32 thorSpeedY;
     s32 pillarX = 60;
-    s32 pillarY = 112;
+    s32 pillarY = THOR_PILLAR_HEIGHT;
 
     thorX = px(80);
     thorY = px(64);
     i = 0;
     thorSpeedX = 0;
     thorSpeedY = 0;
-    for (; i != 910; i++) {
+    for (; i != THOR_SPARK_COUNT; i++) {
       THOR_PARTICLES[i].variant = 0;
     }
     // Nothing in Thor reads these 16 particles, and BattleEffect_RunImpactBurst
@@ -360,10 +376,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
           if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-            blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
+            blit[0](canvas, work->sheet, 36, 0, THOR_PILLAR_WIDTH, pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](canvas, work->sheet + (48 * 112), 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + PICTURE_BYTES(THOR_PILLAR), 36, 0,
+                    THOR_PILLAR_WIDTH, THOR_PILLAR_HEIGHT);
           }
           if (frame == start + 2) {
             THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),
@@ -397,8 +414,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-                  canvas, work->sheet + i % 3 * (72 * 72), boltX, boltY, 72,
-                  72);
+                  canvas, work->sheet + i % 3 * PICTURE_BYTES(THOR_BOLT), boltX,
+                  boltY, THOR_BOLT_WIDTH, THOR_BOLT_HEIGHT);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             if (frame == i * 2 + 80) {
@@ -424,33 +441,33 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
-        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
-                                              work->sheet + THOR_MOTE_PICTURE,
-                                              moteX + 60, moteY - 24, 12, 24);
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+                            work->sheet, THOR_MOTE_PICTURE, moteX + 60,
+                            moteY - 24);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_LIGHTEN);
-        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
-                                              work->sheet + THOR_MOTE_PICTURE,
-                                              mirrorX, moteY - 24, 12, 24);
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+                            work->sheet, THOR_MOTE_PICTURE, mirrorX,
+                            moteY - 24);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                             COMPOSITE_LIGHTEN);
-        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-            canvas, work->sheet + THOR_MOTE_PICTURE, moteX + 60, moteY, 12, 24);
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+                            work->sheet, THOR_MOTE_PICTURE, moteX + 60, moteY);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                                 COMPOSITE_FLIP_Y,
                             COMPOSITE_LIGHTEN);
-        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-            canvas, work->sheet + THOR_MOTE_PICTURE, mirrorX, moteY, 12, 24);
+        EFFECT_DRAW_PICTURE(EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2], canvas,
+                            work->sheet, THOR_MOTE_PICTURE, mirrorX, moteY);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         // Sparks fly off the bolts.
         j = 0;
-        for (i = 0; i != 910; i++) {
+        for (i = 0; i != THOR_SPARK_COUNT; i++) {
           spark = &THOR_PARTICLES[i];
           if (spark->variant == 0) {
             s32 speed = (Random16() & 63) + 64;
@@ -475,7 +492,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         // Sparks slow and bounce off the ground, shrinking as they die.
         DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
         struct Particle *spark;
-        for (i = 0; i != 910; i++) {
+        for (i = 0; i != THOR_SPARK_COUNT; i++) {
           spark = &THOR_PARTICLES[i];
           if (spark->variant > 0) {
             spark->variant--;

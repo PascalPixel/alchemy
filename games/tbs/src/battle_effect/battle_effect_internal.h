@@ -133,6 +133,15 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
 
+/// BG1's vertical scroll that sets the battle background in the battle view.
+#define BATTLE_BACKGROUND_SCROLL_Y 32
+
+/// Where the battle's projection (gProjection) centres on the screen, and
+/// where the summons centre it while their formations fly, twice as low.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+#define SUMMON_PROJECTION_CENTER_Y (BATTLE_PROJECTION_CENTER_Y * 2)
+
 /// A sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.
 #define SHEET_PALETTE_COLORS 64
@@ -236,9 +245,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// outside window 0.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// The battle background's picture as BG1 shows it from BG character block 2:
-/// 256x120 pixels, one byte each.
-#define BATTLE_BACKGROUND_BYTES (256 * 120)
+/// The battle background's picture as BG1 shows it from BG character block 2,
+/// one byte a pixel.
+#define BATTLE_BACKGROUND_WIDTH 256
+#define BATTLE_BACKGROUND_HEIGHT 120
+#define BATTLE_BACKGROUND_BYTES                                                \
+  (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 
 /// Ram_MapGridCellBuffer as the unused blue ramp uses it: a working copy of the
 /// battle background's picture.
@@ -287,7 +299,44 @@ enum RedCrescentPicture {
 };
 
 /// Closing bolts and lightning columns use the same 24x120 pictures.
-#define LIGHTNING_BOLT_PICTURE_BYTES 2880
+#define LIGHTNING_BOLT_WIDTH 24
+#define LIGHTNING_BOLT_HEIGHT 120
+#define LIGHTNING_BOLT_PICTURE_BYTES PICTURE_BYTES(LIGHTNING_BOLT)
+
+/// Each half of RuneSheet's rune, the second drawn mirrored.
+#define RUNE_HALF_WIDTH 24
+#define RUNE_HALF_HEIGHT 48
+
+/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
+/// and its kind), and the one picture of the small sheets.
+#define DJINNI_WIDTH 40
+#define DJINNI_HEIGHT 40
+#define SMALL_DJINNI_WIDTH 20
+#define SMALL_DJINNI_HEIGHT 40
+
+/// The pictures of the sheets several effects share, each sheet's pictures
+/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
+/// skulls and the tornado strips after TornadoSheet's glints.
+#define SMOKE_PUFF_WIDTH 24
+#define SMOKE_PUFF_HEIGHT 48
+#define FLASH_BURST_WIDTH 32
+#define FLASH_BURST_HEIGHT 64
+#define SKULL_WIDTH 24
+#define SKULL_HEIGHT 24
+#define TORNADO_STRIP_WIDTH 40
+#define TORNADO_STRIP_HEIGHT 32
+/// The pictures of DaggerSheet, ShieldSheet, GlowOrbSheet, VioletStreakSheet
+/// and WispSheet.
+#define DAGGER_WIDTH 24
+#define DAGGER_HEIGHT 40
+#define SHIELD_WIDTH 40
+#define SHIELD_HEIGHT 40
+#define GLOW_ORB_WIDTH 40
+#define GLOW_ORB_HEIGHT 40
+#define VIOLET_STREAK_WIDTH 32
+#define VIOLET_STREAK_HEIGHT 64
+#define WISP_WIDTH 64
+#define WISP_HEIGHT 32
 
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.

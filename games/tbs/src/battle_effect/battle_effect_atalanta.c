@@ -134,7 +134,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE];
   draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   // The violet sky scrolls.
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

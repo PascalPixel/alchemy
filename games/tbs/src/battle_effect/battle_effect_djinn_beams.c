@@ -102,9 +102,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
+      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+              DJINNI_WIDTH, DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
+        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+                DJINNI_WIDTH, DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

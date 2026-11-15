@@ -98,10 +98,16 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
 
-/// The impact orb, 20x48 pictures packed at half width, after the six 48x72
-/// pictures over the caster.
-#define CASTING_IMPACT_ORB_PICTURES (6 * 48 * 72)
-/// The Djinni's 20x40 picture, in Ram_MapGridCellBuffer after the impact's own.
+/// The fire streak's six pictures over the caster, at the sheet's start.
+#define CASTING_IMPACT_STREAK_WIDTH 48
+#define CASTING_IMPACT_STREAK_HEIGHT 72
+/// The impact orb's pictures, packed at half width, after the streak's.
+#define CASTING_IMPACT_ORB_PICTURES (6 * PICTURE_BYTES(CASTING_IMPACT_STREAK))
+#define CASTING_IMPACT_ORB_WIDTH 20
+#define CASTING_IMPACT_ORB_HEIGHT 48
+/// The Djinni's picture, in Ram_MapGridCellBuffer after the impact's own.
+#define CASTING_IMPACT_DJINNI_WIDTH 20
+#define CASTING_IMPACT_DJINNI_HEIGHT 40
 #define CASTING_IMPACT_DJINNI_PICTURE 15446
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
@@ -109,11 +115,44 @@ enum CastingImpact {
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
   ((struct Particle *)(Ram_MapGridCellBuffer + 16384))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
+/// The impact particles that carry the rising pictures: flash bursts, skulls
+/// or puffs of smoke.
+#define CASTING_IMPACT_RISING_PICTURES 16
 
 /// Asura's sheet: the masked swordsman with his sword low, then swung up, then
 /// the red crescent his stroke leaves.
-#define ASURA_SHEET_SWUNG (80 * 96)
-#define ASURA_SHEET_CRESCENT (ASURA_SHEET_SWUNG + 80 * 104)
+#define ASURA_SHEET_LOW_WIDTH 80
+#define ASURA_SHEET_LOW_HEIGHT 96
+#define ASURA_SHEET_SWUNG_WIDTH 80
+#define ASURA_SHEET_SWUNG_HEIGHT 104
+#define ASURA_SHEET_CRESCENT_WIDTH 128
+#define ASURA_SHEET_CRESCENT_HEIGHT 91
+#define ASURA_SHEET_SWUNG PICTURE_BYTES(ASURA_SHEET_LOW)
+#define ASURA_SHEET_CRESCENT                                                   \
+  (ASURA_SHEET_SWUNG + PICTURE_BYTES(ASURA_SHEET_SWUNG))
+
+/// RedCrescentSheetB, Asura's crescent fading in four pictures the width of
+/// the canvas.
+#define ASURA_CRESCENT_FADE_A_HEIGHT 91
+#define ASURA_CRESCENT_FADE_B_HEIGHT 59
+#define ASURA_CRESCENT_FADE_C_HEIGHT 29
+#define ASURA_CRESCENT_FADE_D_HEIGHT 26
+#define ASURA_CRESCENT_FADE_B (CANVAS_SIZE * ASURA_CRESCENT_FADE_A_HEIGHT)
+#define ASURA_CRESCENT_FADE_C                                                  \
+  (ASURA_CRESCENT_FADE_B + CANVAS_SIZE * ASURA_CRESCENT_FADE_B_HEIGHT)
+#define ASURA_CRESCENT_FADE_D                                                  \
+  (ASURA_CRESCENT_FADE_C + CANVAS_SIZE * ASURA_CRESCENT_FADE_C_HEIGHT)
+
+/// The blue flame column Aqua Sock drops, then the splash twice its width.
+#define BLUE_FLAME_COLUMN_WIDTH 17
+#define BLUE_FLAME_COLUMN_HEIGHT 104
+#define BLUE_FLAME_SPLASH_HEIGHT 65
+/// Terra Strike's rock spire at its tallest.
+#define ROCK_SPIRE_WIDTH 32
+#define ROCK_SPIRE_HEIGHT 96
+/// The flame Forcible Arm and Truncheon Fist drop.
+#define FALLING_FLAME_WIDTH 32
+#define FALLING_FLAME_HEIGHT 64
 
 /// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
@@ -348,13 +387,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
       if (mode <= CASTING_IMPACT_IMPACT_SAP) {
-        if (n <= 63) {
+        if (n < CASTING_IMPACT_SPARKS) {
           EFFECT_VIEW_FROM_CAMERA(camera);
           Projection_Point(&djinnPos, &sparkScreen);
           sparkScreen.x /= 2;
           djinnX = sparkScreen.x;
           blitters[0](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
-                      sparkScreen.x - 10, sparkScreen.y - 4, 20, 40);
+                      sparkScreen.x - CASTING_IMPACT_DJINNI_WIDTH / 2,
+                      sparkScreen.y - 4, CASTING_IMPACT_DJINNI_WIDTH,
+                      CASTING_IMPACT_DJINNI_HEIGHT);
         }
       }
       EFFECT_PRESENT_CANVAS(work);
@@ -451,7 +492,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     // Sparks scatter from the target.
     if (mode != CASTING_IMPACT_IMPACT_AQUA_SOCK) {
       s32 height = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != CASTING_IMPACT_SPARKS / 2; i++) {
         particle = &work->particles[i];
         SET_POSITION(particle, targetActor->x.fixed, height,
                      targetActor->z.fixed);
@@ -585,11 +626,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           mode != CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
         if (frame <= 11) {
           if (work->args->side == EFFECT_SIDE_ENEMIES) {
-            blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
-                        casterPos.x - 32, casterPos.y - 40, 48, 72);
+            blitters[0](
+                canvas,
+                work->sheet + frame / 2 * PICTURE_BYTES(CASTING_IMPACT_STREAK),
+                casterPos.x - 32, casterPos.y - 40, CASTING_IMPACT_STREAK_WIDTH,
+                CASTING_IMPACT_STREAK_HEIGHT);
           } else {
-            blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
-                        casterPos.x, casterPos.y - 40, 48, 72);
+            blitters[0](
+                canvas,
+                work->sheet + frame / 2 * PICTURE_BYTES(CASTING_IMPACT_STREAK),
+                casterPos.x, casterPos.y - 40, CASTING_IMPACT_STREAK_WIDTH,
+                CASTING_IMPACT_STREAK_HEIGHT);
           }
         }
       }
@@ -649,13 +696,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           mode != CASTING_IMPACT_IMPACT_ASURA) {
         if (frame >= 4 && frame <= 15) {
           blitters[1](canvas,
-                      work->sheet + (frame - 4) / 2 * (20 * 48) +
+                      work->sheet +
+                          (frame - 4) / 2 * PICTURE_BYTES(CASTING_IMPACT_ORB) +
                           CASTING_IMPACT_ORB_PICTURES,
-                      targetPos.x / 2 - 8, casterPos.y - 24, 20, 48);
+                      targetPos.x / 2 - 8, casterPos.y - 24,
+                      CASTING_IMPACT_ORB_WIDTH, CASTING_IMPACT_ORB_HEIGHT);
         }
         EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame > 3) {
-          for (i = 0; i != 128; i++) {
+          for (i = 0; i != CASTING_IMPACT_SPARKS * 2; i++) {
             s32 index = i / 2;
             struct Particle *step = &work->particles[index];
             s32 size = step->variant;
@@ -704,7 +753,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           s32 height;
           caster = GetBattleObjectSlotFar(work->args->user)->actor;
           height = BattleUnit_GetEffectHeightFar(work->args->user) / 2;
-          for (i = 0; i != 32; i++) {
+          for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT / 2; i++) {
             step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             if (step->variant >= 0) {
               s32 size = (i & 1) + 6;
@@ -738,7 +787,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                         (((frame + i * 3) / 2) & 3) *
                                 LIGHTNING_BOLT_PICTURE_BYTES +
                             (pictures + GLINT_SET_BYTES),
-                        targetPos.x / 2 - 8, 0, 24, 104);
+                        targetPos.x / 2 - 8, 0, LIGHTNING_BOLT_WIDTH, 104);
           }
         }
         if (frame >= 8 && frame <= 23) {
@@ -784,23 +833,24 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           scroll = frame * 16 - 48;
           if (fall > 0)
             fall = 0;
-          while (scroll > 104)
-            scroll -= 104;
+          while (scroll > BLUE_FLAME_COLUMN_HEIGHT)
+            scroll -= BLUE_FLAME_COLUMN_HEIGHT;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
           draw = (DrawRectangle *)gHeapSlots;
           draw += HEAP_SLOT_RAM_CODE_2;
           columnX = originX - 8;
           columnY = fall + scroll;
-          top = columnY - 104;
-          width = 17;
+          top = columnY - BLUE_FLAME_COLUMN_HEIGHT;
+          width = BLUE_FLAME_COLUMN_WIDTH;
           EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, columnX, top,
-                                               width, 104);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, columnX,
-                                               columnY, width, 104 - scroll);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures + (17 * 104),
-                                               originX - width, fall + 47,
-                                               width * 2, 65);
+                                               width, BLUE_FLAME_COLUMN_HEIGHT);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              canvas, pictures, columnX, columnY, width,
+              BLUE_FLAME_COLUMN_HEIGHT - scroll);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
+              canvas, pictures + PICTURE_BYTES(BLUE_FLAME_COLUMN),
+              originX - width, fall + 47, width * 2, BLUE_FLAME_SPLASH_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           if (frame == 8) {
             work->shakeFrames = frame;
@@ -830,18 +880,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         // The rune's two halves, the second mirrored.
         if (frame >= 4 && frame <= 23) {
           pairX = targetPos.x / 2;
-          height = 48;
+          height = RUNE_HALF_HEIGHT;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
           slotDraw = (DrawRectangle *)gHeapSlots;
-          slotDraw[HEAP_SLOT_RAM_CODE_2](canvas, pictures, pairX - 24, 48, 24,
-                                         height);
+          slotDraw[HEAP_SLOT_RAM_CODE_2](canvas, pictures,
+                                         pairX - RUNE_HALF_WIDTH, 48,
+                                         RUNE_HALF_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_LIGHTEN);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, pairX, 48, 24,
-                                               height);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(canvas, pictures, pairX, 48,
+                                               RUNE_HALF_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
         BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
@@ -852,23 +903,25 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           REG_BLDALPHA = EFFECT_BLEND_CANVAS(32 - frame);
         }
         if (frame > 5) {
-          stripX = targetPos.x / 2 - 20;
+          stripX = targetPos.x / 2 - TORNADO_STRIP_WIDTH / 2;
           image = frame / 2 % 3;
-          pictureOffset = image * (2 * 40 * 32);
+          pictureOffset = image * (2 * PICTURE_BYTES(TORNADO_STRIP));
           blitters[0](canvas, pictures + GLINT_SET_BYTES + pictureOffset,
-                      stripX, 16, 40, 32);
+                      stripX, 16, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
           blitters[0](canvas,
-                      image * (40 * 32) +
-                          (pictures + GLINT_SET_BYTES + 6 * (40 * 32)),
-                      stripX, 48, 40, 32);
+                      image * PICTURE_BYTES(TORNADO_STRIP) +
+                          (pictures + GLINT_SET_BYTES +
+                           6 * PICTURE_BYTES(TORNADO_STRIP)),
+                      stripX, 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
           blitters[0](canvas,
-                      pictureOffset + (pictures + GLINT_SET_BYTES + 40 * 32),
-                      stripX, 80, 40, 32);
+                      pictureOffset + (pictures + GLINT_SET_BYTES +
+                                       PICTURE_BYTES(TORNADO_STRIP)),
+                      stripX, 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
         }
       } else if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
                  mode == CASTING_IMPACT_IMPACT_BARRAGE) {
         struct Particle *step;
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++) {
           step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           // Flash bursts rise.
           if (frame >= i / 2 + 4) {
@@ -877,8 +930,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               s32 image = age / 2;
               Projection_Point(step, &projected);
               projected.x /= 2;
-              blitters[0](canvas, pictures + image * (32 * 64),
-                          projected.x - 16, projected.y - 32, 32, 64);
+              blitters[0](canvas, pictures + image * PICTURE_BYTES(FLASH_BURST),
+                          projected.x - FLASH_BURST_WIDTH / 2,
+                          projected.y - FLASH_BURST_HEIGHT / 2,
+                          FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               Particle_AdvanceWithGravity3D(step, 60, px(1) / 16);
               step->variant++;
             }
@@ -898,12 +953,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame <= 3) {
           blitters[0](canvas, work->sheet,
                       CASTING_IMPACT_PICTURE_X(work->args->side, 0),
-                      imageY + gCastingImpact_PictureY[0], 57, 98);
+                      imageY + gCastingImpact_PictureY[0],
+                      REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
         } else {
           if (frame <= 7) {
             blitters[0](canvas, work->sheet,
                         CASTING_IMPACT_PICTURE_X(work->args->side, 0),
-                        imageY + gCastingImpact_PictureY[0], 57, 98);
+                        imageY + gCastingImpact_PictureY[0],
+                        REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
           }
           EFFECT_DRAW_PICTURE(blitters[0], canvas, work->sheet,
                               REAPER_SHEET_SWUNG,
@@ -964,42 +1021,49 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
         if (frame <= 3) {
           if (work->args->side == EFFECT_SIDE_PARTY) {
-            blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 0, 24,
+                        ASURA_SHEET_LOW_WIDTH, 104);
           } else {
-            blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
+            blitters[0](canvas, work->imageStorage, 48, 24,
+                        ASURA_SHEET_LOW_WIDTH, 104);
           }
         } else {
           if (frame <= 7) {
             if (work->args->side == EFFECT_SIDE_PARTY) {
-              blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
+              blitters[0](canvas, work->imageStorage, 0, 24,
+                          ASURA_SHEET_LOW_WIDTH, 104);
             } else {
-              blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
+              blitters[0](canvas, work->imageStorage, 48, 24,
+                          ASURA_SHEET_LOW_WIDTH, 104);
             }
           }
           if (work->args->side == EFFECT_SIDE_PARTY) {
             blitters[0](canvas, work->imageStorage + ASURA_SHEET_SWUNG, 16, 16,
-                        80, 104);
+                        ASURA_SHEET_SWUNG_WIDTH, ASURA_SHEET_SWUNG_HEIGHT);
           } else {
             blitters[0](canvas, work->imageStorage + ASURA_SHEET_SWUNG, 32, 16,
-                        80, 104);
+                        ASURA_SHEET_SWUNG_WIDTH, ASURA_SHEET_SWUNG_HEIGHT);
           }
           if (frame == 6 || frame == 7) {
             blitters[0](canvas, work->imageStorage + ASURA_SHEET_CRESCENT, 0,
-                        16, 128, 91);
+                        16, ASURA_SHEET_CRESCENT_WIDTH,
+                        ASURA_SHEET_CRESCENT_HEIGHT);
           }
           if (frame == 8 || frame == 9) {
-            blitters[0](canvas, pictures, 0, 16, 128, 91);
+            blitters[0](canvas, pictures, 0, 16, CANVAS_SIZE,
+                        ASURA_CRESCENT_FADE_A_HEIGHT);
           }
           if (frame == 10 || frame == 11) {
-            blitters[0](canvas, pictures + (128 * 91), 0, 16, 128, 59);
+            blitters[0](canvas, pictures + ASURA_CRESCENT_FADE_B, 0, 16,
+                        CANVAS_SIZE, ASURA_CRESCENT_FADE_B_HEIGHT);
           }
           if (frame == 12 || frame == 13) {
-            blitters[0](canvas, pictures + (128 * 91 + 128 * 59), 0, 16, 128,
-                        29);
+            blitters[0](canvas, pictures + ASURA_CRESCENT_FADE_C, 0, 16,
+                        CANVAS_SIZE, ASURA_CRESCENT_FADE_C_HEIGHT);
           }
           if (frame == 14 || frame == 15) {
-            blitters[0](canvas, pictures + (128 * 91 + 128 * 59 + 128 * 29), 0,
-                        16, 128, 26);
+            blitters[0](canvas, pictures + ASURA_CRESCENT_FADE_D, 0, 16,
+                        CANVAS_SIZE, ASURA_CRESCENT_FADE_D_HEIGHT);
           }
         }
       } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
@@ -1042,7 +1106,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           // XXX (no evidence): whether its radius was meant, as 159 is the
           // largest the others draw (32 + 127); only the author's intent would
           // say.
-          CASTING_IMPACT_IMPACT_PARTICLES[63].y = 159;
+          CASTING_IMPACT_IMPACT_PARTICLES[CASTING_IMPACT_IMPACT_PARTICLE_COUNT -
+                                          1]
+              .y = 159;
         }
         {
           struct Particle *step;
@@ -1060,7 +1126,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                           pictures + gCastingImpact_IceChipPictures[image],
                           projected.x - 4, projected.y - 4, 8, 8);
               step->x -= 6;
-              if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
+              if (step->x < 0 &&
+                  ((i & 7) == 0 ||
+                   i == CASTING_IMPACT_IMPACT_PARTICLE_COUNT - 1)) {
                 Sound_PlayFar(SE_IMPACT);
                 BattleEffect_TintBattler(work->args->targets[0],
                                          SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
@@ -1077,14 +1145,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           } else {
             height = (frame << 4) - 64;
           }
-          if (height > 96) {
-            height = 96;
+          if (height > ROCK_SPIRE_HEIGHT) {
+            height = ROCK_SPIRE_HEIGHT;
           }
-          blitters[0](canvas, pictures, 48, 104 - height, 32, height);
+          blitters[0](canvas, pictures, 48, 104 - height, ROCK_SPIRE_WIDTH,
+                      height);
         }
       } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
                  mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
-        // A 32x64 flame falls diagonally onto the target over six frames.
+        // A flame falls diagonally onto the target over six frames.
         s32 offset;
         s32 imageX;
         s32 imageY;
@@ -1104,7 +1173,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             imageX -= offset * 2;
             imageY = targetPos.y - offset * 4 + 24;
           }
-          blitters[1](canvas, pictures, imageX - 16, imageY - 32, 32, 64);
+          blitters[1](canvas, pictures, imageX - FALLING_FLAME_WIDTH / 2,
+                      imageY - FALLING_FLAME_HEIGHT / 2, FALLING_FLAME_WIDTH,
+                      FALLING_FLAME_HEIGHT);
         }
       } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
         // Skulls rise from the target and fade.
@@ -1113,14 +1184,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
         {
           struct Particle *step;
-          for (i = 0; i != 16; i++) {
+          for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++) {
             s32 image = i % 3;
 
             step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             Projection_Point(step, &projected);
             projected.x /= 2;
-            blitters[i & 1](canvas, pictures + image * (24 * 24),
-                            projected.x - 12, projected.y - 12, 24, 24);
+            blitters[i & 1](canvas, pictures + image * PICTURE_BYTES(SKULL),
+                            projected.x - SKULL_WIDTH / 2,
+                            projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
+                            SKULL_HEIGHT);
             Particle_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
             step->variant++;
           }
@@ -1130,7 +1203,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         // game never dispatches; The Lost Age's twin makes the same test.
         // The smoke impacts: a puff rises each frame.
         struct Particle *step;
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++) {
           step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           if (frame >= i + 4) {
             s32 age = step->variant;
@@ -1138,8 +1211,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               s32 image = age / 4;
               Projection_Point(step, &projected);
               projected.x /= 2;
-              blitters[i & 1](canvas, pictures + image * (24 * 48),
-                              projected.x - 12, projected.y - 24, 24, 48);
+              blitters[i & 1](canvas,
+                              pictures + image * PICTURE_BYTES(SMOKE_PUFF),
+                              projected.x - SMOKE_PUFF_WIDTH / 2,
+                              projected.y - SMOKE_PUFF_HEIGHT / 2,
+                              SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
               if (mode == CASTING_IMPACT_IMPACT_ACID_BATH)
                 Particle_AdvanceWithGravity3D(step, 60, px(1) / 64);
               else
@@ -1156,7 +1232,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           projected.x /= 2;
           djinnX = projected.x;
           blitters[1](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
-                      djinnX - 10, projected.y - 4, 20, 40);
+                      djinnX - CASTING_IMPACT_DJINNI_WIDTH / 2, projected.y - 4,
+                      CASTING_IMPACT_DJINNI_WIDTH,
+                      CASTING_IMPACT_DJINNI_HEIGHT);
           position->x += velocity.x;
           position->y += velocity.y;
           position->z += velocity.z;

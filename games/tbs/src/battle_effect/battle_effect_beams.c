@@ -108,7 +108,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
         BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
   else
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
-                    128);
+                    SHEET_PALETTE_BYTES);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
@@ -227,7 +227,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
@@ -449,7 +449,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   battle = gBattleWork;
   for (frame = 0; frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(battle->background, 6 - frame);

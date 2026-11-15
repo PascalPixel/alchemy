@@ -74,9 +74,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       // Never true: the loop ends at frame 63.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
+      draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
+        draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // The chips fly up, odd ones mirrored.
@@ -213,9 +215,11 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
         EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
-            canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
+            canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
+            SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
+      draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
     // Crackles flicker round each portal.
     if ((frame & 1) == 0) {
@@ -312,16 +316,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
     s32 offsetX = randomX - halfRange;
 
     gBgScroll[1].x = offsetX;
-    gBgScroll[1].y = offsetY + 32;
-    gProjection.centerX = 120 - offsetX;
-    gProjection.centerY = 120 - offsetY;
+    gBgScroll[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
+    gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+    gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
     work->shakeFrames--;
     return;
   }
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
 #undef HAIL_CHIP_PICTURES

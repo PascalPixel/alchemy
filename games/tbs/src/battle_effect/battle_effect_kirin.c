@@ -48,7 +48,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   // Setup: wipe the battle away, swap in the forest and wipe back.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -224,7 +224,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       work->shakeFrames--;
       gBgScroll[1].y = (Random16() & 7) + 28;
     } else {
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     EFFECT_PRESENT_CANVAS(work);
   }

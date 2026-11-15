@@ -81,7 +81,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                       sheet);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER)
     Iwram_CopyWords(BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
+                    SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   if (mode == DRAGON_FIRE_TIAMAT)

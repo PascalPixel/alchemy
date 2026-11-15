@@ -76,7 +76,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(8, SPRITE_NEPTUNE, 1);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_DUSK_CLOUDS_BACKDROP, 0);

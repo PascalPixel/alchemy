@@ -238,7 +238,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
@@ -307,7 +307,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
                               BATTLE_BACKGROUND_FADE_RESTORE);
@@ -379,14 +379,14 @@ void BattleEffect_EndCanvasLayer(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
   // This overwrites the saved y restored above, so BG1 is always left at y 32.
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -449,7 +449,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
   BattleEffect_ClearActorTimers();
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
   // Blank tile 255, then rows that show nothing.
   Iwram_ClearWords(BG_CHAR_BLOCK(0) + 255 * 64, 64);

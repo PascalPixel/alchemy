@@ -156,7 +156,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   volatile u32 fill;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -165,7 +165,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
 /// Updates every effect group of one unit's battle object.

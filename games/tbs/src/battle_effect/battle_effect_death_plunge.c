@@ -486,7 +486,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   BattleEffect_ClearActorTimers();
   view->secondMode = BATTLE_BACKGROUND_FIXED;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -753,7 +753,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,

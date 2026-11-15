@@ -210,7 +210,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   }
   Iwram_CopyWords(BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // The dissolve: the map is erased from the top in ragged columns.
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   work->bg2x = 0;
   work->bg2y = 0;
@@ -255,7 +255,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     struct BattleBackgroundWork *view = slots[0];
 
     gBgScroll[1].x = 0;
-    gBgScroll[1].y = 32;
+    gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
     draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);

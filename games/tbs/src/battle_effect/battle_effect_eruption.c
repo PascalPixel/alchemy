@@ -62,7 +62,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     variant = EFFECT_VARIANT_STRONGER;
   } else {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_FIRE_STREAK_SHEET),
-                    128);
+                    SHEET_PALETTE_BYTES);
     variant = work->args->variant;
   }
 

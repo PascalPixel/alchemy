@@ -42,10 +42,10 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_BASIC)
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RED_PALETTE_B),
-                    128);
+                    SHEET_PALETTE_BYTES);
   else if (work->args->variant == EFFECT_VARIANT_STRONGEST)
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                    128);
+                    SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);

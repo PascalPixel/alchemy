@@ -55,7 +55,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   }
   palette = Resource_GetTableEntry(sheetId);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz(palette + 128, work->sheet);
+  Decompress_TaggedLz(palette + SHEET_PALETTE_BYTES, work->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -177,7 +177,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       *outX = position.x;
       *outY = position.y;
       position.x >>= 1;
-      draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
+      draw[0](canvas, work->sheet, position.x - SMALL_DJINNI_WIDTH / 2,
+              position.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
     // The long version's Djinni bursts into motes.
     if (frame == 64) {
@@ -429,7 +431,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
-                    128);
+                    SHEET_PALETTE_BYTES);
     Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, work->sheet, 0,
                                0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

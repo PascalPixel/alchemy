@@ -74,7 +74,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   drawAlt = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  gProjection.centerY = 240;
+  gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -142,18 +142,18 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       shakeX = (Random16() & 3) - 1;
       shakeY = (Random16() & 3) - 1;
       gBgScroll[1].x = shakeX;
-      gBgScroll[1].y = shakeY + 32;
+      gBgScroll[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
     } else {
       shakeX = 0;
       shakeY = 0;
       gBgScroll[1].x = 0;
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     if (frame >= 176 && frame < 180) {
       shakeX = -gBoreas_ShakeOffsets[frame - 176];
       shakeY = gBoreas_ShakeOffsets[frame - 176];
       gBgScroll[1].x = shakeX;
-      gBgScroll[1].y = shakeY + 32;
+      gBgScroll[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
     }
 
     for (i = 0; i != count; i++) {

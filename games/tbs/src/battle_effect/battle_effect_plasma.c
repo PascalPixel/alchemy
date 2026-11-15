@@ -226,10 +226,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == SPARK_GROUPS_RISING) {
     Iwram_CopyWords(BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
+                    SHEET_PALETTE_BYTES);
   }
   sparks = PARTICLES;
 

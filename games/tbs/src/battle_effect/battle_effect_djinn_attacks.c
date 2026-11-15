@@ -207,7 +207,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
         s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
-        blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
+        blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
       }
 
       // Flameballs fall from the top right, one every 4 frames.
@@ -454,18 +455,21 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // A glowing orb flares, then the Djinni shows in it and dives down to the
     // left.
     if (frame <= 23)
-      blitters[0](canvas, work->sheet + MARS_GLOW_ORB + (frame / 4) * (40 * 40),
-                  40, 20, 40, 40);
+      blitters[0](canvas,
+                  work->sheet + MARS_GLOW_ORB +
+                      (frame / 4) * PICTURE_BYTES(DJINNI),
+                  40, 20, DJINNI_WIDTH, DJINNI_HEIGHT);
     if (frame == 20)
       Iwram_CopyWords(BG_PLTT,
                       Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
-                      128);
+                      SHEET_PALETTE_BYTES);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        blitters[1](canvas, work->sheet, 146 - frame * 4, frame * 8 - 172, 20,
-                    40);
+        blitters[1](canvas, work->sheet, 146 - frame * 4, frame * 8 - 172,
+                    SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       else
-        blitters[0](canvas, work->sheet, 50, 20, 20, 40);
+        blitters[0](canvas, work->sheet, 50, 20, SMALL_DJINNI_WIDTH,
+                    SMALL_DJINNI_HEIGHT);
     }
     // It strikes: the screen shakes and the flames erupt.
     if (frame == 32) {

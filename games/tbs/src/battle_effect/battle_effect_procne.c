@@ -473,7 +473,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor->facing = baseAngle[index];
   }
 
-  gProjection.centerX = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
 
   BattleEffect_SetupBlendedDisplay();
 

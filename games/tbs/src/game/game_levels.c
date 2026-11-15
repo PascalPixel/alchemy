@@ -18,12 +18,12 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   u32 entryIndex;
 
   entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
-  // BUG: the bound is one past the table's 519 rows, so id 519 reads the
-  // enemy table's first bytes as an action.
+  // BUG: the bound is one past the table's rows, so id ABILITY_COUNT reads
+  // the enemy table's first bytes as an action.
 #ifdef BUGFIX
-  if (entryIndex >= 519U) {
+  if (entryIndex >= ABILITY_COUNT) {
 #else
-  if (entryIndex >= 520U) {
+  if (entryIndex >= ABILITY_COUNT + 1) {
 #endif
     entryIndex = 0;
   }

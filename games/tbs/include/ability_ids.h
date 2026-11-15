@@ -387,7 +387,8 @@ enum AbilityId {
   /// The last row of gAbilityStaging.
   ABILITY_SEVERE_BLOW,
   /// The last row of ability_table.c and gAbilityBattleEffects.
-  ABILITY_THRASH
+  ABILITY_THRASH,
+  ABILITY_COUNT
 };
 
 #endif

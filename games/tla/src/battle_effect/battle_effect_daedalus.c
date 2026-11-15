@@ -961,7 +961,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                   dest, &work->frames[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
                   (Q_16_16_TO_INT(q->x)) - 2, (Q_16_16_TO_INT(q->y)) - 12,
                   ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
-              BattleEffectKernels_IntegrateVector2(q, 64, 0);
+              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
@@ -977,7 +977,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                   (Q_16_16_TO_INT(q->x)) - 16, (Q_16_16_TO_INT(q->y)) - 32,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               q->velocityX += px(1) / 16;
-              BattleEffectKernels_IntegrateVector2(q, 64, 0);
+              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
@@ -1257,7 +1257,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     Palette_LoadBasicSpriteColors();
     Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
-    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+    BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BG2X = 0;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1365,7 +1365,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->variant = 0;
           }
           work->sprites[i]->rotation = p->z;
-          BattleEffectKernels_IntegrateVector3(p, 64, 0);
+          BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
           p->velocityX = -Trig_Cos(work->sprites[i]->rotation) * 8;
           p->velocityY = -Trig_Sin(work->sprites[i]->rotation) * 8;
           work->sprites[i]->tile = work->sprites[0]->tile;

@@ -220,7 +220,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
             gBattleEffect_GlintPictureHeights[cell]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
-      BattleEffectKernels_IntegrateVector2(ball, 64, 0);
+      BattleEffectKernels_IntegrateVector2(ball, PARTICLE_DAMPING_NONE, 0);
     }
 
     // Thunder Mine's sparks bounce.

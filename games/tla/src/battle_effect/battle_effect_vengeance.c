@@ -989,7 +989,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
       if (frame >= start + 4 && start < 44)
-        BattleEffectKernels_IntegrateVector3(point, 64, 0);
+        BattleEffectKernels_IntegrateVector3(point, PARTICLE_DAMPING_NONE, 0);
       Transform_ApplyPosition(&point->x);
 
       for (i = 0; i != starCount; i++) {
@@ -1764,7 +1764,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
             blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
           }
-          BattleEffectKernels_IntegrateVector3(step, 64, 0);
+          BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE, 0);
           if (step->z < 0) {
             step->z = zero;
           }
@@ -2057,8 +2057,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);

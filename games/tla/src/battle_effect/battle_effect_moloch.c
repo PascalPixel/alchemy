@@ -949,7 +949,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control &
+         (DMA_ENABLE << 16)) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
@@ -2027,7 +2028,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control &
+         (DMA_ENABLE << 16)) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
@@ -2636,7 +2638,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   noColumns = dst;
   PUT(*src++);
 
-  control = 0x84000000;
+  control = DMA_COPY_WORDS(0);
   COPY_LONG(6);
 
   PUT(*src++);
@@ -2911,7 +2913,7 @@ typedef void (*ModelKernel)(struct RenderModel *model);
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
     (to) = Heap_Alloc((u32)(bytes));                                           \
-    Dma_Set((code), (to), 0x84000000 + (u32)(words), REG_DMA3);                \
+    Dma_Set((code), (to), DMA_COPY_WORDS(0) + (u32)(words), REG_DMA3);         \
   }
 
 /// Copies the model's texture into IWRAM unless it is to stay in place.

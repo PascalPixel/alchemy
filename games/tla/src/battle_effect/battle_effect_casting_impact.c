@@ -1269,7 +1269,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             point[0] = point[0] / 2;
             drawFuncs.draw[0](screen, buffer, point[0] - 20, point[1] - 32,
                               FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(p, 64, 0);
+            BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
             p->variant++;
           }
         }
@@ -1692,7 +1692,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                   point[0] - FLASH_BURST_WIDTH / 2,
                                   point[1] - FLASH_BURST_HEIGHT / 2,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-                BattleEffectKernels_IntegrateVector3(p, 64, px(1) / 16);
+                BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE,
+                                                     px(1) / 16);
                 p->variant++;
               }
             }
@@ -1971,11 +1972,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           drawFuncs.draw[1](screen, buffer + 0x800, (Q_16_16_TO_INT(p->x)) - 24,
                             (Q_16_16_TO_INT(p->y)) - 96, 48, 96);
           if (frame < 12)
-            BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
+            BattleEffectKernels_IntegrateVector2(SPARKS, PARTICLE_DAMPING_NONE,
+                                                 0);
           else if (frame == 12)
             p->velocityY = -p->velocityY / 3;
           else if (frame < 13 || frame > 18)
-            BattleEffectKernels_IntegrateVector2(SPARKS, 64, px(1) / 4);
+            BattleEffectKernels_IntegrateVector2(SPARKS, PARTICLE_DAMPING_NONE,
+                                                 px(1) / 4);
         }
         if (frame == 11) {
           Sound_PlayFar(SE_CLATTER);
@@ -2040,7 +2043,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 (Q_16_16_TO_INT(particle->x)) - gPrism_ShardWidths[m] / 2,
                 (Q_16_16_TO_INT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
-            BattleEffectKernels_IntegrateVector2(particle, 64, px(1) / 8);
+            BattleEffectKernels_IntegrateVector2(
+                particle, PARTICLE_DAMPING_NONE, px(1) / 8);
             particle->variant += particle->z;
             if (particle->z > 1 && (frame & 1))
               particle->z--;

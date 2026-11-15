@@ -430,9 +430,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Irq_SetHandler(2, 0, 0);
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
-  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

@@ -170,7 +170,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 
   // On the far side the background and the spirals move 112 pixels left.
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x6800;
+    REG_BG2X = -(104 << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;

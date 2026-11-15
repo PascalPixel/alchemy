@@ -243,7 +243,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             s32 dropY = Q_16_16_UPPER_HALF(p->y);
             s32 tier = index >> 1;
 
-            BattleEffectKernels_IntegrateVector2(p, 64, 0);
+            BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
             Canvas_BlitAtFoot((u8 *)(circles[tier] + cells), dropX, dropY,
                               drop);
           }

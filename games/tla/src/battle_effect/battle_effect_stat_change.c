@@ -593,7 +593,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   }
 
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
     xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     REG_BG2X = 0;

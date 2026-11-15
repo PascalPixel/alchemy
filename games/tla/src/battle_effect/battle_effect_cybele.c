@@ -115,7 +115,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  REG_BG2X = -0x2000;
+  REG_BG2X = -(32 << 8);
 
   // The vines (particles 0-15): x, the root's y, growth speed and delay.
   for (i = 0; i != CYBELE_VINES; i++) {

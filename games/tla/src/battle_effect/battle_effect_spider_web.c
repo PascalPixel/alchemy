@@ -462,7 +462,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-      REG_BG2X = -0x800;
+      REG_BG2X = -(8 << 8);
       REG_BG2Y = -0x1000;
       REG_BG2PA = 0xcc;
       REG_BG2PD = Q_8_8(1);
@@ -752,7 +752,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (frame == 266) {
         struct Particle *p;
 
-        REG_BG2X = -0x7000;
+        REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
         REG_BG2PA = Q_8_8(1);
         REG_BG2PD = Q_8_8(1);
         for (i = 0, p = work->particles; i != 32; i++, p++) {

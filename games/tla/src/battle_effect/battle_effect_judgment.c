@@ -232,7 +232,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
         QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
-                          (u32)(cells + i * 0x400), 0x84000100);
+                          (u32)(cells + i * 0x400), DMA_COPY_WORDS(0x100));
       }
     }
     if (frame == 76) {
@@ -244,7 +244,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
                 (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
-            (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400), 0x84000100);
+            (u32)(PassBuffer(Ram_MapCellBuffer) + i * 0x400),
+            DMA_COPY_WORDS(0x100));
       }
     }
 
@@ -408,7 +409,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
-  REG_BG2X = -0x3c00;
+  REG_BG2X = -(60 << 8);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   cx = 60;

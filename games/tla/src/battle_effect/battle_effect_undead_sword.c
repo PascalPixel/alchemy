@@ -1193,7 +1193,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         height = heights[cell];
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
-        BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
+        BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
+                                             px(1) / 4);
         if (Q_16_16_UPPER_HALF(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }

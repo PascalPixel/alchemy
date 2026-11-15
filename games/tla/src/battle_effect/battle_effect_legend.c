@@ -446,7 +446,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                     Q_16_16_UPPER_HALF(step->x) - gPrism_ShardWidths[cell] / 2,
                     Q_16_16_UPPER_HALF(step->y) - gPrism_ShardHeights[cell] / 2,
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
-            BattleEffectKernels_IntegrateVector2(step, 64, 0);
+            BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
+                                                 0);
             if (step->y > px(96))
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;

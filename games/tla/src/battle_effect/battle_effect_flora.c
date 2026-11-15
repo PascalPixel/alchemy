@@ -200,7 +200,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
       REG_BG2PA = Q_8_8(1);
       Graphics_LoadGreyRamp();
-      REG_BG2X = -0x3c00;
+      REG_BG2X = -(60 << 8);
     }
     if (frame > 285) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
@@ -697,9 +697,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0), 0x80000010,
-          (volatile u32 *)0x040000d4);
-  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = 0;
@@ -775,7 +775,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       if (frame > i) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
-        BattleEffectKernels_IntegrateVector2(p, 64, 0);
+        BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -(px(1) / 16);
         p->variant++;
       }
@@ -946,9 +946,10 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
-        BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
+        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE, 0);
       else
-        BattleEffectKernels_IntegrateVector3(dagger, 64, -px(1) / 16);
+        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE,
+                                             -px(1) / 16);
     }
     Heap_Release(quad);
     Heap_Release(vertices);

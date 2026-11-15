@@ -194,7 +194,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         }
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
-        BattleEffectKernels_IntegrateVector3(work->particles, 64, 0);
+        BattleEffectKernels_IntegrateVector3(work->particles,
+                                             PARTICLE_DAMPING_NONE, 0);
       }
     }
     Heap_Release(model);
@@ -579,7 +580,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(drop->x) - dropSize / 2,
                   Q_16_16_UPPER_HALF(drop->y) - dropSize, dropSize,
                   dropSize * 2);
-          BattleEffectKernels_IntegrateVector2(drop, 64, px(1) / 2);
+          BattleEffectKernels_IntegrateVector2(drop, PARTICLE_DAMPING_NONE,
+                                               px(1) / 2);
           if (Q_16_16_UPPER_HALF(drop->y) > 111) {
             drop->variant = 1;
             // DEAD: overwritten by the next store; the random number is still

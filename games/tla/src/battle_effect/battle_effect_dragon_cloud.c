@@ -332,7 +332,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 64, -px(1) / 8);
+            BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE,
+                                                 -px(1) / 8);
           }
         }
       }

@@ -126,7 +126,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(step->x) - half,
                   Q_16_16_UPPER_HALF(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
+                                                   0);
             }
           }
           step->variant++;
@@ -176,7 +177,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(step->x) - half,
                   Q_16_16_UPPER_HALF(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
+                                                   0);
             }
           }
           step->variant++;

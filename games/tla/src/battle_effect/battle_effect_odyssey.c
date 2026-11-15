@@ -626,7 +626,8 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
 
     ramp[i] = RGB(level, level, level);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp, 0x8000003f);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp,
+                      DMA_COPY_HALFWORDS(63));
 
   REG_BG2X = scrollX << 8;
   // x, done with the band, now counts the slide's frames.

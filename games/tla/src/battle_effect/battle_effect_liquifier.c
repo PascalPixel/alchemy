@@ -12,7 +12,6 @@
 
 #define KIND123_FRAMES 111
 
-/* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
 /// 111 frames. Sparks gather at the caster (frames 0-15)

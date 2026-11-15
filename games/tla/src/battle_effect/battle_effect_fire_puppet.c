@@ -120,7 +120,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     if (frame > 15) {
       s32 length;
       s32 j;
-      /* FAKEMATCH(temporary): the cell buffer by its fixed address. */
       struct ModelVertex(*cells)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
       u8 *projected = Ram_MapCellBuffer + 0x1000;
@@ -186,7 +185,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       if (frame > 73) {
         Transform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
-      /* FAKEMATCH(temporary): the buffers named, not cells and projected. */
       Render_TransformVertices(Ram_MapCellBuffer, Ram_MapCellBuffer + 0x1000,
                                66);
       Render_DrawModelList(model);

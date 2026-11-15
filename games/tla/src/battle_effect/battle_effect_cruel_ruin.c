@@ -1552,13 +1552,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   {
-    u16 *background = (u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670);
+    struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-    /* FAKEMATCH(dead): a once-only block. */
-    do {
-      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-      BattleBackground_LoadFar(1, *background, 24);
-    } while (0);
+    gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+    BattleBackground_LoadFar(1, battle->background, 24);
   }
   wait(1);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;

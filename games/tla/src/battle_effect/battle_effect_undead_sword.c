@@ -434,7 +434,6 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     {
       const void *palette =
           Resource_GetTableEntry((s32)&ResourceId_CrystalSheet);
-      /* FAKEMATCH(temporary): the copy routine's address in a local. */
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
       copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);

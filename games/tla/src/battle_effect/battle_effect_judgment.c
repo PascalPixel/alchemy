@@ -252,24 +252,23 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, Q16_ONE);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
-      /* FAKEMATCH(dead): the test of the block it stands in, made again. */
-      if ((u32)(frame - 116) <= 27) {
-        s32 size = (frame - 116) / 3 + 16;
+    }
+    if ((u32)(frame - 116) <= 27) {
+      s32 size = (frame - 116) / 3 + 16;
 
-        if (size > 32) {
-          size = 32;
-        }
-        for (i = 0; i != 6; i++) {
-          s32 k = i & 3;
-          s32 a = Random16() & TRIG_ANGLE_MASK;
-          s32 x = (Q_16_16_TO_INT(size * Trig_Sin(a))) -
-                  (gJudgment_ShardWidths[k] >> 1);
-          s32 y = (Q_16_16_TO_INT(size * Trig_Cos(a))) -
-                  (gJudgment_ShardHeights[k] / 2);
+      if (size > 32) {
+        size = 32;
+      }
+      for (i = 0; i != 6; i++) {
+        s32 k = i & 3;
+        s32 a = Random16() & TRIG_ANGLE_MASK;
+        s32 x = (Q_16_16_TO_INT(size * Trig_Sin(a))) -
+                (gJudgment_ShardWidths[k] >> 1);
+        s32 y = (Q_16_16_TO_INT(size * Trig_Cos(a))) -
+                (gJudgment_ShardHeights[k] / 2);
 
-          draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
-                  y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
-        }
+        draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
+                y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
     }
 

@@ -779,11 +779,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                     SHEET_PALETTE_BYTES);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
-  Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  /* FAKEMATCH(dead): the copy in a once-only block. */
-  do {
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
-  } while (0);
+  IWRAM_FILL_WORDS(Ram_MapCellBuffer, 0x8000, 0x01010101);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
   wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);

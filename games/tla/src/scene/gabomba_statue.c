@@ -172,27 +172,17 @@ void GabombaStatue_FightSteel(void) {
 }
 /// A wanderer's update: it turns between its two facings at random intervals.
 s32 GabombaStatue_LookAround(struct Wanderer *actor) {
-  u8 *timer = &actor->timer;
-
-  if (*timer != 0) {
-    (*timer)--;
+  if (actor->timer != 0) {
+    actor->timer--;
   } else {
-    u8 *turned;
-    u16 *facing;
-
-    *timer = (Random16() * 40 >> 16) + 10;
-    turned = &actor->turned;
-    if (*turned != 0) {
-      *turned = 0;
-      /* FAKEMATCH(dead): an empty once-only block. */
-      do {
-      } while (0);
-      facing = &actor->facingA;
+    actor->timer = (Random16() * 40 >> 16) + 10;
+    if (actor->turned != 0) {
+      actor->turned = 0;
+      actor->facing = actor->facingA;
     } else {
-      *turned = 1;
-      facing = &actor->facingB;
+      actor->turned = 1;
+      actor->facing = actor->facingB;
     }
-    actor->facing = *facing;
   }
   return 1;
 }
@@ -397,7 +387,6 @@ extern s8 gGabombaStatue_RopeStopSteps[];
 void GabombaStatue_LashRope(void) {
   struct Orbiter__find_near *actor =
       ((struct Orbiter__find_near *)Actor_Get(9));
-  u16 zero = 0;
   s32 direction;
   s32 i;
 
@@ -405,8 +394,7 @@ void GabombaStatue_LashRope(void) {
     direction = gGabombaStatue_CogDirection;
     GabombaStatue_TurnCogs(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
-    /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
-    gFieldWork->psynergy = zero;
+    gFieldWork->psynergy = 0;
     i = 0;
     do {
       actor->phase += gGabombaStatue_RopeStopSteps[i] * direction;
@@ -437,15 +425,12 @@ GabombaStatue_FindCogUnder(struct Orbiter__find_near *origin, s32 id) {
 /// origin in its facing.
 struct Orbiter__find_near *
 GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
-  s32 facing;
   s32 position[3];
   s32 i;
 
   position[0] = origin->x;
   position[2] = origin->z;
-  /* FAKEMATCH(temporary): the facing read into a local before the call. */
-  facing = origin->facing;
-  FieldVector_AddPolarOffset(16, facing, position);
+  FieldVector_AddPolarOffset(16, origin->facing, position);
   for (i = 8; i < 64; i++) {
     struct Orbiter__find_near *object =
         ((struct Orbiter__find_near *)Actor_Get(i));
@@ -1116,16 +1101,12 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeader, 152,
 /// A turning pinion carries the leader along and throws him down.
 void GabombaStatue_PinionThrowsLeader(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 speed;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_581);
   actor->motionFlags = 0;
-  speed = 0x19999;
-  /* FAKEMATCH(barrier): an empty asm on speed. */
-  asm volatile("" : "+l"(speed));
-  Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, speed, 0x19999);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 1.6, 1.6);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
@@ -2759,29 +2740,15 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
           if (show != 0) {
             object->x.fixed = ((state->originX + column) << 20) + 0x80000;
             object->z.fixed = ((state->originZ + row) << 20) + 0x80000;
-            {
-              s32 x = state->originX;
-              s32 z = state->originZ;
-
-              /* FAKEMATCH(temporary): the origins read into x and z before the
-               * column and row are added. */
-              x += column;
-              z += row;
-              MapGrid_CopyCells(0, 11, 1, 1, x, z);
-            }
+            MapGrid_CopyCells(0, 11, 1, 1, state->originX + column,
+                              state->originZ + row);
             cell->occupied = 2;
           } else {
             object->x.fixed = 0;
             object->z.fixed = 0;
             ((u8 *)cell)[3] = 1;
-            /* FAKEMATCH(temporary): kind and the origins read before the column
-             * and row are added. */
-            kind = cell->kind;
-            mapX = state->originX;
-            mapZ = state->originZ;
-            mapX += column;
-            mapZ += row;
-            MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
+            MapGrid_CopyCells(1, cell->kind, 1, 1, state->originX + column,
+                              state->originZ + row);
           }
           id++;
         }

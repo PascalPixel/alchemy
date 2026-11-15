@@ -276,6 +276,24 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 /// is the lever.
 #define LUCKY_WHEELS_REEL_COUNT 5
 #define LUCKY_WHEELS_LEVER LUCKY_WHEELS_REEL_COUNT
+/// Pulling the lever: 48 frames down and back up, then 8 settling; only then
+/// can the wheels be stopped.
+#define LUCKY_WHEELS_LEVER_PULL_FRAMES 48
+#define LUCKY_WHEELS_LEVER_SETTLE_FRAMES 8
+#define LUCKY_WHEELS_LEVER_FRAMES                                              \
+  (LUCKY_WHEELS_LEVER_PULL_FRAMES + LUCKY_WHEELS_LEVER_SETTLE_FRAMES)
+/// The lever sprite's place at rest, in screen pixels.
+#define LUCKY_WHEELS_LEVER_X 208
+#define LUCKY_WHEELS_LEVER_Y 40
+/// Left alone, the spinning wheels stop one every 32 frames; R stops one at
+/// once.
+#define LUCKY_WHEELS_AUTO_STOP_FRAMES 32
+/// The pause after a winning spin before the win is shown, and after the last
+/// spin loses before the game ends.
+#define LUCKY_WHEELS_WIN_PAUSE 60
+#define LUCKY_WHEELS_LOSS_PAUSE 45
+/// The stop prompt's sound plays this many frames into a spin.
+#define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
 /// The symbols round a wheel, each 16 pixels tall: a wheel turns once in 336
 /// pixels, 8 a frame, and stops only with a symbol centred on a line.
 #define LUCKY_WHEELS_REEL_SYMBOLS 21
@@ -615,7 +633,7 @@ void LuckyWheels_Update(void) {
     } else if (work->state == LUCKY_WHEELS_WON) {
       work->timer++;
       objMode = 0;
-      if (work->timer == 60) {
+      if (work->timer == LUCKY_WHEELS_WIN_PAUSE) {
         work->state = LUCKY_WHEELS_SHOWING_WIN;
         Sound_PlayFar(MUS_JINGLE_LARGE);
         work->timer = 0;
@@ -648,7 +666,7 @@ void LuckyWheels_Update(void) {
       }
     } else if (work->state == LUCKY_WHEELS_OUT_OF_SPINS) {
       work->timer++;
-      if (work->timer == 45)
+      if (work->timer == LUCKY_WHEELS_LOSS_PAUSE)
         work->state = LUCKY_WHEELS_DONE;
     } else if (work->state != LUCKY_WHEELS_DONE) {
       if (work->timer == 4) {
@@ -656,10 +674,11 @@ void LuckyWheels_Update(void) {
                                         LUCKY_WHEELS_STOP_WIDTH, 3, 6);
         Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
       }
-      if (work->timer == 16)
+      if (work->timer == LUCKY_WHEELS_STOP_PROMPT_FRAME)
         Sound_PlayFar(SE_LUCKY_WHEELS_STOP_PROMPT);
-      if (work->timer > 56) {
-        if (fx->frame > 31 || (work->pressed & KEY_R)) {
+      if (work->timer > LUCKY_WHEELS_LEVER_FRAMES) {
+        if (fx->frame >= LUCKY_WHEELS_AUTO_STOP_FRAMES ||
+            (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
@@ -825,7 +844,7 @@ void LuckyWheels_Update(void) {
     if ((work->timer & 15) <= 7)
       v = 1;
     if (work->cursor == LUCKY_WHEELS_LEVER) {
-      x = 208;
+      x = LUCKY_WHEELS_LEVER_X;
       y = 32;
     }
     work->oam[sprite].attr01 =
@@ -941,15 +960,20 @@ void LuckyWheels_Update(void) {
     }
   }
 
-  lever = 40;
+  lever = LUCKY_WHEELS_LEVER_Y;
   if (work->state == LUCKY_WHEELS_SPINNING) {
-    if (work->timer <= 47)
-      lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
-    else if (work->timer <= 55)
-      lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) + 40;
+    if (work->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
+      lever = ((Trig_Sin(work->timer *
+                         (TRIG_TURN / 2 / LUCKY_WHEELS_LEVER_PULL_FRAMES))
+                << 6) >>
+               16) +
+              LUCKY_WHEELS_LEVER_Y;
+    else if (work->timer < LUCKY_WHEELS_LEVER_FRAMES)
+      lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) +
+              LUCKY_WHEELS_LEVER_Y;
   }
-  work->oam[sprite].attr01 =
-      lever | objMode | (208 << 16) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
+  work->oam[sprite].attr01 = lever | objMode | (LUCKY_WHEELS_LEVER_X << 16) |
+                             OBJ_SIZE_32X16 | OBJ_256_COLORS;
   work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 256;
   sprite++;
 

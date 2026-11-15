@@ -237,7 +237,7 @@ void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     replacement = palette - 1;
     if (palette == 0)

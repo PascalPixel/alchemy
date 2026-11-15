@@ -74,7 +74,7 @@ void ActorSystem_PlaceSprites(void) {
     // An actor at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
     if (actor->x.fixed != 0 || actor->z.fixed != 0) {
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_NONE)
         continue;
       // This camera places single sprites only; groups are left.
@@ -146,7 +146,7 @@ void ActorSystem_PlaceSprites(void) {
         }
       }
     } else {
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_ONE) {
         sprite = actor->sprite;
         if (actor->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
@@ -218,7 +218,7 @@ void ActorSystem_ProjectSprites(void) {
     for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
       if (actor->script == 0)
         continue;
-      kind = actor->spriteStorageKind & 15;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       switch (kind) {
       case ACTOR_SPRITE_ONE:
         position = &actor->x.fixed;

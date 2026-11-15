@@ -183,7 +183,7 @@ void Actor_Release(struct Actor *actor) {
   void **sprites;
 
   if (actor) {
-    switch (actor->spriteStorageKind & 15) {
+    switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
     case ACTOR_SPRITE_ONE:
       Sprite_Destroy(actor->sprite);
       break;
@@ -212,7 +212,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
 
   // DEAD: a first search whose result is dropped; the ROM keeps its call.
   Actor_FindFree();
-  spriteStorageKind = encodedSprite / 4096;
+  spriteStorageKind = encodedSprite / (ACTOR_CREATE_SPRITE_MASK + 1);
   encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
   actor = Actor_FindFree();
   if (actor != NULL) {
@@ -326,7 +326,7 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
   s32 part;
 
   if (actor != 0) {
-    switch (actor->spriteStorageKind & 15) {
+    switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
     case ACTOR_SPRITE_ONE:
       Sprite_StartAnimation(actor->sprite, animation);
       Sprite_SetAnimationSpeed(actor->sprite, step);

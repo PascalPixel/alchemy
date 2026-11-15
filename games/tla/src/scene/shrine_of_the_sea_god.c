@@ -112,7 +112,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
+
 void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void FieldCamera_WaitForArrival(void);

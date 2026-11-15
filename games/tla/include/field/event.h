@@ -62,7 +62,7 @@ void Actor_WalkToById(s32 actorId, s32 x, s32 z);
 void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
-s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
+struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
@@ -245,7 +245,8 @@ static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
 /// the event goes on.
-static inline s32 Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
+static inline struct Actor *Actor_ShowEmote(s32 actorId, s32 emote,
+                                            s32 frames) {
   return Actor_ShowEmoteById(actorId, emote, frames);
 }
 

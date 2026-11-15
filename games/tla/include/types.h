@@ -1,5 +1,9 @@
-#ifndef TLA_TYPES_H
-#define TLA_TYPES_H
+#ifndef ALCHEMY_TYPES_H
+#define ALCHEMY_TYPES_H
+
+/// @file
+/// The integer types, TRUE, UNUSED, unread results and the fixed-address
+/// macros.
 
 typedef signed char s8;
 typedef unsigned char u8;
@@ -12,6 +16,8 @@ typedef unsigned long long u64;
 
 #define NULL ((void *)0)
 #define UNUSED __attribute__((unused))
+#define FALSE 0
+#define TRUE 1
 
 #ifdef MODERN
 /// the modern build places code and data where its own compiler puts them:

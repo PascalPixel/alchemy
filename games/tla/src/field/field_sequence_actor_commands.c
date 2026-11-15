@@ -278,23 +278,15 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/* VIEW(event_commands): routine Actor_SetHorizontalPositionAndAngleWithTerrain
- * as void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x,
- * s32 z, s16 angle); field/event.h has s32 angle; as s32, the definition loses
- * the angle's sign extension on entry (2 of 42 instructions in tla-en): the
- * routine takes a halfword, its callers pass a word; tried as the definition's
- * void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32
- * z, s16 angle), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_actor_commands.c:283: conflicting
- * types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
-void Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands(
-    s32 actorId, s32 x, s32 z,
-    s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
-#define Actor_SetHorizontalPositionAndAngleWithTerrain                         \
-  Actor_SetHorizontalPositionAndAngleWithTerrain__event_commands
 /// As Actor_SetHorizontalPositionWithTerrain, and turns the actor to angle.
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
-                                                    s16 angle) {
+/// Written in the old style: the angle arrives as a word and is taken as a
+/// halfword.
+void Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, angle)
+    s32 actorId;
+s32 x;
+s32 z;
+s16 angle;
+{
   struct Actor *actor = Actor_Lookup(actorId);
   s32 terrainHeight;
 

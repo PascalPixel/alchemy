@@ -17,13 +17,7 @@
 #include "text/msg_ids.h"
 #include "macros.h"
 
-/* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
- * the definition has another declaration; tried as the definition's void
- * BattleObject_Reset(struct BattleObject *actor, s32 keep), it does not compile
- * in tla-ja: games/tla/src/battle/battle_motion_graphics.c:150: too few
- * arguments to function `BattleObject_Reset'. */
-void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
-#define BattleObject_Reset BattleObject_Reset__presentation
+void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 
 /// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
 /// a call that lands, saves the battle object it borrows and brings in the
@@ -154,7 +148,12 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     saved->unitId = (plan->unitId ^ 0x80) & 0x80;
     if (BattleObject_Get(saved->unitId)->object == NULL) {
       saved->reactivate = 1;
-      BattleObject_Reset(BattleObject_Get(saved->unitId));
+#ifdef UBFIX
+      BattleObject_Reset(BattleObject_Get(saved->unitId), FALSE);
+#else
+      // UB: keep is left out, so the routine reads whatever r1 holds.
+      ((void (*)())BattleObject_Reset)(BattleObject_Get(saved->unitId));
+#endif
       BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
     }
   } else {

@@ -1654,8 +1654,8 @@ s32 Fireball_CarryLeader(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  /* FAKEMATCH(wrapper): Party_TakeFallDamage called through a cast to s32. */
-  ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
+  // UB: the fall damage takes no arguments and returns nothing.
+  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);

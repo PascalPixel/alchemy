@@ -1082,14 +1082,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_Start(void);
-/* VIEW(talk): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
- * actor, s32 animation, s32 flags); event.h has s32 Actor_ShowEmoteById(s32
- * actorId, s32 emote, s32 frames); tried as the definition's struct
- * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
- * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1038:
- * conflicting types for `Actor_ShowEmoteById'. */
-extern void Actor_ShowEmoteById__talk(s32 actor, s32 animation,
-                                      s32 flags) __asm__("Actor_ShowEmoteById");
 void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
@@ -1125,7 +1117,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
   if (base == (s32)MsgLobbyIllFightEnoughForBoth && actor == 5) {
-    Actor_ShowEmoteById__talk(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+    FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Event_Wait(10);
   }
   Event_End();

@@ -26,7 +26,6 @@
 #include "event_commands_psynergy_dispatch.c"
 #include "event_commands_field_psynergy.c"
 
-#undef Actor_ShowEmoteById
 #undef PaletteFade_SetTarget
 #undef Actor_ReleaseFar
 

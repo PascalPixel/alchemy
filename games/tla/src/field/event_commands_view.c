@@ -5,6 +5,11 @@
 #include "event_commands_internal.h"
 #include "sounds.h"
 #include "field/field_bank.h"
+#include "field/emote.h"
+#include "sprite_ids.h"
+
+// The byte of a sprite's OAM attribute 2 that holds its priority and palette.
+#define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
@@ -104,76 +109,64 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   return 0;
 }
 
-struct BattleEffectWatchedObject *Actor_CreateFar(s32 kind, s32 x, s32 y,
-                                                  s32 z);
 extern const u8 gFieldEffect_WatchedActorScript[];
 
-/// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
-/// (488): spawns an effect object at object resourceId that follows it,
-/// waits state, and returns the new object.
-/* VIEW(event_commands): routine Actor_ShowEmoteById as struct
- * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
- * state); field/event.h has s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32
- * frames); tried as the definition's struct BattleEffectWatchedObject
- * *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32 state), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:67: conflicting types for
- * `Actor_ShowEmoteById'. */
-struct BattleEffectWatchedObject *
-Actor_ShowEmoteById__event_commands(s32 resourceId, s32 flags,
-                                    s32 state) __asm__("Actor_ShowEmoteById");
-#define Actor_ShowEmoteById Actor_ShowEmoteById__event_commands
-/// The event command "actor show emote": shows an emote bubble (sprite 21) over
-/// an actor, then waits the given number of frames.
-struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
-                                                      s32 state) {
-  struct BattleEffectResource *resource;
-  struct BattleEffectWatchedObject *object;
+/// The event command "actor show emote": shows an emote bubble (sprite 488)
+/// over an actor, then waits the given number of frames. Returns the bubble.
+struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
+  struct Actor *target;
+  struct Actor *bubble;
 
-  if ((flags & 0xff) == 6) {
+  if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     Sound_PlayFar(SE_CHIME);
   }
 
-  resource = Actor_Lookup(resourceId);
-  if (resource != 0) {
-    object = Actor_CreateFar(488, resource->x, resource->y, resource->z);
+  target = Actor_Lookup(actorId);
+  if (target != 0) {
+    bubble = Actor_CreateFar(SPRITE_EMOTE, target->x.fixed, target->y.fixed,
+                             target->z.fixed);
+    if (bubble != 0) {
+      struct Sprite *sprite;
 
-    if (object != 0) {
-      Actor_StartScriptFar((struct Actor *)object,
-                           (u32)gFieldEffect_WatchedActorScript);
-      Actor_SelectAnimationFar(object, flags & 15);
-      object->value55 = 0;
-      object->counter = 0;
-      object->resourceId = resourceId;
-      object->callback = FieldEffect_CopyWatchedActorPosition;
-      object->resource = resource;
-      object->visual->value26 = 0;
+      Actor_StartScriptFar(bubble,
+                           (const s32 *)gFieldEffect_WatchedActorScript);
+      Actor_SelectAnimationFar(bubble, emote & 15);
+      bubble->motionFlags = 0;
+      bubble->timer = 0;
+      bubble->userValue = actorId;
+      bubble->update =
+          (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
+      bubble->watchedActor = target;
+      sprite = bubble->sprite;
+      sprite->flags = 0;
 
-      if ((flags & 0x100) != 0) {
+      // Replace the bubble\x27s priority bits (2 and 3) with 1 or the
+      // actor\x27s.
+      if ((emote & EMOTE_IN_FRONT) != 0) {
         s32 mask = 13;
-        u8 visualFlags = object->visual->flags;
+        u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
         mask = -mask;
-        mask &= visualFlags;
+        mask &= attr;
         mask |= 4;
-        object->visual->flags = mask;
+        SPRITE_ATTR2_HIGH(sprite) = mask;
       } else {
-        s32 copiedFlags = 12;
-        u8 sourceFlags = resource->visual->flags;
-        u8 flags;
-        s32 clearMask = 13;
+        s32 priority = 12;
+        u8 src = SPRITE_ATTR2_HIGH(target->sprite);
+        u8 dst;
+        s32 mask = 13;
 
-        copiedFlags &= sourceFlags;
-        flags = object->visual->flags;
-        clearMask = -clearMask;
-        clearMask &= flags;
-        clearMask |= copiedFlags;
-        object->visual->flags = clearMask;
+        priority &= src;
+        dst = SPRITE_ATTR2_HIGH(sprite);
+        mask = -mask;
+        mask &= dst;
+        mask |= priority;
+        SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
-    Event_Wait(state);
+    Event_Wait(frames);
   }
-  return object;
+  return bubble;
 }
 
 /// Returns 0 while the actor's sprite is an attached effect

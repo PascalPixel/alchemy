@@ -997,7 +997,9 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
- * angle); event.h has s32 angle, and through it the events below move. */
+ * angle); event.h has s32 angle (the definition takes a word and keeps its
+ * halfword); with it the constant angle loads after the position in three
+ * events. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
@@ -1005,12 +1007,6 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
-/* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
- * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
- * rest of the object declares it, DehkanPlateau_CannonCastsPound moves: 1 of 20
- * instructions in tla-ja (dehkan_plateau.c). */
-extern void Task_Add__events_g(void (*func)(void),
-                               s32 priority) __asm__("Task_Add");
 
 /// Places an actor on the ground at a 16.16 position, facing a heading.
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -1146,7 +1142,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
 /// Cannon casts Pound on the third room's Pound pillar.
 void DehkanPlateau_CannonCastsPound(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  Task_Add__events_g(DehkanPlateau_SinkPoundedPillar, 0x480);
+  FieldTask_AddFrame(DehkanPlateau_SinkPoundedPillar, 0x480);
   FieldPsynergy_SetupActorPair(ACTOR_TIGHTROPES_CANNON,
                                ACTOR_TIGHTROPES_POUND_PILLAR);
   FieldPsynergy_StartCast();
@@ -1366,17 +1362,11 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
-/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
- * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
- * rest of the object declares it, DehkanPlateau_CannonCastsPoundOnLeader moves:
- * 1 of 24 instructions in tla-ja (dehkan_plateau.c). */
-extern void Task_Add__events_i(void (*func)(void),
-                               s32 priority) __asm__("Task_Add");
 
 /// Cannon casts Pound on the leader in the fifth room.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  Task_Add__events_i(DehkanPlateau_PoundLeaderThrough, 0x480);
+  FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, 0x480);
   FieldPsynergy_SetupActorPair(ACTOR_POUND_CUBE_CANNON,
                                gMainRoutineWork.leaderActorId);
   FieldPsynergy_StartCast();

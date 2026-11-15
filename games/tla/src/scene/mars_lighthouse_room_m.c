@@ -1591,12 +1591,6 @@ void MarsLighthouseRoomM_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-/* VIEW(s2708): routine Party_TakeFallDamage as int Party_TakeFallDamage(),
- * called with no declaration in scope as its bytes need; the definition has
- * void Party_TakeFallDamage(void); not tried: Party_TakeFallDamage's
- * declaration holds a FAKEMATCH tag. */
-s32 Party_TakeFallDamage__s2708() __asm__("Party_TakeFallDamage");
-#define Party_TakeFallDamage Party_TakeFallDamage__s2708
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -1617,7 +1611,12 @@ s32 Fireball_CarryLeader(void) {
   event->pauseMenu = 0;
   event->aButton = 0;
   event->encounter = 0;
-  Party_TakeFallDamage(-10, 0);
+#ifdef UBFIX
+  Party_TakeFallDamage();
+#else
+  // UB: the fall damage takes no arguments and returns nothing.
+  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
+#endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
@@ -2138,4 +2137,3 @@ u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
 // clang-format on
 
 #undef Work020023c4
-#undef Party_TakeFallDamage

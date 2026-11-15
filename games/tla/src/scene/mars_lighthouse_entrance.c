@@ -1603,26 +1603,9 @@ UNUSED void Ride_SetSlotActor(u32 index, s32 value) {
 
 #include "shared/actor_blink.h"
 
-void Party_TakeFallDamage();
 void Actor_SelectAnimation(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
-/* VIEW(s263c): routine Actor_Blink as void Actor_Blink(void);
- * scene/mars_lighthouse_entrance/s2270 has DEFINE_ACTOR_BLINK(Actor_Blink, 10,
- * 4, 0) #undef FlameThrowers_Start #undef Unit_Get // ----
- * scene/mars_lighthouse_entrance/s263c.c ---- /// Scene code of overlay 0x6aa,
- * #include "types.h" #include "field/call.h" #include "field/actor.h" #include
- * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
- * "fixed_math.h" #include "event_inline.h" #include "display_transition.h"
- * #include "field/field_sequence_event.h" #include "field.h" #include
- * "item_icon.h" #include "field/field.h" #include
- * "scene/mars_lighthouse_entrance.h" #include "system/system.h" #include
- * "scene_ids.h" void Party_TakeFallDamage(); tried as the definition's void
- * Actor_Blink(struct Actor *object), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1457: conflicting types for
- * `Actor_Blink'. */
-void Actor_Blink__s263c(void) __asm__("Actor_Blink");
-#define Actor_Blink Actor_Blink__s263c
 extern u8 gInventorySnapshot[];
 
 #define KNOCK_BACK Leader_KnockBack
@@ -1647,15 +1630,6 @@ void MarsLighthouseEntrance_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-/* VIEW(s2860): routine Party_TakeFallDamage as s32 Party_TakeFallDamage(s32 a,
- * s32 b); s263c has void Party_TakeFallDamage(); tried as the definition's void
- * Party_TakeFallDamage(void), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1490: too
- * many arguments to function `Party_TakeFallDamage'. */
-extern s32 Party_TakeFallDamage__s2860(s32 a,
-                                       s32 b) __asm__("Party_TakeFallDamage");
-void Actor_Blink(void);
-
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 int MarsLighthouseEntrance_SlideOnIce(void) {
@@ -1675,9 +1649,12 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   event->pauseMenu = 0;
   event->aButton = 0;
   event->encounter = 0;
-  /* FAKEMATCH(signature): Party_TakeFallDamage declared returning s32, though
-   * it returns nothing. */
-  Party_TakeFallDamage__s2860(-10, 0);
+#ifdef UBFIX
+  Party_TakeFallDamage();
+#else
+  // UB: the fall damage takes no arguments and returns nothing.
+  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
+#endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
@@ -1685,7 +1662,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(FLAG_MENU_OPEN);
-  leader->update = Actor_Blink;
+  leader->update = (void (*)(void))Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
@@ -2030,7 +2007,6 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
-#undef Actor_Blink
 #include "shared/leader_slide_on_ice_ahead.h"
 
 #include "../field/actor_set_sprite_priority_b.c"
@@ -2052,7 +2028,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef WORK
 #undef ABS
 #undef Actor_HoldDuringEvent
-#undef Actor_Blink
 #undef Position
 extern s32 gFieldEffect_DurationScripts[];
 

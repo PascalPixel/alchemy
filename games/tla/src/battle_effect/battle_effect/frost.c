@@ -36,8 +36,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   dots = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);

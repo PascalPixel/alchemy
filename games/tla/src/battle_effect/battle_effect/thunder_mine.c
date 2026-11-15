@@ -7,7 +7,6 @@
 #include "sounds.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -650,7 +649,6 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 }
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define VOID_BEAM_FRAMES 88

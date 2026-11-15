@@ -7,7 +7,6 @@
 #include "sounds.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 /* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88;

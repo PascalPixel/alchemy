@@ -11,21 +11,6 @@
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-/* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/death_plunge.c:249: structure has
- * no member named `vertices'. */
-struct Model__f188714 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
 ///
@@ -49,7 +34,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   struct ModelTexture texture;
   struct Particle *spark;
-  struct Model__f188714 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   u8 *pixels; // The jaw's texture, held for the whole effect.
@@ -207,7 +192,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = vertices;
           texture.pixels = pixels;
-          model->alpha = alpha;
+          model->shade = alpha;
           for (i = 0, angle = TRIG_TURN / 8; i != 2;
                angle += TRIG_TURN / 4, i++) {
             Transform_Reset();

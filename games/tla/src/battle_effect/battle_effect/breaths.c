@@ -22,21 +22,6 @@ enum {
   BREATH_BLAST,         // Blast Breath, kind 414: a blast and a jet.
 };
 
-/* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/breaths.c:368: structure has no
- * member named `vertices'. */
-struct Model__f18bc98 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
 // sparks while a flash grows there. The Beam glows and fires a beam of
@@ -286,7 +271,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
       if (frame >= gBreaths_BurstFrames[mode]) {
         void *vertices;
-        struct Model__f18bc98 *model;
+        struct RenderModel *model;
 
         vertices = Heap_AllocEwram(1024);
         model = Render_AllocateModelList(1);
@@ -315,7 +300,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (alpha > -64) {
             s32 count = 2 - (mode != BREATH_BLAST);
 
-            model->alpha = alpha;
+            model->shade = alpha;
             for (i = 0; i != count; i++) {
               Transform_Reset();
               if (mode == BREATH_BLAST) {
@@ -361,7 +346,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
               if (alpha > 0)
                 alpha = 0;
               if (alpha > -64) {
-                model->alpha = alpha;
+                model->shade = alpha;
                 Transform_Reset();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
@@ -403,7 +388,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
           if (frame > 31)
             alpha = (32 - frame) * 4;
-          model->alpha = alpha;
+          model->shade = alpha;
           texture.logWidth = 5;
           texture.logHeight = 2;
           model->kind = 7;

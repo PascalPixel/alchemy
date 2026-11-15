@@ -9,7 +9,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;

@@ -14,8 +14,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-struct Model;
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 /// The flashes, after the map cells.
@@ -740,8 +738,6 @@ void BattleEffect_ReservedNoOpA(void) {}
 
 /// Does nothing; nothing calls it.
 void BattleEffect_ReservedNoOpB(void) {}
-
-struct Model;
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.

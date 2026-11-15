@@ -13,8 +13,6 @@
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 
-struct Model;
-
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
 

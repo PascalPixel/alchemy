@@ -8,7 +8,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 /* VIEW(summon_effects): tag struct ModelVertex as struct
@@ -20,8 +19,6 @@ struct ModelVertex {
   s8 z;
   s8 pad;
 };
-
-void Render_DrawModelList(struct Model *model);
 
 /* VIEW(megiddo): tag struct RenderModel as struct
  * RenderModel__megiddo; render_model.h has another definition; tried with

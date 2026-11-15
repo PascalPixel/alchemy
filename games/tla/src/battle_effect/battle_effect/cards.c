@@ -22,21 +22,6 @@ enum {
   CARD_SWORD,  // Sword Card, kind 91: a dagger strikes, and shards fly.
 };
 
-/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/cards.c:323: structure has no
- * member named `vertices'. */
-struct Model__f18ad40 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle for 48 frames, spinning upright and
 /// growing, the background scrolling with it as far as it can. Then it shows
@@ -59,7 +44,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint middle;
   struct ModelTexture texture;
   struct Particle *step;
-  struct Model__f18ad40 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   s32 j;

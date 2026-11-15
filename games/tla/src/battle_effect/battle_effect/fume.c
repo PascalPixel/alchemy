@@ -6,7 +6,6 @@
 #include "fixed_math.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 struct Corner {

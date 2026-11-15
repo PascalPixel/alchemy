@@ -153,9 +153,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         // Six frames later every target flashes and recoils.
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -276,9 +274,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -422,9 +418,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->targetCount; j++) {
-            BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, j, 6);
-            BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
+            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
         }
         column->y -= 12;
@@ -598,9 +592,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
       for (member = 0; member != args->targetCount; member++) {
-        BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, member, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[member], KNOCKBACK_BOUNCE);
+        EFFECT_STRIKE_TARGET(args, member, 16, KNOCKBACK_BOUNCE);
       }
     }
 

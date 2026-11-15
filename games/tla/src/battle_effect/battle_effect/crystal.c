@@ -7,8 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct Model;
-
 struct BattleObjectPosition {
   u8 unk00[8];
   s32 x;

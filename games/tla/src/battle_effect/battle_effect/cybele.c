@@ -106,8 +106,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   // The canvas, unscaled and moved 32 pixels left, the vine sheet and two
   // transparent blitters, the second mirrored.
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);

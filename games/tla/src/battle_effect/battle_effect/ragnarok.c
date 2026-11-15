@@ -231,9 +231,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
         if (frame == start + 6) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
+          EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_HURL);
         }
       }
       col++;
@@ -589,9 +587,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     // The hit, and the canvas flooded at frames 9 and 60.
     if (frame == 68) {
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_JOLT);
+        EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_JOLT);
       }
     }
 
@@ -611,7 +607,6 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-struct Model;
 struct StripQuad;
 
 struct JudgmentObject {

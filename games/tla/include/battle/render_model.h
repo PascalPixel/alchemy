@@ -24,9 +24,14 @@ struct RenderModel {
   const u16 *mesh; ///< the faces, as the effect tables write them
   s16 *vertices;   ///< the corners Render_TransformVertices wrote
   struct ModelTexture *texture;
-  s32 shade;  ///< a textured model's brightness
+  long shade; ///< a textured model's brightness
   u8 scrollU; ///< how far the texture is scrolled across
   u8 scrollV; ///< how far the texture is scrolled down
 };
+
+/// Draws a list of models, ended by a cleared entry: each model's rasterizer is
+/// copied into IWRAM for a run of its kind, and its texture with it where there
+/// is room.
+void Render_DrawModelList(struct RenderModel *model);
 
 #endif

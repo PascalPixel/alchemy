@@ -39,8 +39,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   // Setup: the canvas on BG2, the sheet, a transparent blitter.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

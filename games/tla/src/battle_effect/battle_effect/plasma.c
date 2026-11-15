@@ -385,9 +385,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       // The targets flash and recoil six frames after the burst.
       for (j = 0; j != args->targetCount; j++) {
         if (frame == start + 6) {
-          BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, j, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_HURL);
+          EFFECT_STRIKE_TARGET(args, j, 10, KNOCKBACK_HURL);
         }
       }
     }

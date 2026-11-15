@@ -53,8 +53,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   scrollX = gBgScroll[1].x;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
@@ -321,11 +320,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < args->targetCount) {
-              BattleEffect_TintBattler(args->targets[member],
-                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
-                                       8);
-              BattleMotion_ApplyKnockbackFar(args->targets[member],
-                                             KNOCKBACK_HOP);
+              EFFECT_STRIKE_TARGET(args, member, 8, KNOCKBACK_HOP);
             }
           }
         }

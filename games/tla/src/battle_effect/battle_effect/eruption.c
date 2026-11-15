@@ -152,9 +152,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     if (mode == 0) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_LEAP);
+          EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_LEAP);
         }
       }
     } else {

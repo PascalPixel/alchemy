@@ -465,6 +465,22 @@ extern u8 gVortices_Shapes[];
 #define MOTE_SET_BYTES 770
 
 /// Clips overflow on all four sides.
+/// Window 0 shows the battle view: BG0 to BG2, the sprites and blending.
+#define EFFECT_WIN0_LAYERS                                                     \
+  (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |         \
+   WININ_WIN0_CLR)
+
+/// Opens the canvas layer at its own width: BG2 shows it one pixel a pixel.
+#define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
+  (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+
+/// Strikes target `i`: it flashes white in its damage pose and is knocked back
+/// by `motion`.
+#define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
+  (BattleEffect_TintBattler((effect)->targets[i], SPRITE_COLOR_WHITE,          \
+                            POSE_DAMAGE, i, frames),                           \
+   BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
+
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror

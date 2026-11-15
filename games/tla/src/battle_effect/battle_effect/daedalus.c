@@ -6,8 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct Model;
-
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define BURST_FRAMES 48
@@ -1426,9 +1424,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   BattleEffect_ConfigureEffectDisplay();
   REG_WIN0V = WIN_RANGE(16, 128);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SpawnObjects(1, 0x296, 3);

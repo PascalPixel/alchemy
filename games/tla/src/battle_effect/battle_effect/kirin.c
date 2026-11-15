@@ -54,9 +54,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->args);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);

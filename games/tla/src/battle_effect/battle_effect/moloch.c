@@ -9,13 +9,11 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
+struct RenderModel;
 
 /// Moloch's frames, and the frame A or B skips to.
 #define MOLOCH_FRAMES 296
 #define MOLOCH_SKIP_TO 232
-
-void Render_DrawModelList(struct Model *model);
 
 /// Moloch. A shower of 256 motes drifts down the screen and, from frame
 /// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
@@ -2925,26 +2923,10 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   return 1;
 }
 
-/* VIEW(summon_effects): tag struct Model as struct Model__summon_effects;
- * battle_effect/ability_effects has another definition; not tried: struct
- * Model__summon_effects was not found. */
-/// One entry of a model list. Render_AllocateModelList allocates the list with
-/// a cleared entry after the last.
-struct Model {
-  s32 kind; ///< the rasterizer kernel that draws it; 0 ends the list
-  s32 flags;
-  const void *mesh;
-  void *matrix;
-  struct Texture *texture;
-  s32 fade;
-  u8 unk18;
-  u8 frame;
-};
-
 /// The texture stays where it is, even when IWRAM has room for a copy.
 #define MODEL_TEXTURE_IN_PLACE 4
 
-typedef void (*ModelKernel)(struct Model *model);
+typedef void (*ModelKernel)(struct RenderModel *model);
 
 /// Copies a kernel whose DMA control is a word of its own.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
@@ -2965,7 +2947,7 @@ typedef void (*ModelKernel)(struct Model *model);
 /// rasterizer into IWRAM once, and it is freed when the kind changes. Before
 /// a textured model is drawn, its texture is copied into IWRAM where there is
 /// room, and the copy is freed after the model is drawn.
-void Render_DrawModelList(struct Model *model) {
+void Render_DrawModelList(struct RenderModel *model) {
   ModelKernel code = NULL;
   s32 lastKind = 0;
   struct Texture copy;
@@ -3046,7 +3028,7 @@ void Render_DrawModelList(struct Model *model) {
     }
     lastKind = model->kind;
     if (model->texture == &copy) {
-      Heap_Release((void *)(model->texture->pixels & ~3));
+      Heap_Release((void *)((u32)model->texture->pixels & ~3));
       model->texture = texture;
     }
     model++;

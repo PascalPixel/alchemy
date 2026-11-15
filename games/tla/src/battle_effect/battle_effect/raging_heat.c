@@ -7,7 +7,6 @@
 #include "sounds.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))

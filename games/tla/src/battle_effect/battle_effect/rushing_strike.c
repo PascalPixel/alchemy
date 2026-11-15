@@ -233,7 +233,6 @@ void BattleEffect_BuildRepeatingTilemap(void) {
 }
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))

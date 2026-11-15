@@ -57,8 +57,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   // 112 pixels right for the other side.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   if (mode == 1) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
@@ -412,8 +411,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);

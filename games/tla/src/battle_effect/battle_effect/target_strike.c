@@ -122,8 +122,6 @@ void BattleEffect_RunMadZephyr(u8 *object) {
 
 // The body of 21 strike and column effects.
 
-struct Model;
-
 #define gBlitter ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->ramCode2)
 
@@ -147,11 +145,6 @@ struct Model;
 /// The motes live in the map cell buffer, the sparks 0x3800 bytes on.
 #define gMotes ((struct Particle *)Ram_MapCellBuffer)
 #define gSparks ((struct Particle *)(Ram_MapCellBuffer + 0x3800))
-
-/// Render_DrawModelList as the first parts see it.
-void Render_DrawModelList__battle_effect(struct Model *model) __asm__(
-    "Render_DrawModelList");
-#define Render_DrawModelList Render_DrawModelList__battle_effect
 
 #define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \
@@ -384,16 +377,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
           if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+            EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, 0, 12);
-            BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+            EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
@@ -473,16 +462,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           Sound_PlayFar(SE_IMPACT);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+          EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 12);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+          EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         }
@@ -701,8 +686,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
@@ -997,9 +981,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;

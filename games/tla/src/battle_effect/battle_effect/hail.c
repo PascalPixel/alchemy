@@ -111,9 +111,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame == 8) {
       work->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 16);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_LAUNCH);
+      EFFECT_STRIKE_TARGET(args, 0, 16, KNOCKBACK_LAUNCH);
     }
 
     // The water rises 4 pixels a frame to 32 and drifts away from the
@@ -335,9 +333,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
-              BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                       POSE_DAMAGE, 0, 4);
-              BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+              EFFECT_STRIKE_TARGET(args, 0, 4, KNOCKBACK_HURL);
             }
           }
         }

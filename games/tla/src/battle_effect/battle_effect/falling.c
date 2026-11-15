@@ -43,15 +43,13 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2001);
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Line the shards up above the screen, each 8 pixels higher and further
   // out than the one before, with a little scatter.
@@ -255,17 +253,15 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   canvas = heapCache[24];
 
   // Set up the canvas, the drop pictures and the droplets.
-  BattleEffect_StartCanvasLayer(0x2001);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2001);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + 0x604, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Drops draw at their maximum; droplets add their light.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);

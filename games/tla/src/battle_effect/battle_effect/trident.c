@@ -9,7 +9,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -53,9 +52,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(4, 664, 1);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(16, 136);

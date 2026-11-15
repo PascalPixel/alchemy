@@ -68,9 +68,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 6);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_BOUNCE);
+        EFFECT_STRIKE_TARGET(args, i, 6, KNOCKBACK_BOUNCE);
       }
 
       // The bolt, 24 wide, grows 64 pixels a frame down to the ground.

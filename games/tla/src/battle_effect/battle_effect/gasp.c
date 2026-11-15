@@ -8,7 +8,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -967,9 +966,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 26) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
         work->shakeFrames = 8;
-        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, 0, 12);
-        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+        EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame > 27) {

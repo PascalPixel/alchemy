@@ -491,8 +491,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else

@@ -49,7 +49,6 @@
 #undef MOTE_COUNT
 #undef PILLAR_FRAMES
 
-#undef Render_DrawModelList
 #undef OBJ_TILES
 #undef CLIP
 #undef RECORD_FRAMES
@@ -160,7 +159,6 @@
 #undef FxSlot
 #undef SpriteAttributes
 #undef Render_ProjectVertices
-#undef Render_DrawModelList
 
 #include "battle_effect/liquifier.c"
 
@@ -169,7 +167,6 @@
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the
 // effects draw with.
 
-#define Model Model__summon_effects
 #define Texture Texture__summon_effects
 #define BattleBackgroundId BattleBackgroundId__summon_effects
 #define ModelVertex ModelVertex__summon_effects
@@ -181,4 +178,3 @@
 #undef ModelVertex
 #undef BattleBackgroundId
 #undef Texture
-#undef Model

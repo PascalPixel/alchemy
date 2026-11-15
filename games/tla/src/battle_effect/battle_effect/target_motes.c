@@ -325,8 +325,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
@@ -440,8 +439,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   // right half of the field.
   canvas = Ram_HeapSlots->battleCanvas;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);

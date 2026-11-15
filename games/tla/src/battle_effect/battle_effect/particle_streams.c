@@ -707,8 +707,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
   /* FAKEMATCH(temporary): mode tested through its copy in direction. */

@@ -18,21 +18,6 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-/* VIEW(f189b14): tag struct Model as struct Model__f189b14; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/legend.c:225: structure has no
- * member named `vertices'. */
-struct Model__f189b14 {
-  s32 kind;
-  s32 next;
-  void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
 /// Legend (effect kind 122): a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
 /// it. Then one sword for each step of the variant (variant + 1 in all, 16
@@ -177,7 +162,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
     // This frame's models: one quad, retextured for each part.
     {
-      struct Model__f189b14 *model;
+      struct RenderModel *model;
       void *vertices;
       s32 scale;
 
@@ -206,7 +191,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           alpha = -((frame - args->variant * 16) * 4 + -240);
         if (scale > Q16_ONE * 2)
           scale = Q16_ONE * 2;
-        model->alpha = alpha;
+        model->shade = alpha;
         Transform_Reset();
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3(px(start.x - 128), px(height), 0);
@@ -233,7 +218,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             alpha = 0;
           if (alpha > -64) {
             scale = age * 12384 + Q16_ONE / 2;
-            model->alpha = alpha;
+            model->shade = alpha;
             Transform_Reset();
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             SceneTransform_ApplyPosition3(px(start.x - 128), -px(48), 0);
@@ -257,7 +242,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         texture.pixels = work->sheet + 0x5000;
         model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != 8; i++) {
-          model->alpha = 0;
+          model->shade = 0;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3(px(start.x - 128), -px(80), 0);
@@ -333,7 +318,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint targets[8];
   struct ScreenPoint aim;
   struct ModelTexture texture;
-  struct Model__f189b14 *model;
+  struct RenderModel *model;
   void *vertices;
   s32 i;
   s32 firstHit;
@@ -608,7 +593,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         alpha = frame * -4 + 384;
       texture.logWidth = 5;
       texture.logHeight = 7;
-      model->alpha = alpha;
+      model->shade = alpha;
       model->texture = &texture;
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;

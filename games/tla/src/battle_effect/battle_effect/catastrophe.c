@@ -8,7 +8,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -80,8 +79,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleWork;
   VramCache_FreeEntry(*(u32 *)(battle + 84));
   VramBlock_Reset93Far();
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 1) = 0;

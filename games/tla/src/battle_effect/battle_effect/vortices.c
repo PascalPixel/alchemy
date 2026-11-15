@@ -262,9 +262,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     for (j = 0; j != args->targetCount; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, j, 4);
-          BattleMotion_ApplyKnockbackFar(args->targets[j], KNOCKBACK_BOUNCE);
+          EFFECT_STRIKE_TARGET(args, j, 4, KNOCKBACK_BOUNCE);
         }
       }
     }

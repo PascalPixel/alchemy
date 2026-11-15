@@ -39,8 +39,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   cells = Ram_MapCellBuffer;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
@@ -396,9 +395,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == 300) {
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
+        EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_HOP);
       }
       EFFECT_SHOW_DAMAGE(SE_CRASH);
     }

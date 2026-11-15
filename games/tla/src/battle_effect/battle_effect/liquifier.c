@@ -27,8 +27,6 @@
 #include "resource_ids.h"
 #include "system/system.h"
 
-struct Model;
-
 #define KIND123_FRAMES 111
 
 /* FAKEMATCH(temporary): the pictures' buffer by its address. */

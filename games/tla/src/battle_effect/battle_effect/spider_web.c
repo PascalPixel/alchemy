@@ -208,13 +208,7 @@ void Ulysses_MoveLastParticle(void) {
 }
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
-
-/// Render_DrawModelList as the ability effects see it.
-void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
-    "Render_DrawModelList");
-#define Render_DrawModelList Render_DrawModelList__ability_effects
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -916,8 +910,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   slots = Ram_HeapSlots;
   work = (struct BattleEffectWork *)slots->battleEffect;
   canvas = slots->battleCanvas;
-  BattleEffect_StartCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0);
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
@@ -1032,8 +1025,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleCanvas;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-  BattleEffect_StartCanvasLayer(2);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(2);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;

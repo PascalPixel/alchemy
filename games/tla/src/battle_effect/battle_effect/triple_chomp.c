@@ -21,21 +21,6 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
-/* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/triple_chomp.c:133: structure has
- * no member named `vertices'. */
-struct Model__f18b868 {
-  s32 kind;
-  s32 next;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 alpha;
-  s32 tail;
-};
-
 // Triple Chomp (effect kind 426): the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
@@ -49,7 +34,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   DrawRectangle draw[2]; // Unused: [1] gives the stack frame its 4 bytes.
   u8 *graphics;
   void *vertices;
-  struct Model__f18b868 *model;
+  struct RenderModel *model;
   struct ModelTexture texture;
   struct ScreenPoint position;
   struct Particle *drawn;
@@ -142,7 +127,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
         if (alpha > 0)
           alpha = 0;
         if (alpha > -64) {
-          model->alpha = alpha;
+          model->shade = alpha;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           SceneTransform_ApplyPosition3(px(BITE_ANCHOR(i)->x - 128),

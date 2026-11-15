@@ -239,9 +239,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   gBgScroll[1].x = 0;
   emptyList.value = 255;
   BattleActor_SpawnObjectsForListFar(&emptyList, 0);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();

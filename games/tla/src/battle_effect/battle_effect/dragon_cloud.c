@@ -358,9 +358,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // Frame 83: the strike. Frame 50: the puffs burst.
     if (frame == 83) {
       work->shakeFrames = 8;
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
+      EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_HOP);
     }
     if (frame == 50) {
       work->shakeFrames = 12;

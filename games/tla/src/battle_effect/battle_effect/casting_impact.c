@@ -65,27 +65,6 @@ struct DrawFuncs {
   DrawFunc draw[2];
 };
 
-/* VIEW(ability_effects): tag struct Texture as struct Texture__ability_effects;
- * module/battle_effect/battle_effect.h has another definition; not tried:
- * struct Texture__ability_effects was not found. */
-struct Texture {
-  u8 width;
-  u8 height;
-  u16 unk2;
-  u8 *pixels;
-};
-
-struct Model {
-  s32 kind;
-  s32 unk4;
-  const void *mesh;
-  void *matrix;
-  struct Texture *texture;
-  long fade;
-  u8 unk18;
-  u8 frame;
-};
-
 struct IwramPointers {
   u8 unk00[0x30];
   void *bg;
@@ -227,11 +206,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   s32 point[3];
   s32 targetPoint[3];
   struct DrawFuncs drawFuncs;
-  struct Texture stunBoltTexture;
-  struct Texture reverseStarTexture;
-  struct Texture boscaHitTexture;
-  struct Texture stunJipTexture;
-  struct Texture armorCrushTexture;
+  struct ModelTexture stunBoltTexture;
+  struct ModelTexture reverseStarTexture;
+  struct ModelTexture boscaHitTexture;
+  struct ModelTexture stunJipTexture;
+  struct ModelTexture armorCrushTexture;
   s32 step;
   s32 i;
   u8 *src;
@@ -556,7 +535,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     s32 fade;
     s32 scale;
     void *matrix;
-    struct Model *model;
+    struct RenderModel *model;
     const u8 *table;
     s32 k;
     struct Particle *p;
@@ -2039,15 +2018,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         }
         if (frame > 3) {
           struct Particle *p;
-          struct Model *model;
+          struct RenderModel *model;
           matrix = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
-          stunBoltTexture.width = 5;
-          stunBoltTexture.height = 7;
+          stunBoltTexture.logWidth = 5;
+          stunBoltTexture.logHeight = 7;
           model->kind = 6;
           model->texture = &stunBoltTexture;
           model->mesh = gBattleEffect_ColumnMesh;
-          model->matrix = matrix;
+          model->vertices = matrix;
           for (i = 0; i != 20; i++) {
             struct Particle *p;
             p = &RINGS[i];
@@ -2057,7 +2036,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 fade = -16;
               else if (frame >= i + 4)
                 fade = -((frame - i - 4) * 16);
-              model->fade = fade;
+              model->shade = fade;
               {
                 s32 life = p->variant;
                 stunBoltTexture.pixels = buffer + 0xc56 + (life << 12);
@@ -2081,7 +2060,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                  kind == CASTING_IMPACT_IMPACT_FLASH_FORCE ||
                  kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
         void *matrix;
-        struct Model *model;
+        struct RenderModel *model;
         s32 fade;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
@@ -2090,14 +2069,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           fade = (40 - frame) * 4;
         else
           work->shakeFrames = 1;
-        reverseStarTexture.width = 6;
-        reverseStarTexture.height = 6;
+        reverseStarTexture.logWidth = 6;
+        reverseStarTexture.logHeight = 6;
         reverseStarTexture.pixels = buffer;
         model->kind = 7;
         model->texture = &reverseStarTexture;
         model->mesh = gBattleEffect_SquareMesh;
-        model->matrix = matrix;
-        model->fade = fade;
+        model->vertices = matrix;
+        model->shade = fade;
         Transform_Reset();
         SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
                                       px(target[1] - 64), 0);
@@ -2153,13 +2132,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        boscaHitTexture.width = 7;
-        boscaHitTexture.height = 7;
+        boscaHitTexture.logWidth = 7;
+        boscaHitTexture.logHeight = 7;
         boscaHitTexture.pixels = buffer;
         model->texture = &boscaHitTexture;
         model->kind = 7;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->matrix = matrix;
+        model->vertices = matrix;
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
             kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
           s32 fade;
@@ -2170,7 +2149,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               fade = 0;
               if (t > 7)
                 fade = (8 - t) * 8;
-              model->fade = fade;
+              model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
                 SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
@@ -2194,7 +2173,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             fade = 0;
             if (t > 7)
               fade = (8 - t) * 8;
-            model->fade = fade;
+            model->shade = fade;
             if (fade >= -63) {
               Transform_Reset();
               SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
@@ -2215,7 +2194,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               fade = 0;
               if (t > 7)
                 fade = (8 - t) * 8;
-              model->fade = fade;
+              model->shade = fade;
               if (fade > -64) {
                 Transform_Reset();
                 SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
@@ -2273,13 +2252,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 t;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
-        stunJipTexture.width = 7;
-        stunJipTexture.height = 7;
+        stunJipTexture.logWidth = 7;
+        stunJipTexture.logHeight = 7;
         stunJipTexture.pixels = buffer;
         model->kind = 7;
         model->texture = &stunJipTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
-        model->matrix = matrix;
+        model->vertices = matrix;
         t = frame - 4;
         if (t >= 0) {
           s32 fade;
@@ -2287,7 +2266,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           fade = 0;
           if (t > 7)
             fade = (8 - t) * 8;
-          model->fade = fade;
+          model->shade = fade;
           if (fade >= -63) {
             Transform_Reset();
             SceneTransform_ApplyPosition3(px(target[0] / 2 - 64), px(40), 0);
@@ -2299,8 +2278,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             Render_DrawModelList(model);
           }
         }
-        stunJipTexture.width = 7;
-        stunJipTexture.height = 4;
+        stunJipTexture.logWidth = 7;
+        stunJipTexture.logHeight = 4;
         stunJipTexture.pixels = buffer + 0x4000;
         model->mesh = gCastingImpact_BandMesh;
         for (i = 0; i != 2; i++) {
@@ -2314,7 +2293,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               scale =
                   (frame - start) * gCastingImpact_StunJipBandGrowth[i] * 1500 +
                   0x4180;
-              model->fade = fade;
+              model->shade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3(
                   px(target[0] / 2 - 60),
@@ -2336,22 +2315,22 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 4)
           work->shakeFrames = 8;
       } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-        struct Texture *tex;
+        struct ModelTexture *tex;
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
         model = Render_AllocateModelList(1);
         /* FAKEMATCH(temporary): tex holds &armorCrushTexture. */
         tex = &armorCrushTexture;
-        tex->width = 6;
-        tex->height = 6;
+        tex->logWidth = 6;
+        tex->logHeight = 6;
         model->texture = tex;
-        model->matrix = matrix;
+        model->vertices = matrix;
         tex->pixels = buffer;
         model->kind = 7;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
-          model->frame = (frame * 8 + i * 32) & 127;
+          model->scrollV = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
             Sound_PlayFar(SE_104);
           if (frame > start) {
@@ -2362,7 +2341,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               scale = (frame - start) * gCastingImpact_ArmorCrushWaveGrowth[i] *
                           2000 +
                       Q16_ONE / 4;
-              model->fade = fade;
+              model->shade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3(px(target[0] / 2 - 60), 0x280000,
                                             0);

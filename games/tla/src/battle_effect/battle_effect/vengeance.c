@@ -11,7 +11,6 @@
 // Vengeance: the avenger's blades.
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -101,9 +100,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(40, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(40, 136);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
                WINOUT_WIN01_CLR | WINOUT_WINOBJ_CLR;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
@@ -602,24 +600,6 @@ struct Texture__f1811d4 {
   void *pixels;
 };
 
-// One entry of the list Render_DrawModelList draws; kind 7 is a textured mesh
-// whose texture scrolls by scrollU and scrollV.
-/* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/vengeance.c:877: structure has no
- * member named `scrollU'. */
-struct RenderPrimitive__f1811d4 {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct Texture__f1811d4 *texture;
-  s32 brightness;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 /// Copies a palette over the background's 256 colours.
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
@@ -644,7 +624,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   void *canvas = Ram_HeapSlots->battleCanvas;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct Particle *drop;
-  struct RenderPrimitive__f1811d4 *column;
+  struct RenderModel *column;
   void *vertices;
   s32 frame;
   s32 i;
@@ -816,8 +796,8 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
             brightness = 224 - (frame << 3);
         }
         column->kind = 7;
-        column->brightness = brightness;
-        column->faces = gGeyser_Faces;
+        column->shade = brightness;
+        column->mesh = gGeyser_Faces;
         column->texture = &texture;
         column->vertices = vertices;
         SceneTransform_ApplyScale3(scale * 2, Q16_ONE * 7, scale * 2);

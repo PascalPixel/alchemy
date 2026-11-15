@@ -9,7 +9,6 @@
 
 struct FxPartyList;
 struct MeshTriangle;
-struct Model;
 struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
@@ -232,9 +231,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         if (frame == 15) {
           work->shakeFrames = 6;
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, 0, 6);
-          BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
+          EFFECT_STRIKE_TARGET(args, 0, 6, KNOCKBACK_NUDGE);
           for (i = 0; i != 63; i++) {
             s32 angle;
             s32 speed;

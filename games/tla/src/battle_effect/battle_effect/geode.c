@@ -7,7 +7,6 @@
 #include "sounds.h"
 
 struct MeshTriangle;
-struct Model;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -64,9 +63,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                       DJINNI_ANCHOR_CENTRE_BRIGHTENING),
       screenA, screenB);
   BattleEffect_ConfigureEffectDisplay();
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
                WINOUT_WINOBJ_ALL;
   transition[4] = 1;

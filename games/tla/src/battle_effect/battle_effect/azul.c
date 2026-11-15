@@ -10,7 +10,6 @@
 
 struct FxPartyList;
 struct MeshTriangle;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -699,9 +698,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
+        EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;

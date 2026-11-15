@@ -50,8 +50,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
                              work->sheet + 0x1800, 0, 0);
@@ -379,9 +378,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       if (frame == 10) {
         for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                   POSE_DAMAGE, i, 8);
-          BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
+          EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_HURL);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet

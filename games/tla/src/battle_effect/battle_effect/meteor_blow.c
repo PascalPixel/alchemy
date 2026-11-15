@@ -8,7 +8,6 @@
 
 struct FxPartyList;
 struct MeshTriangle;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -22,6 +21,21 @@ struct MeteorStar {
 };
 
 extern const struct Scale gMeteorBlow_DoubleScale;
+
+/* VIEW(meteor_blow): tag struct RenderModel as struct
+ * RenderModel__meteor_blow; render_model.h has another definition; tried with
+ * the definition the rest of the object has, BattleEffect_RunMeteorBlow
+ * moves: 1 of 1545 instructions in tla-en. */
+struct RenderModel__meteor_blow {
+  s32 kind;
+  s32 flags;
+  const u16 *mesh;
+  s16 *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
@@ -72,8 +86,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   work->args = args;
-  BattleEffect_StartCanvasLayer(0x2000);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(0x2000);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
@@ -401,9 +414,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2Y = -0x1000;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG1 | WININ_WIN1_BG2 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+              WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG0 |
                WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
   REG_WIN0V = WIN_RANGE(16, 124);
@@ -432,7 +444,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    struct RenderModel *model;
+    struct RenderModel__meteor_blow *model;
     s32 angle;
     s32 back;
     s32 shade;

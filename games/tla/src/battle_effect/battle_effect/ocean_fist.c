@@ -6,7 +6,6 @@
 #include "sounds.h"
 
 struct FxPartyList;
-struct Model;
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define OCEAN_FIST_FRAMES 92

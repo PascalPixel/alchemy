@@ -7,23 +7,7 @@
 #include "sounds.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
-
-/* VIEW(f178710): tag struct RenderModel as struct RenderModel__f178710;
- * render_model.h has another definition; tried with the definition the rest of
- * the object has, BattleEffect_RunRisingDragon moves: 1 of 882 instructions in
- * tla-ja. */
-struct RenderModel__f178710 {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  long shade; // long: its store orders after texture's, as an s32 one does not
-  u8 scrollU;
-  u8 scrollV;
-};
 
 // On every strike after the first, the target's motion goes to this percent of
 // its anchor's x, lowered from patch 1.
@@ -70,7 +54,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   struct ScreenPoint hit;
   struct ModelTexture texture;
-  struct RenderModel__f178710 *model;
+  struct RenderModel *model;
   void *vertices;
   struct Particle *spark;
   struct Particle *mote;

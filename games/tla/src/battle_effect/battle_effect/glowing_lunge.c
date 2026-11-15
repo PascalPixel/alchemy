@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 
-struct Model;
-
 #define LUNGE_FRAMES 60
 #define LUNGE_STREAK_FRAMES 15 ///< the streak follows the caster
 #define LUNGE_HIT_FRAME 8      ///< the caster reaches the target
@@ -14,40 +12,10 @@ struct Model;
 #define SPARK_COUNT 64
 #define BURST_COUNT 16 ///< mode 5's flame bursts
 
-// A texture: log2 of its width and height in the first word, then its
-// pixels.
-/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:243: structure has
- * no member named `logWidth'. */
-struct Texture__f17e0c0 {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
-  void *pixels;
-};
-
-// One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
-// quads.
-/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/glowing_lunge.c:214: structure has
- * no member named `brightness'. */
-struct RenderPrimitive__f17e0c0 {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct Texture__f17e0c0 *texture;
-  s32 brightness;
-};
-
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
-  struct Texture__f17e0c0 texture;
+  struct ModelTexture texture;
   DrawRectangle draw[2];
   u8 *flashPixels = Ram_MapCellBuffer;
   s32 height;
@@ -61,7 +29,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 *camera = Ram_HeapSlots->cameraWork;
   u8 *sparkCels = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
-  struct RenderPrimitive__f17e0c0 *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 i;
   s32 row;
@@ -162,10 +130,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
     texture.pixels = work->sheet;
     quad->texture = &texture;
-    quad->faces = gBattleEffect_TallMesh;
+    quad->mesh = gBattleEffect_TallMesh;
     quad->kind = 6;
     quad->vertices = vertices;
-    quad->brightness = brightness;
+    quad->shade = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -191,12 +159,12 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       brightness = 32 - flashFrame * 8;
       if (brightness > 0)
         brightness = 0;
-      quad->brightness = brightness;
+      quad->shade = brightness;
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = flashPixels;
       quad->kind = 7;
-      quad->faces = gBattleEffect_LargeSquareMesh;
+      quad->mesh = gBattleEffect_LargeSquareMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (args->side == EFFECT_SIDE_ENEMIES)
@@ -212,9 +180,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, LUNGE_HIT_FRAME);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+      EFFECT_STRIKE_TARGET(args, 0, LUNGE_HIT_FRAME, KNOCKBACK_HURL);
       if (mode == 5)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else

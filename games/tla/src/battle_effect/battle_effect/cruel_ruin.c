@@ -95,9 +95,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
 
   i = 0;
@@ -649,9 +648,8 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   wait(1);
   BattleEffect_SetupCanvasWindows();
   REG_BG2PA = Q_8_8(1);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
-              WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
 
   i = 0;
@@ -708,8 +706,6 @@ void BattleEffect_EndElementStreaks(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
-
-struct Model;
 
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode2)
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)

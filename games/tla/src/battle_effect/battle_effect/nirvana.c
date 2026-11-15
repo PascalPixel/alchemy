@@ -154,8 +154,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -512,25 +511,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
 }
 
 struct FxPartyList;
-struct Model;
 struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
-
-/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in
- * tla-ja. */
-struct RenderModel__f16d130 {
-  s32 kind;
-  s32 flags;
-  const u16 *mesh;
-  s16 *vertices;
-  struct ModelTexture *texture;
-  const void *shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 struct ProjectedPoint {
   s32 x, y, depth;
@@ -602,7 +585,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     struct ProjectedPoint point;
     struct ProjectedPoint dropScreen;
     struct ModelTexture texture;
-    struct RenderModel__f16d130 *model;
+    struct RenderModel *model;
     void *vertices;
     u8 color[1];
     s32 savedScrollX;

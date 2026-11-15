@@ -8,8 +8,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct Model;
-
 #define KIND125_FRAMES 114
 
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
@@ -44,8 +42,6 @@ struct RenderModel__f190b74 {
     u8 *color;
   } look;
 };
-
-void Render_DrawModelList(struct Model *model);
 
 /// Effect kind 125, 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes

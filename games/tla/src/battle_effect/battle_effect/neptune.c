@@ -62,8 +62,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
-              WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 | WININ_WIN1_CLR;
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleEffect_SelectLivingTargets(work->args);
@@ -479,9 +478,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     for (i = 0; i != args->targetCount; i++) {
       if (frame == i * 16 + 8) {
-        BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_LEAP);
+        EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != 1024; i++) {

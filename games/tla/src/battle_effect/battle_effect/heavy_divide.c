@@ -9,7 +9,6 @@
 #include "macros.h"
 
 struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -285,8 +284,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1);
+  EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CE, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -354,10 +352,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
           if (age == 2) {
             s32 member = i % args->targetCount;
 
-            BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-                                     POSE_DAMAGE, member, 3);
-            BattleMotion_ApplyKnockbackFar(args->targets[member],
-                                           KNOCKBACK_NUDGE);
+            EFFECT_STRIKE_TARGET(args, member, 3, KNOCKBACK_NUDGE);
             Sound_PlayFar(SE_POWER_UP);
             work->shakeFrames = 3;
           }
@@ -695,8 +690,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 }
 
 #undef BLITTER
-
-struct Model;
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))

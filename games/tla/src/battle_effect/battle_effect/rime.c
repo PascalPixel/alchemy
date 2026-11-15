@@ -7,8 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct Model;
-
 /// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -18,35 +16,6 @@ struct Model;
 /// 64-pixel-wide square after the rune picture.
 #define CRYSTAL_OFFSET 0x480
 #define CRYSTAL_ORIGIN (CRYSTAL_OFFSET + 8 * 64 + 8)
-
-// A texture for the ARM polygon kernels: 1 << logWidth by 1 << logHeight
-// pixels.
-/* VIEW(f173588): tag struct Texture as struct Texture__f173588;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/rime.c:181: structure has no member
- * named `logWidth'. */
-struct Texture__f173588 {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-// One model for Render_DrawModelList, the polygon kernel runner.
-/* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588;
- * ability_effects.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect/rime.c:195: structure has no member
- * named `brightness'. */
-struct RenderModel__f173588 {
-  s32 kind;
-  s32 flags;
-  const void *mesh;
-  void *vertices;
-  struct Texture__f173588 *texture;
-  s32 brightness;
-};
 
 /// Rime and Haze: the Djinni rises swaying through the canvas over the
 /// party while its sign turns in the air: for Rime a crystal that spins in
@@ -65,8 +34,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   // Unused: blit[1] gives the stack frame its 4 bytes at sp 24.
   DrawRectangle blit[2];
   void *vertices;
-  struct Texture__f173588 texture;
-  struct RenderModel__f173588 *model;
+  struct ModelTexture texture;
+  struct RenderModel *model;
   s32 frame;
   s32 i;
 
@@ -180,7 +149,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
         brightness = 0;
       if (frame > 55)
         brightness = (56 - frame) * 8;
-      model->brightness = brightness;
+      model->shade = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
       for (i = 0; i != 2; i++) {
         s32 scale = Q16_ONE * 2 - frame * 0x800;
@@ -207,7 +176,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       // fourth one chimes as it opens.
       struct Particle *star;
 
-      model->brightness = 0;
+      model->shade = 0;
       texture.pixels = work->sheet;
       for (i = 0, star = work->particles; i != 16; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)

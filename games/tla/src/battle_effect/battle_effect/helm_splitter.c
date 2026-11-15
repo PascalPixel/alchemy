@@ -122,9 +122,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     if (frame == 18) {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_BOUNCE);
+      EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
       for (i = 0; i != args->variant * 16 + 16; i++) {
         s32 force = (Random16() & 255) + 256;

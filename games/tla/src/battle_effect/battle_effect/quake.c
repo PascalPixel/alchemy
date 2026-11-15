@@ -42,9 +42,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  BattleEffect_StartCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1); // no horizontal stretch
-  REG_BLDCNT = 0;       // no blending
+  EFFECT_START_NARROW_CANVAS(1); // no horizontal stretch
+  REG_BLDCNT = 0;                // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 

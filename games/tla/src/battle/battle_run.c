@@ -27,9 +27,10 @@
 /// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
 #define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
-/* VIEW(battle_kinds): tag struct BattleWork as struct BattleKindsView; the
- * victory message reads the kinds of enemy as The Broken Seal's enemyKinds,
- * which BattleWork keeps as bytes (see BattleWork.unk010). */
+/* VIEW(battle_kinds): tag struct BattleWork as struct BattleKindsView;
+ * battle/battle_work.h has u8 unk010[12] where The Broken Seal has u16
+ * enemyKinds[6]; tried as u16 enemyKinds[6], BattleParty_ChooseReserve moves:
+ * 363 bytes in tla-en. */
 struct BattleKindsView {
   s32 formation;
   s16 spriteSlots[6];

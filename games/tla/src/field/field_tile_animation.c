@@ -360,19 +360,19 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation no by clearing its paused byte.
-void TilesetAnim_Resume(u32 no) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
-  struct MapAnimation *anim = &state->anim[no];
+void TilesetAnim_Resume(u32 channelIndex) {
+  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct MapAnimation *channel = &gridState->anim[channelIndex];
 
-  anim->paused = 0;
+  channel->paused = 0;
 }
 
 /// Pauses tileset animation no by setting its paused byte.
-void TilesetAnim_Pause(u32 no) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
-  struct MapAnimation *anim = &state->anim[no];
+void TilesetAnim_Pause(u32 channelIndex) {
+  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct MapAnimation *channel = &gridState->anim[channelIndex];
 
-  anim->paused = 1;
+  channel->paused = 1;
 }
 
 /// Starts the tileset animations a map's animation script lists: each 0xfdNN

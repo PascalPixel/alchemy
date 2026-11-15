@@ -129,15 +129,14 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 /// Applies BG0 line scrolling with HBlank DMA.
 void FieldEffect_ArmBg0HBlankDma(void) {
   struct MindReadWork *work = Ram_HeapSlots->mindRead;
-
   if (!work->delay) {
-    u16 *lines = work->lines[work->page];
+    u16 *line = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
-
-    dma[5] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
-    dma[5] &= (u16)~DMA_ENABLE;
+    dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma[5] &= ~DMA_ENABLE;
     (void)dma[5];
-    Dma_Set(lines, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
+    // One halfword at each HBlank (repeating, destination reloaded).
+    Dma_Set(line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
 }
@@ -469,12 +468,11 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
 /// where it started, comes back and is freed.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   struct Vector3 position;
-  s8 *statePointer = &effect->state;
   s32 state;
 
 next_state:
-  state = *statePointer;
-  if (state == 0) {
+  state = effect->state;
+  if (state == OUT_AND_BACK_AIM_OUT) {
     u32 angle;
 
     position.x = effect->originX;
@@ -486,32 +484,29 @@ next_state:
     effect->acceleration = px(4);
     effect->maxSpeed = px(4);
     effect->limitTurnStep = state;
-    (*statePointer)++;
+    effect->state++;
     return;
   }
 
-  if (state == 1) {
+  if (state == OUT_AND_BACK_FLYING_OUT) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
-      (*statePointer)++;
+      effect->state++;
       goto next_state;
     }
     return;
   }
 
-  if (state == 2) {
+  if (state == OUT_AND_BACK_AIM_BACK) {
     effect->targetX = effect->originX;
     effect->targetZ = effect->originZ;
-    {
-      u32 value = 0x400;
-
-      effect->maxTurnStep = value;
-    }
+    effect->maxTurnStep = TRIG_TURN / 64;
     effect->limitTurnStep = 1;
-    (*statePointer)++;
+    effect->state++;
     return;
   }
 
-  if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
+  if (state == OUT_AND_BACK_FLYING_BACK &&
+      FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 #undef MOVE_CELL_MASK
@@ -1089,6 +1084,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
 /// toward the caster's facing from 16 pixels above it, on screen, give or take
 /// 4 pixels, and is freed on arrival.
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
+  // OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Vector3 pos;
   s32 state;
@@ -1119,10 +1115,13 @@ again:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
+    // 8 pixels toward effectWork->angle from 16 pixels above the main actor,
+    // on screen, give or take 4 pixels.
     struct Actor *caster = effectWork->mainActor;
 
-    SET_POSITION(&pos, caster->x.fixed, caster->y.fixed + px(16),
-                 caster->z.fixed);
+    pos.x = caster->x.fixed;
+    pos.y = caster->y.fixed + px(16);
+    pos.z = caster->z.fixed;
     Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(px(4), Random16(), &pos);

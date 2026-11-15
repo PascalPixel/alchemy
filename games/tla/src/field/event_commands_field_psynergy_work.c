@@ -326,11 +326,11 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the Psynergy's work.
 void FieldPsynergy_StopMindReadWave(void) {
-  u8 *work = Ram_HeapSlots->mindRead;
+  struct MindReadWork *work = Ram_HeapSlots->mindRead;
 
   FieldPsynergy_RestoreMindReadPalette();
-  Task_Remove((TaskFunc)FieldPsynergy_UpdateMindReadWave);
-  Actor_SetSpritePalette(Actor_GetById(*(u16 *)(work + 0x290)), 1);
+  Task_Remove(FieldPsynergy_UpdateMindReadWave);
+  Actor_SetSpritePalette(Actor_GetById(work->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }

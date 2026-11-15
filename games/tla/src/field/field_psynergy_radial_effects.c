@@ -972,11 +972,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   s32 y;
   s32 limit;
   s32 scale;
-  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  limit = particle->groundHeight + 0xA0000;
+  limit = particle->groundHeight + px(10);
   source = particle->watchedActor;
-  if (party->mapId == SCENE_CLEAR)
+  if (gMainRoutineWork.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
@@ -985,13 +984,14 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
     return;
   }
 
-  scale = particle->scaleX + 0xC00;
+  scale = particle->scaleX + Q16_ONE * 3 / 64;
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
-  SET_ACTOR_POSITION(particle, source->x.fixed, y - px(2),
-                     source->z.fixed + ((Q16_ONE - scale) * 5) + px(9));
+  particle->x.fixed = source->x.fixed;
+  particle->y.fixed = y - px(2);
+  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + px(9);
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -1001,11 +1001,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   s32 y;
   s32 limit;
   s32 scale;
-  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  limit = particle->groundHeight + 0xA0000;
+  limit = particle->groundHeight + px(10);
   source = particle->watchedActor;
-  if (party->mapId == SCENE_CLEAR)
+  if (gMainRoutineWork.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
@@ -1014,13 +1013,14 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
     return;
   }
 
-  scale = particle->scaleX + 0xC00;
+  scale = particle->scaleX + Q16_ONE * 3 / 64;
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
-  SET_ACTOR_POSITION(particle, source->x.fixed, y - px(2),
-                     source->z.fixed - ((Q16_ONE - scale) * 5) + px(16));
+  particle->x.fixed = source->x.fixed;
+  particle->y.fixed = y - px(2);
+  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + px(16);
 }
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
@@ -1075,13 +1075,11 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
 void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   s16 phase;
   s32 elapsedFrames;
-  struct MainRoutineWork *party;
 
   phase = caster->arcPhase;
-  elapsedFrames = (s16)caster->arcFrames++;
-  party = &gMainRoutineWork;
+  elapsedFrames = caster->arcFrames++;
 
-  if (party->mapId == SCENE_CLEAR) {
+  if (gMainRoutineWork.mapId == SCENE_CLEAR) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {

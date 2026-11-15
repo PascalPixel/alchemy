@@ -29,6 +29,8 @@
 #include "graphics/resource.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/ground_mask.h"
+#include "field/field_psynergy_work.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -283,11 +285,6 @@ s32 Kibombo_KeepShakeCentre(struct Actor *object) {
 }
 
 extern s16 gKibombo_HousesExitRegions[];
-
-struct KibomboWork90 {
-  u8 unk00[0x18];
-  struct Actor *leader;
-};
 
 s32 Kibombo_ShakeInPlace(struct Actor *object) {
   if (gFrameCount & 1) {
@@ -1645,15 +1642,16 @@ ask:
 #undef EVENT_WORK
 
 void Kibombo_TrackLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
+  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
-  work->leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  work->actor =
+      (struct FadeActor *)Actor_GetById(gMainRoutineWork.leaderActorId);
 }
 
 void Kibombo_StopTrackingLeader(void) {
-  struct KibomboWork90 *work = Ram_HeapSlots->fadeOverlay;
+  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
-  work->leader = 0;
+  work->actor = 0;
 }
 
 s32 Kibombo_ClampColor(s32 value) {
@@ -1899,11 +1897,6 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
     Actor_SetBlendMode(object, 1);
   }
 }
-
-struct KibomboEffectWork {
-  u8 unk000[0x7c4];
-  s16 field7c4;
-};
 
 static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
   Kibombo_SpawnFlame(x, y, z);
@@ -2217,9 +2210,9 @@ void Kibombo_SetStatueTongue(s32 open, s32 mode) {
 
 /// While Scoop is cast, digs the marking the event is scooping.
 void Kibombo_DigMarkingUnderLeader(void) {
-  struct KibomboEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  if (work->field7c4 != 0) {
+  if (work->stage != 0) {
     if (GameFlag_Get(FLAG_SCOOPING_FIRST_MARKING))
       Kibombo_DigFirstMarking();
     else if (GameFlag_Get(FLAG_SCOOPING_SECOND_MARKING))

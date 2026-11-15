@@ -364,18 +364,18 @@ void GarohInteriors_AskAboutReveal(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 room1 = SCENE_GAROH_INTERIORS_HOUSES;
+  s32 houses = SCENE_GAROH_INTERIORS_HOUSES;
   s32 scene;
 
   if (shared) {
     scene = party->next;
-    if (scene == room1)
+    if (scene == houses)
       return gGarohInteriors_InnMorningTriggers;
     if (scene == SCENE_GAROH_INTERIORS_SHOP)
       return gGarohInteriors_HouseMorningTriggers;
   } else {
     scene = party->next;
-    if (scene == room1) {
+    if (scene == houses) {
       if (party->entrance == 99)
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;

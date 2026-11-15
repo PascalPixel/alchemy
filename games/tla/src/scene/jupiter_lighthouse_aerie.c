@@ -861,15 +861,16 @@ struct BeamWork__s17a8 {
   u8 unkaa8[0x1c];
   s32 from[3];
   s32 to[3];
-  s32 start[3];
-  u8 unkae8[0x18];
+  s32 carried[3];
+  s32 pointA[3];
+  s32 pointB[3];
   s16 step;
-  s16 unkb02;
+  s16 frame;
   u16 largeTile;
   u16 smallTile;
-  u8 unkb08;
-  u8 unkb09;
-  u8 unkb0a;
+  u8 duration;
+  u8 loop;
+  u8 still;
   u8 side;
   struct Actor *first;
   struct Actor *second;
@@ -948,22 +949,22 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
     work->to[1] = 0x200000;
     work->to[2] = px(164);
   }
-  work->start[0] = work->from[0];
-  work->start[1] = work->from[1];
-  work->start[2] = work->from[2];
+  work->carried[0] = work->from[0];
+  work->carried[1] = work->from[1];
+  work->carried[2] = work->from[2];
   carrier->speedLimit = px(1) / 2;
   carrier->acceleration = px(1) / 2;
   Actor_StartIdle(carrier);
-  FieldActor_SetMoveTargetFixed(carrier, work->start[0], work->start[1],
-                                work->start[2]);
+  FieldActor_SetMoveTargetFixed(carrier, work->carried[0], work->carried[1],
+                                work->carried[2]);
   Event_PlaySound(SE_SWIRL);
   JupiterLighthouse_StartBeamFlicker(work->first);
   FieldEvent_Wait(40);
   work->side = side;
   work->step = 0;
-  work->unkb02 = 0;
-  work->unkb09 = 1;
-  work->unkb0a = 0;
+  work->frame = 0;
+  work->loop = 1;
+  work->still = 0;
   Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_VBLANK);
   while (work->step != 999)
     System_Wait(1);

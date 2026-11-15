@@ -62,7 +62,11 @@ struct Formation {
 /// Karst and Agatio against Isaac's party (ENEMY_KARST_VS_ISAAC), lost after
 /// the first action.
 #define FORMATION_KARST_AND_AGATIO_VS_ISAAC 638
-/// The formations, by formation id (battle_tables.s).
+/// The formations, by formation id (formations.c).
 extern struct Formation gFormations[];
+
+/// The 87 enemies whose defeated flags (0x600 + id) a monster battle clears
+/// before it picks a formation (BattleFormation_SelectLevelMatchedCandidate).
+extern u16 gBattleFormation_LevelMatchedEnemies[];
 
 #endif

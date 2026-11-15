@@ -102,11 +102,6 @@ struct BattleGroupOrder {
   s32 group[2];
 };
 
-extern const u32 gAbilityBattleEffects[];
-extern u8 gAbilityStaging[];
-
-extern u8 gActionRun_EffectChance[];
-
 extern const u8 Model_DecodeCode[];
 
 extern u8 Model_DecodeCodeSize[];
@@ -118,9 +113,6 @@ void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 s32 SpriteAnimation_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
 
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
-
-/// The enemy flags (0x600 + id) cleared before every search.
-extern const u16 gBattleFormation_LevelMatchedEnemies[];
 
 void BattleMessage_OpenFar(s32 message);
 

@@ -38,6 +38,9 @@
 #include "system/system.h"
 #include "battle/battle_system.h"
 #include "battle/battle_type.h"
+#include "battle/ability_staging.h"
+#include "battle/debug_parameter_set.h"
+#include "battle/weapon_kind.h"
 #include "battle/battle_summon.h"
 #include "battle/battle_unit.h"
 #include "system/heap_release.h"
@@ -196,17 +199,6 @@ struct Snapshot {
 
 STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 0x94);
 
-/// A row of the debug parameter sets: a party member, its level, its Djinn of
-/// each element, its equipped items and two Psynergy it learns.
-struct DebugPartyEntry {
-  s8 owner;
-  u8 level;
-  s8 djinnCounts[4];
-  u16 items[6];
-  u16 actions[2];
-  u16 unused; ///< 0 in every row; nothing reads it
-};
-
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
 struct BattleLinkedActionState {
@@ -270,37 +262,6 @@ enum BattleActionFailure {
   ACTION_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// BattlePlan.staging: how
-/// BattleStaging_DispatchAction shows the action, set by BattleActionRun_Build
-/// from the ability (gAbilityStaging where it gives one). The Lost Age adds the
-/// stagings from STAGING_TEAM_STRIKE on.
-enum BattleStaging {
-  STAGING_MESSAGES = 1, ///< no effect: each target's messages only
-  STAGING_ATTACK = 2,   ///< the acting unit runs up and strikes
-  STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
-  STAGING_ITEM = 4,
-  STAGING_SUMMON = 5, ///< the larger summons, the acting unit hidden
-  STAGING_DJINNI = 6, ///< a Djinni with no attack (Granite, Quartz...)
-  STAGING_FLEE = 7,   ///< a unit runs
-  /// The action plays as a cast, the caster showing its element's streaks in
-  /// place of the gathering star field: an enemy's ability that is not
-  /// Psynergy and has a battle effect, Slice, and weapon unleashes such as
-  /// Blizzard and Titan Blade.
-  STAGING_ENEMY_CAST = 8,
-  STAGING_FULL_SCREEN = 9, ///< Gaia, Rockfall, Procne and their kin
-  /// Meld ("Launch a powerful team strike.") and Mold: a second unit
-  /// (BattlePlan.partnerId) strikes as the Djinni is unleashed.
-  STAGING_TEAM_STRIKE = 10,
-  STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
-  STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
-  STAGING_IRIS = 13,           ///< the summon, then the Aurora Field
-  /// The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox
-  /// and Call Zombie (BattleMotion_CallBeast).
-  STAGING_BEAST_ATTACK = 15,
-  /// The summoned beasts that cast, Emu to Call Dullahan.
-  STAGING_BEAST_CAST = 16
-};
-
 /// BattleStaging_HideField's mode bit that hides the acting unit too, as the
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
@@ -316,21 +277,6 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
-// BattlePlan.battleEffect: the effect kind
-// in the low twelve bits and its strength (a double or triple blow) above them;
-// then how the effect is staged.
-#define EFFECT_VARIANT_SHIFT 12
-#define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
-#define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
-#define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
-/// Plays the effect on the side opposite its targets. Unused: no entry of
-/// gAbilityBattleEffects in either game sets it and no code adds it.
-#define EFFECT_OTHER_SIDE 0x20000
-/// The camera takes the other side's view (an enemy's cast a view of its
-/// own), or turns right round.
-#define EFFECT_VIEW_ACROSS 0x40000
-#define EFFECT_VIEW_REVERSED 0x80000
-
 /// The scripted battles' snapshot (ScriptedBattle_SaveUnits).
 extern struct Snapshot gScriptedBattle_Snapshot;
 
@@ -343,9 +289,6 @@ extern struct SnapshotVitals gScriptedBattle_SnapshotVitals[];
 /// The five units Karst and Agatio's battle carries over between its parts:
 /// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
-
-/// The debug parameter sets DebugParameterSet_Load loads, a party member a row.
-extern struct DebugPartyEntry gDebug_ParameterSets[];
 
 // A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
 // Broken Seal's.

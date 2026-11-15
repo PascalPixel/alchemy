@@ -73,7 +73,7 @@
 #include "window/window.h"
 #include "field/actor.h"
 #include "battle/battle_action.h"
-#include "menu/resource_menu.h"
+#include "window/icon_menu.h"
 #include "graphics/display_transition.h"
 #include "field/scene_call.h"
 #include "field/sprite.h"

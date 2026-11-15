@@ -215,7 +215,12 @@ struct Actor {
   /// The object its action script follows or faces.
   struct Actor *watchedActor;
   void (*update)(void); ///< the object's per-frame hook
-  u8 unk70[0x10];
+  /// What a carrier moved this frame, which Actor_MoveWithCarriers adds to
+  /// an actor riding it, and that actor's carrier.
+  s32 stepX;
+  s32 stepY;
+  s32 stepZ;
+  struct Actor *carrier;
 };
 
 typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];

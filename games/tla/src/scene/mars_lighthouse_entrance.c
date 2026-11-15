@@ -1697,12 +1697,12 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                 leader->z.fixed) != 7) {
-      leader->x.fixed += ((s32 *)ride->car->unk70)[0];
-      leader->z.fixed += ((s32 *)ride->car->unk70)[2];
+      leader->x.fixed += ride->car->stepX;
+      leader->z.fixed += ride->car->stepZ;
     } else {
-      if (((s32 *)ride->car->unk70)[0] != 0)
+      if (ride->car->stepX != 0)
         leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
-      if (((s32 *)ride->car->unk70)[2] != 0)
+      if (ride->car->stepZ != 0)
         leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;

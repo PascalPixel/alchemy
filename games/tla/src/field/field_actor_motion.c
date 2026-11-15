@@ -442,20 +442,20 @@ void Actor_MoveWithCarriers(void) {
       s32 z = object->z.fixed;
 
       if (object->priorityFlags & 64) {
-        struct Actor *carrier = (struct Actor *)WORD_AT(object, 0x7c);
+        struct Actor *carrier = object->carrier;
 
         if (carrier != NULL) {
-          if (WORD_AT(carrier, 0x74) != 0) {
+          if (carrier->stepY != 0) {
             if (y == object->groundHeight) {
               object->groundHeight = carrier->y.fixed + px(16);
               y = object->groundHeight;
             } else {
-              object->groundHeight += WORD_AT(carrier, 0x74);
-              y += WORD_AT(carrier, 0x74);
+              object->groundHeight += carrier->stepY;
+              y += carrier->stepY;
             }
           }
-          x += WORD_AT(carrier, 0x70);
-          z += WORD_AT(carrier, 0x78);
+          x += carrier->stepX;
+          z += carrier->stepZ;
         }
       }
       SET_ACTOR_POSITION(object, x, y, z);

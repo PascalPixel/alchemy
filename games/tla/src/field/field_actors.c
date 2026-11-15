@@ -308,10 +308,10 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
     object->riseBaseY = 0;
     object->homeX = x / px(1);
     object->homeZ = z / px(1);
-    *(s32 *)&object->unk70[12] = 0;
-    *(s32 *)&object->unk70[0] = 0;
-    *(s32 *)&object->unk70[4] = 0;
-    *(s32 *)&object->unk70[8] = 0;
+    object->carrier = NULL;
+    object->stepX = 0;
+    object->stepY = 0;
+    object->stepZ = 0;
   }
   return object;
 }

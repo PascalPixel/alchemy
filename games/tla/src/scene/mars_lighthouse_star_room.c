@@ -1593,7 +1593,7 @@ extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 // XXX: is the car an actor (its stopped halfword sits where an actor's action
-// is, its steps in unk70)? The code that stores the car's pointer at the ride
+// is, its steps in stepX and stepZ)? The code that stores the car's pointer at the ride
 // state's 0x6c would settle it.
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
@@ -1632,12 +1632,12 @@ s32 Fireball_CarryLeader(void) {
   while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                 leader->z.fixed) != 7) {
-      leader->x.fixed += ((s32 *)ride->car->unk70)[0];
-      leader->z.fixed += ((s32 *)ride->car->unk70)[2];
+      leader->x.fixed += ride->car->stepX;
+      leader->z.fixed += ride->car->stepZ;
     } else {
-      if (((s32 *)ride->car->unk70)[0] != 0)
+      if (ride->car->stepX != 0)
         leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
-      if (((s32 *)ride->car->unk70)[2] != 0)
+      if (ride->car->stepZ != 0)
         leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;

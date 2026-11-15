@@ -45,9 +45,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
 

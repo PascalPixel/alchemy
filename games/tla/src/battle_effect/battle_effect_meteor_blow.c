@@ -93,9 +93,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -394,7 +392,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
-  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both\n //
+  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both
   // moves.
   hx = 200;
   hz = 0;
@@ -419,9 +417,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_BILLOW, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   {
     s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
 

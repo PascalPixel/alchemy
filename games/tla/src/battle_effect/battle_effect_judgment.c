@@ -81,7 +81,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 i;
   u8 *cells;
   u8 *pal;
-  s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -623,9 +622,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                           JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 66) <= 1) {
-      /* FAKEMATCH(temporary): the width through a local set at both draws of
-       * this picture. */
-      width = 24;
+      s32 width = JUDGMENT_SHEET_FLASH_LARGE_WIDTH;
+
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
               JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }
@@ -646,7 +644,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                           JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 80) <= 1) {
-      width = 24;
+      s32 width = JUDGMENT_SHEET_FLASH_LARGE_WIDTH;
+
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
               JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }

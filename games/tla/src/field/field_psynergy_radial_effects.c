@@ -455,7 +455,7 @@ void FieldPsynergy_Halt(void) {
 /// Per-frame update of a paused actor: gives its sprite one of the table's
 /// eight params at random.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
-  s8 *table = gBattleEffect_RandomChildValues;
+  const s8 *table = gBattleEffect_RandomChildValues;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(actor, table[(u32)(random * 8) >> 16]);
 }

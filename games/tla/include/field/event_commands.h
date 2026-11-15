@@ -410,9 +410,15 @@ struct EffectChild {
   void (*callback)(void);
 };
 
-extern const u8 gBattleEffect_HeavyImpactScript[];
+extern const s32 gBattleEffect_HeavyImpactScript[];
+s32 SpawnHeavyImpactEffect(struct Actor *source);
 
-extern u8 gAnim_ChildPaletteCycle[];
+/// What BattleEffect_GetEightWayHeadingWord returns when no direction is held,
+/// or right and left or up and down together: the blank entries of
+/// gBattleEffect_EightWayHeadingWords.
+#define DPAD_ANGLE_NONE 0xffff
+
+extern const u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
                                                   struct Vec3 *position);

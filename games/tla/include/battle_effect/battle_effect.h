@@ -313,6 +313,25 @@ struct RockWallHeights {
   s32 column[4]; // each pillar's height in pixels
 };
 
+/// The five widths a rising pillar takes.
+struct FiveWidths {
+  s32 w[5];
+};
+
+/// The seven widths a widening pillar takes.
+struct SevenWidths {
+  s32 w[7];
+};
+
+/// Where a strip's petals start across, by quarter of its rise: the left edge
+/// and the width they spread over.
+struct FourSpans {
+  struct {
+    s32 left;
+    s32 width;
+  } p[4];
+};
+
 // A row of gFrost_Timings, one for each variant.
 enum {
   RISE_MOTES,   // the rising motes
@@ -347,9 +366,9 @@ void BattleEffect_WipeCanvas(s32, s32);
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *effect, s32 mode);
-extern struct Scale gBoreas_UnitScale;
+extern const struct Scale gBoreas_UnitScale;
 void BattleEffect_RunStatBoost(struct BattleEffectParams *effect, u32 mode);
-extern struct RockWallHeights gRockWall_Heights;
+extern const struct RockWallHeights gRockWall_Heights;
 void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);

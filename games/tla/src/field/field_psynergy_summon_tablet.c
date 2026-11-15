@@ -188,7 +188,7 @@ void SummonTablet_UpdateMotes(void) {
 }
 
 extern const s32 gFieldEffect_TargetColors[];
-extern const u8 gSummonTablet_SquashScript[];
+extern const s32 gSummonTablet_SquashScript[];
 extern const u8 gMovementType_SquashScript[];
 
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the

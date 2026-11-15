@@ -46,6 +46,13 @@ struct TransitionSpan {
   u8 y1;
 };
 
+/// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
+#define TRANSITION_SHOW_ALL 0x7f7f
+
+/// A shape of WINDOW_TRANSITION_SHAPE: WINOUT and WININ while opening (swapped
+/// while closing), then up to three runs of lines down the screen, each a
+/// count of lines and either a WIN_RANGE for all of them or, when 0, the window
+/// edges from (x0, y0) on the first line toward (x1, y1) on the last.
 struct TransitionShape {
   u16 first;
   u16 second;
@@ -64,7 +71,8 @@ extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 extern const s32 gFieldEffect_ParticleEmitterScript[];
 
-extern const u8 gBattleEffect_MarkerParticleScript[];
+extern const s32 gBattleEffect_MarkerParticleScript[];
+s32 Field_IsRevealActive(struct Actor *interpreter);
 
 extern const s32 gFieldEffect_RisingPulseScript[];
 

@@ -231,7 +231,7 @@ void SelectionMenu_StartDrawing(void) {
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
 extern u32 gVBlankCount;
-extern s8 gMenu_CursorBobOffsets[];
+extern const s8 gMenu_CursorBobOffsets[];
 
 /// The selection screen's per-frame task: slides and draws the row of icons,
 /// the large icon over the chosen one, the end arrows, the icons already chosen

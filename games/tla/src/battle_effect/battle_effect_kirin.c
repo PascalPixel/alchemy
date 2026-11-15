@@ -9,8 +9,8 @@
 
 /// The hit bursts, 32 for each target, in the map cell buffer.
 
-extern struct SpriteScale gKirin_SweepScale;
-extern struct SpriteScale gKirin_ChargeScale;
+extern const struct SpriteScale gKirin_SweepScale;
+extern const struct SpriteScale gKirin_ChargeScale;
 
 #define KIRIN_CHARGE_FRAMES 96 ///< frames of the charge and the wall of fire
 #define KIRIN_SWEEP_FRAMES 120 ///< frames of Kirin's bound through the hoop

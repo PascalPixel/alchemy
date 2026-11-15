@@ -55,4 +55,9 @@ STATIC_ASSERT(offsetof(struct OptionMenuWork, page) == 0x574);
 STATIC_ASSERT(offsetof(struct OptionMenuWork, cursor) == 0x5a4);
 STATIC_ASSERT(offsetof(struct OptionMenuWork, icon) == 0x610);
 
+/// The sound test's four values: music, jingle, sound effect and sound preset.
+struct SoundTestValues {
+  s32 values[4];
+};
+
 #endif

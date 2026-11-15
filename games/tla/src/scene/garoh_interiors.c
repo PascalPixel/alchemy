@@ -391,7 +391,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 turn;
 
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_HOUSES) {

@@ -775,7 +775,7 @@ void DehkanPlateau_StepOnCrack(void) {
       leader->y.fixed += -(px(3) / 5);
       wait(1);
     }
-    gFieldWork->transition = 0x209;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Import_EventSetExitRequest(work->stepTrigger);
@@ -1327,7 +1327,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     leader->y.fixed -= px(3) / 5;
     wait(1);
   }
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(23);
@@ -1404,7 +1404,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -1800,7 +1800,7 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawPoundCubeFallLanding, 13,
 /// Sets up the fourth room, below the cracks: the floor Cannon opened, and the
 /// landing of a fall.
 void DehkanPlateau_InitializeMintChest(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   DehkanPlateau_HideMintChestActors();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
@@ -1845,7 +1845,7 @@ void DehkanPlateau_LandFromFall(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -1896,7 +1896,7 @@ loop:
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_End();
 }
 
@@ -1906,7 +1906,7 @@ void DehkanPlateau_InitializePoundCube(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 entrance;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   owner->priorityFlags |= 32;
   if (GameFlag_Get(FLAG_POUND_CUBE_TAKEN) == 0) {
     DehkanPlateau_CreatePoundCube();
@@ -1970,7 +1970,7 @@ void DehkanPlateau_CreatePoundCube(void) {
 /// Sets up the sixth room: its Pound pillar and grey pillar, Cannon met already
 /// if he is in the party, and the landing of a fall.
 void DehkanPlateau_InitializeCannon(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_CANNON)) != 0)
     GameFlag_Set(FLAG_CANNON_MET);

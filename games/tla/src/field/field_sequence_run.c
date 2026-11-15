@@ -116,7 +116,7 @@ s32 FieldSequence_Run(void) {
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(0x10000, 0);
-  work->transition = 0x100;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
   work->transitionActive = 0;
   work->walkingDistanceScale = 409;

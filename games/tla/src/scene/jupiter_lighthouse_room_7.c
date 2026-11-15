@@ -629,7 +629,7 @@ void LightSprites_InitB();
 void LightSprites_AddCounted();
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;

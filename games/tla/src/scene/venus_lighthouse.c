@@ -330,13 +330,13 @@ s32 VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    options.priority = 3 - (s32)((u32)(Random16() * 2) >> 16);
+    options.priority = 3 - (s32)(Random_Below(2));
     options.startScaleX = 2 * Q16_ONE / 5;
     options.startScaleY = 2 * Q16_ONE / 5;
     options.palette = SPRITE_COLOR_BLACK;
-    particleX = actor->x.fixed + px((s32)((u32)(Random16() * 9) >> 16) - 4);
-    particleY = actor->y.fixed + px(32 - (s32)((u32)(Random16() * 32) >> 16));
-    riseSpeed = (px((s32)((u32)(Random16() * 5) >> 16)) + px(5)) / 10;
+    particleX = actor->x.fixed + px((s32)(Random_Below(9)) - 4);
+    particleY = actor->y.fixed + px(32 - (s32)(Random_Below(32)));
+    riseSpeed = (px((s32)(Random_Below(5))) + px(5)) / 10;
     FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
@@ -570,7 +570,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 // entrance 22.
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -610,7 +610,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->restartScene = SCENE_VENUS_LIGHTHOUSE;
@@ -668,7 +668,7 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetSpeed(ACTOR_ALEX, 1);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 256;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1195,7 +1195,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(50);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 60;
-  work->transition = 256;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(22);

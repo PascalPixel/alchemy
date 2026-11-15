@@ -12,6 +12,7 @@
 /// resolves to the overlay's import stub. event_inline.h includes this layer.
 
 #include "field/event.h"
+#include "graphics/resource.h"
 
 /// Adds `func` as a task of priority `priority` (TASK_PASS_FRAME
 /// runs it once a frame), or gives the task already running it that
@@ -24,6 +25,13 @@ static inline s32 Task_AddFrame(TaskFunc func, s32 priority) {
 /// Task_AddFrame, for a caller that leaves the slot unread.
 static inline void FieldTask_AddFrame(TaskFunc func, s32 priority) {
   Task_Add(func, priority);
+}
+
+/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
+/// `destination`.
+static inline s32 FieldDecompress_TaggedLz(const void *source,
+                                           void *destination) {
+  return Decompress_TaggedLz(source, destination);
 }
 
 static inline void FieldMessage_DecodeRawUnbounded(s32 message, u16 *buffer) {

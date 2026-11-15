@@ -389,7 +389,7 @@ void EffectSprite_InitFromSlot94();
 /// Sets up the houses: the guests' extra sprites, and once the mast is cleared
 /// the two sailors in Alex's room.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 4;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(ACTOR_HEALER, 3);
@@ -437,7 +437,7 @@ void EffectSprite_InitFromSlot94();
 
 /// Sets up the houses and the guests' extra sprites.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 4;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 16;
   FieldActor_SetSpritePriority(ACTOR_HEALER, 3);

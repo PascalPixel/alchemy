@@ -215,7 +215,7 @@ void LemuriaDock_CyclePalette(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   Task_Add(LemuriaDock_CyclePalette, TASK_PASS_VBLANK);
   Flag_Clear(FLAG_SHOW_AREA_NAME);

@@ -432,7 +432,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS) {
     GondowanCliffs_SetUpPass();
     return 0;

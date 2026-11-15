@@ -264,8 +264,8 @@ s32 Kibombo_ShakeInPlace(struct Actor *object) {
 
     dx = -0x10000;
     dy = dx;
-    dx += ((Random16() * 3) >> 16) << 16;
-    dy += ((Random16() * 3) >> 16) << 16;
+    dx += (Random_Below(3)) << 16;
+    dy += (Random_Below(3)) << 16;
 
     Actor_SetPositionAndResetMotion(object, object->bounce + dx,
                                     object->gravity + dy, object->z.fixed);
@@ -284,7 +284,7 @@ s32 Kibombo_TurnRandomly(struct Actor *object) {
   if (object->riseCounter != 0) {
     object->riseCounter--;
   } else {
-    object->riseCounter = ((Random16() * 10) >> 16) + 10;
+    object->riseCounter = (Random_Below(10)) + 10;
     object->facing = Random16();
   }
   return 1;
@@ -1683,10 +1683,10 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
                                                                                \
     if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 && \
         (gFrameCount & 7) == 0) {                                              \
-      Kibombo_FlickerColor(9, 0, ((Random16() * 10) >> 16) - 5);               \
-      Kibombo_FlickerColor(n1, 1, ((Random16() * n2) >> 16) - n3);             \
-      Kibombo_FlickerColor(n4, 2, ((Random16() * 4) >> 16) - 2);               \
-      call1(n5, 3, ((Random16() * n6) >> 16) - n7);                            \
+      Kibombo_FlickerColor(9, 0, (Random_Below(10)) - 5);                      \
+      Kibombo_FlickerColor(n1, 1, (Random_Below(n2)) - n3);                    \
+      Kibombo_FlickerColor(n4, 2, (Random_Below(4)) - 2);                      \
+      call1(n5, 3, (Random_Below(n6)) - n7);                                   \
     }                                                                          \
   }
 
@@ -1701,8 +1701,8 @@ void Kibombo_FlickerStatueFires(void) {
 
   if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
       (gFrameCount & 7) == 0) {
-    Kibombo_FlickerColor(169, 0, ((Random16() * 4) >> 16) - 2);
-    Kibombo_FlickerColor(167, 1, ((Random16() * 2) >> 16) - 1);
+    Kibombo_FlickerColor(169, 0, (Random_Below(4)) - 2);
+    Kibombo_FlickerColor(167, 1, (Random_Below(2)) - 1);
     Kibombo_FlickerColor(166, 2, Random16() >> 16);
   }
 }
@@ -1835,7 +1835,7 @@ void Kibombo_FlickerFlame(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    object->timer = ((Random16() * 10) >> 16) + 10;
+    object->timer = (Random_Below(10)) + 10;
     if (object->userValue != 0) {
       object->scaleX = Q16_ONE * 3 / 2;
       object->userValue = 0;
@@ -1855,7 +1855,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->priorityFlags &= ~1;
     object->scaleY = Q16_ONE * 2;
-    object->timer = ((Random16() * 10) >> 16) + 10;
+    object->timer = (Random_Below(10)) + 10;
     object->userValue = 0;
     object->update = (void (*)(void))Kibombo_FlickerFlame;
     sprite = object->sprite;
@@ -2236,7 +2236,7 @@ void Kibombo_LeaveRoom(void) {
 void Kibombo_LeaveRoomFading(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 0x209;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Kibombo_LeaveRoom();
 }
 
@@ -2554,7 +2554,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 40);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   wait(1);
-  gFieldWork->transition = 0x202;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(10);
@@ -2608,7 +2608,7 @@ void Kibombo_GabombaNotPleased(void) {
   GameFlag_Clear(0x8f7);
   Sound_Play(MUS_KIBOMBO);
   Event_Wait(80);
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(11);
@@ -2667,7 +2667,7 @@ void Kibombo_OpenCeremonyScene(void) {
   }
   wait(1);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 0x201;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2915,7 +2915,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 320);
   Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
-  gFieldWork->transition = 0x203;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_GABOMBA_RESPONDED);
@@ -2935,7 +2935,7 @@ void Kibombo_CeremonyEnds(void) {
       gMainRoutineWork.leaderActorId, px(370), px(636), FACING_NORTH);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_SetSource(0, 0);
   PaletteFade_SetTarget(0x10002, 0);
   gFieldWork->transitionFrames = 60;
@@ -3016,7 +3016,7 @@ void Kibombo_CeremonyEnds(void) {
   Actor_SetPosition(ACTOR_KRADEN_AT_HOME, 0, 0);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 16;
-  work->transition = 0x209;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Set(FLAG_GABOMBA_CEREMONY_ENDED);
   Event_End();
 }
@@ -3356,7 +3356,7 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Kibombo_InitializeHouses(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Kibombo_HideHousesPair();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {

@@ -343,7 +343,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
@@ -619,9 +619,9 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     spark.startScaleX = 0xb333;
     spark.startScaleY = 0xb333;
     spark.palette = 14;
-    x = object->x.fixed + (((((u32)Random16() * 9) >> 16) - 4) << 16);
-    y = object->y.fixed + ((32 - (((u32)Random16() * 20) >> 16)) << 16);
-    speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + 0x50000) / 10;
+    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
+    speed = (s32)(((Random_Below(5)) << 16) + 0x50000) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, 0xb0000, &spark);
   }
   return 0;

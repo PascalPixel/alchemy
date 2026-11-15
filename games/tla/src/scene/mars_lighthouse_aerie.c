@@ -187,7 +187,7 @@ void MarsLighthouseAerie_LookAround(struct Actor *object) {
   if (*timer != 0) {
     (*timer)--;
   } else {
-    *timer = (((u32)Random16() * 80) >> 16) + 60;
+    *timer = (Random_Below(80)) + 60;
     object->facing = Random16();
   }
 }
@@ -329,7 +329,7 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   MarsLighthouseAerie_SetUpBeacon();
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   if (gMainRoutineWork.entrance == 5) {
@@ -390,7 +390,7 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object);
 /// Every sixteenth frame a flame rises from the beacon's fire.
 void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_FIRE);
-  s32 offset = (Random16() * 48 >> 16) << 16;
+  s32 offset = (Random_Below(48)) << 16;
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
@@ -447,7 +447,7 @@ void MarsLighthouseAerie_StartLookingAround(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_Stop(id);
-  object->riseCounter = (((u32)Random16() * 40) >> 16) + 20;
+  object->riseCounter = (Random_Below(40)) + 20;
   object->update = (void (*)(void))MarsLighthouseAerie_LookAround;
 }
 
@@ -532,7 +532,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   // "The wind's too strong! I can't see anything!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldActor_Stop(gMainRoutineWork.leaderActorId);
-  actor->riseCounter = ((Random16() * 20) >> 16) + 20;
+  actor->riseCounter = (Random_Below(20)) + 20;
   actor->update = (void (*)(void))MarsLighthouseAerie_LookAround;
   MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
   MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
@@ -1285,7 +1285,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_SetSpritePriority(ACTOR_KRADEN, 1);
   FieldActor_SetSpritePriority(ACTOR_IVAN_STAND_IN, 1);
   FieldActor_SetSpritePriority(ACTOR_MIA_STAND_IN, 1);
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1343,9 +1343,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_JENNAS_FATHER)), 0);
   FieldActor_SetSpriteColor((Actor_Get(ACTOR_FREED_KYLE)), 0);
   FieldEvent_Wait(20);
-  mother->riseCounter = ((Random16() * 80) >> 16) + 40;
-  father->riseCounter = ((Random16() * 80) >> 16) + 40;
-  kyle->riseCounter = ((Random16() * 80) >> 16) + 40;
+  mother->riseCounter = (Random_Below(80)) + 40;
+  father->riseCounter = (Random_Below(80)) + 40;
+  kyle->riseCounter = (Random_Below(80)) + 40;
   mother->update = (void (*)(void))MarsLighthouseAerie_Throb;
   father->update = (void (*)(void))MarsLighthouseAerie_Throb;
   kyle->update = (void (*)(void))MarsLighthouseAerie_Throb;
@@ -1952,8 +1952,8 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   }
   if (spawn) {
     object = FieldActor_Create(0x2a0, anchor->x.fixed,
-                               anchor->y.fixed -
-                                   ((Random16() * 80 >> 16) << 16) - 0x80000,
+                               anchor->y.fixed - ((Random_Below(80)) << 16) -
+                                   0x80000,
                                anchor->z.fixed);
     if (object != NULL) {
       u8 zero;
@@ -2348,7 +2348,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_MoveTo(512, 96, 288, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -2922,7 +2922,7 @@ void Teleport_StartShimmer(void) {
 }
 
 void Teleport_StopShimmer(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -2988,7 +2988,7 @@ void Teleport_ArriveWhirling(void) {
   saved = work->transition;
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Teleport_StartFastShimmer();

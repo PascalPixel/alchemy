@@ -516,7 +516,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

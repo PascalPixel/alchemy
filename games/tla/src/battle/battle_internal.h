@@ -384,18 +384,4 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// party's for an enemy and the enemies' for a party member.
 #define TARGET_NONE_ENEMY PLACE_PARTY
 
-/// Io_Write16 for a 32-bit register, as The Broken Seal's io_write.h has it.
-#ifndef Io_Write32
-#define Io_Write32(v, reg) Io_Write16(v, reg)
-#endif
-
-/// Sets the kind of battle the next one is, as every write to it does. The
-/// name is ours, as in The Broken Seal (main_routine_work.h there).
-#ifndef Battle_SetType
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-#endif
-
 #endif

@@ -839,7 +839,7 @@ step:
   if (++frame <= 39)
     goto step;
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(16);
@@ -1086,7 +1086,8 @@ s32 Scene_Initialize(void) {
 
   /* FAKEMATCH(temporary): the first flag update through other. */
 
-  ((struct FieldWork *)heap->fieldWork)->transition = 516;
+  ((struct FieldWork *)heap->fieldWork)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   value = 516;
   Flag_Set(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();

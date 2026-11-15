@@ -150,7 +150,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   }
 
   if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
-    s32 limit = ((Random16() * 5) >> 16) + 1;
+    s32 limit = (Random_Below(5)) + 1;
 
     if (limit <= 1)
       limit = 2;

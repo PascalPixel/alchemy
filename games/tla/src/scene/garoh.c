@@ -558,7 +558,7 @@ void Garoh_EnterCrevice(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   Event_PlaySound(SE_MAP_EXIT);
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Flag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
   FieldEvent_SetExitRequest(event->stepTrigger);
@@ -611,7 +611,7 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   if (gMainRoutineWork.next == SCENE_GAROH_TUNNELS) {
-    gFieldWork->transition = 0x204;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   } else if (gMainRoutineWork.next == SCENE_GAROH_WEREWOLF_CAVE) {
     FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
     FieldActor_SetSpritePriority(ACTOR_FIRE_B, 1);
@@ -620,14 +620,14 @@ s32 Scene_Initialize(void) {
 
       Actor_SetPositionAndFacing(ACTOR_MAHA, px(328), px(162), angle);
     }
-    gFieldWork->transition = 0x204;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldEffect_StartBlankOverlay(0);
     if (gMainRoutineWork.entrance == 6) {
       work = Ram_HeapSlots->fieldWork;
-      work->transition = 0x209;
+      work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
       Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
-      gFieldWork->transition = 0x204;
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
     }
@@ -682,7 +682,7 @@ void Garoh_InitializeVillage(void) {
   if (gMainRoutineWork.entrance == 12) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    work->transition = 0x209;
+    work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_UP);
     Event_ClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
     Event_StartScreenTransition();
@@ -1118,7 +1118,7 @@ void Garoh_WerewolfProwls(void) {
     wave = Math_Sin(i * (TRIG_TURN / 8));
     position[2] = Garoh_PathStep(px(32), px(120), i) - wave * 7;
     position[1] = 0;
-    r = ((Random16() * 10) >> 16) + 4;
+    r = (Random_Below(10)) + 4;
     Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
                         position[2] / px(1));
@@ -1149,7 +1149,7 @@ void Garoh_WerewolfProwls(void) {
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
-    r = ((Random16() * 10) >> 16) + 4;
+    r = (Random_Below(10)) + 4;
     Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
                         position[2] / px(1));

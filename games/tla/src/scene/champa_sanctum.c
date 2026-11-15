@@ -42,7 +42,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 513;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Actor_SetSpritePriority(ACTOR_HEALER, 2);
   Actor_GetById(ACTOR_HEALER)->collisionFlags |= 4;
   Actor_GetById(ACTOR_HEALER)->collisionFlags |= 16;

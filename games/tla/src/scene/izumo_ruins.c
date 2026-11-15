@@ -360,7 +360,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 height;
 
-  work->transition = 0x204;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {

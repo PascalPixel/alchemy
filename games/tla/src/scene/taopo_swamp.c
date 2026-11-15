@@ -1279,7 +1279,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if (scene == SCENE_TAOPO_SWAMP_MUD) {
     gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_ENTRANCE;
     gMainRoutineWork.retreatEntrance = 1;
@@ -1898,7 +1898,7 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the pool

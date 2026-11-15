@@ -12,9 +12,9 @@ s32 Actor_EmitRisingSparks(struct Actor *object) {
     spark.startScaleX = Q16_ONE * 7 / 10;
     spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 14;
-    x = object->x.fixed + (((((u32)Random16() * 9) >> 16) - 4) << 16);
-    y = object->y.fixed + ((32 - (((u32)Random16() * 20) >> 16)) << 16);
-    speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + px(5)) / 10;
+    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
+    speed = (s32)(((Random_Below(5)) << 16) + px(5)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,

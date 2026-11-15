@@ -488,7 +488,7 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 #include "shared/scene_raise_held_actor.h"
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == SCENE_DAILA_FLOODED)
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
   else if (gMainRoutineWork.next == SCENE_DAILA)

@@ -625,7 +625,7 @@ extern s16 gSettlements_WallCrate[];
 void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == SCENE_KALT_ISLAND)
     Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
@@ -782,7 +782,7 @@ void Settlements_CycleWaterColors(void) {
 }
 
 void Settlements_StartWaterfall(void) {
-  gFieldWork->transition = 514;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();

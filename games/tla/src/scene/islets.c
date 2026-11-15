@@ -1170,7 +1170,7 @@ void Islets_RideBackToIsland(void) {
     } while (*done == 0);
     Islets_StopWaterShimmer();
     System_Wait(1);
-    gFieldWork->transition = 0x201;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     FieldPsynergy_GreyMindReadPalette();
@@ -1682,7 +1682,7 @@ void Islets_ArriveAtSecretSpot(void) {
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
   System_Wait(1);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 0x201;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.6);
@@ -1710,7 +1710,7 @@ void Islets_ArriveAtSecretSpot(void) {
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 0x100;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Islets_StartWaterShimmer();
 }
 
@@ -1738,7 +1738,8 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
-  ((struct FieldWork *)EVENT_WORK)->transition = 513;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1774,7 +1775,8 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
   Islets_StartWaterShimmer();
 #if TLA_PATCH_1
-  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 #endif
 }
 
@@ -1782,7 +1784,7 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 scene;
 
-  work->transition = 0x100;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ISLETS_DOG)
     Islets_InitializeDog();
@@ -2242,7 +2244,7 @@ void Islets_DropThroughHole(void) {
   Actor_SetSpriteFlags((s32)object0, 0);
   Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
   FieldEvent_Wait(40);
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);

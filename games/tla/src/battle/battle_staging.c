@@ -409,7 +409,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       }
       completed = 1;
     }
-  } else if (((Random16() * 10) >> 16) <= 6) {
+  } else if ((Random_Below(10)) <= 6) {
     s16 event[2];
 
     event[0] = plan->unitId;

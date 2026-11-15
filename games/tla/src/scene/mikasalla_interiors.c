@@ -259,7 +259,7 @@ void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 5)

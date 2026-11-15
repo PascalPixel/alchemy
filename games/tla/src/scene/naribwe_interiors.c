@@ -848,7 +848,7 @@ void Actor_DisableById(s32 id);
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   Actor_DisableById(ACTOR_FORTUNE_TABLE);
   Actor_DisableById(ACTOR_FORTUNE_MARKER);

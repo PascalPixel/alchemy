@@ -13,7 +13,7 @@ void Rubble_Spray(s32 spread) {
   s32 y;
 
   do {
-    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
         285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     if (effect != 0) {

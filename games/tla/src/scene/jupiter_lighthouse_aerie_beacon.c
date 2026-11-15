@@ -58,13 +58,6 @@
     FieldEvent_Wait(frames);                                                   \
   } while (0)
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 /// The placed actors this file moves by number. The party's rows take their
 /// characters' numbers; the rest count on from 8 (a render of the beacon with
 /// FLAG_ISAAC_AND_IVAN_FELL set shows Agatio's sheet at 27, Karst's at 28).
@@ -338,7 +331,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     break;
   }
   if (spawn) {
-    rise = ((u32)(Random16() * 80) >> 16) << 16;
+    rise = (Random_Below(80)) << 16;
     effect =
         FieldActor_Create(672, center->x.fixed,
                           center->y.fixed - rise + 0xfff80000, center->z.fixed);
@@ -2323,7 +2316,7 @@ s32 Scene_Initialize(void) {
   s32 t7;
   s32 t8;
 
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Call2(HangingVine_Place, 0xf, 1);
   HangingVine_Place(16, 1);
   t2 = Actor_Get(gMainRoutineWork.leaderActorId);

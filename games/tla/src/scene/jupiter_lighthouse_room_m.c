@@ -25,13 +25,6 @@
 #include "field/actor.h"
 #include "item_ids.h"
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 void Leader_CenterInCell(void);
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -1570,7 +1563,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   HangingVine_Place(8, 1);
   HangingVine_Place(9, 1);
   HangingVine_Place(10, 1);

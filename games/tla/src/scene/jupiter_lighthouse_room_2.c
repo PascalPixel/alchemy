@@ -480,7 +480,7 @@ void JupiterLighthouse_SpawnBeamMotes(void) {
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 0x204;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldActor_SetSpritePriority(ACTOR_FIRST_BEAM_PILLAR, 3);
   FieldActor_SetSpritePriority(ACTOR_SECOND_BEAM_PILLAR, 3);
   Io_Write16(0x3f06, &REG_BLDCNT);

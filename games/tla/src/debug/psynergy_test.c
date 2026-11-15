@@ -486,7 +486,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 0x100;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->sceneAttributeHigh = 0;
   work->sceneAttributeLow = 0;
   // How many of each rare item the shops may sell, as in The Broken Seal's

@@ -31,7 +31,7 @@ void CrackedTile_Fall(struct CellTargetHead *table,
   } while (x <= 39);
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   table->shown = 0;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }

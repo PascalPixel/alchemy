@@ -540,7 +540,7 @@ void YampiDesertCave_StartMarkGlow(void) {
 }
 
 void YampiDesertCave_StopMarkGlow(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -604,7 +604,7 @@ void YampiDesertCave_ArriveByTeleport(void) {
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   YampiDesertCave_StartMarkFlash();
@@ -974,7 +974,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
     YampiDesertCave_SetMarkColors(

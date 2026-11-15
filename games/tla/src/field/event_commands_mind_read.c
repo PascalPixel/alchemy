@@ -841,7 +841,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
         Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
         piece->motionFlags = 2;
       }
-      wait((((u32)Random16() * 2) >> 16) + 2);
+      wait((Random_Below(2)) + 2);
       n--;
     } while (n >= 0);
     HangingVine_Hang(scene->secondActorId, 1);
@@ -879,7 +879,7 @@ void FieldPsynergy_Growth(void) {
       Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
       *((u8 *)object + 0x55) = 2;
     }
-    wait((((u32)Random16() * 2) >> 16) + 2);
+    wait((Random_Below(2)) + 2);
     entryCount--;
   } while (entryCount >= 0);
   wait(30);

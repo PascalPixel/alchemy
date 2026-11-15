@@ -430,7 +430,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PaletteFade_SetTarget(0, 0);
   PaletteFade_StartInterpolation(60);
   wait(64);
-  ((struct FieldWork *)EVENT_WORK)->transition = 513;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   ((struct FieldWork *)EVENT_WORK)->transitionFrames = 10;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -718,7 +719,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   GabombaStatueChamber_OpenThePassage();
-  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -875,7 +877,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Wait(10);
   Actor_SetMovementTypeById(ACTOR_AKAFUBU, gGabombaStatueChamber_WalkOffScript);
   Event_Wait(60);
-  ((struct FieldWork *)EVENT_WORK)->transition = 514;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
@@ -1020,7 +1023,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 521;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   ((struct Actor *)Actor_GetById(Party_GetLeaderActor()))->priorityFlags |=
       0x20;
   scene = gMainRoutineWork.next;

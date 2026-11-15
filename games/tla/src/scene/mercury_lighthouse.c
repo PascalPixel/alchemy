@@ -55,7 +55,7 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
     (*timer)--;
     return;
   }
-  *timer = ((Random16() * 80) >> 16) + 40;
+  *timer = (Random_Below(80)) + 40;
   state = &object->riseEnabled;
   switch (*state) {
   case 0:
@@ -194,12 +194,12 @@ void MercuryLighthouse_HearVoices(void) {
   // "I don't know. They've been standing here telling everyone to leave..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_OLD_MAN, 0);
   actor = Actor_GetById(ACTOR_OLD_MAN);
-  delay = ((Random16() * 80) >> 16) + 40;
+  delay = (Random_Below(80)) + 40;
   actor->riseCounter = delay;
   actor->riseEnabled = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(ACTOR_OLD_WOMAN);
-  delay = ((Random16() * 80) >> 16) + 40;
+  delay = (Random_Below(80)) + 40;
   actor->riseCounter = delay;
   actor->riseEnabled = 2;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
@@ -258,7 +258,7 @@ void MercuryLighthouse_HearVoices(void) {
   *(u16 *)BG_PLTT = 0;
   wait(1);
   gFieldWork->transitionFrames = 16;
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetFlag(0xa3c);

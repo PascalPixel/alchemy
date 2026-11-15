@@ -343,7 +343,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   state = &gMainRoutineWork;
   Actor_Get(state->leaderActorId)->priorityFlags |= 32;
   if (state->entrance == 90) {
@@ -473,7 +473,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       }
       spark->timer++;
       if (spark->timer > 31) {
-        spark->timer = -(Random16() * 7 >> 16);
+        spark->timer = -(Random_Below(7));
       }
       spark++;
     } while ((s32)spark <= (s32)&sparks[95]);

@@ -120,7 +120,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 256;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->sceneAttributeHigh = 0;
   work->sceneAttributeLow = 0;
   gMainRoutineWork.messageSpeed = 2;

@@ -86,7 +86,7 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   Event_ClearFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = 8;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
@@ -99,7 +99,7 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   Event_SetFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = 8;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
@@ -169,7 +169,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
     gMainRoutineWork.leaderActorId = 8;
-    gFieldWork->transition = 0x209;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     gMainRoutineWork.leaderActorId = 4;
@@ -261,7 +261,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   FieldEvent_Wait(10);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 30;
-  work->transition = 0x204;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);

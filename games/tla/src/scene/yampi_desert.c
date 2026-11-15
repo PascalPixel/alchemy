@@ -1029,7 +1029,7 @@ step_5:
   if (i <= 5)
     goto step_5;
   Actor_SetPosition(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 0, 0);
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(4);
@@ -2155,7 +2155,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   actor8->gravity = Q16_ONE / 2;
   actor8->bounce = 0;
   wait(1);
-  gFieldWork->transition = 0x203;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -2440,7 +2440,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 
 /// The setup of the scorpion pit.
 void YampiDesert_SetUpScorpionPit(void) {
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.entrance == 1 &&
       !GameFlag_Get(FLAG_KING_SCORPION_BEATEN)) {
@@ -2459,11 +2459,13 @@ void YampiDesert_SetUpScorpionPit(void) {
   wait(10);
 }
 
-void YampiDesert_SetUpOasisCave(void) { gFieldWork->transition = 0x204; }
+void YampiDesert_SetUpOasisCave(void) {
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+}
 
 /// Sets up the Blow Mace chest's room: its stake and its sand slide.
 void YampiDesert_SetUpBlowMaceChest(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Scene_QueueMusic(SE_KIRIN);
   YampiDesert_PlaceStakes(gYampiDesertBlowMaceChestStakes);
   YampiDesert_SetUpBlowMaceChestSlideActors();

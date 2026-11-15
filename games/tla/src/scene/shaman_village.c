@@ -2837,7 +2837,7 @@ void ShamanVillage_SetUpVillage(void) {
 void ShamanVillage_SetUpInn(void) {
   u32 i;
 
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags = 8;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     s32 angle = FACING_SOUTH_SOUTHEAST;
@@ -2902,7 +2902,7 @@ DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors, 9, 10)
 void ShamanVillage_SetUpSanctum(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 521;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Task_Add(ShamanVillage_LayerSanctumActors, TASK_PASS_VBLANK);
   } else {

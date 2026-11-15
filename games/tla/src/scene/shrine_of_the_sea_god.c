@@ -554,7 +554,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
     ShrineOfTheSeaGod_ScrollWaterUp();
   for (i = 0; i < 24; i++)
     ShrineOfTheSeaGod_LiftWithWater();
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetExitRequest(3);
@@ -652,7 +652,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   c->z.fixed += -px(12);
   MapGrid_CenterOnFollowedPoint();
   wait(4);
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
@@ -705,7 +705,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   MapGrid_CopyCellsTo(46, 108, 9, 12, 12, 3);
   wait(10);
   MapGrid_WaitForShakeToSettle();
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_FIRST_LOG);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_SECOND_LOG);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_THIRD_LOG);
@@ -743,7 +743,7 @@ void ShrineOfTheSeaGod_RiseOnWater(void) {
   layer->offsetY += px(-50);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  gFieldWork->transition = 515;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Event_StartScreenTransition();
   MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   for (i = 0; i < 100; i++) {
@@ -755,7 +755,7 @@ void ShrineOfTheSeaGod_RiseOnWater(void) {
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetScreenShake(0, 0, 0);
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   MapGrid_CopyCellsTo(62, 69, 62, 18, 19, 6);
   wait(1);
@@ -790,7 +790,7 @@ loop:
   layer->offsetY -= px(1) / 2;
   wait(2);
   if (i == 90) {
-    gFieldWork->transition = 0x203;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Event_FinishScreenTransition();
   }
   i++;
@@ -1859,7 +1859,7 @@ void ShrineOfTheSeaGod_EndSand(void) {
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
     ShrineOfTheSeaGod_InitializeRope();

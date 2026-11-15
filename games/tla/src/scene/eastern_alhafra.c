@@ -683,7 +683,8 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 
-  ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
+  ((struct FieldWork *)EVENT_WORK)->transition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   EasternAlhafra_StartWave();
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
@@ -1676,7 +1677,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
     event->transitionFrames = 60;
-    event->transition = 0x100;
+    event->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

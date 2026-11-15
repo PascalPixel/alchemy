@@ -41,7 +41,7 @@ s32 Forge_RollResult(s32 itemId) {
   if (recipe != NULL) {
     for (i = 0; i < 8 && recipe->results[i] != 0; i++)
       total += recipe->weights[i];
-    roll = (Random16() * total) >> 16;
+    roll = Random_Below(total);
     for (i = 0; i < 8 && recipe->results[i] != 0; i++) {
       roll -= recipe->weights[i];
       if (roll < 0)

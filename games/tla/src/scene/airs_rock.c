@@ -1660,7 +1660,7 @@ s32 Scene_Initialize(void) {
   s32 *beam;
   volatile struct DmaRegisters *dma;
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
@@ -1864,7 +1864,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
         Actor_SetPosition(ACTOR_THIRD_PILLAR, 184, 280);
       if (!GameFlag_Get(FLAG_AIRS_ROCK_FOG_CLEARED)) {
-        gFieldWork->transition = 0x100;
+        gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
         dma = (volatile struct DmaRegisters *)0x040000b0;

@@ -810,7 +810,7 @@ next:
   if (i <= 39)
     goto next;
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(arg);
@@ -895,7 +895,7 @@ next:
   if (i <= 39)
     goto next;
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(11);
@@ -1052,7 +1052,7 @@ s32 Scene_Initialize(void) {
   // XXX: Data_02006878 is cleared here and read nowhere in this overlay; a
   // watch on the word in the running game would say what else reads it.
   Data_02006878 = 0;
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_OUTSIDE) {
@@ -2200,7 +2200,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   } while (0);
   event->busy = 0;
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2226,7 +2226,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -2379,7 +2379,7 @@ void Teleport_StartShimmer(void) {
 
 /// Stops the shimmer.
 void Teleport_StopShimmer(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -2443,7 +2443,7 @@ void Teleport_ArriveWhirling(void) {
   saved = work->transition;
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Teleport_StartFastShimmer();

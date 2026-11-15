@@ -502,7 +502,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
       Actor_GetById(ACTOR_OLD_WOMAN_ON_FISHING_BOATS)->update =

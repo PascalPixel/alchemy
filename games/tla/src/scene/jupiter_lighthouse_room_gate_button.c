@@ -146,7 +146,7 @@ void JupiterLighthouse_FinishMovingBlock(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.entrance == 6)
     Actor_ArriveInRing(gMainRoutineWork.leaderActorId);

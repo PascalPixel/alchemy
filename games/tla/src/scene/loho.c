@@ -319,7 +319,7 @@ spark:
     goto drawSpark;
   p->sprite.words[0] = 0x40000000;
   p->sprite.words[1] = 0;
-  t47 = (u16)((((u32)(Random16() * 96) >> 16) + 72) & 0x1ff);
+  t47 = (u16)(((Random_Below(96)) + 72) & 0x1ff);
   t48 = p->sprite.halves[1];
   p->sprite.halves[1] = (t48 & -0x200) | t47;
   p->sprite.oam.y = (u32)Random16() >> 10;
@@ -338,7 +338,7 @@ ageSpark:
   p->age += 1;
   if (p->age <= 31)
     goto nextSpark;
-  p->age = -((u32)(Random16() * 7) >> 16);
+  p->age = -(Random_Below(7));
 nextSpark:
   p++;
   if ((s32)p <= (s32)&table[95])
@@ -811,12 +811,12 @@ void Loho_TurnAndClimbDownLadder(void) {
 }
 
 void Loho_SetUpTown(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
 }
 
 void Loho_SetUpInteriors(void) {
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INNKEEPER), 0);
 }
 

@@ -33,6 +33,7 @@
 #include "scene/scene.h"
 #include "system/system_bank.h"
 #include "resource_ids.h"
+#include "system/system_call.h"
 
 extern s16 gTitleVramBlock;
 
@@ -274,14 +275,6 @@ fade:
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gFieldWork->transitionFrames = 60;
-}
-
-/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-/// `destination`: the system call layer's inline, as The Broken Seal's
-/// system_call.h has it, which this game's does not yet.
-static inline s32 FieldDecompress_TaggedLz(const void *source,
-                                           void *destination) {
-  return Decompress_TaggedLz(source, destination);
 }
 
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by

@@ -602,12 +602,10 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_SHAKE:
         if (gVBlankCount & 1) {
-          sprite->x =
-              output->x +
-              (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
-          sprite->y =
-              output->y +
-              (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
+          sprite->x = output->x +
+                      (s32)(((Random_Below(3)) + (Random_Below(3))) >> 1) - 1;
+          sprite->y = output->y +
+                      (s32)(((Random_Below(3)) + (Random_Below(3))) >> 1) - 1;
         }
         break;
       case WINDOW_SPRITE_MOTION_POP:

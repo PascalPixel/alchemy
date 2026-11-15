@@ -482,7 +482,7 @@ void Madra_SealHole(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Madra_SealHole();
   } else {

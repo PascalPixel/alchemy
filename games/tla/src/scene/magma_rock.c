@@ -1460,7 +1460,7 @@ void MagmaRock_LaunchLeader(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1495,7 +1495,7 @@ loop:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   MagmaRock_EndEvent();
 }
 
@@ -1609,7 +1609,7 @@ s32 Scene_Initialize(void) {
   s32 priorityBit, destinationX, destinationColumn, width;
   u8 zero;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work = &gMainRoutineWork;
   work->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
   work->retreatEntrance = 1;
@@ -2126,7 +2126,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
   s32 y;
 
   do {
-    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
         285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {
@@ -2184,9 +2184,9 @@ void MagmaRock_SpawnDustRing(void) {
       effect->velocity.y = zero;
       effect->velocity.z = Math_Sin(angle);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += (Random16() * 0xc000 >> 16) - 0x6000;
-      effect->velocity.z += (Random16() * 0x6000 >> 16) - 0x3000;
-      effect->spin = (Random16() * 0x1000 >> 16) - 0x800;
+      effect->velocity.x += (Random_Below(0xc000)) - 0x6000;
+      effect->velocity.z += (Random_Below(0x6000)) - 0x3000;
+      effect->spin = (Random_Below(0x1000)) - 0x800;
       effect->scaleRateX = zero;
       effect->scaleRateY = zero;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;

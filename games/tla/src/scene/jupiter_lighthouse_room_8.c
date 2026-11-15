@@ -170,7 +170,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 PushTarget_FillFootprint(s32 id);
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);

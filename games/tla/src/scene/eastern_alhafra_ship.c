@@ -190,7 +190,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == 99) {
     GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);

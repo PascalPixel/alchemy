@@ -175,7 +175,7 @@ s32 GabombaStatue_LookAround(struct Wanderer *actor) {
   if (actor->timer != 0) {
     actor->timer--;
   } else {
-    actor->timer = (Random16() * 40 >> 16) + 10;
+    actor->timer = (Random_Below(40)) + 10;
     if (actor->turned != 0) {
       actor->turned = 0;
       actor->facing = actor->facingA;
@@ -617,7 +617,7 @@ void GabombaStatue_EndRide(struct Actor *object) {
     if (i == 10)
       Event_PlaySound(SE_DUST_PUFF);
     if (i == 20) {
-      gFieldWork->transition = 521;
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
       Event_FinishScreenTransition();
     }
   }
@@ -866,7 +866,7 @@ void GabombaStatue_HearTheOffering(void) {
   Event_PlaySound(MUS_KIBOMBO);
   result = GabombaStatue_RunCharges(11, 1);
   ObjectTable_Snapshot();
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {
@@ -1521,7 +1521,7 @@ void GabombaStatue_LandFromFall(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -1541,8 +1541,8 @@ void GabombaStatue_LandFromFall(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+    velocity[0] += (Random_Below(0xc000)) - 0x6000;
+    velocity[2] += (Random_Below(0x6000)) - 0x3000;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2], 0x1090001,
                       &options);
@@ -1561,7 +1561,7 @@ void GabombaStatue_LandFromFall(void) {
   actor->bounce = Q16_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_End();
 }
 
@@ -1668,7 +1668,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(448), px(312), speed);
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(468), px(312), speed);
   System_Wait(1);
-  gFieldWork->transition = 0x202;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1702,15 +1702,11 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
   ((struct Wanderer *)Actor_Get(gMainRoutineWork.leaderActorId))->timer =
-      (Random16() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_PIERS))->timer =
-      (Random16() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_JENNA))->timer =
-      (Random16() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_SHEBA))->timer =
-      (Random16() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_KRADEN))->timer =
-      (Random16() * 40 >> 16) + 10;
+      (Random_Below(40)) + 10;
+  ((struct Wanderer *)Actor_Get(ACTOR_PIERS))->timer = (Random_Below(40)) + 10;
+  ((struct Wanderer *)Actor_Get(ACTOR_JENNA))->timer = (Random_Below(40)) + 10;
+  ((struct Wanderer *)Actor_Get(ACTOR_SHEBA))->timer = (Random_Below(40)) + 10;
+  ((struct Wanderer *)Actor_Get(ACTOR_KRADEN))->timer = (Random_Below(40)) + 10;
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_StepBackScript);
@@ -1751,7 +1747,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(448), px(312), north);
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(468), px(312), north);
   System_Wait(1);
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1926,7 +1922,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  gFieldWork->transition = 0x202;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(1.2);
@@ -2025,7 +2021,7 @@ void GabombaStatue_FixTheChannel(void) {
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       GabombaStatue_TurnCogs(0);
@@ -2184,10 +2180,10 @@ void GabombaStatue_InitializeArrows(void) {
   if (Event_GetFlag(0x8fc)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    gFieldWork->transition = 0x201;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gFieldWork->transition = 0x209;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_ClearFlag(0x8fc);
     if (Event_GetFlag(0x9eb) && !Event_GetFlag(FLAG_GABOMBA_CHANNEL_FIXED))
       GabombaStatue_FixTheChannel();
@@ -2414,12 +2410,12 @@ count_next:
     goto retry;
   if (cross == 0)
     goto retry;
-  mode = (Random16() * 2) >> 16;
+  mode = Random_Below(2);
   left = 7;
   tries = 1;
 start_try:
-  col = (Random16() * 11) >> 16;
-  row = ((Random16() * 3) >> 16) + 5;
+  col = Random_Below(11);
+  row = (Random_Below(3)) + 5;
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if ((u32)(piece - 1) <= 1) {
@@ -2440,8 +2436,8 @@ start_done:
 corner_next:
   tries = 1;
 corner_try:
-  col = (Random16() * 11) >> 16;
-  row = (Random16() * 8) >> 16;
+  col = Random_Below(11);
+  row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if (piece == 3 || piece == 8 || piece == 9) {
@@ -2450,13 +2446,13 @@ corner_try:
       if (shape != 6 && shape != 9) {
         switch (piece) {
         case 3:
-          cell->kind = ((Random16() * 2) >> 16) + 1;
+          cell->kind = (Random_Below(2)) + 1;
           break;
         case 8:
-          cell->kind = (((Random16() * 2) >> 16) << 1) + 4;
+          cell->kind = ((Random_Below(2)) << 1) + 4;
           break;
         case 9:
-          cell->kind = (((Random16() * 2) >> 16) << 1) + 5;
+          cell->kind = ((Random_Below(2)) << 1) + 5;
           break;
         }
         state->cells[row * 11 + col].occupied = 1;
@@ -2473,8 +2469,8 @@ corner_done:
     goto corner_next;
   tries = 1;
 straight_try:
-  col = (Random16() * 11) >> 16;
-  row = (Random16() * 8) >> 16;
+  col = Random_Below(11);
+  row = Random_Below(8);
   if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
     piece = state->cells[row * 11 + col].kind;
     if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
@@ -2492,8 +2488,8 @@ straight_done:
   plain_next:
     tries = 1;
   plain_try:
-    col = (Random16() * 11) >> 16;
-    row = (Random16() * 8) >> 16;
+    col = Random_Below(11);
+    row = Random_Below(8);
     if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
       piece = state->cells[row * 11 + col].kind;
       if ((u32)(piece - 1) <= 1) {
@@ -2515,7 +2511,7 @@ turn_col:
   piece = state->cells[row * 11 + col].kind;
   shape = state->cells[row * 11 + col].occupied;
   if (shape != 0) {
-    switch ((Random16() * 8) >> 16) {
+    switch (Random_Below(8)) {
     case 0:
     case 1:
     case 2:
@@ -2611,7 +2607,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       value = Random16();
       dir = direction;
       if (value > 0x7fff)
-        dir = (Random16() * 4) >> 16;
+        dir = Random_Below(4);
       tried = gGabombaStatue_PathTried[step];
       if ((tried >> dir) & one)
         continue;

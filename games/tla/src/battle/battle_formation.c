@@ -521,8 +521,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
          memberOrEnemyIndex++) {
-      s32 first = (Random16() * 5) >> 16;
-      s32 second = (Random16() * 5) >> 16;
+      s32 first = Random_Below(5);
+      s32 second = Random_Below(5);
       s32 swap = memberOrder[first];
 
       memberOrder[first] = memberOrder[second];

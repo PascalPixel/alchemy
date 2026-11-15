@@ -585,7 +585,7 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
 DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)

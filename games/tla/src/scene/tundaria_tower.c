@@ -825,7 +825,7 @@ void TundariaTower_LandFromSlide(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -862,7 +862,7 @@ void TundariaTower_LandFromSlide(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_End();
 }
 
@@ -882,7 +882,7 @@ s32 Scene_Initialize(void) {
   s32 scene;
   s32 flag;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_TUNDARIA_TOWER_ENTRANCE) {
   } else if (scene == SCENE_TUNDARIA_TOWER_CENTER_PRONG) {
@@ -1451,7 +1451,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
   do {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+      s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);

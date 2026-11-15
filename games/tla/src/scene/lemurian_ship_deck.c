@@ -541,7 +541,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_DECK_1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
-    gFieldWork->transition = 0x100;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);

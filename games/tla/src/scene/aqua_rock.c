@@ -1030,7 +1030,7 @@ s32 Scene_Initialize(void) {
   s32 id, x, z;
   s16 *entrance;
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_MOAI;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;

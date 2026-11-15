@@ -202,7 +202,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 0x204;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldActor_SetSpritePriority(64, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;

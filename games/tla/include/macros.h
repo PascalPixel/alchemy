@@ -29,6 +29,9 @@
 /// The magnitude of v. v is read twice.
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+/// The entries of an array whose size is declared, as pret's global.h has it.
+#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
+
 /// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
 /// `v | -v`. The flag readers and the Psynergy tests return their truth values
 /// so; the name is ours. `v` is read twice.

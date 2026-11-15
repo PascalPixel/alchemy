@@ -172,7 +172,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     sum += entry->weights[i];
   if (sum == 0)
     return 0;
-  pick = (Random16() * sum) >> 16;
+  pick = Random_Below(sum);
   for (i = 0; i < 8; i++) {
     pick -= entry->weights[i];
     if (pick < 0)

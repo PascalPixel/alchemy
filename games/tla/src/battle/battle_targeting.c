@@ -2451,7 +2451,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     }
   } else if (unit->enemyId == ENEMY_DULLAHAN) {
     if (selectionMemory->initialized == 0)
-      selectionMemory->form = (Random16() * 3) >> 16;
+      selectionMemory->form = Random_Below(3);
     enemy =
         Enemy_GetDefinitionFar(gBattleAI_DullahanForms[selectionMemory->form]);
   }

@@ -7,6 +7,7 @@
 #include "sprite_ids.h"
 #include "window/message_argument.h"
 #include "field/field_work.h"
+#include "system/frame.h"
 #include "sound/sound_driver_symbols.h"
 #include "flags.h"
 #include "field/field.h"
@@ -1277,7 +1278,6 @@ void Event_End(void);
 extern s32 gLinkLobby_WaitFrames;
 extern s32 gLinkLobby_CallFrames;
 extern u16 gData_02003a74[];
-extern u8 gIdleSleepEnabled;
 
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
@@ -1309,7 +1309,7 @@ s32 LinkLobby_Initialize(void) {
   gMainRoutineWork.secondShortcut = 0;
   gLinkLobby_CallFrames = 0;
   gLinkLobby_WaitFrames = 0;
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadReverbCode(2);
   LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);

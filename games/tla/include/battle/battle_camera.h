@@ -10,6 +10,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
+#include "system/projection.h"
 
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
 /// and distance.
@@ -87,11 +88,6 @@ enum BattleBackgroundMode {
 /// BattleBackground_SetMode's fade that restores the saved palette instead of
 /// taking from each colour channel.
 #define BATTLE_BACKGROUND_FADE_RESTORE 128
-
-/// Where the battle centres its projection on the screen: across the middle,
-/// and 120 pixels down, below the screen's middle.
-#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
-#define BATTLE_PROJECTION_CENTER_Y 120
 
 /// The battle background's heap slot as the background code reads it: its
 /// display mode.

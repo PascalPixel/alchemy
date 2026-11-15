@@ -148,7 +148,7 @@ void LemuriaPalace_CycleGlowColors(void) {
 /// The room's setup: it schedules the palette cycle
 /// LemuriaPalace_CycleGlowColors.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_FRAME);
   FieldActor_SetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
   if (gMainRoutineWork.entrance == 6)

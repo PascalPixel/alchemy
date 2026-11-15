@@ -930,7 +930,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(slot->object, Random_Below(7));
     scale = (Random16() >> 1) + 0x13333;
     slot->scaleY = scale;
     slot->scaleX = scale;

@@ -55,13 +55,6 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
@@ -253,7 +246,7 @@ void JupiterLighthouse_SpawnSparks(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);
@@ -354,10 +347,10 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     params.startScaleX = 0xb333;
     params.startScaleY = 0xb333;
     params.palette = 14;
-    x = object->x.fixed + ((((Random16() * 9) >> 16) - 4) << 16);
-    y = object->y.fixed + ((32 - ((Random16() * 20) >> 16)) << 16);
+    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,
+                      (s32)(((Random_Below(5)) << 16) + 0x50000) / 10, 0,
                       0xb0000, &params);
   }
   return 0;

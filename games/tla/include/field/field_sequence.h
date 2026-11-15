@@ -8,22 +8,9 @@
 #include "field/encounter_zone.h"
 #include "field/field_bank.h"
 #include "field/scene_tables.h"
+#include "field/actor.h"
 
 struct Actor;
-
-/// How a scene fades in and out: SCENE_TRANSITION's high byte, which
-/// ScreenTransition_Start and ScreenTransition_Finish read.
-enum ScreenTransitionStyle {
-  TRANSITION_FADE = 0,          ///< from or to black
-  TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
-  TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses
-  TRANSITION_DISSOLVE = 3,
-  /// Opening from, or closing to, the centre line; the variant picks how.
-  TRANSITION_CENTRE_LINE = 4
-};
-
-/// A scene transition: its style and its variant.
-#define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
@@ -47,19 +34,8 @@ enum WindowTransitionMode {
   WINDOW_TRANSITION_LEADER_LOW = 77
 };
 
-/// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.
-#define FIELD_CELL_MASK 0xfff00000
-/// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
-/// axis.
-#define FIELD_CELL(coordinate) ((coordinate) >> 20)
-/// The whole pixels of a 16.16 coordinate or distance, px() undone.
-#define FIELD_PIXEL(coordinate) ((coordinate) >> 16)
 /// The exit request that leaves for the scene and entrance already chosen.
 #define EXIT_KEEP_DESTINATION 999
-/// A 16.16 coordinate's whole pixels, its fraction cleared.
-#define FIELD_PIXEL_MASK 0xffff0000
-/// The 16.16 coordinate of the middle of a map grid cell.
-#define FIELD_CELL_CENTER(cell) (((cell) << 20) + px(8))
 
 /// A rule choosing a scene's field music, ended by id -1: a scene or an area
 /// (byScene), an entrance (-1 for any), a flag that must be set (-1 for none)

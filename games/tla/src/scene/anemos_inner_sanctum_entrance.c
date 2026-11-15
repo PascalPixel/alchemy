@@ -275,7 +275,7 @@ next:
     Actor_SetMoveTarget(object, object->x.fixed, -px(8), object->z.fixed);
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
-    wait((Random16() * 4 >> 16) + 3);
+    wait((Random_Below(4)) + 3);
   }
   if (++i <= 6)
     goto next;
@@ -338,7 +338,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 /// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
 /// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);

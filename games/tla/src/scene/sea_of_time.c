@@ -1280,7 +1280,7 @@ void SeaOfTime_Open(void) {
 /// in the first room, draws the unlit cells in the second, and schedules the
 /// frame callback.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;

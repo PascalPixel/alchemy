@@ -230,9 +230,9 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
 #if !TLA_PATCH_1
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 #else
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 #endif
   Actor_SetSpritePriority(ACTOR_BIRD, 1);
   Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_ALCHEMYS_ABUSE, 2);

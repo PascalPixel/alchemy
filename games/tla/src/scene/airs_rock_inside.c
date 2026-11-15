@@ -3134,7 +3134,7 @@ void AirsRockInside_LandInHall(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
@@ -3173,7 +3173,7 @@ void AirsRockInside_LandInHall(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_End();
 }
 
@@ -3189,7 +3189,7 @@ s32 Scene_Initialize(void) {
 
   /* FAKEMATCH(wrapper): MapCell_SetAttributes called through call.h's Call4. */
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);

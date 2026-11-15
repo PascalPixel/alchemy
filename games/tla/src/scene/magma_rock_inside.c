@@ -2254,7 +2254,7 @@ static __inline__ void Lower(s32 id, s32 height) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     MagmaRockInside_StartLavaPlatform(8, gMagmaRockInside_PlatformPathA, 768);
@@ -2647,7 +2647,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   s32 y;
 
   do {
-    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
         285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {

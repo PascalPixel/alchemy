@@ -53,7 +53,7 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
       entry->priority += (u32)(Random16() * unit->agi) >> 16;
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
-    entry->target = (u32)(Random16() * targetRange) >> 16;
+    entry->target = Random_Below(targetRange);
     count++;
     entry++;
   }

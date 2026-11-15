@@ -617,7 +617,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   // watchpoint on 0x020021b8 and 0x02002338 in a played game would settle it.
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
-      gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
+      gSceneLocalState[0x11b8 + i * 12 + j] = Random_Below(5);
   }
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
@@ -1035,8 +1035,8 @@ void DataTransfer_GiveDefaultDjinn(void) {
   counts[3] = 0;
   remaining = 16;
   do {
-    element = (Random16() * ELEMENT_COUNT) >> 16;
-    djinn = (Random16() * TRANSFERRED_DJINN_PER_ELEMENT) >> 16;
+    element = Random_Below(ELEMENT_COUNT);
+    djinn = Random_Below(TRANSFERRED_DJINN_PER_ELEMENT);
     if (!GameFlag_Get(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn))) {
       s8 low;
       s8 high;
@@ -1051,8 +1051,8 @@ void DataTransfer_GiveDefaultDjinn(void) {
           high = counts[i];
       }
       counts[element]--;
-      if (high - low <= 1 && ((Random16() * 100) >> 16) <
-                                 gDataTransfer_DjinnChances[element][djinn]) {
+      if (high - low <= 1 &&
+          (Random_Below(100)) < gDataTransfer_DjinnChances[element][djinn]) {
         Djinn_GiveToParty(element, djinn);
         counts[element]++;
         remaining--;

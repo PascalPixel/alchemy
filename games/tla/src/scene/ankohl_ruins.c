@@ -218,7 +218,7 @@ void AnkohlRuins_LandFromFall(void) {
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -255,7 +255,7 @@ loop:
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_End();
 }
 

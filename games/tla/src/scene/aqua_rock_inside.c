@@ -115,7 +115,6 @@ struct FieldSpriteFlags {
 };
 
 s32 Trig_Cos(s32 angle);
-void Decompress_TaggedLz(const void *source, void *destination);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Map_LoadCellsAndShapes(void);
@@ -1538,7 +1537,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       AquaRockInside_SetMoaiFace(8);
@@ -2297,10 +2296,10 @@ void AquaRockInside_DrawSplashes(void) {
       z -= viewZ;
       z -= originY;
       screenY = z - y;
-      rawX = (x >> 16) + ((Random16() * 10) >> 16);
+      rawX = (x >> 16) + (Random_Below(10));
 
       x = rawX - 10;
-      rawY = (screenY >> 16) + ((Random16() * 10) >> 16);
+      rawY = (screenY >> 16) + (Random_Below(10));
       screenY = rawY - 10;
       z = ((y + z) >> 16) + 50;
 
@@ -2311,7 +2310,7 @@ void AquaRockInside_DrawSplashes(void) {
         screenY &= 255;
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
-        *frame = (tile + (((Random16() * 3) >> 16) << 3)) | priority;
+        *frame = (tile + ((Random_Below(3)) << 3)) | priority;
         Oam_AddSpriteAtDepthClamped(splash->sprite, z);
       }
     }

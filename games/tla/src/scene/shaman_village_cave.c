@@ -641,7 +641,7 @@ next:
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Event_GetFlag(0x9a9))
     Actor_SetPosition(ACTOR_OVERGROWTH, 0, 0);
   if (Event_GetFlag(0x9aa))

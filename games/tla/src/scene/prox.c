@@ -1467,7 +1467,7 @@ void Prox_GiveThanksForBeacon(void) {
                              angleB000);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
-  EVENT_WORK->transition = 0x100;
+  EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0.8);
@@ -1738,7 +1738,7 @@ void Prox_GiveThanksForBeacon(void) {
   {
     struct FieldWork *work = EVENT_WORK;
 
-    work->transition = 0x209;
+    work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     work->transitionFrames = 0x10;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
@@ -1761,10 +1761,10 @@ s32 Scene_Initialize(void) {
   }
   scene = gMainRoutineWork.next;
   if (scene == SCENE_PROX_HOUSES) {
-    gFieldWork->transition = 0x209;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Prox_InitializeHouses();
   } else if (scene == SCENE_PROX_CAVE_HOMES) {
-    gFieldWork->transition = 0x209;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
     s32 *effect = &gFieldWork->transition;

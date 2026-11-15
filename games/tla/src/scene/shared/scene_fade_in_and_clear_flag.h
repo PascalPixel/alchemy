@@ -2,6 +2,6 @@
 void Scene_FadeInAndClearFlag(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 0x209;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }

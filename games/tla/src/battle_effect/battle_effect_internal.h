@@ -177,9 +177,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
-/// The number of elements of an array, as The Broken Seal's macros.h has it.
-#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
-
 /// The whole pixels of a 16.16 value.
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 
@@ -191,16 +188,10 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
 #endif
 
-/// A blend weight's whole: the layer at full strength (REG_BLDALPHA).
-#define BLEND_WEIGHT_MAX 16
 /// The canvas added to the battle under it: both blend weights whole.
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
-
-/// The brightest colour, every channel at its highest level, as The Broken
-/// Seal's io_reg.h has it.
-#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 
 /// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it: a
 /// timed command's frames run as written (The Broken Seal's sprite.h).
@@ -263,16 +254,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// screen's right edge.
 #define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
 
-/// BG1's vertical scroll that sets the battle background in the battle view,
-/// and BattleCamera_SetView's zoom, in percent, for the battle's usual view, as
-/// The Broken Seal's battle.h has them.
-#define BATTLE_BACKGROUND_SCROLL_Y 32
-#define BATTLE_ZOOM_NORMAL 100
-
-/// The battle's projection centre on the screen, as projection.h has it in
-/// The Broken Seal.
-#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
-#define BATTLE_PROJECTION_CENTER_Y 120
 /// Where the summons centre the projection while their figures fly, lower
 /// than the battle's BATTLE_PROJECTION_CENTER_Y.
 #define SUMMON_PROJECTION_CENTER_Y 240

@@ -4,6 +4,20 @@
 #include "field/field_coordinate.h"
 #include "types.h"
 
+/// How a scene fades in and out: SCENE_TRANSITION's high byte, which
+/// ScreenTransition_Start and ScreenTransition_Finish read.
+enum ScreenTransitionStyle {
+  TRANSITION_FADE = 0,          ///< from or to black
+  TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
+  TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses
+  TRANSITION_DISSOLVE = 3,
+  /// Opening from, or closing to, the centre line; the variant picks how.
+  TRANSITION_CENTRE_LINE = 4
+};
+
+/// A scene transition as FieldWork.transition holds it.
+#define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
+
 /// Actor.targetX, targetY and targetZ when it has no movement target.
 #define TARGET_UNSET ((s32)0x80000000)
 

@@ -561,7 +561,7 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
 void IncreaseItemAndLevel_RequestExit(s32 countdown) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->transition = 513;
+  event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   event->transitionFrames = 24;
   Import_EventSetExitRequest(countdown);
 }
@@ -572,7 +572,7 @@ void IncreaseItemAndLevel_RequestExit(s32 countdown) {
 s32 Scene_Initialize(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event->transition = 516;
+  event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   event->transitionFrames = 24;
   if (gMainRoutineWork.entrance <= 89) {
     Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;

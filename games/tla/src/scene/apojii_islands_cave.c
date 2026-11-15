@@ -52,7 +52,7 @@ void ApojiiIslandsCave_BlowAwayFoliage(s32 unused, s32 actor) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   return 0;
 }
 

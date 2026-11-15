@@ -277,7 +277,7 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 /// Sets up the cave or the jail.
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if (gMainRoutineWork.next == SCENE_ALHAFRAN_CAVE)
     AlhafranCave_SetUpCave();
   else if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL)
@@ -287,13 +287,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ALHAFRAN_CAVE) {
-    gFieldWork->transition = 0x201;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     AlhafranCave_SetUpCave();
   } else if (scene == SCENE_ALHAFRA_JAIL) {
     if (gMainRoutineWork.entrance == 8 || gMainRoutineWork.entrance == 9)
-      gFieldWork->transition = 0x209;
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     else
-      gFieldWork->transition = 0x201;
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     AlhafranCave_SetUpJail();
   }
   return 0;

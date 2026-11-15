@@ -123,7 +123,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     case ABILITY_FORMULA_NO_POWER:
-      randomAdjust = (Random16() * 4) >> 16;
+      randomAdjust = Random_Below(4);
       if (randomAdjust == 0) {
         randomAdjust = -1;
       } else {

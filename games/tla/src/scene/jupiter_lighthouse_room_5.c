@@ -594,7 +594,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
     Event_ClearFlag(FLAG_ALEX_WAITING);
   if (Event_GetFlag(FLAG_ALEX_WAITING)) {
@@ -790,9 +790,9 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   options.startScaleX = 0xb333;
   options.startScaleY = 0xb333;
   options.palette = 14;
-  x = object->x.fixed + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
-  y = object->y.fixed + ((32 - (s32)((u32)(Random16() * 20) >> 16)) << 16);
-  speed = (((s32)((u32)(Random16() * 5) >> 16) << 16) + 0x50000) / 10;
+  x = object->x.fixed + (((s32)(Random_Below(9)) - 4) << 16);
+  y = object->y.fixed + ((32 - (s32)(Random_Below(20))) << 16);
+  speed = (((s32)(Random_Below(5)) << 16) + 0x50000) / 10;
   FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,

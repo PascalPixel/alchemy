@@ -1065,7 +1065,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Event_Wait(20);
   Event_PlaySound(SE_GLITTER);
   Event_Wait(80);
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   PartyInventory_Remove(ITEM_BLACK_CRYSTAL);
@@ -1159,7 +1159,7 @@ void LemurianShip_FloodHold(void) {
 void LemurianShip_SetUpTwoJellyRoom(void);
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {

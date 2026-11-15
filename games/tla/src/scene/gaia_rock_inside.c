@@ -47,13 +47,6 @@
 #include "field/actor_script.h"
 #include "../field/actor_set_sprite_priority.c"
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 #include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
@@ -379,7 +372,7 @@ s32 GaiaRockInside_RaiseDust(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
@@ -400,8 +393,8 @@ s32 GaiaRockInside_RaiseDust(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+    velocity[0] += (Random_Below(0xc000)) - 0x6000;
+    velocity[2] += (Random_Below(0x6000)) - 0x3000;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2], 0x1090001,
                       &options);
@@ -419,7 +412,7 @@ s32 GaiaRockInside_RaiseDust(void) {
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   return Event_EndWithResult();
 }
 #endif
@@ -2185,7 +2178,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (work->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     early = &work->entrance;
     if (work->entrance > 8) {
@@ -3032,7 +3025,7 @@ restart:
       goto restart;
     nx = x;
     ny = y;
-    dir = (Random16() * 4) >> 16;
+    dir = Random_Below(4);
     if (dir == 0 && (step == 1 || step == 13))
       goto retry;
     switch (dir) {

@@ -83,7 +83,7 @@ s32 Scene_Initialize(void) {
 
   map->mode = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_VBLANK);
   {
     u8 *flags =

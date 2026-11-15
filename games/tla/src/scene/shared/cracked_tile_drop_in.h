@@ -14,7 +14,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

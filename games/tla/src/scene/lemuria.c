@@ -673,7 +673,7 @@ void Actor_SetWideSprite();
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_FRAME);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SIGNPOST), 0);

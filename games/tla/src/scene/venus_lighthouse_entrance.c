@@ -186,7 +186,7 @@ s32 Scene_Initialize(void) {
   struct Actor *ruffian;
   struct Actor *leader;
 
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   leader->priorityFlags |= 0x20;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 5);

@@ -35,13 +35,6 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 void IsletCave_TeleportIn(void);
 
 s32 List_CountEntries(u16 *list);
@@ -150,7 +143,7 @@ void IsletCave_StartSlowPaletteCycle(void) {
 }
 
 void IsletCave_StopPaletteCycle(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -215,7 +208,7 @@ void IsletCave_TeleportIn(void) {
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   IsletCave_StartFastPaletteCycle();
@@ -429,7 +422,7 @@ extern s32 gIsletCave_TremorTargetScript[];
 s32 Scene_Initialize(void) {
   s32 scene, dim;
 
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ISLET_CAVE_MELD) {

@@ -208,7 +208,7 @@ void Mikasalla_CastParch(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   return 0;
 }
 

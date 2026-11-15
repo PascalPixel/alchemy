@@ -119,9 +119,6 @@ enum { STEP_TRIGGER_AREA_BASE = 100 };
 #define STEP_TRIGGER_AREA(area) (STEP_TRIGGER_AREA_BASE + (area))
 enum { AREA_DAILA = 0, AREA_YALLAM = 25, AREA_PROX = 50 };
 
-/// Field_RequestDjinnBattle's actor bit: the Djinni does not hop first.
-#define DJINN_NO_HOP 0x800
-
 void Gauge_Update(void);
 
 void WorldMap_SelectExitByZ(s32 a, s32 b, s32 c);
@@ -815,7 +812,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_ScheduleRatioTransition(0x10000, 1);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 0x400;
+  work->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
   work->transitionFrames = 16;
   wait(1);
   FieldCamera_SetSpeed(8);
@@ -1607,8 +1604,8 @@ void WorldMap_SpawnCollapseDust(void) {
   s32 z;
   s32 scale;
 
-  x = ((Random16() * 40) >> 16) << 16;
-  z = ((Random16() * 30) >> 16) << 16;
+  x = (Random_Below(40)) << 16;
+  z = (Random_Below(30)) << 16;
   obj = (FieldActor_Create(285, x + 0x7b80000, 0, z + 0x1c5c0000));
   if (obj != NULL) {
     sprite = obj->sprite;
@@ -1739,8 +1736,8 @@ void WorldMap_SpawnIdejimaWake(void) {
   obj->scaleX = Q16_ONE / 2;
   obj->scaleY = Q16_ONE / 2;
   spr = obj->sprite;
-  if ((Random16() * 2) >> 16) {
-    s32 back = ((Random16() * 48) >> 16) << 16;
+  if (Random_Below(2)) {
+    s32 back = (Random_Below(48)) << 16;
 
     obj->x.fixed -= back >> 1;
     obj->z.fixed -= back;
@@ -1780,7 +1777,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
   actor->timer = 0;
   Actor_SetScript(ACTOR_DRIFTING_IDEJIMA, gWorldMap_IdejimaDriftScript);
   Task_AddFrame(WorldMap_SpawnIdejimaWake, TASK_PASS_VBLANK);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
@@ -2175,7 +2172,7 @@ void WorldMap_TakeOff(void) {
 
 s32 WorldMap_TwinkleTrail(struct Actor *object) {
   if (Random16() < 0x4000)
-    Actor_SetSpriteColorMode(object, Random16() * 8 >> 16);
+    Actor_SetSpriteColorMode(object, Random_Below(8));
   return 0;
 }
 
@@ -2453,7 +2450,7 @@ void WorldMap_LoadTidalWave(void) {
   }
   Event_PlaySound(SE_SCATTER);
   System_Wait(120);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   // mode holds one 0 for the rest of the function; the closing scroll reset
   // stores it again.
   mode = 0;

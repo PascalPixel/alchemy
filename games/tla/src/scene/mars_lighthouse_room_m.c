@@ -685,7 +685,7 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.next;
   entrance = gMainRoutineWork.entrance;
 
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Palette_SetColorsFade((s32)gMarsLighthouseRoomM_FadeSlots,
                         (s32)gMarsLighthouseRoomM_FadeColorsFrom,
@@ -694,7 +694,7 @@ s32 Scene_Initialize(void) {
   if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    gFieldWork->transition = 0x204;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       s32 unset = Event_GetFlag(FLAG_WAY_TO_AERIE_OPEN);
@@ -976,7 +976,7 @@ void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
       Actor_StartScript(object, gMarsLighthouseRoomM_RubbleBounceScript);
     } else {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
-      object->velocityX = (((u32)(Random16() * 8) >> 16) - 4) << 16;
+      object->velocityX = ((Random_Below(8)) - 4) << 16;
       object->velocityY = px(4);
       Actor_StartScript(object, gMarsLighthouseRoomM_RubbleFallScript);
     }
@@ -993,8 +993,8 @@ void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 c, s32 d, s32 e,
   Event_PlaySound(SE_CLATTER);
   MarsLighthouseRoomM_SpawnRubble(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
-    px = x + ((u32)(Random16() * 12) >> 16) - 6;
-    pz = z + ((u32)(Random16() * 12) >> 16) - 6;
+    px = x + (Random_Below(12)) - 6;
+    pz = z + (Random_Below(12)) - 6;
     MarsLighthouseRoomM_SpawnRubble(px, pz, 0);
   }
   wait(4);
@@ -1135,7 +1135,7 @@ void PaletteCycle_Fade(void);
 
 /// Stops the shimmer.
 void Teleport_StopShimmer(void) {
-  gFieldWork->transition = 256;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -1197,7 +1197,7 @@ void Teleport_ArriveWhirling(void) {
   saved = work->transition;
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Teleport_StartFastShimmer();

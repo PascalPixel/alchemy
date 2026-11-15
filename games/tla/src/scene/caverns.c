@@ -447,7 +447,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == SCENE_CAVERNS_INDRA)
     Caverns_InitializeIndra();
   if (gMainRoutineWork.next == SCENE_CAVERNS_ANGARA)

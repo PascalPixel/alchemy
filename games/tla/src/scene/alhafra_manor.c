@@ -268,7 +268,7 @@ s32 Scene_Initialize(void) {
   s32 cameraZ = px(320);
   s16 *entrance;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == 80) {
@@ -295,7 +295,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 99) {
     FieldCamera_MoveWithinMapBounds(px(304), cameraY, cameraZ, 0);
-    gFieldWork->transition = 256;
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
@@ -344,7 +344,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(30);
   FieldCamera_MoveTo(344, CAMERA_KEEP, 120, 0);
   gFieldWork->transitionFrames = 60;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -394,7 +394,7 @@ void AlhafraManor_BriggsEscapes(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
   Event_Wait(40);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
@@ -727,7 +727,7 @@ void AlhafraManor_BriggsEscapes(void) {
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
   gFieldWork->transitionFrames = 16;
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 

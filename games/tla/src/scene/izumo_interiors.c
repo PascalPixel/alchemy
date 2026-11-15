@@ -1243,7 +1243,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x201;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&

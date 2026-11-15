@@ -54,7 +54,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     FieldParticle_Initialize(slot, 672, position.x, position.z);
     FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(slot->object, Random_Below(7));
     scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;

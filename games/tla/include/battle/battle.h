@@ -25,6 +25,8 @@ enum BattleElementGlow {
   GLOW_BURST    ///< the element's burst: a Djinni set
 };
 
+/// BG1's vertical scroll that sets the battle background in the battle view.
+#define BATTLE_BACKGROUND_SCROLL_Y 32
 /// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
 #define BATTLE_ZOOM_NORMAL 100
 

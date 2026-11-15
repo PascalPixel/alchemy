@@ -490,7 +490,7 @@ s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   struct FieldWork *event;
 
-  gFieldWork->transition = 521;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_HOUSES) {

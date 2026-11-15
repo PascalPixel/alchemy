@@ -11,6 +11,9 @@ void Oam_ResetFrame(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
+/// A random number from 0 to n - 1: n times a 16-bit random draw, over 65536,
+/// as The Broken Seal's event.h writes it.
+#define Random_Below(n) (Random16() * (n) >> 16)
 /// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the turn's gBattleRandomSeed.
 extern u32 gRandomSeed;

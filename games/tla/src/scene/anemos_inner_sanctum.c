@@ -220,7 +220,7 @@ void PaletteCycle_Start(void) {
 }
 
 void AnemosInnerSanctum_StopPaletteCycle(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
@@ -244,7 +244,7 @@ void AnemosInnerSanctum_TeleportIn(void) {
   saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   AnemosInnerSanctum_StartFastPaletteCycle();
@@ -1359,7 +1359,7 @@ s32 Scene_Initialize(void) {
   s32 nearStairs;
   s32 entrance;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
     Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
@@ -1690,7 +1690,7 @@ void CrackedTile_DropIn(void) {
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);

@@ -197,7 +197,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   work = Ram_HeapSlots->fieldWork;
-  work->transition = 256;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_SUHALLA_GATE_HOUSE)
     SuhallaGate_SetUpRoad();

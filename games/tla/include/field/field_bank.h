@@ -6,6 +6,7 @@
 /// once, beside field.h until the files that declare these otherwise agree.
 
 #include "types.h"
+#include "system/io_reg.h"
 #include "resource_ids.h"
 #include "system/bg_scroll.h"
 #include "field/particle.h"
@@ -71,11 +72,9 @@ struct DiceWork {
   struct DiceParticle particles[4];
 };
 
-/// Attribute 2's 16-colour palette above its tile number, and a sprite's x in
-/// the attr01 word of an OAM entry, whose attribute 1 is its high half: as
-/// The Broken Seal's io_reg.h writes them, for the field's minigames.
+/// Attribute 2's 16-colour palette above its tile number, as The Broken Seal's
+/// io_reg.h writes it, for the field's minigames.
 #define OBJ_PALETTE(n) ((n) << 12)
-#define OBJ_X(x) ((x) << 16)
 
 /// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
 struct DiceOam {

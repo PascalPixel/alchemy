@@ -81,7 +81,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
   s32 minimumBonus;
 
   for (rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
-    bonus += ((Random16() * 6) >> 16) + 1;
+    bonus += (Random_Below(6)) + 1;
   base = *reward;
   minimumBonus = base * 3 / 10;
   if (bonus < minimumBonus)
@@ -99,7 +99,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
   s32 minimumBonus;
 
   for (rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
-    bonus += ((Random16() * 4) >> 16) + 1;
+    bonus += (Random_Below(4)) + 1;
   base = *reward;
   minimumBonus = base * 3 / 10;
   if (bonus < minimumBonus)

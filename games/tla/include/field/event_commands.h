@@ -306,6 +306,8 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
 void Weather_UpdateLightning(void);
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
+/// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
+#define DJINN_NO_HOP 0x800
 
 /// The encounter table row of the hidden Mad Plants' battles, one column
 /// each, in FLAG_MAD_PLANT's order.

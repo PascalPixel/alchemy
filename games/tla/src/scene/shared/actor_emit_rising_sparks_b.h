@@ -10,10 +10,10 @@ s32 Actor_EmitRisingSparksB(struct Actor *object) {
     params[2] = 0xb333;
     params[3] = 0xb333;
     params[1] = 14;
-    x = object->x.fixed + ((((Random16() * 9) >> 16) - 4) << 16);
-    y = object->y.fixed + ((32 - ((Random16() * 20) >> 16)) << 16);
+    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,
+                      (s32)(((Random_Below(5)) << 16) + 0x50000) / 10, 0,
                       0xb0000, params);
   }
   return 0;

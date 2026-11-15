@@ -3211,7 +3211,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   do {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+      s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
           285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);

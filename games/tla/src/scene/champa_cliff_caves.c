@@ -68,11 +68,6 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "scene_ids.h"
 #include "version.h"
 
-/// Sets how the next battle starts (gMainRoutineWork.battleType).
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
 #include "field/call.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
@@ -375,9 +370,9 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  gFieldWork->transition = 516;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 #else
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 #endif
   if (party->next != SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
     Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
@@ -1040,7 +1035,7 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 20);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 40;
-  work->transition = 521;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.restartScene,

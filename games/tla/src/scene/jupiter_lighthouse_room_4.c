@@ -237,7 +237,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(FLAG_RED_DOOR_OPENED))
     JupiterLighthouse_OpenRedDoor();
@@ -436,9 +436,9 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
     options.startScaleX = 0xb333;
     options.startScaleY = 0xb333;
     options.palette = 14;
-    x = object->x.fixed + ((((Random16() * 9) >> 16) - 4) << 16);
-    y = object->y.fixed + ((32 - ((Random16() * 20) >> 16)) << 16);
-    velocityY = (s32)(((((Random16() * 5) >> 16) << 16) + 0x50000)) / 10;
+    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
+    velocityY = (s32)((((Random_Below(5)) << 16) + 0x50000)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,

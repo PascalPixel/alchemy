@@ -512,7 +512,7 @@ void TreasureIsle_CycleWaterColors(void) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  gFieldWork->transition = 0x204;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Tightrope_Initialize();
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     Event_SetFlag(FLAG_AREA_TEMP_00);

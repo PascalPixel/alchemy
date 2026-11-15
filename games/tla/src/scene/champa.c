@@ -570,7 +570,7 @@ s32 Tightrope_Initialize();
 
 s32 Scene_Initialize(void) {
 
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_FRAME);
   TilesetAnim_Pause(8);
   Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_FLAG), 0);

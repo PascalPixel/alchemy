@@ -187,7 +187,7 @@ s32 Scene_Initialize(void) {
   s32 blend;
   s32 alpha;
 
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   t0 = (s32)Actor_Get(gMainRoutineWork.leaderActorId);
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
@@ -443,7 +443,7 @@ toss:
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.prizeWeights[prize];
-        prizeRoll = (u32)(Random16() * total) >> 16;
+        prizeRoll = Random_Below(total);
         for (prize = 0; prize < 15; prize++) {
           prizeRoll -= WEIGHT(prize);
           if (prizeRoll < 0)

@@ -29,13 +29,6 @@
 #include "fixed_math.h"
 #include "field/event_commands.h"
 
-/// Sets the rules of the next battle (enum BattleType), as The Broken Seal's
-/// main_routine_work.h does.
-#define Battle_SetType(mode)                                                   \
-  do {                                                                         \
-    gMainRoutineWork.battleType = (mode);                                      \
-  } while (0)
-
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;

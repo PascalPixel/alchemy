@@ -89,7 +89,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 513;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   return 0;

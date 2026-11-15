@@ -49,6 +49,7 @@
 #include "battle/battle_unit.h"
 #include "game/owner_state.h"
 #include "macros.h"
+#include "system/system_call.h"
 
 /// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeUnlocked;
@@ -111,13 +112,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
-
-/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-/// `destination`.
-static inline s32 FieldDecompress_TaggedLz(const void *source,
-                                           void *destination) {
-  return Decompress_TaggedLz(source, destination);
-}
 
 /// The logo background, as the title's Title_LoadBackground, then the party
 /// leader's motion flags cleared.

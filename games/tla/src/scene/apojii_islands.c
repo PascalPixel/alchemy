@@ -671,7 +671,7 @@ void ApojiiIslands_InitializeHaze(void) {
 }
 
 void ApojiiIslands_LeaveQuietly(void) {
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 

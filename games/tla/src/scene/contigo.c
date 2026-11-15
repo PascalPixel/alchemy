@@ -295,7 +295,7 @@ void Contigo_StartSlowPaletteCycle(void) {
 void Contigo_StopPaletteCycle(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = 256;
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -328,7 +328,7 @@ void Contigo_TeleportIn(void) {
   saved = work->transition;
   PaletteFade_SetTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Contigo_StartFastPaletteCycle();
@@ -664,7 +664,7 @@ void Contigo_RaiseMotes(void) {
       Actor_SetSpriteFlags(object, 0);
       object->update = Contigo_CircleGlow;
       object->motionFlags = 0;
-      object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
+      object->timer = -(s32)(Random_Below(16)) * 2 + 20;
       object->userValue = 0;
       object->gravity = px(1) / 10;
       object->velocityY = px(3);
@@ -1342,10 +1342,10 @@ s32 Contigo_PickTopic(s32 topic) {
   if (topic < 0)
     return 0;
   if (topic == 5)
-    topic = (s32)((u32)(Random16() * 5) >> 16);
+    topic = (s32)(Random_Below(5));
   state = (struct ContigoTopicState *)&gMainRoutineWork;
   cursor = state->cursor[topic];
-  variant = (cursor + (s32)((u32)(Random16() * 2) >> 16) + 4) % 3;
+  variant = (cursor + (s32)(Random_Below(2)) + 4) % 3;
   state->cursor[topic] = variant;
   index = topic * 2;
 
@@ -2372,7 +2372,7 @@ void Contigo_InitializeGeoglyph(void) {
 }
 
 void Contigo_InitializeShops(void) {
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
         GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
@@ -2427,7 +2427,7 @@ void Contigo_InitializeLuckyDice(void) {
   s8 *prize;
   s32 item;
 
-  gFieldWork->transition = 0x209;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Contigo_ShrinkActor(13);
   Contigo_ShrinkActor(16);
   Contigo_ShrinkActor(17);

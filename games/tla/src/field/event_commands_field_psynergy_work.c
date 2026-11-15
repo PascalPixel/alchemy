@@ -51,7 +51,7 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 void Camera_WorldToScreen(struct Vector3 *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
-  if (((struct FieldWork *)slots->fieldWork)->mode == 3) {
+  if (((struct FieldWork *)slots->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);

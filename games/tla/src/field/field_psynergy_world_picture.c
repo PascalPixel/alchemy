@@ -134,7 +134,7 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 z;
 
   GameFlag_Clear(0x11e);
-  if (state->mode == 3) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     object = Actor_Lookup(leader);
     if (object == 0)
       return;

@@ -215,7 +215,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   for (i = 0; i < partyCount; i++)
     previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
 
-  if (*((s8 *)work + 0x18a) == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile =
         &((struct MapCell *)
               Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
@@ -245,9 +245,9 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;
-    if (GameFlag_Get(0x167))
+    if (GameFlag_Get(FLAG_LURE_CAP))
       speed <<= 1;
-    if (*((s8 *)work + 0x18a) == 3) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       work->encounter = Encounter_RollWorldMap((s32)&leader->x.fixed, speed);
     } else {
       if (attributes & 4)

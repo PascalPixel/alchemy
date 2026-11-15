@@ -61,7 +61,7 @@ void Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(gMainRoutineWork.battleMusic);
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   Sound_PlayFar(SE_BEAST_CRY);
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(0x401, 16);
     work->transitionActive = 0;

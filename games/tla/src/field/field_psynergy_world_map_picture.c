@@ -970,7 +970,7 @@ extern const struct FlagEntry gFlagEntries[];
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
-  if (gFieldWork->mode == 3) {
+  if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Leader_StopMoving();
     WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)

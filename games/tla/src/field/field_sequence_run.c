@@ -507,7 +507,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       Vector_AddPolarOffset(px(16), leader->facing, position);
     }
-    if (work->mode == 3) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       s32 x, z;
 
       x = probePosition.vector.x;
@@ -533,7 +533,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {
       result = collisionCode;
     }
-    if (result == 0 && work->mode == 3) {
+    if (result == 0 && work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           WorldMap_GetCollisionFar(probePosition.coordinates) == 3)
         result = 99;

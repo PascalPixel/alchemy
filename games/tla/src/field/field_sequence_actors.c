@@ -245,7 +245,7 @@ void Actor_ResetForLeader(s32 table) {
   object->layer = gMainRoutineWork.layer;
   object->timer = 0;
   object->userValue = 0;
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gMainRoutineWork.ownerOverride != 0)
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     else
@@ -289,7 +289,7 @@ void Actor_ResetForLeader(s32 table) {
                            object->z.fixed);
   camera->groundHeight = object->groundHeight;
   Actor_StartCameraFar(camera, object);
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u8 *effect = Sprite_AddAnimationFar(object->sprite, 266);
 
     effect[5] = 15;

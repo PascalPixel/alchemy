@@ -317,15 +317,12 @@ s32 Credits_Run(s32 mode) {
       Credits_LoadBackground(gDisplayScroll_SlideResources[slide],
                              (slide & 1) ^ 1);
       for (step = 1; step <= BLEND_WEIGHT_MAX; step++) {
-        if (slide & 1) {
-          /* FAKEMATCH(temporary): the weights kept in locals; as one
-           * expression they load in another order. */
-          s32 t = BLEND_WEIGHT_MAX;
-          s32 hi = step << 8;
-          s32 r = t - step;
-          REG_BLDALPHA = hi | r;
-        } else
-          REG_BLDALPHA = ((BLEND_WEIGHT_MAX - step) << 8) | step;
+        // Fade the new half in: an even slide went to BG2, the first target
+        // (BLDALPHA bits 4..0), an odd one to BG3, the second (bits 12..8).
+        if (slide & 1)
+          Io_Write16((step << 8) | (BLEND_WEIGHT_MAX - step), &REG_BLDALPHA);
+        else
+          Io_Write16(((BLEND_WEIGHT_MAX - step) << 8) | step, &REG_BLDALPHA);
         for (frame = 0; frame <= 3; frame++) {
           if (gInput.held & KEY_START)
             goto done;

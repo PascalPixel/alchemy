@@ -9,8 +9,7 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-#define COUNTDOWN_START_FRAMES 900
-#define FRAMES_PER_SECOND 60
+#define COUNTDOWN_START_FRAMES (15 * FRAMES_PER_SECOND)
 
 /* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
  * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; tried

@@ -524,7 +524,8 @@ void MenuIcon_LoadSlots(void) {
       u32 *attributes;
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
-      Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
+                                     *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;
       *attributes++ = OUTPUT_SIZE_16X16;
       *attributes = 0;

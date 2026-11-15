@@ -18,6 +18,13 @@
 #define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
 
+/// The menus' list entries, each with an icon sprite.
+#define MENU_ENTRY_ICONS 32
+/// Where an entry icon waits, just past the screen's bottom right corner,
+/// until a screen places it.
+#define MENU_ICON_HIDDEN_X (DISPLAY_WIDTH + 8)
+#define MENU_ICON_HIDDEN_Y (DISPLAY_HEIGHT + 8)
+
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
 /// largest of the screens' views of it. Each screen's run function takes the
 /// block as it opens and releases it as it closes.
@@ -140,6 +147,7 @@ enum DjinnCompareOperation {
 #include "field/a9_motion.h"
 #include "battle/battle_effect.h"
 #include "menu/djinn_menu.h"
+#include "menu/select.h"
 #include "macros.h"
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
@@ -170,11 +178,12 @@ struct ItemMenuWork {
   struct RenderInput *infoWindow;
   struct RenderInput *equipWindow;
   struct RenderInput *listWindow;
-  u8 unusedAfterLists[4]; ///< no view of the menu work names it
+  struct RenderInput *unopenedWindow; ///< never given a window; only closed
   struct RenderInput *modalWindow;
-  u8 unusedAfterModal[4]; ///< no view of the menu work names it
+  struct RenderInput
+      *secondUnopenedWindow; ///< never given a window; only closed
   struct WindowSprite *gridCursor;
-  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *questionWindow;
   /// The cursor grid: its place and its size.
@@ -288,7 +297,7 @@ struct StatusScreenWork {
   struct RenderInput *helpWindow;
   /// ItemMenuWork's equipWindow to gridCursor; not named here.
   u8 itemWindows[24];
-  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *selectorWindow;
   u8 selectedColumn;
@@ -361,7 +370,7 @@ struct PsynergyMenuWork {
   /// ItemMenuWork's modal window and the words around it; not named here.
   u8 modalWindows[12];
   struct WindowSprite *entryGridCursor;
-  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct RenderInput *messageWindow;
   u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here

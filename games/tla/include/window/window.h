@@ -16,6 +16,28 @@
 #include "graphics/uiflow.h"
 #include "static_assert.h"
 
+// The display's sizes and the screen block, palette and sprite words the
+// windows and menus build, as The Broken Seal's io_reg.h names them.
+/// The screen's size in 8-pixel tiles.
+#define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
+#define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
+#define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
+/// Colours in one 16-colour palette.
+#define PALETTE_COLORS 16
+/// Tiles in a row of a screen block, whose map is 32 tiles square.
+#define BG_SCREEN_WIDTH 32
+/// A screen block entry's 16-colour palette, in its top four bits.
+#define BG_TILE_PALETTE(n) ((n) << 12)
+/// A blend weight's full strength: BLEND_ALPHA(BLEND_WEIGHT_MAX, 0) shows only
+/// the top layer.
+#define BLEND_WEIGHT_MAX 16
+/// A sprite's x, 0 to 511, in the high half of its attribute word.
+#define OBJ_X(x) ((x) << 16)
+/// The frames the game runs each second, one each VBlank.
+#define FRAMES_PER_SECOND 60
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -155,9 +177,6 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
 /// icons and the coloured numbers are drawn in it.
 #define BASIC_COLORS_PALETTE 5
-
-/// The colours of one 16-colour palette.
-#define PALETTE_COLORS 16
 
 // The two page arrows beside a paged list's page numbers, in the menus and
 // the File Screen: tiles 296 and 297 of character block 0, which

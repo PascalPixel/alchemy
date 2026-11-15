@@ -370,7 +370,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_HideAllIcons();
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       result = 0;
-      if ((item->flags & 16) != 0) {
+      if ((item->flags & ITEM_STACKABLE) != 0) {
         qty = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
         if (qty > 1) {
           ItemMenu_DrawItemHead();
@@ -383,7 +383,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       menu->sideMember[1] = 0;
       Resource_LoadByModeIntoSlotFar(
-          2, (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) | (result << 11),
+          2,
+          (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) |
+              (result << INVENTORY_QUANTITY_SHIFT),
           (u8)menu->selectedItemIcon->index, 0);
       menu->selectedItemIcon->motion = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
@@ -422,14 +424,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     case 4:
       aborted = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
-      if ((item->flags & 16) != 0) {
+      if ((item->flags & ITEM_STACKABLE) != 0) {
         qty = ItemMenu_GetItemQuantity(menu->sideMember[1],
                                        menu->selectedItems[0] &
                                            INVENTORY_ITEM_ID_MASK);
         if (qty == 30) {
           aborted = 1;
         }
-        if (ItemMenu_CountItems(menu->sideMember[1]) == 15 && qty == 0) {
+        if (ItemMenu_CountItems(menu->sideMember[1]) == INVENTORY_SLOTS &&
+            qty == 0) {
           state = 7;
           break;
         }
@@ -488,7 +491,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       result = 1;
       if (aborted == 0) {
         menu->sideMember[0] = menu->sideMember[1];
-        menu->selectedItems[0] &= 0x1ff;
+        menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if TLA_PATCH_2
         ItemMenu_SetMessageWindowHeight6();
 #endif
@@ -622,7 +625,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
         menu->sideMember[0] = menu->sideMember[1];
-        menu->selectedItems[0] &= 0x1ff;
+        menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
@@ -768,7 +771,7 @@ s32 ItemMenu_Use(void) {
   }
 
   item = menu->selectedItems[0];
-  mask = 0x1ff;
+  mask = INVENTORY_ITEM_ID_MASK;
   mask &= item;
   Item_PlayUseAnimation(mask);
   Unit_CalculateFar(menu->sideMember[0]);
@@ -819,27 +822,27 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
   s32 remainingY;
 
   firstSlot = 0;
-  firstY = 0xA8;
+  firstY = MENU_ICON_HIDDEN_Y;
   firstIcons = &menu->entryIcons[0];
   do {
-    *firstIcons++ =
-        WindowSprite_CreateFromResourceFar(2, firstSlot, window, 0xF8, firstY);
+    *firstIcons++ = WindowSprite_CreateFromResourceFar(
+        ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, firstY);
     firstSlot++;
   } while (firstSlot <= 7);
   secondSlot = 8;
-  secondY = 0xA8;
+  secondY = MENU_ICON_HIDDEN_Y;
   secondIcons = &menu->entryIcons[8];
   do {
-    *secondIcons++ = WindowSprite_CreateFromResourceFar(2, secondSlot, window,
-                                                        0x100, secondY);
+    *secondIcons++ = WindowSprite_CreateFromResourceFar(
+        ICON_KIND_ITEM, secondSlot, window, 256, secondY);
     secondSlot++;
   } while (secondSlot <= 15);
   remainingSlot = 16;
-  remainingY = 0xA8;
+  remainingY = MENU_ICON_HIDDEN_Y;
   remainingIcons = &menu->entryIcons[16];
   do {
     *remainingIcons++ = WindowSprite_CreateFromResourceFar(
-        2, remainingSlot, window, 0x100, remainingY);
+        ICON_KIND_ITEM, remainingSlot, window, 256, remainingY);
     remainingSlot++;
   } while (remainingSlot <= 31);
 }
@@ -851,7 +854,7 @@ void ItemMenu_HideAllIcons(void) {
       ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 31; slot >= 0; slot--) {
+  for (slot = MENU_ENTRY_ICONS - 1; slot >= 0; slot--) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->motion = hiddenState;
@@ -865,7 +868,7 @@ void ItemMenu_HideTradedIcons(void) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   s32 slot;
 
-  for (slot = 0; slot <= 31; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     struct WindowSprite *icon = menu->entryIcons[slot];
     if (icon != 0 && slot % 5 == 0)
       icon->motion = ICON_HIDDEN;
@@ -881,26 +884,26 @@ void Menu_ReleaseEntryObjects(void);
 /// status panel's portrait (the work's cursor), and closes every window the
 /// menu opened.
 void ItemMenu_Close(void) {
-  u8 *menu;
-  u8 *cursor;
+  struct ItemMenuWork *menu;
+  struct WindowSprite *cursor;
 
   menu = Ram_HeapSlots->menuWork;
   Menu_ReleaseEntryObjects();
   ItemMenu_HideAllIcons();
   wait(1);
-  cursor = *(u8 **)(menu + 0x170);
-  cursor[5] = 13;
-  Window_CloseIfOpen(menu + 0x10, 1);
-  Window_CloseIfOpen(menu + 0x24, 1);
-  Window_CloseIfOpen(menu + 0xf0, 1);
-  Window_CloseIfOpen(menu + 0x28, 1);
-  Window_CloseIfOpen(menu + 0x2c, 1);
-  Window_CloseIfOpen(menu + 0x30, 1);
-  Window_CloseIfOpen(menu + 0x34, 1);
-  Window_CloseIfOpen(menu + 0x38, 1);
-  Window_CloseIfOpen(menu + 0x3c, 1);
-  Window_CloseIfOpen(menu + 0x40, 1);
-  Window_CloseIfOpen(menu + 0x44, 1);
+  cursor = menu->cursor;
+  cursor->motion = ICON_HIDDEN;
+  Window_CloseIfOpen((void **)&menu->mainWindow, 1);
+  Window_CloseIfOpen((void **)&menu->itemWindow, 1);
+  Window_CloseIfOpen((void **)&menu->questionWindow, 1);
+  Window_CloseIfOpen((void **)&menu->statusWindow, 1);
+  Window_CloseIfOpen((void **)&menu->buttonHelpWindow, 1);
+  Window_CloseIfOpen((void **)&menu->infoWindow, 1);
+  Window_CloseIfOpen((void **)&menu->equipWindow, 1);
+  Window_CloseIfOpen((void **)&menu->listWindow, 1);
+  Window_CloseIfOpen((void **)&menu->unopenedWindow, 1);
+  Window_CloseIfOpen((void **)&menu->modalWindow, 1);
+  Window_CloseIfOpen((void **)&menu->secondUnopenedWindow, 1);
 }
 
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
@@ -1059,11 +1062,11 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
 }
 
 void ItemMenu_OpenCategory(s32 category) {
-  u8 *menu = Ram_HeapSlots->menuWork;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   ItemMenu_PositionCategory();
-  WindowSprite_RedrawSavedRectFar(*(void **)(menu + 36));
-  ItemMenu_DrawCategory(*(void **)(menu + 36), category, 0);
+  WindowSprite_RedrawSavedRectFar(menu->itemWindow);
+  ItemMenu_DrawCategory(menu->itemWindow, category, 0);
 }
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -1139,7 +1142,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           heldCount = ItemMenu_GetItemQuantity(menu->memberIds[selection],
                                                menu->selectedItems[0] &
                                                    INVENTORY_ITEM_ID_MASK);
-          if (ItemMenu_CountItems(menu->memberIds[selection]) == 15 &&
+          if (ItemMenu_CountItems(menu->memberIds[selection]) ==
+                  INVENTORY_SLOTS &&
               heldCount == 0) {
             labelX = TRADE_LABEL_X;
             label = (s32)MsgTradeForWhat;
@@ -1283,7 +1287,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 slot;
 
-  for (slot = 0; slot < 32; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     if (items[slot] == 0) {
       Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
@@ -1297,7 +1301,7 @@ s32 ItemMenu_CountItems(s32 owner_id) {
   struct OwnerInventoryState *state = Unit_Get(owner_id);
   s32 i;
 
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     s32 item_id = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
 
     if (item_id != 0)
@@ -1322,7 +1326,7 @@ s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
       quantity++;
     }
     i++;
-  } while (i <= 14);
+  } while (i <= INVENTORY_SLOTS - 1);
   return quantity;
 }
 
@@ -1331,11 +1335,11 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
   s32 count;
   s32 i;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     items[i] = 0;
   }
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     items[i] = 0;
     if (owner->inventory[i] != 0) {
       items[count] = owner->inventory[i];
@@ -1357,14 +1361,16 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
 
   icons = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   entries = items;
-  remaining = 14;
+  remaining = INVENTORY_SLOTS - 1;
   do {
     itemId = *entries++;
     if (itemId != 0) {
       if (style == 0) {
-        Resource_LoadByModeIntoSlotFar(2, itemId, (u8)(*icons)->index, 0);
+        Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, itemId,
+                                       (u8)(*icons)->index, 0);
       } else {
-        Resource_LoadByModeIntoSlotFar(7, itemId, (u8)(*icons)->index, 0);
+        Resource_LoadByModeIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
+                                       (u8)(*icons)->index, 0);
       }
     }
     icons++;
@@ -1430,7 +1436,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
-        entry &= ~0x200;
+        entry &= ~INVENTORY_EQUIPPED;
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
           style |= 9;
@@ -1465,7 +1471,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       Iwram_CopyWordsEntry(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
-        entry &= ~0x200;
+        entry &= ~INVENTORY_EQUIPPED;
         previewSlot = Inventory_AddItemFar(target, entry);
         if (previewSlot != -1) {
           style |= 2;
@@ -1869,7 +1875,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   void *itemData;
   s32 result = -1;
 
-  masked &= 0x1ff;
+  masked &= INVENTORY_ITEM_ID_MASK;
   itemData = Item_GetDirectFar(masked);
 
   if (Scene_HasItemTriggerFar(masked) != 0) {
@@ -1919,17 +1925,19 @@ void Inventory_BreakFar(s32 owner, s32 slot);
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
-  u8 *work = Ram_HeapSlots->menuWork;
-  u32 item = *(u16 *)(work + 0x16c);
+  struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
+  u32 item = work->selectedItems[0];
   u32 mask;
 
-  mask = 0x1ff;
+  mask = INVENTORY_ITEM_ID_MASK;
   mask &= item;
-  if (((u8 *)Item_GetDirectFar(mask))[12] == 2 && Random16() < 0x2000) {
-    Inventory_BreakFar(work[0x216], *(u16 *)(work + 0x168));
+  // One time in eight: 8192 of Random16's 65536 values.
+  if (Item_GetDirectFar(mask)->useType == ITEM_USE_MAY_BREAK &&
+      Random16() < 8192) {
+    Inventory_BreakFar(work->sideMember[0], work->selectedSlots[0]);
     Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
-    WindowSprite_RedrawSavedRectFar(*(void **)(work + 0x30));
+    WindowSprite_RedrawSavedRectFar(work->infoWindow);
   }
 }
 
@@ -2135,46 +2143,50 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
       row++;
     }
   }
-  for (i = 0; i < 4; i++) {
-    if (def->effects[i].kind == 0)
+  for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
+    if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;
     amount = def->effects[i].amount;
     switch (def->effects[i].kind) {
-    case 0:
+    case EQUIP_EFFECT_NONE:
       break;
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 26:
+    case EQUIP_EFFECT_ADD_HP:
+    case EQUIP_EFFECT_ADD_HP_REGEN:
+    case EQUIP_EFFECT_ADD_PP:
+    case EQUIP_EFFECT_ADD_PP_REGEN:
+    case EQUIP_EFFECT_ADD_AGILITY:
+    case EQUIP_EFFECT_ADD_LUCK:
+    case EQUIP_EFFECT_ADD_ACTIONS:
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       break;
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
+    case EQUIP_EFFECT_ADD_VENUS_POWER:
+    case EQUIP_EFFECT_ADD_MERCURY_POWER:
+    case EQUIP_EFFECT_ADD_MARS_POWER:
+    case EQUIP_EFFECT_ADD_JUPITER_POWER:
+    case EQUIP_EFFECT_ADD_VENUS_RESIST:
+    case EQUIP_EFFECT_ADD_MERCURY_RESIST:
+    case EQUIP_EFFECT_ADD_MARS_RESIST:
+    case EQUIP_EFFECT_ADD_JUPITER_RESIST:
       Window_SetTilemapEntryFar(
-          window, (u8)((def->effects[i].kind - 15) % 4) + 1, 0, row, 2);
+          window,
+          (u8)((def->effects[i].kind - EQUIP_EFFECT_ADD_VENUS_POWER) %
+               ELEMENT_COUNT) +
+              1,
+          0, row, 2);
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 8, row * 8);
       ItemMenu_DrawStat(amount, 3, window, ITEM_DETAILS_VALUE_X, row * 8);
       break;
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
+    case EQUIP_EFFECT_SCALE_HP:
+    case EQUIP_EFFECT_SCALE_HP_REGEN:
+    case EQUIP_EFFECT_SCALE_PP:
+    case EQUIP_EFFECT_SCALE_PP_REGEN:
+    case EQUIP_EFFECT_SCALE_ATTACK:
+    case EQUIP_EFFECT_SCALE_DEFENSE:
+    case EQUIP_EFFECT_SCALE_AGILITY:
+    case EQUIP_EFFECT_SCALE_LUCK:
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 0, row * 8);
       if (amount > 9) {
@@ -2197,21 +2209,21 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
                                  ITEM_DETAILS_MULTIPLIER_X + 24, row * 8);
 #endif
       break;
-    case 23:
-    case 25:
-    case 27:
+    case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
+    case EQUIP_EFFECT_CURSE_REMOVABLE:
+    case EQUIP_EFFECT_LURE:
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 0, row * 8);
 #if LANGUAGE == LANGUAGE_GERMAN
       // German continues these three names on a second line.
       row++;
-      if (def->effects[i].kind == 23)
+      if (def->effects[i].kind == EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
         Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 28, window, 0,
                                    row * 8);
-      else if (def->effects[i].kind == 25)
+      else if (def->effects[i].kind == EQUIP_EFFECT_CURSE_REMOVABLE)
         Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 29, window, 0,
                                    row * 8);
-      else if (def->effects[i].kind == 27)
+      else if (def->effects[i].kind == EQUIP_EFFECT_LURE)
         Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 30, window, 0,
                                    row * 8);
 #endif
@@ -2533,7 +2545,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
-  Resource_LoadByModeIntoSlotFar(2, menu->selectedItems[0],
+  Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
   menu->selectedItemIcon->motion = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;

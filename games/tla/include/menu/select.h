@@ -54,7 +54,10 @@ enum IconKind {
   ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
   ICON_KIND_ITEM = 2,    ///< an item's icon
   ICON_KIND_ABILITY = 4, ///< a Psynergy's icon, from its ability number
-  ICON_KIND_YES_NO = 6   ///< a yes or no command, drawn as a command
+  ICON_KIND_YES_NO = 6,  ///< a yes or no command, drawn as a command
+  /// An item's icon without the broken mark, for the equipment view.
+  ICON_KIND_EQUIPMENT_ITEM = 7,
+  ICON_KIND_PATTERN = 8 ///< one of the other icons
 };
 
 /// The entries of SelectionScreen.records.

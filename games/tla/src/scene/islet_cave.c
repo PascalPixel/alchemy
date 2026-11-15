@@ -764,11 +764,7 @@ void IsletCave_SentinelAwaits(void) {
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  cue = 0x67;
-  /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second. */
-  __asm__ volatile("" : "+r"(cue));
-  Field_RequestBattleFromEncounterTable(cue, 2);
+  Field_RequestBattleFromEncounterTable(0x67, 2);
   Event_End();
 }
 

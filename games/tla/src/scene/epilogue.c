@@ -32,6 +32,7 @@
 #include "system/main_routine_work.h"
 #include "system/input.h"
 #include "system/ram_buffer.h"
+#include "system/io_write.h"
 
 struct EpilogueSprite;
 
@@ -252,7 +253,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   u8 *eventMode;
   s32 saved;
-  s32 zero, one, value;
+  s32 zero, one;
   s32 count;
   void *p;
   u8 *actor;
@@ -419,13 +420,8 @@ L_02008692:
 L_0200871e:
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  value = 0;
-  /* FAKEMATCH(dead): the store in a once-only block. */
-  do {
-    REG_BLDCNT = value;
-  } while (0);
-  value = 0x1040;
-  REG_DISPCNT = value;
+  Io_Write16(0, &REG_BLDCNT);
+  Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Window_LoadGraphics();
   DebugText_Clear();
   gOamCopyEnabled = 1;

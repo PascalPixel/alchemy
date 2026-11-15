@@ -909,8 +909,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   do {
     {
       u32 entry = *list;
-      /* FAKEMATCH(dead): the effect work read through its own address. */
-      s32 id = (*&work)->objectId;
+      s32 id = work->objectId;
 
       if (id == entry) {
         struct Actor *object = Actor_Get(id);

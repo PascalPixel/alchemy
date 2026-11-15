@@ -1107,7 +1107,6 @@ void GabombaStatueChamber_InitializeLift(void) {
 /// the way the party came.
 void GabombaStatueChamber_InitializeWitchDoctor(void) {
   u32 i;
-  char *scene;
 
   for (i = 0; i <= 17; i++)
     Actor_SetSpritePriority(i + 15, 2);
@@ -1122,15 +1121,10 @@ void GabombaStatueChamber_InitializeWitchDoctor(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
   if (gMainRoutineWork.entrance == 2) {
     if (GameFlag_Get(0xa27)) {
-      /* FAKEMATCH(temporary): the scene id through a local, which issues its
-       * literal load first. */
-      scene = &SceneId_GabombaStatuePinion;
-      gMainRoutineWork.retreatScene = (s32)scene;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
-      /* FAKEMATCH(temporary): the scene id through a local. */
-      scene = &SceneId_GabombaStatueChamber1;
-      gMainRoutineWork.retreatScene = (s32)scene;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_1;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }

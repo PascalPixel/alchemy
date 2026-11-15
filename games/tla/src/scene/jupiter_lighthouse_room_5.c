@@ -894,7 +894,6 @@ void JupiterLighthouse_AddSparks(s32 count) {
   s32 angle;
   s32 i;
   s32 radius;
-  u64 cosine;
   s32 speed;
 
   if (count > 0) {
@@ -904,9 +903,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
       angle = ((Random16() * 3) >> 2) + 0x6000;
       radius = 0x400000;
       speed = ((Random16() << 4) >> 16) + 16;
-      /* FAKEMATCH(temporary): the cosine held in a 64-bit temporary. */
-      cosine = Trig_Cos(angle);
-      spark->dx = Iwram_MulQ16(cosine, radius) >> 16;
+      spark->dx = Iwram_MulQ16(Trig_Cos(angle), radius) >> 16;
       spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
       spark->duration = speed;
       spark->age = 0;

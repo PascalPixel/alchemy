@@ -41,6 +41,7 @@
 #include "field/event_inline.h"
 #include "field/call.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/dma.h"
 #include "field/map_grid.h"
 #include "shared/tables.h"
@@ -804,12 +805,7 @@ void Idejima_ResetWaves(void) {
 void Idejima_ScrollWaves(void) {
   s16 *line = gIdejima_WaveLines[(s16)(gIdejima_WaveBuffer ^ 1)];
 
-  s32 offset = line[0];
-
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
-  REG_BG3VOFS = offset;
+  Io_Write16(line[0], &REG_BG3VOFS);
   Dma_Set(line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           REG_DMA0);
 }

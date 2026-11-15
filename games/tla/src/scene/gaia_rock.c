@@ -179,7 +179,6 @@ void GaiaRock_StartMovingPillar(void) {
 /// enough west, the second bridges its gap as it passes over it to (79, 12).
 void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
-  struct Actor *p;
 
   MapGrid_CopyCellAttributes(8, 90, 1, 1, 8, 91);
   if (id == 16 && Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
@@ -191,20 +190,13 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   if (id == 19 && Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
     if ((object->x.fixed >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
-    /* FAKEMATCH(temporary): the object read again through p for the last two
-     * tests. */
-    p = object;
-    if ((p->x.fixed >> 19) == 79 && (p->y.fixed >> 19) == 12) {
+    if ((object->x.fixed >> 19) == 79 && (object->y.fixed >> 19) == 12) {
       DROP_OBJECT(19);
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
-    if ((p->x.fixed >> 19) == 81) {
+    if ((object->x.fixed >> 19) == 81) {
       Event_SetFlag(FLAG_SECOND_PILLAR_DROPPED);
-      {
-        s32 row = 46;
-
-        MapGrid_CopyCellAttributes(41, row, 1, 1, 39, 46);
-      }
+      MapGrid_CopyCellAttributes(41, 46, 1, 1, 39, 46);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
     }
   }

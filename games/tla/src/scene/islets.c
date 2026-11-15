@@ -934,7 +934,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 296, 452);
   leader->update = Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
-  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
+  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   FieldEvent_Wait(20);
   // "And we're off!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
@@ -1096,7 +1096,7 @@ void Islets_GiveTurtle(void) {
       leader->update = Islets_RideOnLonesomeGeorge;
       FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
                                 15);
-      Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
+      Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
       FieldEvent_Wait(20);
       // "And we're off!"
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
@@ -1165,7 +1165,7 @@ void Islets_RideBackToIsland(void) {
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 768);
     leader->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
-    Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
+    Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
     FieldEvent_Wait(20);
     FieldPsynergy_RestoreMindReadPalette();
     Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 1.6);
@@ -1295,7 +1295,7 @@ void Islets_PengusGivesPrettyStone(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(ACTOR_PENGULINA, 1);
+  Actor_SetAnimation(ACTOR_PENGULINA, ANIM_STAND);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 216, 184);
   FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
   FieldEvent_SetMessageId((s32)MsgThankYouSo);
@@ -1694,7 +1694,7 @@ void Islets_ArriveAtSecretSpot(void) {
   object->facing = FACING_NORTH;
   owner->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
-  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
+  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   System_Wait(1);
   work = Ram_HeapSlots->fieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -1714,7 +1714,7 @@ void Islets_ArriveAtSecretSpot(void) {
   FieldEvent_SetMessageId((s32)MsgHereWeAre);
   // "Here we are!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 1);
+  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
@@ -1750,7 +1750,7 @@ void Islets_ArriveBackAtIsland(void) {
   leader->update = Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.leaderActorId)),
                             15);
-  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 3);
+  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
   ((struct FieldWork *)EVENT_WORK)->transition =
@@ -1777,7 +1777,7 @@ void Islets_ArriveBackAtIsland(void) {
   FieldEvent_SetMessageId(MsgWellHereWe);
   // "Well, here we are."
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
-  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, 1);
+  Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.leaderActorId)),
                             0);
@@ -1976,7 +1976,7 @@ void Islets_InitializePrettyStone(void) {
   }
   if (!Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
-    Actor_SetAnimation(ACTOR_PENGULINA, 0);
+    Actor_SetAnimation(ACTOR_PENGULINA, ANIM_STILL);
     Actor_Get(ACTOR_PENGULINA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     other = Actor_Get(ACTOR_PENGUS);
@@ -2518,7 +2518,7 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
                              (gPushLeaderSteps[direction] << 16) >> 31,
@@ -2526,7 +2526,7 @@ void PushTarget_Push(struct PushTarget target) {
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

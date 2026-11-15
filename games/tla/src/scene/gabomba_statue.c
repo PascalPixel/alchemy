@@ -1835,7 +1835,7 @@ void GabombaStatue_SeeHowItWorks(void) {
     Event_ShowMessage(cue, 0);
   }
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "Piers, I understand that you're angry at them, but it really is in..."
   Event_ShowMessage(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
@@ -1854,7 +1854,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Oh! So...if his ceremony succeeds, the orb will be taken into the..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   // "And we're INSIDE the statue! If the ceremony succeeds, we can go..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   GabombaStatue_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 10);
@@ -1878,7 +1878,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
@@ -1905,7 +1905,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   // "Won't that do the trick?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
@@ -2030,7 +2030,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "It rolled through this groove and right through this hole."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "We saw a light through there, so we suspect there must be another..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                     0);

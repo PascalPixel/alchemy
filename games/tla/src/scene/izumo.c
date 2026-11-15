@@ -425,7 +425,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_SUSA, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationById(ACTOR_SUSA, 4);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
@@ -434,7 +434,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "And then I thought of something."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_SetAnimationById(ACTOR_SUSA, 3);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(15);
   // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
   FieldMessage_ShowAtActor(ACTOR_SUSA, 0);
@@ -469,7 +469,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   // "Long ago, the Great Serpent of Mikage would sleep with its body..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   Actor_FaceActorById(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
-  Actor_SetAnimationById(ACTOR_SUSA, 3);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
@@ -477,7 +477,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(30);
   // "The serpent was once the sword's protector, but it lost the sword..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_SetAnimationById(ACTOR_SUSA, 4);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(30);
   // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
@@ -490,7 +490,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(15);
   // "I hope you are successful in your quest."
   Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-  Actor_SetAnimationById(ACTOR_SUSA, 3);
+  Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);

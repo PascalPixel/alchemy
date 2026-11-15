@@ -701,13 +701,13 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Event_OpenMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Actor_SetAnimation(ACTOR_KRADEN, 3);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     (gFieldWork->message)++;
   } else {
-    Actor_SetAnimation(ACTOR_KRADEN, 4);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(33);
     (gFieldWork->message)++;
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
@@ -732,7 +732,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(ACTOR_PIERS, 1);
@@ -905,7 +905,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
-  Actor_SetAnimation(ACTOR_KARST, 4);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
   Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
@@ -997,7 +997,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
   Actor_FaceEachOther(ACTOR_AGATIO, ACTOR_KARST, 30);
-  Actor_SetAnimation(ACTOR_AGATIO, 3);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_NOD);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_AGATIO, 3);
@@ -1059,7 +1059,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   if (object != NULL)
     Actor_SetDestination(ACTOR_JENNA, object->x.part[0].pixel,
                          object->z.part[0].pixel);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_Get(ACTOR_FELIX);
   if (object != NULL)
     Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
@@ -1092,8 +1092,8 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   PLACE(ACTOR_AGATIO, 737, 202, FACING_EAST);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_STAND);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
-  Actor_SetAnimation(ACTOR_AGATIO, 1);
-  Actor_SetAnimation(ACTOR_KARST, 1);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_STAND);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgIMSorry);
@@ -1218,7 +1218,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_Wait(10);
   // "It would be a shame if you and I ever had to regret letting him live..."
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  Actor_SetAnimation(ACTOR_AGATIO, 1);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_STAND);
   FieldEvent_Wait(30);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(20);

@@ -895,7 +895,7 @@ void GaiaRockInside_MeetSusa(void) {
       object->script == gGaiaRockInside_SerpentStrikeScript)
     FieldActor_WaitForScriptEndById(ACTOR_CASK);
   GaiaRockInside_SaveSusa();
-  Actor_SetAnimation(ACTOR_SUSA, 1);
+  Actor_SetAnimation(ACTOR_SUSA, ANIM_STAND);
   Actor_FaceActor(ACTOR_SUSA, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmote(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
@@ -923,7 +923,7 @@ void GaiaRockInside_MeetSusa(void) {
   FieldEvent_Wait(10);
   // "If you understand, then get out of my way. Stand over there."
   Event_ShowMessage(ACTOR_SUSA, 0);
-  Actor_SetAnimationAndWait(ACTOR_SUSA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_SetFlag(FLAG_MET_SUSA);
   if (object->script == gGaiaRockInside_SerpentTurnLeftScript ||
@@ -964,7 +964,7 @@ void GaiaRockInside_TalkToSusa(void) {
     FieldEvent_Wait(10);
     // "If you understand, then get out of my way. Stand over there."
     Event_ShowMessage(ACTOR_SUSA, 0);
-    Actor_SetAnimationAndWait(ACTOR_SUSA, 3);
+    Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
     FieldEvent_Wait(10);
     GaiaRockInside_RestoreSusa();
   }
@@ -1273,7 +1273,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
@@ -1307,7 +1307,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Party_LearnAbility(FELIX, ABILITY_SAND);
   Event_SetFlag(FLAG_LEARNED_SAND);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   {
     struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -2299,7 +2299,7 @@ s32 Scene_Initialize(void) {
         Event_Wait(40);
         Event_SetMessageId((s32)MsgFieldAtLastTheSerpentHas);
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-        Actor_SetAnimationAndWait(ACTOR_SUSA, 3);
+        Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_SetAnimationById(ACTOR_SUSA, 8);
         Event_ShowMessageAndWait(0x600a, 0);
@@ -2533,35 +2533,35 @@ s32 Scene_Initialize(void) {
       susa->velocityY = 0;
       susa->speedLimit = slow;
       Actor_SetPosition(ACTOR_SUSA, 456, 360);
-      Actor_SetAnimationById(ACTOR_SUSA, 1);
+      Actor_SetAnimationById(ACTOR_SUSA, ANIM_STAND);
       PaletteFade_SetTarget(scale, 0);
       PaletteFade_StartInterpolation(10);
       Event_Wait(10);
       Actor_FaceActorById(ACTOR_SUSA, *owner, 0);
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_SetAnimationAndWait(ACTOR_SUSA, 3);
+      Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
-      Actor_SetAnimationById(ACTOR_SUSA, 2);
+      Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
       Actor_WalkTo(ACTOR_SUSA, 488, 392);
       Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
       Event_Wait(5);
       Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
       Actor_WaitForMoveById(ACTOR_SUSA);
-      Actor_SetAnimationById(ACTOR_SUSA, 0);
+      Actor_SetAnimationById(ACTOR_SUSA, ANIM_STILL);
       Actor_FaceActorById(ACTOR_SUSA, ACTOR_KRADEN, 0);
       Event_Wait(15);
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_SetAnimationAndWait(ACTOR_SUSA, 3);
+      Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
       Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
-      Actor_SetAnimationById(ACTOR_SUSA, 2);
+      Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
       Actor_WalkTo(ACTOR_SUSA, 488, 536);
       FieldCamera_FollowActor(*owner, 1);
       Actor_FaceActorById(*owner, ACTOR_KRADEN, 0);
       Actor_FaceActorById(ACTOR_KRADEN, *owner, 0);
       Event_Wait(30);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
-      Actor_SetAnimationById(ACTOR_KRADEN, 2);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+      Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
       {
         struct Actor *ownerActor = Actor_GetById(*owner);
 

@@ -453,14 +453,14 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_Wait(40);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(40);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   // "Akafubu has not honed his own powers, and the fault lies with him..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   TALK();
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 4);
-  Actor_SetAnimationById(ACTOR_KRADEN, 2);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,

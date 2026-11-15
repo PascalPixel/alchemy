@@ -759,22 +759,22 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_Wait_(5);
   JupiterLighthouse_PlaySound(78);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  Actor_AnimateThenWait(ACTOR_KARST, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   JupiterLighthouse_PlaySound(34);
   FieldEvent_ShowMessageThenWait(4124, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0));
   JupiterLighthouse_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 4, 33);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_Wait_(10);
-  Actor_AnimateThenWait(ACTOR_KARST, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(4124, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait_(10);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 3, 20);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
@@ -840,11 +840,11 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHWEST, 0);
   Event_OpenMessage(ACTOR_KARST, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
-    Actor_AnimateThenWait(ACTOR_KARST, 3, 20);
+    Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
     gFieldWork->message++;
   } else {
-    Actor_AnimateThenWait(ACTOR_KARST, 3, 20);
+    Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
     gFieldWork->message++;
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   }
@@ -857,18 +857,18 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
   Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHEAST, 0);
-  Actor_AnimateThenWait(ACTOR_KARST, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30));
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHWEST, 0);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 4, 33);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
-  Actor_AnimateThenWait(ACTOR_KARST, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 2);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait_(5);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 3, 20);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
@@ -1190,7 +1190,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   // "This one moved... I can't believe they're still alive! The pests!"
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 4, 33);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
   // "If we stay here much longer, Isaac and the others will come! We..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -1209,7 +1209,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Alex! You..."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
-  Actor_AnimateThenWait(ACTOR_ALEX, 4, 33);
+  Actor_AnimateThenWait(ACTOR_ALEX, ANIM_SHAKE_HEAD, 33);
   // "You no longer consider me a friend? I do not care."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -1218,11 +1218,11 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Yes, I heard you the first time. But shouldn't you heal yourselves..."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
-  Actor_SetAnimation(ACTOR_KARST, 1);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_STAND);
   Actor_FaceDirection(ACTOR_KARST, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_AnimateThenWait(ACTOR_ALEX, 4, 33);
+  Actor_AnimateThenWait(ACTOR_ALEX, ANIM_SHAKE_HEAD, 33);
   // "After fighting both Isaac and Felix, you're in no condition to fight me."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_EAST);
@@ -1235,7 +1235,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirection(ACTOR_KARST, slow, 0);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, slow);
   FieldEvent_Wait(5);
-  Actor_AnimateThenWait(ACTOR_ALEX, 4, 33);
+  Actor_AnimateThenWait(ACTOR_ALEX, ANIM_SHAKE_HEAD, 33);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, mid);
   // "There's no time to talk!"
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
@@ -1243,21 +1243,21 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirection(ACTOR_KARST, FACING_SOUTH, 0);
   // "Then what should we do?"
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
-  Actor_AnimateThenWait(ACTOR_ALEX, 3, 20);
+  Actor_AnimateThenWait(ACTOR_ALEX, ANIM_NOD, 20);
   // "We take the elevator! With the beacon lit, it should be fully..."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_SOUTHWEST);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTHEAST);
-  Actor_AnimateThenWait(ACTOR_AGATIO, 3, 20);
+  Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
   // "We have no choice. Let's go."
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 0);
-  Actor_AnimateThenWait(ACTOR_ALEX, 3, 20);
+  Actor_AnimateThenWait(ACTOR_ALEX, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   // "Good! You're listening to reason! Now follow me!"
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
-  Actor_SetAnimation(ACTOR_AGATIO, 3);
-  Actor_AnimateThenWait(ACTOR_KARST, 3, 20);
+  Actor_SetAnimation(ACTOR_AGATIO, ANIM_NOD);
+  Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   EventCamera_FollowActor(ACTOR_AGATIO, 1);
   Actor_SetScript(ACTOR_AGATIO, (s32)gJupiterLighthouse_WalkToPlatformsScript);
@@ -1314,7 +1314,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldActor_WaitForMoveById(ACTOR_MIA);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_AnimateThenWait(ACTOR_KRADEN, 4, 33);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
   // "It seems they fought with Agatio and Karst..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_AnimateThenWait(2, 4, 33);
@@ -1424,7 +1424,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceEachOther(ACTOR_PIERS, ACTOR_FELIX, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
-  Actor_AnimateThenWait(ACTOR_KRADEN, 3, 20);
+  Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   // "That's a sound plan, Ivan... I fully agree."
@@ -1560,7 +1560,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
     Actor_SetDestination(ACTOR_JENNA, actor->x.part[0].pixel,
                          actor->z.part[0].pixel);
   }
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = Actor_Get(ACTOR_FELIX);
   if (actor != 0) {
     Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].pixel,
@@ -1791,7 +1791,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirection(ACTOR_KARST, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTHEAST);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(ACTOR_KARST, 3);
+  Actor_SetAnimation(ACTOR_KARST, ANIM_NOD);
   SET_MODE_AND_WAIT(ACTOR_AGATIO, 3, 20);
   FieldEvent_Wait(10);
   EventCamera_FollowActor(ACTOR_AGATIO, 1);
@@ -2016,7 +2016,7 @@ void JupiterLighthouse_WeBeatThem(void) {
     Actor_SetDestination(ACTOR_JENNA, ((struct Actor *)t364)->x.part[0].pixel,
                          ((struct Actor *)t364)->z.part[0].pixel);
   }
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   t367 = (s32)Actor_Get(ACTOR_FELIX);
   if (t367 != 0) {
     Actor_SetDestination(ACTOR_KRADEN, ((struct Actor *)t367)->x.part[0].pixel,

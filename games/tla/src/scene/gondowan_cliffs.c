@@ -403,13 +403,13 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);

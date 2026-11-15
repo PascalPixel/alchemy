@@ -7,6 +7,7 @@
 
 #include "edition.h"
 #include "static_assert.h"
+#include "game/item.h"
 
 /// The sizes the STATIC_ASSERTs below hold the structs to, and the
 /// action id's bits in an action list entry.
@@ -348,7 +349,7 @@ struct Unit {
   struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
-  u16 inventory[15];
+  u16 inventory[INVENTORY_SLOTS];
   u8 paddingBeforeDjinn[2]; ///< up to the word djinnHeld starts on
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
   u32 djinnHeld[ELEMENT_COUNT];

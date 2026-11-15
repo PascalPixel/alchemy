@@ -41,7 +41,7 @@ struct RenderModel__f190b74 {
   } look;
 };
 
-/// Effect kind 125, 114 frames. The screen turns to a scrolling red haze
+/// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
 /// rise from the caster, two claws strike the target from above and below
 /// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86

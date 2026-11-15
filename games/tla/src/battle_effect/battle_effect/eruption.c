@@ -5,14 +5,21 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The eruption's modes (BattleEffect_RunEruption).
+enum EruptionMode {
+  ERUPTION_BLAST,     ///< fire streak colours; the variant picks the counts and
+                      ///< the targets recoil
+  ERUPTION_SMOKE_BOMB ///< greys
+};
+
 /// Abilities: Smoke Bomb, Sleep Bomb.
 void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args) {
-  BattleEffect_RunEruption(args, 1);
+  BattleEffect_RunEruption(args, ERUPTION_SMOKE_BOMB);
 }
 
 /// Abilities: Blast, Mad Blast, Fiery Blast.
 void BattleEffect_RunBlast(struct BattleEffectParams *args) {
-  BattleEffect_RunEruption(args, 0);
+  BattleEffect_RunEruption(args, ERUPTION_BLAST);
 }
 
 #define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet
@@ -43,7 +50,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
-  if (mode == 1) {
+  if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
 
@@ -151,7 +158,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Hit the targets a frame apart; in mode 0 they recoil too.
-    if (mode == 0) {
+    if (mode == ERUPTION_BLAST) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i + 6) {
           EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_LEAP);

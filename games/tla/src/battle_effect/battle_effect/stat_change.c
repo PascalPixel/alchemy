@@ -5,76 +5,94 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-/// Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge
-///; Kindle; kind 46 is used by no ability.
+/// The stat boosts' modes (BattleEffect_RunStatBoost), each named for the
+/// effect that plays it.
+enum StatBoostMode {
+  STAT_BOOST_IMPACT,  ///< a dagger, in Mars colours
+  STAT_BOOST_GUARD,   ///< a shield, in Mars colours
+  STAT_BOOST_WARD,    ///< a shield, in Jupiter colours
+  STAT_BOOST_GRANITE, ///< a pane of light, in Venus colours
+  STAT_BOOST_ZEPHYR,  ///< a gust of wind, keeping the palette
+  STAT_BOOST_FLASH,   ///< a pane of light, in Mars colours
+  STAT_BOOST_IRON,
+  STAT_BOOST_UNUSED, ///< no ability's effect plays it
+  STAT_BOOST_SHADE,
+  STAT_BOOST_COAL,
+  STAT_BOOST_CRUCIBLE_FIRE, ///< Impact's burst without the gathering lights
+  STAT_BOOST_STEAM,
+  STAT_BOOST_GUARD_AURA
+};
+
+/// Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge; Kindle.
 void BattleEffect_RunImpact(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 0);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_IMPACT);
 }
 
 /// Abilities: Guard, Protect, Guardian, Protector; Corona.
 void BattleEffect_RunGuard(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 1);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_GUARD);
 }
 
 /// Abilities: Iron.
 void BattleEffect_RunIron(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 6);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_IRON);
 }
 
-/// Unused: no ability's effect names it.
-void BattleEffect_RunStatBoostMode7(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 7);
+/// Plays the stat boost's unused mode; no ability's effect names this one.
+void BattleEffect_RunUnusedStatBoost(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, STAT_BOOST_UNUSED);
 }
 
-/// Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze (kind
-/// 215).
+/// Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze.
 void BattleEffect_RunWard(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 2);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_WARD);
 }
 
 /// Abilities: Steam.
 void BattleEffect_RunSteam(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 11);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_STEAM);
 }
 
 /// Abilities: Granite.
 void BattleEffect_RunGranite(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 3);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_GRANITE);
 }
 
 /// Abilities: Flash.
 void BattleEffect_RunFlash(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 5);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_FLASH);
 }
 
 /// Abilities: Shade.
 void BattleEffect_RunShade(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 8);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_SHADE);
 }
 
 /// Abilities: Guard Aura.
 void BattleEffect_RunGuardAura(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 12);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_GUARD_AURA);
 }
 
 /// Abilities: Zephyr.
 void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 4);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_ZEPHYR);
 }
 
 /// Abilities: Coal.
 void BattleEffect_RunCoal(struct BattleEffectParams *args) {
-  BattleEffect_RunStatBoost(args, 9);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_COAL);
 }
 
-/// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
-/// lights), with no prelude Djinni and the fade step cleared.
+/// The stat boost's burst with no gathering lights, with no prelude Djinni and
+/// the fade step cleared.
+///
+/// Abilities: Crucible Fire.
 void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   work->fadeStep = 0;
   args->prelude = 0;
-  BattleEffect_RunStatBoost(args, 10);
+  BattleEffect_RunStatBoost(args, STAT_BOOST_CRUCIBLE_FIRE);
 }
 
 /// Build a blitter in its heap slot and fetch its entry.
@@ -129,25 +147,26 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
   // The prelude: the Djinni appears on the far side; origin receives where.
   if (args->prelude == 1) {
-    if (mode == 3 || mode == 6)
+    if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
       BattleEffect_RunDjinniEntrance(args,
                                      DJINNI_ENTRANCE(ELEMENT_VENUS,
                                                      args->side ^ 1,
                                                      DJINNI_ANCHOR_TARGET_X),
                                      origin, target);
-    else if (mode == 7 || mode == 8 || mode == 11)
+    else if (mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_SHADE ||
+             mode == STAT_BOOST_STEAM)
       BattleEffect_RunDjinniEntrance(args,
                                      DJINNI_ENTRANCE(ELEMENT_MERCURY,
                                                      args->side ^ 1,
                                                      DJINNI_ANCHOR_TARGET_X),
                                      origin, target);
-    else if (mode == 2 || mode == 4)
+    else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
       BattleEffect_RunDjinniEntrance(args,
                                      DJINNI_ENTRANCE(ELEMENT_JUPITER,
                                                      args->side ^ 1,
                                                      DJINNI_ANCHOR_TARGET_X),
                                      origin, target);
-    else if (mode != 10)
+    else if (mode != STAT_BOOST_CRUCIBLE_FIRE)
       BattleEffect_RunDjinniEntrance(
           args,
           DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
@@ -155,10 +174,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     origin[0] = origin[0] * 4 / 5;
   }
 
-  // Mode 10 is mode 0 joined at frame 53, with a fade.
-  if (mode == 10) {
+  // Crucible Fire is Impact joined at frame 53, with a fade.
+  if (mode == STAT_BOOST_CRUCIBLE_FIRE) {
     work->fadeFrames = 24;
-    mode = 0;
+    mode = STAT_BOOST_IMPACT;
     start = 53;
   }
   REG_BG2PA = 0xcc; // 1.25 times as wide
@@ -168,14 +187,15 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                              work->sheet + SERIES_B_FLARES, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                              work->sheet + SERIES_B_BURST, 1, 1);
-  if (mode == 3 || mode == 5 || mode == 8 || mode == 12) {
+  if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
+      mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
-    if (mode == 3)
+    if (mode == STAT_BOOST_GRANITE)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet), 128);
-    else if (mode == 5)
+    else if (mode == STAT_BOOST_FLASH)
       CopyWordsRoutine()(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
@@ -183,10 +203,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       CopyWordsRoutine()(
           (void *)BG_PLTT,
           Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
-  } else if (mode == 4) {
+  } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
-  } else if (mode == 9) {
+  } else if (mode == STAT_BOOST_COAL) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 0);
     CopyWordsRoutine()((void *)BG_PLTT,
@@ -195,35 +215,36 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   } else {
     void *palette;
 
-    if (mode == 0)
+    if (mode == STAT_BOOST_IMPACT)
       Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet,
                                  work->sheet + SERIES_B_PICTURE, 1, 0);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet,
                                  work->sheet + SERIES_B_PICTURE, 1, 0);
-    if (mode == 0)
+    if (mode == STAT_BOOST_IMPACT)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-    else if (mode == 2 || mode == 4)
+    else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
       palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
-    else if (mode == 6)
+    else if (mode == STAT_BOOST_IRON)
       palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
-    else if (mode == 7 || mode == 11)
+    else if (mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_STEAM)
       palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
-    else if (mode == 1)
+    else if (mode == STAT_BOOST_GUARD)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     CopyWordsRoutine()((void *)BG_PLTT, palette, 128);
   }
-  if (mode == 3 || mode == 6)
+  if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
-  else if (mode == 12)
+  else if (mode == STAT_BOOST_GUARD_AURA)
     Graphics_LoadGreyRamp();
-  else if (mode == 2 || mode == 4)
+  else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
-  else if (mode == 7 || mode == 8 || mode == 11)
+  else if (mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_SHADE ||
+           mode == STAT_BOOST_STEAM)
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SERIES_B_DJINNI, 1, 0);
   else
@@ -266,9 +287,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
     if (frame == 0)
       Sound_PlayFar(SE_SWIRL);
-    if (mode == 6 && (frame & 3) == 0)
+    if (mode == STAT_BOOST_IRON && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
-    if (mode == 11 && (frame & 3) == 0)
+    if (mode == STAT_BOOST_STEAM && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
@@ -333,10 +354,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
             __asm__("" : "=r"(slot) : "0"(slot));
             draw[1] = (DrawRectangle)*slot;
           }
-          if (mode == 0) {
+          if (mode == STAT_BOOST_IMPACT) {
             Transform_ApplyPitch(-frame << 10);
-          } else if (mode == 1) {
-          } else if (mode == 2) {
+          } else if (mode == STAT_BOOST_GUARD) {
+          } else if (mode == STAT_BOOST_WARD) {
             Transform_ApplyYaw(frame << 10);
           } else {
             Transform_ApplyYaw(frame << 10);
@@ -398,7 +419,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       }
 
       // From frame 80, the mode's picture.
-      if (mode == 0) {
+      if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cel = (frame - member * 8 - 80) / 4 % 7;
@@ -408,7 +429,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                   screen.x - 12, screen.y - 20, 24, 40);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
-      } else if (mode == 3 || mode == 5 || mode == 8 || mode == 12) {
+      } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
+                 mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
@@ -418,7 +440,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                   screen.x - 16, screen.y - 32, 32, 64);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
-      } else if (mode == 4 || mode == 9) {
+      } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 2 % 6;

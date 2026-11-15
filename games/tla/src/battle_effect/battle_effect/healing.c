@@ -5,34 +5,53 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
+/// first ability that plays it.
+enum HealingMotesMode {
+  HEALING_MODE_PLY,         ///< swirling sparkles, the canvas at its own width
+  HEALING_MODE_WISH,        ///< motes tumbling in from all around
+  HEALING_MODE_CURE,        ///< a ring of motes below each target
+  HEALING_MODE_CURE_POISON, ///< sparkles that go out one by one
+  HEALING_MODE_RESTORE,     ///< the same, turning on a second axis
+  HEALING_MODE_TONIC,
+  HEALING_MODE_PSY_CRYSTAL, ///< motes in the Mars Djinni palette
+  HEALING_MODE_SALT,
+  HEALING_MODE_SPRING,
+  HEALING_MODE_BREATH,
+  HEALING_MODE_ETHER,
+  HEALING_MODE_AURA,
+  HEALING_MODE_EDDY,
+  HEALING_MODE_REVERSE_STAR
+};
+
 /// Abilities: Ply, Ply Well, Pure Ply, Herb,
 /// Nut, Vial, Potion,
 /// Soothing Water, Pixie, Faery, Weird Nymph, Succubus,
 /// Earnest Ply, Fizz.
 void BattleEffect_RunPly(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 0);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_PLY);
 }
 
 /// Abilities: Wish, Wish Well, Pure Wish, Mist Potion, Elder
 /// Wood, Estre Wood, Regenerate, Reflect, Spritz.
 void BattleEffect_RunWish(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 1);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_WISH);
 }
 
 /// Abilities: Cure, Cure Well, Potent Cure, Corn, Flower,
 /// Worms.
 void BattleEffect_RunCure(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 2);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_CURE);
 }
 
 /// Abilities: Spring.
 void BattleEffect_RunSpring(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 8);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_SPRING);
 }
 
 /// Abilities: Breath.
 void BattleEffect_RunBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 9);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_BREATH);
 }
 
 /// Sparkles twinkle around each target, four more a frame, and go out one by
@@ -41,45 +60,46 @@ void BattleEffect_RunBreath(struct BattleEffectParams *args) {
 /// Abilities: Cure Poison, Restore.
 void BattleEffect_RunCurePoison(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunHealingMotes(args, 3);
+    BattleEffect_RunHealingMotes(args, HEALING_MODE_CURE_POISON);
     return;
   }
-  BattleEffect_RunHealingMotes(args, 4);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_RESTORE);
 }
 
-/// Unused: no ability's effect names it.
-void BattleEffect_RunHealingMotesMode4(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 4);
+/// Plays the healing motes as Restore shows them; no ability's effect names
+/// this one.
+void BattleEffect_RunUnusedRestoreMotes(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_RESTORE);
 }
 
 /// Abilities: Tonic.
 void BattleEffect_RunTonic(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 5);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_TONIC);
 }
 
 /// Abilities: Salt.
 void BattleEffect_RunSalt(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 7);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_SALT);
 }
 
 /// Abilities: Psy Crystal, Adept Ring, Ember.
 void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 6);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_PSY_CRYSTAL);
 }
 
 /// Abilities: Ether.
 void BattleEffect_RunEther(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 10);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_ETHER);
 }
 
 /// Abilities: Aura, Healing Aura, Cool Aura, Manticore.
 void BattleEffect_RunAura(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 11);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_AURA);
 }
 
 /// Abilities: Eddy.
 void BattleEffect_RunEddy(struct BattleEffectParams *args) {
-  BattleEffect_RunHealingMotes(args, 12);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_EDDY);
 }
 
 /// Motes of light scattered around each target swirl in towards it.
@@ -88,7 +108,7 @@ void BattleEffect_RunEddy(struct BattleEffectParams *args) {
 void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
   args->prelude = 0;
   args->variant = 2;
-  BattleEffect_RunHealingMotes(args, 13);
+  BattleEffect_RunHealingMotes(args, HEALING_MODE_REVERSE_STAR);
 }
 
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
@@ -128,22 +148,24 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   sprites = Ram_HeapSlots->battleSheet;
   shift = 0;
   BattleEffect_StartCanvasLayer(0);
-  if (mode == 13)
+  if (mode == HEALING_MODE_REVERSE_STAR)
     work->fadeFrames = 24;
 
   // The prelude: the Djinni appears; origin receives where.
   if (args->prelude == 1) {
     s32 djinni;
 
-    if (mode == 6)
+    if (mode == HEALING_MODE_PSY_CRYSTAL)
       djinni = ELEMENT_MARS;
-    else if (mode == 2 || mode == 7)
+    else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_SALT)
       djinni = ELEMENT_VENUS;
-    else if (mode == 9 || mode == 10)
+    else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER)
       djinni = ELEMENT_JUPITER;
     else
       djinni = ELEMENT_MERCURY;
-    if (mode == 6 || mode == 0 || mode == 8 || mode == 9 || mode == 10)
+    if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_PLY ||
+        mode == HEALING_MODE_SPRING || mode == HEALING_MODE_BREATH ||
+        mode == HEALING_MODE_ETHER)
       BattleEffect_RunDjinniEntrance(
           args, DJINNI_ENTRANCE(djinni, args->side, DJINNI_ANCHOR_OVER_TARGET),
           origin, target);
@@ -156,7 +178,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Modes 0, 8 and 9 show the canvas at full width, the first target at
   // the middle (64); the rest keep it twice as wide (narrow).
-  if (mode == 0 || mode == 8 || mode == 9) {
+  if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
+      mode == HEALING_MODE_BREATH) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &base);
     shift = 64 - base.x;
     REG_BG2X = shift << 8;
@@ -173,15 +196,17 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                              work->sheet + BEAM_SHEET, 1, 0);
   for (i = 0; i != 288; i++)
     work->sheet[BEAM_BYTES + i] = work->sheet[BEAM_SHEET + i * 2];
-  if (mode <= 1 || mode == 3 || mode == 4 || mode == 5 || mode == 8 ||
-      mode == 12) {
+  if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
+      mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC ||
+      mode == HEALING_MODE_SPRING || mode == HEALING_MODE_EDDY) {
     if (args->variant == EFFECT_VARIANT_BASIC)
       palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-  } else if (mode == 9 || mode == 10) {
+  } else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER) {
     palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
-  } else if (mode == 6 || mode == 11 || mode == 13) {
+  } else if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_AURA ||
+             mode == HEALING_MODE_REVERSE_STAR) {
     palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
   } else {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
@@ -190,20 +215,21 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   // The Djinni: 40x40 at full width, a 20x40 picture when narrow.
   if (narrow == 0) {
-    if (mode == 6)
+    if (mode == HEALING_MODE_PSY_CRYSTAL)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-    else if (mode == 2 || mode == 7)
+    else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_SALT)
       palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
-    else if (mode == 9 || mode == 10)
+    else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER)
       palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   } else {
-    if (mode == 6 || mode == 11 || mode == 13)
+    if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_AURA ||
+        mode == HEALING_MODE_REVERSE_STAR)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet);
-    else if (mode == 2 || mode == 7)
+    else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_SALT)
       palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSmallSheet);
-    else if (mode == 9 || mode == 10)
+    else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER)
       palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
@@ -214,7 +240,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                                       draw = blit); // [0] MAX, [1] ADDITIVE
 
   // Scatter the motes; the mode decides how, and how long the effect is.
-  if (mode == 0 || mode == 6 || mode == 8 || mode == 9 || mode == 10) {
+  if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||
+      mode == HEALING_MODE_SPRING || mode == HEALING_MODE_BREATH ||
+      mode == HEALING_MODE_ETHER) {
     // Across and deep 64 pixels each way, 32-95 pixels up.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -224,13 +252,13 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    if (mode == 9)
+    if (mode == HEALING_MODE_BREATH)
       total = 54;
-    else if (mode == 8)
+    else if (mode == HEALING_MODE_SPRING)
       total = 76;
     else
       total = args->targetCount * 8 + 58;
-  } else if (mode == 7) {
+  } else if (mode == HEALING_MODE_SALT) {
     // From the feet, 48 pixels up, thrown out and up.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -244,7 +272,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->variant = 0;
     }
     total = args->targetCount * 8 + 58;
-  } else if (mode == 12) {
+  } else if (mode == HEALING_MODE_EDDY) {
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
 
@@ -254,7 +282,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->variant = 0;
     }
     total = args->targetCount * 8 + 58;
-  } else if (mode == 1 || mode == 13) {
+  } else if (mode == HEALING_MODE_WISH || mode == HEALING_MODE_REVERSE_STAR) {
     // 64 pixels each way.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -265,7 +293,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->variant = 0;
     }
     total = args->targetCount * 8 + 58;
-  } else if (mode == 11) {
+  } else if (mode == HEALING_MODE_AURA) {
     // A wide cloud, 100 pixels each way.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -276,7 +304,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->variant = 0;
     }
     total = args->targetCount * 8 + 46;
-  } else if (mode == 2) {
+  } else if (mode == HEALING_MODE_CURE) {
     // A ring 32-95 pixels across, 50 pixels down, rising.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -289,7 +317,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->variant = 0;
     }
     total = args->targetCount * 8 + 58;
-  } else if (mode == 3) {
+  } else if (mode == HEALING_MODE_CURE_POISON) {
     // 64 pixels across and deep, 32 up and down.
     for (i = 0; i != 512; i++) {
       struct Particle *spark = &SPARKS[i];
@@ -320,9 +348,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     limit = 32;
   else if (args->variant == EFFECT_VARIANT_STRONGEST)
     limit = 128;
-  if (mode == 8)
+  if (mode == HEALING_MODE_SPRING)
     limit = 128;
-  if (mode == 12)
+  if (mode == HEALING_MODE_EDDY)
     limit = 16;
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
@@ -334,7 +362,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
     if (frame == 40)
       EFFECT_SHOW_DAMAGE(0);
-    if (mode == 7 && (frame & 3) == 0)
+    if (mode == HEALING_MODE_SALT && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
@@ -375,11 +403,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
         Sound_PlayFar(SE_RECOVERY);
-      if (mode == 8) {
+      if (mode == HEALING_MODE_SPRING) {
         if (frame == start + 41)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 32);
-      } else if (mode == 11) {
+      } else if (mode == HEALING_MODE_AURA) {
         if (frame == start + 24)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 28);
@@ -388,20 +416,21 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                                  TINT_KEEP, member, 28);
       }
       if (frame > start) {
-        if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||
-            mode == 12) {
+        if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||
+            mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
+            mode == HEALING_MODE_ETHER || mode == HEALING_MODE_EDDY) {
           Transform_ApplyYaw((frame - start) << 9);
-        } else if (mode == 9) {
+        } else if (mode == HEALING_MODE_BREATH) {
           Transform_ApplyYaw((frame - start) << 11);
-        } else if (mode == 11) {
-        } else if (mode == 13) {
+        } else if (mode == HEALING_MODE_AURA) {
+        } else if (mode == HEALING_MODE_REVERSE_STAR) {
           Transform_ApplyRoll(frame << 9);
-        } else if (mode == 1) {
+        } else if (mode == HEALING_MODE_WISH) {
           Transform_ApplyPitch(frame << 9);
           Transform_ApplyRoll(frame << 9);
-        } else if (mode == 2 || mode == 12) {
+        } else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_EDDY) {
           Transform_ApplyYaw((frame - member * 40) << 9);
-        } else if (mode == 3) {
+        } else if (mode == HEALING_MODE_CURE_POISON) {
           Transform_ApplyYaw((frame - start) << 9);
         } else {
           Transform_ApplyYaw((frame - start) << 9);
@@ -414,9 +443,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           struct Particle *spark = &SPARKS[member * SPARKS_PER_MEMBER + i];
           s32 end;
 
-          if (mode == 3 || mode == 4 || mode == 5)
+          if (mode == HEALING_MODE_CURE_POISON ||
+              mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC)
             end = start + i / 2 + 32;
-          else if (mode == 7)
+          else if (mode == HEALING_MODE_SALT)
             end = start + i / 2 + 64;
           else
             end = 0x10000;
@@ -431,7 +461,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               s32 size;
 
               EffectPosition_ProjectPoint((s32 *)spark, &screen);
-              if (mode == 0 || mode == 8 || mode == 9)
+              if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
+                  mode == HEALING_MODE_BREATH)
                 screen.x += shift;
               else
                 screen.x >>= 1;
@@ -444,22 +475,27 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               if (screen.depth > 634)
                 screen.depth = 634;
               size = 3 - (screen.depth - 314) / 128;
-              if (mode == 0 || mode == 8 || mode == 9)
+              if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
+                  mode == HEALING_MODE_BREATH)
                 size = (i * 4 + frame) % 9;
-              else if (mode == 11 || mode == 13)
+              else if (mode == HEALING_MODE_AURA ||
+                       mode == HEALING_MODE_REVERSE_STAR)
                 size = 4 - (screen.depth - 314) / 128;
-              else if (mode == 7)
+              else if (mode == HEALING_MODE_SALT)
                 size = (i * 4 + frame) % 9;
-              if (mode == 0 || mode == 3 || mode == 4 || mode == 5 ||
-                  mode == 7 || mode == 8 || mode == 9 || mode == 11 ||
-                  mode == 13) {
+              if (mode == HEALING_MODE_PLY ||
+                  mode == HEALING_MODE_CURE_POISON ||
+                  mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC ||
+                  mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
+                  mode == HEALING_MODE_BREATH || mode == HEALING_MODE_AURA ||
+                  mode == HEALING_MODE_REVERSE_STAR) {
                 u8 *cell = work->sheet + gBattleEffect_SparklePictures[size];
                 u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
                         edge);
-              } else if (mode == 12) {
+              } else if (mode == HEALING_MODE_EDDY) {
                 blit[0](canvas, work->sheet + BEAM_BYTES, screen.x - 6,
                         screen.y - 12, 12, 24);
               } else {
@@ -468,13 +504,17 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               }
 
               // Close in by 1/distance of the way a frame.
-              if (mode <= 2 || mode == 6 || mode == 8 || mode == 9 ||
-                  mode == 10 || mode == 11 || mode == 13 || mode == 12) {
+              if (mode <= HEALING_MODE_CURE ||
+                  mode == HEALING_MODE_PSY_CRYSTAL ||
+                  mode == HEALING_MODE_SPRING || mode == HEALING_MODE_BREATH ||
+                  mode == HEALING_MODE_ETHER || mode == HEALING_MODE_AURA ||
+                  mode == HEALING_MODE_REVERSE_STAR ||
+                  mode == HEALING_MODE_EDDY) {
                 spark->x -= spark->x / distance;
                 spark->y -= spark->y / distance;
                 spark->z -= spark->z / distance;
               }
-              if (mode == 7) {
+              if (mode == HEALING_MODE_SALT) {
                 spark->x += spark->velocityX;
                 spark->y += spark->velocityY;
                 spark->z += spark->velocityZ;

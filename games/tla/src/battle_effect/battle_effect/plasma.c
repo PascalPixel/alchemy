@@ -170,12 +170,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
 ///.
 void BattleEffect_RunNova(struct BattleEffectParams *args) {
-  BattleEffect_RunSparkGroups(args, 0);
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_NOVA);
 }
 
 /// Abilities: Dynamite, Angry Mine.
 void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
-  BattleEffect_RunSparkGroups(args, 1);
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
 }
 
 #define FLASH_POINTS 16 ///< flash points kept for each group
@@ -211,11 +211,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // The burst's origin on the canvas.
-  if (kind == SPARKS_FIXED) {
+  if (kind == SPARK_GROUPS_NOVA) {
     BattleEffect_StartCanvasLayer(1);
     originX = 60;
     originY = 48;
-  } else if (kind == SPARKS_ORANGE) {
+  } else if (kind == SPARK_GROUPS_DYNAMITE) {
     BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
@@ -234,14 +234,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  if (kind == SPARKS_ORANGE) {
+  if (kind == SPARK_GROUPS_DYNAMITE) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
-  } else if (kind == SPARKS_FROM_ACTOR) {
+  } else if (kind == SPARK_GROUPS_RISING) {
     const void *palette =
         Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
     s32 (*copy)(void *destination, const void *source, s32 size) =
@@ -302,7 +302,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     if (args->variant == 3 && frame == 4)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
 
-    if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
+    if (kind == SPARK_GROUPS_DYNAMITE || kind == SPARK_GROUPS_RISING) {
       if (frame == 2) {
         Sound_PlayFar(SE_CRASH);
         EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -359,7 +359,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       if (frame > start + 5) {
         s32 gravity;
 
-        if (kind == SPARKS_FROM_ACTOR)
+        if (kind == SPARK_GROUPS_RISING)
           gravity = -0x1000;
         else
           gravity = 0x1000;

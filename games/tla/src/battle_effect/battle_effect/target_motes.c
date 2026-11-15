@@ -8,49 +8,65 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
+/// Where Paralyze unpacks the tornado's glints in the sheet.
+#define TORNADO_GLINT_SHEET 0x2580
+
+/// The target motes' styles (BattleEffect_RunTargetMotes), each named for the
+/// effect that plays it.
+enum TargetMotesMode {
+  TARGET_MOTES_TAINT,       ///< lime smoke closing in
+  TARGET_MOTES_PINK_SMOKE,  ///< pink smoke closing in; Taint's stronger variant
+  TARGET_MOTES_DELUDE,      ///< cyan smoke rising
+  TARGET_MOTES_PARALYZE,    ///< smoke rising, with glints
+  TARGET_MOTES_HEARTRENDER, ///< hearts closing in
+  TARGET_MOTES_MYSTIC_FLAME, ///< glowing orbs closing in
+  TARGET_MOTES_DROWN,        ///< vortex motes closing in
+  TARGET_MOTES_DEMON_FIRE ///< orbs in Mars Djinn colours rising, then a strike
+};
+
 /// Each entry passes a particle type (color and count) to
 /// BattleEffect_RunTargetMotes.
 void BattleEffect_RunTaint(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunTargetMotes(args, 0);
+    BattleEffect_RunTargetMotes(args, TARGET_MOTES_TAINT);
     return;
   }
-  BattleEffect_RunTargetMotes(args, 1);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
 }
 
 /// Abilities: Poison Gel.
 void BattleEffect_RunPoisonGel(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 1);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PINK_SMOKE);
 }
 
 /// Abilities: Delude, Confuse, Mist, Mucous Gel.
 void BattleEffect_RunDelude(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 2);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DELUDE);
 }
 
 /// Abilities: Paralyze.
 void BattleEffect_RunParalyze(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 3);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_PARALYZE);
 }
 
 /// Abilities: Heartrender.
 void BattleEffect_RunHeartrender(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 4);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_HEARTRENDER);
 }
 
 /// Abilities: Mystic Flame.
 void BattleEffect_RunMysticFlame(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 5);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_MYSTIC_FLAME);
 }
 
 /// Abilities: Demonfire.
 void BattleEffect_RunDemonFire(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 7);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DEMON_FIRE);
 }
 
 /// Abilities: Drown.
 void BattleEffect_RunDrown(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetMotes(args, 6);
+  BattleEffect_RunTargetMotes(args, TARGET_MOTES_DROWN);
 }
 
 #define MOTE_MAX 512
@@ -86,21 +102,21 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   count = 16;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  if (mode == 0) {
+  if (mode == TARGET_MOTES_TAINT) {
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  } else if (mode == 1) {
+  } else if (mode == TARGET_MOTES_PINK_SMOKE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-  } else if (mode == 2) {
+  } else if (mode == TARGET_MOTES_DELUDE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
-  } else if (mode == 3) {
+  } else if (mode == TARGET_MOTES_PARALYZE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
-  } else if (mode == 4) {
+  } else if (mode == TARGET_MOTES_HEARTRENDER) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  } else if (mode == 5) {
+  } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
     palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
-  } else if (mode == 7) {
+  } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = 24;
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
@@ -111,11 +127,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  if (mode == 4)
+  if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
-  if (mode == 3)
+  if (mode == TARGET_MOTES_PARALYZE)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                               work->sheet + RENDER_MODE_TORNADO, 1, 0);
+                               work->sheet + TORNADO_GLINT_SHEET, 1, 0);
 
   // Scatter the motes around the origin.
   for (i = 0; i != MOTE_MAX; i++) {
@@ -137,7 +153,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 64;
   else
     total = args->targetCount * 8 + 32;
-  if (!(mode <= 1 || mode == 3))
+  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
@@ -148,7 +164,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // Mode 7 sends the caster at the first target 46 frames before the
     // end and strikes it 14 frames later; the others let the battle show the
     // damage.
-    if (mode == 7) {
+    if (mode == TARGET_MOTES_DEMON_FIRE) {
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
       if (frame == total - 32) {
@@ -171,7 +187,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
-      if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
+      if (mode == TARGET_MOTES_PARALYZE && frame > member * 8 &&
+          frame < member * 8 + 32) {
         EffectPosition_ProjectScaledBattler(args->targets[member], &base);
 
         for (i = 0; i != 2; i++) {
@@ -211,7 +228,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           ((DrawRectangle)Ram_HeapSlots->ramCode2)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
-                  RENDER_MODE_TORNADO,
+                  TORNADO_GLINT_SHEET,
               x, y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
@@ -234,7 +251,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       // From its turn on, the target's motes turn around it.
       if (frame > member * 8) {
         Transform_ApplyYaw(frame << 9);
-        if (mode <= 1 || mode == 4)
+        if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
           Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
           struct Particle *mote = &PARTICLES[member * 64 + i];
@@ -251,13 +268,14 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
               screen.x >>= 1;
-              if (mode == 5 || mode == 7)
+              if (mode == TARGET_MOTES_MYSTIC_FLAME ||
+                  mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
                         screen.y - 20, 40, 40);
-              else if (mode == 6)
+              else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
-              else if (mode == 4)
+              else if (mode == TARGET_MOTES_HEARTRENDER)
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else
@@ -305,7 +323,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (!(mode <= 1 || mode == 3))
+  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
@@ -752,17 +770,17 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
 /// Abilities: Balm.
 void BattleEffect_RunBalm(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 0);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_BALM);
 }
 
 /// Abilities: Tinder.
 void BattleEffect_RunTinder(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 1);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_TINDER);
 }
 
 /// Abilities: Phoenix, Regen Dance.
 void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
-  BattleEffect_RunTumblingQuads(args, 2);
+  BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_PHOENIX);
 }
 #undef BLITTER
 #undef GROUND_Y

@@ -7,6 +7,21 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
+/// The lobbed shells' styles (BattleEffect_RunLobbedShells), each named for the
+/// effect that plays it, and its row of gLobbedShells_Styles.
+enum LobbedShellsMode {
+  LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
+  LOBBED_SHELLS_STICKY_GOO,    ///< the spider web's colours, smoke
+  LOBBED_SHELLS_STICKY_POISON, ///< lime, smoke
+  LOBBED_SHELLS_ROTTEN_BLOOD,  ///< green, shards
+  LOBBED_SHELLS_MAD_SPATTER,   ///< gold, shards
+  LOBBED_SHELLS_DECOMPOSE,     ///< green, smoke
+  LOBBED_SHELLS_POISON_INK,    ///< Mars Djinn colours, smoke
+  LOBBED_SHELLS_MUD,
+  LOBBED_SHELLS_RISING_VENOM,
+  LOBBED_SHELLS_FORMIC_ACID
+};
+
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
 /// slot 26), out[1] adds the colours (slot 47). BattleEffect_LoadBlitter takes
@@ -261,52 +276,52 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
 
 /// Abilities: Mad Spatter.
 void BattleEffect_RunMadSpatter(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 4);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
 }
 
 /// Abilities: Mud.
 void BattleEffect_RunMud(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 7);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_MUD);
 }
 
 /// Abilities: Decompose.
 void BattleEffect_RunDecompose(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 5);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
 }
 
 /// Abilities: Bone Chiller.
 void BattleEffect_RunBoneChiller(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 0);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
 }
 
 /// Abilities: Sticky Goo.
 void BattleEffect_RunStickyGoo(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 1);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
 }
 
 /// Abilities: Poison Ink.
 void BattleEffect_RunPoisonInk(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 6);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
 }
 
 /// Abilities: Sticky Poison.
 void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 2);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
 }
 
 /// Abilities: Rotten Blood.
 void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 3);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
 
 /// Abilities: Rising Venom.
 void BattleEffect_RunRisingVenom(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 8);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_RISING_VENOM);
 }
 
 /// Abilities: Formic Acid.
 void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
-  BattleEffect_RunLobbedShells(args, 9);
+  BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_FORMIC_ACID);
 }
 
 // The shots live in the map buffer, 16 for each target, and the bursts
@@ -350,7 +365,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // Set up: the canvas (mode 7 with its prelude), the gold shells and the
   // smoke with their palettes, then the mode's palette.
-  if (mode == 7) {
+  if (mode == LOBBED_SHELLS_MUD) {
     BattleEffect_StartCanvasLayer(0);
     BattleEffect_RunDjinniEntrance(
         args,
@@ -367,21 +382,21 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                              work->sheet + SMOKE_SHEET, 1, 1);
-  if (mode == 0)
+  if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
-  else if (mode == 1)
+  else if (mode == LOBBED_SHELLS_STICKY_GOO)
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
-  else if (mode == 2)
+  else if (mode == LOBBED_SHELLS_STICKY_POISON)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  else if (mode == 8)
+  else if (mode == LOBBED_SHELLS_RISING_VENOM)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  else if (mode == 3)
+  else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  else if (mode == 4 || mode == 7)
+  else if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
     palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-  else if (mode == 6)
+  else if (mode == LOBBED_SHELLS_POISON_INK)
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-  else if (mode == 9)
+  else if (mode == LOBBED_SHELLS_FORMIC_ACID)
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
@@ -392,9 +407,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
-  if (mode == 7)
+  if (mode == LOBBED_SHELLS_MUD)
     height = 0x280000;
-  else if (mode == 8)
+  else if (mode == LOBBED_SHELLS_RISING_VENOM)
     height = 0x140000;
   else
     height = 0x40000;
@@ -420,7 +435,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
   // each frame and turn blending off, the others fade it to three quarters.
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  if (mode == 4 || mode == 7) {
+  if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     REG_BLDCNT = 0;
   } else {
@@ -539,11 +554,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   EFFECT_RELEASE_BLITTERS();
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
-  if (mode == 3 || mode == 5) {
+  if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    if (mode == 3)
+    if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
       BattleEffect_RunImpair(args);
     else
       BattleEffect_RunDull(args);

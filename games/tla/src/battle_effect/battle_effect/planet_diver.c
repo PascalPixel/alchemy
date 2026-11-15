@@ -8,6 +8,15 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
+/// The gathering lights' modes (BattleEffect_RunGatheringLights), each named
+/// for the effect that plays it, and its row of gGatheringLights_Counts.
+enum GatheringLightsMode {
+  GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
+  GATHERING_LIGHTS_RUMBLE,      ///< Mars Djinn colours
+  GATHERING_LIGHTS_HAUNTING,    ///< Mercury Djinn colours
+  GATHERING_LIGHTS_THORNY_GRAVE
+};
+
 /// The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 
@@ -239,22 +248,22 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 
 /// Abilities: Demon Night.
 void BattleEffect_RunDemonNight(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, 0);
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
 }
 
 /// Abilities: Rumble.
 void BattleEffect_RunRumble(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, 1);
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
 }
 
 /// Abilities: Haunting.
 void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, 2);
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }
 
 /// Abilities: Thorny Grave.
 void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, 3);
+  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_THORNY_GRAVE);
 }
 
 #define MOTES_PER_TARGET 128
@@ -287,9 +296,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
                              0);
-  if (mode == 0 || mode == 3)
+  if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||
+      mode == GATHERING_LIGHTS_THORNY_GRAVE)
     palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 1)
+  else if (mode == GATHERING_LIGHTS_RUMBLE)
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
@@ -298,7 +308,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
     routine((void *)BG_PLTT, source_, 128);
   }
-  if (mode == 3)
+  if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
     Palette_MirrorBgColors();
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
@@ -333,9 +343,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     s32 scrollX;
 
     if (frame == 80) {
-      if (mode == 0)
+      if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      else if (mode == 3)
+      else if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -365,9 +375,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       s32 half = BattleUnit_GetEffectHeightFar(args->targets[k]) / 2;
 
       if (frame == k * 20 + 71) {
-        if (mode == 0)
+        if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        else if (mode != 3)
+        else if (mode != GATHERING_LIGHTS_THORNY_GRAVE)
           Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
@@ -412,7 +422,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
-                if (mode == 3) {
+                if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
                   BattleEffect_StartActorMotion(args->targets[k], 1, 0x20000,
                                                 0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)

@@ -679,11 +679,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       EFFECT_RELEASE_BLITTERS();
       Actor_SelectAnimationFar(object, 3);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
-        BattleEffect_RunProjectileVolley(action, 9);
+        BattleEffect_RunProjectileVolley(action, PROJECTILE_VOLLEY_BLIZZARD);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME)
         BattleEffect_RunMysticFlame(action);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS)
-        BattleEffect_RunProjectileVolley(action, 8);
+        BattleEffect_RunProjectileVolley(action,
+                                         PROJECTILE_VOLLEY_IMPACT_COMETS);
       return;
     }
     Actor_SetAnimationSpeedFar(object, 16);
@@ -700,7 +701,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       EFFECT_RELEASE_BLITTERS();
       action->variant = 3;
-      BattleEffect_RunSparkGroups(action, 2);
+      BattleEffect_RunSparkGroups(action, SPARK_GROUPS_RISING);
       return;
     }
     Iwram_ClearWords(screen, 0x3c00);

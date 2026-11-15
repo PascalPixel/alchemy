@@ -52,11 +52,11 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
   MIRROR_HALF(1, PICTURE_OFFSET + 0xdcf, 19, 55)
   MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
-  if (mode == 3)
+  if (mode == MIRRORED_WALL_SACK)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  else if (mode == 2)
+  else if (mode == MIRRORED_WALL_RECOVERY)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_FireballSheet),
                     128);
@@ -72,10 +72,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  if (mode == 2) {
+  if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
-  } else if (mode == 1 || mode == 3) {
+  } else if (mode == MIRRORED_WALL_BERSERK || mode == MIRRORED_WALL_SACK) {
     work->shakeFrames = 8;
     Sound_PlayFar(SE_POWER_UP);
   } else {
@@ -84,7 +84,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
 
   for (frame = 0; frame != BURST_FRAMES; frame++) {
     if (frame == 0) {
-      if (mode == 2)
+      if (mode == MIRRORED_WALL_RECOVERY)
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 32);
       else
@@ -93,7 +93,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     }
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(0);
-    if (frame == 8 && mode == 0)
+    if (frame == 8 && mode == MIRRORED_WALL_SPASM)
       Sound_PlayFar(SE_RECOVERY);
 
     // Cels 0, 1 and 2 four frames each, then 1 and 2 by turns.
@@ -123,7 +123,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (mode == 0)
+    if (mode == MIRRORED_WALL_SPASM)
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);

@@ -21,7 +21,7 @@
 /// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
 /// circles over the canvas and a fan of light lines spreads from it. At
 /// frame 56 every target flashes.
-/// Balm, Tinder and Phoenix run it with modes 0, 1 and 2.
+/// Balm, Tinder and Phoenix run it in their modes.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
   s32 size[3];
@@ -46,7 +46,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
 
   // The mode's canvas, sheets and palette.
-  if (mode == QUADS_MERCURY) {
+  if (mode == TUMBLING_QUADS_BALM) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_MERCURY,
                                                    args->side ^ 1,
@@ -59,7 +59,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
-  } else if (mode == QUADS_MARS) {
+  } else if (mode == TUMBLING_QUADS_TINDER) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1,
                                                    DJINNI_ANCHOR_OVER_TARGET),
@@ -101,7 +101,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         quad->x = Random16() & 0xffff;
         Random16();
         quad->z = px(1);
-        if (mode == QUADS_RISING)
+        if (mode == TUMBLING_QUADS_PHOENIX)
           quad->y = px(32);
         else
           quad->y = height;
@@ -186,7 +186,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
           Transform_Reset();
           Transform_ApplyPitch(3000);
-          if (mode == QUADS_RISING)
+          if (mode == TUMBLING_QUADS_PHOENIX)
             quad->y -= quad->velocityY;
           else
             quad->y += quad->velocityY;

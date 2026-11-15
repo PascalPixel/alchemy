@@ -15,7 +15,7 @@
 /* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
-/// Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
+/// 111 frames. Sparks gather at the caster (frames 0-15)
 /// and burst from it toward the target (16-110); eight flat flashes turn about
 /// the caster; sixteen textured shards fly from the target (54-101), each
 /// leaving a fading splash; two rings swell at the caster (0-15); every four

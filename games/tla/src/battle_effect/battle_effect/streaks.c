@@ -243,26 +243,30 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// The mote fountain's modes (BattleEffect_RunMoteFountain).
+enum MoteFountainMode {
+  MOTE_FOUNTAIN_FOUNTAIN_HEALING, ///< Soothing Star
+  MOTE_FOUNTAIN_DRIFTING,         ///< Sleep Star
+  MOTE_FOUNTAIN_SLAVER            ///< Slaver
+};
+
 /// Abilities: Sleep Star.
 void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
-  BattleEffect_RunMoteFountain(args, 1);
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
 }
 
 /// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
-  BattleEffect_RunMoteFountain(args, 0);
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 
 /// Abilities: Slaver.
 void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
-  BattleEffect_RunMoteFountain(args, 2);
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_SLAVER);
 }
 
 /// The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
-
-// Soothing Star (mode 0, effect kind 344), Sleep Star (mode 1) and
-// Slaver (mode 2).
 
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.
@@ -286,7 +290,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  if (mode == MODE_SOOTHING_STAR)
+  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
@@ -299,9 +303,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCode2;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == MODE_SOOTHING_STAR)
+  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;
-  else if (mode == MODE_SLEEP_STAR)
+  else if (mode == MOTE_FOUNTAIN_DRIFTING)
     resource = (s32)&ResourceId_EarthWallSheet;
   else
     resource = (s32)&ResourceId_GreenPalette;
@@ -317,7 +321,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     s32 angle;
 
     mote = &EFFECT_STEPS[i];
-    if (mode == MODE_SLAVER) {
+    if (mode == MOTE_FOUNTAIN_SLAVER) {
       if (args->side == EFFECT_SIDE_ENEMIES)
         angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
       else
@@ -332,7 +336,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     mote->x = source->x;
     mote->z = source->z;
     mote->velocityX = Trig_Sin(angle) * speed >> 8;
-    if (mode == MODE_SLAVER) {
+    if (mode == MOTE_FOUNTAIN_SLAVER) {
       mote->velocityY = ((Random16() & 255) + 128) << 10;
       mote->velocityZ = -(Trig_Cos(angle) * speed) >> 9;
     } else {
@@ -340,19 +344,19 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       mote->velocityZ = -(Trig_Cos(angle) * speed << 1) >> 8;
     }
     mote->variant = (Random16() & 31) + 48;
-    if (mode == MODE_SOOTHING_STAR) {
+    if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
       mote->velocityZ /= 2;
     }
   }
 
   frames = 96;
-  if (mode != MODE_SLAVER)
+  if (mode != MOTE_FOUNTAIN_SLAVER)
     frames = 128;
   for (frame = 0; frame != frames; frame++) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
-    if (mode == MODE_SLAVER && frame == 0)
+    if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
       Sound_PlayFar(SE_CURSE);
 
     for (i = 0; i != 128; i++) {
@@ -377,14 +381,14 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
-        if (mode == MODE_SLAVER) {
+        if (mode == MOTE_FOUNTAIN_SLAVER) {
           BattleEffectKernels_IntegrateVector3(mote, 62, -px(1) / 8);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
           BattleEffectKernels_IntegrateVector3(mote, 62, px(1) / 64);
         }
-        if (mode == MODE_SLEEP_STAR) {
+        if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
             mote->velocityX += px(1) / 8;
           else
@@ -395,7 +399,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     }
 
     // From frame 48, flash the targets one after another, 8 frames apart.
-    if (mode == MODE_SLEEP_STAR) {
+    if (mode == MOTE_FOUNTAIN_DRIFTING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           EFFECT_SHOW_DAMAGE(-1);
@@ -403,7 +407,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                                    POSE_DAMAGE, i, 8);
         }
       }
-    } else if (mode == MODE_SOOTHING_STAR) {
+    } else if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
@@ -418,7 +422,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  if (mode == MODE_SLAVER) {
+  if (mode == MOTE_FOUNTAIN_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);

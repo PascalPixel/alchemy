@@ -14,7 +14,8 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
   wait(29);
   args->variant = 4;
-  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
+  BattleEffect_RunSparkGroups(
+      args, SPARK_GROUPS_RISING); // 2: from the user's position.
 }
 
 /// The user leaps at the first target, waits 26 frames, and the spark groups
@@ -25,7 +26,7 @@ void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 0x18, 0xc3333);
   wait(26);
   args->variant = 5;
-  BattleEffect_RunSparkGroups(args, 2);
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
 /// Jumps the user toward the first target and emits type 3 sparks after 12
@@ -36,7 +37,8 @@ void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
   wait(12);
   args->variant = 3;
-  BattleEffect_RunSparkGroups(args, 2); // 2: from the user's position.
+  BattleEffect_RunSparkGroups(
+      args, SPARK_GROUPS_RISING); // 2: from the user's position.
 }
 
 /// Abilities: Quick Strike.

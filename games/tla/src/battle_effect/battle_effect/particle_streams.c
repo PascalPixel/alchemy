@@ -6,6 +6,13 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
+/// The particle streams' modes (BattleEffect_RunParticleStreams).
+enum ParticleStreamsMode {
+  PARTICLE_STREAMS_METEOR,     ///< one spawned sprite falls
+  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated sprites
+                               ///< fall in the lightning bolt's colours
+};
+
 /// BattleEffect_StartActorMotion with fixed speeds and a random distance:
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
 /// its anchor's x, then takes mode 5.
@@ -609,12 +616,12 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 
 /// The particle streams in mode 0.
 void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
-  BattleEffect_RunParticleStreams(args, 0);
+  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_METEOR);
 }
 
 /// The particle streams in mode 1.
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
-  BattleEffect_RunParticleStreams(args, 1);
+  BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
 }
 
 #undef EMBERS
@@ -731,7 +738,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
-  if (mode == 1) {
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct FxAnimObject *flame = Sprite_CreateFar(638 + i * 0x2001);
 
@@ -746,7 +753,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     BattleEffect_SpawnObjects(1, 650, 3);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
-  if (mode == 1)
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
@@ -871,7 +878,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       asm("" : "=r"(base) : "0"(base), "r"(count) : "r1", "r3");
       line = HEAT_LINES(base);
 
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
@@ -934,7 +941,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       y = 96 - frame;
       position[3] = 0;
       position[1] = px(255);
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
@@ -1086,7 +1093,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     if (frame == 40)
       Sound_PlayFar(SE_CRASH);
     if (frame == BLAST_HIT_FRAME) {
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         Sprite_DestroyFar(work->sprites[0]);
         Sprite_DestroyFar(work->sprites[1]);
         BattleObject_PutFar();
@@ -1182,7 +1189,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     grow = (frame << 8) + 0x20000;
     position[3] = 0;
     position[1] = px(255);
-    if (mode == 1) {
+    if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
       position[0] = px(x) + px(96);
@@ -1203,7 +1210,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  if (mode == 0)
+  if (mode == PARTICLE_STREAMS_METEOR)
     Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }

@@ -117,13 +117,6 @@ struct RuinObject {
   u8 resource;
 };
 
-// The kinds this body draws, chosen by the effect's entry.
-enum {
-  QUADS_MERCURY, // over a prepared canvas, with the Mercury Djinn
-  QUADS_MARS,    // over a prepared canvas, with the Mars Djinn
-  QUADS_RISING   // rising from the first target
-};
-
 /// A render job (the first of Render_AllocateModelList's entries).
 struct RenderJob {
   s32 kind;
@@ -140,18 +133,6 @@ struct DropSplashBuffer {
   u16 lines[160];
   struct Particle splashes[512];
 };
-
-// The kinds of spark group, chosen by the effect's entry.
-enum {
-  SPARKS_FIXED,     // from a fixed point, canvas at priority 1
-  SPARKS_ORANGE,    // from a lower point, orange, with a palette fade
-  SPARKS_FROM_ACTOR // from the caster, lightning colours, sparks rising
-};
-
-enum { MODE_SOOTHING_STAR, MODE_SLEEP_STAR, MODE_SLAVER };
-
-// Where mode 3 unpacks the tornado's glints in the sheet.
-enum { RENDER_MODE_TORNADO = 0x2580 };
 
 /// The star's texture, 64x64 pixels.
 struct StarTexture {
@@ -396,6 +377,56 @@ enum CanvasWipeFill {
 /// Passed to BattleEffect_TintBattler as its palette, pose or timer slot: leave
 /// that one as it is.
 #define TINT_KEEP (-1)
+
+/// The tumbling quads' modes (BattleEffect_RunTumblingQuads), each named for
+/// the effect that plays it.
+enum TumblingQuadsMode {
+  TUMBLING_QUADS_BALM,   ///< over a prepared canvas, with the Mercury Djinn
+  TUMBLING_QUADS_TINDER, ///< over a prepared canvas, with the Mars Djinn
+  TUMBLING_QUADS_PHOENIX ///< rising from the first target
+};
+
+/// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
+/// effect that plays it.
+enum MirroredWallMode {
+  MIRRORED_WALL_SPASM,    ///< actual size, a gentle shake for 32 frames
+  MIRRORED_WALL_BERSERK,  ///< 1.25 times as wide, a hard shake for 8 frames
+  MIRRORED_WALL_RECOVERY, ///< 1.25 times as wide, no shake, in the Fireball
+                          ///< colours
+  MIRRORED_WALL_SACK
+};
+
+/// Where BattleEffect_RunSparkGroups' bursts go off.
+enum SparkGroupsMode {
+  SPARK_GROUPS_NOVA,     ///< Nova's
+  SPARK_GROUPS_DYNAMITE, ///< Dynamite's, orange
+  SPARK_GROUPS_RISING    ///< below the user, in the LightningBolt colours, the
+                         ///< sparks rising
+};
+
+/// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
+/// for the effect that fires it; the casting impacts fire some of them.
+enum ProjectileVolleyMode {
+  PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
+  PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
+  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing pellets
+  PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
+  PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
+  PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
+  PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
+  PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
+  PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after a casting impact
+  PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips
+  PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
+  PROJECTILE_VOLLEY_WING_STROKE,   ///< large yellow sparks, spread up and down
+  PROJECTILE_VOLLEY_BLAZE_RUSH,
+  PROJECTILE_VOLLEY_HYDRO_SLASH,
+  PROJECTILE_VOLLEY_DIAMOND_DUST,
+  PROJECTILE_VOLLEY_BEAST_NEEDLE,
+  PROJECTILE_VOLLEY_POISON_STING,
+  PROJECTILE_VOLLEY_STUN_STING,
+  PROJECTILE_VOLLEY_CHILL_BREATH
+};
 
 // The declarations the parts share.
 

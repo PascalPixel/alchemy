@@ -35,11 +35,11 @@ Field_ShamanVillageInn:
 	.global Tileset_ShamanVillageInnPalette
 Tileset_ShamanVillageInnPalette:
 	.incbin "games/tla/src/graphics/tileset/shaman_village_inn/palette.gbapal.lz"
-	.byte 0xf7, 0x99, 0x1a	@ PACKER: left in the buffer by Field_ShamanVillageInn+0x1d9
+	.byte 0xf7, 0x99, 0x1a	@ PACKER: left in the buffer by Field_ShamanVillage4+0x1d9
 	.global Tileset_ShamanVillageInnTilesA
 Tileset_ShamanVillageInnTilesA:
 	.incbin "games/tla/src/graphics/tileset/shaman_village_inn/tiles_a.4bpp.mtf"
-	.byte 0x07	@ PACKER: left in the buffer by Field_ShamanVillageInn+0x1b33
+	.byte 0x07	@ PACKER: left in the buffer by Field_ShamanVillage4+0x1b33
 	.global Tileset_ShamanVillageInnTilesB
 Tileset_ShamanVillageInnTilesB:
 	.incbin "games/tla/src/graphics/tileset/shaman_village_inn/tiles_b.4bpp.mtf"

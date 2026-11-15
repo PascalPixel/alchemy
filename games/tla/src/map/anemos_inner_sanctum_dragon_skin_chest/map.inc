@@ -39,4 +39,4 @@ Tileset_AnemosInnerSanctumDragonSkinChestPalette:
 	.global Tileset_AnemosInnerSanctumDragonSkinChestTilesA
 Tileset_AnemosInnerSanctumDragonSkinChestTilesA:
 	.incbin "games/tla/src/graphics/tileset/anemos_inner_sanctum_dragon_skin_chest/tiles_a.4bpp.mtf"
-	.byte 0x72	@ PACKER: left in the buffer by Field_ShamanVillageInn+0x20b3
+	.byte 0x72	@ PACKER: left in the buffer by Field_ShamanVillage4+0x20b3

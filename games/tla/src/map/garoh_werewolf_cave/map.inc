@@ -38,4 +38,4 @@ Tileset_PaletteGarohWerewolfCaveA:
 	.global Tileset_PaletteGarohWerewolfCaveB
 Tileset_PaletteGarohWerewolfCaveB:
 	.incbin "games/tla/src/graphics/tileset/palettes/garoh_werewolf_cave_b.gbapal.lz"
-	.byte 0x33, 0xbc, 0x5a	@ PACKER: left in the buffer by Field_GarohWerewolfCave+0x13d
+	.byte 0x33, 0xbc, 0x5a	@ PACKER: left in the buffer by Field_Garoh5+0x13d

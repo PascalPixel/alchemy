@@ -19,7 +19,6 @@
 #include "system/io_reg.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
-#include "scene/garoh.h"
 #include "scene/scene.h"
 #include "system/task.h"
 #include "field/actor.h"

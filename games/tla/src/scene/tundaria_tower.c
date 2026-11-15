@@ -119,7 +119,7 @@ extern struct Trigger gTundariaTowerBurstBroochTriggers[];
 /// Talking to Reflux starts its battle.
 void TundariaTower_FightReflux(void) {
   GameFlag_Set(FLAG_FIGHTING_REFLUX);
-  Event_RequestDjinnBattle(8, 52);
+  Event_RequestDjinnBattle(ACTOR_REFLUX, DJINNI_REFLUX);
 }
 
 #include "../field/actor_wait_until_idle.c"
@@ -375,7 +375,7 @@ void TundariaTower_BurstCrystal(s32 step) {
     position.x = px(347);
     position.y = 0;
     position.z = px(376);
-    TundariaTower_ScatterIceShards(&position, 8, 0x18000);
+    TundariaTower_ScatterIceShards(&position, 8, Q16_ONE * 3 / 2);
     break;
   }
 }
@@ -395,8 +395,8 @@ void TundariaTower_SparkleCenterProng(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
+    FieldEffect_Spawn(object->x.fixed + (px(dx - 8)),
+                      object->y.fixed + (px(dy - 8)), object->z.fixed, 0,
                       0x8000, phase, 0x100000, &params);
   }
 }
@@ -443,14 +443,14 @@ void TundariaTower_RefluxAppears(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  TundariaTower_FadeFrom(0x10000, 0);
-  PaletteFade_SetTarget(0x7fff, 0);
+  TundariaTower_FadeFrom(Q16_ONE, 0);
+  PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(2);
   Sound_Play(SE_WATER);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   Event_Wait(2);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(Q16_ONE, 0);
   PaletteFade_StartInterpolation(2);
   object->steeringFlags = 0;
   object->update = 0;
@@ -570,8 +570,8 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
          (MapCell_GetAttributes(2, (FIELD_CELL(object->x.fixed)) + dx,
                                 (FIELD_CELL(object->z.fixed)) + dz) >>
           8) != 255) {
-    Actor_SetMoveTarget(object, (dx << 20) + object->x.fixed, object->y.fixed,
-                        (dz << 20) + object->z.fixed);
+    Actor_SetMoveTarget(object, px(dx * 16) + object->x.fixed, object->y.fixed,
+                        px(dz * 16) + object->z.fixed);
     FieldCamera_FollowActor(actor, 1);
     Actor_WaitForMove(object);
     wait(1);
@@ -669,7 +669,7 @@ void TundariaTower_BurstBrownWall(s32 step) {
     position.x = px(120);
     position.y = 0;
     position.z = px(568);
-    TundariaTower_ScatterIceShards(&position, 8, 0x18000);
+    TundariaTower_ScatterIceShards(&position, 8, Q16_ONE * 3 / 2);
     break;
   }
 }

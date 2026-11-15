@@ -658,7 +658,7 @@ s32 Actor_GetCellIndex(struct Actor *object);
 /// (flag 0x271).
 void YampiDesertCave_FightCrystal(void) {
   Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP);
-  Event_RequestDjinnBattle(17, 17);
+  Event_RequestDjinnBattle(ACTOR_CRYSTAL, DJINNI_CRYSTAL);
   return;
 }
 

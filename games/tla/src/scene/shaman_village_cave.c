@@ -222,7 +222,7 @@ void ShamanVillageCave_EddyFlees(void) {
 void ShamanVillageCave_FightEddy(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_05);
   Event_SetFlag(FLAG_SCENE_TEMP_06);
-  Event_RequestDjinnBattle(ACTOR_EDDY, 35);
+  Event_RequestDjinnBattle(ACTOR_EDDY, DJINNI_EDDY);
 }
 
 s32 ShamanVillageCave_SettleOvergrowth(struct Actor *object) {

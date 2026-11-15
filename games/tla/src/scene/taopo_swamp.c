@@ -397,11 +397,13 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
 }
 
 /// Scoop on the spot under actor 65 digs up its item (flag 0x301).
-void TaopoSwamp_ScoopHiddenItem(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
+void TaopoSwamp_ScoopHiddenItem(s32 a) {
+  Event_DigUpTreasure(a, 65, FLAG_AREA_TEMP_01);
+}
 
 /// Scoop on the spot under actor 64 digs up its item (flag 0x300).
 void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
-  Event_DigUpTreasure(a, 64, 0x300);
+  Event_DigUpTreasure(a, 64, FLAG_AREA_TEMP_00);
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
@@ -461,13 +463,13 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   if (id == 9) {
     if (FIELD_CELL(object->x.fixed) == 17) {
       object->z.fixed += px(1);
-      Vent_SetGust(2, 0x80000);
+      Vent_SetGust(2, px(8));
       Event_SetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT);
     }
   } else if (id == 10) {
     if (FIELD_CELL(object->x.fixed) == 29) {
       object->z.fixed += px(1);
-      Vent_SetGust(8, 0x80000);
+      Vent_SetGust(8, px(8));
       Event_SetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT);
     }
   }
@@ -851,7 +853,7 @@ burst:
   scale = (Random16() >> 2) + 0x1000;
   Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
   Actor_SetSpriteFlags(clod, 0);
-  clod->velocityY = (angle << 2) + 0x20000;
+  clod->velocityY = (angle << 2) + px(2);
   cosine = Trig_Cos(angle);
   mul = Iwram_MulQ16;
   speed <<= 3;
@@ -1040,7 +1042,7 @@ void TaopoSwamp_DripAtRandom(void) {
   if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {
     s32 x = (Random16() << 5) + 0x2080000;
     s32 z = 0xb00000 - (Random16() << 3);
-    s32 y = 0xa00000;
+    s32 y = px(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
 
@@ -1197,7 +1199,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
     Event_PlaySound(SE_DRIP);
     object->y.fixed = object->groundHeight;
     object->velocityY = 0;
-    if (Event_GetFlag(0x104) == 0) {
+    if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       count = FieldGameFlag_GetByte(0x230);
       if (count <= 3) {
         count++;
@@ -1217,9 +1219,9 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
 /// Every 64 frames a drop falls from the ceiling onto the vent spot.
 void TaopoSwamp_DripFromCeiling(void) {
   if ((gFrameCount & 63) == 0) {
-    s32 x = 0x1980000;
-    s32 z = 0x1b80000;
-    s32 y = 0xa00000;
+    s32 x = px(408);
+    s32 z = px(440);
+    s32 y = px(160);
     struct Actor *object = FieldActor_Create(0x12d, x, y, z);
     s32 scale = 0x547a;
 
@@ -1247,7 +1249,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
       s32 offset = Random16() << 5;                                            \
       s32 x = offset + n1;                                                     \
       s32 z = n2 - offset;                                                     \
-      s32 y = 0xa00000;                                                        \
+      s32 y = px(160);                                                         \
       struct Actor *object = FieldActor_Create(0x12d, x, y, z);                \
       s32 scale = 0x547a;                                                      \
                                                                                \
@@ -1255,7 +1257,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
         object->scaleX = scale;                                                \
         object->scaleY = scale;                                                \
         object->motionFlags = 2;                                               \
-        object->groundHeight = 0xffc00000;                                     \
+        object->groundHeight = -px(64);                                        \
         object->gravity = 0x7333;                                              \
         Actor_StartScript(object, gTaopoSwamp_DropFalls);                      \
         Actor_SetSpriteFlags(object, 0);                                       \
@@ -1742,23 +1744,23 @@ static __inline__ void Blend_SetAlpha(s32 value) {
 void TaopoSwamp_DarkenRoom(s32 fade) {
   BlendScript_Suspend();
   if (fade) {
-    Blend_SetAlpha(0xe06);
+    Blend_SetAlpha(BLEND_ALPHA(6, 14));
     /* FAKEMATCH(dead): the empty once-only block finishes the blend value
      * before the shared register address. */
     do {
     } while (0);
     System_Wait(10);
-    Blend_SetAlpha(0xd04);
+    Blend_SetAlpha(BLEND_ALPHA(4, 13));
     System_Wait(10);
-    Blend_SetAlpha(0xd02);
+    Blend_SetAlpha(BLEND_ALPHA(2, 13));
     System_Wait(10);
-    Blend_SetAlpha(0xc01);
+    Blend_SetAlpha(BLEND_ALPHA(1, 12));
     System_Wait(10);
-    Blend_SetAlpha(0xc00);
+    Blend_SetAlpha(BLEND_ALPHA(0, 12));
     System_Wait(10);
   }
   TaopoSwamp_FocusMapOn(100, 50);
-  Blend_SetAlpha(0xc07);
+  Blend_SetAlpha(BLEND_ALPHA(7, 12));
   if (gMainRoutineWork.entrance == 6)
     FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, TASK_PASS_VBLANK);
 }
@@ -1846,9 +1848,9 @@ void TaopoSwamp_RiseOnBubble(void) {
     sprite = object->sprite;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetMoveTargetFixed(
-        object, (object->x.fixed & 0xfff00000) + px(8), object->y.fixed,
-        (object->z.fixed & 0xfff00000) + px(8));
+    FieldActor_SetMoveTargetFixed(object, (object->x.fixed & -px(16)) + px(8),
+                                  object->y.fixed,
+                                  (object->z.fixed & -px(16)) + px(8));
     FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
@@ -1886,8 +1888,8 @@ void TaopoSwamp_SaveFirmGround(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
 
-  state->x = (object->x.fixed & 0xfff00000) + 0x80000;
-  state->z = (object->z.fixed & 0xfff00000) + 0x80000;
+  state->x = (object->x.fixed & -px(16)) + px(8);
+  state->z = (object->z.fixed & -px(16)) + px(8);
 }
 
 #define VENT_TOUCHING Vent_IsTouching
@@ -1898,7 +1900,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = TaopoSwamp_CreateActor(0x11d, position[0], position[1],
-                                                position[2] - 0x20000);
+                                                position[2] - px(2));
   s32 angle;
 
   if (object != 0) {
@@ -1939,10 +1941,10 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       s32 w = points[1];
 
       point->unk00 = 0;
-      point->x = x << 16;
-      point->z = z << 16;
-      point->y = Map_GetTerrainHeight(0, x << 16, (z << 16) + 0x100000);
-      point->w = w << 16;
+      point->x = px(x);
+      point->z = px(z);
+      point->y = Map_GetTerrainHeight(0, px(x), px(z) + px(16));
+      point->w = px(w);
       point->index = i++;
       points += 2;
       point++;
@@ -1968,7 +1970,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
   work->arg = arg;
   if (REG_BLDCNT == 0) {
     {
-      s32 alpha = 0xc08;
+      s32 alpha = BLEND_ALPHA(8, 12);
       REG_BLDALPHA = alpha;
     }
     {

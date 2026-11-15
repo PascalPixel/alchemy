@@ -2473,12 +2473,11 @@ void KandoreanTemple_RideWestLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-rise:
-  object->y.fixed -= px(4);
-  KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, 19660, 0x4ccc);
-  wait(1);
-  if (object->y.fixed > -px(20))
-    goto rise;
+  do {
+    object->y.fixed -= px(4);
+    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, 19660, 0x4ccc);
+    wait(1);
+  } while (object->y.fixed > -px(20));
   Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition = 521;
   Event_FinishScreenTransition();
@@ -2492,12 +2491,11 @@ void KandoreanTemple_RideEastLiftUp(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-rise:
-  object->y.fixed -= px(4);
-  KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, 19660, 0x4ccc);
-  wait(1);
-  if (object->y.fixed > -px(20))
-    goto rise;
+  do {
+    object->y.fixed -= px(4);
+    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, 19660, 0x4ccc);
+    wait(1);
+  } while (object->y.fixed > -px(20));
   Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition = 521;
   Event_FinishScreenTransition();
@@ -2732,12 +2730,11 @@ void KandoreanTemple_TestTheStudents(void) {
   sprite = object->sprite;
   object->motionFlags = 0;
   i = 0;
-rise13:
-  object->y.fixed += 0xccc;
-  Event_Wait(1);
-  i++;
-  if (i <= 63)
-    goto rise13;
+  do {
+    object->y.fixed += 0xccc;
+    Event_Wait(1);
+    i++;
+  } while (i <= 63);
   KandoreanTemple_Wobble(sprite, 32, 32);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_FIRST_TESTED_STUDENT,
@@ -2788,12 +2785,11 @@ rise13:
   object = Actor_GetById(ACTOR_SECOND_TESTED_STUDENT);
   object->motionFlags = 0;
   i = 0;
-rise14:
-  object->y.fixed += 0x2666;
-  Event_Wait(1);
-  i++;
-  if (i <= 63)
-    goto rise14;
+  do {
+    object->y.fixed += 0x2666;
+    Event_Wait(1);
+    i++;
+  } while (i <= 63);
   KandoreanTemple_Sway(object, 64, 4096);
   KandoreanTemple_Sway(object, 128, -4096);
   KandoreanTemple_Sway(object, 128, 4096);
@@ -2824,12 +2820,11 @@ rise14:
   sprite = object->sprite;
   object->motionFlags = 0;
   i = 0;
-rise15:
-  object->y.fixed += 0x3333;
-  Event_Wait(1);
-  i++;
-  if (i <= 63)
-    goto rise15;
+  do {
+    object->y.fixed += 0x3333;
+    Event_Wait(1);
+    i++;
+  } while (i <= 63);
   KandoreanTemple_Wobble(sprite, 32, 64);
   sprite->rotation = 0;
   Actor_RunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
@@ -2839,12 +2834,11 @@ rise15:
   Actor_RunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
   Event_Wait(60);
   i = 0;
-fall15:
-  object->y.fixed += -0x3333;
-  Event_Wait(1);
-  i++;
-  if (i <= 63)
-    goto fall15;
+  do {
+    object->y.fixed += -0x3333;
+    Event_Wait(1);
+    i++;
+  } while (i <= 63);
   Event_Wait(20);
   Actor_ShowEmoteById(ACTOR_THIRD_TESTED_STUDENT, EMOTE_IN_FRONT | EMOTE_SMILE,
                       0);
@@ -3520,13 +3514,13 @@ struct ActorPlacement gKandoreanTemple_FogRoomPlacements[] = {
 };
 
 struct ActorPlacement gKandoreanTemple_GatePlacements[] = {
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 224, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 224, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, (s32)gKandoreanTemple_LookAroundScript, 264, 0, 424, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 334, 0, 317, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 284, 0, 328, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 246, 0, 318, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3539,12 +3533,12 @@ struct ActorPlacement gKandoreanTemple_PoisHallPlacements[] = {
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 439, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 359, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateLowScript, 412, 0, 324, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 90, 0, 230, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 174, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 439, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateHighScript, 359, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gKandoreanTemple_LevitateLowScript, 412, 0, 324, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 90, 0, 230, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gKandoreanTemple_StandStillScript, 174, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

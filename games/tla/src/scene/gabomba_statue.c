@@ -398,11 +398,10 @@ void GabombaStatue_LashRope(void) {
     /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
     gFieldWork->psynergy = zero;
     i = 0;
-  loop:
-    actor->phase += gGabombaStatue_RopeStopSteps[i] * direction;
-    System_Wait(1);
-    if (++i <= 24)
-      goto loop;
+    do {
+      actor->phase += gGabombaStatue_RopeStopSteps[i] * direction;
+      System_Wait(1);
+    } while (++i <= 24);
   }
 }
 
@@ -1279,33 +1278,33 @@ void GabombaStatue_PauseCogsInMenus(void) {
     value = 0;
   }
   i = 8;
-next:
-  {
-    struct Actor *object = Actor_Get(i);
+  do {
+    {
+      struct Actor *object = Actor_Get(i);
 
-    if (object != NULL && object->spriteStorageKind == 1) {
-      struct FieldPart *part = ((struct FieldAnimation *)object->sprite)->part;
+      if (object != NULL && object->spriteStorageKind == 1) {
+        struct FieldPart *part =
+            ((struct FieldAnimation *)object->sprite)->part;
 
-      if (part != NULL) {
-        switch (part->kind) {
-        case 357:
-        case 358:
-        case 359:
-        case 360:
-        case 361:
-        case 362:
-          Actor_SetAnimationSpeed(object, value);
-          break;
-        case 407:
-          object->paused = open;
-          break;
+        if (part != NULL) {
+          switch (part->kind) {
+          case 357:
+          case 358:
+          case 359:
+          case 360:
+          case 361:
+          case 362:
+            Actor_SetAnimationSpeed(object, value);
+            break;
+          case 407:
+            object->paused = open;
+            break;
+          }
         }
       }
     }
-  }
-  i++;
-  if (i < 64)
-    goto next;
+    i++;
+  } while (i < 64);
 }
 
 #define MARK(at, cellPicture, shape)                                           \
@@ -1781,8 +1780,8 @@ void GabombaStatue_SeeHowItWorks(void) {
   // "He's been failing because the conduit that channels his Psynergy is..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   // "Should we reconnect the conduit so he can complete the ceremony?"
-  ((void *)Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 5,
-                             0));
+  ((void *)Event_OpenMessage(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
     GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -2770,54 +2769,52 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
   state->statuesReady = show;
   state->firstId = id;
   row = 0;
-nextRow:
-  column = 0;
-nextColumn:
-  {
-    struct PuzzleCell *cell = &state->cells[row * 11 + column];
+  do {
+    column = 0;
+    do {
+      {
+        struct PuzzleCell *cell = &state->cells[row * 11 + column];
 
-    if (cell->occupied != 0) {
-      struct Actor *object = Actor_Get(id);
-      s32 mapX;
-      s32 mapZ;
-      s32 kind;
+        if (cell->occupied != 0) {
+          struct Actor *object = Actor_Get(id);
+          s32 mapX;
+          s32 mapZ;
+          s32 kind;
 
-      if (show != 0) {
-        object->x.fixed = ((state->originX + column) << 20) + 0x80000;
-        object->z.fixed = ((state->originZ + row) << 20) + 0x80000;
-        {
-          s32 x = state->originX;
-          s32 z = state->originZ;
+          if (show != 0) {
+            object->x.fixed = ((state->originX + column) << 20) + 0x80000;
+            object->z.fixed = ((state->originZ + row) << 20) + 0x80000;
+            {
+              s32 x = state->originX;
+              s32 z = state->originZ;
 
-          /* FAKEMATCH(temporary): the origins read into x and z before the
-           * column and row are added. */
-          x += column;
-          z += row;
-          MapGrid_CopyCells(0, 11, 1, 1, x, z);
+              /* FAKEMATCH(temporary): the origins read into x and z before the
+               * column and row are added. */
+              x += column;
+              z += row;
+              MapGrid_CopyCells(0, 11, 1, 1, x, z);
+            }
+            cell->occupied = 2;
+          } else {
+            object->x.fixed = 0;
+            object->z.fixed = 0;
+            ((u8 *)cell)[3] = 1;
+            /* FAKEMATCH(temporary): kind and the origins read before the column
+             * and row are added. */
+            kind = cell->kind;
+            mapX = state->originX;
+            mapZ = state->originZ;
+            mapX += column;
+            mapZ += row;
+            MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
+          }
+          id++;
         }
-        cell->occupied = 2;
-      } else {
-        object->x.fixed = 0;
-        object->z.fixed = 0;
-        ((u8 *)cell)[3] = 1;
-        /* FAKEMATCH(temporary): kind and the origins read before the column and
-         * row are added. */
-        kind = cell->kind;
-        mapX = state->originX;
-        mapZ = state->originZ;
-        mapX += column;
-        mapZ += row;
-        MapGrid_CopyCells(1, kind, 1, 1, mapX, mapZ);
       }
-      id++;
-    }
-  }
-  column++;
-  if (column <= 10)
-    goto nextColumn;
-  row++;
-  if (row <= 7)
-    goto nextRow;
+      column++;
+    } while (column <= 10);
+    row++;
+  } while (row <= 7);
   state->endId = id;
 }
 #undef FIELD_AT
@@ -3959,11 +3956,11 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room6Placements[] = {
     ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(26, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 430, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

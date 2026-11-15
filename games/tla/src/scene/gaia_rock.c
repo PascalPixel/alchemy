@@ -349,34 +349,34 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
 
   i = 0;
   timer = 20;
-loop:
-  {
-    struct OrbitEffect *effect;
-    s32 radius;
-    s32 position[3];
+  do {
+    {
+      struct OrbitEffect *effect;
+      s32 radius;
+      s32 position[3];
 
-    position[0] = source->x;
-    position[1] = source->y + i * 0xcccc + 0x40000;
-    position[2] = source->z;
-    radius = Random16();
-    FieldVector_AddPolarOffsetFixed(radius * 5 + 0x30000, Random16(), position);
-    effect = (struct OrbitEffect *)Value4(
-        (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
-    if (effect != NULL) {
-      effect->update = GaiaRock_CircleLeaf;
-      effect->timer = timer;
-      effect->pause = 0;
-      effect->speed = 0x1999;
-      effect->scale = 0x30000;
-      effect->angle = Random16();
-      effect->priorityFlags = 0;
-      Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
+      position[0] = source->x;
+      position[1] = source->y + i * 0xcccc + 0x40000;
+      position[2] = source->z;
+      radius = Random16();
+      FieldVector_AddPolarOffsetFixed(radius * 5 + 0x30000, Random16(),
+                                      position);
+      effect = (struct OrbitEffect *)Value4(
+          (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
+      if (effect != NULL) {
+        effect->update = GaiaRock_CircleLeaf;
+        effect->timer = timer;
+        effect->pause = 0;
+        effect->speed = 0x1999;
+        effect->scale = 0x30000;
+        effect->angle = Random16();
+        effect->priorityFlags = 0;
+        Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
+      }
     }
-  }
-  timer -= 2;
-  i++;
-  if (i < 16)
-    goto loop;
+    timer -= 2;
+    i++;
+  } while (i < 16);
   return 0;
 }
 
@@ -609,33 +609,32 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
   i = 15;
-dust:
-  {
-    struct Actor *dust = FieldActor_Create(
-        255, leader->x.fixed, leader->y.fixed + px(16), leader->z.fixed);
+  do {
+    {
+      struct Actor *dust = FieldActor_Create(
+          255, leader->x.fixed, leader->y.fixed + px(16), leader->z.fixed);
 
-    if (dust != 0) {
-      s32 angle;
-      s32 speed;
-      u32 size;
-      s32 scale;
+      if (dust != 0) {
+        s32 angle;
+        s32 speed;
+        u32 size;
+        s32 scale;
 
-      Actor_StartScript(dust, gGaiaRock_DustScript);
-      angle = Random16();
-      speed = Random16();
-      size = Random16();
-      scale = (size >> 1) + 0x2000;
-      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
-      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
-      dust->acceleration = 0;
-      dust->scaleX = scale;
-      dust->scaleY = scale;
-      dust->gravity = 0x547a;
-      dust->bounce = Q16_ONE / 2;
+        Actor_StartScript(dust, gGaiaRock_DustScript);
+        angle = Random16();
+        speed = Random16();
+        size = Random16();
+        scale = (size >> 1) + 0x2000;
+        dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
+        dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
+        dust->acceleration = 0;
+        dust->scaleX = scale;
+        dust->scaleY = scale;
+        dust->gravity = 0x547a;
+        dust->bounce = Q16_ONE / 2;
+      }
     }
-  }
-  if (--i >= 0)
-    goto dust;
+  } while (--i >= 0);
   Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
@@ -733,10 +732,10 @@ struct ActorPlacement gGaiaRock_Room1Placements[] = {
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(377, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 295, 0, 442, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gGaiaRock_CrateScript, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

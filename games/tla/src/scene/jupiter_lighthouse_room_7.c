@@ -352,29 +352,26 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 4);
     if (mode == 1) {
       frame = 0;
-    L_0200864c:
-      i = 0;
-    L_0200864e:
-      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-      if (JupiterLighthouse_IsOnWestPath(object)) {
-        object->motionFlags = 0;
-        object->y.fixed -= px(2);
-      }
-      if (++i <= 5)
-        goto L_0200864e;
-      System_Wait(1);
-      frame++;
-      if (frame <= 15)
-        goto L_0200864c;
+      do {
+        i = 0;
+        do {
+          object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+          if (JupiterLighthouse_IsOnWestPath(object)) {
+            object->motionFlags = 0;
+            object->y.fixed -= px(2);
+          }
+        } while (++i <= 5);
+        System_Wait(1);
+        frame++;
+      } while (frame <= 15);
     }
     i = 0;
-  L_02008684:
-    object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-    object->motionFlags = 3;
-    i++;
-    object->y.fixed = object->groundHeight;
-    if (i <= 5)
-      goto L_02008684;
+    do {
+      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+      object->motionFlags = 3;
+      i++;
+      object->y.fixed = object->groundHeight;
+    } while (i <= 5);
     /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
      * from being threaded to the function's end. */
     do {
@@ -388,30 +385,27 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {
       frame = 0;
-    L_0200870a:
-      i = 0;
-    L_0200870c:
-      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-      if (JupiterLighthouse_IsOnWestPath(object)) {
-        object->motionFlags = 0;
-        object->y.fixed += px(2);
-      }
-      if (++i <= 5)
-        goto L_0200870c;
-      System_Wait(1);
-      frame++;
-      if (frame <= 15)
-        goto L_0200870a;
+      do {
+        i = 0;
+        do {
+          object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+          if (JupiterLighthouse_IsOnWestPath(object)) {
+            object->motionFlags = 0;
+            object->y.fixed += px(2);
+          }
+        } while (++i <= 5);
+        System_Wait(1);
+        frame++;
+      } while (frame <= 15);
     }
     i = 0;
-  L_02008744:
-    object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-    if (JupiterLighthouse_IsOnWestPath(object)) {
-      object->motionFlags = 4;
-      object->y.fixed = 0x208000;
-    }
-    if (++i <= 5)
-      goto L_02008744;
+    do {
+      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+      if (JupiterLighthouse_IsOnWestPath(object)) {
+        object->motionFlags = 4;
+        object->y.fixed = 0x208000;
+      }
+    } while (++i <= 5);
   }
 }
 
@@ -988,33 +982,32 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 
   if (*list == 0xffff)
     return;
-top:
-  {
-    u32 entry = *list;
-    /* FAKEMATCH(dead): the effect work read through its own address. */
-    s32 id = (*&work)->objectId;
+  do {
+    {
+      u32 entry = *list;
+      /* FAKEMATCH(dead): the effect work read through its own address. */
+      s32 id = (*&work)->objectId;
 
-    if (id == entry) {
-      struct Actor *object = Actor_Get(id);
-      s32 a;
-      s32 flag;
+      if (id == entry) {
+        struct Actor *object = Actor_Get(id);
+        s32 a;
+        s32 flag;
 
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        Event_SetFlag(flag);
-        Actor_SetCellOpen(id, a, flag, object->layer);
-        object->scaleY = Q16_ONE;
+        list++;
+        a = list[0];
+        flag = list[1];
+        if (count < 8)
+          object->scaleY -= 0x1f00;
+        if (mode == 1) {
+          Event_SetFlag(flag);
+          Actor_SetCellOpen(id, a, flag, object->layer);
+          object->scaleY = Q16_ONE;
+        }
+        return;
       }
-      return;
     }
-  }
-  list += 3;
-  if (*list != 0xffff)
-    goto top;
+    list += 3;
+  } while (*list != 0xffff);
 }
 
 #include "shared/actor_set_cell_open.h"
@@ -1218,12 +1211,12 @@ LATE_DATA u32 gSceneExits[] = {
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(340, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 564, 0, 712, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 216, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 264, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 264, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(316, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 264, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 264, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 136, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),

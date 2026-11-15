@@ -61,7 +61,7 @@ s32 Kibombo_KeepShakeCentre(struct Actor *object) {
   return 0;
 }
 
-extern s16 gKibombo_Room3Regions[];
+extern s16 gKibombo_HousesExitRegions[];
 
 struct KibomboWork90 {
   u8 unk00[0x18];
@@ -119,57 +119,57 @@ u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_3)
-    return gKibombo_Room3Regions;
+    return gKibombo_HousesExitRegions;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gKibombo_Room1Placements[];
-extern struct ActorPlacement gKibombo_Room4Placements[];
-extern struct ActorPlacement gKibombo_Room2Placements[];
-extern struct ActorPlacement gKibombo_Room5Placements[];
-extern struct ActorPlacement gKibombo_Room3Placements[];
-extern struct ActorPlacement gKibombo_Placements[];
-extern struct Trigger gKibombo_Room1Triggers[];
-extern struct Trigger gKibombo_Room4Triggers[];
-extern struct Trigger gKibombo_Room2Triggers[];
-extern struct Trigger gKibombo_Room5Triggers[];
-extern struct Trigger gKibombo_Room3Triggers[];
+extern struct ActorPlacement gKibombo_VillageActorPlacements[];
+extern struct ActorPlacement gKibombo_CeremonyActorPlacements[];
+extern struct ActorPlacement gKibombo_StatueGroundsActorPlacements[];
+extern struct ActorPlacement gKibombo_StatueGroundsCeremonyActorPlacements[];
+extern struct ActorPlacement gKibombo_HousesActorPlacements[];
+extern struct ActorPlacement gKibombo_ActorPlacements[];
+extern struct Trigger gKibombo_VillageTriggers[];
+extern struct Trigger gKibombo_CeremonyTriggers[];
+extern struct Trigger gKibombo_StatueGroundsTriggers[];
+extern struct Trigger gKibombo_StatueGroundsCeremonyTriggers[];
+extern struct Trigger gKibombo_HousesTriggers[];
 extern struct Trigger gKibombo_Triggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_1)
-    return gKibombo_Room1Placements;
+    return gKibombo_VillageActorPlacements;
   if (scene == SCENE_KIBOMBO_4)
-    return gKibombo_Room4Placements;
+    return gKibombo_CeremonyActorPlacements;
   if (scene == SCENE_KIBOMBO_2)
-    return gKibombo_Room2Placements;
+    return gKibombo_StatueGroundsActorPlacements;
   if (scene == SCENE_KIBOMBO_5)
-    return gKibombo_Room5Placements;
+    return gKibombo_StatueGroundsCeremonyActorPlacements;
   if (scene == SCENE_KIBOMBO_3) {
     if (GameFlag_Get(0x8ee))
-      gKibombo_Room3Placements[0].talkFacing = 0;
-    return gKibombo_Room3Placements;
+      gKibombo_HousesActorPlacements[0].talkFacing = 0;
+    return gKibombo_HousesActorPlacements;
   }
-  return gKibombo_Placements;
+  return gKibombo_ActorPlacements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_1)
-    return gKibombo_Room1Triggers;
+    return gKibombo_VillageTriggers;
   if (scene == SCENE_KIBOMBO_4)
-    return gKibombo_Room4Triggers;
+    return gKibombo_CeremonyTriggers;
   if (scene == SCENE_KIBOMBO_2)
-    return gKibombo_Room2Triggers;
+    return gKibombo_StatueGroundsTriggers;
   if (scene == SCENE_KIBOMBO_5)
-    return gKibombo_Room5Triggers;
+    return gKibombo_StatueGroundsCeremonyTriggers;
   if (scene == SCENE_KIBOMBO_3)
-    return gKibombo_Room3Triggers;
+    return gKibombo_HousesTriggers;
   return gKibombo_Triggers;
 }
 
@@ -693,12 +693,11 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
   if (gKibombo_BlackCrystal != 0) {
     if (gKibombo_BlackCrystal->y.fixed > px(36)) {
-    wait:
-      Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
-      gKibombo_BlackCrystal->y.fixed += 0xffffc000;
-      wait(1);
-      if (gKibombo_BlackCrystal->y.fixed > px(36))
-        goto wait;
+      do {
+        Kibombo_ObjArm(17, FACING_NORTH_NORTHEAST, 0);
+        gKibombo_BlackCrystal->y.fixed += 0xffffc000;
+        wait(1);
+      } while (gKibombo_BlackCrystal->y.fixed > px(36));
     }
   }
   Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
@@ -1752,7 +1751,7 @@ void Kibombo_HideGroundsPair(void) {
 
 // Hides room 3's actors 26 and 27 before the room opens.
 // XXX: who actors 26 and 27 are in room 3; staging the room would settle it.
-void Kibombo_HideRoom3Pair(void) {
+void Kibombo_HideHousesPair(void) {
   u32 i;
 
   for (i = 0; i <= 1; i++) {
@@ -2712,25 +2711,23 @@ void Kibombo_GabombaRespondsToGift(void) {
 
     gift->motionFlags = 0;
     if (gift->y.fixed > px(36)) {
-    lower:
-      gKibombo_BlackCrystal->y.fixed -= 0x8000;
-      wait(1);
-      if (gKibombo_BlackCrystal->y.fixed > px(36))
-        goto lower;
+      do {
+        gKibombo_BlackCrystal->y.fixed -= 0x8000;
+        wait(1);
+      } while (gKibombo_BlackCrystal->y.fixed > px(36));
     }
   }
   Sound_Play(SE_CRUNCH);
   if (gKibombo_BlackCrystal != 0) {
     gKibombo_BlackCrystal->motionFlags = 0;
     i = 0;
-  rise:
-    gKibombo_BlackCrystal->y.fixed += px(6);
-    object->scaleY -= Q16_ONE / 8;
-    object->y.fixed -= 0x8000;
-    wait(1);
-    i++;
-    if (i < 4)
-      goto rise;
+    do {
+      gKibombo_BlackCrystal->y.fixed += px(6);
+      object->scaleY -= Q16_ONE / 8;
+      object->y.fixed -= 0x8000;
+      wait(1);
+      i++;
+    } while (i < 4);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     for (i = 0; i < 4; i++) {
       object->scaleY -= Q16_ONE / 8;
@@ -2873,17 +2870,17 @@ s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_1)
-    Kibombo_InitializeRoom1();
+    Kibombo_InitializeVillageByDay();
   else if (scene == SCENE_KIBOMBO_4)
-    Kibombo_InitializeRoom4();
+    Kibombo_InitializeCeremony();
   else if (scene == SCENE_KIBOMBO_2)
-    Kibombo_InitializeRoom2();
+    Kibombo_InitializeStatueGroundsByDay();
   else if (scene == SCENE_KIBOMBO_5)
-    Kibombo_InitializeRoom5();
+    Kibombo_InitializeStatueGroundsCeremony();
   else if (scene == SCENE_KIBOMBO_6)
-    Kibombo_InitializeRoom6();
+    Kibombo_InitializeStatueFace();
   else if (scene == SCENE_KIBOMBO_3)
-    Kibombo_InitializeRoom3();
+    Kibombo_InitializeHouses();
   return 0;
 }
 
@@ -2902,7 +2899,7 @@ void Kibombo_InitializeVillage(void) {
   Actor_GetById(23)->collisionFlags |= 0x80;
 }
 
-void Kibombo_InitializeRoom1(void) {
+void Kibombo_InitializeVillageByDay(void) {
   Actor_SetPosition(11, 88, 314);
   Actor_SetSpriteFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = Q16_ONE / 2;
@@ -2942,7 +2939,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 /// actors 30 to 35, sets flags 0x202 and 0x209, places actor 29, places actors
 /// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
 /// Kibombo_FlickerVillageFires scheduled.
-void Kibombo_InitializeRoom4(void) {
+void Kibombo_InitializeCeremony(void) {
   struct Actor *actor = Actor_GetById(11);
   u8 *unit;
   s32 done;
@@ -3061,7 +3058,7 @@ void Kibombo_InitializeStatueGrounds(void) {
   Actor_SetSpritePriority(14, 1);
 }
 
-void Kibombo_InitializeRoom2(void) {
+void Kibombo_InitializeStatueGroundsByDay(void) {
   s16 entrance;
 
   Kibombo_InitializeStatueGrounds();
@@ -3091,7 +3088,7 @@ void Kibombo_InitializeRoom2(void) {
   }
 }
 
-void Kibombo_InitializeRoom5(void) {
+void Kibombo_InitializeStatueGroundsCeremony(void) {
   u32 i;
 
   Event_Start();
@@ -3185,7 +3182,7 @@ void Kibombo_InitializeRoom5(void) {
 
 #define PALETTE_WORD(index) (*(u16 *)(0x05000000 + (index) * 2))
 
-void Kibombo_InitializeRoom6(void) {
+void Kibombo_InitializeStatueFace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(FLAG_SCENE_TEMP_02);
@@ -3213,11 +3210,11 @@ void Kibombo_InitializeRoom6(void) {
 
 void Actor_FallOverById(s32 actor, s32 angle);
 
-void Kibombo_InitializeRoom3(void) {
+void Kibombo_InitializeHouses(void) {
   struct Actor *object;
 
   gFieldWork->transition = 0x209;
-  Kibombo_HideRoom3Pair();
+  Kibombo_HideHousesPair();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
       Actor_SetPosition(10, 0, 0);
@@ -3553,7 +3550,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gKibombo_Room3Regions[] = {
+s16 gKibombo_HousesExitRegions[] = {
     400, 40, 368, 416, 56, 384, -1, 14,
     112, 40, 624, 128, 56, 640, -1, 15,
     384, 40, 880, 400, 56, 896, -1, 16,
@@ -3628,12 +3625,12 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gKibombo_Placements[] = {
+struct ActorPlacement gKibombo_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKibombo_Room1Placements[] = {
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gKibombo_VillageActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(387, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(387, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3654,8 +3651,8 @@ struct ActorPlacement gKibombo_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKibombo_Room4Placements[] = {
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gKibombo_CeremonyActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 72, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3687,11 +3684,11 @@ struct ActorPlacement gKibombo_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKibombo_Room2Placements[] = {
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gKibombo_StatueGroundsActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(395, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(395, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(396, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3700,11 +3697,11 @@ struct ActorPlacement gKibombo_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKibombo_Room5Placements[] = {
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gKibombo_StatueGroundsCeremonyActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(395, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(395, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(396, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3719,18 +3716,18 @@ struct ActorPlacement gKibombo_Room5Placements[] = {
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 432, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 310, 0, 422, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 406, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 130, 0, 364, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 130, 0, 364, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKibombo_Room3Placements[] = {
+struct ActorPlacement gKibombo_HousesActorPlacements[] = {
     ACTOR_PLACEMENT(27, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 366, 0, 586, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(28, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 586, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 634, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 634, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 108, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(145, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 124, 0, 120, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 100, 0, 132, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
@@ -3757,7 +3754,7 @@ struct Trigger gKibombo_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gKibombo_Room1Triggers[] = {
+struct Trigger gKibombo_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
@@ -3821,7 +3818,7 @@ struct Trigger gKibombo_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gKibombo_Room4Triggers[] = {
+struct Trigger gKibombo_CeremonyTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, FLAG_SCENE_TEMP_09,
@@ -3933,7 +3930,7 @@ struct Trigger gKibombo_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gKibombo_Room2Triggers[] = {
+struct Trigger gKibombo_StatueGroundsTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3,
@@ -3959,7 +3956,7 @@ struct Trigger gKibombo_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gKibombo_Room5Triggers[] = {
+struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3,
@@ -4020,7 +4017,7 @@ struct Trigger gKibombo_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gKibombo_Room3Triggers[] = {
+struct Trigger gKibombo_HousesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

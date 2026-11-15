@@ -410,13 +410,12 @@ L_02008692:
   count = 0;
   if (gInput.pressed != 0)
     goto L_0200871e;
-L_02008704:
-  System_Wait(1);
-  count++;
-  if (count > 10799)
-    goto L_0200871e;
-  if (gInput.pressed == 0)
-    goto L_02008704;
+  do {
+    System_Wait(1);
+    count++;
+    if (count > 10799)
+      goto L_0200871e;
+  } while (gInput.pressed == 0);
 L_0200871e:
   EndingPicture_Show(0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);

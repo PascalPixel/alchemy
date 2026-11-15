@@ -331,11 +331,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   s32 toZ;
 
   if ((u16)shape != gPushKinds[(u16)i]) {
-  next:
-    j = (u16)((i << 16) + 0x10000 >> 16);
-    i = j;
-    if (j <= 5 && (u16)shape != gPushKinds[j])
-      goto next;
+    do {
+      j = (u16)((i << 16) + 0x10000 >> 16);
+      i = j;
+    } while (j <= 5 && (u16)shape != gPushKinds[j]);
   }
   j = (u16)i;
   if (j == 6)
@@ -492,13 +491,12 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   other = Actor_FindAtCell(position, 1);
   if (other != NULL) {
     i = 0;
-  next:
-    if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
-        gPushKinds[i])
-      return;
-    i++;
-    if (i < 6)
-      goto next;
+    do {
+      if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
+          gPushKinds[i])
+        return;
+      i++;
+    } while (i < 6);
     FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
                                          object->y.fixed, object->z.fixed);
   }
@@ -735,10 +733,10 @@ LATE_DATA u32 gSceneExits[] = {
 };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(331, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 192, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(332, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 192, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),

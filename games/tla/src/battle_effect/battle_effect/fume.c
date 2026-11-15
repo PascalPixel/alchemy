@@ -13,13 +13,6 @@ struct Corner {
   s8 z;
 };
 
-struct StarTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 // Columns of gFume_Levels, one row per Fume level (effect->variant): the
 // plume's width, the frame its tail starts, its arc's height, the sparks'
 // spread, count and lift.

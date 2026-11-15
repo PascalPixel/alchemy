@@ -638,10 +638,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                ringAngle += 0x888, offset += 64, ring++) {
             s32 y = -Trig_Cos(ringAngle) * 96 >> 16;
             s32 rr = Trig_Sin(ringAngle) * 48 >> 16;
-            struct EclipseVertex *v = (struct EclipseVertex *)Data_02010800;
+            struct ModelVertex *v = (struct ModelVertex *)Data_02010800;
 
             k = 0;
-            v = (struct EclipseVertex *)((u8 *)v + offset);
+            v = (struct ModelVertex *)((u8 *)v + offset);
             for (; k != 16; k++) {
               SET_POSITION(v, Trig_Sin(k << 12) * rr >> 16, y,
                            Trig_Cos(k << 12) * rr >> 16);

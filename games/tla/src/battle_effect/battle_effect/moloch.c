@@ -2840,14 +2840,6 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   Heap_Release(routine);
 }
 
-/// One projected vertex, as Render_ProjectPoint leaves it.
-struct ProjectedVertex {
-  s16 x;     ///< screen pixels
-  s16 y;     ///< screen pixels
-  s16 depth; ///< projected depth
-  s16 unk06;
-};
-
 /// Projects count model vertices through Render_ProjectPoint into screen
 /// coordinates.
 void Render_ProjectVertices(struct ModelVertex *vertices,

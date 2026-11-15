@@ -72,13 +72,6 @@ struct EclipseObject {
   u8 slot;
 };
 
-struct EclipseVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
-
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
@@ -107,13 +100,6 @@ struct StreakSceneWork {
   s32 fadeFrames;   // frames of the background's fade left
                     // (BattleEffect_DimBackgroundStep)
   s32 fadeStep;
-};
-
-struct ModelTextureB {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
 };
 
 struct RuinObject {

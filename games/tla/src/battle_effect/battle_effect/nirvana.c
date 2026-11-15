@@ -510,20 +510,11 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct ModelVertex;
-struct ProjectedVertex;
 struct StripQuad;
 
 struct ProjectedPoint {
   s32 x, y, depth;
 };
-
-void Render_ProjectVertices__ability_effects(
-    struct ModelVertex *vertices, struct ProjectedVertex *screen,
-    s32 count) __asm__("Render_ProjectVertices");
-#define Render_ProjectVertices Render_ProjectVertices__ability_effects
-
-// One model vertex: signed byte coordinates, padded to a word.
 
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)

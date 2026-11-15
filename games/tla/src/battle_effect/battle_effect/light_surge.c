@@ -11,13 +11,6 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-struct SurgeTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
 
@@ -42,7 +35,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 unused7;
   struct BattleCamera *camera;
   s16 savedYaw;
-  struct SurgeTarget *target;
+  struct Actor *target;
   s16 *circles;
   s32 x;
   s32 y;
@@ -126,8 +119,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         fall->z = Trig_Cos(angle) * radius;
         fall->y = px(110);
         radius = (Random16() & 31) + 4;
-        fall->velocityX = target->x + Trig_Sin(angle) * radius;
-        z = target->z + Trig_Cos(angle) * radius;
+        fall->velocityX = target->x.fixed + Trig_Sin(angle) * radius;
+        z = target->z.fixed + Trig_Cos(angle) * radius;
         fall->velocityZ = z;
         fall->velocityY = -px(8);
         fall->velocityX = (fall->velocityX - fall->x) / 6;

@@ -7,11 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct BattleObjectPosition {
-  u8 unk00[8];
-  s32 x;
-};
-
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
@@ -74,7 +69,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   draw[0] = BLITTER;
   {
     void *camera;
-    struct BattleObjectPosition *target;
+    struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -89,7 +84,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
-          SET_POSITION(shard, target->x + ((Trig_Sin(angle) * radius) >> 1),
+          SET_POSITION(shard,
+                       target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
                        px(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
           shard->velocityY = (Random16() & 0xffff) + 0x40000;

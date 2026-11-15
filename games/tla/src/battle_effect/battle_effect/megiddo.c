@@ -9,16 +9,6 @@
 
 struct StripQuad;
 
-/* VIEW(summon_effects): tag struct ModelVertex as struct
- * ModelVertex__summon_effects; battle_effect/ability_effects has another
- * definition; not tried: struct ModelVertex__summon_effects was not found. */
-struct ModelVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
-
 /* VIEW(megiddo): tag struct RenderModel as struct
  * RenderModel__megiddo; render_model.h has another definition; tried with
  * the definition the rest of the object has, BattleEffect_RunMegiddo

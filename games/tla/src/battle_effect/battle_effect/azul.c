@@ -13,13 +13,6 @@ struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-struct AzulVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unk3;
-};
-
 struct AzulFace {
   u8 corner[3];
   u8 unk3;
@@ -62,7 +55,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   struct Point2D base;
   struct Point2D pos;
   struct Point2D vel;
-  struct AzulVertex *verts;
+  struct ModelVertex *verts;
   struct AzulFace *faces;
   u8 *sphere;
   u8 *grid;
@@ -98,7 +91,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   battle = (u8 *)Ram_HeapSlots->battleWork;
-  verts = (struct AzulVertex *)work->sheet;
+  verts = (struct ModelVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
   sphere = work->sheet + 0x800;
   grid = work->sheet + 0xc00;
@@ -529,10 +522,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (; k != 16; angle += 0x888, offset += 64, k++) {
         s32 y = -Trig_Cos(angle) * 48 >> 16;
         s32 radius = Trig_Sin(angle) * 48 >> 16;
-        struct AzulVertex *v;
+        struct ModelVertex *v;
 
         j = 0;
-        v = (struct AzulVertex *)(sphere + offset);
+        v = (struct ModelVertex *)(sphere + offset);
         for (; j != 16; j++) {
           SET_POSITION(v, Trig_Sin(j << 12) * radius >> 16, y,
                        Trig_Cos(j << 12) * radius >> 16);

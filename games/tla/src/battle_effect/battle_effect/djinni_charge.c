@@ -8,22 +8,9 @@
 #include "macros.h"
 
 struct MeshTriangle;
-struct ModelVertex;
-struct ProjectedVertex;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-
-/* VIEW(ability_effects): routine Render_ProjectVertices as void
- * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
- * *screen, s32 count); battle_effect/summon_effects has void
- * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
- * *screen, s32 count) {; not tried: Render_ProjectVertices's bound declaration
- * was not found. */
-/// Render_ProjectVertices as the ability effects see it.
-void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
-                                             struct ProjectedVertex *screen,
-                                             s32 count);
 
 // BattleEffect_RunDjinniEntrance
 

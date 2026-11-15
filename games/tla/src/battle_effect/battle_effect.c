@@ -158,7 +158,6 @@
 #undef SpriteObject
 #undef FxSlot
 #undef SpriteAttributes
-#undef Render_ProjectVertices
 
 #include "battle_effect/liquifier.c"
 
@@ -169,12 +168,10 @@
 
 #define Texture Texture__summon_effects
 #define BattleBackgroundId BattleBackgroundId__summon_effects
-#define ModelVertex ModelVertex__summon_effects
 
 #include "battle_effect/megiddo.c"
 #include "battle_effect/odyssey.c"
 #include "battle_effect/moloch.c"
 
-#undef ModelVertex
 #undef BattleBackgroundId
 #undef Texture

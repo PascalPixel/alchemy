@@ -1062,7 +1062,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           }
         }
         if (frame > 123) {
-          ((struct ModelTextureB *)&texture)->logWidth = 5;
+          texture.logWidth = 5;
           texture.logHeight = 2;
           texture.pixels = work->sheet + 0x3648;
           model->mesh = gBattleEffect_SmallSquareMesh;

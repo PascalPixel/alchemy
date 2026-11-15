@@ -80,11 +80,12 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       struct Particle *thrown;
 
       for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
-        struct StarTarget *caster = BattleObject_GetFar(args->user)->object;
+        struct Actor *caster = BattleObject_GetFar(args->user)->object;
         s32 height = BattleUnit_GetEffectHeightFar(args->user) / 2;
         s32 velocity;
 
-        SET_POSITION(thrown, caster->x, caster->y + height, caster->z);
+        SET_POSITION(thrown, caster->x.fixed, caster->y.fixed + height,
+                     caster->z.fixed);
         velocity = ((Random16() & 255) - 128) << 8;
         // DEAD: both stores are overwritten by the 0 below; the ROM keeps them.
         thrown->velocityX = velocity;
@@ -109,7 +110,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
          star++, delay += 8, firstDrop += 32, i++) {
       s32 k;
-      struct StarTarget *target;
+      struct Actor *target;
       s32 height;
       s32 picture;
       s32 dx;
@@ -133,9 +134,9 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       if (frame <= delay + 10) {
         continue;
       }
-      dx = (target->x - star->x) >> 10;
-      dy = (target->y + height - star->y) >> 10;
-      dz = (target->z - star->z) >> 10;
+      dx = (target->x.fixed - star->x) >> 10;
+      dy = (target->y.fixed + height - star->y) >> 10;
+      dz = (target->z.fixed - star->z) >> 10;
       star->velocityX += dx;
       star->velocityY += dy;
       star->velocityZ += dz;
@@ -143,7 +144,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       if (a < 0) {
         a = -a;
       }
-      b = target->x;
+      b = target->x.fixed;
       if (b < 0) {
         b = -b;
       }

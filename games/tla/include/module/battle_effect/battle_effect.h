@@ -16,7 +16,6 @@ struct MeshTriangle;
 struct MeshVertex;
 struct PoolEntry;
 struct StripQuad;
-struct SummonArgument;
 
 /// The large effects BattleEffect_RunSummon runs, by kind: The Broken
 /// Seal's twelve summons, The Lost Age's twelve, and the scenes of Daedalus's
@@ -234,7 +233,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *effect);
 void BattleEffect_RunHaures(struct BattleEffectParams *effect);
 void BattleEffect_RunEclipse(struct BattleEffectParams *effect);
 void BattleEffect_RunCoatlicue(struct BattleEffectParams *effect);
-void BattleEffect_RunDaedalus(struct SummonArgument *arg);
+void BattleEffect_RunDaedalus(struct BattleEffectParams *args);
 void BattleEffect_RunAzul(struct BattleEffectParams *effect);
 void BattleEffect_RunCatastrophe(struct BattleEffectParams *effect);
 void BattleEffect_RunCharon(struct BattleEffectParams *arg);

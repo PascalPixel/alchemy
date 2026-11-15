@@ -6,6 +6,23 @@
 /// @file
 /// The model records the battle effects hand to the ARM model renderer.
 
+/// A corner of a model, as Render_TransformVertices and Render_ProjectVertices
+/// read it: signed whole pixels, padded to a word.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
+};
+
+/// One projected vertex, as Render_ProjectPoint leaves it.
+struct ProjectedVertex {
+  s16 x;     ///< screen pixels
+  s16 y;     ///< screen pixels
+  s16 depth; ///< projected depth
+  s16 unk06;
+};
+
 /// A texture for the ARM model renderer: its size as powers of two and the
 /// address of its pixels.
 struct ModelTexture {
@@ -33,5 +50,9 @@ struct RenderModel {
 /// copied into IWRAM for a run of its kind, and its texture with it where there
 /// is room.
 void Render_DrawModelList(struct RenderModel *model);
+/// Projects count model vertices through Render_ProjectPoint into screen
+/// coordinates.
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count);
 
 #endif

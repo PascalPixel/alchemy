@@ -43,13 +43,6 @@ struct SpriteObject__f175f74 {
   u8 unk17;
 };
 
-struct ModelDesc {
-  u32 a : 8;
-  u32 b : 8;
-  u32 c : 16;
-  u8 *tiles;
-};
-
 /* VIEW(f175f74): tag struct Model as struct Model__f175f74; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
@@ -60,7 +53,7 @@ struct Model__f175f74 {
   s32 unk04;
   const void *mesh;
   void *texture;
-  struct ModelDesc *desc;
+  struct ModelTexture *desc;
   s32 depth;
 };
 
@@ -158,10 +151,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 revealPlace[4];
   s32 finalePlace[4];
   DrawRectangleFn routine[2];
-  struct ModelDesc lateTexture;
-  struct ModelDesc revealTexture;
-  struct ModelDesc risingTexture;
-  struct ModelDesc openingTexture;
+  struct ModelTexture lateTexture;
+  struct ModelTexture revealTexture;
+  struct ModelTexture risingTexture;
+  struct ModelTexture openingTexture;
   u8 *canvas;
   struct SummonWork__f175f74 *work;
   struct LineScrollView *lineScroll;
@@ -726,9 +719,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->depth = depth;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                             CANVAS_FADE_THREE_QUARTERS);
-        lateTexture.a = 7;
-        lateTexture.b = 7;
-        lateTexture.tiles = work->buffer + 0x1000;
+        lateTexture.logWidth = 7;
+        lateTexture.logHeight = 7;
+        lateTexture.pixels = work->buffer + 0x1000;
         model->kind = 7;
         model->desc = &lateTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
@@ -754,10 +747,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           if (depth > 0) {
             depth = 0;
           }
-          lateTexture.a = 6;
-          lateTexture.b = 6;
+          lateTexture.logWidth = 6;
+          lateTexture.logHeight = 6;
           model->depth = depth;
-          lateTexture.tiles = work->buffer;
+          lateTexture.pixels = work->buffer;
           model->desc = &lateTexture;
           model->mesh = gBattleEffect_SquareMesh;
           model->kind = 7;
@@ -894,9 +887,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           void *texture = Heap_AllocEwram(32);
           struct Model__f175f74 *model = Render_AllocateModelList(1);
 
-          revealTexture.a = 7;
-          revealTexture.b = 7;
-          revealTexture.tiles = work->buffer + 0x1000;
+          revealTexture.logWidth = 7;
+          revealTexture.logHeight = 7;
+          revealTexture.pixels = work->buffer + 0x1000;
           model->kind = 7;
           model->desc = &revealTexture;
           model->mesh = gBattleEffect_LargeSquareMesh;
@@ -1177,9 +1170,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         depth = 184 - frame * 2;
         model->depth = depth;
       }
-      risingTexture.a = 6;
-      risingTexture.b = 6;
-      risingTexture.tiles = work->buffer;
+      risingTexture.logWidth = 6;
+      risingTexture.logHeight = 6;
+      risingTexture.pixels = work->buffer;
       model->kind = 7;
       model->desc = &risingTexture;
       model->mesh = gBattleEffect_SquareMesh;
@@ -1214,7 +1207,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (frame > 55) {
         s32 last = frame * 2 - 208;
 
-        risingTexture.tiles = work->buffer + 0x1000;
+        risingTexture.pixels = work->buffer + 0x1000;
         if (last >= -32) {
           last = -32;
         }
@@ -1665,9 +1658,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         void *texture = Heap_AllocEwram(32);
         struct Model__f175f74 *model = Render_AllocateModelList(1);
 
-        openingTexture.a = 6;
-        openingTexture.b = 6;
-        openingTexture.tiles = work->buffer + 0x3000;
+        openingTexture.logWidth = 6;
+        openingTexture.logHeight = 6;
+        openingTexture.pixels = work->buffer + 0x3000;
         model->kind = 9;
         model->mesh = gBattleEffect_SquareMesh;
         model->desc = &openingTexture;

@@ -194,13 +194,6 @@ typedef struct VramSlot {
   u16 offset;
 } VramSlot;
 
-typedef struct Bitmap {
-  u32 width : 8;
-  u32 height : 8;
-  u32 unk2 : 16;
-  void *data;
-} Bitmap;
-
 /* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -225,19 +218,6 @@ struct SummonWork__f17e698 {
   s32 transferPending;
 };
 
-struct SummonArgument {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 unk0c;
-  s32 unk10;
-  s32 count;
-  s32 variant;
-  s32 unk1c;
-  s32 unk20;
-  s16 actors[8];
-};
-
 typedef void (*CopyFunc)(void *, const void *, s32);
 typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
@@ -256,7 +236,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /// then the second scene (BattleEffect_RunDaedalusAlt) plays.
 ///
 /// Abilities: Daedalus.
-void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
+void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   s16 targets[14];
   struct SpritePlacement pos;
   struct SpritePlacement shipPlace;
@@ -264,7 +244,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   struct Scale scale;
   void *blit[2];
   struct Scale shipScale;
-  Bitmap bitmap;
+  struct ModelTexture bitmap;
   struct Scale particleScale;
   u8 *dest;
   s32 frame;
@@ -968,9 +948,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
         buffer = Heap_AllocEwram(512);
         beam = Render_AllocateModelList(1);
-        bitmap.width = 7;
-        bitmap.height = 7;
-        bitmap.data = pixels;
+        bitmap.logWidth = 7;
+        bitmap.logHeight = 7;
+        bitmap.pixels = pixels;
         beam[4] = (s32)&bitmap;
         beam[1] = 0;
         beam[2] = (s32)gBattleEffect_LargeSquareMesh;
@@ -1220,8 +1200,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     REG_BG2PA = Q_8_8(0.5);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
-    arg->actors[arg->count] = 0xff;
-    BattleActor_SpawnObjectsForListFar(arg->actors, 0);
+    args->targets[args->targetCount] = 0xff;
+    BattleActor_SpawnObjectsForListFar(args->targets, 0);
     BattleEffect_SpawnObjects(1, 663, 1);
     for (i = 0; i != 15; i++) {
       work->sprites[1 + i] = EffectSprite_Acquire(32, 16, 0x80006000, 0);
@@ -1299,10 +1279,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               q->variant = 0;
             }
             Sound_PlayFar(SE_CLATTER);
-            for (j = 0; j != arg->count; j++) {
-              BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000,
+            for (j = 0; j != args->targetCount; j++) {
+              BattleEffect_StartActorMotion(args->targets[j], 1, 0, 0, 0x20000,
                                             100);
-              BattleEffect_TintBattler(arg->actors[j], SPRITE_COLOR_WHITE,
+              BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, j, 7);
               work->shakeFrames = 4;
             }

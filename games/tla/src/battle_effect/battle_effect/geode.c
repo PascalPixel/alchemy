@@ -10,13 +10,6 @@ struct MeshTriangle;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-struct ModelVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unk03;
-};
-
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 

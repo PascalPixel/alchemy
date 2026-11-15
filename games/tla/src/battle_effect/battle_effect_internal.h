@@ -207,6 +207,14 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// by row, each tile 64 bytes row by row.
 #define CANVAS_PIXEL_OFFSET(x, y)                                              \
   ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+/// The bytes of one 8x8 tile of the canvas; a row of pixels steps from one tile
+/// to the next by CANVAS_TILE_BYTES - 8.
+#define CANVAS_TILE_BYTES (8 * 8)
+/// The bytes of a 32x32 sprite's tiles in 256 colours, and in 16.
+#define OBJ_32X32_8BPP_BYTES (32 * 32)
+#define OBJ_32X32_4BPP_BYTES (32 * 32 / 2)
+/// The byte of the first pixel of canvas row y, y not negative.
+#define CANVAS_ROW_OFFSET(y) ((((y) & 7) << 3) + (((y) >> 3) << 10))
 /// The brightest canvas level: the additive blitters and
 /// CANVAS_COPY_AND_BRIGHTEN stop at it.
 #define CANVAS_LEVEL_BRIGHTEST 63
@@ -472,6 +480,7 @@ enum RedCrescentPicture {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+#define MOTE_PICTURES 10
 
 /// Clips overflow on all four sides.
 /// The columns of gTargetStrike_Styles, one row a style.
@@ -1579,7 +1588,7 @@ extern const s8 gMegiddo_RayX[];
 extern const s8 gMegiddo_RayY[];
 extern const s16 gOdyssey_FlashPitches[];
 extern const s16 gOdyssey_FlashYaws[];
-extern const u8 gMoloch_RingStarts[];
+extern const u8 gMoloch_RingStarts[4];
 extern const u8 gMoloch_RingGrowth[];
 extern const s8 gMoloch_RingHeights[];
 extern s32 gIris_SplashRadii[];

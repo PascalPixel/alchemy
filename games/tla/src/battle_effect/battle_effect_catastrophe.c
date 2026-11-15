@@ -25,6 +25,27 @@ struct MeshVertex {
 #define CATASTROPHE_RING 0x2000
 #define CATASTROPHE_SWEEP_PICTURES 0x800
 
+/// Catastrophe's sprites, all 32x32: the chained demon (ChainedDemonTiles, its
+/// last four drawn from pictures swapped in and out at frames 339 and 450), its
+/// mirrored copy's six, the golden scales, and the eleven of the armour (the
+/// purple armour's five, then the white spikes' six).
+#define CATASTROPHE_DEMON 0
+#define CATASTROPHE_DEMON_TILED 24
+#define CATASTROPHE_DEMON_SWAPPED 24
+#define CATASTROPHE_DEMON_SWAPPED_COUNT 4
+#define CATASTROPHE_DEMON_COUNT 28
+#define CATASTROPHE_MIRRORED_DEMON 28
+#define CATASTROPHE_MIRRORED_DEMON_COUNT 6
+#define CATASTROPHE_SCALES 34
+#define CATASTROPHE_SCALES_COUNT 5
+#define CATASTROPHE_ARMOUR 39
+#define CATASTROPHE_PURPLE_ARMOUR_COUNT 5
+#define CATASTROPHE_SPIKES 44
+#define CATASTROPHE_SPIKES_COUNT 6
+#define CATASTROPHE_ARMOUR_COUNT                                               \
+  (CATASTROPHE_PURPLE_ARMOUR_COUNT + CATASTROPHE_SPIKES_COUNT)
+#define CATASTROPHE_SPRITES 50
+
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
 /// far below and bursts in a ring and a white flash; then violet lightning
@@ -139,29 +160,31 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     e += 384;
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
-    for (i = 0; i != 24; cells += 1024, i++) {
+    for (i = 0; i != CATASTROPHE_DEMON_TILED;
+         cells += OBJ_32X32_8BPP_BYTES, i++) {
       obj = EffectSprite_CreateWithTiles(32, 32,
                                          OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
       obj->image.priority = 2;
       work->sprites[i] = obj;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_8BPP_BYTES);
     }
     {
       u8 *cells = Ram_MapCellBuffer + 0x6000;
 
-      for (i = 0; i != 4; i++) {
+      for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-        work->sprites[24 + i] = obj;
+        work->sprites[CATASTROPHE_DEMON_SWAPPED + i] = obj;
         Iwram_CopyWords(obj, work->sprites[i], 24);
-        Iwram_CopyWords((void *)OBJ_TILES(work->sprites[24 + i]),
-                        cells + i * 1024, 1024);
+        Iwram_CopyWords(
+            (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
+            cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
       }
     }
     Iwram_CopyWords(cellBuffer + 0x1000, Ram_MapCellBuffer + 0x6000, 0x1000);
   }
-  for (i = 0; i != 6; i++) {
+  for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-    work->sprites[28 + i] = obj;
+    work->sprites[CATASTROPHE_MIRRORED_DEMON + i] = obj;
     Iwram_CopyWords(obj, work->sprites[i], 24);
   }
   {
@@ -172,12 +195,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != 5; cells += 512, i++) {
+    for (i = 0; i != CATASTROPHE_SCALES_COUNT;
+         cells += OBJ_32X32_4BPP_BYTES, i++) {
       obj =
           EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(12));
       obj->image.priority = 1;
-      work->sprites[34 + i] = obj;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
+      work->sprites[CATASTROPHE_SCALES + i] = obj;
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
   {
@@ -188,12 +212,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != 5; cells += 512, i++) {
+    for (i = 0; i != CATASTROPHE_PURPLE_ARMOUR_COUNT;
+         cells += OBJ_32X32_4BPP_BYTES, i++) {
       obj =
           EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(13));
       obj->image.priority = 1;
-      work->sprites[39 + i] = obj;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
+      work->sprites[CATASTROPHE_ARMOUR + i] = obj;
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
   {
@@ -204,12 +229,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     e += 32;
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != 6; cells += 512, i++) {
+    for (i = 0; i != CATASTROPHE_SPIKES_COUNT;
+         cells += OBJ_32X32_4BPP_BYTES, i++) {
       obj =
           EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(14));
       obj->image.priority = 1;
-      work->sprites[44 + i] = obj;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
+      work->sprites[CATASTROPHE_SPIKES + i] = obj;
+      Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
   Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
@@ -475,10 +501,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if (swapped == 0) {
       if (frame == 339) {
         swapped = 1;
-        for (i = 0; i != 4; i++) {
-          void *tiles = (void *)OBJ_TILES(work->sprites[24 + i]);
+        for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
+          void *tiles =
+              (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]);
 
-          Iwram_CopyWords(tiles, cellBuffer + i * 1024, 1024);
+          Iwram_CopyWords(tiles, cellBuffer + i * OBJ_32X32_8BPP_BYTES,
+                          OBJ_32X32_8BPP_BYTES);
         }
       }
     } else if (frame == 450) {
@@ -486,9 +514,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
       swapped = 0;
       cells = Ram_MapCellBuffer + 0x1000;
-      for (i = 0; i != 4; i++) {
-        Iwram_CopyWords((void *)OBJ_TILES(work->sprites[24 + i]),
-                        cells + i * 1024, 1024);
+      for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
+        Iwram_CopyWords(
+            (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
+            cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
       }
     }
     if (frame <= 593) {
@@ -497,7 +526,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       place[1] = px(255);
       {
 
-        for (i = 0; i != 28; i++) {
+        for (i = 0; i != CATASTROPHE_DEMON_COUNT; i++) {
           place[0] = px(gCatastrophe_DemonX[i]) + px(8);
           place[2] = px(gCatastrophe_DemonZ[i]) + camZ;
           if (place[2] > 0xfffff) {
@@ -508,36 +537,37 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           }
         }
       }
-      for (i = 0; i != 5; i++) {
+      for (i = 0; i != CATASTROPHE_SCALES_COUNT; i++) {
         s32 h = i / 2;
 
         place[0] = ((i - h * 2) << 21) + drift + px(72);
         place[2] = (h << 21) + camZ + sway + px(60);
         if (place[2] > 0xfffff) {
           if (place[2] <= px(168)) {
-            Render_ApplyProjectedPlacementFar(work->sprites[34 + i], place,
-                                              (s32 *)&req, 0);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[CATASTROPHE_SCALES + i], place, (s32 *)&req, 0);
           }
         }
       }
-      for (i = 0; i != 11; i++) {
+      for (i = 0; i != CATASTROPHE_ARMOUR_COUNT; i++) {
         place[0] = px(gCatastrophe_ArmourX[i]) - drift + px(132);
         place[2] = px(gCatastrophe_ArmourZ[i]) + camZ + sway + px(29);
         if (place[2] > 0xfffff) {
           if (place[2] <= px(168)) {
-            Render_ApplyProjectedPlacementFar(work->sprites[39 + i], place,
-                                              (s32 *)&req, 0);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[CATASTROPHE_ARMOUR + i], place, (s32 *)&req, 0);
           }
         }
       }
       req.x = -0x10001;
-      for (i = 0; i != 6; i++) {
+      for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
         place[0] = px(gCatastrophe_MirroredDemonX[i]) + px(8);
         place[2] = px(gCatastrophe_MirroredDemonZ[i]) + camZ;
         if (place[2] > 0xfffff) {
           if (place[2] <= px(168)) {
-            Render_ApplyProjectedPlacementFar(work->sprites[28 + i], place,
-                                              (s32 *)&req, 0);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[CATASTROPHE_MIRRORED_DEMON + i], place,
+                (s32 *)&req, 0);
           }
         }
       }
@@ -940,7 +970,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
     frame++;
   }
-  for (i = 0; i != 50; i++) {
+  for (i = 0; i != CATASTROPHE_SPRITES; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   VramBlock_Load93Far();

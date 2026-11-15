@@ -11,6 +11,19 @@ struct RenderModel;
 /// Moloch's frames, and the frame A or B skips to.
 #define MOLOCH_FRAMES 296
 #define MOLOCH_SKIP_TO 232
+/// The motes, in the map cell buffer; the flame columns, four pixels apart
+/// from x = 44 (sixteen are set up, the first twelve drawn); the embers, from
+/// work->particles[24]; and the summoned sprites.
+#define MOLOCH_MOTES 256
+#define MOLOCH_FLAMES 12
+#define MOLOCH_FLAME_LEFT 44
+#define MOLOCH_FIRST_EMBER 24
+#define MOLOCH_EMBERS 16
+#define MOLOCH_SPRITES 12
+/// A flame or ember lives four frames on each of FlashBurstSheet's six
+/// pictures; the ring texture follows them.
+#define MOLOCH_FLAME_LIFE (6 * 4)
+#define MOLOCH_RING_TEXTURE (6 * PICTURE_BYTES(FLASH_BURST))
 
 /// Moloch. A shower of 256 motes drifts down the screen and, from frame
 /// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
@@ -44,8 +57,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x3000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                             work->sheet + MOLOCH_RING_TEXTURE, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Graphics_LoadGreyRamp();
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -57,7 +70,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
     focus.y = px(64);
     BattleEffect_SelectLivingTargets(work->args);
     wait(1);
-    BattleEffect_SpawnObjects(12, SPRITE_MOLOCH, 2);
+    BattleEffect_SpawnObjects(MOLOCH_SPRITES, SPRITE_MOLOCH, 2);
 
     frame = 0;
     do {
@@ -71,7 +84,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
         // The motes start along the top, each after its own delay.
         motes = gMapGridCellBuffer;
-        for (i = 0; i != 256; i++) {
+        for (i = 0; i != MOLOCH_MOTES; i++) {
           mote = &motes[i];
           Random16();
           mote->variant = i;
@@ -81,10 +94,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           mote->velocityY = 0;
         }
 
-        // Twelve flame columns rise from y = 72, four pixels apart.
+        // The flame columns rise from y = 72.
         for (i = 0; i != 16; i++) {
           flame = &work->particles[i];
-          flame->x = px(i * 3 + i + 44);
+          flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
           flame->y = px(72);
           flame->velocityX = 0;
           flame->velocityY = -((Random16() & 3) + 2) << 16;
@@ -93,8 +106,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         }
 
         // The embers of the closing glow start at (54, 56).
-        for (i = 0; i != 16; i++) {
-          flame = &work->particles[24 + i];
+        for (i = 0; i != MOLOCH_EMBERS; i++) {
+          flame = &work->particles[MOLOCH_FIRST_EMBER + i];
           flame->x = px(54);
           flame->y = px(56);
           flame->variant = i * -2;
@@ -105,7 +118,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
       if (frame <= 271) {
         motes = gMapGridCellBuffer;
-        for (i = 0; i != 256; i++) {
+        for (i = 0; i != MOLOCH_MOTES; i++) {
           mote = &motes[i];
           if (mote->variant == 0) {
             s32 size = gMoloch_MoteSizes[i & 7];
@@ -174,10 +187,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
       // Frames 91-255: the flame columns, a 32x64 cell for every four frames.
       if ((u32)(frame - 91) <= 164) {
-        for (i = 0; i != 12; i++) {
+        for (i = 0; i != MOLOCH_FLAMES; i++) {
           flame = &work->particles[i];
           if (flame->velocityZ != 2) {
-            if ((u32)flame->variant <= 23) {
+            if ((u32)flame->variant < MOLOCH_FLAME_LIFE) {
               draw[flame->velocityZ](
                   canvas,
                   work->sheet +
@@ -187,8 +200,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
-            if (++flame->variant == 24) {
-              flame->x = px(i * 3 + i + 44);
+            if (++flame->variant == MOLOCH_FLAME_LIFE) {
+              flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
               flame->y = px(72);
               flame->variant = 0;
               flame->velocityY = -((Random16() & 3) + 2) << 16;
@@ -211,9 +224,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       // Frames 201-271: the embers of the closing glow.
       if ((u32)(frame - 200) <= 71) {
         if (frame > 200) {
-          for (i = 0; i != 16; i++) {
-            flame = &work->particles[24 + i];
-            if ((u32)flame->variant <= 23) {
+          for (i = 0; i != MOLOCH_EMBERS; i++) {
+            flame = &work->particles[MOLOCH_FIRST_EMBER + i];
+            if ((u32)flame->variant < MOLOCH_FLAME_LIFE) {
               draw[0](canvas,
                       work->sheet +
                           (flame->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
@@ -223,7 +236,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
-            if (++flame->variant == 24) {
+            if (++flame->variant == MOLOCH_FLAME_LIFE) {
               flame->x = px(54);
               flame->y = px(56);
               flame->velocityX = -(px(Random16() & 3) + px(2));
@@ -240,14 +253,14 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         model = Render_AllocateModelList(1);
         texture.logWidth = 7;
         texture.logHeight = 5;
-        texture.pixels = work->sheet + 0x3000;
+        texture.pixels = work->sheet + MOLOCH_RING_TEXTURE;
         model->mesh = gBattleEffect_CylinderMesh;
         model->kind = MODEL_SHADED_ADDITIVE;
         model->texture = &texture;
         model->vertices = projected;
         model->scrollU = 0;
         model->scrollV = 0;
-        for (i = 0; i != 4; i++) {
+        for (i = 0; i != ARRAY_COUNT(gMoloch_RingStarts); i++) {
           s32 start = gMoloch_RingStarts[i] + 136;
           s32 scale;
           s32 shade;
@@ -325,7 +338,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_MOLOCH, focus.x, focus.y);
-    for (i = 0; i != 12; i++)
+    for (i = 0; i != MOLOCH_SPRITES; i++)
       Sprite_DestroyFar(work->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
@@ -388,6 +401,46 @@ void Iris_ChangeBackdrop(void) {
   gBgScroll[1].x = 0;
 }
 
+/// Iris's sheet, work->sheet: the mote set and its fading copies, then the
+/// drops' pictures (eight of each size, each a shaded circle mirrored and
+/// dimmer than the last), later overwritten by the strips' and the glow's
+/// 32x64 textures.
+#define IRIS_MOTE_FADES 8
+#define IRIS_DROPS 0x1b12
+#define IRIS_DROP_WIDTH 20
+#define IRIS_DROP_HEIGHT 40
+#define IRIS_SMALL_DROPS 0x4c12
+#define IRIS_SMALL_DROP_WIDTH 12
+#define IRIS_SMALL_DROP_HEIGHT 24
+#define IRIS_DROP_PICTURES 8
+#define IRIS_TEXTURES (IRIS_MOTE_FADES * MOTE_SET_BYTES)
+#define IRIS_TEXTURE_WIDTH 32
+#define IRIS_TEXTURE_HEIGHT 64
+#define IRIS_TEXTURE_BYTES PICTURE_BYTES(IRIS_TEXTURE)
+/// The pillars' 16x16 texture follows the first mote set; its shaded circle
+/// is drawn first at IRIS_PILLAR_CIRCLE and mirrored into it.
+#define IRIS_PILLAR_TEXTURE MOTE_SET_BYTES
+#define IRIS_PILLAR_TEXTURE_SIZE 16
+#define IRIS_PILLAR_CIRCLE 0x3e8
+
+/// The splashes' pictures, in the particle sheet (Ram_HeapSlots->battleSheet):
+/// three fades each of a large and a small ring mote, eight fades of a dot and
+/// the spray's column.
+#define IRIS_LARGE_RING_WIDTH 7
+#define IRIS_LARGE_RING_HEIGHT 14
+#define IRIS_SMALL_RING_WIDTH 5
+#define IRIS_SMALL_RING_HEIGHT 10
+#define IRIS_DOT_WIDTH 2
+#define IRIS_DOT_HEIGHT 4
+#define IRIS_SPRAY_WIDTH 8
+#define IRIS_SPRAY_HEIGHT 32
+enum IrisSplashPicture {
+  IRIS_LARGE_RINGS = 0,
+  IRIS_SMALL_RINGS = IRIS_LARGE_RINGS + 3 * PICTURE_BYTES(IRIS_LARGE_RING),
+  IRIS_DOTS = IRIS_SMALL_RINGS + 3 * PICTURE_BYTES(IRIS_SMALL_RING),
+  IRIS_SPRAY = IRIS_DOTS + 8 * PICTURE_BYTES(IRIS_DOT)
+};
+
 /// Iris: draws one falling drop at (x, y), large (20x40) when small is 0
 /// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
 /// under it a trail of particles every half size down to row 112.
@@ -405,13 +458,18 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
-  // The drop: one 20x40 or 12x24 cell of its strip in the sheet.
+  // The drop: one picture of its eight, large or small.
   if (small == 0)
-    draw[1](canvas, work->sheet + 0x1b12 + frame / 2 * (20 * 40), x - 10,
-            y - 20, 20, 40);
+    draw[1](canvas,
+            work->sheet + IRIS_DROPS + frame / 2 * PICTURE_BYTES(IRIS_DROP),
+            x - IRIS_DROP_WIDTH / 2, y - IRIS_DROP_HEIGHT / 2, IRIS_DROP_WIDTH,
+            IRIS_DROP_HEIGHT);
   else
-    draw[1](canvas, work->sheet + 0x4c12 + frame / 2 * (12 * 24), x - 6, y - 12,
-            12, 24);
+    draw[1](canvas,
+            work->sheet + IRIS_SMALL_DROPS +
+                frame / 2 * PICTURE_BYTES(IRIS_SMALL_DROP),
+            x - IRIS_SMALL_DROP_WIDTH / 2, y - IRIS_SMALL_DROP_HEIGHT / 2,
+            IRIS_SMALL_DROP_WIDTH, IRIS_SMALL_DROP_HEIGHT);
 
   // The trail: particles of size 8 (6 for a small drop), half a size apart.
   size = 8 - small * 2;
@@ -438,7 +496,7 @@ extern const struct ModelVertex gIris_PillarVertices[6];
 /// height. x is the pillar's screen column (63 is the centre); the base sits
 /// height pixels below row 63, so the pillar grows upward from there.
 void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   void *projected;
   struct RenderModel *model;
   struct ModelVertex vertices[6];
@@ -449,10 +507,9 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   model = Render_AllocateModelList(1);
   memcpy(vertices, gIris_PillarVertices, sizeof(vertices));
 
-  // A 16x16 texture at 0x302 into the sheet.
   texture.logWidth = 4;
   texture.logHeight = 4;
-  texture.pixels = work + 0xa02;
+  texture.pixels = work->sheet + IRIS_PILLAR_TEXTURE;
 
   // Each row is halfWidth to either side; the top row reaches height.
   vertices[0].x = -halfWidth;
@@ -498,15 +555,31 @@ struct StripQuad;
 
 #define HALF(p, n) (((s16 *)(p))[n])
 
-/// The spark objects' work, in the map cell buffer at 0x1f40.
-struct IrisSparks {
-  s16 life[36]; // high byte: frames left; 0 frees the slot
-  u16 tiles[15];
-  u16 frames[36];
-  s32 x[36];
-  s32 y[36];
-  s32 vx[36];
-  s32 vy[36];
+/// Iris's runs: the pink petals (PinkPetalsTiles, fifteen pictures of a petal
+/// tumbling), the motes in work->particles, and the opening's streaks, each a
+/// head and the points that trail it.
+#define IRIS_PETALS 36
+#define IRIS_PETAL_FRAMES 15
+#define IRIS_MOTES 32
+#define IRIS_STREAKS 15
+#define IRIS_STREAK_LENGTH 10
+/// Iris herself, RobedGoddessTiles as a 4 x 4 grid of 32x32 sprites.
+#define IRIS_GODDESS_COLUMNS 4
+#define IRIS_GODDESS_ROWS 4
+#define IRIS_GODDESS_SPRITES (IRIS_GODDESS_COLUMNS * IRIS_GODDESS_ROWS)
+#define IRIS_GODDESS_TILE 32
+/// The 128 background colours the scene fades (entries 96 to 223).
+#define IRIS_FADE_COLORS 128
+
+/// The petal objects' work, in the map cell buffer at 0x1f40.
+struct IrisPetals {
+  s16 life[IRIS_PETALS]; // high byte: frames left; 0 frees the slot
+  u16 tiles[IRIS_PETAL_FRAMES];
+  u16 frames[IRIS_PETALS];
+  s32 x[IRIS_PETALS];
+  s32 y[IRIS_PETALS];
+  s32 vx[IRIS_PETALS];
+  s32 vy[IRIS_PETALS];
 };
 
 /// A point of a streak: the head moves, the other nine trail it.
@@ -542,7 +615,7 @@ struct IrisScene {
       s16 radiusPixels;
     };
   };
-  struct IrisPoint streaks[15][10];
+  struct IrisPoint streaks[IRIS_STREAKS][IRIS_STREAK_LENGTH];
 };
 
 /// The five widths a rising pillar takes.
@@ -555,7 +628,7 @@ struct SevenWidths {
   s32 w[7];
 };
 
-/// Where a strip's sparks start across, by quarter of its rise: the left edge
+/// Where a strip's petals start across, by quarter of its rise: the left edge
 /// and the width they spread over.
 struct FourSpans {
   struct {
@@ -564,9 +637,10 @@ struct FourSpans {
   } p[4];
 };
 
-#define IRIS_SPARKS (*(struct IrisSparks *)(Ram_MapCellBuffer + 0x1f40))
+#define IRIS_PETAL_WORK (*(struct IrisPetals *)(Ram_MapCellBuffer + 0x1f40))
 #define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 0x2ee0))
-#define IRIS_STREAKS ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
+#define IRIS_STREAK_POINTS                                                     \
+  ((struct IrisPoint(*)[IRIS_STREAK_LENGTH])(Ram_MapCellBuffer + 0x2ef4))
 
 extern const struct FiveWidths gIris_RisingPillarWidths;
 extern const struct SevenWidths gIris_WideningPillarWidths;
@@ -575,8 +649,8 @@ extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
 #define SCENE (&IRIS_SCENE)
-#define STREAK(i, j) (((struct IrisPoint *)IRIS_STREAKS)[(i) * 10 + (j)])
-/// The 128 background colours the scene fades (entries 96 to 223).
+#define STREAK(i, j)                                                           \
+  (((struct IrisPoint *)IRIS_STREAK_POINTS)[(i) * IRIS_STREAK_LENGTH + (j)])
 #define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
 
 #define Iwram_FillWords(dest, size, value)                                     \
@@ -622,7 +696,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       a = point << 10;
       px = (Q_16_16_TO_INT(r * Trig_Sin(a) / 2)) + x;
       py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y;
-      draw(canvas, sprites + cel8 + 444, px, py - 2, 2, 4);
+      draw(canvas, sprites + cel8 + IRIS_DOTS, px, py - 2, IRIS_DOT_WIDTH,
+           IRIS_DOT_HEIGHT);
     }
     if (small == 0) {
       s32 offset = 0;
@@ -631,9 +706,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 spoke;
 
       if (t <= 11)
-        offset = 196;
+        offset = IRIS_LARGE_RINGS + 2 * PICTURE_BYTES(IRIS_LARGE_RING);
       else if (t <= 23)
-        offset = 98;
+        offset = IRIS_LARGE_RINGS + PICTURE_BYTES(IRIS_LARGE_RING);
       /* FAKEMATCH(dead): t * 4 / 3 into dead. */
       dead = t * 4;
       dead /= 3;
@@ -647,24 +722,26 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         a = (spoke << 13) + (t * 5 << 9);
         px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
         py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
-        blit(canvas, ring, px - 3, py - 7, 7, 14);
+        blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
+             IRIS_LARGE_RING_HEIGHT);
         a += a >> 1;
         px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
         py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
-        blit(canvas, ring, px - 3, py - 7, 7, 14);
+        blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
+             IRIS_LARGE_RING_HEIGHT);
       }
       draw(canvas, work->sheet + (gBattleEffect_MotePictures[8] + sheetOffset),
            x - 4, y - 9, 9, 18);
     } else {
-      s32 offset = 294;
+      s32 offset = IRIS_SMALL_RINGS;
       u8 *ring;
       DrawRectangle blit;
       s32 spoke;
 
       if (t <= 11)
-        offset = 394;
+        offset = IRIS_SMALL_RINGS + 2 * PICTURE_BYTES(IRIS_SMALL_RING);
       else if (t <= 23)
-        offset = 344;
+        offset = IRIS_SMALL_RINGS + PICTURE_BYTES(IRIS_SMALL_RING);
       /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm. */
       dead = t * 4;
       dead /= 3;
@@ -678,11 +755,13 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         a = (spoke << 13) + (t * 5 << 9);
         px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
         py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
-        blit(canvas, ring, px - 2, py - 5, 5, 10);
+        blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
+             IRIS_SMALL_RING_HEIGHT);
         a += a >> 1;
         px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
         py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
-        blit(canvas, ring, px - 2, py - 5, 5, 10);
+        blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
+             IRIS_SMALL_RING_HEIGHT);
       }
       draw(canvas, work->sheet + (gBattleEffect_MotePictures[6] + sheetOffset),
            x - 3, y - 7, 7, 14);
@@ -695,7 +774,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       ringCel = r / 3 * 8;
       if (ringCel == 64)
         ringCel = 56;
-      ringCel += 444;
+      ringCel += IRIS_DOTS;
       for (point = 0; point != 64; point++) {
         s32 px;
         s32 a;
@@ -703,7 +782,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         a = point << 10;
         px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
         py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
-        draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
+             IRIS_DOT_HEIGHT);
       }
       for (point = 0; point != 64; point++) {
         s32 px;
@@ -713,13 +793,16 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         px = (Q_16_16_TO_INT(r * Trig_Sin(a) * 2)) + x;
         py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y +
              gIris_SplashOffsetsY[small] * 2;
-        draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
+             IRIS_DOT_HEIGHT);
       }
     }
     for (segment = 0; segment < t - *(gIris_SplashRadii + small) * 2 &&
-                      y + segment * 32 <= 112;
+                      y + segment * IRIS_SPRAY_HEIGHT <= 112;
          segment++)
-      draw(canvas, sprites + 508, x - 4, y + segment * 32, 8, 32);
+      draw(canvas, sprites + IRIS_SPRAY, x - IRIS_SPRAY_WIDTH / 2,
+           y + segment * IRIS_SPRAY_HEIGHT, IRIS_SPRAY_WIDTH,
+           IRIS_SPRAY_HEIGHT);
     if (t < *(gIris_SplashRadii + small) * 2 + 8) {
       s32 shake = (*(gIris_SplashRadii + small) * 2 - t + 8) >> 1;
       typeof(gBgScroll[0]) *scroll = gBgScroll;
@@ -733,92 +816,95 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         scroll[1].y = base - shake;
     }
     if (small == 0)
-      drawAlt(canvas, work->sheet + 0x1b12, x - 10, y - 20, 20, 40);
+      drawAlt(canvas, work->sheet + IRIS_DROPS, x - IRIS_DROP_WIDTH / 2,
+              y - IRIS_DROP_HEIGHT / 2, IRIS_DROP_WIDTH, IRIS_DROP_HEIGHT);
     else
-      drawAlt(canvas, work->sheet + 0x4c12, x - 6, y - 12, 12, 24);
+      drawAlt(canvas, work->sheet + IRIS_SMALL_DROPS,
+              x - IRIS_SMALL_DROP_WIDTH / 2, y - IRIS_SMALL_DROP_HEIGHT / 2,
+              IRIS_SMALL_DROP_WIDTH, IRIS_SMALL_DROP_HEIGHT);
   }
 }
 
 /// Iris: a circle of light opens over a dark field while fifteen
-/// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
-/// of sprites and bursts into sparks; drops fall and splash in rings; pillars
-/// of light climb, the scene fills with rising motes, rays turn about the
-/// centre, and the screen whitens as she heals the party.
+/// streaks swirl up out of it; Iris herself appears, a 4 x 4 grid of
+/// sprites, amid two bursts of pink petals and later rises away; drops fall and
+/// splash in rings; pillars of light climb, the scene fills with rising motes,
+/// rays turn about the centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
-  struct IrisPoint(*streaks)[10] = IRIS_STREAKS;
+  struct IrisPoint(*streaks)[IRIS_STREAK_LENGTH] = IRIS_STREAK_POINTS;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct Sprite **objects = (struct Sprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
-  struct IrisSparks *sparks = &IRIS_SPARKS;
+  struct IrisPetals *petals = &IRIS_PETAL_WORK;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
   s32 savedScroll = gBgScroll[1].x;
   s16 *camera = Ram_HeapSlots->cameraWork;
-  s32 savedZoom;
+  s32 savedYaw;
   s32 frame;
   void *draw[2];
 
-  // The first spark slot with no life left, or -1.
-  s32 FindFreeSpark(void) {
+  // The first petal slot with no life left, or -1.
+  s32 FindFreePetal(void) {
     s32 i;
-    s32 slot = 36;
+    s32 slot = IRIS_PETALS;
 
-    for (i = 0; i != 36; i++) {
-      if (sparks->life[i] == 0) {
+    for (i = 0; i != IRIS_PETALS; i++) {
+      if (petals->life[i] == 0) {
         slot = i;
         break;
       }
     }
-    if (slot == 36)
+    if (slot == IRIS_PETALS)
       slot = -1;
     return slot;
   }
 
-  // Each live spark: placed at its size, moved, dropped when it leaves the
+  // Each live petal: placed at its size, moved, dropped when it leaves the
   // screen, otherwise animated and aged.
-  void UpdateSparks(void) {
+  void UpdatePetals(void) {
     struct Scale scale;
     s32 place[4];
     s32 i;
 
-    for (i = 0; i != 36; i++) {
-      if (sparks->life[i] != 0) {
-        scale.x = scale.y = sparks->life[i] * 2;
+    for (i = 0; i != IRIS_PETALS; i++) {
+      if (petals->life[i] != 0) {
+        scale.x = scale.y = petals->life[i] * 2;
         place[3] = 0;
         place[1] = px(255);
-        place[0] = sparks->x[i];
-        place[2] = sparks->y[i];
+        place[0] = petals->x[i];
+        place[2] = petals->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], place, (s32 *)&scale, 0);
-        sparks->x[i] += sparks->vx[i];
-        sparks->y[i] += sparks->vy[i];
-        if (sparks->x[i] < -px(16) || sparks->x[i] > px(240) ||
-            sparks->y[i] < 0 || sparks->y[i] > px(160)) {
-          sparks->life[i] = 0;
+        petals->x[i] += petals->vx[i];
+        petals->y[i] += petals->vy[i];
+        if (petals->x[i] < -px(16) || petals->x[i] > px(240) ||
+            petals->y[i] < 0 || petals->y[i] > px(160)) {
+          petals->life[i] = 0;
           continue;
         }
         if (!(frame & 3))
-          sparks->frames[i]++;
-        if (sparks->frames[i] > 14)
-          sparks->frames[i] = 0;
-        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
-        sparks->life[i] -= 0x100;
+          petals->frames[i]++;
+        if (petals->frames[i] >= IRIS_PETAL_FRAMES)
+          petals->frames[i] = 0;
+        objects[i]->image.tile = petals->tiles[petals->frames[i]];
+        petals->life[i] -= 0x100;
       }
     }
   }
 
-  // The first free mote of 32, or -1.
+  // The first free mote of IRIS_MOTES, or -1.
   s32 FindFreeParticle(void) {
     s32 i;
-    s32 slot = 32;
+    s32 slot = IRIS_MOTES;
 
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != IRIS_MOTES; i++) {
       if (work->particles[i].variant == 0) {
         slot = i;
         break;
       }
     }
-    if (slot == 32)
+    if (slot == IRIS_MOTES)
       slot = -1;
     return slot;
   }
@@ -830,7 +916,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     s32 place[3];
     s32 i;
 
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != IRIS_MOTES; i++) {
       if (work->particles[i].variant != 0) {
         s32 n = work->particles[i].variant & 15;
         s32 px = Q_16_16_TO_INT(work->particles[i].x);
@@ -847,7 +933,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
           if (age > 32)
             offset = (age - 32) * MOTE_SET_BYTES;
-          if (offset == 0x1810) {
+          if (offset == IRIS_MOTE_FADES * MOTE_SET_BYTES) {
             work->particles[i].variant = 0;
             continue;
           }
@@ -860,10 +946,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           offset = 0;
           age = frame - work->particles[i].z;
           if (age > 24)
-            offset = (age - 24) * 0x800;
+            offset = (age - 24) * IRIS_TEXTURE_BYTES;
           texture.logWidth = 5;
           texture.logHeight = 6;
-          texture.pixels = work->sheet + 0x1810 + offset;
+          texture.pixels = work->sheet + IRIS_TEXTURES + offset;
           Transform_ResetMatrix();
           place[0] = work->particles[i].x - px(64);
           place[1] = work->particles[i].y - px(64);
@@ -881,7 +967,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
           Heap_Release(model);
           Heap_Release(verts);
-          if (offset == 0x3800)
+          if (offset == 7 * IRIS_TEXTURE_BYTES)
             work->particles[i].variant = 0;
         } else {
           ((DrawRectangle)draw[0])(
@@ -958,7 +1044,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  savedZoom = camera[27];
+  savedYaw = camera[27];
   if (args->side == EFFECT_SIDE_ENEMIES) {
     s32 yaw = TRIG_TURN / 4;
 
@@ -977,7 +1063,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tileBuffer, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  for (i = 0; i != 0x302; i++)
+  for (i = 0; i != MOTE_SET_BYTES; i++)
     sprites[i] >>= 1;
   BattleEffect_DrawShadedCircles(work->sheet, 32, Q16_ONE);
   Graphics_LoadGreyRamp();
@@ -997,7 +1083,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_PRESENT_CANVAS(work);
         if (frame <= 386) {
-          for (i = 0; i != 16; i++)
+          for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
             Sprite_DestroyFar(work->sprites[i]);
           BattleEffect_SelectLivingTargets(work->args);
           Palette_LoadBasicSpriteColors();
@@ -1047,7 +1133,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       scene->x = px(60);
       scene->y = px(128);
       scene->radius = px(12);
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != IRIS_STREAKS; i++) {
         struct IrisPoint *s = streaks[i];
 
         s->x = px(gIris_StreakX[i]);
@@ -1055,7 +1141,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s->angle = gIris_StreakAngles[i];
         s->speed = gIris_StreakSpeeds[i];
         s->unused = 0;
-        for (j = 1; j != 10; j++) {
+        for (j = 1; j != IRIS_STREAK_LENGTH; j++) {
           STREAK(i, j).x = px(150);
           STREAK(i, j).y = px(150);
         }
@@ -1066,7 +1152,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       draw[1] = Ram_HeapSlots->ramCodePaired;
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != IRIS_STREAKS; i++) {
         if (!(frame & 1)) {
           for (j = 9; j != 0; j--) {
             STREAK(i, j).x = STREAK(i, j - 1).x;
@@ -1082,7 +1168,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             s->y -= Trig_Cos(s->angle) * 3 / 2;
             s->angle += s->speed * 2 / 3;
             size = (i & 3) + 5;
-            for (j = 0; j != 10; j++) {
+            for (j = 0; j != IRIS_STREAK_LENGTH; j++) {
               u8 *to = canvas;
               u8 *cell = sprites + gBattleEffect_MotePictures[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
@@ -1100,7 +1186,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           {
             u16 *fade = FADE_PLTT;
 
-            for (i = 0; i != 128; i++) {
+            for (i = 0; i != IRIS_FADE_COLORS; i++) {
               s32 c = *fade;
               s32 b = RGB_BLUE((u16)c);
               s32 g = RGB_GREEN((u16)c);
@@ -1117,7 +1203,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           {
             u16 *fade = FADE_PLTT;
 
-            for (i = 0; i != 128; i++) {
+            for (i = 0; i != IRIS_FADE_COLORS; i++) {
               s32 c = *fade;
               s32 b = RGB_BLUE((u16)c);
               s32 g = RGB_GREEN((u16)c);
@@ -1154,7 +1240,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
 
-    // The crystal: sixteen sprites, the sparks and the first motes.
+    // Iris appears: her sixteen sprites, the petals and the first motes.
     if (frame == 176) {
       u8 *colors;
       struct VramCacheEntry *table;
@@ -1170,7 +1256,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       colors += 0x200;
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = gIris_TileBuffer;
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != IRIS_GODDESS_SPRITES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
@@ -1184,38 +1270,38 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       colors += 32;
       DECOMPRESS_IN_BLOCK(colors, work->sheet);
       table = gVramCacheEntries;
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != IRIS_PETAL_FRAMES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
         obj->image.priority = 1;
-        sparks->tiles[i] = obj->image.tile;
-        sparks->frames[i] = i;
+        petals->tiles[i] = obj->image.tile;
+        petals->frames[i] = i;
         Dma_Set(work->sheet + i * 128,
                 (void *)(OBJ_VRAM0 + table[obj->slot].offset),
                 DMA_COPY_WORDS(32), REG_DMA3);
       }
-      for (; i != 36; i++) {
+      for (; i != IRIS_PETALS; i++) {
         struct Sprite *obj =
             EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
         Dma_Set(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);
-        sparks->frames[i] = Random16() % 15;
-        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
+        petals->frames[i] = Random16() % IRIS_PETAL_FRAMES;
+        objects[i]->image.tile = petals->tiles[petals->frames[i]];
       }
-      for (i = 0; i != 18; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + px(57);
-        sparks->y[i] = (Random16() % 15 << 16) + px(79);
-        sparks->vx[i] = ((Random16() & 63) - 32) << 12;
-        sparks->vy[i] = ((Random16() & 63) - 32) << 12;
+      for (i = 0; i != IRIS_PETALS / 2; i++) {
+        petals->x[i] = (Random16() % 15 << 16) + px(57);
+        petals->y[i] = (Random16() % 15 << 16) + px(79);
+        petals->vx[i] = ((Random16() & 63) - 32) << 12;
+        petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
-      for (; i != 36; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + px(169);
-        sparks->y[i] = (Random16() % 15 << 16) + px(79);
-        sparks->vx[i] = ((Random16() & 63) - 32) << 12;
-        sparks->vy[i] = ((Random16() & 63) - 32) << 12;
+      for (; i != IRIS_PETALS; i++) {
+        petals->x[i] = (Random16() % 15 << 16) + px(169);
+        petals->y[i] = (Random16() % 15 << 16) + px(79);
+        petals->vx[i] = ((Random16() & 63) - 32) << 12;
+        petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
@@ -1265,17 +1351,18 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           lift = ((366 - frame) * 5 << 17) + 0x400000;
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
-        for (j = 0; j != 4; j++) {
-          for (column = 0; column != 4; column++) {
-            pos[0] = px(72) + column * px(32);
-            pos[2] = lift + px(56) + j * px(32);
-            Render_ApplyProjectedPlacementFar(work->sprites[j * 4 + column],
-                                              pos, (s32 *)&scale, 0);
+        for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
+          for (column = 0; column != IRIS_GODDESS_COLUMNS; column++) {
+            pos[0] = px(72) + column * px(IRIS_GODDESS_TILE);
+            pos[2] = lift + px(56) + j * px(IRIS_GODDESS_TILE);
+            Render_ApplyProjectedPlacementFar(
+                work->sprites[j * IRIS_GODDESS_COLUMNS + column], pos,
+                (s32 *)&scale, 0);
           }
         }
       }
       if (frame == 386) {
-        for (i = 0; i != 16; i++)
+        for (i = 0; i != IRIS_GODDESS_SPRITES; i++)
           Sprite_DestroyFar(work->sprites[i]);
         BattleEffect_SelectLivingTargets(work->args);
         Palette_LoadBasicSpriteColors();
@@ -1291,33 +1378,33 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           s32 x;
           s32 m;
 
-          off = ((y & 7) << 3) + ((y >> 3) << 10);
-          for (x = 0; x != 128; x += 8) {
+          off = CANVAS_ROW_OFFSET(y);
+          for (x = 0; x != CANVAS_SIZE; x += 8) {
             for (m = x; m != x + 8; m++) {
               if (canvas[off] < v)
                 canvas[off] = v;
               off++;
             }
-            off += 56;
+            off += CANVAS_TILE_BYTES - 8;
           }
         }
       }
     }
     if ((u32)(frame - 177) <= 46) {
-      for (i = 0; i != 36; i++) {
+      for (i = 0; i != IRIS_PETALS; i++) {
         shrink.x = shrink.y = px(1) - ((frame - 177) >> 1 << 11);
         pos[3] = 0;
         pos[1] = px(255);
-        pos[0] = sparks->x[i];
-        pos[2] = sparks->y[i];
+        pos[0] = petals->x[i];
+        pos[2] = petals->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], pos, (s32 *)&shrink, 0);
-        sparks->x[i] += sparks->vx[i];
-        sparks->y[i] += sparks->vy[i];
+        petals->x[i] += petals->vx[i];
+        petals->y[i] += petals->vy[i];
         if (!(frame & 3))
-          sparks->frames[i]++;
-        if (sparks->frames[i] > 14)
-          sparks->frames[i] = 0;
-        objects[i]->image.tile = sparks->tiles[sparks->frames[i]];
+          petals->frames[i]++;
+        if (petals->frames[i] >= IRIS_PETAL_FRAMES)
+          petals->frames[i] = 0;
+        objects[i]->image.tile = petals->tiles[petals->frames[i]];
       }
     }
     if ((u32)(frame - 179) <= 38) {
@@ -1343,14 +1430,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 179) <= 31)
       REG_BLDALPHA = (210 - frame) >> 1 | 0x1000;
 
-    // The drops: their frames, the sparks' cells and the spray.
+    // The drops: the motes' fading sets, the drops' pictures and the spray's
+    // column.
     if (frame == 230) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-      for (i = 1; i != 8; i++) {
+      for (i = 1; i != IRIS_MOTE_FADES; i++) {
         s32 next;
 
-        for (j = 0; j != 10; j = next) {
+        for (j = 0; j != MOTE_PICTURES; j = next) {
           u8 *src = work->sheet + gBattleEffect_MotePictures[j];
           u8 *out = work->sheet +
                     (gBattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
@@ -1361,7 +1449,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           for (; off != (next << 1) * next; off++) {
             u8 v = *src - i * 8;
 
-            if (v > 63)
+            if (v > CANVAS_LEVEL_BRIGHTEST)
               v = 0;
             *out = v;
             src++;
@@ -1370,18 +1458,21 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != 8; i++) {
-        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x1b12 + i * 800,
-                                               20, 0x10000 - i * 0x2000);
-        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4c12 + i * 288,
-                                               12, 0x10000 - i * 0x2000);
+        BattleEffect_DrawShadedCirclesMirrored(
+            work->sheet + IRIS_DROPS + i * PICTURE_BYTES(IRIS_DROP),
+            IRIS_DROP_WIDTH, Q16_ONE - i * (Q16_ONE / IRIS_DROP_PICTURES));
+        BattleEffect_DrawShadedCirclesMirrored(
+            work->sheet + IRIS_SMALL_DROPS + i * PICTURE_BYTES(IRIS_SMALL_DROP),
+            IRIS_SMALL_DROP_WIDTH,
+            Q16_ONE - i * (Q16_ONE / IRIS_DROP_PICTURES));
       }
-      for (i = 0; i != 36; i++)
-        sparks->life[i] = 0;
+      for (i = 0; i != IRIS_PETALS; i++)
+        petals->life[i] = 0;
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                  0);
       for (i = 0; i != 32; i++)
         for (j = 0; j != 8; j++)
-          sprites[508 + i * 8 + j] = gIris_LineShades[j];
+          sprites[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] = gIris_LineShades[j];
       dst = sprites;
       for (i = 0; i != 2; i++) {
         for (j = 0; j != 3; j++) {
@@ -1428,13 +1519,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                           gIris_SplashY[j], gIris_SplashSmall[j]);
           if (gIris_SplashStarts[j] - gIris_SplashSmall[j] * 16 + 48 == frame) {
             for (i = 0; i != 6; i++) {
-              s32 s = FindFreeSpark();
+              s32 s = FindFreePetal();
 
-              sparks->life[s] = 0x7900;
-              sparks->x[s] = gIris_SplashX[j] << 17;
-              sparks->y[s] = px(gIris_SplashY[j]) + px(32);
-              sparks->vx[s] = ((Random16() & 31) - 16) << 12;
-              sparks->vy[s] = -(Random16() & 31) << 12;
+              petals->life[s] = 0x7900;
+              petals->x[s] = gIris_SplashX[j] << 17;
+              petals->y[s] = px(gIris_SplashY[j]) + px(32);
+              petals->vx[s] = ((Random16() & 31) - 16) << 12;
+              petals->vy[s] = -(Random16() & 31) << 12;
             }
           }
         } else if (frame < gIris_SplashEnds[j] + gIris_DropFrames[j]) {
@@ -1447,17 +1538,20 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 279) <= 132 || frame > 446)
-      UpdateSparks();
+      UpdatePetals();
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // The pillars of light.
     if (frame == 370) {
-      BattleEffect_DrawShadedCircles(work->sheet + 0x3e8, 16, Q16_ONE);
+      BattleEffect_DrawShadedCircles(work->sheet + IRIS_PILLAR_CIRCLE,
+                                     IRIS_PILLAR_TEXTURE_SIZE, Q16_ONE);
       for (i = 0; i != 16; i++) {
-        Dma_Set(work->sheet + 0x3e8 + (i << 3), work->sheet + 0x302 + (i << 4),
+        Dma_Set(work->sheet + IRIS_PILLAR_CIRCLE + (i << 3),
+                work->sheet + IRIS_PILLAR_TEXTURE + (i << 4),
                 DMA_COPY_HALFWORDS(8), REG_DMA3);
         for (j = 0; j != 8; j++)
-          work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
+          work->sheet[IRIS_PILLAR_TEXTURE + 8 + i * 16 + j] =
+              work->sheet[IRIS_PILLAR_CIRCLE + 7 + i * 8 - j];
       }
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(8);
     }
@@ -1471,16 +1565,16 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame > 370) {
         s32 h = (frame - 370) << 3;
 
-        if (h > 127)
-          h = 127;
+        if (h > CANVAS_SIZE - 1)
+          h = CANVAS_SIZE - 1;
         Iris_DrawPillar(3, 34, h);
       }
       if (frame > 375) {
         struct FiveWidths widths = gIris_RisingPillarWidths;
         s32 h = (frame - 375) << 3;
 
-        if (h > 127)
-          h = 127;
+        if (h > CANVAS_SIZE - 1)
+          h = CANVAS_SIZE - 1;
         Iris_DrawPillar(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
       }
       if (frame > 380) {
@@ -1488,8 +1582,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 h = (frame - 380) << 2;
         s32 q;
 
-        if (h > 127)
-          h = 127;
+        if (h > CANVAS_SIZE - 1)
+          h = CANVAS_SIZE - 1;
         q = h / 19;
         Iris_DrawPillar(widths.w[q], q + 12, h);
       }
@@ -1498,16 +1592,16 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 h = (frame - 382) << 3;
         s32 q;
 
-        if (h > 127)
-          h = 127;
+        if (h > CANVAS_SIZE - 1)
+          h = CANVAS_SIZE - 1;
         q = h / 21;
         Iris_DrawPillar(widths.w[q], q * 2 + 70, h);
       }
       if (frame > 385) {
         s32 h = (frame - 385) << 2;
 
-        if (h > 127)
-          h = 127;
+        if (h > CANVAS_SIZE - 1)
+          h = CANVAS_SIZE - 1;
         Iris_DrawPillar(14, (h >> 3) + 48, h);
       }
       if (frame == 422) {
@@ -1533,20 +1627,20 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
        */
       i = first;
       top = i;
-      for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
+      for (; i != top + 40 && (v = (i - top) * 2, i <= CANVAS_SIZE - 1); i++) {
         if (i >= 0) {
           /* FAKEMATCH(dead): i / 3 into dead, which flow deletes. */
           dead = i / 3;
-          if (v > 63)
-            v = 63;
-          off = ((i & 7) << 3) + ((i >> 3) << 10);
-          for (k = 0; k != 128; k += 8) {
+          if (v > CANVAS_LEVEL_BRIGHTEST)
+            v = CANVAS_LEVEL_BRIGHTEST;
+          off = CANVAS_ROW_OFFSET(i);
+          for (k = 0; k != CANVAS_SIZE; k += 8) {
             for (m = 0; m != 8; m++) {
               if (canvas[off] < v)
                 canvas[off] = v;
               off++;
             }
-            off += 56;
+            off += CANVAS_TILE_BYTES - 8;
           }
         }
       }
@@ -1556,7 +1650,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       {
         u16 *fade = FADE_PLTT;
 
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != IRIS_FADE_COLORS; i++) {
           s32 c = *fade;
           s32 r = RGB_LEVEL_MAX;
           s32 g;
@@ -1584,12 +1678,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Transform_Reset();
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_StarfieldFlareBackdrop, 0);
-      off = 0x302;
+      off = MOTE_SET_BYTES;
       {
         u16 *fade = FADE_PLTT;
         s32 red = RGB_LEVEL_MAX;
 
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != IRIS_FADE_COLORS; i++) {
           s32 c = *fade;
           s32 r = red & c;
           s32 g = RGB_GREEN((u16)c);
@@ -1607,13 +1701,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         BattleEffect_DrawShadedCircles(work->sheet + off, n, Q16_ONE);
         off += n * w;
       }
-      Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
-      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64,
-                                           0x10000);
-      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64,
-                                           0x10000);
+      Iwram_FillWords(work->sheet + IRIS_TEXTURES, 2 * IRIS_TEXTURE_BYTES, 0);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
+                                               IRIS_TEXTURE_BYTES,
+                                           16, IRIS_TEXTURE_HEIGHT, Q16_ONE);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
+                                               2 * IRIS_TEXTURE_BYTES,
+                                           16, IRIS_TEXTURE_HEIGHT, Q16_ONE);
       {
-        u8 *ramp = work->sheet + 0x2010;
+        u8 *ramp = work->sheet + IRIS_TEXTURES + IRIS_TEXTURE_BYTES;
 
         for (i = 0; i != 64; i++) {
           for (j = 0; j != 32; j++) {
@@ -1623,14 +1719,14 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      for (i = 0; i != 36; i++)
-        sparks->life[i] = 0;
-      for (i = 0; i != 32; i++)
+      for (i = 0; i != IRIS_PETALS; i++)
+        petals->life[i] = 0;
+      for (i = 0; i != IRIS_MOTES; i++)
         work->particles[i].variant = 0;
-      for (i = 1; i != 8; i++) {
+      for (i = 1; i != IRIS_MOTE_FADES; i++) {
         s32 next;
 
-        for (j = 0; j != 10; j = next) {
+        for (j = 0; j != MOTE_PICTURES; j = next) {
           u8 *src = work->sheet + gBattleEffect_MotePictures[j];
           u8 *out = work->sheet +
                     (gBattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
@@ -1641,7 +1737,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           for (; off != (next << 1) * next; off++) {
             u8 v = *src - i * 8;
 
-            if (v > 63)
+            if (v > CANVAS_LEVEL_BRIGHTEST)
               v = 0;
             *out = v;
             src++;
@@ -1662,19 +1758,19 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       for (i = top; i != 0; i--) {
         u8 v = (top - i) * 2;
 
-        if (i <= 127) {
-          if (v > 63)
-            v = 63;
+        if (i <= CANVAS_SIZE - 1) {
+          if (v > CANVAS_LEVEL_BRIGHTEST)
+            v = CANVAS_LEVEL_BRIGHTEST;
           if (top - 8 < i)
             v = 0;
-          off = ((i & 7) << 3) + ((i >> 3) << 10);
-          for (x = 0; x != 128; x += 8) {
+          off = CANVAS_ROW_OFFSET(i);
+          for (x = 0; x != CANVAS_SIZE; x += 8) {
             for (m = 0; m != 8; m++) {
               if (canvas[off] < v)
                 canvas[off] = v;
               off++;
             }
-            off += 56;
+            off += CANVAS_TILE_BYTES - 8;
           }
         }
       }
@@ -1695,29 +1791,29 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       model->mesh = gIris_StripMesh;
       model->vertices = verts;
       if (frame <= 563) {
-        scroll = 0x1000;
+        scroll = 2 * IRIS_TEXTURE_BYTES;
         if (frame > 500) {
           scroll = (s16)(scroll - (frame - 500) * 64);
           if (scroll < 0)
             scroll = 0;
         }
-        texture.pixels = work->sheet + 0x1810 + scroll;
+        texture.pixels = work->sheet + IRIS_TEXTURES + scroll;
         if (!(frame & 7)) {
           s32 s;
 
           leftSpans = gIris_LeftStripSpans;
-          s = FindFreeSpark();
+          s = FindFreePetal();
 
           if (s != -1) {
             s32 r = Random16() & 127;
 
-            sparks->life[s] = -0x7c00;
-            sparks->x[s] = (leftSpans.p[(r + 1) >> 5].left +
+            petals->life[s] = -0x7c00;
+            petals->x[s] = (leftSpans.p[(r + 1) >> 5].left +
                             Random16() % leftSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = px(r) + px(16);
-            sparks->vx[s] = (Random16() & 15) * 3 << 11;
-            sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
+            petals->y[s] = px(r) + px(16);
+            petals->vx[s] = (Random16() & 15) * 3 << 11;
+            petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
         }
         model->texture = &texture;
@@ -1725,29 +1821,29 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         Render_DrawModelList(model);
       }
       if (frame <= 563) {
-        scroll = 0x1000;
+        scroll = 2 * IRIS_TEXTURE_BYTES;
         if (frame > 470) {
           scroll = (s16)(scroll - (frame - 470) * 64);
           if (scroll < 0)
             scroll = 0;
         }
-        texture.pixels = work->sheet + 0x1810 + scroll;
+        texture.pixels = work->sheet + IRIS_TEXTURES + scroll;
         if (!(frame & 7) && frame <= 501) {
           s32 s;
 
           rightSpans = gIris_RightStripSpans;
-          s = FindFreeSpark();
+          s = FindFreePetal();
 
           if (s != -1) {
             s32 r = Random16() & 127;
 
-            sparks->life[s] = -0x7c00;
-            sparks->x[s] = (rightSpans.p[(r + 1) >> 5].left +
+            petals->life[s] = -0x7c00;
+            petals->x[s] = (rightSpans.p[(r + 1) >> 5].left +
                             Random16() % rightSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = px(r) + px(16);
-            sparks->vx[s] = (Random16() & 15) * 3 << 11;
-            sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
+            petals->y[s] = px(r) + px(16);
+            petals->vx[s] = (Random16() & 15) * 3 << 11;
+            petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
         }
         if (!(frame & 3)) {
@@ -1857,27 +1953,34 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (frame == 754) {
       s32 white;
-      BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
-                                           0x10000);
-      BattleEffect_DrawShadedCircles(work->sheet + 0x1c10, 32, Q16_ONE);
+      BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
+                                               8 * IRIS_TEXTURE_BYTES,
+                                           16, 32, Q16_ONE);
+      BattleEffect_DrawShadedCircles(work->sheet + IRIS_TEXTURES +
+                                         IRIS_TEXTURE_BYTES / 2,
+                                     IRIS_TEXTURE_WIDTH, Q16_ONE);
       for (i = 0; i != 32; i++) {
-        Dma_Set(work->sheet + (i << 4) + 0x1c10,
-                work->sheet + (i << 5) + 0x1810, DMA_COPY_WORDS(8), REG_DMA3);
+        Dma_Set(work->sheet + (i << 4) + IRIS_TEXTURES + IRIS_TEXTURE_BYTES / 2,
+                work->sheet + (i << 5) + IRIS_TEXTURES, DMA_COPY_WORDS(8),
+                REG_DMA3);
         for (j = 0; j != 16; j++)
-          work->sheet[0x1820 + i * 32 + j] = work->sheet[0x181f + i * 32 - j];
+          work->sheet[IRIS_TEXTURES + 16 + i * IRIS_TEXTURE_WIDTH + j] =
+              work->sheet[IRIS_TEXTURES + 15 + i * IRIS_TEXTURE_WIDTH - j];
       }
       for (i = 0; i != 32; i++)
-        Dma_Set(work->sheet + 0x1bf0 - (i << 5),
-                work->sheet + 0x1c10 + (i << 5), DMA_COPY_WORDS(16), REG_DMA3);
+        Dma_Set(work->sheet + IRIS_TEXTURES + IRIS_TEXTURE_BYTES / 2 -
+                    IRIS_TEXTURE_WIDTH - (i << 5),
+                work->sheet + IRIS_TEXTURES + IRIS_TEXTURE_BYTES / 2 + (i << 5),
+                DMA_COPY_WORDS(16), REG_DMA3);
       white = 64;
       for (i = 1; i != 8; i++) {
-        u8 *src = work->sheet + 0x1810;
-        u8 *out = work->sheet + 0x1810 + i * 0x800;
+        u8 *src = work->sheet + IRIS_TEXTURES;
+        u8 *out = work->sheet + IRIS_TEXTURES + i * IRIS_TEXTURE_BYTES;
         u8 v;
 
         j = 0;
         v = white - i * 8;
-        for (; j != 0x800; j++) {
+        for (; j != IRIS_TEXTURE_BYTES; j++) {
           if (v < *src)
             *out = v;
           else
@@ -1934,7 +2037,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       coneTexture.logWidth = 5;
       coneTexture.logHeight = 5;
-      coneTexture.pixels = work->sheet + 0x5810;
+      coneTexture.pixels = work->sheet + IRIS_TEXTURES + 8 * IRIS_TEXTURE_BYTES;
       Transform_ResetMatrix();
       place[0] = px(32);
       place[1] = -px(24);
@@ -1955,13 +2058,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(verts);
-      s = FindFreeSpark();
+      s = FindFreePetal();
       if (s != -1) {
-        sparks->life[s] = (Random16() & 15) << 15;
-        sparks->x[s] = px(239);
-        sparks->y[s] = px(Random16() & 255);
-        sparks->vx[s] = -(Random16() & 31) << 12;
-        sparks->vy[s] = ((Random16() & 31) - 16) << 12;
+        petals->life[s] = (Random16() & 15) << 15;
+        petals->x[s] = px(239);
+        petals->y[s] = px(Random16() & 255);
+        petals->vx[s] = -(Random16() & 31) << 12;
+        petals->vy[s] = ((Random16() & 31) - 16) << 12;
       }
       if (!(frame & 3)) {
         s32 n = FindFreeParticle();
@@ -2024,7 +2127,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  camera[27] = savedZoom;
+  camera[27] = savedYaw;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
@@ -3028,9 +3131,52 @@ void Render_DrawModelList(struct RenderModel *model) {
 }
 #undef MOLOCH_FRAMES
 #undef MOLOCH_SKIP_TO
+#undef MOLOCH_MOTES
+#undef MOLOCH_FLAMES
+#undef MOLOCH_FLAME_LEFT
+#undef MOLOCH_FIRST_EMBER
+#undef MOLOCH_EMBERS
+#undef MOLOCH_SPRITES
+#undef MOLOCH_FLAME_LIFE
+#undef MOLOCH_RING_TEXTURE
+#undef IRIS_MOTE_FADES
+#undef IRIS_DROPS
+#undef IRIS_DROP_WIDTH
+#undef IRIS_DROP_HEIGHT
+#undef IRIS_SMALL_DROPS
+#undef IRIS_SMALL_DROP_WIDTH
+#undef IRIS_SMALL_DROP_HEIGHT
+#undef IRIS_DROP_PICTURES
+#undef IRIS_TEXTURES
+#undef IRIS_TEXTURE_WIDTH
+#undef IRIS_TEXTURE_HEIGHT
+#undef IRIS_TEXTURE_BYTES
+#undef IRIS_PILLAR_TEXTURE
+#undef IRIS_PILLAR_TEXTURE_SIZE
+#undef IRIS_PILLAR_CIRCLE
+#undef IRIS_LARGE_RING_WIDTH
+#undef IRIS_LARGE_RING_HEIGHT
+#undef IRIS_SMALL_RING_WIDTH
+#undef IRIS_SMALL_RING_HEIGHT
+#undef IRIS_DOT_WIDTH
+#undef IRIS_DOT_HEIGHT
+#undef IRIS_SPRAY_WIDTH
+#undef IRIS_SPRAY_HEIGHT
 #undef BLITTER
 #undef HALF
+#undef IRIS_PETALS
+#undef IRIS_PETAL_FRAMES
+#undef IRIS_MOTES
 #undef IRIS_STREAKS
+#undef IRIS_STREAK_LENGTH
+#undef IRIS_GODDESS_COLUMNS
+#undef IRIS_GODDESS_ROWS
+#undef IRIS_GODDESS_SPRITES
+#undef IRIS_GODDESS_TILE
+#undef IRIS_FADE_COLORS
+#undef IRIS_PETAL_WORK
+#undef IRIS_SCENE
+#undef IRIS_STREAK_POINTS
 #undef SCENE
 #undef STREAK
 #undef FADE_PLTT

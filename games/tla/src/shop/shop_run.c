@@ -62,7 +62,7 @@ void Shop_InitializeWork(void) {
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
-  shop->mode = SHOP_CURSOR_ENTER_FRAMES;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   Palette_LoadIconsIntoHighlightFar();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
@@ -137,7 +137,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     window = Window_CreateFar(30, 0, 2, 2, WINDOW_FLAG_INSTANT);
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
-  anchor->sentinel = 255;
+  anchor->sentinel = OAM_DEPTH_FRONT;
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it
@@ -210,11 +210,11 @@ void Sound_WaitForJingle(void) {
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 resolvedMessage;
-  s32 portraitResource;
+  s32 voice;
   s8 shopType;
 
   resolvedMessage = messageId;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_GENERAL_STORE)
@@ -223,7 +223,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   if (shopType == SHOP_TYPE_ITEMS)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -232,7 +233,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
 /// Shows a shopkeeper's line as Shop_ShowKeeperMessage does, hiding the hand
 /// cursor while it shows and putting back its motion after.
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
-  s32 portraitResource;
+  s32 voice;
   s32 resolvedMessage;
   s8 shopType;
   u8 savedCursorMode;
@@ -243,7 +244,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_GENERAL_STORE)
     resolvedMessage += MsgGeneralStoreWelcome - MsgWeaponShopWelcome;
@@ -253,7 +254,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

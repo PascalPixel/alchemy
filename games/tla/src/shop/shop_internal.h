@@ -44,6 +44,7 @@
 #include "game/owner_state.h"
 #include "fixed_math.h"
 #include "field/field_event.h"
+#include "field/field_sequence.h"
 #include "window/item_icon.h"
 #include "game/character_ids.h"
 #include "gamepak/far_call/game.h"
@@ -200,12 +201,12 @@ struct ShopWork {
   u8 unusedAfterSelection[4]; ///< no view of the menu work names it
   s16 stockCount;
   s8 partyMemberCount;
-  u8 mode;        ///< passed on as the hand cursor's kind
-  s8 shopType;    ///< the stock row's type (enum ShopType)
-  s8 action;      ///< the counter or service chosen (enum ShopAction or
-                  ///< enum SanctumService)
-  s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
-                  ///< none
+  u8 cursorFrames; ///< the frames the hand cursor takes to its next place
+  s8 shopType;     ///< the stock row's type (enum ShopType)
+  s8 action;       ///< the counter or service chosen (enum ShopAction or
+                   ///< enum SanctumService)
+  s8 burstMember;  ///< the sanctum's party member whose pose is randomized; -1
+                   ///< none
   /// ItemMenuWork's: nonzero while Menu_UpdateEntryObjectTransforms places
   /// the party figures; cleared while a details window covers them.
   u8 memberSpritesShown;

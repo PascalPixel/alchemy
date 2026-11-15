@@ -44,6 +44,95 @@
 #define SUMMARY_STAT_VALUE_X 184
 #endif
 
+/// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
+/// cursor stops in window_tables.s name; the status icons' places and the
+/// three list pages follow.
+enum BattleSummaryHelp {
+  /// The name, whose help says how to switch party members with L and R.
+  OWNER_STATUS_HELP_NAME = 0,
+  OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
+  OWNER_STATUS_HELP_EXPERIENCE = 2,
+  OWNER_STATUS_HELP_HP = 3,
+  OWNER_STATUS_HELP_PP = 4,
+  OWNER_STATUS_HELP_CLASS = 5,
+  OWNER_STATUS_HELP_DJINN = 6,
+  OWNER_STATUS_HELP_ELEMENT_LEVEL = 7,
+  OWNER_STATUS_HELP_POWER = 8,
+  OWNER_STATUS_HELP_RESIST = 9,
+  OWNER_STATUS_HELP_ATTACK = 10,
+  OWNER_STATUS_HELP_DEFENSE = 11,
+  OWNER_STATUS_HELP_AGILITY = 12,
+  OWNER_STATUS_HELP_LUCK = 13,
+  /// The first status icon's place: its help is its status's
+  /// (MsgNormalStatus + condition).
+  OWNER_STATUS_HELP_CONDITION = 14,
+  OWNER_STATUS_HELP_LAST_CONDITION = 21, ///< the eighth icon's place
+  OWNER_STATUS_HELP_PSYNERGY_LIST = 22,  ///< STATUS_PAGE_PSYNERGY's rows
+  OWNER_STATUS_HELP_DJINN_LIST = 23,     ///< STATUS_PAGE_DJINN's rows
+  OWNER_STATUS_HELP_ITEM_LIST = 24       ///< STATUS_PAGE_ITEMS's rows
+};
+
+/// A status the Status screen shows as an icon, which picks both the icon
+/// and its help (MsgNormalStatus + condition).
+enum BattleSummaryStatus {
+  OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
+  OWNER_CONDITION_NORMAL = 0, ///< no status: "Normal status."
+  OWNER_CONDITION_POISON = 1,
+  OWNER_CONDITION_DEADLY_POISON = 2,
+  OWNER_CONDITION_STUN = 3,
+  OWNER_CONDITION_PSYNERGY_SEALED = 4,
+  OWNER_CONDITION_SLEEP = 5,
+  OWNER_CONDITION_DELUSION = 6,
+  OWNER_CONDITION_HAUNT = 7,
+  OWNER_CONDITION_GRIM_REAPER = 8, ///< downed when its turns run out
+  OWNER_CONDITION_ATTACK_UP = 9,
+  OWNER_CONDITION_ATTACK_DOWN = 10,
+  OWNER_CONDITION_DEFENSE_UP = 11,
+  OWNER_CONDITION_DEFENSE_DOWN = 12,
+  OWNER_CONDITION_RESISTANCE_UP = 13,
+  OWNER_CONDITION_RESISTANCE_DOWN = 14,
+  OWNER_CONDITION_CURSED_ITEM = 15,
+  OWNER_CONDITION_DOWNED = 16,
+  OWNER_CONDITION_AGILITY_UP = 17,
+  OWNER_CONDITION_AGILITY_DOWN = 18
+};
+
+/// The Status screen's pages, which A turns.
+enum BattleSummaryPage {
+  STATUS_PAGE_STATS = 0,
+  STATUS_PAGE_PSYNERGY = 1,
+  STATUS_PAGE_DJINN = 2,
+  STATUS_PAGE_ITEMS = 3,
+  STATUS_PAGE_COUNT = 4
+};
+
+// The Status screen's cursor groups, each with its table of cursor stops.
+/// The name, experience, HP, PP, class, Djinn and element rows
+/// (gOwnerStatus_StatCursors).
+#define STATUS_CURSOR_GENERAL 0
+/// Attack, Defense, Agility and Luck (gOwnerStatus_EquipmentCursors).
+#define STATUS_CURSOR_COMBAT_STATS 1
+#define STATUS_CURSOR_CONDITIONS 2 ///< the status icons
+#define STATUS_CURSOR_PSYNERGY 3   ///< the Psynergy page's rows
+#define STATUS_CURSOR_DJINN 4      ///< the Djinn page's grid
+#define STATUS_CURSOR_ITEMS 5      ///< the items page's rows
+
+// The Djinn page's list entries: bits 21..17 the recovery turns left, 16 set
+// for a Djinni not set (on standby or recovering), 11..8 its element and
+// 7..0 its number; STATUS_DJINN_END ends the list.
+#define STATUS_DJINN_ELEMENT 0xf00
+#define STATUS_DJINN_ELEMENT_SHIFT 8
+#define STATUS_DJINN_NUMBER 0xff
+#define STATUS_DJINN_UNSET 0x10000
+#define STATUS_DJINN_TURNS 0x3e0000
+#define STATUS_DJINN_TURNS_SHIFT 17
+#define STATUS_DJINN_END 0x80000000
+/// An entry's Djinni, for its name and effect messages.
+#define STATUS_DJINNI(entry)                                                   \
+  (((entry) & STATUS_DJINN_ELEMENT) >> STATUS_DJINN_ELEMENT_SHIFT) *           \
+          DJINN_PER_ELEMENT +                                                  \
+      ((entry) & STATUS_DJINN_NUMBER)
+
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 #if TLA_PATCH_2
@@ -149,11 +238,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursor.groupPositions[i] = 0;
   cursor.helpEntry = 0;
   cursor.drawnHelpEntry = 0;
-  cursor.group = 0;
+  cursor.group = STATUS_CURSOR_GENERAL;
   cursorSlot = VramCache_AllocEntry(0x80);
   for (i = 0; i <= 10; i++) {
     statusSlots[i] = VramCache_AllocEntry(0x80);
-    statusKinds[i] = -1;
+    statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
   for (i = 0; i <= 3; i++) {
     iconSlots[i] = VramCache_AllocEntry(0x80);
@@ -164,9 +253,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     for (i = 0; i <= 5; i++) {
       s32 kind = list[i];
 
-      if (kind == 255)
+      if (kind == BATTLE_UNIT_LIST_END)
         break;
-      if (kind != 254 && kind == member) {
+      if (kind != BATTLE_UNIT_REMOVED && kind == member) {
         memberIndex = i;
         break;
       }
@@ -195,35 +284,35 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     sprite->oam.f.x = 8;
     sprite->oam.f.y = 24;
     sprite->oam.f.palette = PORTRAIT_PALETTE;
-    Oam_AddSpriteAtDepth(sprite, 240);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
 
     switch (cursor.helpEntry) {
-    case 0 ... 9:
+    case OWNER_STATUS_HELP_NAME ... OWNER_STATUS_HELP_RESIST:
     default:
-      cursor.group = 0;
+      cursor.group = STATUS_CURSOR_GENERAL;
       if (hasDjinn != 0)
         cursor.groupSize = 9;
       else
         cursor.groupSize = 7;
       break;
-    case 10 ... 13:
-      cursor.group = 1;
+    case OWNER_STATUS_HELP_ATTACK ... OWNER_STATUS_HELP_LUCK:
+      cursor.group = STATUS_CURSOR_COMBAT_STATS;
       cursor.groupSize = 4;
       break;
-    case 14 ... 21:
-      cursor.group = 2;
+    case OWNER_STATUS_HELP_CONDITION ... OWNER_STATUS_HELP_LAST_CONDITION:
+      cursor.group = STATUS_CURSOR_CONDITIONS;
       cursor.groupSize = statusCount;
       break;
-    case 22:
-      cursor.group = 3;
+    case OWNER_STATUS_HELP_PSYNERGY_LIST:
+      cursor.group = STATUS_CURSOR_PSYNERGY;
       cursor.groupSize = psynergyCount;
       break;
-    case 23:
-      cursor.group = 4;
+    case OWNER_STATUS_HELP_DJINN_LIST:
+      cursor.group = STATUS_CURSOR_DJINN;
       cursor.groupSize = djinnCount;
       break;
-    case 24:
-      cursor.group = 5;
+    case OWNER_STATUS_HELP_ITEM_LIST:
+      cursor.group = STATUS_CURSOR_ITEMS;
       cursor.groupSize = itemCount;
       break;
     }
@@ -233,12 +322,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & KEY_A) {
-      page = (page + 1) % 4;
+      page = (page + 1) % STATUS_PAGE_COUNT;
       cursor.group = page + 3;
       cursor.groupPositions[page + 3] = 0;
       cursor.groupSize = 1;
-      if (page != 0)
-        cursor.helpEntry = page + 21;
+      if (page != STATUS_PAGE_STATS)
+        cursor.helpEntry = page + OWNER_STATUS_HELP_LAST_CONDITION;
       else
         cursor.helpEntry = page;
       redraw = 1;
@@ -246,7 +335,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
 
     if (statusCount != 0) {
-      if ((u32)cursor.group <= 1) {
+      if ((u32)cursor.group <= STATUS_CURSOR_COMBAT_STATS) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & KEY_DOWN) {
           keys = 0;
@@ -254,8 +343,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
-            if (cursor.group == 1) {
-              cursor.group = 2;
+            if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
+              cursor.group = STATUS_CURSOR_CONDITIONS;
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
@@ -265,52 +354,53 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
-            if (cursor.group == 1) {
-              cursor.group = 2;
+            if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
+              cursor.group = STATUS_CURSOR_CONDITIONS;
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
         } else if (keys & KEYS_HORIZONTAL) {
           keys = 0;
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-          cursor.group ^= 2;
+          cursor.group ^= STATUS_CURSOR_CONDITIONS;
           if (gInput.repeat & KEY_LEFT)
             groupPosition = statusCount - 1;
           else
             groupPosition = 0;
         }
         cursor.groupPositions[cursor.group] = groupPosition;
-      } else if (cursor.group == 2) {
+      } else if (cursor.group == STATUS_CURSOR_CONDITIONS) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (groupPosition >= cursor.groupSize)
           groupPosition = cursor.groupSize - 1;
         if (groupPosition < 0) {
-          cursor.group = 0;
-          groupPosition = cursor.groupPositions[0];
+          cursor.group = STATUS_CURSOR_GENERAL;
+          groupPosition = cursor.groupPositions[STATUS_CURSOR_GENERAL];
         } else if (keys & KEY_RIGHT) {
           keys = 0;
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
-            cursor.group = 0;
-            groupPosition = cursor.groupPositions[0];
+            cursor.group = STATUS_CURSOR_GENERAL;
+            groupPosition = cursor.groupPositions[STATUS_CURSOR_GENERAL];
           }
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if (keys & KEY_LEFT) {
           keys = 0;
           groupPosition--;
           if (groupPosition < 0) {
-            cursor.group = 0;
-            groupPosition = cursor.groupPositions[0];
+            cursor.group = STATUS_CURSOR_GENERAL;
+            groupPosition = cursor.groupPositions[STATUS_CURSOR_GENERAL];
           }
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if (keys & KEYS_VERTICAL) {
           keys = 0;
-          cursor.group = 0;
-          groupPosition = cursor.groupPositions[0];
+          cursor.group = STATUS_CURSOR_GENERAL;
+          groupPosition = cursor.groupPositions[STATUS_CURSOR_GENERAL];
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = groupPosition;
-      } else if (cursor.group == 3 || cursor.group == 5) {
+      } else if (cursor.group == STATUS_CURSOR_PSYNERGY ||
+                 cursor.group == STATUS_CURSOR_ITEMS) {
         // Four rows a page: up and down step, left and right turn the page.
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & KEY_DOWN) {
@@ -351,7 +441,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (groupPosition < 0)
           groupPosition = 0;
         cursor.groupPositions[cursor.group] = groupPosition;
-      } else if (cursor.group == 4) {
+      } else if (cursor.group == STATUS_CURSOR_DJINN) {
         // Three Djinn a column.
         s32 djinnPosition = cursor.groupPositions[cursor.group];
 
@@ -392,7 +482,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
     }
 
-    if (cursor.group == 0) {
+    if (cursor.group == STATUS_CURSOR_GENERAL) {
       const struct BattleSummaryStatCursor *stop;
       s32 k = cursor.groupPositions[cursor.group];
 
@@ -405,7 +495,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Window_HighlightRect((s16)statusWindow->x + stop->highlightColumn + 1,
                            (s16)statusWindow->y + stop->highlightRow + 1,
                            stop->highlightWidth, 1, HIGHLIGHT_PALETTE);
-    } else if (cursor.group == 1) {
+    } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
       cursor.helpEntry =
           gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
               .entry;
@@ -415,7 +505,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.row =
           gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
               .row;
-    } else if (cursor.group == 2) {
+    } else if (cursor.group == STATUS_CURSOR_CONDITIONS) {
       cursor.helpEntry =
           gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
               .entry;
@@ -425,7 +515,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       cursor.row =
           gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
               .row;
-      if (statusKinds[0] == 0)
+      if (statusKinds[0] == OWNER_CONDITION_NORMAL)
         Window_HighlightRect((s16)statusWindow->x + 15,
                              (s16)statusWindow->y + 1, 10, 1,
                              HIGHLIGHT_PALETTE);
@@ -433,11 +523,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Window_HighlightRect((s16)statusWindow->x + cursor.column + 1,
                              (s16)statusWindow->y + cursor.row + 1, 2, 2,
                              HIGHLIGHT_PALETTE);
-    } else if (cursor.group == 3 || cursor.group == 5) {
+    } else if (cursor.group == STATUS_CURSOR_PSYNERGY ||
+               cursor.group == STATUS_CURSOR_ITEMS) {
       s8 position = cursor.groupPositions[cursor.group];
 
       cursor.row = (s8)(position % 4) * 2 + 8;
-      if (cursor.group == 3)
+      if (cursor.group == STATUS_CURSOR_PSYNERGY)
         cursor.column = -2;
       else
         cursor.column = -1;
@@ -445,7 +536,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                            (s16)statusWindow->y + cursor.row + 1, 20, 1,
                            HIGHLIGHT_PALETTE);
     } else {
-      s32 position = cursor.groupPositions[4];
+      s32 position = cursor.groupPositions[STATUS_CURSOR_DJINN];
 
       cursor.row = (s8)(position % 3) * 2 + 9;
       cursor.column = (s8)(position / 3) * 7 - 2;
@@ -480,7 +571,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         portraitSprite.oam.f.x = 0xac;
         portraitSprite.oam.f.y = 56;
         if (figureShown != 0)
-          Oam_AddSpriteAtDepth(&portraitSprite, 240);
+          Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
         figureShown = 1;
       }
     }
@@ -497,24 +588,25 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       s32 bob = gFrameCount & 4;
       s32 x = (s16)statusWindow->x * 8 + cursorPosition.x + 16;
 
-      cursorSprite.oam.f.x = page == 0 ? x - bob / 4 : x + bob / 4;
+      cursorSprite.oam.f.x =
+          page == STATUS_PAGE_STATS ? x - bob / 4 : x + bob / 4;
     }
     cursorSprite.oam.f.y = cursorPosition.y + (s16)statusWindow->y * 8 -
                            (s32)(gFrameCount & 4) / 4 + 16;
-    if (page != 0)
+    if (page != STATUS_PAGE_STATS)
       cursorSprite.oam.f.affineIndex = 0;
     else
       cursorSprite.oam.f.affineIndex = 8;
-    Oam_AddSpriteAtDepth(&cursorSprite, 241);
+    Oam_AddSpriteAtDepth(&cursorSprite, OAM_DEPTH_WINDOW + 1);
 
     if (redraw == 0)
       goto place_sprites;
 
     unit = Unit_Get(member);
-    if (page == 0)
+    if (page == STATUS_PAGE_STATS)
       Text_FillCanvasBackground();
 
-    if (page == 3) {
+    if (page == STATUS_PAGE_ITEMS) {
       // Items: those the member can use in battle first.
       u16 *entries = NAVIGATION->listAbilities;
       s32 count;
@@ -577,7 +669,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-         * fill loop's test. */
+         * fill loop's test; without it, 2 of 3111 instructions differ in
+         * tla-en.
+         */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -585,7 +679,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
       if (count > 4)
         SUMMARY_DRAW_PAGE_MARKS(statusWindow, count, rowBase);
-    } else if (page == 1) {
+    } else if (page == STATUS_PAGE_PSYNERGY) {
       // Battle Psynergy: grey when it cannot be used in battle, red when the
       // PP are short, another colour while Psynergy is sealed.
       u16 *entries = NAVIGATION->listAbilities;
@@ -631,7 +725,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             s32 range;
             s32 tileFlags;
 
-            Window_SetTilemapEntry(statusWindow, 0xf01f, 11, j * 2 + 8, 0);
+            Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL, 11,
+                                   j * 2 + 8, 0);
             Window_SetTilemapEntry(statusWindow, SUMMARY_PP_LABEL_SECOND_TILE,
                                    12, j * 2 + 8, 0);
             iconSprites[j].oam.f.tile =
@@ -650,7 +745,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                     64 + j * 16);
             Text_SetColor(TEXT_COLOR_WHITE);
             work->textPalette = WINDOW_PALETTE;
-            if (ability->element != 4)
+            if (ability->element != ELEMENT_NONE)
               Window_SetTilemapEntry(statusWindow,
                                      ELEMENT_ICON_TILE + ability->element, 15,
                                      j * 2 + 8, tileFlags);
@@ -662,7 +757,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-           * fill loop's test. */
+           * fill loop's test; without it, 2 of 3111 instructions differ in
+           * tla-en.
+           */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -673,7 +770,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         work->dirty = 1;
         work->holdTilemapUpload = 0;
       }
-    } else if (page == 2) {
+    } else if (page == STATUS_PAGE_DJINN) {
       // Djinn: each element's set ones, then those on standby or recovering
       // (bit 16, the turns left above bit 17).
       s32 rowBase = 0;
@@ -688,10 +785,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                 helpWindow->width, helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
-      for (element = 0; element <= 3; element++) {
-        for (bit = 0; bit <= 19; bit++) {
+      for (element = 0; element < ELEMENT_COUNT; element++) {
+        for (bit = 0; bit < DJINN_PER_ELEMENT; bit++) {
           if (unit->djinnSet[element] & (1 << bit)) {
-            djinnList[djinnCount] = (element << 8) | bit;
+            djinnList[djinnCount] =
+                (element << STATUS_DJINN_ELEMENT_SHIFT) | bit;
             djinnCount++;
           } else if (unit->djinnHeld[element] & (1 << bit)) {
             struct DjinnRecoveryList *recovery =
@@ -707,35 +805,35 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                           recovery->entries[k].index == bit);
                  k++)
               ;
-            value = (element << 8) | bit | 0x10000;
+            value = (element << STATUS_DJINN_ELEMENT_SHIFT) | bit |
+                    STATUS_DJINN_UNSET;
             djinnList[djinnCount] = value;
             if (recovery->entries[k].turns > 0)
-              djinnList[djinnCount] =
-                  value | (recovery->entries[k].turns << 17);
+              djinnList[djinnCount] = value | (recovery->entries[k].turns
+                                               << STATUS_DJINN_TURNS_SHIFT);
             djinnCount++;
           }
         }
       }
-      djinnList[djinnCount] = 0x80000000;
-      if (cursor.groupPositions[4] >= djinnCount)
-        cursor.groupPositions[4] = djinnCount - 1;
-      entry = djinnList[cursor.groupPositions[4]];
+      djinnList[djinnCount] = STATUS_DJINN_END;
+      if (cursor.groupPositions[STATUS_CURSOR_DJINN] >= djinnCount)
+        cursor.groupPositions[STATUS_CURSOR_DJINN] = djinnCount - 1;
+      entry = djinnList[cursor.groupPositions[STATUS_CURSOR_DJINN]];
       work->holdTilemapUpload = 1;
       if (djinnCount != 0) {
         MessageArgument_ClearAll();
-        if (entry & 0x10000) {
-          if (entry & 0x3e0000) {
-            MessageArgument_Push((entry & 0x3e0000) >> 17,
+        if (entry & STATUS_DJINN_UNSET) {
+          if (entry & STATUS_DJINN_TURNS) {
+            MessageArgument_Push((entry & STATUS_DJINN_TURNS) >>
+                                     STATUS_DJINN_TURNS_SHIFT,
                                  MESSAGE_ARGUMENT_NUMBER);
-            SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                  (s32)MsgDjinnEffect,
+            SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
                               psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
           } else {
             Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
           }
         } else {
-          SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
-                                (s32)MsgDjinnEffect,
+          SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
                             psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
         }
       } else {
@@ -754,23 +852,25 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           shown = djinnList[rowBase + j];
           column = j / 3 * 7;
           tileRow = j % 3 * 2 + 9;
-          if (shown == 0x80000000)
+          if (shown == STATUS_DJINN_END)
             break;
-          Window_SetTilemapEntry(statusWindow,
-                                 ((shown & 0xf00) >> 8) + ELEMENT_ICON_TILE,
-                                 column, tileRow, 0);
-          if (shown & 0x3e0000)
+          Window_SetTilemapEntry(
+              statusWindow,
+              ((shown & STATUS_DJINN_ELEMENT) >> STATUS_DJINN_ELEMENT_SHIFT) +
+                  ELEMENT_ICON_TILE,
+              column, tileRow, 0);
+          if (shown & STATUS_DJINN_TURNS)
             Text_SetColor(TEXT_COLOR_YELLOW);
-          else if (shown & 0x10000)
+          else if (shown & STATUS_DJINN_UNSET)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 + (shown & 0xff) +
-                                      (s32)MsgDjinnName,
+          Text_DrawMessageAsTiles(STATUS_DJINNI(shown) + (s32)MsgDjinnName,
                                   statusWindow, column * 8 + 8, tileRow * 8);
 // Spanish and Italian leave a recovering Djinni's turns off the list.
 #if !TLA_PATCH_4
-          if (shown & 0x3e0000)
-            Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
-                                    column * 8 + 40, tileRow * 8);
+          if (shown & STATUS_DJINN_TURNS)
+            Text_DrawNumberAtOffset(
+                (shown & STATUS_DJINN_TURNS) >> STATUS_DJINN_TURNS_SHIFT, 2,
+                statusWindow, column * 8 + 40, tileRow * 8);
 #endif
           Text_SetColor(TEXT_COLOR_WHITE);
         }
@@ -784,7 +884,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
 
     if (redraw != 0) {
-      if (page == 0) {
+      if (page == STATUS_PAGE_STATS) {
         WindowSprite_RedrawSavedRect(statusWindow);
         Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
                                   helpWindow->width, helpWindow->height, page);
@@ -856,7 +956,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                               40);
       Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
                               0, 48);
-      if (page == 0) {
+      if (page == STATUS_PAGE_STATS) {
         if (hasDjinn != 0)
           Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
         Text_DrawMessageAsTiles((s32)MsgExp - 5, statusWindow, 0, 80);
@@ -889,122 +989,123 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       // The status icons, as The Broken Seal orders them.
       i = 0;
       if (unit->hp == 0) {
-        statusKinds[0] = 16;
+        statusKinds[0] = OWNER_CONDITION_DOWNED;
         i = 1;
       }
       do {
         if (unit->curse != 0) {
-          statusKinds[i++] = 15;
+          statusKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
         }
         if (i > 7)
           break;
         if (unit->grimReaper != 0) {
-          statusKinds[i++] = 8;
+          statusKinds[i++] = OWNER_CONDITION_GRIM_REAPER;
         }
         if (i > 7)
           break;
         if (unit->poison == 1) {
-          statusKinds[i++] = 1;
+          statusKinds[i++] = OWNER_CONDITION_POISON;
         }
         if (i > 7)
           break;
         if (unit->poison == 2) {
-          statusKinds[i++] = 2;
+          statusKinds[i++] = OWNER_CONDITION_DEADLY_POISON;
         }
         if (i > 7)
           break;
         if (unit->psySeal != 0) {
-          statusKinds[i++] = 4;
+          statusKinds[i++] = OWNER_CONDITION_PSYNERGY_SEALED;
         }
         if (i > 7)
           break;
         if (unit->stun != 0) {
-          statusKinds[i++] = 3;
+          statusKinds[i++] = OWNER_CONDITION_STUN;
         }
         if (i > 7)
           break;
         if (unit->sleep != 0) {
-          statusKinds[i++] = 5;
+          statusKinds[i++] = OWNER_CONDITION_SLEEP;
         }
         if (i > 7)
           break;
         if (unit->haunt != 0) {
-          statusKinds[i++] = 7;
+          statusKinds[i++] = OWNER_CONDITION_HAUNT;
         }
         if (i > 7)
           break;
         if (unit->delusion != 0) {
-          statusKinds[i++] = 6;
+          statusKinds[i++] = OWNER_CONDITION_DELUSION;
         }
         if (i > 7)
           break;
         if (unit->attackTurns != 0) {
           if (unit->attackStage > 0) {
-            statusKinds[i++] = 9;
+            statusKinds[i++] = OWNER_CONDITION_ATTACK_UP;
           }
           if (unit->attackStage < 0) {
-            statusKinds[i++] = 10;
+            statusKinds[i++] = OWNER_CONDITION_ATTACK_DOWN;
           }
         }
         if (i > 7)
           break;
         if (unit->defenseTurns != 0) {
           if (unit->defenseStage > 0) {
-            statusKinds[i++] = 11;
+            statusKinds[i++] = OWNER_CONDITION_DEFENSE_UP;
           }
           if (unit->defenseStage < 0) {
-            statusKinds[i++] = 12;
+            statusKinds[i++] = OWNER_CONDITION_DEFENSE_DOWN;
           }
         }
         if (i > 7)
           break;
         if (unit->resistanceTurns != 0) {
           if (unit->resistanceStage > 0) {
-            statusKinds[i++] = 13;
+            statusKinds[i++] = OWNER_CONDITION_RESISTANCE_UP;
           }
           if (unit->resistanceStage < 0) {
-            statusKinds[i++] = 14;
+            statusKinds[i++] = OWNER_CONDITION_RESISTANCE_DOWN;
           }
         }
         if (i > 7)
           break;
         if (unit->agilityStage > 0) {
-          statusKinds[i++] = 17;
+          statusKinds[i++] = OWNER_CONDITION_AGILITY_UP;
         }
         if (unit->agilityStage < 0) {
-          statusKinds[i++] = 18;
+          statusKinds[i++] = OWNER_CONDITION_AGILITY_DOWN;
         }
       } while (0);
       for (j = 0; j < i; j++)
         Resource_LoadTableEntryToBuffer(statusKinds[j], statusSlots[j]);
       if (i == 0) {
-        statusKinds[0] = 0;
+        statusKinds[0] = OWNER_CONDITION_NORMAL;
         i = 1;
       }
       if (i <= 10) {
         for (j = i; j < 11; j++)
-          statusKinds[j] = -1;
+          statusKinds[j] = OWNER_CONDITION_EMPTY;
       }
       statusCount = i;
-      if (statusKinds[0] == 0)
+      if (statusKinds[0] == OWNER_CONDITION_NORMAL)
         Text_DrawMessageAsTiles(unit->hp != 0 ? (s32)MsgNormal
                                               : (s32)MsgCantFight,
                                 statusWindow, 112, 0);
     }
 
-    if (page == 0) {
+    if (page == STATUS_PAGE_STATS) {
       u16 *helpText = Heap_Alloc(SUMMARY_HELP_TEXT_LENGTH * sizeof(*helpText));
 
-      if ((u32)cursor.helpEntry >= 14) {
-        s32 statusKind = statusKinds[cursor.helpEntry - 14];
+      if ((u32)cursor.helpEntry >= OWNER_STATUS_HELP_CONDITION) {
+        s32 statusKind =
+            statusKinds[cursor.helpEntry - OWNER_STATUS_HELP_CONDITION];
         struct Unit *savedUnit;
         s32 attackDelta;
         s32 defenseDelta;
         s32 agilityDelta;
         s32 helpValue;
 
-        if (statusKind == 0 && unit->hp == 0)
-          statusKind = 16;
+        if (statusKind == OWNER_CONDITION_NORMAL && unit->hp == 0)
+          statusKind = OWNER_CONDITION_DOWNED;
         savedUnit = Heap_Alloc(sizeof(*savedUnit));
         Iwram_CopyWordsEntry(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
@@ -1021,29 +1122,29 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Iwram_CopyWordsEntry(unit, savedUnit, sizeof(*savedUnit));
         Heap_Release(savedUnit);
         switch (statusKind) {
-        case 8:
+        case OWNER_CONDITION_GRIM_REAPER:
           helpValue = unit->grimReaper;
           break;
-        case 9:
+        case OWNER_CONDITION_ATTACK_UP:
           helpValue = attackDelta;
           break;
-        case 10:
+        case OWNER_CONDITION_ATTACK_DOWN:
           helpValue = -attackDelta;
           break;
-        case 11:
+        case OWNER_CONDITION_DEFENSE_UP:
           helpValue = defenseDelta;
           break;
-        case 12:
+        case OWNER_CONDITION_DEFENSE_DOWN:
           helpValue = -defenseDelta;
           break;
-        case 17:
+        case OWNER_CONDITION_AGILITY_UP:
           helpValue = agilityDelta;
           break;
-        case 18:
+        case OWNER_CONDITION_AGILITY_DOWN:
           helpValue = -agilityDelta;
           break;
-        case 13:
-        case 14:
+        case OWNER_CONDITION_RESISTANCE_UP:
+        case OWNER_CONDITION_RESISTANCE_DOWN:
           helpValue = unit->resistanceStage * 20;
           if (helpValue < 0)
             helpValue = -helpValue;
@@ -1055,7 +1156,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         } while (0);
         Message_CopyExpanded(statusKind + (s32)MsgNormalStatus, helpText,
                              SUMMARY_HELP_TEXT_LENGTH);
-      } else if (cursor.helpEntry == 2 && unit->level <= 98) {
+      } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
+                 unit->level < UNIT_LEVEL_MAX) {
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
@@ -1074,7 +1176,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
   place_sprites:
     {
-      struct SummaryResourceEntry *entry;
+      struct VramCacheEntry *entry;
       s32 *slot;
       s32 iconX;
 
@@ -1086,13 +1188,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
         sprite->oam.f.y = (s16)statusWindow->y * 8 + 8;
-        if (statusKinds[i] > 0)
-          Oam_AddSpriteAtDepth(sprite, 240);
+        if (statusKinds[i] > OWNER_CONDITION_NORMAL)
+          Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
         iconX += 15;
         sprite++;
       }
-      if (page == 1 || page == 3) {
-        struct SummaryResourceEntry *iconEntry;
+      if (page == STATUS_PAGE_PSYNERGY || page == STATUS_PAGE_ITEMS) {
+        struct VramCacheEntry *iconEntry;
         s32 iconRow;
 
         for (i = 0, iconEntry = gVramCacheEntries, sprite = iconSprites,
@@ -1101,12 +1203,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           MenuSprite_Initialize(
               *sprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
           sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
-          if (page == 3)
+          if (page == STATUS_PAGE_ITEMS)
             sprite->oam.f.x = 24;
           else
             sprite->oam.f.x = 8;
           sprite->oam.f.y = (iconRow + (s16)statusWindow->y) * 8 + 68;
-          Oam_AddSpriteAtDepth(sprite, 240);
+          Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
           sprite++;
           iconRow += 2;
         }
@@ -1151,7 +1253,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(((u8 *)Ram_HeapSlots->battleWork)[0x41]);
+  PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
   NAVIGATION->timerHidden = 0;
   ReleaseBattleObjectRecordsFar(shownMember);
   BattleObject_PutFar();

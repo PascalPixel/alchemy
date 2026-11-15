@@ -16,7 +16,7 @@ struct IconAttr {
   u16 attr1High : 7;
   u16 tile : 10;
   u16 attr2High : 6;
-  u16 unk06;
+  u16 affineParam; ///< OAM's fourth halfword, the affine parameter slot
 };
 
 /// An icon's sprite: its link in the sprite list and its OAM attributes.

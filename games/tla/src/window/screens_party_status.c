@@ -86,9 +86,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   u16 *dest;
   const s8 *table;
 
-  if ((flags & 1) == 0)
-    flags &= ~2;
-  if (flags & 2) {
+  if ((flags & PARTY_STATUS_SHOW_PP) == 0)
+    flags &= ~PARTY_STATUS_SHOW_DJINN;
+  if (flags & PARTY_STATUS_SHOW_DJINN) {
     bias = 5;
     first = 0;
   }
@@ -105,11 +105,11 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
         for (row = 0; row != rows; row++) {
           dest = canvas->tilemap[(s16)window->y + row] + ((s16)window->x + col);
           if (row == 0)
-            *dest = 0xf018;
+            *dest = WINDOW_TILE_BORDER_TOP_TEE;
           else if (row == rows - 1)
-            *dest = 0xf019;
+            *dest = WINDOW_TILE_BORDER_BOTTOM_TEE;
           else
-            *dest = 0xf00f;
+            *dest = WINDOW_TILE_DIVIDER_VERTICAL;
         }
       }
       i++;
@@ -126,12 +126,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       dest =
           canvas->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
       col = 1;
-      *dest++ = 0xf080;
+      *dest++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
       while (col < max) {
         col++;
-        *dest++ = 0xf081;
+        *dest++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
       }
-      *dest = 0xf082;
+      *dest = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;
     }
   }
   canvas->dirty = 1;
@@ -197,15 +197,6 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
 #define PARTY_STATUS_DJINN_WIDTH 5
 
-/* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
- * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); window/window.h has void
- * BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); tried as the rest of the
- * object declares it, PartyStatus_Draw moves: 2 of 495 instructions,
- * BattleCommandRow_Run moves: 1 of 1120 instructions in tla-ja. */
-extern s32
-Func_08118130__screens(s32 a,
-                       u8 *counts) __asm__("BattleDjinn_CountStandbyFar");
-
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
 /// Draws the party status window with `flags` (see PARTY_STATUS_*): each party
@@ -245,7 +236,8 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->battleMode == WINDOW_FIELD || Func_08118130__screens(0, 0) == 0)
+  if (work->battleMode == WINDOW_FIELD ||
+      BattleDjinn_CountStandbyFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -326,11 +318,15 @@ void PartyStatus_Draw(s32 flags) {
     i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    Func_08118130__screens(0, standbyDjinn);
-    Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
-    Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
-    Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
-    Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
+    BattleDjinn_CountStandbyFar(0, standbyDjinn);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_VENUS, 0, row,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_MERCURY, 2, row,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_MARS, 0, row + 1,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_JUPITER, 2,
+                           row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
       Dma_Set(gPartyStatus_DigitTiles, (void *)0x06003400, DMA_COPY_WORDS(72),

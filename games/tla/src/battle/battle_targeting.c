@@ -568,7 +568,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct BattleObject *runtime;
 
   creature = Unit_Get(unitId);
-  if (creature->side == 1) {
+  if (creature->side == BATTLE_UNIT_ENEMY) {
     Unit_SetHpFar(creature, 0);
     BattleObject_RemoveFromLists(unitId);
     BattleObject_MarkForRelease(unitId);
@@ -638,8 +638,8 @@ u32 BattlePlayback_RunAll(void) {
         MessageArgument_ClearAllFar();
         break;
       case PLAYBACK_HIT:
-        if (runtime->pendingCue > 0)
-          Sound_PlayFar(runtime->pendingCue);
+        if (runtime->pendingSound > 0)
+          Sound_PlayFar(runtime->pendingSound);
         BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case PLAYBACK_DEFEAT:
@@ -1717,7 +1717,8 @@ power_end:
       } else if (ability->effect == ABILITY_EFFECT_CRYSTAL) {
         maxu = (u16)target->hpMax;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu. */
+        /* FAKEMATCH(barrier): an empty asm on maxu; without it, 45 of 3451
+         * instructions differ in tla-en. */
         asm("" : "+r"(maxu));
       } else {
 #ifdef UBFIX
@@ -2085,7 +2086,8 @@ power_end:
     case ABILITY_EFFECT_DRAIN_HALF_HP:
       power = damageDealt;
       amount = actor->hp;
-      /* FAKEMATCH(barrier): an empty asm on dmg. */
+      /* FAKEMATCH(barrier): an empty asm on amount, the user's hit points;
+       * without it, 2 of 3451 instructions differ in tla-en. */
       __asm__("" : "=r"(amount) : "0"(amount));
       if (ability->effect == ABILITY_EFFECT_DRAIN_HALF_HP)
         power /= 2;

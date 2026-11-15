@@ -9,6 +9,7 @@
 #include "window_internal.h"
 #include "flags.h"
 #include "sounds.h"
+#include "menu/djinn_menu.h"
 #include "system/affine.h"
 #include "field/flag_call.h"
 #include "gamepak/far_call/game.h"
@@ -79,10 +80,9 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /// panels' clear and the link wait's message (Link_DrawWaitingForOpponent).
 /// Unlike The Broken Seal's, each round first appends the forced actions of
 /// statused members (BattleParty_SplitChoosers), whose count is added to the
-/// result; B on the party's row undoes a reserve swap; command 49 swaps a
-/// reserve member in (BattleParty_ChooseReserve after choosing the slot);
-/// Status lists the reserve as well; Flee is command 99; and the Djinn
-/// tutorial's hint follows an unleash.
+/// result; B on the party's row undoes a reserve swap; Switch swaps a reserve
+/// member in (BattleParty_ChooseReserve after choosing the slot); Status lists
+/// the reserve as well; and the Djinn tutorial's hint follows an unleash.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   u16 signatureHeader[2];
@@ -190,7 +190,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, 0x480);
+  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_VBLANK);
 
   for (;;) {
     commandsOut = commands;
@@ -239,7 +239,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       NAVIGATION->commandSelection[0] = 1;
       continue;
     }
-    // Command 49: choose a party place, then the reserve member for it.
+    // Switch: choose a party place, then the reserve member for it.
     if (mode == COMMAND_ICON_SWITCH) {
       Sound_PlayFar(SE_MENU_CONFIRM);
     choose_place:
@@ -272,7 +272,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Heap_Release(block);
       continue;
     }
-    // Flee: one command 99 for the party, first in the round.
+    // Flee: one COMMAND_FLEE for the party, first in the turn (priority
+    // 0x7ffe).
     if (mode == COMMAND_ICON_FLEE) {
       s32 refused = Battle_RefuseFlee();
 
@@ -606,7 +607,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                            Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
             void *hint =
-                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() + 14, 15, 8);
+                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                        DJINN_TUTORIAL_LINE_UNLEASH_HINT,
+                                    15, 8);
 
             while (Message_AllTyped() == 0)
               wait(1);
@@ -840,8 +843,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-// The transition's byte after its fields; while it is set the window lines
-// are left alone.
+// The transition's byte after its fields, which the centre-line close sets
+// (ScreenTransition_Finish); while it is set the window lines are left alone.
 #define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
 
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
@@ -896,7 +899,8 @@ void IconMenu_DrawIcons(void) {
         y = (scale * 15 / 256 - 30) & 255;
       attr = &sprite->link;
       *attr++ = 0;
-      *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
+      *attr++ = (matrix << 25) | y | OBJ_X(left) | OBJ_SIZE_32X32 |
+                OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
       *attr = gVramCacheEntries[sprite->slot].offset >> 5;
       slot = 246;
     } else {
@@ -906,7 +910,7 @@ void IconMenu_DrawIcons(void) {
       attr = &sprite->link;
       y = sprite->y;
       *attr++ = 0;
-      value = y | (px << 16) | 0x80002000;
+      value = y | OBJ_X(px) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       base = gVramCacheEntries[sprite->slot].offset;
       *attr++ = value;
       *attr = base >> 5;
@@ -990,9 +994,10 @@ void IconMenu_DrawIcons(void) {
 /// until IconMenu_Close frees it; it is returned, and also reached
 /// as gIconMenuWork. Every command icon menu starts here.
 void *IconMenu_Open(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, 152);
+  void *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
 
-  Dma_Fill32(0, work, 152);
+  Dma_Fill32(0, work, sizeof(struct IconMenuWork));
   Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_VBLANK - 10);
   return work;
 }
@@ -1001,22 +1006,18 @@ void *IconMenu_Open(void) {
 /// before freeing the resource-menu state (HEAP_SLOT_ICON_MENU), then waits a
 /// frame.
 void IconMenu_Close(void) {
-  struct Window *child;
+  struct Window *labelWindow;
   s32 i;
-  u16 *entry;
-  void *work;
+  struct IconMenuWork *work;
 
   work = Ram_HeapSlots->iconMenu;
   Task_Remove(IconMenu_DrawIcons);
-  child = FIELD_AT_OFFSET(work, struct Window **, 0x78);
-  if (child != 0) {
-    Window_Close(child, 2);
+  labelWindow = work->window;
+  if (labelWindow != 0) {
+    Window_Close(labelWindow, 2);
   }
-  i = 0;
-  while (i < (s32)FIELD_AT_OFFSET(work, s16 *, 0x8E)) {
-    entry = (u16 *)((u8 *)work + 0x12) + i * 10;
-    VramCache_FreeEntry(*entry);
-    i += 1;
+  for (i = 0; i < work->count; i++) {
+    VramCache_FreeEntry(work->entries[i].slot);
   }
   HeapSlot_Release(HEAP_SLOT_ICON_MENU);
   wait(1U);
@@ -1366,8 +1367,10 @@ void Menu_DrawModeLabel(void) {
     state->previousMode = state->selection;
     Window_ClearInteriorTiles(state->lowerWindow, 8, 40, LABEL_RIGHT, 80);
 
+    // The lines of what each password carries, from "Levels"
+    // (MsgPasswordLevel).
     switch (state->selection) {
-    case 0: {
+    case PASSWORD_LEVEL_GOLD: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
@@ -1378,7 +1381,7 @@ void Menu_DrawModeLabel(void) {
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 72);
       break;
     }
-    case 1: {
+    case PASSWORD_LEVEL_SILVER: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
@@ -1387,7 +1390,7 @@ void Menu_DrawModeLabel(void) {
       Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 56);
       break;
     }
-    case 2: {
+    case PASSWORD_LEVEL_BRONZE: {
       s32 text = (s32)MsgPasswordLevel;
 
       Text_DrawMessageAsTiles(text++, state->lowerWindow, 8, 40);
@@ -1437,7 +1440,7 @@ void Menu_DrawModeIndicator(void) {
     *shown = *current;
     WindowSprite_PrepareForRedraw(state->lowerWindow);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-    if (*current == 0) {
+    if (*current == TRANSFER_METHOD_PASSWORD) {
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, HELP_X,
                        4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow,
@@ -1452,12 +1455,12 @@ void Menu_DrawModeIndicator(void) {
     }
 #else
     switch (*current) {
-    case 0:
+    case TRANSFER_METHOD_PASSWORD:
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
       break;
-    case 1:
+    case TRANSFER_METHOD_CABLE:
       Text_DrawMessage((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
                        16);

@@ -153,33 +153,48 @@ struct SnapshotVitals {
   u16 pp;
 };
 
-/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
-/// battles between them: whether each was listed, the first three's summon
-/// boosts, and the last two's HP and PP. The statuses between them are
-/// SnapshotCopy's.
-struct Snapshot {
-  u8 listed[8];
-  u8 tags[3][4];
-  u8 unk14[0x80];
-  struct SnapshotVitals vitals[5];
-};
-
-/// A unit as the scripted battles' snapshot reads it: its HP and PP, its summon
-/// boosts, and the 25 status bytes from its curse to its challenge.
-struct SnapshotUnit {
-  u8 unk00[0x38];
-  s16 hp;
-  u16 unk3a;
-  u8 unk3c[0xf0];
-  u8 tags[4];
-  u8 snapshot[25];
-};
-
 /// A unit's 25 status bytes, from its curse to its challenge, kept between the
 /// scripted battles.
 struct SnapshotCopy {
-  u8 bytes[25];
+  s8 curse;
+  s8 poison;
+  u8 attackTurns;
+  s8 attackStage;
+  u8 defenseTurns;
+  s8 defenseStage;
+  u8 resistanceTurns;
+  s8 resistanceStage;
+  u8 delusion;
+  s8 confusion;
+  u8 charm;
+  u8 stun;
+  u8 sleep;
+  u8 psySeal;
+  u8 regenerate;
+  s8 reflect;
+  u8 haunt;
+  u8 grimReaper;
+  u8 equipBonus[2];
+  u8 ready;
+  u8 immobile;
+  u8 agilityTurns;
+  s8 agilityStage;
+  s8 challenge;
 };
+
+/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
+/// battles between them: whether each was listed, the first three's summon
+/// boosts, each one's statuses and the last two's HP and PP.
+struct Snapshot {
+  u8 listed[8];
+  s8 summonBoosts[3][4];
+  /// The units' SnapshotCopy rows, read as Data_0200ff6c, each padded to 28
+  /// bytes; the last overruns into vitals' unused first rows.
+  u8 statuses[0x80];
+  struct SnapshotVitals vitals[5]; ///< also read as Data_0200ffec
+};
+
+STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 0x94);
 
 /// A row of the debug parameter sets: a party member, its level, its Djinn of
 /// each element, its equipped items and two Psynergy it learns.
@@ -189,7 +204,7 @@ struct DebugPartyEntry {
   s8 djinnCounts[4];
   u16 items[6];
   u16 actions[2];
-  u16 unk16;
+  u16 unused; ///< 0 in every row; nothing reads it
 };
 
 /// The packet the two consoles exchange each turn of a link battle: how many
@@ -198,7 +213,7 @@ struct BattleLinkedActionState {
   s32 count;
   s32 check;
   s32 seed;
-  u8 unk0c[28];
+  u8 unused[28]; ///< no code names it
 };
 
 /// The camera's yaw while a party member acts, and while an enemy does, in
@@ -219,6 +234,11 @@ struct BattleLinkedActionState {
 
 /// The battle camera's distance from its focus in the default view.
 #define BATTLE_CAMERA_DISTANCE px(510)
+
+/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
+/// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
+/// spot.
+#define BATTLE_UNIT_GRAVITY (px(67) / 100)
 
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
@@ -320,7 +340,7 @@ extern struct SnapshotCopy Data_0200ff6c[];
 /// The last two units' HP and PP within the snapshot.
 extern struct SnapshotVitals Data_0200ffec[];
 
-/// The five units the scripted battles of formations 74 to 76 carry over:
+/// The five units Karst and Agatio's battle carries over between its parts:
 /// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
 
@@ -371,6 +391,9 @@ u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 
+/// The battle background's colours: BG palettes 6 to 13, filled from
+/// BattleWork.palette, darkened or not.
+#define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 /// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
 #define BATTLE_BG_PALETTE_COLORS (8 * 16)
 
@@ -379,9 +402,29 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// 16.16 brightness, so level 60 is almost black.
 #define BACKGROUND_LEVEL_STEP 1092
 
+/// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
+#define BATTLE_BG1CNT                                                          \
+  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
+
 /// BattleActionRecord.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions): as a place code, place 0 of the other side, the
 /// party's for an enemy and the enemies' for a party member.
 #define TARGET_NONE_ENEMY PLACE_PARTY
+
+/* VIEW(battle_kinds): tag struct BattleWork as struct BattleKindsView;
+ * battle/battle_work.h has u8 enemyKindBytes[12] where The Broken Seal has u16
+ * enemyKinds[6]; tried as u16 enemyKinds[6], BattleParty_ChooseReserve moves:
+ * 363 bytes in tla-en. */
+struct BattleKindsView {
+  s32 formation;
+  s16 spriteSlots[6];
+  u16 enemyKinds[6];      ///< the kinds of enemy in the formation
+  u32 nameLetterMasks[6]; ///< for each kind, the name letters already given
+  s8 lastNameLetter[6];   ///< for each kind, the last name letter given
+  u8 unusedAfterChannels[2];
+  u16 firstDefeated;
+  u16 defeatState;
+  u8 enemyKindCount; ///< kinds of enemy listed, at most 5
+};
 
 #endif

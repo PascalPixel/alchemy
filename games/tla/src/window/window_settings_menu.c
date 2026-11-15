@@ -16,9 +16,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 g = rgb[1] * scale_g >> 16;
   s32 b = rgb[2] * scale_b >> 16;
 
-  CLAMP(r, 0, 31);
-  CLAMP(g, 0, 31);
-  CLAMP(b, 0, 31);
+  CLAMP(r, 0, RGB_LEVEL_MAX);
+  CLAMP(g, 0, RGB_LEVEL_MAX);
+  CLAMP(b, 0, RGB_LEVEL_MAX);
   r |= b << 10 | g << 5;
   return r;
 }
@@ -30,7 +30,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
 #define GLOW_COLOR_SET(index, value)                                           \
   do {                                                                         \
     u32 color_ = (value);                                                      \
-    BG_PLTT_COLOR(15, (index)) = color_;                                       \
+    BG_PLTT_COLOR(WINDOW_PALETTE, (index)) = color_;                           \
   } while (0)
 
 void WindowColor_Apply(s32 phase, s32 brightness) {
@@ -130,9 +130,9 @@ void SettingsMenu_InitializeWork(void) {
               (sizeof(struct OptionMenuWork) / 4),
           REG_DMA3);
   work->option[0] = gMainRoutineWork.windowHue;
-  work->optionCount[0] = 24;
+  work->optionCount[0] = WINDOW_HUE_COUNT;
   work->option[1] = gMainRoutineWork.windowBrightness;
-  work->optionCount[1] = 15;
+  work->optionCount[1] = WINDOW_BRIGHTNESS_COUNT;
   work->option[2] = gMainRoutineWork.messageSpeed;
   work->optionCount[2] = 3;
   work->option[3] = gMainRoutineWork.speech;
@@ -188,18 +188,9 @@ extern s8 gOptionMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
-/* VIEW(window): routine CommandIcon_Create as void *CommandIcon_Create(s32
- * frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
- * window/screens has struct WindowSprite *CommandIcon_Create(s32 arg0, s32
- * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried as the
- * definition's struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
- * struct RenderInput *arg2, s32 arg3, s32 arg4), it does not compile in tla-ja
- * (make modern): games/tla/include/system/task.h:53:23: note: expected
- * 'TaskFunc' {aka 'void (*)(void)'} but argument is of type 'int'. */
-void *CommandIcon_Create__window(s32 frame, s32 flags,
-                                 struct RenderInput *input, s32 offsetX,
-                                 s32 offsetY) __asm__("CommandIcon_Create");
-#define CommandIcon_Create CommandIcon_Create__window
+struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
+                                        struct RenderInput *window, s32 x,
+                                        s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
@@ -238,8 +229,8 @@ struct RenderInput *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles((s32)MsgSpeechLabel, win, 8, 64);
   Text_DrawMessageAsTiles((s32)MsgAutoSleepLabel, win, 8, 88);
 
-  out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000,
-                            win, 0, 0);
+  out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
+                            OUTPUT_SIZE_16X16, win, 0, 0);
   work->cursor.sprite = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
@@ -660,7 +651,6 @@ void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
-void MenuTitle_Bob__window(struct WindowSprite *pair) __asm__("MenuTitle_Bob");
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
@@ -747,7 +737,7 @@ s32 PauseMenu_Choose(s32 initial) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (KEYS_PRESSED & 10) {
+    if (KEYS_PRESSED & (KEY_B | KEY_START)) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
       break;

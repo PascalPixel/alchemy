@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_RESOURCE_MENU_H
-#define ALCHEMY_RESOURCE_MENU_H
+#ifndef ALCHEMY_ICON_MENU_H
+#define ALCHEMY_ICON_MENU_H
 
 #include "types.h"
 #include "static_assert.h"
@@ -48,7 +48,5 @@ STATIC_ASSERT(offsetof(struct IconMenuWork, window) == 0x78);
 STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 0x8c);
 STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 0x92);
 STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 0x96);
-
-extern struct IconMenuWork *gMenuSelectWork;
 
 #endif

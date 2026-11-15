@@ -18,10 +18,11 @@
 
 void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 
-/// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
-/// a call that lands, saves the battle object it borrows and brings in the
-/// beast's class (Wild Wolf's 117 and so on) to play the attack; returns the
-/// save, or NULL for any other ability. BattleMotion_DismissBeast undoes it.
+/// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
+/// for a call that lands, saves the battle object it borrows and brings in the
+/// beast's enemy (ENEMY_WILD_WOLF for Wild Wolf and so on) to play the attack;
+/// returns the save, or NULL for any other ability. BattleMotion_DismissBeast
+/// undoes it.
 struct SavedBattleObj *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {
@@ -45,98 +46,98 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   saved->single = single;
   saved->reactivate = 0;
   switch (plan->abilityId) {
-  case 600:
-    classId = 117;
+  case ABILITY_WILD_WOLF:
+    classId = ENEMY_WILD_WOLF;
     break;
-  case 601:
-    classId = 137;
+  case ABILITY_EMU:
+    classId = ENEMY_EMU;
     break;
-  case 602:
-    classId = 182;
+  case ABILITY_ROC:
+    classId = ENEMY_ROC;
     break;
-  case 603:
-    classId = 299;
+  case ABILITY_SALAMANDER:
+    classId = ENEMY_SALAMANDER;
     break;
-  case 604:
-    classId = 296;
+  case ABILITY_ORC:
+    classId = ENEMY_ORC;
     break;
-  case 605:
-    classId = 278;
+  case ABILITY_HARPY:
+    classId = ENEMY_HARPY;
     break;
-  case 606:
-    classId = 316;
+  case ABILITY_GRAND_GOLEM:
+    classId = ENEMY_GRAND_GOLEM;
     break;
-  case 607:
-    classId = 317;
+  case ABILITY_CERBERUS:
+    classId = ENEMY_DREAD_HOUND;
     break;
-  case 608:
-    classId = 185;
+  case ABILITY_WYVERN:
+    classId = ENEMY_WYVERN;
     break;
-  case 609:
-    classId = 158;
+  case ABILITY_PIXIE:
+    classId = ENEMY_PIXIE;
     break;
-  case 610:
-    classId = 150;
+  case ABILITY_DINOX:
+    classId = ENEMY_DINOX;
     break;
-  case 611:
-    classId = 311;
+  case ABILITY_GRYPHON:
+    classId = ENEMY_GRYPHON;
     break;
-  case 612:
-    classId = 212;
+  case ABILITY_LIVING_ARMOR:
+    classId = ENEMY_LIVING_ARMOR;
     break;
-  case 613:
-    classId = 323;
+  case ABILITY_CHIMERA:
+    classId = ENEMY_CHIMERA;
     break;
-  case 614:
-    classId = 191;
+  case ABILITY_BLUE_DRAGON:
+    classId = ENEMY_BLUE_DRAGON;
     break;
-  case 615:
-    classId = 159;
+  case ABILITY_FAERY:
+    classId = ENEMY_FAERY;
     break;
-  case 616:
-    classId = 162;
+  case ABILITY_ELDER_WOOD:
+    classId = ENEMY_ELDER_WOOD;
     break;
-  case 617:
-    classId = 155;
+  case ABILITY_LICH:
+    classId = ENEMY_DOOMSAYER;
     break;
-  case 618:
-    classId = 263;
+  case ABILITY_TROLL:
+    classId = ENEMY_TROLL;
     break;
-  case 619:
-    classId = 197;
+  case ABILITY_MINOTAUR:
+    classId = ENEMY_MINOTAURUS;
     break;
-  case 620:
-    classId = 215;
+  case ABILITY_GHOST_SOLDIER:
+    classId = ENEMY_GHOST_ARMY;
     break;
-  case 621:
-    classId = 99;
+  case ABILITY_MACETAIL:
+    classId = ENEMY_MACETAIL;
     break;
-  case 622:
-    classId = 196;
+  case ABILITY_FIRE_DRAGON:
+    classId = ENEMY_FIRE_DRAGON;
     break;
-  case 623:
-    classId = 160;
+  case ABILITY_WEIRD_NYMPH:
+    classId = ENEMY_WEIRD_NYPMH;
     break;
-  case 624:
-    classId = 281;
+  case ABILITY_SUCCUBUS:
+    classId = ENEMY_SIREN;
     break;
-  case 625:
-    classId = 163;
+  case ABILITY_ESTRE_WOOD:
+    classId = ENEMY_ESTRE_WOOD;
     break;
-  case 626:
-    classId = 302;
+  case ABILITY_MANTICORE:
+    classId = ENEMY_MANTICORE;
     break;
-  case 627:
-    classId = 188;
+  case ABILITY_PHOENIX:
+    classId = ENEMY_PHOENIX;
     break;
-  case 629:
-    classId = 242;
+  case ABILITY_CALL_ZOMBIE:
+    classId = ENEMY_ZOMBIE;
     break;
-  case 630:
-    classId = 203;
+  case ABILITY_CALL_DEMON:
+    classId = ENEMY_RED_DEMON;
     break;
-  case 631:
-    classId = 218;
+  case ABILITY_CALL_DULLAHAN:
+    classId = ENEMY_DULLAHAN;
     break;
   default:
     classId = 9;
@@ -162,7 +163,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
@@ -172,8 +173,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = (i << 8) | (16 - i);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = (i << 8) | (BLEND_WEIGHT_MAX - i);
     wait(1);
   }
 
@@ -188,7 +189,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
       BattleObject_ReleaseSpriteSlots(ids[i]);
     }
   }
-  Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
+  Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId),
+                       sizeof(struct BattleObject));
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
   BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
   if (single)
@@ -218,8 +220,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     object->y = (29 - i) * 3 << 16;
     object->velocityY = 0;
     object->angle += 0x2222;
-    if (i <= 15)
-      REG_BLDALPHA = ((16 - i) << 8) | i;
+    if (i < BLEND_WEIGHT_MAX)
+      REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
   }
   BattleHighlight_SetSpriteMode(saved->unitId, 0);
@@ -255,7 +257,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
 
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   BattleHighlight_SetSpriteMode(unitId, 1);
   for (i = 0; i != 16; i++) {
     s32 fade;
@@ -265,12 +267,13 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     fade = i * 2 - 16;
     if (fade < 0)
       fade = 0;
-    if (fade <= 15)
-      *(volatile u16 *)0x04000052 = (fade << 8) | (16 - fade);
+    if (fade < BLEND_WEIGHT_MAX)
+      REG_BLDALPHA = (fade << 8) | (BLEND_WEIGHT_MAX - fade);
     wait(1);
   }
   ReleaseBattleObjectRecords(unitId);
-  Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved, 44);
+  Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved,
+                       sizeof(struct BattleObject));
   if (saved->reactivate) {
     BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
@@ -295,9 +298,9 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   }
   BattleMotion_ReturnToSpot(unitId);
   SET_POSITION(object, object->targetX, object->targetY, object->targetZ);
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
     object->y = 0;
-    *(volatile u16 *)0x04000052 = ((16 - i) << 8) | i;
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
   }
   if (saved->single) {
@@ -393,19 +396,19 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
 
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0x1088;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0x1088;
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN0V = WIN_RANGE(16, 136);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN1V = WIN_RANGE(16, 136);
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-  REG_DISPCNT |= 0x6000;
+  REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 
   if (missed != 0) {
     wait(10);
@@ -453,7 +456,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (work.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->battleEffect & 0x4000)
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
         BattleEffect_RunByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
@@ -466,7 +469,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (critical != 0) {
       view->flag = 0;
       BattleUnit_ListAllAndSubmit();
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(work.actors[0]);
   }
@@ -513,7 +516,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     u8 *mode;
 
     battle = Ram_HeapSlots->battleWork;
-    mode = (u8 *)battle + 0x869;
+    mode = &battle->actingAnimation;
     object = slot->object;
     Actor_SelectAnimationFar(object, *mode);
   }
@@ -550,11 +553,12 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
         s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
-        ColorBuffer_Scale(palette, 0x050000c0, value, 128);
+        ColorBuffer_Scale(palette, (u32)BATTLE_BG_PALETTE, value,
+                          BATTLE_BG_PALETTE_COLORS);
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += 0x444;
+      fade += Q16_ONE / 60;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);
@@ -728,6 +732,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
+    // The word after the plan in BattleWork is skipPlayback.
     if (((s32 *)plan)[25] == 0)
       Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind) {
@@ -822,7 +827,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
 removed:
   BattleEnemy_ReleaseNameLetter(id);
-  for (j = 0; j < 20; j++) {
+  for (j = 0; j < BATTLE_ACTION_CAPACITY; j++) {
     if (work->actions[j].unitId == id)
       work->actions[j].unitId = BATTLE_UNIT_LIST_END;
   }

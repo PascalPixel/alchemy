@@ -93,7 +93,7 @@ s32 LinkBattle_SendParty(void) {
   count = BattleParty_PrepareMembers(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
-    ((struct Unit *)buffer)->side = 2;
+    ((struct Unit *)buffer)->side = BATTLE_UNIT_PARTY;
     work->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
@@ -101,7 +101,7 @@ s32 LinkBattle_SendParty(void) {
     wait(2);
   }
   for (; i <= 2; i++) {
-    ((struct Unit *)buffer)->side = 0;
+    ((struct Unit *)buffer)->side = BATTLE_UNIT_ABSENT;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
@@ -213,8 +213,9 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches. */
+  /* LEFTOVER(frame): an unused local: the ROM's frame reserves 20 bytes
+   * (sub sp, #20) and no instruction touches them; without it, 16 of 231
+   * instructions differ in tla-en. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

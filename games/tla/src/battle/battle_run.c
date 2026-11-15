@@ -16,6 +16,16 @@
 #include "battle/presentation.h"
 #include "system/system.h"
 #include "battle/range_falloff.h"
+#include "menu/djinn_menu.h"
+#include "sound/sound_driver_symbols.h"
+
+/// Battle_Run's results besides the number of enemies defeated.
+#define BATTLE_OUTCOME_LOST -1
+#define BATTLE_OUTCOME_FLED 999
+
+/// The six enemy units, which Unit_Get reads for unit ids 128 to 133 while the
+/// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
+#define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
 /// With the front line down and someone living, sends the reserve members in
 /// to take the fallen ones' places, as many as there are of both.
@@ -72,33 +82,33 @@ void BattleCamera_Create(void) {
   camera->distance = 256 << 16;
 }
 
-/// Replaces enemy 128 with the next form of the three-part battle of enemy
-/// groups 78 to 80: unit 373 after group 78, else 376. The form change's
-/// battle effect calls it through its far call.
+/// Replaces the first enemy with the Doom Dragon's next form:
+/// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
+/// The form change's battle effect calls it through its far call.
 void Battle_ChangeEnemyForm(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 unit;
   s32 *object;
 
-  if (id == 78)
-    unit = 373;
+  if (id == FORMATION_DOOM_DRAGON_A)
+    unit = ENEMY_DOOM_DRAGON_E;
   else
-    unit = 376;
-  BattleObject_MarkForRelease(128);
+    unit = ENEMY_DOOM_DRAGON_H;
+  BattleObject_MarkForRelease(FIRST_ENEMY_UNIT);
   BattleMotion_DestroyAllSlotObjects();
   BattleEnemy_ClaimNameLetter(unit, 1);
-  BattleUnit_SetFar(128, unit, 255);
-  work->enemyIds[0] = 128;
+  BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, 255);
+  work->enemyIds[0] = FIRST_ENEMY_UNIT;
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
-  object = (s32 *)BattleObject_Get(128);
-  BattleObject_Make((struct BattleObject *)object, 128, object[3] / Q16_ONE,
-                    object[4] / Q16_ONE);
+  object = (s32 *)BattleObject_Get(FIRST_ENEMY_UNIT);
+  BattleObject_Make((struct BattleObject *)object, FIRST_ENEMY_UNIT,
+                    object[3] / Q16_ONE, object[4] / Q16_ONE);
   BattleObject_Put();
 }
 
-/// Plays the form change effect of enemy group value (78 to 80) on the first
-/// enemy.
+/// Plays the Doom Dragon's form change effect for its formation value
+/// (FORMATION_DOOM_DRAGON_A to _C) on the first enemy.
 void Battle_PlayFormChange(s32 value) {
   struct BattlePresentationWork request;
 
@@ -123,45 +133,6 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-/// The battle work as Battle_Run reads it.
-struct EncounterWork {
-  s32 enemyGroup;
-  u8 unk004[0x0c];
-  u16 enemyClasses[22];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 unk040;
-  u8 partyStatus;
-  u8 battleType;
-  u8 challengeFlag;
-  u8 twoSided;
-  u8 encounterMode;
-  u8 unk046;
-  u8 actionEnded;
-  u8 ownerSlots[8];
-  u8 linkSide;
-  u8 linkMisses;
-  u8 linkPaused;
-  u8 unk053;
-  s32 promptSlot;
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-  u8 placement[16];
-  u8 slots[14][44];
-  struct BattleActionRecord actions[20];
-  u8 unk42c[0x12c];
-  s32 defeated;
-  u8 unk55c[0x114];
-  u16 background;
-  u8 unk672[0x1e6];
-  s32 pendingUnit;
-  s32 pendingTag;
-  u16 extraQueue;
-  u16 nextExtraQueue;
-  u8 extraCount;
-  u8 nextExtraCount;
-  u8 unk866[0x16];
-};
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 
 void ActorSystem_InitializeFar(s32 mode);
@@ -172,10 +143,10 @@ void Sound_LoadReverbCode(s32 preset);
 /// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
-  struct EncounterWork *battle;
+  struct BattleWork *battle;
   struct BattlePresentationTransition *transition;
   s32 enemyCount;
-  u8 *ownerStateDestination;
+  u8 *enemyUnitDestination;
   s32 round;
   s32 actionCount;
   s32 i;
@@ -188,32 +159,35 @@ s32 Battle_Run(s32 enemyGroup) {
   s32 scripted;
 
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct EncounterWork));
-  HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
-  transition = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 0x280);
+  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
+  HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
+  transition = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
+                                   sizeof(struct BattlePresentationTransition));
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   result = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, 0x7c8);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
   Task_ResetAll();
   transition->targetYaw = YAW_PARTY_ACTION;
   transition->frames = 0;
   transition->flag = 1;
-  transition->unk18 = 0;
-  transition->unk1c = 0;
-  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
+  transition->unusedAfterFlag[0] = 0;
+  transition->unusedAfterFlag[1] = 0;
+  REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   GameFlag_Set(0x169);
   Transform_Reset();
 
   IWRAM_FILL_WORDS(camera, sizeof(struct BattleCamera), 0);
-  Iwram_FillWordsEntry(battle, sizeof(struct EncounterWork), 0);
-  battle->promptSlot = -1;
-  battle->enemyGroup = enemyGroup;
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE, 12);
-  IWRAM_FILL_WORDS(Ram_HeapSlots->battleMessage, 12, 0);
+  Iwram_FillWordsEntry(battle, sizeof(struct BattleWork), 0);
+  battle->arrowTiles = -1;
+  battle->formation = enemyGroup;
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
+                      sizeof(struct BattleMessageWork));
+  IWRAM_FILL_WORDS(Ram_HeapSlots->battleMessage,
+                   sizeof(struct BattleMessageWork), 0);
   battle->background = BattleBackground_GetSelectedFar();
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 0xe00);
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
   ActorSystem_InitializeFar(4);
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
@@ -221,13 +195,13 @@ s32 Battle_Run(s32 enemyGroup) {
     WindowSystem_InitBattleFar(0);
 
   BattleCamera_Create();
-  enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
+  enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    battle->twoSided = 1;
+    battle->isLink = 1;
     Battle_SetType(BATTLE_TYPE_LINK);
   }
-  if (battle->twoSided != 0) {
+  if (battle->isLink != 0) {
     Battle_SetRandomSeed(0);
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
@@ -239,22 +213,22 @@ s32 Battle_Run(s32 enemyGroup) {
         break;
       }
     }
-    battle->linkSide = (*(volatile u32 *)0x04000128 << 26) >> 30;
-    ownerStateDestination = Ram_HeapSlots->enemyUnits;
-    for (copyIndex = 0; copyIndex < 0x7c8; copyIndex++)
-      *ownerStateDestination++ = gActorSpriteSlots[copyIndex];
-    enemyCount = GameFlag_GetByte(0x3f0);
+    battle->linkSide = SIO_ID_OF(REG_SIOCNT);
+    enemyUnitDestination = Ram_HeapSlots->enemyUnits;
+    for (copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
+      *enemyUnitDestination++ = gActorSpriteSlots[copyIndex];
+    enemyCount = GameFlag_GetByte(FLAG_AREA_TEMP_F0);
     BattleParty_AssignOpponentSlots();
-    battle->battleType = 0;
+    battle->layout = FORMATION_LAYOUT_SHUFFLED;
   }
-  Task_Add(BattleCamera_Update, 0x47f);
+  Task_Add(BattleCamera_Update, TASK_PASS_VBLANK - 1);
 
   cue = gMainRoutineWork.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
       Sound_PlayFar(MUS_BOULDER_CHASE);
-      Sound_LoadReverbCode(4);
+      Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
     Sound_PlayFar(MUS_BATTLE);
@@ -264,11 +238,12 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
-  if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
+  if ((u16)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
-    battle->partyStatus = 1;
-  if (enemyGroup == 75 || enemyGroup == 76)
+    battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
+  if (enemyGroup == FORMATION_KARST_AND_AGATIO_B ||
+      enemyGroup == FORMATION_KARST_AND_AGATIO_C)
     ScriptedBattle_RestoreUnits();
   PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   BattleCamera_SetDefaultView();
@@ -278,32 +253,32 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
-  *(volatile u16 *)0x04000050 = 0;
+  REG_BLDCNT = 0;
   BattleSpoils_Clear();
-  battle->promptSlot = VramCache_AllocEntry(128);
+  battle->arrowTiles = VramCache_AllocEntry(128);
 
-  battle->encounterMode = FIRST_STRIKE_NONE;
+  battle->firstStrike = FIRST_STRIKE_NONE;
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
-    battle->encounterMode = FIRST_STRIKE_PARTY;
+    battle->firstStrike = FIRST_STRIKE_PARTY;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
-      battle->encounterMode = FIRST_STRIKE_PARTY;
+      battle->firstStrike = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
-      battle->encounterMode = 2;
+      battle->firstStrike = FIRST_STRIKE_ENEMIES;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST) {
-    battle->encounterMode = FIRST_STRIKE_ENEMIES;
+    battle->firstStrike = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(BattleObject_UpdateSpritePriorities, 0x480);
+  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_VBLANK);
 
   for (round = 1;; round++) {
-    if (BattleUnit_ListLivingIds(1, 0) == 0)
+    if (BattleUnit_ListLivingIds(BATTLE_SIDE_MASK_PARTY, 0) == 0)
       BattleParty_SwapInReserves();
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
-    if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
+    if ((u16)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
       battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
@@ -312,20 +287,20 @@ s32 Battle_Run(s32 enemyGroup) {
     PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
-    VramCache_FreeEntry(battle->promptSlot);
+    VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
       actionCount = AutoBattle_BuildActions(battle->actions);
-    battle->promptSlot = VramCache_AllocEntry(128);
+    battle->arrowTiles = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
       goto aborted;
 
     for (i = 0; i < actionCount; i++) {
       actingUnit = battle->actions[i].unitId;
-      battle->pendingUnit = -1;
-      battle->actionEnded = 0;
+      battle->counterUnitId = -1;
+      battle->ceaseFire = 0;
       if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
@@ -334,43 +309,46 @@ s32 Battle_Run(s32 enemyGroup) {
         if (AutoBattle_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
-      if (enemyGroup == 638)
+      if (enemyGroup == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
         goto party_lost;
-      if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
+      if (BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         goto party_lost;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
-        if (enemyGroup == 78 || enemyGroup == 79) {
+        if (enemyGroup == FORMATION_DOOM_DRAGON_A ||
+            enemyGroup == FORMATION_DOOM_DRAGON_B) {
           Battle_PlayFormChange(enemyGroup++);
           break;
         }
-        if (enemyGroup == 80)
-          Battle_PlayFormChange(80);
-        if (actingUnit <= ALLY_MAX && battle->defeated == 1) {
-          /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
+        if (enemyGroup == FORMATION_DOOM_DRAGON_C)
+          Battle_PlayFormChange(FORMATION_DOOM_DRAGON_C);
+        if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1) {
+          /* FAKEMATCH(barrier): an empty asm before the defeatState store; as
+           * the store alone, 2 of 885 instructions differ in tla-en. */
           asm("");
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         }
         goto won;
       }
-      if (battle->pendingUnit != -1 &&
-          Battle_FindUnitPlace(battle->pendingTag) != -1) {
-        battle->actions[i].unitId = battle->pendingUnit;
+      if (battle->counterUnitId != -1 &&
+          Battle_FindUnitPlace(battle->counterTargetId) != -1) {
+        battle->actions[i].unitId = battle->counterUnitId;
         battle->actions[i].command = COMMAND_DJINN_COUNTER;
         battle->actions[i].parameter = 0;
-        battle->actions[i].target = Battle_FindUnitPlace(battle->pendingTag);
+        battle->actions[i].target =
+            Battle_FindUnitPlace(battle->counterTargetId);
         battle->actions[i].range = 1;
         i--;
       }
       if (LinkBattle_SyncTurn() < 0)
         goto aborted;
-      if (i == actionCount - 1 && battle->extraCount != 0) {
-        u32 queue = battle->extraQueue;
+      if (i == actionCount - 1 && battle->daedalusStrikes != 0) {
+        u32 queue = battle->daedalusFromEnemies;
 
-        battle->extraQueue = queue >> 1;
+        battle->daedalusFromEnemies = queue >> 1;
         queue &= 1;
-        battle->extraCount--;
+        battle->daedalusStrikes--;
         battle->actions[i].unitId = queue << 7;
         battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
@@ -378,26 +356,26 @@ s32 Battle_Run(s32 enemyGroup) {
         battle->actions[i].range = 255;
         i--;
       }
-      if (battle->actionEnded != 0)
+      if (battle->ceaseFire != 0)
         break;
     }
 
     BattleParty_ClearGuards();
-    battle->extraQueue = battle->nextExtraQueue;
+    battle->daedalusFromEnemies = battle->nextDaedalusFromEnemies;
 #if TLA_PATCH_1
     // Japanese leaves the next turn's queue in place.
-    battle->nextExtraQueue = 0;
+    battle->nextDaedalusFromEnemies = 0;
 #endif
-    battle->extraCount = battle->nextExtraCount;
-    battle->nextExtraCount = 0;
-    battle->encounterMode = FIRST_STRIKE_NONE;
+    battle->daedalusStrikes = battle->nextDaedalusStrikes;
+    battle->nextDaedalusStrikes = 0;
+    battle->firstStrike = FIRST_STRIKE_NONE;
     Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
-    scripted = enemyGroup - 74;
+    scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
     if ((u32)scripted <= 1 && round == 2)
       goto won_scripted;
-    if (battle->twoSided != 0) {
+    if (battle->isLink != 0) {
       if (LinkBattle_SyncTurn() < 0)
         goto aborted_scripted;
     } else {
@@ -406,31 +384,36 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_Get(FLAG_DJINN_LESSON) == 0)
       continue;
 
-    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
+    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
+                                       DJINN_TUTORIAL_LINE_UNLEASHED,
+                                   0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
     Window_CloseFar(window, 1);
     wait(1);
-    window =
-        Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
+    window = Message_OpenWindowFar(
+        Tutorial_GetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_STANDBY, 10, 4, 1);
     BattleMessage_WaitForAdvanceAt(44, 24);
     Window_CloseFar(window, 1);
     wait(1);
   }
 
 won:
-  scripted = enemyGroup - 74;
+  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
 won_scripted:
   Battle_ClearSerialTransferPayload();
   if ((u32)scripted > 1) {
-    if (enemyGroup != 80 && GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
-      if (battle->twoSided != 0)
+    if (enemyGroup != FORMATION_DOOM_DRAGON_C &&
+        GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
+      if (battle->isLink != 0)
         Sound_PlayFar(MUS_VICTORY);
-      if (battle->defeated != 0) {
+      if (battle->spoils.defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= DEFEAT_SEVERAL) {
           BattleUnit_SetFar(FIRST_ENEMY_UNIT,
-                            battle->enemyClasses[battle->firstDefeated], 26);
+                            ((struct BattleKindsView *)battle)
+                                ->enemyKinds[battle->firstDefeated],
+                            26);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
@@ -443,24 +426,24 @@ won_scripted:
   }
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
-  result = battle->defeated;
+  result = battle->spoils.defeated;
   goto finished;
 
 aborted:
-  scripted = enemyGroup - 74;
+  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
 aborted_scripted:
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
-  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
-  result = battle->defeated;
+  REG_DISPCNT = DISPCNT_MODE_1;
+  result = battle->spoils.defeated;
   GameFlag_Set(FLAG_AREA_TEMP_E8);
   goto finished;
 
 party_lost:
   Battle_ClearSerialTransferPayload();
-  scripted = enemyGroup - 74;
-  if ((u32)scripted > 1 && enemyGroup != 638) {
-    if (enemyGroup != 76) {
+  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
+  if ((u32)scripted > 1 && enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
+    if (enemyGroup != FORMATION_KARST_AND_AGATIO_C) {
       Sound_PlayFar(MUS_DEFEAT);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareMembers(0) == 1)
@@ -472,7 +455,7 @@ party_lost:
     Sound_PlayFar(SOUND_FADE_OUT_BGM);
   }
   ScreenFade_ToBlack(30);
-  result = -1;
+  result = BATTLE_OUTCOME_LOST;
   ScreenFade_Wait();
   goto finished;
 
@@ -480,8 +463,8 @@ fled:
   Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
-  result = 999;
-  scripted = enemyGroup - 74;
+  result = BATTLE_OUTCOME_FLED;
+  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
 
 finished:
   if ((u32)scripted <= 1)
@@ -515,7 +498,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = 2;
+    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -543,7 +526,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = 2;
+    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -569,7 +552,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (Unit_Get(id)->side != 0) {
+      if (Unit_Get(id)->side != BATTLE_UNIT_ABSENT) {
         *output = id;
         listed++;
         output++;
@@ -630,7 +613,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != 0 && unit->hp > 0) {
+        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;
@@ -697,7 +680,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != 0 && unit->hp > 0) {
+        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;

@@ -467,9 +467,9 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
 /// entry unless it is a glyph, and for a portrait frees its palette slot too.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
-  if ((u8)entry->kind != 0) {
+  if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
     VramCache_FreeEntry((u8)entry->index);
-    if ((u8)entry->kind == 2) {
+    if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
       u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
       s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
       *(u16 *)(dst + idx) = PORTRAIT_SLOT_EMPTY;
@@ -502,7 +502,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
     found->x = x << 8;
     found->y = y << 8;
     found->entry = entry;
-    found->colour = 15;
+    found->colour = TEXT_COLOR_WHITE;
     found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
     found->outline = TEXT_STYLE_PLAIN;
@@ -571,7 +571,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     selected->startX = 3 << 8;
     selected->work->state = zero;
     // Start the next text run without retaining the previous run's style.
-    selected->colour = 15;
+    selected->colour = TEXT_COLOR_WHITE;
     selected->entry = entry;
     lineSpacing = 10;
     selected->countdown = zero;
@@ -621,7 +621,7 @@ void Message_ResetIdle(void) {
     }
     selection->x = 0;
     selection->countdown = 0;
-    selection->colour = 0xF;
+    selection->colour = TEXT_COLOR_WHITE;
     selection->outline = TEXT_STYLE_PLAIN;
     selection->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   }

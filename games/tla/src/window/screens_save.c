@@ -37,24 +37,35 @@ enum FileMenuMode {
 #include "window/window.h"
 #include "gamepak/far_call/field.h"
 
+/// The progress bar: twelve tiles wide at tile column 9, row 9 of the window
+/// map, drawn from tiles 128 on (SaveProgress_Open loads them), in seven
+/// stages.
+#define PROGRESS_BAR_X 9
+#define PROGRESS_BAR_Y 9
+#define PROGRESS_BAR_WIDTH 12
+#define PROGRESS_BAR_LAST_ROW 6
+#define PROGRESS_BAR_FIRST_TILE 128
+
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
 void SaveProgress_Advance(s32 step) {
-  u8 *save = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *save = Ram_HeapSlots->saveWork;
   u32 row;
   const u8 *src;
   u16 *dst;
   s32 i;
 
-  if (*(s16 *)(save + 0x3142) <= 3)
+  // A three-sector write moves the bar twice as far a sector.
+  if ((s16)save->sectorTotal <= 3)
     step <<= 1;
-  row = (s16)(*(u16 *)(save + 0x3140) += step);
-  if (row > 6)
-    row = 6;
-  dst = (u16 *)0x06002252;
-  src = gWindow_ProgressBarRows + row * 12;
-  for (i = 11; i >= 0; i--)
-    *dst++ = *src++ + 0xf080;
+  row = (s16)(save->sectorCount += step);
+  if (row > PROGRESS_BAR_LAST_ROW)
+    row = PROGRESS_BAR_LAST_ROW;
+  dst = (u16 *)BG_SCREEN_BLOCK(4) + PROGRESS_BAR_Y * BG_SCREEN_WIDTH +
+        PROGRESS_BAR_X;
+  src = gWindow_ProgressBarRows + row * PROGRESS_BAR_WIDTH;
+  for (i = PROGRESS_BAR_WIDTH - 1; i >= 0; i--)
+    *dst++ = *src++ + WINDOW_TILE(PROGRESS_BAR_FIRST_TILE);
 }
 
 // Heading x coordinate: only French differs.
@@ -68,7 +79,14 @@ void SaveProgress_Advance(s32 step) {
 #define COPYING_X 84
 #endif
 
-/// Opens the progress screen: 0 saves, 1 erases, 2 copies.
+/// What the progress screen says it is doing.
+enum SaveProgressKind {
+  SAVE_PROGRESS_SAVING = 0,  ///< "Saving..." (MsgSaving)
+  SAVE_PROGRESS_ERASING = 1, ///< "Erasing..." (MsgErasing)
+  SAVE_PROGRESS_COPYING = 2  ///< "Copying..." (MsgCopying)
+};
+
+/// Opens the progress screen for a SaveProgressKind.
 struct Window *SaveProgress_Open(u32 kind) {
   struct Window *window;
   void *tiles;
@@ -79,13 +97,13 @@ struct Window *SaveProgress_Open(u32 kind) {
   Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
-  case 0:
+  case SAVE_PROGRESS_SAVING:
     Text_DrawMessage((s32)&MsgSaving, (s32)window, SAVING_X, 40);
     break;
-  case 1:
+  case SAVE_PROGRESS_ERASING:
     Text_DrawMessage((s32)&MsgErasing, (s32)window, ERASING_X, 40);
     break;
-  case 2:
+  case SAVE_PROGRESS_COPYING:
     Text_DrawMessage((s32)&MsgCopying, (s32)window, COPYING_X, 40);
     break;
   }
@@ -415,7 +433,7 @@ s32 Save_BuildFileSummary(void) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->reunited = GameFlag_Get(34) != 0;
+  summary->reunited = GameFlag_Get(FLAG_REUNITED) != 0;
   {
     s32 n;
     u32 frames;
@@ -447,10 +465,10 @@ s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else if (Save_WritePartMasked(file, gSaveBuffer) != 0) {
-    FieldMessage_Show((s32)&MsgSaveFailed, 1);
+    FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
     result = -3;
   }
   Save_ReleaseWork();
@@ -470,7 +488,7 @@ s32 Save_ProcessSelectedFile(void) {
   if (value != -1) {
     found = Save_InitializeWork();
     if (found != 0) {
-      FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+      FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
       result = -9;
     } else {
       u8 *dst;
@@ -483,11 +501,11 @@ s32 Save_ProcessSelectedFile(void) {
       dst = (u8 *)buffer + (s32)gMainRoutineWork.linkTallies;
       dst -= (s32)gSaveBuffer;
       Iwram_CopyWordsEntry(dst, gMainRoutineWork.linkTallies, 16);
-      token = (s32)SaveProgress_Open(0);
+      token = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       found = Save_WritePartMasked(gSaveSlot, buffer);
       SaveProgress_Close((struct Window *)token);
       if (found != 0) {
-        FieldMessage_Show((s32)&MsgSaveFailed, 1);
+        FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = -3;
       }
     }
@@ -562,7 +580,7 @@ s32 Save_ToChosenFile(void) {
         Message_CloseFinishedWindows();
       }
       gSaveSlot = slot;
-      token = (s32)SaveProgress_Open(0);
+      token = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
       found = Save_WritePartMasked(slot, gSaveBuffer);
@@ -588,7 +606,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 file;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -596,7 +614,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
     if (file == -1) {
       result = file;
     } else if (Save_ReadPart(file, gSaveBuffer) != 0) {
-      FieldMessage_Show((s32)&MsgLoadFailed, 1);
+      FieldMessage_Show((s32)&MsgLoadFailed, FIELD_MESSAGE_ZOOM);
       result = -2;
     } else {
       gPlayTimeFrames = SAVE_GAME_WORDS->playTime;
@@ -616,7 +634,7 @@ s32 Save_CopyFile(void) {
   s32 token;
 
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = -9;
   } else {
     Save_LoadFileSummaries();
@@ -636,14 +654,14 @@ s32 Save_CopyFile(void) {
           FieldMessage_Show((s32)&MsgEraseFailed, 1);
           result = -5;
         } else {
-          token = (s32)SaveProgress_Open(2);
+          token = (s32)SaveProgress_Open(SAVE_PROGRESS_COPYING);
           value = Save_WritePartMasked(value, buffer);
           SaveProgress_Close((struct Window *)token);
           if (value != 0) {
-            FieldMessage_Show((s32)&MsgEraseFailed, 1);
+            FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
             result = -3;
           } else {
-            FieldMessage_Show((s32)&MsgFileCopied, 1);
+            FieldMessage_Show((s32)&MsgFileCopied, FIELD_MESSAGE_ZOOM);
           }
         }
       }
@@ -682,7 +700,7 @@ s32 Save_EraseSelectedFile(void) {
         Message_CloseFinishedWindows();
       } else {
         Message_CloseFinishedWindows();
-        token = (s32)SaveProgress_Open(1);
+        token = (s32)SaveProgress_Open(SAVE_PROGRESS_ERASING);
         found = Save_DeletePartMasked(value);
         SaveProgress_Close((struct Window *)token);
         if (found != 0) {

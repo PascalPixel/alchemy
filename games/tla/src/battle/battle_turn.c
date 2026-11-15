@@ -236,10 +236,15 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       Unit_Get(entry->unitId);
       action = Ability_Get(Djinn_GetAbilityIdFar((entry->parameter) >> 8 & 15,
                                                  entry->parameter & 0xff));
-      if (action->effect == 72 || action->effect == 76 ||
-          action->effect == 79 || action->effect == 74 ||
-          action->effect == 46 || action->effect == 47 ||
-          action->effect == 88 || action->effect == ABILITY_EFFECT_GROUND) {
+      // These Djinn act ahead of the turn order.
+      if (action->effect == ABILITY_EFFECT_SHIELD ||
+          action->effect == ABILITY_EFFECT_BREATH ||
+          action->effect == ABILITY_EFFECT_VANISH ||
+          action->effect == ABILITY_EFFECT_COUNTER ||
+          action->effect == ABILITY_EFFECT_DEFEND ||
+          action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
+          action->effect == ABILITY_EFFECT_GUARD_AURA ||
+          action->effect == ABILITY_EFFECT_GROUND) {
         u32 priority = entry->priority;
 
         entry->priority = priority + 10000;

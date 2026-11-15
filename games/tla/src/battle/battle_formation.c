@@ -42,7 +42,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   }
 
   targetLevel = targetLevel / unitCount;
-  targetLevel += (s8)GameFlag_GetByte(0x3f8);
+  targetLevel += (s8)GameFlag_GetByte(FLAG_AREA_TEMP_F8);
   if (targetLevel <= 0)
     targetLevel = 1;
   if (targetLevel > UNIT_LEVEL_MAX)
@@ -52,23 +52,26 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
-  if (GameFlag_Get(0x65b))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65c))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65d))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x65e))
-    GameFlag_Set(0x65f);
-  if (GameFlag_Get(0x66b))
-    GameFlag_Set(0x66c);
-  if (GameFlag_Get(0x668))
-    GameFlag_Set(0x66a);
-  if (GameFlag_Get(0x669))
-    GameFlag_Set(0x66a);
-  GameFlag_Clear(0x771);
-  if (GameFlag_Get(0x778))
-    GameFlag_Set(0x771);
+  // A boss beaten in another of its forms marks one form beaten: the
+  // Serpent's four-beam one, the Knight's second, Moapa's third, and the
+  // Doom Dragon's first only once its last has fallen.
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_ONE_BEAM)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_TWO_BEAMS)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_THREE_BEAMS)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_SERPENT_FOUR_BEAMS));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_KNIGHT)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_KNIGHT_B));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_C));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_B)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_MOAPA_C));
+  GameFlag_Clear(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
+  if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_H)))
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
        candidateOrUnitIndex++)
@@ -164,8 +167,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->maxHp * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 16383)
-    value = 16383;
+  if (value > UNIT_ENEMY_HP_MAX)
+    value = UNIT_ENEMY_HP_MAX;
   stats->maxHp = value;
 
   value = state->stats.maxPp;
@@ -173,8 +176,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->maxPp * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 9999)
-    value = 9999;
+  if (value > UNIT_ENEMY_PP_MAX)
+    value = UNIT_ENEMY_PP_MAX;
   state->stats.maxPp = value;
 
   floor = __divsi3(levels * 123, 10);
@@ -183,8 +186,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->atk * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.atk = value;
 
   floor = __divsi3(levels * 33, 10);
@@ -193,8 +196,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->def * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.def = value;
 
   floor = __divsi3(levels * 51, 10);
@@ -203,8 +206,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   floor = __divsi3(base->agi * 7, 10);
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   state->stats.agi = value;
 
   for (i = 0; i < ELEMENT_COUNT; i++) {
@@ -212,8 +215,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
     floor = __divsi3(base->element[i].power * 7, 10);
     if (value < floor)
       value = floor;
-    if (value > 200)
-      value = 200;
+    if (value > UNIT_ELEMENT_MAX)
+      value = UNIT_ELEMENT_MAX;
     state->stats.element[i].power = value;
   }
 
@@ -236,71 +239,77 @@ void BattleUnit_Strengthen(s32 unitId) {
   floor = saved->hp * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 16383)
-    value = 16383;
+  if (value > UNIT_ENEMY_HP_MAX)
+    value = UNIT_ENEMY_HP_MAX;
   unit->baseHp = value;
   value = unit->baseAttack * 5 / 4;
   floor = saved->attack * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   unit->baseAttack = value;
   value = unit->baseDefense * 5 / 4;
   floor = saved->defense * 7 / 10;
   if (value < floor)
     value = floor;
-  if (value > 999)
-    value = 999;
+  if (value > UNIT_STAT_MAX)
+    value = UNIT_STAT_MAX;
   unit->baseDefense = value;
   Unit_CalculateFar(unitId);
   Heap_Release(saved);
 }
 
-// The letters cycle through CH_CNT values: 26 in the Japanese release, 9
-// elsewhere, as String_FindFirstDigit reads them back.
+/// The name letters an enemy can take: the alphabet in Japanese, nine digits
+/// elsewhere, as String_FindFirstDigit reads them back.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define CH_CNT 26
+#define ENEMY_NAME_SUFFIX_COUNT 26
 #else
-#define CH_CNT 9
+#define ENEMY_NAME_SUFFIX_COUNT 9
 #endif
 
 /// Gives an enemy of the class its name letter, which tells it from others of
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
 /// classes are already listed.
-s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
-  struct SummonChargeState *w;
-  s32 num;
-  s32 i;
-  s32 retry;
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
+  struct BattleKindsView *battle;
+  s32 classCount;
+  s32 classIndex;
+  s32 attempt;
 
-  w = (struct SummonChargeState *)Ram_HeapSlots->battleWork;
-  num = w->count;
-  for (i = 0; i < num; i++) {
-    if (w->classIds[i] == no)
+  battle = (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  classCount = battle->enemyKindCount;
+  for (classIndex = 0; classIndex < classCount; classIndex++) {
+    if (battle->enemyKinds[classIndex] == classId)
       break;
   }
-  if (i != num) {
-    retry = 0;
-    if (w->channels[i] < 0) {
-      w->channels[i] = 1;
-      w->usedMasks[i] = 3;
+  if (classIndex != classCount) {
+    attempt = 0;
+    // The second of its class: letters 0 and 1 both taken.
+    if (battle->lastNameLetter[classIndex] < 0) {
+      battle->lastNameLetter[classIndex] = 1;
+      battle->nameLetterMasks[classIndex] = 3;
       return ENEMY_LETTER_FIRST_TOO | 1;
     }
-    for (; retry <= 31; retry++) {
-      w->channels[i] = (w->channels[i] + 1) % CH_CNT;
-      if ((w->usedMasks[i] & (1 << w->channels[i])) == 0)
+    // The next letter after the last given that is free; after 32 tries the
+    // last one tried is reused.
+    for (; attempt <= 31; attempt++) {
+      battle->lastNameLetter[classIndex] =
+          (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
+      if ((battle->nameLetterMasks[classIndex] &
+           (1 << battle->lastNameLetter[classIndex])) == 0)
         break;
     }
-    w->usedMasks[i] |= 1 << w->channels[i];
-    return w->channels[i];
+    battle->nameLetterMasks[classIndex] |=
+        1 << battle->lastNameLetter[classIndex];
+    return battle->lastNameLetter[classIndex];
   }
-  if (num <= 4) {
-    w->channels[num] = -1;
-    w->classIds[num] = no;
-    w->usedMasks[num] = 0;
-    w->count = num + 1;
-    return CH_CNT;
+  if (classCount <= 4) {
+    battle->lastNameLetter[classCount] = -1;
+    battle->enemyKinds[classCount] = classId;
+    battle->nameLetterMasks[classCount] = 0;
+    battle->enemyKindCount = classCount + 1;
+    return ENEMY_NAME_SUFFIX_COUNT;
   }
   return -1;
 }
@@ -308,37 +317,39 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
 /// Frees a departing enemy's name letter for the next of its class.
-s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
-  struct SummonChargeState *state =
-      (struct SummonChargeState *)Ram_HeapSlots->battleWork;
-  struct BattleActorDefinition *actor;
-  s32 count = state->count;
+UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
+  struct BattleKindsView *battle =
+      (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  struct Unit *unit;
+  s32 count = battle->enemyKindCount;
   s32 index;
   s32 nameLength;
-  s32 bit;
+  s32 suffixIndex;
   s32 classId;
 
-  actor = Unit_Get(actorId);
-  if (actor->unavailable != CLASS_NONE)
+  unit = Unit_Get(unitId);
+  if (unit->classId != CLASS_NONE)
     return;
 
-  classId = actor->classId;
+  classId = unit->enemyId;
   for (index = 0; index < count; index++) {
-    if (state->classIds[index] == classId)
+    if (battle->enemyKinds[index] == classId)
       break;
   }
-  if (index == count || state->usedMasks[index] == 0)
+  if (index == count || battle->nameLetterMasks[index] == 0)
     return;
 
-  for (nameLength = 0; nameLength <= 13; nameLength++) {
-    if (actor->name[nameLength] == 0)
+  for (nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
+    if (unit->name[nameLength] == 0)
       break;
   }
 
-  bit = 32;
+  // An empty name uses a shift of 32, which emits zero on ARM. A name with
+  // no suffix instead uses its last character as a suffix.
+  suffixIndex = 32;
   if (nameLength > 0)
-    bit = actor->name[nameLength - 1] - LIST_MARKER_CHAR;
-  state->usedMasks[index] &= ~(1 << bit);
+    suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+  battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),
@@ -521,8 +532,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
          memberOrEnemyIndex++) {
-      s32 first = Random_Below(5);
-      s32 second = Random_Below(5);
+      s32 first = Random_Below(FORMATION_MEMBERS);
+      s32 second = Random_Below(FORMATION_MEMBERS);
       s32 swap = memberOrder[first];
 
       memberOrder[first] = memberOrder[second];
@@ -590,7 +601,8 @@ assign_enemy:
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                               levelAdjustment);
-    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
+    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) &&
+             GameFlag_Get(FLAG_HARD_LEVEL))
       BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     battle->forceField = 0;
     enemyId = unit->enemyId;
@@ -615,26 +627,29 @@ assigned:
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
 /// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
-  u32 kind = gSummon_EntryTable[index].defeatSound;
+  u32 kind = gBattleSprites[index].defeatSound;
 
   if ((s32)kind > 4)
     kind = -1U;
   return kind;
 }
 
+/// The last enemy with a row in gBattleSprites (battle_tables.s).
+#define ENEMY_CLASS_LAST 386
+
 /// Returns the class's battle sprite, row 0's for a class out of range.
 s32 BattleSprite_GetSprite(s32 index) {
-  if ((u32)index > 386)
-    return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].animation;
+  if ((u32)index > ENEMY_CLASS_LAST)
+    return gBattleSprites[0].animation;
+  return gBattleSprites[index].animation;
 }
 
 /// Returns the class's sprite palette. For a class out of range it returns row
 /// 0's sprite, not a palette.
 s32 BattleSprite_GetPalette(s32 index) {
-  if ((u32)index > 386)
-    return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].palette;
+  if ((u32)index > ENEMY_CLASS_LAST)
+    return gBattleSprites[0].animation;
+  return gBattleSprites[index].palette;
 }
 
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
@@ -644,10 +659,10 @@ s32 BattleSprite_IsSmall(s32 index) {
   s32 result;
   u32 flags;
 
-  if ((u32)index > 386)
+  if ((u32)index > ENEMY_CLASS_LAST)
     return 0;
   result = 0;
-  flags = gSummon_EntryTable[index].isSmall;
+  flags = gBattleSprites[index].isSmall;
   if (flags)
     result = 1;
   return result;
@@ -658,9 +673,9 @@ s32 BattleSprite_IsSmall(s32 index) {
 u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 1;
-  value = gSummon_EntryTable[index].attackEffect;
+  value = gBattleSprites[index].attackEffect;
   return value ? value : 1;
 }
 
@@ -669,30 +684,24 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
 u32 BattleSprite_GetAttackHop(u32 index) {
   u16 value;
 
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 0;
-  value = gSummon_EntryTable[index].attackHop;
+  value = gBattleSprites[index].attackHop;
   return value ? value : 0;
 }
 
 /// Returns 1 for a class whose blow lands with a heavier impact; 0 out of
 /// range.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
-  if ((u32)index > 386)
+  if ((u32)index > ENEMY_CLASS_LAST)
     return 0;
-  return gSummon_EntryTable[index].heavyImpact;
+  return gBattleSprites[index].heavyImpact;
 }
 
 /// Returns the height an animation is drawn at over a class, in pixels, or 0
 /// for its size's default; 0 out of range.
 u32 BattleSprite_GetEffectHeight(u32 index) {
-  u8 *table;
-  u32 offset;
-
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 0;
-  table = (u8 *)gSummon_EntryTable;
-  offset = index * 8;
-  offset += 4;
-  return table[offset];
+  return gBattleSprites[index].effectHeight;
 }

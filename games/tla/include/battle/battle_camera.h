@@ -22,11 +22,11 @@ struct BattleCamera {
   s32 followEye;       ///< cleared beside followPosition; nothing reads it
   s32 *followPosition; ///< when set, followed instead of focus
 
-  s32 distance; ///< eye to focus, 16.16 fixed-point pixels
-  u8 unk24[16]; ///< not named by TLA code
-  u16 pitch;    ///< 1/65536 turns
-  u16 yaw;      ///< 1/65536 turns
-  u8 unk38[20]; ///< not named by TLA code
+  s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
+  u8 unusedAfterDistance[16]; ///< no code names it
+  u16 pitch;                  ///< 1/65536 turns
+  u16 yaw;                    ///< 1/65536 turns
+  u8 unusedAfterYaw[20];      ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
@@ -46,8 +46,7 @@ struct BattlePresentationTransition {
   s32 secondMode; ///< BattleBackgroundView's secondMode
   s32 active;     ///< BattleBackgroundView's busy, at the same offset
   s32 flag;       ///< 0 lets the camera update set the background's range
-  s32 unk18;      ///< cleared at the battle's start; not read by name in TLA
-  s32 unk1c;      ///< cleared at the battle's start; not read by name in TLA
+  s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
 /// A presentation's effect command, laid out as BattleEffectParams with a
@@ -61,7 +60,7 @@ struct BattlePresentationWork {
   s32 count;        ///< targets in actors
   s32 variant;      ///< the ability's size, from 0
   s32 flags;        ///< BattleEffectParams's prelude, at the same offset
-  u8 unk20[4];      ///< not named by TLA code
+  u8 unused[4];     ///< no code names it
   s16 actors[9];    ///< the targets' unit ids, count of them
   u8 params[8][4];  ///< each target's animation entries' param, kept
 };
@@ -108,8 +107,8 @@ struct BattleAffine {
 /// The battle background's scanline work: two pages of per-line values,
 /// swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
-  u32 page;     ///< the page of lines shown
-  u8 unk04[12]; ///< not named by TLA code
+  u32 page;      ///< the page of lines shown
+  u8 unused[12]; ///< no code names it
   struct BattleAffine affine;
   u16 lines[2][160];
 };

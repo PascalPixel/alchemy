@@ -1,7 +1,10 @@
 #include "edition.h"
 #include "types.h"
+#include "window/window.h"
 
-void Tile_BuildCellPictures(u16 *dst, u16 *src) {
+/// Builds the hardware window's left and right edges for each scan line from
+/// the window tilemap at src, and returns the end of what it wrote at dst.
+u16 *Tile_BuildCellPictures(u16 *dst, u16 *src) {
   u32 row;
   u32 col;
   s32 a;
@@ -30,7 +33,7 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
         continue;
       if (found == 0) {
         switch (cmd) {
-        case 0xf010:
+        case WINDOW_TILE_BORDER_TOP_LEFT:
           a = col * 8;
           b = a + 8;
           c = a + 1;
@@ -39,7 +42,7 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
           f = b;
           found++;
           break;
-        case 0xf013:
+        case WINDOW_TILE_BORDER_BOTTOM_LEFT:
           a = col * 8;
           b = a + 8;
           c = a;
@@ -48,9 +51,9 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
           f = a + 7;
           found++;
           break;
-        case 0xf007:
-        case 0xf016:
-        case 0xf01a:
+        case WINDOW_TILE(7):
+        case WINDOW_TILE_BORDER_LEFT:
+        case WINDOW_TILE_BORDER_LEFT_TEE:
           a = col * 8;
           b = a + 8;
           d = a;
@@ -61,19 +64,19 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
         }
       } else {
         switch (cmd) {
-        case 0xf012:
+        case WINDOW_TILE_BORDER_TOP_RIGHT:
           b = col * 8 + 8;
           e = col * 8 + 7;
           f = b;
           break;
-        case 0xf015:
+        case WINDOW_TILE_BORDER_BOTTOM_RIGHT:
           b = col * 8 + 8;
           e = b;
           f = col * 8 + 7;
           break;
-        case 0xf007:
-        case 0xf017:
-        case 0xf01b:
+        case WINDOW_TILE(7):
+        case WINDOW_TILE_BORDER_RIGHT:
+        case WINDOW_TILE_BORDER_RIGHT_TEE:
           f = col * 8 + 8;
           b = f;
           e = f;
@@ -101,4 +104,5 @@ void Tile_BuildCellPictures(u16 *dst, u16 *src) {
     dst++;
     *dst++ = v;
   }
+  return dst;
 }

@@ -5,6 +5,7 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "window/screens.h"
+#include "menu/djinn_menu.h"
 
 /// Opens a message at (x, y), waits for its text to finish, and returns its
 /// window so the caller can hold it open for a separate prompt.
@@ -102,7 +103,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
     if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
-      Func_08118130__screens(0, party);
+      BattleDjinn_CountStandbyFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DJINN;
@@ -136,7 +137,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
-  Task_Add(CommandRow_PutBg1Behind, 0xc80);
+  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_FRAME);
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
@@ -158,7 +159,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             for (col = 0; col <= 2; col++)
               *(work->tilemap[0] +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                WINDOW_X - 18 + (col & 3)) = 0xf07f;
+                WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -188,7 +189,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             for (col = 0; col <= 2; col++)
               *(work->tilemap[0] +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                2 + (col & 3)) = 0xf07f;
+                2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -261,16 +262,21 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             if (navigation->tutorialStep == 1) {
               void *message;
 
-              ((u8 *)Ram_HeapSlots->windowWork)[5] |= 4;
+              ((struct WindowWork *)Ram_HeapSlots->windowWork)->battleMode |=
+                  WINDOW_GLYPHS_BLENDED;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                   COMMAND_ICON_DJINN)
-                message = Message_ShowAndWait(
-                    Djinn_GetGiveTutorialMessage() + 10, 15, 8);
+                message =
+                    Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                            DJINN_TUTORIAL_LINE_UNLEASH_COMMAND,
+                                        15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                        COMMAND_ICON_SUMMON)
-                message = Message_ShowAndWait(
-                    Djinn_GetGiveTutorialMessage() + 9, 15, 8);
-              ((u8 *)Ram_HeapSlots->windowWork)[5] &= ~4;
+                message = Message_ShowAndWait(Djinn_GetGiveTutorialMessage() +
+                                                  DJINN_TUTORIAL_LINE_SUMMON,
+                                              15, 8);
+              ((struct WindowWork *)Ram_HeapSlots->windowWork)->battleMode &=
+                  ~WINDOW_GLYPHS_BLENDED;
               BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;
@@ -341,7 +347,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap[0] +
                             (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-                            panel * 3 + 5 + (col & 3)) = 0xf07f;
+                            panel * 3 + 5 + (col & 3)) =
+              WINDOW_TILE_COMMAND_PANEL;
       }
     }
   }
@@ -352,7 +359,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      0x20000);
+                      IO_WRITE_HALFWORD);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);
@@ -370,14 +377,14 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
     x = 0;
   }
   if (x + width > 29) {
-    width = 30 - x;
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {

@@ -498,21 +498,22 @@ void MenuIcon_PushSlots(void) {
   if (menu->menuIconsShown != 0) {
     slot = menu->menuIcons;
     for (i = 4; i >= 0; i--) {
-      Oam_AddSpriteAtDepth(slot, 240);
+      Oam_AddSpriteAtDepth(slot, OAM_DEPTH_WINDOW);
       slot++;
     }
   }
 }
 
-extern u16 gData_08105a50[5];
+extern u16 gStatusScreen_CommandIcons[5];
 
-/// Loads the five menu icons of gData_08105a50 into free VRAM entries, gives
+/// Loads the Status screen's five command icons (gStatusScreen_CommandIcons)
+/// into free VRAM entries, gives
 /// each slot its sprite attributes and tile, keeps the entries for
 /// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot = menu->menuIcons;
-  u16 *ids = gData_08105a50;
+  u16 *ids = gStatusScreen_CommandIcons;
   u16 *resource = menu->menuIconSlots;
   s32 entry;
   s32 i;
@@ -520,10 +521,11 @@ void MenuIcon_LoadSlots(void) {
 
   for (i = 0; i < 5; i++) {
     entry = VramCache_FindFreeEntry();
-    if (entry <= 95) {
+    if (entry < VRAM_CACHE_ENTRY_COUNT) {
       u32 *attributes;
 
-      /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
+      /* FAKEMATCH(temporary): the table read at a byte offset of its own; as
+       * ids[i], 49 of 83 instructions differ in tla-en. */
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
                                      *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;

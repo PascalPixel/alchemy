@@ -50,7 +50,9 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 
 struct BattlePresentationWork;
 
-typedef void (*ModelDecoder)(const void *source, void *destination);
+/// The bit decoder BattleBackground_Load copies to RAM and runs. It returns
+/// the source after the last halfword it read.
+typedef const u8 *(*ModelDecoder)(const u8 *source, void *destination);
 
 struct DjinnRecoveryEntryDraft {
   u8 element;
@@ -82,23 +84,6 @@ struct FormationCandidate {
 struct OwnerElementStats {
   s16 power;
   s16 res;
-};
-
-struct SummonChargeState {
-  u8 unk00[0x10];
-  u16 classIds[6];
-  u32 usedMasks[6];
-  s8 channels[6];
-  u8 unk3a[6];
-  u8 count;
-};
-
-struct BattleActorDefinition {
-  u8 name[14];
-  u8 unk0e[0x11b];
-  u8 unavailable;
-  u8 unk12a[0x20];
-  u16 classId;
 };
 
 struct AIState {

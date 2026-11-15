@@ -185,21 +185,22 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   *cursor++ = WINDOW_TILE_FLASH_TOP_LEFT;
   cursor = Memory_FillHalfwordsDma(
       cursor, WINDOW_TILE_PAIR(WINDOW_TILE_FLASH_TOP), width - 2);
   *cursor++ = WINDOW_TILE_FLASH_TOP_RIGHT;
-  cursor += 32 - width;
+  cursor += BG_SCREEN_WIDTH - width;
   for (row = 1; row < height - 1; row++) {
     *cursor++ = WINDOW_TILE_FLASH_LEFT;
     if (width != 2)
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
     *cursor++ = WINDOW_TILE_FLASH_RIGHT;
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
   *cursor++ = WINDOW_TILE_FLASH_BOTTOM_LEFT;
   cursor = Memory_FillHalfwordsDma(
@@ -271,7 +272,7 @@ s32 Window_IsClosed(struct Window *window) {
 void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->glyphSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
@@ -290,7 +291,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
 }
@@ -309,7 +310,7 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
   if (initialize != 0)
     Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);

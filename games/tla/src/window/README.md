@@ -108,8 +108,8 @@ code](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 
-The later parts of `window.c`, the `screens_*.c` files, hold the windows
-other parts of the game ask for: a battle's command row, its Psynergy,
+A second object, `screens.c` and its `screens_*.c` parts, holds the windows
+other parts of the game ask for, as The Broken Seal's `screens.c` does: a battle's command row, its Psynergy,
 Djinn, item and summon menus, the preview of what setting a Djinni changes,
 the target cursor, the choice of a reserve member for a party slot, the
 party status panel, the Status screen, the name entry screen, the link

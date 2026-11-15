@@ -112,7 +112,7 @@ void WindowSprite_PrepareForRedraw(struct Window *window);
 /// frame that took two VBlanks or more.
 s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  // DEAD: the ROM reads the held keys here once and never uses the value.
+  // DEAD: the held keys are read here and never used; the ROM keeps the load.
   u32 keys = gInput.held;
   s32 glyphsLeft = gMessageSpeed_Steps[TEXT_SPEED];
   s32 frameVBlanks;
@@ -241,7 +241,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->x = channel->startX;
         channel->y = 0;
         channel->line = 0;
-        channel->colour = 15;
+        channel->colour = TEXT_COLOR_WHITE;
         channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);
@@ -298,7 +298,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_COLORS_RESET:
-        channel->colour = 15;
+        channel->colour = TEXT_COLOR_WHITE;
         channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);

@@ -16,7 +16,7 @@ struct MenuCursor {
   s16 targetY;
   s8 active;
   s8 kind;
-  u8 unk00e[2];
+  u8 padding[2]; ///< to the struct's word size
 };
 
 #endif

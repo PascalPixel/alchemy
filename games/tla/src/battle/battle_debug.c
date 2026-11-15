@@ -18,10 +18,11 @@ UNUSED void DebugBattle_RunForever(void) {
     Battle_Run(0);
 }
 
-/// After the scripted battles of enemy groups 74 and 75, snapshots the five
-/// units of gScriptedBattle_Units that fought (Felix, Piers and Jenna, and
-/// enemies 128 and 129) for ScriptedBattle_RestoreUnits to bring back when
-/// groups 75 and 76 begin.
+/// After the first two parts of Karst and Agatio's battle
+/// (FORMATION_KARST_AND_AGATIO_A and _B), snapshots the five units of
+/// gScriptedBattle_Units that fought (Felix, Piers and Jenna, and the first two
+/// enemies) for ScriptedBattle_RestoreUnits to bring back as the next part
+/// begins.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
@@ -30,7 +31,7 @@ void ScriptedBattle_SaveUnits(void) {
   struct SnapshotCopy *copies = Data_0200ff6c;
 
   for (; i <= 4; i++, copies++) {
-    struct SnapshotUnit *unit = Unit_Get(ids[i]);
+    struct Unit *unit = Unit_Get(ids[i]);
 
     snap->listed[i] = 0;
     if (BattleUnit_IsListed(ids[i])) {
@@ -45,7 +46,7 @@ void ScriptedBattle_SaveUnits(void) {
 
           /* FAKEMATCH(temporary): the PP value held in a local while pv is
            * built. */
-          pp = unit->unk3a;
+          pp = (u16)unit->pp;
           base = Data_0200ffec;
           // The address as an integer sum, i * 4 first: &base[i] puts the
           // base first in the add.
@@ -58,33 +59,33 @@ void ScriptedBattle_SaveUnits(void) {
       }
       if (i <= 2) {
         for (j = 0; j < 4; j++)
-          snap->tags[i][j] = unit->tags[j];
+          snap->summonBoosts[i][j] = unit->summonBoost[j];
       }
-      copies->bytes[0] = unit->snapshot[0];
-      copies->bytes[1] = unit->snapshot[1];
-      copies->bytes[2] = unit->snapshot[2];
-      copies->bytes[3] = unit->snapshot[3];
-      copies->bytes[4] = unit->snapshot[4];
-      copies->bytes[5] = unit->snapshot[5];
-      copies->bytes[6] = unit->snapshot[6];
-      copies->bytes[7] = unit->snapshot[7];
-      copies->bytes[8] = unit->snapshot[8];
-      copies->bytes[9] = unit->snapshot[9];
-      copies->bytes[10] = unit->snapshot[10];
-      copies->bytes[11] = unit->snapshot[11];
-      copies->bytes[12] = unit->snapshot[12];
-      copies->bytes[13] = unit->snapshot[13];
-      copies->bytes[14] = unit->snapshot[14];
-      copies->bytes[15] = unit->snapshot[15];
-      copies->bytes[16] = unit->snapshot[16];
-      copies->bytes[17] = unit->snapshot[17];
-      copies->bytes[18] = unit->snapshot[18];
-      copies->bytes[19] = unit->snapshot[19];
-      copies->bytes[20] = unit->snapshot[20];
-      copies->bytes[21] = unit->snapshot[21];
-      copies->bytes[22] = unit->snapshot[22];
-      copies->bytes[23] = unit->snapshot[23];
-      copies->bytes[24] = unit->snapshot[24];
+      copies->curse = unit->curse;
+      copies->poison = unit->poison;
+      copies->attackTurns = unit->attackTurns;
+      copies->attackStage = unit->attackStage;
+      copies->defenseTurns = unit->defenseTurns;
+      copies->defenseStage = unit->defenseStage;
+      copies->resistanceTurns = unit->resistanceTurns;
+      copies->resistanceStage = unit->resistanceStage;
+      copies->delusion = unit->delusion;
+      copies->confusion = unit->confusion;
+      copies->charm = unit->charm;
+      copies->stun = unit->stun;
+      copies->sleep = unit->sleep;
+      copies->psySeal = unit->psySeal;
+      copies->regenerate = unit->regenerate;
+      copies->reflect = unit->reflect;
+      copies->haunt = unit->haunt;
+      copies->grimReaper = unit->grimReaper;
+      copies->equipBonus[0] = unit->equipBonus[0];
+      copies->equipBonus[1] = unit->equipBonus[1];
+      copies->ready = unit->ready;
+      copies->immobile = unit->immobile;
+      copies->agilityTurns = unit->agilityTurns;
+      copies->agilityStage = unit->agilityStage;
+      copies->challenge = unit->challenge;
     }
   }
 }
@@ -100,41 +101,41 @@ void ScriptedBattle_RestoreUnits(void) {
   struct SnapshotCopy *copies = Data_0200ff6c;
 
   for (i = 0; i <= 4; i++, copies++) {
-    struct SnapshotUnit *unit = Unit_Get(gScriptedBattle_Units[i]);
+    struct Unit *unit = Unit_Get(gScriptedBattle_Units[i]);
 
     if (BattleUnit_IsListed(gScriptedBattle_Units[i]) && snap->listed[i] != 0) {
       if (i <= 2) {
         for (j = 0; j < 4; j++)
-          unit->tags[j] = snap->tags[i][j];
+          unit->summonBoost[j] = snap->summonBoosts[i][j];
       }
-      unit->snapshot[0] = copies->bytes[0];
-      unit->snapshot[1] = copies->bytes[1];
-      unit->snapshot[2] = copies->bytes[2];
-      unit->snapshot[3] = copies->bytes[3];
-      unit->snapshot[4] = copies->bytes[4];
-      unit->snapshot[5] = copies->bytes[5];
-      unit->snapshot[6] = copies->bytes[6];
-      unit->snapshot[7] = copies->bytes[7];
-      unit->snapshot[8] = copies->bytes[8];
-      unit->snapshot[9] = copies->bytes[9];
-      unit->snapshot[10] = copies->bytes[10];
-      unit->snapshot[11] = copies->bytes[11];
-      unit->snapshot[12] = copies->bytes[12];
-      unit->snapshot[13] = copies->bytes[13];
-      unit->snapshot[14] = copies->bytes[14];
-      unit->snapshot[15] = copies->bytes[15];
-      unit->snapshot[16] = copies->bytes[16];
-      unit->snapshot[17] = copies->bytes[17];
-      unit->snapshot[18] = copies->bytes[18];
-      unit->snapshot[19] = copies->bytes[19];
-      unit->snapshot[20] = copies->bytes[20];
-      unit->snapshot[21] = copies->bytes[21];
-      unit->snapshot[22] = copies->bytes[22];
-      unit->snapshot[23] = copies->bytes[23];
-      unit->snapshot[24] = copies->bytes[24];
+      unit->curse = copies->curse;
+      unit->poison = copies->poison;
+      unit->attackTurns = copies->attackTurns;
+      unit->attackStage = copies->attackStage;
+      unit->defenseTurns = copies->defenseTurns;
+      unit->defenseStage = copies->defenseStage;
+      unit->resistanceTurns = copies->resistanceTurns;
+      unit->resistanceStage = copies->resistanceStage;
+      unit->delusion = copies->delusion;
+      unit->confusion = copies->confusion;
+      unit->charm = copies->charm;
+      unit->stun = copies->stun;
+      unit->sleep = copies->sleep;
+      unit->psySeal = copies->psySeal;
+      unit->regenerate = copies->regenerate;
+      unit->reflect = copies->reflect;
+      unit->haunt = copies->haunt;
+      unit->grimReaper = copies->grimReaper;
+      unit->equipBonus[0] = copies->equipBonus[0];
+      unit->equipBonus[1] = copies->equipBonus[1];
+      unit->ready = copies->ready;
+      unit->immobile = copies->immobile;
+      unit->agilityTurns = copies->agilityTurns;
+      unit->agilityStage = copies->agilityStage;
+      unit->challenge = copies->challenge;
       if (i > 2) {
-        Unit_SetHpFar((struct Unit *)unit, snap->vitals[i].hp);
-        Unit_SetPpFar((struct Unit *)unit, Data_0200ff58.vitals[i].pp);
+        Unit_SetHpFar(unit, snap->vitals[i].hp);
+        Unit_SetPpFar(unit, Data_0200ff58.vitals[i].pp);
       }
     }
   }
@@ -160,9 +161,9 @@ s32 DebugParameterSet_Load(s32 preset) {
   Party_RemoveMemberFar(1);
   Party_RemoveMemberFar(2);
   Party_RemoveMemberFar(3);
-  Party_RemoveMemberFar(5);
-  Party_RemoveMemberFar(4);
-  Party_RemoveMemberFar(6);
+  Party_RemoveMemberFar(JENNA);
+  Party_RemoveMemberFar(FELIX);
+  Party_RemoveMemberFar(SHEBA);
   Party_RemoveMemberFar(7);
   Djinn_GetRecoveryTableFar(0)->list.count = done;
 

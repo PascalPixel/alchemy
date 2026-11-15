@@ -125,7 +125,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   // The night's fades take 60 frames each, a window closing round the leader
   // as The Broken Seal's.
   field = Ram_HeapSlots->fieldWork;
-  field->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  field->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   field->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();

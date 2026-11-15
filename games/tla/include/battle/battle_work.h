@@ -36,15 +36,15 @@ struct BattlePlaybackWork {
   s32 eventIndex; ///< the next queued event to play
   s32 timer;      ///< frames to wait
   struct AdvanceArrowSprite arrow; ///< the advance arrow
-  s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
-  s32 unitId;        ///< the unit of the hit or defeat being played
-  s16 pendingCue;    ///< hit sound, played on the next hit
-  s16 unk16a;        ///< while nonzero, a resumed phase keeps pendingCue
-  s32 flags;         ///< cleared when playback starts
+  s32 arrowResource;    ///< the arrow's resource entry; -1 until it is shown
+  s32 unitId;           ///< the unit of the hit or defeat being played
+  s16 pendingSound;     ///< hit sound (an SE_ id), played on the next hit
+  s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
+  s32 flags;            ///< cleared when playback starts
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingCue) == 0x168);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 0x168);
 
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
@@ -77,11 +77,11 @@ struct BattleWork {
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
   // XXX: The Broken Seal's enemyKinds (u16[6]: the kinds of enemy, for the
   // letters that tell two of a kind apart), which BattleEnemy_RecordDefeat
-  // reads so, as does BattleEnemy_ClaimNameLetter through its
-  // SummonChargeState view; declared so, or as a union with these bytes,
-  // BattleParty_ChooseReserve allocates its registers otherwise (r8 for the
-  // reserve list in place of a stack slot).
-  u8 unk010[12];
+  // reads so, as do Battle_Run and the name letters through struct
+  // BattleKindsView (battle_internal.h); declared so, or as a union with these
+  // bytes, BattleParty_ChooseReserve allocates its registers otherwise (r8 for
+  // the reserve list in place of a stack slot).
+  u8 enemyKindBytes[12];
   u32 nameLetterMasks[6];    ///< for each kind, the name letters already given
   s8 lastNameLetter[6];      ///< for each kind, the last name letter given
   u8 unusedAfterChannels[2]; ///< no code names it
@@ -114,7 +114,7 @@ struct BattleWork {
   struct BattleObject slots[14];
   struct BattleActionRecord
       actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
-  u8 unk42c[0x124];                    ///< not named by TLA code
+  u8 unusedAfterActions[0x124];        ///< no code names it
   struct BattleSpoils spoils;          ///< what the battle has won so far
   u16 palette[128]; ///< the backdrop's colours, before scaling
   s32 brightness;   ///< the backdrop's brightness, 16.16, 0x10000 full

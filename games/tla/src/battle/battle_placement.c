@@ -42,7 +42,7 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   actor->fading = 0;
   facingAngle = ArcTan2(0, 0) + TRIG_TURN / 2;
   object->angle = facingAngle;
-  object->unk59 = 3;
+  object->collisionFlags = 3;
   object->motionFlags = 2;
   actor->visible = 1;
   Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
@@ -434,7 +434,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // size.
   facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
   object->angle = facingAngle;
-  object->unk59 = 3;
+  object->collisionFlags = 3;
   object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
     object->scaleX = Q16_ONE * 13 / 10;

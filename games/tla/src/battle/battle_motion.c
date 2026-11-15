@@ -28,7 +28,7 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   zero = 0;
   object->acceleration = px(2);
   object->speedLimit = px(8);
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->velocityY = zero;
   object->verticalMotionPhase = zero;
   object->autoFaceMotion = zero;
@@ -52,7 +52,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->acceleration = px(2);
   object->speedLimit = px(8);
   object->velocityY = px(5);
-  object->verticalMotionStrength = 0x7851;
+  object->verticalMotionStrength = px(47) / 100;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -76,7 +76,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->acceleration = px(2);
   start->speedLimit = px(8);
   start->velocityY = px(4);
-  start->gravity = 0xab85;
+  start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, z);
@@ -89,7 +89,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *slot) {
 
   object->acceleration = px(2);
   object->speedLimit = px(8);
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
@@ -107,7 +107,7 @@ void BattleMotion_HopBack(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = px(4);
   object->velocityY = px(3);
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -127,7 +127,7 @@ void BattleMotion_LeapBack(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = px(4);
   object->velocityY = px(4);
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -136,7 +136,8 @@ void BattleMotion_LeapBack(s32 objectId) {
     s32 anchor = slot->anchorX;
 
     mul = Iwram_MulQ16;
-    Actor_SetMoveTargetFar(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
+    Actor_SetMoveTargetFar(object, mul(anchor, Q16_ONE * 13 / 10), 0,
+                           slot->anchorZ);
   }
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
@@ -171,7 +172,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
     x = (scale * gBattleKnockback_DistancePercent[variant]) / 100;
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
@@ -211,7 +212,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->autoFaceMotion = 1;
   Actor_StartIdleFar(object);
   if (dist != 0)
@@ -286,7 +287,7 @@ void BattleMotion_PlayHitFlash(s32 slot) {
   struct SpriteAnimation *effect;
 
   if (battleObject->object != NULL) {
-    if ((battleObject->object->recordStorageKind & 0xf) == 1) {
+    if ((battleObject->object->recordStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
       effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(
           battleObject->object->records, SPRITE_STAR_BURST);
       if (effect != NULL) {

@@ -379,8 +379,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   struct HeapSlots *slots;
 
 #if TLA_PATCH_2 && !TLA_PATCH_3
-  // DEAD: German alone clears afterItem here; the first code always clears
-  // it before it is read.
+  // DEAD: German alone clears afterItem here, and the first code always
+  // clears it before it is read; the ROM keeps the store.
   afterItem = 0;
 #endif
   if (script == -1) {
@@ -750,7 +750,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             c = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[c & 3];
 #else
-            // DEAD: the item argument is read and dropped.
+            // DEAD: the item argument is read and dropped; the ROM keeps the
+            // call.
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
 #if LANGUAGE == LANGUAGE_FRENCH
             word = (s8 *)gLocalizedWord_ItemPronoun;

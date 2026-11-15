@@ -63,8 +63,8 @@ void SelectionMenu_Create(void) {
   // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
   screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
-  screen->records[0].kind = 0;
-  screen->records[1].kind = 0;
+  screen->records[0].kind = FALSE;
+  screen->records[1].kind = FALSE;
   screen->records[0].y = 0;
   screen->records[1].y = 0;
   // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
@@ -728,11 +728,11 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
     screen->cursorIndex--;
     screen->records[1].base = ARROW_SCROLL_FRAMES;
     screen->top++;
-    SelectionMenu_Scroll(screen, 1);
+    SelectionMenu_Scroll(screen, TRUE);
     if (screen->top + screen->cursorIndex + 2 == screen->count) {
-      screen->records[1].kind = 0;
+      screen->records[1].kind = FALSE;
     }
-    screen->records[0].kind = 1;
+    screen->records[0].kind = TRUE;
   }
   screen->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(screen, screen->cursorIndex);
@@ -753,9 +753,9 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   if (screen->cursorIndex == 1 && screen->top != 0) {
     screen->records[0].base = ARROW_SCROLL_FRAMES;
     screen->top--;
-    SelectionMenu_Scroll(screen, 0);
+    SelectionMenu_Scroll(screen, FALSE);
     if (screen->top == 0) {
-      screen->records[0].kind = 0;
+      screen->records[0].kind = FALSE;
     }
     screen->records[1].kind = 1;
   } else {
@@ -784,7 +784,7 @@ void SelectionMenu_StepRight(struct SelectionScreen *state) {
     end = state->top + state->cursorIndex;
     if (end == state->count) {
       node = state->head;
-      state->records[0].kind = 0;
+      state->records[0].kind = FALSE;
       while (node->next != NULL) {
         node->targetX = state->baseX;
         node->targetY = state->baseY;
@@ -817,16 +817,16 @@ void SelectionMenu_StepRight(struct SelectionScreen *state) {
         node = node->next;
         y += SELECTION_ICON_SPACING;
       }
-      state->records[1].kind = 1;
+      state->records[1].kind = TRUE;
     } else if (state->cursorIndex == SELECTION_LAST_PLACE &&
                end + 1 < state->count) {
       state->cursorIndex--;
       state->records[1].base = ARROW_SCROLL_FRAMES;
       state->top++;
-      SelectionMenu_Scroll(state, 1);
+      SelectionMenu_Scroll(state, TRUE);
       if (state->top + state->cursorIndex + 2 == state->count)
-        state->records[1].kind = 0;
-      state->records[0].kind = 1;
+        state->records[1].kind = FALSE;
+      state->records[0].kind = TRUE;
     }
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
@@ -853,10 +853,10 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
       if (state->cursorIndex == 1 && state->top != 0) {
         state->records[0].base = ARROW_SCROLL_FRAMES;
         state->top--;
-        SelectionMenu_Scroll(state, 0);
+        SelectionMenu_Scroll(state, FALSE);
         if (state->top == 0)
-          state->records[0].kind = 0;
-        state->records[1].kind = 1;
+          state->records[0].kind = FALSE;
+        state->records[1].kind = TRUE;
       } else {
         state->cursorIndex--;
       }
@@ -893,7 +893,7 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
         node = node->next;
         i += SELECTION_ICON_SPACING;
       }
-      state->records[0].kind = 1;
+      state->records[0].kind = TRUE;
     }
   } else if (state->cursorIndex != 0) {
     state->cursorIndex--;
@@ -1332,7 +1332,7 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  Oam_AddSpriteAtDepth(sprite, 252);
+  Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 
 /// Frees an arrow sprite's tile slot.

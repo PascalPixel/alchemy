@@ -322,10 +322,10 @@ void DebugWarp_KaoruSpecial4(void) {
 
 /// Preset 6, "Kaoru Special3": seven story flags set, saving barred. To Prox.
 void DebugWarp_KaoruSpecial3(void) {
-  GameFlag_Set(0x824);
+  GameFlag_Set(FLAG_TRANSFERRED_VISITED_SICK_DORA);
   GameFlag_Set(FLAG_CANNOT_SAVE_HERE);
   GameFlag_Set(0x9c5);
-  GameFlag_Set(0xa3d);
+  GameFlag_Set(FLAG_MARS_BEACON_LIT);
   GameFlag_Set(0x9c0);
   GameFlag_Set(0x9c1);
   GameFlag_Set(0x9c2);

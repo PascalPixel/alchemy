@@ -29,7 +29,7 @@ s32 Forge_Run(s32 actorId) {
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   icon =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
-  icon->sentinel = 255;
+  icon->sentinel = OAM_DEPTH_FRONT;
   icon->motion = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -137,14 +137,14 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   cursorAnchor->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
-  shop->mode = 1;
+  shop->cursorFrames = 1;
   Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(partyWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
@@ -165,7 +165,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
       itemSlot = ItemPicker_SelectItem(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-        shop->mode = 12;
+        shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
         redraw = 2;
         continue;
       }
@@ -241,7 +241,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   slot = 0;
   while (1) {
     if (redraw != 0) {
@@ -254,7 +254,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       column = slot % SHOP_INVENTORY_COLUMNS;
       row = slot / SHOP_INVENTORY_COLUMNS;
       MenuCursor_Place(window, column * 16, row * 16 + 8);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       ItemPicker_DrawItem(priceWindow, unitId, slot);
       Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
     }
@@ -425,7 +425,7 @@ void ItemIconGrid_Draw(void) {
 
     for (i = INVENTORY_SLOTS - 1; i >= 0; i--) {
       if (*iconSlot++ != ICON_NONE)
-        Oam_AddSpriteAtDepth(sprite, 240);
+        Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
       sprite++;
     }
   }

@@ -14,7 +14,7 @@
 #include "window/message_speed.h"
 #include "edition.h"
 #include "graphics/oam.h"
-#include "graphics/output.h"
+#include "graphics/render_input.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
 
@@ -108,6 +108,14 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255
+
+/// WindowSprite.kind: what a window sprite owns besides itself, which
+/// WindowSprite_Release frees.
+enum WindowSpriteKind {
+  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
+  WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
+};
 
 /// How a window sprite moves (WindowSprite.motion); 0 is a free one.
 enum {
@@ -394,13 +402,11 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
 s32 BattleParty_ChooseReserve(s32 slot);
 
-void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
+s32 BattleDjinn_CountStandbyFar(u32 unitId, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
 s32 Djinn_GetGiveTutorialMessage(void);
-
-void WindowSprite_PrepareForRedraw(struct Window *);
 
 extern s16 gTitleBattleOptionEnabled;
 extern s16 gTitleUpdateOptionEnabled;
@@ -409,7 +415,7 @@ s32 Save_ScanFileSummaries(void);
 
 extern s32 gKeyState;
 
-void Text_UseExtraTiles(s32 alt);
+void Text_UseExtraTiles(s32 allowAlternateTiles);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
@@ -475,6 +481,9 @@ enum WindowBattleMode {
   /// In battle, while BattleMessage_Open decodes a battle message: the
   /// Japanese decoder then sets names off with spaces and style codes.
   WINDOW_BATTLE_MESSAGE = 2,
+  /// A flag with WINDOW_BATTLE: glyphs are drawn blended (semi-transparent),
+  /// while the Djinn tutorial's line shows over the command row.
+  WINDOW_GLYPHS_BLENDED = 4,
 };
 
 /// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
@@ -509,6 +518,8 @@ enum PauseMenuEntry {
 };
 
 #define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+/// "Window brightness" takes 0 to 14.
+#define WINDOW_BRIGHTNESS_COUNT 15
 
 /// The brightness that adds nothing to the hue's colour.
 #define WINDOW_BRIGHTNESS_NEUTRAL 7
@@ -519,5 +530,9 @@ enum PauseMenuEntry {
 /// How many levels HIGHLIGHT_PALETTE lightens each channel of
 /// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
 #define HIGHLIGHT_LIGHTEN_STEPS 9
+
+/// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
+/// above the window options, as ☀️'s.
+#define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
 
 #endif

@@ -166,7 +166,11 @@ void Window_CloseAll(void) {
   }
 }
 
-/// Loads frame `offset` of the flash border picture
+/// The flash border's frames: eight tiles each, shown in tiles 8 to 15.
+#define FLASH_FRAME_BYTES (8 * TILE_SIZE_4BPP)
+#define FLASH_FRAME_TILES (BG_CHAR_BLOCK(0) + 8 * TILE_SIZE_4BPP)
+
+/// Loads the flash border frame `offset` bytes into its picture
 /// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
 /// rectangle with it.
 void Window_ShowFlashFrame(struct Window **window, s32 offset) {
@@ -178,7 +182,8 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   s32 width = rect->width;
   s32 height = rect->height;
 
-  Dma_Set(source, (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(source, (void *)FLASH_FRAME_TILES,
+          DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4), REG_DMA3);
   Window_DrawFlashBorder(x, y, width, height);
 }
 
@@ -189,15 +194,15 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
 void Window_StepSwellEffect(struct UiChannelSlot *window) {
   if (window->work->animation == WINDOW_ANIMATION_SWELL) {
     if (window->countdown == 10)
-      Window_ShowFlashFrame(&window->work, 0x300);
+      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
     else if (window->countdown == 9)
-      Window_ShowFlashFrame(&window->work, 0x200);
+      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
     else if (window->countdown == 8)
-      Window_ShowFlashFrame(&window->work, 0x100);
+      Window_ShowFlashFrame(&window->work, 1 * FLASH_FRAME_BYTES);
     else if (window->countdown == 6)
-      Window_ShowFlashFrame(&window->work, 0x200);
+      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
     else if (window->countdown == 4)
-      Window_ShowFlashFrame(&window->work, 0x300);
+      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
     if (window->countdown == 2) {
       struct Window *rect = window->work;
 
@@ -206,7 +211,8 @@ void Window_StepSwellEffect(struct UiChannelSlot *window) {
     window->countdown--;
     if (window->countdown == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
-              (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
+              (void *)FLASH_FRAME_TILES, DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4),
+              REG_DMA3);
       window->work->animation = 0;
     }
   }
@@ -311,28 +317,20 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   return 0;
 }
 
-/// A window as Message_CloseFinishedWindows reads it: its state and flags, and
-/// its zoom stage and duration read as one word, nonzero while a zoom runs.
-struct UiWindowState {
-  u8 unk00[0x14];
-  u16 state;
-  u16 flags;
-  s32 pendingValue;
-};
-
 /// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 slotIndex;
   struct UiChannelSlot *slot;
-  struct UiWindowState *work;
+  struct Window *work;
 
   slot = ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   slotIndex = 0;
   do {
-    work = (struct UiWindowState *)slot->work;
-    if (work != NULL && work->pendingValue == 0 && work->flags != 0 &&
+    work = slot->work;
+    // The zoom's stage and duration are read as one word: both zero.
+    if (work != NULL && *(s32 *)&work->zoomStage == 0 && work->flags != 0 &&
         work->state != 0) {
-      Window_Close((struct Window *)work, work->flags & 2);
+      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
     }
     slotIndex++;
     slot++;
@@ -408,6 +406,10 @@ void Message_DecodeAppend(s32 message) {
   Message_Decode(message, 1);
 }
 
+/// The story crawl's canvas, one byte a pixel: a line of 24 tiles of the
+/// credits' tile ring.
+#define CRAWL_CANVAS_WIDTH 192
+
 // The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen of
 // the European fonts' fifteen.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -431,7 +433,7 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
       bits <<= 1;
       p++;
     }
-    dst += 192;
+    dst += CRAWL_CANVAS_WIDTH;
   }
 }
 
@@ -465,13 +467,14 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
     width = KANJI_WIDTH;
     rows = (const u16 *)(gFont_KanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
   }
-  canvas += x + row * 192;
-  Text_PlotGlyphRows((u16 *)rows, canvas + 3 * 192 + 1, 1);
+  canvas += x + row * CRAWL_CANVAS_WIDTH;
+  Text_PlotGlyphRows((u16 *)rows, canvas + 3 * CRAWL_CANVAS_WIDTH + 1, 1);
   if (mark != NULL)
-    Text_PlotGlyphRows((u16 *)mark, canvas + 192 + 8, 1);
-  Text_PlotGlyphRows((u16 *)rows, canvas + 2 * 192, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + CRAWL_CANVAS_WIDTH + 8, 1);
+  Text_PlotGlyphRows((u16 *)rows, canvas + 2 * CRAWL_CANVAS_WIDTH,
+                     TEXT_COLOR_WHITE);
   if (mark != NULL) {
-    Text_PlotGlyphRows((u16 *)mark, canvas + 7, 15);
+    Text_PlotGlyphRows((u16 *)mark, canvas + 7, TEXT_COLOR_WHITE);
     width++;
   }
   return width;
@@ -480,13 +483,14 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
 s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
   u16 *glyph = (u16 *)((u8 *)gFont_Glyphs + (((ch & 0xff) - 32) << 5));
   s32 width = *glyph;
-  u8 *dst = canvas + (x + row * 192);
+  u8 *dst = canvas + (x + row * CRAWL_CANVAS_WIDTH);
   u8 *rows;
 
   glyph++;
-  rows = dst + 3 * 192 + 1;
+  rows = dst + 3 * CRAWL_CANVAS_WIDTH + 1;
   Text_PlotGlyphRows(glyph, rows, 1);
-  Text_PlotGlyphRows(glyph, rows = dst + 2 * 192, 15);
+  Text_PlotGlyphRows(glyph, rows = dst + 2 * CRAWL_CANVAS_WIDTH,
+                     TEXT_COLOR_WHITE);
   return width;
 }
 #endif
@@ -525,38 +529,38 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
     return 1;
 #endif
   }
-  x = (192 - width) / 2;
+  x = (CRAWL_CANVAS_WIDTH - width) / 2;
   code = *text++;
   while (code != 0) {
     if (code <= 30) {
       switch (code) {
-      case 8:
+      case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
-      case 9:
+      case TEXT_OUTLINE:
         work->outline = *text;
         text++;
         break;
-      case 10:
+      case TEXT_LINE_SPACING:
         work->lineSpacing = *text;
         text++;
         break;
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
       skip:
         text++;
         break;
-      case 7:
+      case TEXT_COLORS_RESET:
         Text_ResetStyle();
         break;
-      case 3:
+      case TEXT_NEWLINE:
         x = 0;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case 15:
+      case TEXT_WINDOW_STATE:
       case 28:
         text++;
         goto skip;
@@ -693,17 +697,6 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-/* VIEW(window): routine Portrait_Create as s32 Portrait_Create(s32 id, s32
- * kind, s32 slot, struct Window *window, s32 x, s32 y); window/screens has
- * struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
- * s32 arg3, s32 arg4, s32 arg5) {; tried as the definition's struct
- * WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side, s32
- * arg3, s32 arg4, s32 arg5), it does not compile in tla-ja (make modern):
- * games/tla/include/system/task.h:53:23: note: expected 'TaskFunc' {aka 'void
- * (*)(void)'} but argument is of type 'int'. */
-s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
-                            s32 x, s32 y) __asm__("Portrait_Create");
-#define Portrait_Create Portrait_Create__window
 
 /// Marks both portrait slots free (resource 999). Only the window system's
 /// setup calls it.
@@ -712,7 +705,7 @@ void Portrait_ClearSlots(void) {
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = 999;
+    work->resourceIds[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }
@@ -721,8 +714,6 @@ extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
-                            s32 x, s32 y) __asm__("Portrait_Create");
 
 /// Returns the portrait of a character (ids below 20) or another speaker's
 /// sprite (128 and up for those), or -1 when it has none.
@@ -730,30 +721,31 @@ s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;
 
+  // The party members' small sprites speak as the party members.
   switch (value) {
-  case 47:
-    value = 4;
+  case SPRITE_JENNA_SMALL - 1: // Felix's small sprite
+    value = FELIX;
     break;
-  case 49:
-    value = 6;
+  case SPRITE_SHEBA_SMALL:
+    value = SHEBA;
     break;
-  case 48:
-    value = 5;
+  case SPRITE_JENNA_SMALL:
+    value = JENNA;
     break;
-  case 50:
-    value = 7;
+  case SPRITE_PIERS_SMALL:
+    value = PIERS;
     break;
-  case 51:
-    value = 0;
+  case SPRITE_ISAAC_SMALL:
+    value = ISAAC;
     break;
-  case 52:
-    value = 1;
+  case SPRITE_GARET_SMALL:
+    value = GARET;
     break;
-  case 53:
-    value = 2;
+  case SPRITE_IVAN_SMALL:
+    value = IVAN;
     break;
-  case 54:
-    value = 3;
+  case SPRITE_MIA_SMALL:
+    value = MIA;
     break;
   }
   if (value < 16) {
@@ -843,7 +835,7 @@ void Portrait_CloseWindow(s32 id) {
 
   for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;
-    if ((u8)entity->kind == 2 && (u8)entity->index == id) {
+    if ((u8)entity->kind == WINDOW_SPRITE_PORTRAIT && (u8)entity->index == id) {
       Window_Close(work, 2);
       return;
     }

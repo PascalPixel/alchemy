@@ -145,7 +145,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
   for (;;) {
     /* LEFTOVER(template): cur holds &cursorStorage, as BattlePsynergyMenu_Run's
-     * iconSprite holds its cursor. */
+     * iconSprite holds its cursor; as &cursorStorage at each use, 281 of 984
+     * instructions differ in tla-en. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

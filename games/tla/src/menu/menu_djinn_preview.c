@@ -36,11 +36,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 row;
 
   menu = Ram_HeapSlots->menuWork;
-  confirmationChoice = 0;
+  confirmationChoice = YES;
   result = 0;
   redraw = 1;
   frame = 0;
-  page = 2;
+  page = DJINN_COMPARE_PAGE_BOTH;
   help = menu->helpWindow;
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[0] = 0;
@@ -65,8 +65,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   pageCounts[1] = 1;
   if (mode <= DJINN_COMPARE_GIVE) {
     u16 *diffWork;
-    u8 *original;
-    u8 *unit;
+    struct Unit *original;
+    struct Unit *unit;
     s32 memberId;
     s32 firstElement;
     s32 firstIndex;
@@ -79,7 +79,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 size;
 
     diffWork = Heap_AllocEwram(96);
-    size = 332;
+    size = sizeof(struct Unit);
     original = Heap_AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
@@ -99,9 +99,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         Djinn_SetFar(memberId, secondElement, secondIndex);
     }
     Unit_CalculateFar(memberId);
-    pageCounts[0] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
+    pageCounts[0] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWordsEntry(unit, original, size);
 
     memberId = menu->shownMember[1];
@@ -113,16 +112,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (firstWasSet != 0)
       Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[1] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
+    pageCounts[1] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWordsEntry(unit, original, size);
     Heap_Release(original);
     Heap_Release(diffWork);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
-    u8 *original;
-    u8 *unit;
+    struct Unit *original;
+    struct Unit *unit;
     s32 memberId;
     s32 firstElement;
     s32 firstIndex;
@@ -131,21 +129,20 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 gainedCount;
 
     diffWork = Heap_AllocEwram(96);
-    original = Heap_AllocEwram(332);
+    original = Heap_AllocEwram(sizeof(struct Unit));
     memberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     applySecond = (mode == DJINN_COMPARE_SET);
     unit = Unit_Get(memberId);
-    Iwram_CopyWordsEntry(original, unit, 332);
+    Iwram_CopyWordsEntry(original, unit, sizeof(struct Unit));
     Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (applySecond != 0)
       Djinn_SetFar(memberId, firstElement, firstIndex);
     Unit_CalculateFar(memberId);
-    pageCounts[0] =
-        PsynergyList_Diff((u16 *)(original + 88), (u16 *)(unit + 88), diffWork,
-                          &gainedCount, &lostCount);
-    Iwram_CopyWordsEntry(unit, original, 332);
+    pageCounts[0] = PsynergyList_Diff(original->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
+    Iwram_CopyWordsEntry(unit, original, sizeof(struct Unit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
     Heap_Release(original);
@@ -200,7 +197,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     backdrop = menu->backdrop;
     pressed = gInput.pressed;
     repeat = gInput.repeat;
-    if (backdrop->tutorialStep != 0) {
+    if (backdrop->tutorialStep != DJINN_TUTORIAL_OFF) {
       u8 *saved;
       s32 size;
 
@@ -210,9 +207,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       repeat = 0;
       backdrop->tutorialTimer++;
       switch (backdrop->tutorialStep) {
-      case 5:
-      case 12:
-      case 23:
+      case DJINN_TUTORIAL_GIVE_PREVIEW:
+      case DJINN_TUTORIAL_SET_PREVIEW:
+      case DJINN_TUTORIAL_POWERS_PREVIEW:
         if (backdrop->tutorialTimer == 100) {
           repeat = KEY_A;
           pressed = KEY_A;
@@ -220,13 +217,14 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep++;
         }
         break;
-      case 10:
+      case DJINN_TUTORIAL_SET_CHANGES:
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
-          window =
-              Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3, 8, 0, 1);
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
+                                             DJINN_TUTORIAL_LINE_SET_CHANGES,
+                                         8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_SHOWN;
@@ -241,20 +239,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
-          backdrop->tutorialStep = 11;
+          backdrop->tutorialStep = DJINN_TUTORIAL_CLASS_PSYNERGY;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_HIDDEN;
           } while (0);
         }
         break;
-      case 11:
+      case DJINN_TUTORIAL_CLASS_PSYNERGY:
         if (backdrop->tutorialTimer == 60) {
           s32 window;
 
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
-          window =
-              Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2, 8, 0, 1);
+          window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
+                                             DJINN_TUTORIAL_LINE_CLASS_PSYNERGY,
+                                         8, 0, 1);
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_SHOWN;
@@ -270,7 +269,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           wait(1);
           redraw = 1;
           backdrop->tutorialTimer = 0;
-          backdrop->tutorialStep = 12;
+          backdrop->tutorialStep = DJINN_TUTORIAL_SET_PREVIEW;
           /* FAKEMATCH(dead): the cursor's store in a once-only block. */
           do {
             menu->cursor->motion = ICON_HIDDEN;
@@ -342,11 +341,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         for (index = 0; index < pageCounts[page]; index++) {
           s32 tile;
 
-          tile = 0xf031 + index;
+          tile = WINDOW_TILE('1') + index;
           if (index > 8)
-            tile = 0xf03f;
+            tile = WINDOW_TILE('?');
           if (index == selectedPages[page])
-            tile -= 0x1000;
+            tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
           Window_SetTilemapEntryFar((s32)list, tile,
                                     list->width - pageCounts[page] + index - 2,
                                     -1, 0);
@@ -392,16 +391,16 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       void *tile;
       u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
-      tile = (void *)0x060052c0;
+      tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
       if ((frame & 4) != 0) {
-        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
       } else {
         Iwram_FillWords(tile, 32, fill);
       }
     }
 
     if ((pressed & KEY_A) != 0) {
-      if (confirmationChoice == 0) {
+      if (confirmationChoice == YES) {
         result = DJINN_RESULT_CONFIRMED;
         break;
       }
@@ -447,7 +446,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
@@ -562,11 +561,11 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     if (counts[side] > 1) {
       window = menu->secondWindow;
       for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
-        tile = 0xf031 + pageIndex;
+        tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 8)
-          tile = 0xf03f;
+          tile = WINDOW_TILE('?');
         if (pageIndex == selected[side])
-          tile -= 0x1000;
+          tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar((s32)window, tile,
                                   window->width - counts[side] + pageIndex - 2,
                                   -1, 0);
@@ -587,9 +586,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       redraw = 0;
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWordsEntry((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM,
+                             gMenu_BackdropBorderTile, 32);
       else
-        Iwram_FillWordsEntry((void *)0x060052c0, 32,
+        Iwram_FillWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM, TILE_SIZE_4BPP,
                              TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {

@@ -11,8 +11,20 @@
 #include "battle/presentation.h"
 #include "system/system.h"
 
+/// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
+/// 256 affine map in screen block 7, 256 colours, priority 2.
+#define BACKGROUND_PLANE_UPPER                                                 \
+  (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
+   BGCNT_CHAR_BASE(2) | BGCNT_PRIORITY(2))
+/// The same map, reading the remaining picture tiles from character block 3.
+#define BACKGROUND_PLANE_LOWER                                                 \
+  (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
+   BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 /// Lines outside the plane read the padded map in this screen block.
 #define BACKGROUND_PADDED_SCREEN 31
+#define BACKGROUND_PLANE_OFF                                                   \
+  (BGCNT_WRAP | BGCNT_SCREEN_BASE(BACKGROUND_PADDED_SCREEN) |                  \
+   BGCNT_256_COLORS | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 /// The screen lines the plane covers, 0 to 135, above the status window.
 #define BACKGROUND_PLANE_LINES 136
 /// The plane's top lines, left off except while commands are chosen.
@@ -44,10 +56,10 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+    Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+    ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       screen->brightness =
                           Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BG_PALETTE_COLORS);
@@ -67,18 +79,16 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
-                        BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
-                            BGCNT_PRIORITY(3),
-                        IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
 
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     struct BattleWork *work;
@@ -86,7 +96,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     palette = work->palette;
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+    Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *work;
@@ -96,7 +106,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)&BG_PLTT_COLOR(6, 0);
+    destination = BATTLE_BG_PALETTE;
 
     for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
       s32 red = RGB_RED(source[i]);
@@ -148,37 +158,33 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   u16 *palette;
 
   RamCode_Load(decode, Model_DecodeCode, Model_DecodeCodeSize);
-  {
-    u32 offset = 0x100;
-    void *vram;
-
-    /* FAKEMATCH(dead): two updates that cancel. */
-    if (session) {
-      offset++;
-      offset--;
-    }
-    vram = (void *)BG_CHAR_BLOCK(2);
-    decode(data + offset, vram);
-  }
+  decode(data + 256, (void *)BG_CHAR_BLOCK(2));
   Heap_Release(decode);
   palette = session->palette;
   Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
-                      session->brightness = 0x10000 - level * 1092, 128);
+    ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
+                      session->brightness =
+                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                      BATTLE_BG_PALETTE_COLORS);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
-    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
+    BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
-  Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
-  if (view->mode == 0)
-    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
+  BattleTransition_BuildTilemap(
+      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+  // BG1's last row is left clear.
+  Iwram_ClearWordsEntry(
+      (void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64),
+      64);
+  if (view->mode == BATTLE_BACKGROUND_NONE)
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
   view->mode = mode;
-  if (mode == 1)
-    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  if (mode == BATTLE_BACKGROUND_FIXED)
+    REG_BG1CNT = BATTLE_BG1CNT;
 }
 
 /// Builds the zoomed background's next page for a zoom of scale about centerX
@@ -190,7 +196,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  s32 horizon;
+  s32 panX;
   u16 wrap;
   u16 *line;
   struct BattleAffine *affine;
@@ -199,21 +205,23 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   s32 x;
   s32 y;
   u32 scanline;
-  u32 groundEndLine;
+  u32 lowerHalfLine;
 
-  horizon = 0x800;
+  // The sideways pan, 8.8 pixels: 8 when zoomed out, else 104 less three
+  // times the yaw, so the picture turns with the camera.
+  panX = 8 << 8;
   wrap = 0;
   ratio = Q16_ONE;
   if (scale >= ratio) {
     wrap = BGCNT_WRAP;
-    horizon = 0x6800 + -(s16)camera->yaw * 3;
+    panX = (104 << 8) + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
   if ((view->mode == BATTLE_BACKGROUND_FIXED ||
        view->secondMode == BATTLE_BACKGROUND_FIXED) &&
       view->busy == 0)
-    gBgScroll[1].x = horizon >> 8;
+    gBgScroll[1].x = panX >> 8;
   if (view->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
   line = scanlines->lines[scanlines->page ^ 1];
@@ -226,23 +234,23 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pd = step;
   x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
   y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
-  affine->x = ((x + 0x7fff) >> 8) + offsetX + horizon;
-  affine->y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
-  groundEndLine =
-      (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
+  affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
+  affine->y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
+  lowerHalfLine =
+      (Iwram_RatioMulQ14((s16)affine->pd, (64 << 8) - affine->y) >> 16) + 1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
-      *line++ = 0x3f8e;
+      *line++ = BACKGROUND_PLANE_OFF;
   }
-  if (groundEndLine > BACKGROUND_PLANE_LINES)
-    groundEndLine = BACKGROUND_PLANE_LINES;
-  for (; scanline < groundEndLine; scanline++)
-    *line++ = wrap | 0x478a;
+  if (lowerHalfLine > BACKGROUND_PLANE_LINES)
+    lowerHalfLine = BACKGROUND_PLANE_LINES;
+  for (; scanline < lowerHalfLine; scanline++)
+    *line++ = wrap | BACKGROUND_PLANE_UPPER;
   for (; scanline < BACKGROUND_PLANE_LINES; scanline++)
-    *line++ = wrap | 0x478e;
+    *line++ = wrap | BACKGROUND_PLANE_LOWER;
   for (; scanline < DISPLAY_HEIGHT; scanline++)
-    *line++ = 0x3f8e;
+    *line++ = BACKGROUND_PLANE_OFF;
   scanlines->page ^= 1;
 }
 
@@ -251,7 +259,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
@@ -312,7 +320,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   s32 alpha;
   s32 half;
   s32 width;
@@ -332,16 +340,10 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_ApplyPosition(pos);
   Transform_ApplyYaw((s16)scene->yaw);
   Transform_ApplyPitch((s16)scene->pitch);
-  {
-    /* FAKEMATCH(pin): the camera pinned to r1, copied before the bound stores.
-     */
-    register s32 *camera asm("r1") = (s32 *)scene;
-
-    renderBounds[0] = 0;
-    renderBounds[1] = 0;
-    renderBounds[2] = span;
-    Iwram_TransformVectorEntry(renderBounds, camera);
-  }
+  renderBounds[0] = 0;
+  renderBounds[1] = 0;
+  renderBounds[2] = span;
+  Iwram_TransformVector(renderBounds, (s32 *)scene);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
@@ -450,11 +452,13 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #else
 #define DEBUG_VALUE_SELECT 544
 #endif
+/// What R picks, in every release.
+#define DEBUG_VALUE_R 399
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
 /// the battle work's debugValue (by 1, 10 and 100) until A takes it; Select
-/// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
-/// unchanged.
+/// held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value
+/// comes back unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
@@ -482,7 +486,7 @@ s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
   if (gInput.held & KEY_R)
-    value = 399;
+    value = DEBUG_VALUE_R;
   return value;
 }
 
@@ -519,14 +523,14 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   object = slot->object;
   if (object == 0)
     return;
-  switch (object->recordStorageKind & 15) {
-  case 1: {
+  switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  case ACTOR_SPRITE_ONE: {
     record = object->records;
     record->part[0].objectMode = mode;
     record->part[1].objectMode = mode;
     break;
   }
-  case 2: {
+  case ACTOR_SPRITE_GROUP: {
     records = object->records;
     i = 0;
     do {
@@ -804,7 +808,8 @@ void ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      /* FAKEMATCH(dead): an empty once-only block after the age's store. */
+      /* FAKEMATCH(dead): an empty once-only block after the age's store; as
+       * the store alone, 2 of 267 instructions differ in tla-en. */
       do {
       } while (0);
       draw(dest, (u8 *)work + gElementGlow_RingPictures[phase],
@@ -888,7 +893,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     s32 angle;
 
     ring = &work->rings[i];
-    angle = i * 0x5555;
+    angle = i * (TRIG_TURN / 3);
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
     ring->velX = PolarX(angle, 0x200);
@@ -927,13 +932,14 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   /* LEFTOVER(frame): the twin's five-argument BattleEffect_BuildBlitterFar,
    * never taken here: of the 8 bytes the ROM's frame reserves (sub sp, #8),
-   * no instruction addresses sp+0 to sp+3, the call's fifth argument. */
+   * no instruction addresses sp+0 to sp+3, the call's fifth argument; as the
+   * call left out, 10 of 255 instructions differ in tla-en. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
-  Task_Add(ElementGlow_UpdateStarField, 0x480);
-  return Task_Add(ElementGlow_UploadStarField, 0x480);
+  Task_Add(ElementGlow_UpdateStarField, TASK_PASS_VBLANK);
+  return Task_Add(ElementGlow_UploadStarField, TASK_PASS_VBLANK);
 }
 
 /// Ends a star field: clears the tiles in character block 1, releases its
@@ -984,23 +990,24 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                                               DISPCNT_WIN0_ON);
-  IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                                             BGCNT_SCREEN_BASE(7));
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   wait(1);
   Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
-  Io_Write16(0x1088, &REG_WIN0V);
+  Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+        ColorBuffer_Scale(session->palette, BATTLE_BG_PALETTE,
                           *brightness = Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
@@ -1085,7 +1092,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (enemy == 0)
       continue;
     if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
-        !GameFlag_Get(enemyId + 0x608))
+        !GameFlag_Get(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;

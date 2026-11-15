@@ -10,7 +10,8 @@
 // BattleFormation_BuildEnemyList draws a formation's enemies in, and how
 // BattleUnit_Collect stands them in their line. The two random orders stand
 // left to right as drawn; BattleUnit_Collect takes any other value as
-// FORMATION_LAYOUT_CENTERED. Every formation of this game has
+// FORMATION_LAYOUT_CENTERED. The 24 formations of the bosses
+// and the scripted battles have FORMATION_LAYOUT_CENTERED, every other
 // FORMATION_LAYOUT_SHUFFLED.
 
 /// Each kind's enemies together, the kinds in a random order. A link battle's
@@ -20,7 +21,7 @@
 /// has it.
 #define FORMATION_LAYOUT_INTERLEAVED 1
 /// The formation's own order, its first enemy in the centre and the rest
-/// alternately either side; no formation has it.
+/// alternately either side: the bosses' and the scripted battles'.
 #define FORMATION_LAYOUT_CENTERED 2
 
 /// The kinds of enemy a formation may hold.
@@ -41,6 +42,26 @@ struct Formation {
 
 /// The rows of gFormations.
 #define FORMATION_COUNT 660
+
+// The formations the battle code itself tests for.
+/// Karst and Agatio's battle, fought in three parts: the first two end after
+/// two turns, and each part takes up the five units as the last left them
+/// (ScriptedBattle_SaveUnits); the third is ENEMY_KARST_B and ENEMY_AGATIO_B.
+///@{
+#define FORMATION_KARST_AND_AGATIO_A 74
+#define FORMATION_KARST_AND_AGATIO_B 75
+#define FORMATION_KARST_AND_AGATIO_C 76
+///@}
+/// The Doom Dragon's three forms, each changing into the next
+/// (Battle_PlayFormChange).
+///@{
+#define FORMATION_DOOM_DRAGON_A 78
+#define FORMATION_DOOM_DRAGON_B 79
+#define FORMATION_DOOM_DRAGON_C 80
+///@}
+/// Karst and Agatio against Isaac's party (ENEMY_KARST_VS_ISAAC), lost after
+/// the first action.
+#define FORMATION_KARST_AND_AGATIO_VS_ISAAC 638
 /// The formations, by formation id (battle_tables.s).
 extern struct Formation gFormations[];
 

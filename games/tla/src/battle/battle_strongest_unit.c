@@ -27,7 +27,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
     for (i = 0; work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (work->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(work->enemyIds[i])->hp != 0)
-        targets[count++] = i | 0x180;
+        targets[count++] = i | PLACE_ENEMY;
     }
   }
   if (count == 0)

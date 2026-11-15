@@ -3,6 +3,7 @@
 #include "edition.h"
 #include "types.h"
 #include "game/item.h"
+#include "window/window.h"
 
 //--------------------------------------------------------------------------
 // Menu tables: cursor bobbing, list orders, cursor widths and resource ids.
@@ -81,4 +82,7 @@ u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 
 s32 gDjinnFigures_SpriteIds[4] = {0xf3, 0xf4, 0xf5, 0xf6};
 
-u16 gData_08105a50[5] = {16, 1, 2, 15, 7};
+/// The command icons the Status screen shows (MenuIcon_LoadSlots).
+u16 gStatusScreen_CommandIcons[5] = {COMMAND_ICON_SUMMON, COMMAND_ICON_PSYNERGY,
+                                     COMMAND_ICON_ITEM, COMMAND_ICON_DJINN,
+                                     COMMAND_ICON_STATUS};

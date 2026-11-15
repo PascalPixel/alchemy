@@ -8,22 +8,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
-struct Object {
-  u8 filler0[6];
-  u16 src6;
-  u8 src8;
-  u8 filler9[6];
-  u8 out15;
-  u8 filler16[4];
-  u8 out20;
-  u8 mode21 : 2;
-  u8 rest21 : 6;
-  u16 pos22 : 9;
-  u16 affine22 : 5;
-  u16 rest22 : 2;
-};
-
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
@@ -35,7 +19,7 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
   void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
 
-  if (resourceIndex <= 0x5F) {
+  if (resourceIndex < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)resourceAddress, stagingBuffer);
     VramCache_Load(resourceIndex, 0x200, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -52,7 +36,7 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
   struct WindowSprite *second;
 
   index = VramCache_FindFreeEntry();
-  if (index > 95)
+  if (index >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
   MenuTitle_Load(group, index);
@@ -72,14 +56,14 @@ extern volatile u32 gVBlankCount;
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gWindow_PairBobOffsets, one step every four VBlanks.
-void MenuTitle_Bob(struct BobPairObject *obj) {
+void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
   obj = obj->next;
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
@@ -90,7 +74,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  if (value <= 95) {
+  if (value < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
     if (flag != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);
@@ -123,47 +107,57 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// Makes the sprite `obj` pulse: scales it about its centre by
 /// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
 /// frames, and puts it on draw layer 252.
-void WindowSprite_Pulse(struct Object *obj) {
-  s32 v;
-  struct Effect effect;
-
-  v = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+void WindowSprite_Pulse(struct WindowSprite *obj) {
+  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+  struct AffineTransform effect;
 
   if (obj != 0) {
-    effect.x = v;
-    effect.y = v;
-    effect.z = 0;
-    obj->affine22 =
-        OamMatrix_AllocFromTransform((struct AffineTransform *)&effect);
-    obj->mode21 = 3;
-    obj->pos22 = obj->src6 + 0xfff0;
-    obj->out20 = obj->src8 + 0xf0;
-    obj->out15 = OAM_DEPTH_FRONT - 3;
+    effect.scaleX = scale;
+    effect.scaleY = scale;
+    effect.angle = 0;
+    obj->sprite.oam.matrix = OamMatrix_AllocFromTransform(&effect);
+    // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
+    // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
+    obj->sprite.oam.affineMode = 3;
+    obj->sprite.oam.x = obj->x + 0xfff0;
+    obj->sprite.oam.y = (u8)obj->y + 0xf0;
+    obj->sentinel = OAM_DEPTH_FRONT - 3;
   }
 }
 
 /// Returns the Djinn tutorial's message on giving a Djinni: the second set's
-/// while flag 0x175 is set.
+/// while FLAG_ALREADY_KNOWS_DJINN is set.
 s32 Djinn_GetGiveTutorialMessage(void) {
-  if (GameFlag_Get(0x175))
+  if (GameFlag_Get(FLAG_ALREADY_KNOWS_DJINN))
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-// Builds twelve two-tile patterns as the 24 BG tiles from tile 788, the ones
-// Window_DrawThreeTileColumn draws: each tile filled with colour 4, then rows
-// 1 to 7 marked by XOR with gMenu_BarPatternRows. The first set grows its
-// pattern with the row, the second skips row 1. It is declared to return s32
-// but returns no value, and its caller reads none.
+#define RANGE_PATTERN_SET_COUNT 2
+#define RANGE_PATTERN_COUNT 6
+#define RANGE_PATTERN_PAIR_BYTES (2 * TILE_SIZE_4BPP)
+/// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
+/// draws as tilemap entries.
+#define RANGE_ICON_FIRST_TILE 788
+
+// Builds twelve two-tile patterns as the 24 BG tiles from
+// RANGE_ICON_FIRST_TILE, the ones Window_DrawThreeTileColumn draws: each tile
+// filled with colour 4, then rows 1 to 7 marked by XOR with
+// gMenu_BarPatternRows. The first set grows its pattern with the row, the
+// second skips row 1. It is declared to return s32 but returns no value, and
+// its caller reads none.
 s32 Menu_BuildLocalizedPatternTiles(void) {
   s32 set;
   s32 n;
 
-  for (set = 0; set < 2; set++) {
-    for (n = 0; n < 6; n++) {
-      u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
+  for (set = 0; set < RANGE_PATTERN_SET_COUNT; set++) {
+    for (n = 0; n < RANGE_PATTERN_COUNT; n++) {
+      u32 *tile =
+          (u32 *)(set * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_BYTES) +
+                  n * RANGE_PATTERN_PAIR_BYTES + (u32)BG_CHAR_BLOCK(0) +
+                  RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
       s32 x;
 
       Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
@@ -196,11 +190,12 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
                                s32 unused) {
 #endif
   s32 tile_offset = pattern * 2;
-  s32 tile = tile_offset + 0xF315;
+  s32 tile = tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
   Window_SetTilemapEntry((struct Window *)window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntry((struct Window *)window, tile_offset + 0xF314, x + 1,
-                         y, 0);
+  Window_SetTilemapEntry((struct Window *)window,
+                         tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE),
+                         x + 1, y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);
 }
 
@@ -268,11 +263,15 @@ void Link_DrawPageArrows(s32 offset) {
     phase = 1;
   }
   phase = phase + 1;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gRomShiftedTilePair,
-                                (u32 *)offset, -phase);
-  Graphics_MergeShiftedTileRows((u32 *)0x06000240,
-                                (u32 *)(gRomShiftedTilePair + 32),
-                                (u32 *)(offset + 32), phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
+      (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) *
+                  TILE_SIZE_4BPP),
+      (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
 }
 
 /// Link_DrawPageArrows with both arrows merged into the one tile at VRAM

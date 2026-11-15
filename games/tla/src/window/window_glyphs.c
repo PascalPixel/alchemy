@@ -349,12 +349,12 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
   }
 
   cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
-  if (cell < 32 * 20) { // inside the tilemap
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) { // inside the tilemap
     s32 src;
     s32 dst;
 
     cell *= 2;
-    dst = 0x06002000 + cell;
+    dst = (s32)WINDOW_TILEMAP_VRAM + cell;
     src = (s32)canvas->tilemap + cell;
 
     Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);

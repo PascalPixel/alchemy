@@ -171,7 +171,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             actor->defendLevel = DEFEND_NORMAL;
           return ACTION_REPORTED;
         }
-        if (ability->effect != 75)
+        if (ability->effect != ABILITY_EFFECT_DAZZLE)
           break;
         range = 11;
       }
@@ -586,7 +586,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
-    /* FAKEMATCH(dead): the rolls in a one-pass block left by break. */
+    // A deluded attacker misses 153 times in 256, and any attack 1 in 32; a
+    // target that cannot move is never missed, and in the Djinn tutorial the
+    // attack always misses.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)
@@ -619,10 +621,10 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY ||
-        ability->effect == 89) {
+        ability->effect == ABILITY_EFFECT_VENGEANCE) {
       s32 index;
 
-      if (ability->effect == 89) {
+      if (ability->effect == ABILITY_EFFECT_VENGEANCE) {
         s32 roll = Battle_RandomFar() & 255;
 
         if (roll <= 178) {
@@ -681,7 +683,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           plan->targetCritical[index] = CRITICAL_STRONG;
       }
     } else if (abilityId == ABILITY_ANNIHILATION ||
-               abilityId == ABILITY_WHORL || ability->effect == 82) {
+               abilityId == ABILITY_WHORL ||
+               ability->effect == ABILITY_EFFECT_BLOW_AWAY) {
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++) {
@@ -734,7 +737,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if (Battle_IsReviveEffectFar(ability->effect))
       plan->battleEffect |= EFFECT_ON_DOWNED;
     if ((abilityId == ABILITY_ANNIHILATION || abilityId == ABILITY_WHORL ||
-         ability->effect == 82) &&
+         ability->effect == ABILITY_EFFECT_BLOW_AWAY) &&
         plan->targetHit[0] != 0)
       plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
   }

@@ -21,21 +21,11 @@ s32 Screens_ReturnZero(void) { return 0; }
 
 // UB: Message_Start is called with five of its six arguments, so the flags it
 // reads are whatever the stack word after the fifth holds (the 0 left there as
-// Icon_LoadWithPalette's last argument); UBFIX declares it whole and
-// passes 0.
+// Icon_LoadWithPalette's last argument), as a call with no declaration in
+// scope compiles; UBFIX declares it whole and passes 0.
 #ifdef UBFIX
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags);
-#else
-/* VIEW(screens): routine Message_Start as s32 Message_Start(); window/window
- * has struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32
- * x, s32 y, u16 *spacing, s32 flags) {; tried as the definition's struct
- * UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
- * u16 *spacing, s32 flags), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/window/screens_joined.c:77: too few
- * arguments to function `Message_Start'. */
-s32 Message_Start__screens() __asm__("Message_Start");
-#define Message_Start Message_Start__screens
 #endif
 
 /// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
@@ -64,21 +54,23 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->dirty = 1;
 
     id = Portrait_GetForSpeaker(name);
-    Icon_LoadWithPalette(id, zero, &slot, &tile, 14, zero);
+    Icon_LoadWithPalette(id, zero, &slot, &tile, PORTRAIT_PALETTE, zero);
 
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile with
     // palette 14.
     p = entry;
     *p++ = zero;
-    *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
     *p = tile | (14 << 12);
 
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_Push(element * 20 + djinn + 300, MESSAGE_ARGUMENT_ABILITY);
+    MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
+                             ABILITY_DJINNI_FIRST,
+                         MESSAGE_ARGUMENT_ABILITY);
 
     text = Message_DecodeMode1(element + (s32)MsgFoundVenusDjinni);
 
@@ -94,7 +86,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
-      Oam_AddSpriteAtDepth(entry, 250);
+      Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 #else
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
 #endif
@@ -136,7 +128,7 @@ void Party_ShowJoinedMessage(s32 member) {
     // with palette 14.
     p = entry;
     *p++ = 0;
-    *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
     *p = tile | (14 << 12);
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
@@ -152,7 +144,7 @@ void Party_ShowJoinedMessage(s32 member) {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
-      Oam_AddSpriteAtDepth(entry, 250);
+      Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 #else
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
 #endif
@@ -226,8 +218,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
-      Oam_AddSpriteAtDepth(firstEntry, 250);
-      Oam_AddSpriteAtDepth(secondEntry, 250);
+      Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
+      Oam_AddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
 #else
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(firstEntry, 250);
       ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(secondEntry,

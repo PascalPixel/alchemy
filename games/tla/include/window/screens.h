@@ -6,16 +6,8 @@
 
 #include "types.h"
 
-struct BobPairObject;
 struct RenderInput;
 struct WindowSprite;
-
-struct Effect {
-  unsigned x : 16;
-  unsigned y : 16;
-  unsigned z : 16;
-  unsigned unk : 16;
-};
 
 struct NameCursorMotion {
   struct WindowSprite *anchor;
@@ -54,7 +46,10 @@ void DjinnFigures_ReleaseTopRowFar(void);
 void DjinnFigures_SetShownFar(s32 shown);
 void DjinnFigures_SetSlotPositionFar(s32 index, s32 x, s32 y);
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
-void MenuTitle_Bob(struct BobPairObject *object);
+void MenuTitle_Bob(struct WindowSprite *object);
+struct Window;
+struct WindowSprite *Portrait_Create(s32 speaker, s32 option, s32 side,
+                                     struct Window *window, s32 x, s32 y);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
 s32 FileList_SelectAction(void);
@@ -89,6 +84,14 @@ enum FieldMenuCommand {
 
 /// The places of the transfer method menu.
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
+
+/// The places of the password level menu: how much of the game a password
+/// carries.
+enum PasswordLevel {
+  PASSWORD_LEVEL_GOLD = 0,   ///< levels, Djinn, stats, items and coins
+  PASSWORD_LEVEL_SILVER = 1, ///< levels, Djinn and stats
+  PASSWORD_LEVEL_BRONZE = 2  ///< levels and Djinn
+};
 
 /// What IconMenu_ChooseSendOption offers.
 enum ResourceLayoutMode {

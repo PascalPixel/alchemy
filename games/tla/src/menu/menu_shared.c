@@ -504,7 +504,8 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   icon = 0;
   slot = VramCache_FindFreeEntry();
   if (slot != 0) {
-    VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              (s32)&ResourceId_UiIconTiles);
     icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return icon;
@@ -548,20 +549,20 @@ struct RenderInput *MenuCursor_Create(void *source) {
   icon->motion = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
-  sentinel = 254;
+  sentinel = OAM_DEPTH_FRONT - 1;
   icon->sentinel = sentinel;
   sentinel -= 255;
   work->tabIndex[1] = zero;
   work->sideIcon[1]->sentinel = sentinel;
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
-  if (slot <= 95) {
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
@@ -1002,7 +1003,7 @@ done:
 }
 
 void Palette_LightenHighlight(s32 paletteNumber) {
-  u16 *palette = (u16 *)(0x05000000 + (paletteNumber << 5));
+  u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
   u32 green;
   u32 blue;
@@ -1012,8 +1013,8 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
-  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
-  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
+  green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
+  red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
   blue += HIGHLIGHT_LIGHTEN_STEPS;
   if (blue > RGB_LEVEL_MAX)
     blue = RGB_LEVEL_MAX;
@@ -1102,7 +1103,7 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 }
 
 void Palette_LoadIconsIntoHighlight(void) {
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
@@ -1161,10 +1162,13 @@ s32 Sound_PlayReturnOne(s32 cue) {
   return 1;
 }
 
-/// A VBlank task while the menus watch for Start: flashes the Start prompt's
+/// The tile of BG character block 0 the Start prompt blinks.
+#define MENU_START_PROMPT_TILE 298
+
+/// A VBlank task while the menus watch for Start: blinks the Start prompt's
 /// tile every four frames, and on Start plays the cancel sound, sets
 /// FLAG_MENU_START_PRESSED and removes itself.
-void Menu_UpdateCancelSound(void) {
+void Menu_WatchStart(void) {
   u32 frame;
   u32 *node;
   struct InputState *input;
@@ -1173,33 +1177,40 @@ void Menu_UpdateCancelSound(void) {
   frame = gFrameCount;
   if ((frame & 3) == 0) {
     if (frame & 4)
-      Iwram_CopyWords((void *)0x06002540, gData_08105948, 32);
+      Iwram_CopyWords(BG_CHAR_BLOCK(0) +
+                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                      gMenu_StartPromptTile, TILE_SIZE_4BPP);
     else
-      Iwram_FillWords((void *)0x06002540, 32, 0x44444444);
+      Iwram_FillWords(BG_CHAR_BLOCK(0) +
+                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                      TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
   }
   input = &gInput;
-  mask = 8;
+  mask = KEY_START;
   if (input->pressed & mask) {
     Sound_PlayFar(SE_MENU_CANCEL);
     GameFlag_Set(FLAG_MENU_START_PRESSED);
-    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_WatchStart));
   }
-  node = (u32 *)(Ram_HeapSlots->windowWork + 0xE30);
+  // DEAD: walks the free window sprites to the end of their list and keeps
+  // nothing; the ROM keeps the loop.
+  node = (u32 *)&((struct WindowWork *)Ram_HeapSlots->windowWork)
+             ->freeOutputs.head;
   while ((node = (u32 *)*node) != 0)
     ;
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_UpdateCancelSound.
+/// Menu_WatchStart.
 void Menu_StartWatchingStart(void) {
   GameFlag_Clear(FLAG_MENU_START_PRESSED);
-  Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
+  Task_Add((s32)Menu_WatchStart, TASK_PASS_VBLANK);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
 void Menu_StopWatchingStart(void) {
   if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
-    Task_Remove((u32)((s32)Menu_UpdateCancelSound));
+    Task_Remove((u32)((s32)Menu_WatchStart));
   }
 }
 

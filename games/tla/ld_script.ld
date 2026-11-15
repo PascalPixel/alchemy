@@ -65,8 +65,8 @@ Glyph_DrawCodeSize = Tile_BuildCellPicturesCode - Glyph_DrawCode;
 BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
 Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
-BattleEffect_ExpandCodeSize = BattleEffect_DotProduct2 - BattleEffect_ExpandCode;
-BattleEffect_Expand2CodeSize = BattleEffect_Expand2End - BattleEffect_Expand2Code;
+Credits_DecodeBackgroundCodeSize = EndingPicture_DotProduct - Credits_DecodeBackgroundCode;
+EndingPicture_DecodeCodeSize = EndingPicture_DecodeEnd - EndingPicture_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
 Transform_UpdateVerticesCodeSize = Render_ConvertMapCode - Transform_UpdateVerticesCode;
@@ -170,6 +170,7 @@ SECTIONS
         "*/games/tla/src/window/expand_opaque.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/expand_opaque_masks.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/window.o"(.text)
+        "*/games/tla/src/window/screens.o"(.text)
         "*/games/tla/src/graphics/ui/slider.o"(.rodata)
         "*/games/tla/src/graphics/ui/marks.o"(.rodata)
         "*/games/tla/src/graphics/ui/menu_icons.o"(.rodata)
@@ -282,17 +283,11 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + 0x081a0000);
         "*/games/tla/src/gamepak/far_call/credits.o"(.text)
         "*/games/tla/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_link.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_dispatch.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_tables.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_commands.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_decode_2.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_2.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_2_link.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_2_dispatch.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_2_tables.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/credits_background_expand_2_commands.o"(.text .rodata .data .padding)
+        "*/games/tla/src/menu/credits_background_expand.o"(.rodata)
+        "*/games/tla/src/menu/credits_background_expand.o"(.text .data .text.credits_background_expand_commands)
+        "*/games/tla/src/menu/ending_picture_decode.o"(.text .rodata .data .padding)
+        "*/games/tla/src/menu/ending_picture_expand.o"(.rodata)
+        "*/games/tla/src/menu/ending_picture_expand.o"(.text .data .text.ending_picture_expand_commands)
         "*/games/tla/src/menu/credits.o"(.text)
         "*/games/tla/src/menu/credits.o"(.rodata)
         "*/games/tla/src/menu/credits.o"(.data)

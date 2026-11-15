@@ -17,7 +17,7 @@ struct Effect04Vector;
 struct EffectVector;
 
 struct ItemHead {
-  u8 unk00[3];
+  u8 unused[3]; ///< no code names it
   u8 flags;
 };
 
@@ -43,17 +43,17 @@ struct ScatterPosition {
 
 /// A composite sprite, as field.h's CompositeAnimation.
 struct CloakSprite {
-  u8 unk00[0x19];
-  u8 dirty; // redraw the parts
-  u8 blend; // 2 draws the caster half transparent, 1 shows it plainly
+  u8 unused[0x19]; ///< no code names it
+  u8 dirty;        // redraw the parts
+  u8 blend;        // 2 draws the caster half transparent, 1 shows it plainly
   u8 unk1b[0x0d];
   struct SpriteAnimation *entries[4];
 };
 
 struct CloakCaster {
-  u8 unk00[0x50];
+  u8 unused[0x50]; ///< no code names it
   struct CloakSprite *sprite;
-  u8 unk54[0x18];
+  u8 unusedAfterSprite[0x18]; ///< no code names it
   void (*hook)(void);
 };
 
@@ -63,14 +63,14 @@ struct TouchCell {
 };
 
 struct TouchLayer {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 z;
-  u8 unk10[40];
+  u8 unusedAfterZ[40]; ///< no code names it
 };
 
 struct TouchMap {
-  u8 unk000[264];
+  u8 unused[264]; ///< no code names it
   struct TouchLayer layers[1];
 };
 
@@ -81,7 +81,7 @@ struct TouchCopy {
   u8 fromZ;
   u8 cellX;
   u8 cellZ;
-  u8 unk06[2];
+  u8 unusedAfterCellZ[2]; ///< no code names it
 };
 
 struct TouchCopies {
@@ -122,7 +122,7 @@ struct BurstCell {
 };
 
 struct ScaledSprite {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 scale;
 };
 
@@ -318,18 +318,18 @@ void Party_RemoveMemberRestored(s32 owner);
 struct Actor;
 
 struct FallingObject {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 y;
-  u8 unk10[4];
+  u8 unusedAfterY[4]; ///< no code names it
   s32 floor;
-  u8 unk18[0x46];
+  u8 unusedAfterFloor[0x46]; ///< no code names it
   s16 dispatchState;
-  u8 unk60[0xc];
+  u8 unusedAfterDispatchState[0xc]; ///< no code names it
   void *update;
 };
 
 struct Effect05Sprite {
-  u32 unk00[2];
+  u32 unused[2]; ///< no code names it
   u8 unk08;
   u32 unk09_0 : 2;
   u32 mode : 2;
@@ -355,10 +355,10 @@ struct WorldMapPlace {
   s16 unk02;
   s16 x;
   s16 z;
-  u8 unk08[4];
-  s16 name;         ///< the place name's message
-  s16 nameEntrance; ///< the name's message for the entrance
-  u8 unk10[4];
+  u8 unusedAfterZ[4];            ///< no code names it
+  s16 name;                      ///< the place name's message
+  s16 nameEntrance;              ///< the name's message for the entrance
+  u8 unusedAfterNameEntrance[4]; ///< no code names it
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's
@@ -398,12 +398,12 @@ struct Actor;
 struct Vec3;
 
 struct WaveFxSprite {
-  u32 unk00[2];
+  u32 unused[2]; ///< no code names it
   u8 unk08;
   u32 unk09_0 : 2;
   u32 mode : 2;
   u32 unk09_4 : 4;
-  u8 unk0a[8];
+  u8 unusedB[8]; ///< no code names it
   u16 orientation;
   u8 unk14[6];
   u8 palette;
@@ -420,12 +420,12 @@ struct WaveFxDescriptor {
 };
 
 struct WaveFxMetadata {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s8 boxX;
 };
 
 struct ResourceEntry {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   u8 vramBlock;
 };
 
@@ -497,24 +497,24 @@ struct EffectChild {
 };
 
 struct EffectTarget {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
 };
 
 struct RadialBurstEffect {
-  u8 unk00[12];
+  u8 unused[12]; ///< no code names it
   s32 x;
   s32 z;
   s32 sourceX;
   s32 sourceZ;
-  u8 unk1c[4];
+  u8 unusedAfterSourceZ[4]; ///< no code names it
   s32 velocityX;
   s32 velocityZ;
-  u8 unk28[10];
+  u8 unusedAfterVelocityZ[10]; ///< no code names it
   u16 scale;
-  u8 unk34[12];
+  u8 unusedAfterScale[12]; ///< no code names it
   s8 state;
   u8 unk41;
   u8 enabled;
@@ -528,9 +528,9 @@ struct ImpactVector {
 
 struct WaveFxScroll {
   u16 lines[2][162];
-  u8 unk288[2];
+  u8 unused[2]; ///< no code names it
   u8 page;
-  u8 unk28b[9];
+  u8 unusedAfterPage[9]; ///< no code names it
   u8 delay;
 };
 
@@ -568,11 +568,11 @@ struct Output_08097f80 {
 };
 
 struct SwayObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 y;
-  u8 unk0c[44];
+  u8 unusedAfterY[44]; ///< no code names it
   s32 baseY;
-  u8 unk3c[40];
+  u8 unusedAfterBaseY[40]; ///< no code names it
   s16 phase;
 };
 
@@ -583,31 +583,31 @@ struct OrbitVector {
 };
 
 struct SparkObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[4];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[24];
+  u8 unusedAfterScaleY[24]; ///< no code names it
   s32 anchorX;
-  u8 unk3c[12];
+  u8 unusedAfterAnchorX[12]; ///< no code names it
   s32 gravity;
-  u8 unk4c[9];
+  u8 unusedAfterGravity[9]; ///< no code names it
   u8 motionFlags;
-  u8 unk56[8];
+  u8 unusedAfterMotionFlags[8]; ///< no code names it
   u16 unk5e;
-  u8 unk60[4];
+  u8 unusedB[4]; ///< no code names it
   s16 phase;
-  u8 unk66[6];
+  u8 unusedAfterPhase[6]; ///< no code names it
   void (*update)(struct SparkObject *);
 };
 
 struct OwnerObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
-  u8 unk0c[4];
+  u8 unusedAfterX[4]; ///< no code names it
   s32 z;
   u8 unk14[14];
   u8 layer;

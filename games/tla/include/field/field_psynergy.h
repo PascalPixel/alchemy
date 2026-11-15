@@ -15,12 +15,12 @@ struct SpriteAnimation;
 struct ArcEffectObject__launch;
 
 struct ArcEntry {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 param;
 };
 
 struct ArcGroup {
-  u8 unk00[25];
+  u8 unused[25]; ///< no code names it
   u8 dirty;
   u8 flags;
   u8 unk1b[13];
@@ -28,7 +28,7 @@ struct ArcGroup {
 };
 
 struct ArcScene {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   struct ArcEffectObject__launch *mainActor;
   u8 unk14[0x6fc];
   s16 arcTileSlot;
@@ -58,20 +58,20 @@ struct LaunchVector {
 };
 
 struct LaunchObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
 };
 
 struct LaunchScene {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   struct LaunchObject *mainActor;
 };
 
 /// A composite sprite, as far as this reads it.
 struct OrbTargetSprite {
-  u8 unk00[0x28];
+  u8 unused[0x28]; ///< no code names it
   struct SpriteAnimation *entries[4];
 };
 
@@ -117,7 +117,7 @@ struct BowWork {
 };
 
 struct PointWork {
-  u8 unk_0[0xcc0];
+  u8 unused[0xcc0]; ///< no code names it
   s16 points[62];
   u16 unk_d3c;
   u16 unk_d3e;
@@ -126,7 +126,7 @@ struct PointWork {
 };
 
 struct TouchOwner {
-  u8 unk00[34];
+  u8 unused[34]; ///< no code names it
   u8 layer;
 };
 
@@ -139,15 +139,15 @@ struct ArcWork {
 };
 
 struct TimedObject {
-  u8 unk00[0x64];
+  u8 unused[0x64]; ///< no code names it
   s16 age;
-  u8 unk66[6];
+  u8 unusedAfterAge[6]; ///< no code names it
   void *update;
 };
 
 /// The effect work, its slots 8 bytes earlier than FieldEffectWork has them.
 struct FallbackScene {
-  u8 unk00[0x50];
+  u8 unused[0x50]; ///< no code names it
   struct FieldParticle slots[16];
 };
 
@@ -158,19 +158,19 @@ struct FxPosition13 {
 };
 
 struct SpinObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   s32 floor;
   s32 fall;
-  u8 unk1c[0x1c];
+  u8 unusedAfterFall[0x1c]; ///< no code names it
   s32 targetX;
-  u8 unk3c[0x19];
+  u8 unusedAfterTargetX[0x19]; ///< no code names it
   u8 motionFlags;
-  u8 unk56[0xe];
+  u8 unusedAfterMotionFlags[0xe]; ///< no code names it
   s16 timer;
-  u8 unk66[6];
+  u8 unusedAfterTimer[6]; ///< no code names it
   void (*update)(struct SpinObject *);
 };
 

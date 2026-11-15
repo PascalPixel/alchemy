@@ -12,7 +12,7 @@
  * games/tla/src/field/field_psynergy_actor_cells.c:45: structure has no member
  * named `flags'. */
 struct SwitchCell__f0eabd0 {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u8 block;
   u8 flags;
 };
@@ -339,7 +339,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
 }
 
 struct ScreenSprite {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 x;
   s32 y;
   u8 unk14[0x14];

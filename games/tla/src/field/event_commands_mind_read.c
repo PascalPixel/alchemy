@@ -1122,7 +1122,7 @@ struct ScreenPoint {
 
 struct EffectWork {
   u16 angle;
-  u8 unk02[14];
+  u8 unusedAfterAngle[14]; ///< no code names it
   struct EffectTarget *target;
 };
 
@@ -1686,7 +1686,7 @@ void FieldPsynergy_Ply(void) {
  * event_work.h has another definition; not tried: struct FieldWork__f0de21c was
  * not found. */
 struct EventWork__f0de21c {
-  u8 unk000[0x166];
+  u8 unused[0x166]; ///< no code names it
   u16 state;
 };
 

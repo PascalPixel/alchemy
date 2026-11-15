@@ -31,7 +31,7 @@ struct ParchPuff {
 struct ParchWork {
   u8 tiles[0x1000];
   struct EffectSprite disc;
-  u8 unk1028[0x28];
+  u8 unusedAfterDisc[0x28]; ///< no code names it
   s32 discX;
   s32 discY;
   s32 discScaleX;

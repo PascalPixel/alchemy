@@ -65,7 +65,7 @@ struct ResourceSlot {
 /// outline's edge and fill colours, and the resource slots.
 struct ObjectSystemWork {
   u16 used;
-  u8 unk02[2];
+  u8 unusedAfterUsed[2]; ///< no code names it
   s16 suspended; ///< nonzero while a menu has suspended sprite projection
   u8 edge;       ///< outline edge colour
   u8 fill;       ///< outline fill colour
@@ -85,7 +85,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
 /// its shadow) is drawn with: the link to the next part queued at its depth,
 /// then the OAM entry's attributes 0 to 3.
 struct AnimationSpritePart {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affine : 2;
   u16 objectMode : 2;
@@ -98,7 +98,7 @@ struct AnimationSpritePart {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
 };
 
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to

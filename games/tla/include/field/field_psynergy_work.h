@@ -15,13 +15,13 @@ union FieldObject;
 /// A field object as an arc effect's caster: its facing, its animation records
 /// and the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
-  u8 unk00[6];
-  u16 angle; ///< 1/65536 turns
-  u8 unk08[0x48];
+  u8 unused[6];              ///< no code names it
+  u16 angle;                 ///< 1/65536 turns
+  u8 unusedAfterAngle[0x48]; ///< no code names it
   struct Sprite *records;
-  u8 unk54[0x10];
-  s16 phase; ///< 1 spins the caster
-  s16 step;  ///< frames since the arcs started
+  u8 unusedAfterRecords[0x10]; ///< no code names it
+  s16 phase;                   ///< 1 spins the caster
+  s16 step;                    ///< frames since the arcs started
   struct Actor *watchedObject;
   void (*callback)(union FieldObject *object); ///< run each frame
 };
@@ -89,14 +89,14 @@ struct FieldEffectWork {
   s16 arcTileSlot; ///< the VRAM cache entry of the falling arcs' tiles
   s8 messageMode;  ///< the announcement's box mode: 1, an event adds 8
   u8 messageShown; ///< set while the announcement's message is open
-  u8 unk714[4];
+  u8 unusedAfterMessageShown[4]; ///< no code names it
   /// The caster's priority flags and sprite priority, saved at the start and
   /// restored as it ends.
   ///@{
   u8 savedPriorityFlags;
   u8 savedSpritePriority;
   ///@}
-  u8 unk71a[0xaa];
+  u8 unusedAfterSavedSpritePriority[0xaa]; ///< no code names it
   /// A lasting Psynergy's stage and frame, passed to its event as it runs.
   ///@{
   s16 stage;

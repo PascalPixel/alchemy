@@ -74,12 +74,12 @@ void FieldPsynergy_WatchSandGround(void) {
 /// A sprite layer as FieldPsynergy_DecodePicture reads it: how its pictures
 /// are coded and the one shown.
 struct PictureSource {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 decodeMode;
   u8 unk06;
   u8 format;
   const void **pictures;
-  u8 unk0c[10];
+  u8 unusedAfterPictures[10]; ///< no code names it
   u8 picture;
 };
 

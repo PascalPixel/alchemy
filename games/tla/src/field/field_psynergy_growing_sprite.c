@@ -12,7 +12,7 @@
  * tla-ja: games/tla/src/field/field_psynergy_growing_sprite.c:21: structure has
  * no member named `tile'. */
 struct EffectSprite__psynergy_effects_11 {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 attr0_0 : 13;
   u16 color : 1;
   u16 attr0_14 : 2;
@@ -20,14 +20,14 @@ struct EffectSprite__psynergy_effects_11 {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
   s32 x;
   s32 y;
   s32 scaleX;
   s32 scaleY;
-  u8 unk1c[2];
+  u8 unusedAfterScaleY[2]; ///< no code names it
   u16 depth;
-  u8 unk20[8];
+  u8 unusedAfterDepth[8]; ///< no code names it
 };
 
 void Camera_WorldToScreen(s32 *position);

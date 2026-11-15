@@ -95,7 +95,7 @@ void BattleEffect_EndX(void) {
 struct CycloneWork {
   u8 particleBurst[0x1b08];
   s16 count;
-  u8 unk1b0a[2];
+  u8 unusedAfterCount[2]; ///< no code names it
   struct Actor *follower; ///< the actor carried with the leader
   s16 state;              ///< the stage of the ride; 999 once it ends
   s16 timer;              ///< frames into the ride
@@ -510,7 +510,7 @@ void Actor_ArriveInRing(s32 actor) {
 /// and 16 smoke puffs with their motion, where the jet starts and where it
 /// points, and the actor it has reached.
 struct BlazeWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite drops[16];
   struct FieldPsynergyParticle dropMotion[16];
   struct EffectSprite puffs[16];

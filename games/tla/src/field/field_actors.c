@@ -598,11 +598,11 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
  * games/tla/src/field/field_actors.c:613: dereferencing pointer to incomplete
  * type. */
 struct IconSprite__resource_slot {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   struct RenderOam oam;
   s32 scale;
   u8 vramSlot;
-  u8 unk11[3];
+  u8 unusedAfterVramSlot[3]; ///< no code names it
   u8 width;
   u8 height;
   u8 unk16;

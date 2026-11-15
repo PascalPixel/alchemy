@@ -58,17 +58,17 @@ struct MotionScript {
 };
 
 struct PlacedSprite {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 low09 : 2;
   u8 priority : 2;
   u8 high09 : 4;
-  u8 unk0a[2];
-  s32 scale; ///< 16.16 fixed point
+  u8 unusedB[2]; ///< no code names it
+  s32 scale;     ///< 16.16 fixed point
   u8 slot;
-  u8 retainCacheEntry; ///< bit 0
-  u8 unk12[7];
+  u8 retainCacheEntry;               ///< bit 0
+  u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
   u8 dirty;
-  u8 unk1a[0x0b];
+  u8 unusedAfterDirty[0x0b]; ///< no code names it
   u8 low25 : 2;
   u8 shadowPriority : 2;
   u8 high25 : 4;
@@ -82,7 +82,7 @@ struct ActorCameraPoint {
 };
 
 struct MapPriorityWork {
-  u8 unk000[0x101];
+  u8 unused[0x101]; ///< no code names it
   s8 basePriority;
 };
 
@@ -97,15 +97,15 @@ struct ActorCameraFixed {
 };
 
 struct PlayerSprite {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 low05 : 2;
   u8 objectMode : 2;
   u8 high05 : 4;
-  u8 unk06[3];
+  u8 unusedB[3]; ///< no code names it
   u8 low09 : 2;
   u8 priority : 2;
   u8 high09 : 4;
-  u8 unk0a[7];
+  u8 unusedC[7]; ///< no code names it
   u8 shape11;
   u16 rotation;
   u8 unk14[5];
@@ -116,7 +116,7 @@ struct PlayerSprite {
 };
 
 struct MapFlagsWork {
-  u8 unk000[0x17];
+  u8 unused[0x17];  ///< no code names it
   u8 groundEffects; ///< bits: 3..2 the wading kind | 1..0 footprints
 };
 
@@ -167,33 +167,33 @@ struct MapLayerScroll {
 };
 
 struct MapScrollWork {
-  u8 unk000[0x14];
+  u8 unused[0x14]; ///< no code names it
   u16 flags;
-  u8 unk016[0xe4 - 0x16];
+  u8 unusedAfterFlags[0xe4 - 0x16]; ///< no code names it
   s32 viewX, viewY;
   s32 minX, minY, maxX, maxY;
-  u8 unk0fc[5];
+  u8 unusedB[5]; ///< no code names it
   u8 unk101;
-  u8 unk102[2];
+  u8 unusedC[2]; ///< no code names it
   u8 enabled[3];
   u8 unk107;
   struct MapLayerScroll layers[3];
 };
 
 struct Unk_WakeActor {
-  u8 unk00[0x63];
+  u8 unused[0x63]; ///< no code names it
   u8 unk63;
 };
 
 struct Unk_ClimbEventWork {
-  u8 unk000[0xd4a];
+  u8 unused[0xd4a]; ///< no code names it
   /* FAKEMATCH(signature): read as the low byte of a halfword. */
   u16 unkd4a : 8;
   u16 unkd4b : 8;
 };
 
 struct Unk0802a124Actor {
-  u8 unk00[0x62];
+  u8 unused[0x62]; ///< no code names it
   u8 unk62;
   u8 unk63;
 };
@@ -227,24 +227,24 @@ struct MapGridCellAnimationStep {
 } __attribute__((packed, aligned(2)));
 
 struct Child {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 low9 : 2;
   u8 layer : 2;
   u8 high9 : 4;
-  u8 unk0a[0x10];
+  u8 unusedB[0x10]; ///< no code names it
   u8 value1a;
 };
 
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
 /// axis and blocked count.
 struct WaitingActor {
-  u8 unk00[0x38];
+  u8 unused[0x38]; ///< no code names it
   s32 targetX;
   s32 targetY;
   s32 targetZ;
-  u8 unk44[0x12];
+  u8 unusedAfterTargetZ[0x12]; ///< no code names it
   u8 arrivalAxis;
-  u8 unk57[9];
+  u8 unusedAfterArrivalAxis[9]; ///< no code names it
   u8 refused;
 };
 
@@ -275,11 +275,11 @@ extern u8 Render_CopyStridedCode[];
 extern u8 Render_CopyStridedCodeSize[];
 
 struct IconOwner {
-  u8 unk00[80];
+  u8 unused[80]; ///< no code names it
   struct IconSprite__resource_slot *sprite;
-  u8 unk54[8];
+  u8 unusedAfterSprite[8]; ///< no code names it
   u8 unk5c;
-  u8 unk5d[5];
+  u8 unusedB[5]; ///< no code names it
   u8 iconId;
 };
 

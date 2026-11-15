@@ -505,7 +505,7 @@ struct ReelWork {
   struct ReelSprite obj[128];
   struct Window *window;
   struct Window *subWindow;
-  u8 unk4d0[8];
+  u8 unusedAfterSubWindow[8]; ///< no code names it
   u16 scanlineOffsets[160];
 #if TLA_PATCH_1
   // The Japanese release has no phase: it closes and reopens its prompt

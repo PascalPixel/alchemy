@@ -60,7 +60,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
 struct HoverWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite sprite;
   s32 scale;
   s16 resource;

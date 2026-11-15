@@ -26,16 +26,16 @@
 extern const s32 gBattleEffect_SharedParticleScript[];
 
 struct OrbitEffect {
-  u8 unk00[6];
+  u8 unused[6]; ///< no code names it
   u16 angle;
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[20];
   s32 scale;
-  u8 unk2c[28];
+  u8 unusedAfterScale[28]; ///< no code names it
   s32 speed;
-  u8 unk4c[24];
+  u8 unusedAfterSpeed[24]; ///< no code names it
   u16 timer;
   s16 pause;
   struct OrbitEffect *anchor;
@@ -880,11 +880,11 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
 #define SLOT_MAX 24
 
 struct SpinScene {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   struct SpinObject *mainActor;
   u8 unk14[4];
   s16 firstActorId;
-  u8 unk1a[0x36];
+  u8 unusedAfterFirstActorId[0x36]; ///< no code names it
   struct FieldParticle slots[SLOT_MAX];
 };
 
@@ -1263,14 +1263,14 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
  * games/tla/src/field/field_psynergy_radial_effects.c:1290: structure has no
  * member named `x'. */
 struct ArcSprite__f0e150c {
-  u8 unk00[12];
+  u8 unused[12]; ///< no code names it
   s32 x;
   s32 y;
   s32 scaleX;
   s32 scaleY;
-  u8 unk1c[2];
+  u8 unusedAfterScaleY[2]; ///< no code names it
   s16 depth;
-  u8 unk20[8];
+  u8 unusedAfterDepth[8]; ///< no code names it
 };
 
 /// Task: draws the two pairs of swelling arcs on their actor: each pair swells
@@ -1867,7 +1867,7 @@ void FieldPsynergy_RunTouchedEvents(void) {
  * games/tla/src/field/field_psynergy_radial_effects.c:1898: structure has no
  * member named `unk02'. */
 struct MapCell__f0e150c {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u8 unk02;
 };
 

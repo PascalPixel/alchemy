@@ -14,7 +14,7 @@
  * tla-ja: games/tla/src/field/event_commands_weather.c:15: field `particles'
  * has incomplete type. */
 struct GroundParticle__event_commands {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 attr0 : 6;
   u16 shape : 2;
@@ -24,17 +24,17 @@ struct GroundParticle__event_commands {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
   s32 posX;
   s32 posY;
   s32 posZ;
-  u8 unk18[4];
+  u8 unusedAfterPosZ[4]; ///< no code names it
   u16 timer;
-  u8 unk1e[2];
+  u8 unusedAfterTimer[2]; ///< no code names it
 };
 
 struct GroundParticleWork {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   s32 tile;
   struct GroundParticle__event_commands particles[64];
 };
@@ -92,7 +92,7 @@ void GroundParticles_Update(void) {
  * with the definition the rest of the object has, Weather_UpdateRain moves: 1
  * of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   // long, not s32: its own alias set lets the sprite stores pass its load.
   long tile;
   struct GroundParticle__event_commands particles[64];

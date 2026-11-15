@@ -71,11 +71,11 @@ struct MotionObject {
   u8 collisionFlags;
   u8 actionFlags;
   u8 paused;
-  u8 unk5c[2];
+  u8 unusedAfterPaused[2]; ///< no code names it
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 unk62[0x0a];
+  u8 unusedAfterFrozen[0x0a]; ///< no code names it
   void (*update)(struct MotionObject *object);
   s32 moved[3];
   struct MotionObject *standingOn;

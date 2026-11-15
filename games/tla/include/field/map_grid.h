@@ -94,7 +94,7 @@ struct MapWork {
   /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;
   struct MapLayer layers[4];
-  u8 unk1e8[0x774];
+  u8 unusedAfterLayers[0x774]; ///< no code names it
   s32 farPlane;
   s32 zoom;
   s32 zoomFrom;
@@ -107,19 +107,19 @@ struct MapWork {
 /// control bits, the window edges and interrupt lines of a transition, and
 /// the map's resources.
 struct MapViewWork {
-  u32 unk000[5]; ///< map work fields no window view names
-  u16 dispcnt;   ///< display control bits ORed into DISPCNT
-  u8 unk016[0xea];
+  u32 unused[5];               ///< map work fields no window view names
+  u16 dispcnt;                 ///< display control bits ORed into DISPCNT
+  u8 unusedAfterDispcnt[0xea]; ///< no code names it
   s8 animationActive;
-  u8 unk101[3];
+  u8 unusedAfterAnimationActive[3]; ///< no code names it
   u16 windowTop;
   u16 windowBottom;
   u16 irqFirstLine;
   u16 irqSecondLine;
   u16 irqPhase;
-  u8 unk10e[0x12];
+  u8 unusedAfterIrqPhase[0x12]; ///< no code names it
   u32 *resources;
-  u8 unk124[0x84c];
+  u8 unusedAfterResources[0x84c]; ///< no code names it
   s8 extraTiles;
   u8 pictureShown;
   u8 picturePending;
@@ -129,7 +129,7 @@ struct MapViewWork {
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {
   s32 x;
-  u8 unk04[4];
+  u8 unusedAfterX[4]; ///< no code names it
   s32 y;
 };
 

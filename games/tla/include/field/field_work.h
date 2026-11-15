@@ -97,8 +97,8 @@ struct FieldWork {
   /// The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
   /// them, and they are kept when a rope or tightrope was raised.
   u16 heldKeys;
-  u8 unk188[2];
-  s8 mode; ///< an enum ActorSystemMode
+  u8 unusedAfterHeldKeys[2]; ///< no code names it
+  s8 mode;                   ///< an enum ActorSystemMode
   /// The area's graphics are to be reloaded on the World Map
   /// (WorldMap_Freeze, WorldMap_ReloadPendingAreaGraphics).
   s8 areaGraphicsPending;
@@ -158,9 +158,9 @@ struct FieldWork {
   s8 psynergyActing;   ///< set while Psynergy takes effect
   s8 castStarted;      ///< set once a cast has been announced
   s16 queuedSound;     ///< a sound Scene_PlayQueuedMusic plays; -1 for none
-  u8 unkcba[2];
-  struct Actor *movedBlock; ///< the block Actor_LiftTargetBlock lifted, for
-                            ///< Actor_PlaceMovedBlock
+  u8 unusedAfterQueuedSound[2]; ///< no code names it
+  struct Actor *movedBlock;     ///< the block Actor_LiftTargetBlock lifted, for
+                                ///< Actor_PlaceMovedBlock
   /// The cells a Psynergy touches, as cell coordinates, ended by -1.
   s16 psynergyCells[56];
   s8 unkd30;
@@ -185,7 +185,7 @@ struct FieldWork {
   s16 standing;
   u16 unkd4a;
   u16 unkd4c;
-  u8 unkd4e[2];
+  u8 padding[2];
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xd50);

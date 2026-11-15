@@ -319,7 +319,7 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
  * games/tla/src/field/event_commands_field_psynergy_work.c:327: structure has
  * no member named `id'. */
 struct WaveFxWork__scene {
-  u8 unk000[0x28b];
+  u8 unused[0x28b]; ///< no code names it
   s8 red;
   s8 green;
   s8 blue;
@@ -328,7 +328,7 @@ struct WaveFxWork__scene {
   u16 value;
   u8 steps;
   u8 unk295;
-  u8 unk296[2];
+  u8 unusedB[2]; ///< no code names it
 };
 
 /// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase

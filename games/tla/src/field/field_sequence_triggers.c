@@ -129,7 +129,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
 }
 
 struct FxGroup {
-  u8 unk00[32];
+  u8 unused[32]; ///< no code names it
   struct Actor *objects[8];
   u16 values[8];
   s32 count;

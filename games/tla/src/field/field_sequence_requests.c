@@ -137,7 +137,7 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
  * `struct EventWork1cc'. */
 #define EventWork1cc EventWork1cc__event_commands
 struct EventWork1cc {
-  u8 unk000[0x1cc];
+  u8 unused[0x1cc]; ///< no code names it
   struct CueObject *focus;
 };
 

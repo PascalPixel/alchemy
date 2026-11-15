@@ -33,7 +33,7 @@
 /// drawn.
 struct CanvasSpriteWork {
   struct EffectSprite sprite;
-  u8 unk28[0x78];
+  u8 unusedAfterSprite[0x78]; ///< no code names it
   s32 drawnFrames;
   s32 frame;
   s32 x; ///< whole pixels
@@ -46,7 +46,7 @@ struct CanvasSpriteWork {
   u8 priority;
   s8 mode;
   s8 command;
-  u8 unkc2[2];
+  u8 unusedAfterCommand[2]; ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 0xc4);

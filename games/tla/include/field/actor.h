@@ -17,7 +17,7 @@
 /// A view of an actor's sprite record: the word at 0x28 points at its sprite
 /// id, which Actor_GetSpriteById and the event commands read.
 struct ObjectAnimationState {
-  u8 unk00[0x28];
+  u8 unused[0x28]; ///< no code names it
   s16 *value28;
 };
 

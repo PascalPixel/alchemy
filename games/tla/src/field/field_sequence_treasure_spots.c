@@ -158,11 +158,11 @@ void Field_PlaceTreasureSpots(void) {
  * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:174: structure
  * has no member named `yOffset'. */
 struct ObjectSprite__field_sequence {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 attr0High;
   u8 unk06;
   u8 attr1High;
-  u8 unk08[0xf];
+  u8 unusedB[0xf]; ///< no code names it
   u8 yOffset;
 };
 

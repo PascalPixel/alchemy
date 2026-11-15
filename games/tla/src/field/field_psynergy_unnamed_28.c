@@ -363,10 +363,10 @@ struct BurstMote {
 /// The work of the sparkle burst field Psynergy 28 ends with (heap slot
 /// battleEffect): the sparkle picture, 64 sparkles and their motes.
 struct SparkleBurstWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite sprites[64];
   struct BurstMote motes[64];
-  u8 unk2100[0x880];
+  u8 unusedAfterMotes[0x880]; ///< no code names it
   s16 resource;
 };
 
@@ -649,7 +649,7 @@ void ViewMove_End(void) {
 /// The actors near the caster whose sprite value a view move saves and gives
 /// back (heap slot battleEffect): up to eight, with each one's value.
 struct FxGroup {
-  u8 unk00[32];
+  u8 unused[32]; ///< no code names it
   struct Actor *objects[8];
   u16 values[8];
   s32 count;

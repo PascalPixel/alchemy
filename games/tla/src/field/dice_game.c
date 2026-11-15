@@ -143,7 +143,7 @@ void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
 
 /// Super Lucky Dice's work as the dice game reads it: its 128 reel sprites.
 struct ReelWork {
-  u8 unk000[0xc4];
+  u8 unused[0xc4]; ///< no code names it
   struct ReelSprite obj[128];
 };
 

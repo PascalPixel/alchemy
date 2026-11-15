@@ -11,12 +11,12 @@
 #include "field/field.h"
 
 struct SpritePictures {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 picture;
 };
 
 struct AnimatedSprite {
-  u8 unk00[0x12];
+  u8 unused[0x12]; ///< no code names it
   s16 rotation;
   u8 unk14[5];
   u8 picture;
@@ -100,7 +100,7 @@ struct ChasingMote {
 /// pictures, the sparks and motes that fly between the tablet and the leader,
 /// and the circle they gather on.
 struct MoteWork {
-  u8 unk0000[0x800];
+  u8 unused[0x800]; ///< no code names it
   struct ChasingMote sparks[32];
   struct EffectSprite sparkSprites[32];
   struct ChasingMote motes[48];

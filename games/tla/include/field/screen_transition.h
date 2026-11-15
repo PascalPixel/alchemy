@@ -24,24 +24,24 @@ struct SpeakerDefinition {
 };
 
 struct BattleRenderObject {
-  u8 unk00[0x50];
+  u8 unused[0x50]; ///< no code names it
   struct ObjectAnimationState *animation;
   u8 kind;
 };
 
 struct FadeActor {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u16 unk14;
   s16 floor;
-  u8 unk18[10];
+  u8 unusedAfterFloor[10]; ///< no code names it
   u8 terrainId;
 };
 
 struct FadeView {
-  u8 unk00[228];
+  u8 unused[228]; ///< no code names it
   s16 camera[4];
 };
 
@@ -61,7 +61,7 @@ struct TransitionShape {
 };
 
 struct MapLayerFlags {
-  u8 unk00[0x14];
+  u8 unused[0x14]; ///< no code names it
   u16 flags;
 };
 

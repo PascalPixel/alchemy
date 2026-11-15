@@ -11,19 +11,19 @@
 /// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
 /// splash particles.
 struct GrindWork {
-  u8 unk0000[0x20];
+  u8 unused[0x20]; ///< no code names it
   u8 picture[0x800];
   struct FieldPsynergyParticle particles[64];
   struct EffectSprite sprites[64];
 };
 
 struct SplashAnimation {
-  u8 unk00[16];
+  u8 unused[16]; ///< no code names it
   u8 entry;
-  u8 unk11[3];
+  u8 unusedAfterEntry[3]; ///< no code names it
   u8 width;
   u8 height;
-  u8 unk16[18];
+  u8 unusedAfterHeight[18]; ///< no code names it
   void *tiles;
 };
 
@@ -33,7 +33,7 @@ struct SplashAnimation {
  * games/tla/src/field/field_psynergy_grind.c:201: structure has no member named
  * `callback'. */
 struct PendingEvent__f0e92b4 {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   void (*callback)(s32, s32, s32);
 };
 

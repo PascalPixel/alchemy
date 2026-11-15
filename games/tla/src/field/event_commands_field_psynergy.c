@@ -265,7 +265,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
 }
 
 struct ResourceSprite {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   u8 vramBlock;
   u8 flags;
 };

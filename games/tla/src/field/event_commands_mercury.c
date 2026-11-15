@@ -30,7 +30,7 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
  * games/tla/src/field/event_commands_mercury.c:73: structure has no member
  * named `sprite'. */
 struct CaptureObject__f0d8740 {
-  u8 unk00[6];
+  u8 unused[6]; ///< no code names it
   u16 facing;
   s32 x;
   s32 y;
@@ -38,16 +38,16 @@ struct CaptureObject__f0d8740 {
   u8 unk14[4];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[3];
+  u8 unusedAfterScaleY[3]; ///< no code names it
   u8 priorityFlags;
-  u8 unk24[44];
+  u8 unusedAfterPriorityFlags[44]; ///< no code names it
   struct CaptureSprite *sprite;
   u8 unk54;
   u8 mode;
-  u8 unk56[4];
+  u8 unusedAfterMode[4]; ///< no code names it
   u8 collisionFlags;
   u8 visible;
-  u8 unk5c[12];
+  u8 unusedAfterVisible[12]; ///< no code names it
   struct CaptureObject__f0d8740 *linked;
   void *callback;
 };

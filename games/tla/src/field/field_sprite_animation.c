@@ -22,11 +22,11 @@
 #include "system/scene.h"
 
 struct ChildObject {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u16 value;
-  u8 unk04[8];
+  u8 unusedAfterValue[8]; ///< no code names it
   s32 active;
-  u8 unk10[5];
+  u8 unusedAfterActive[5]; ///< no code names it
   u8 mode;
 };
 
@@ -392,9 +392,9 @@ s32 Sprite_StartAnimation(struct Sprite *state, s32 flags) {
 }
 
 struct ChildGroup {
-  u8 unk00[27];
+  u8 unused[27]; ///< no code names it
   u8 count;
-  u8 unk1c[12];
+  u8 unusedAfterCount[12]; ///< no code names it
   struct ChildObject *children[1];
 };
 

@@ -13,7 +13,7 @@
 #include "system/heap_release.h"
 
 struct ObjectMetadata {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s8 height;
 };
 

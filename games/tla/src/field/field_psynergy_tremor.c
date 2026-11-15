@@ -40,13 +40,13 @@ struct TremorWork {
 
 /// An object's sprite; the sway shakes it sideways by its offset.
 struct TremorSprite {
-  u8 unk00[0x12];
+  u8 unused[0x12]; ///< no code names it
   u16 offsetX;
   u8 width;
   u8 height;
-  u8 unk16[3];
+  u8 unusedAfterHeight[3]; ///< no code names it
   u8 unk19;
-  u8 unk1a[0xe];
+  u8 unusedB[0xe]; ///< no code names it
   void *pictures;
 };
 

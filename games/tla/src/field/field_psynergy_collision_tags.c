@@ -46,20 +46,20 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
 }
 
 struct SwitchCell {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u8 block;
   u8 unk03_0 : 7;
   u8 raised : 1;
 };
 
 struct RestoreLayer {
-  u8 unk00[0x138 - 0x108];
+  u8 unused[0x138 - 0x108]; ///< no code names it
   struct SwitchCell *cells;
-  u8 unk34[4];
+  u8 unusedAfterCells[4]; ///< no code names it
 };
 
 struct RestoreMap {
-  u8 unk000[0x108];
+  u8 unused[0x108]; ///< no code names it
   struct RestoreLayer layers[1];
 };
 

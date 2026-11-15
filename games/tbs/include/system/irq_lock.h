@@ -43,4 +43,20 @@
     REG_IME = (saved);                                                         \
   } while (0)
 
+/// Disables interrupts, keeping IME in a variable of the caller's that an
+/// interrupt may read.
+static inline void Irq_Lock(volatile u32 *saved) {
+  u16 *ime;
+
+  IME_SAVE((ime = (u16 *)&REG_IME), *saved);
+  IME_DISABLE(ime);
+}
+
+/// Restores the IME that Irq_Lock kept.
+static inline void Irq_Unlock(volatile u32 *saved) {
+  u32 value = *saved;
+
+  REG_IME = value;
+}
+
 #endif

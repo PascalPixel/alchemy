@@ -833,7 +833,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_DOWN_2:
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -851,7 +851,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_UP_2:
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -869,7 +869,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -887,7 +887,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_UP_2:
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -940,7 +940,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:
       target->resistanceStage -= 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (savedTarget->resistanceStage -
@@ -960,7 +960,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_UP_2:
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:
       target->resistanceStage += 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (target->resistanceStage -

@@ -182,10 +182,10 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
 
   switch (effectId) {
-  case ABILITY_EFFECT_DEFENSE_DOWN_2:
+  case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
   case ABILITY_EFFECT_DEFENSE_DOWN:
     return 70;
-  case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:
   case ABILITY_EFFECT_RESISTANCE_DOWN:
     return 75;
   case ABILITY_EFFECT_CHARM:
@@ -216,7 +216,7 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_REVIVE_80:
     fixedChance = 90;
     break;
-  case ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
   case ABILITY_EFFECT_ATTACK_DOWN:
   case ABILITY_EFFECT_CURSE:
   case ABILITY_EFFECT_DRAIN_PP:

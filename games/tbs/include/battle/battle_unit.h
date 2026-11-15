@@ -91,31 +91,31 @@ enum AbilityFormula {
 /// for the abilities that have it (ability_table.c, with their English names
 /// and descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE
 /// are read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
-/// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_2` moves its
-/// stat two stages, one without moves it one.
+/// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_SHARPLY` moves
+/// its stat two stages, one without moves it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
-  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
-  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
-  ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
-  ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
-  ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
-  ABILITY_EFFECT_ATTACK_UP_2 = 6,        ///< Impact
-  ABILITY_EFFECT_ATTACK_UP = 7,          ///< High Impact
-  ABILITY_EFFECT_ATTACK_DOWN_2 = 8,      ///< Dull
-  ABILITY_EFFECT_ATTACK_DOWN = 9,        ///< Blunt
-  ABILITY_EFFECT_DEFENSE_UP_2 = 10,      ///< Guard
-  ABILITY_EFFECT_DEFENSE_UP = 11,        ///< Protect
-  ABILITY_EFFECT_DEFENSE_DOWN_2 = 12,    ///< Impair
-  ABILITY_EFFECT_DEFENSE_DOWN = 13,      ///< Debilitate
-  ABILITY_EFFECT_RESISTANCE_UP_2 = 14,   ///< Ward
-  ABILITY_EFFECT_RESISTANCE_UP = 15,     ///< Resist
-  ABILITY_EFFECT_RESISTANCE_DOWN_2 = 16, ///< Weaken
-  ABILITY_EFFECT_RESISTANCE_DOWN = 17,   ///< Enfeeble
-  ABILITY_EFFECT_POISON = 18,            ///< Taint
-  ABILITY_EFFECT_VENOM = 19,             ///< Poison
-  ABILITY_EFFECT_DELUSION = 20,          ///< Delude
-  ABILITY_EFFECT_CONFUSION = 21,         ///< Confuse
+  ABILITY_EFFECT_RESTORE_HP = 1,          ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,          ///< restores PP (the item menu's use)
+  ABILITY_EFFECT_CURE_POISON = 3,         ///< Cure Poison, Antidote
+  ABILITY_EFFECT_RESTORE = 4,             ///< Restore, Elixir
+  ABILITY_EFFECT_REVIVE = 5,              ///< Revive, Water of Life: full HP
+  ABILITY_EFFECT_ATTACK_UP_SHARPLY = 6,   ///< Impact
+  ABILITY_EFFECT_ATTACK_UP = 7,           ///< High Impact
+  ABILITY_EFFECT_ATTACK_DOWN_SHARPLY = 8, ///< Dull
+  ABILITY_EFFECT_ATTACK_DOWN = 9,         ///< Blunt
+  ABILITY_EFFECT_DEFENSE_UP_SHARPLY = 10, ///< Guard
+  ABILITY_EFFECT_DEFENSE_UP = 11,         ///< Protect
+  ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY = 12,    ///< Impair
+  ABILITY_EFFECT_DEFENSE_DOWN = 13,            ///< Debilitate
+  ABILITY_EFFECT_RESISTANCE_UP_SHARPLY = 14,   ///< Ward
+  ABILITY_EFFECT_RESISTANCE_UP = 15,           ///< Resist
+  ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY = 16, ///< Weaken
+  ABILITY_EFFECT_RESISTANCE_DOWN = 17,         ///< Enfeeble
+  ABILITY_EFFECT_POISON = 18,                  ///< Taint
+  ABILITY_EFFECT_VENOM = 19,                   ///< Poison
+  ABILITY_EFFECT_DELUSION = 20,                ///< Delude
+  ABILITY_EFFECT_CONFUSION = 21,               ///< Confuse
   ABILITY_EFFECT_CHARM = 22,
   ABILITY_EFFECT_STUN = 23, ///< Paralyze
   ABILITY_EFFECT_SLEEP = 24,

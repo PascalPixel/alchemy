@@ -155,42 +155,42 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   {                                                                            \
     (applies) = 0;                                                             \
     switch ((action)->effect) {                                                \
-    case ABILITY_EFFECT_ATTACK_UP_2:                                           \
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:                                     \
     case ABILITY_EFFECT_ATTACK_UP:                                             \
       if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_ATTACK_DOWN_2:                                         \
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:                                   \
     case ABILITY_EFFECT_ATTACK_DOWN:                                           \
       if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_UP_2:                                          \
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:                                    \
     case ABILITY_EFFECT_DEFENSE_UP:                                            \
       if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:                                        \
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:                                  \
     case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
       if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_UP_2:                                       \
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:                                 \
     case ABILITY_EFFECT_RESISTANCE_UP:                                         \
       if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2:                                     \
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:                               \
     case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
       if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \

@@ -750,7 +750,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             c = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[c & 3];
 #else
-            // DEAD: the item argument is read and dropped; the ROM keeps the call.
+            // DEAD: the item argument is read and dropped; the ROM keeps the
+            // call.
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
 #if LANGUAGE == LANGUAGE_FRENCH
             word = (s8 *)gLocalizedWord_ItemPronoun;

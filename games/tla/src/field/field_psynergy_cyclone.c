@@ -614,8 +614,8 @@ void Blaze_UpdateSpray(void) {
         break;
       }
     }
-    if ((FIELD_CELL(particle->x)) != (work->origin[0] >> 20) ||
-        (FIELD_CELL(particle->z)) != (work->origin[2] >> 20)) {
+    if (FIELD_CELL(particle->x) != FIELD_CELL(work->origin[0]) ||
+        FIELD_CELL(particle->z) != FIELD_CELL(work->origin[2])) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;

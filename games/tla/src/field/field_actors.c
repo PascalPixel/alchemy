@@ -676,10 +676,10 @@ UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
 #define CELL_PRIORITY(cells, x, z)                                             \
-  (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 16) >> 30)
+  (((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)] << 16) >> 30)
 // The layer field (bits 13..12) of a cell's word: the layer plus one.
 #define CELL_LAYER(cells, x, z)                                                \
-  (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 18) >> 30)
+  (((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)] << 18) >> 30)
 
 /// Each frame, with the scrolling camera: places every actor's sprite on the
 /// screen.

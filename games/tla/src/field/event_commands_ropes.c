@@ -1562,7 +1562,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 
   // Clear the collision codes of the five cells above the object.
   x = FIELD_CELL(object->x);
-  z = (object->z - object->y) >> 20;
+  z = FIELD_CELL(object->z - object->y);
   cells = map->layers[2].cells;
   for (i = 0; i < 5; i++) {
     z++;

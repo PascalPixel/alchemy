@@ -868,8 +868,6 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
         obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + px(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + px(72);
-        /* FAKEMATCH(temporary): the new heading held in cycleFrame, the local
-         * the last obstacle keeps its phase in. */
         cycleFrame = (u16)obstacle->heading + motionStep;
         obstacle->heading = cycleFrame;
         obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;

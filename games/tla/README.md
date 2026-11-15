@@ -52,5 +52,7 @@ of the code opens up.
 
 ## Looking something up
 
+- [How the two games relate](sequel.md) reads The Broken Seal in this
+  game's code: what it grew from, and what both still carry.
 - The [glossary](glossary.md) has every word these pages share.
 - [Build it yourself](../README.md#build-it-yourself) gets you a ROM you made yourself.

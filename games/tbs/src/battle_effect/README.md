@@ -118,7 +118,10 @@ Two shapes are shared widely enough to have names in the code. The
 **prelude** is a Djinni's entrance, played before its attack. A **casting
 impact** is sparks gathering on the user and then a strike on the target,
 shared by eight Djinn and many weapon unleashes, each adding something of
-its own.
+its own. The table also holds effects no ability plays. One is a leap at
+the target with sparks bursting beneath it: Severe Blow is a casting impact
+in this game, and the leap is Severe Blow in The Lost Age
+([How the two games relate](../../../tla/sequel.md)).
 
 ## Where the code is
 

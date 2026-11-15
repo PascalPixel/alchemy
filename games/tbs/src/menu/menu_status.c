@@ -143,17 +143,19 @@ s32 PartyMemberChooser_Open(void) {
 /// -1.
 s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
+  s32 finished = 0;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the slot's clearing in both arms of a test. */
-  if ((s32)work < 0)
-    work->selectedSlots[0] = result;
-  else
-    work->selectedSlots[0] = result;
-  if (StatusScreen_SelectMember(0) == -1)
-    result = -1;
-  else
-    result = work->selectedIds[0];
+  /* LEFTOVER(template): StatusScreen_RunPages's loop over its steps, with its
+   * first step alone: it runs once. */
+  while (!finished) {
+    work->selectedSlots[0] = finished;
+    if (StatusScreen_SelectMember(0) == -1)
+      result = -1;
+    else
+      result = work->selectedIds[0];
+    finished = 1;
+  }
   return result;
 }
 

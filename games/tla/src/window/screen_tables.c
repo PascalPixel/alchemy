@@ -7,7 +7,6 @@
 #include "ability_ids.h"
 #include "edition.h"
 #include "fixed_math.h"
-#include "macros.h"
 #include "sprite_ids.h"
 #include "battle/battle_unit.h"
 #include "game/game.h"

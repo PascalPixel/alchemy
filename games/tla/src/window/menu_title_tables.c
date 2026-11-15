@@ -4,7 +4,6 @@
 
 #include "types.h"
 #include "edition.h"
-#include "macros.h"
 
 /// Each 4bpp colour as Graphics_ExpandVramTilesByColorTable maps it: the
 /// first sixteen with colour 1 as colour 10, then the sixteen unchanged.

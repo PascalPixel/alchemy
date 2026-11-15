@@ -182,10 +182,3 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 /// 128 thrown up at the start and 128 shed by the head.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
-
-// Returns the fixed IWRAM word copy entry, so the call loads its address before
-// its arguments.
-static inline s32 (*Iwram_GetCopyWords(void))(void *destination,
-                                              const void *source, s32 size) {
-  return Iwram_CopyWordsEntry;
-}

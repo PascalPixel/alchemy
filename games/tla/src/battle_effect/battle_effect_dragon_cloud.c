@@ -78,12 +78,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                              &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
-  /* FAKEMATCH(wrapper): the copy routine fetched through Iwram_GetCopyWords. */
-  if (args->variant == EFFECT_VARIANT_STRONGER)
-    Iwram_GetCopyWords()(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-        SHEET_PALETTE_BYTES);
+  if (args->variant == EFFECT_VARIANT_STRONGER) {
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+  }
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 

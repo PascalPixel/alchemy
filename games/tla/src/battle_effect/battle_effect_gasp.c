@@ -12,14 +12,6 @@ struct StripQuad;
 
 /// The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
-/// Loads a sheet's colours into the background palette.
-#define LOAD_BG_PALETTE(resource)                                              \
-  {                                                                            \
-    void *palette = Resource_GetTableEntry((s32)&(resource));                  \
-    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
-                                                                               \
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
-  }
 /// Sets the transform for one of modes 11 and 14's spinning particles: at its
 /// position, half as wide (the canvas holds every other column), turned by z.
 #define PLACE_PARTICLE(p)                                                      \
@@ -1352,6 +1344,5 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 #undef BLITTER
 #undef EXTRA_PARTICLES
 #undef FIGURE
-#undef LOAD_BG_PALETTE
 #undef PLACE_PARTICLE
 #undef WAIT_TRANSFER

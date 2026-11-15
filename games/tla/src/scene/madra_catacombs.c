@@ -450,9 +450,8 @@ void MadraCatacombs_FinishMovingClimbablePillar(void) {
 /// actors 20 to 29 each go to one of them.
 void MadraCatacombs_LightFlames(void) {
   u32 i;
-  /* FAKEMATCH(pin): the actor pinned to r6. */
-  register s32 actor __asm__("r6");
-  s32 target;
+  s32 target = ACTOR_FIRST_WEST_FLARE;
+  s32 actor = ACTOR_FIRST_FLAME;
 
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 4, 184, 258);
@@ -464,8 +463,6 @@ void MadraCatacombs_LightFlames(void) {
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 1, 184, 162);
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE, 136, 138);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE, 184, 138);
-  target = ACTOR_FIRST_WEST_FLARE;
-  actor = ACTOR_FIRST_FLAME;
   for (i = 0; i < 10; i++) {
     Actor_SetAnimation(actor, 0);
     Actor_MoveToObject(actor, target);

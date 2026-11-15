@@ -259,6 +259,12 @@ s32 GaiaRockInside_GetMazeWayOn(void);
 void Map_CopyRawCellsRect(s32 x, s32 z, s32 width, s32 height, s32 cellX,
                           s32 cellZ);
 
+/// Copies whole cells as the map stores them, from an event.
+static inline void MapGrid_CopyRawCells(s32 x, s32 z, s32 width, s32 height,
+                                        s32 cellX, s32 cellZ) {
+  Map_CopyRawCellsRect(x, z, width, height, cellX, cellZ);
+}
+
 void GaiaRockInside_JumpDownByAltar(void);
 
 void GaiaRockInside_CycloneStartsPlatforms(void);
@@ -3150,7 +3156,7 @@ void GaiaRockInside_TakeMazeExit(s32 direction) {
 extern s8 gGaiaRockInside_MazeOrigins[][2];
 
 /// From the third state on, for each of the two map layers:
-/// Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
+/// MapGrid_CopyRawCells with the state's origin plus the layer's cell, a 15 by
 /// 10 size and the layer's cell plus one.
 void GaiaRockInside_DrawMazeRoom(void) {
   s32 state = *(s32 *)(gInventorySnapshot + 0x288);
@@ -3164,11 +3170,10 @@ void GaiaRockInside_DrawMazeRoom(void) {
     s32 i;
 
     for (i = 1; i >= 0; i--, layer++) {
-      /* FAKEMATCH(pin): x fixed to r2. */
-      register s32 x asm("r2") = FIELD_CELL(layer->offsetX);
+      s32 x = FIELD_CELL(layer->offsetX);
       s32 z = FIELD_CELL(layer->offsetY);
 
-      Map_CopyRawCellsRect(originX + x, originZ + z, 15, 10, x + 1, z + 1);
+      MapGrid_CopyRawCells(originX + x, originZ + z, 15, 10, x + 1, z + 1);
     }
   }
 }
@@ -3177,23 +3182,23 @@ void GaiaRockInside_DrawMazeRoom(void) {
 /// step or the exit, or -1 if no way leads on.
 s32 GaiaRockInside_GetMazeWayOn(void) {
   Path *path = gPath;
-  s32 current = path->current;
-  /* FAKEMATCH(pin): the node fixed to r3 and each link to r2. */
-  register PathStep *node asm("r3") = &path->steps[current];
-  s32 next = current + 1;
+  s32 step = path->current;
+  PathStep *node = &path->steps[step];
   u32 link;
 
+  // A way leads on when it reaches the exit or the step after this one.
+  step++;
   link = node->next[MAZE_SOUTH];
-  if (link == MAZE_EXIT || link == next)
+  if (link == MAZE_EXIT || link == step)
     return FACING_SOUTH;
   link = node->next[MAZE_WEST];
-  if (link == MAZE_EXIT || link == next)
+  if (link == MAZE_EXIT || link == step)
     return FACING_WEST;
   link = node->next[MAZE_EAST];
-  if (link == MAZE_EXIT || link == next)
+  if (link == MAZE_EXIT || link == step)
     return FACING_EAST;
   link = node->next[MAZE_NORTH];
-  if (link == MAZE_EXIT || link == next)
+  if (link == MAZE_EXIT || link == step)
     return FACING_NORTH;
   return -1;
 }

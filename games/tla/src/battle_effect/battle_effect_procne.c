@@ -406,15 +406,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-                  /* FAKEMATCH(dead): the transform in a once-only block. */
-                  do {
-                    void (*transform)(const void *, s32 *) =
-                        Iwram_TransformVectorEntry;
-                    /* FAKEMATCH(pin): the result pointer in r1, set before the
-                     * point in r0. */
-                    register s32 *result __asm__("r1") = &screen.x;
-                    transform(&spark[index].x, result);
-                  } while (0);
+                  Iwram_TransformVector(&spark[index].x, &screen.x);
                   screen.x = (screen.x >> 17) + 32;
                   screen.y = (FIXEDtoINT(screen.y)) + 56;
                   screen.depth >>= 16;

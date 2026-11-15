@@ -258,6 +258,15 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define SHEET_PALETTE_COLORS 64
 #define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
 
+/// Loads a sheet's colours into the background palette.
+#define LOAD_BG_PALETTE(resource)                                              \
+  {                                                                            \
+    void *palette = Resource_GetTableEntry((s32)&(resource));                  \
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
+                                                                               \
+    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
+  }
+
 /// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
 /// speed * damping / DAMPING_SCALE.
 #define DAMPING_SCALE 64

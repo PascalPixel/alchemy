@@ -103,12 +103,6 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
 #define FLARES ((struct Particle *)Ram_MapCellBuffer)
 #define FLARES_PER_MEMBER 64
 
-/// The IWRAM word copy, fetched as a routine.
-static inline CopyWordsFn CopyWordsRoutine(void) {
-  /* FAKEMATCH(wrapper): the routine fetched through this inline. */
-  return Iwram_CopyWordsEntry;
-}
-
 // Lights gather around each target in turn, eight frames apart, turning as
 // they close in; at the center they burst, and the mode's picture plays
 // there (a dagger, a shield, a streak or a wisp).
@@ -197,30 +191,20 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
-    if (mode == STAT_BOOST_GRANITE)
-      CopyWordsRoutine()(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
-          SHEET_PALETTE_BYTES);
-    else if (mode == STAT_BOOST_FLASH)
-      CopyWordsRoutine()(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-          SHEET_PALETTE_BYTES);
-    else
-      CopyWordsRoutine()(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
-          SHEET_PALETTE_BYTES);
+    if (mode == STAT_BOOST_GRANITE) {
+      LOAD_BG_PALETTE(ResourceId_VenusDjinnSheet);
+    } else if (mode == STAT_BOOST_FLASH) {
+      LOAD_BG_PALETTE(ResourceId_MarsDjinnSheet);
+    } else {
+      LOAD_BG_PALETTE(ResourceId_MercuryDjinnSheet);
+    }
   } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
   } else if (mode == STAT_BOOST_COAL) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + SERIES_B_PICTURE, 1, 0);
-    CopyWordsRoutine()((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                       SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_MarsDjinnSheet);
   } else {
     void *palette;
 
@@ -242,7 +226,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    CopyWordsRoutine()((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    {
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+      copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    }
   }
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,

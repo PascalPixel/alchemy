@@ -2129,115 +2129,73 @@ s32 GabombaStatue_GetPuzzleSeed(void) {
 void GabombaStatue_CheckOfferingClock();
 
 void GabombaStatue_InitializeArrows(void) {
-  s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
-      t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
-  const u8 *table;
+  struct Actor *leader;
+  s32 seed;
 
-  t1 = ((s32)Actor_Get(10));
-  FieldActor_SetSpriteColor(t1, 3);
+  FieldActor_SetSpriteColor(Actor_Get(10), 3);
   Task_AddFrame((s32)GabombaStatue_FadeByDepth, TASK_PASS_VBLANK);
-  t4 = ((s32)Actor_Get(11));
-  FieldActor_SetSpriteColor(t4, 11);
-  t6 = ((s32)Actor_Get(12));
-  FieldActor_SetSpriteColor(t6, 11);
-  t8 = ((s32)Actor_Get(13));
-  FieldActor_SetSpriteColor(t8, 10);
-  t10 = ((s32)Actor_Get(14));
-  FieldActor_SetSpriteColor(t10, 10);
-  t12 = ((s32)Actor_Get(16));
-  Actor_SetSpriteFlags(t12, 0);
-  t14 = ((s32)Actor_Get(17));
-  Actor_SetSpriteFlags(t14, 0);
-  t16 = ((s32)Actor_Get(18));
-  Actor_SetSpriteFlags(t16, 0);
-  t18 = ((s32)Actor_Get(19));
-  Actor_SetSpriteFlags(t18, 0);
-  t20 = ((s32)Actor_Get(20));
-  Actor_SetSpriteFlags(t20, 0);
-  t22 = ((s32)Actor_Get(21));
-  Actor_SetSpriteFlags(t22, 0);
-  t24 = ((s32)Actor_Get(22));
-  Actor_SetSpriteFlags(t24, 0);
-  t26 = Event_GetFlag(FLAG_GABOMBA_RESPONDED);
-  if (t26 == 0)
-    goto L_0200b6f2;
-  t27 = Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP);
-  if (t27 != 0)
-    goto L_0200b6f2;
-  GabombaStatue_SawEnergyFlow();
-  goto L_0200b856;
-L_0200b6f2:
-  t29 = Event_GetFlag(0x8fc);
-  if (t29 == 0)
-    goto L_0200b762;
-  t30 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  v_r5 = t30;
-  Actor_SetPosition(11, 0, 0);
-  Actor_SetPosition(12, 0, 0);
-  Actor_SetPosition(13, 0, 0);
-  Actor_SetPosition(14, 0, 0);
-  GabombaStatue_ResetClock();
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveToFixed(FIELD_AT(v_r5, s32, 8), -1, FIELD_AT(v_r5, s32, 16),
-                          0);
-  MapGrid_CenterOnFollowedPoint();
-  System_Wait(1);
-  Event_End();
-L_0200b762:
-  t42 = Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
-  if (t42 == 0)
-    goto L_0200b78e;
-  t43 = Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP);
-  if (t43 != 0)
-    goto L_0200b78e;
-  GabombaStatue_StartClock(0);
-  Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, TASK_PASS_VBLANK);
-L_0200b78e:
-  t46 = GabombaStatue_GetPuzzleSeed();
-  table = ((u8 *)gGabombaStatue_PathLengths);
-  GabombaStatue_SetUpChannelPuzzle(19, 11, *(s32 *)(table + (t46 << 2)), 16);
-  Actor_SetAnimation(15, 5);
-  if (gMainRoutineWork.entrance != 2)
-    goto L_0200b7c0;
-  GabombaStatue_WatchTheChargesStick();
-  goto L_0200b856;
-L_0200b7c0:
-  t50 = Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
-  if (t50 != 0)
-    goto L_0200b7e4;
-  if (gMainRoutineWork.entrance != 1) {
-    p_r3 = gMainRoutineWork.entrance;
-    goto L_0200b7dc;
+  FieldActor_SetSpriteColor(Actor_Get(11), 11);
+  FieldActor_SetSpriteColor(Actor_Get(12), 11);
+  FieldActor_SetSpriteColor(Actor_Get(13), 10);
+  FieldActor_SetSpriteColor(Actor_Get(14), 10);
+  Actor_SetSpriteFlags(Actor_Get(16), 0);
+  Actor_SetSpriteFlags(Actor_Get(17), 0);
+  Actor_SetSpriteFlags(Actor_Get(18), 0);
+  Actor_SetSpriteFlags(Actor_Get(19), 0);
+  Actor_SetSpriteFlags(Actor_Get(20), 0);
+  Actor_SetSpriteFlags(Actor_Get(21), 0);
+  Actor_SetSpriteFlags(Actor_Get(22), 0);
+  if (Event_GetFlag(FLAG_GABOMBA_RESPONDED) &&
+      !Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP)) {
+    GabombaStatue_SawEnergyFlow();
+    return;
   }
-  GabombaStatue_FocusEnergies();
-  goto L_0200b7e4;
-L_0200b7dc:
-  if (p_r3 != 3)
-    goto L_0200b7e4;
-  GabombaStatue_SeeHowItWorks();
-L_0200b7e4:
-  t53 = Event_GetFlag(0x8fc);
-  if (t53 == 0)
-    goto L_0200b856;
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  gFieldWork->transition = 0x201;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  gFieldWork->transition = 0x209;
-  Event_ClearFlag(0x8fc);
-  t59 = Event_GetFlag(0x9eb);
-  if (t59 == 0)
-    goto L_0200b84a;
-  t60 = Event_GetFlag(FLAG_GABOMBA_CHANNEL_FIXED);
-  if (t60 != 0)
-    goto L_0200b84a;
-  GabombaStatue_FixTheChannel();
-L_0200b84a:
-  Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Event_End();
-L_0200b856:
+  if (Event_GetFlag(0x8fc)) {
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(12, 0, 0);
+    Actor_SetPosition(13, 0, 0);
+    Actor_SetPosition(14, 0, 0);
+    GabombaStatue_ResetClock();
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    FieldCamera_MoveToFixed(leader->x.fixed, -1, leader->z.fixed, 0);
+    MapGrid_CenterOnFollowedPoint();
+    System_Wait(1);
+    Event_End();
+  }
+  if (Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS) &&
+      !Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP)) {
+    GabombaStatue_StartClock(0);
+    Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, TASK_PASS_VBLANK);
+  }
+  seed = GabombaStatue_GetPuzzleSeed();
+  GabombaStatue_SetUpChannelPuzzle(19, 11, gGabombaStatue_PathLengths[seed],
+                                   16);
+  Actor_SetAnimation(15, 5);
+  if (gMainRoutineWork.entrance == 2) {
+    GabombaStatue_WatchTheChargesStick();
+    return;
+  }
+  if (!Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS)) {
+    if (gMainRoutineWork.entrance == 1)
+      GabombaStatue_FocusEnergies();
+    else if (gMainRoutineWork.entrance == 3)
+      GabombaStatue_SeeHowItWorks();
+  }
+  if (Event_GetFlag(0x8fc)) {
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    gFieldWork->transition = 0x201;
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    gFieldWork->transition = 0x209;
+    Event_ClearFlag(0x8fc);
+    if (Event_GetFlag(0x9eb) && !Event_GetFlag(FLAG_GABOMBA_CHANNEL_FIXED))
+      GabombaStatue_FixTheChannel();
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
+    Event_End();
+  }
 }
 
 struct SpriteView {

@@ -1791,7 +1791,7 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
-  ((void (*)())Actor_FaceDirectionById)(12, 0);
+  ((void (*)())Actor_FaceDirectionById)(12, FACING_EAST);
   Event_SetMessageId((s32)&MsgKandoreanTempleSecretOfLash);
   // "This is the power and the secret of our temple!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);

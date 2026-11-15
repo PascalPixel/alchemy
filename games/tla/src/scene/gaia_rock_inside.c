@@ -68,29 +68,32 @@ struct Actor;
 /// One grid cell: the step that stands on it (0 for none, 99 for the border)
 /// and the column and row of the next step.
 typedef struct {
-  s8 unk_0;
-  s8 unk_1;
-  s8 unk_2;
-} Unk_Cell;
+  s8 step;
+  s8 nextX;
+  s8 nextY;
+} PathCell;
 
 /// One step of the path: its number, then the step found below, to the left,
 /// to the right and above it.
 typedef struct {
-  u8 unk_0;
-  u8 unk_1;
-  u8 unk_2;
-  u8 unk_3;
-  u8 unk_4;
-  u8 unk_5;
-  u8 unk_6;
-  u8 unk_7;
-} Unk_Step;
+  u8 number;
+  u8 spare;
+  u8 next[4]; ///< the step each way leads to, by enum MazeWay
+  u8 padding[2];
+} PathStep;
 
-/// At gInventorySnapshot + 0x288.
+/// The four ways out of a step, in the order PathStep.next keeps them.
+enum MazeWay { MAZE_SOUTH, MAZE_WEST, MAZE_EAST, MAZE_NORTH };
+
+/// PathStep.next's mark for the way out of the maze, from its last step.
+#define MAZE_EXIT 251
+
+/// At gInventorySnapshot + 0x288: the step the party stands on, set to the
+/// first once the path is laid, and the steps.
 typedef struct {
-  s32 unk_0;
-  Unk_Step steps[15];
-} Unk_Path;
+  s32 current;
+  PathStep steps[15];
+} Path;
 
 struct Counted {
   s32 *script;
@@ -141,17 +144,6 @@ struct GaiaRockInsideLayer {
 struct GaiaRockInsideMapWork {
   u8 unk000[0x108];
   struct GaiaRockInsideLayer layers[2];
-};
-
-struct GaiaRockInsideNode {
-  u8 unk0[2];
-  u8 next[4];
-  u8 unk6[2];
-};
-
-struct GaiaRockInsidePath {
-  s32 current;
-  struct GaiaRockInsideNode nodes[1];
 };
 
 extern u32 gGaiaRockInside_FlameScript[];
@@ -2344,7 +2336,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 9, 1);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
         C2(Actor_SetMovementTypeById, 10, 1);
-        C3(Actor_FaceDirectionById, 10, 0xe000, 0);
+        C3(Actor_FaceDirectionById, 10, FACING_NORTHEAST, 0);
         C2(Actor_SetAnimationById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -2521,9 +2513,9 @@ s32 Scene_Initialize(void) {
       owner = &room->leaderActorId;
       C3(Actor_SetHorizontalPositionWithTerrain, *owner, 0x1c80000, 0x1480000);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1e80000, 0x1a80000);
-      C3(Actor_FaceDirectionById, *owner, 0, 0);
-      C3(Actor_FaceDirectionById, 11, 0, 0);
-      C3(Actor_FaceDirectionById, 10, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_EAST, 0);
+      C3(Actor_FaceDirectionById, 11, FACING_EAST, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_NORTH, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C3(Actor_ShowEmoteById, 11, 258, 30);
@@ -2534,8 +2526,8 @@ s32 Scene_Initialize(void) {
       Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_FaceDirectionById, *owner, 0x4000, 0);
-      C3(Actor_FaceDirectionById, 11, 0x4000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_SOUTH, 0);
+      C3(Actor_FaceDirectionById, 11, FACING_SOUTH, 0);
       C1(Event_Wait, 30);
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
@@ -2592,7 +2584,7 @@ s32 Scene_Initialize(void) {
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Actor_SetAnimationAndWait, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
-      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_SOUTH, 0);
       C2(Actor_SetAnimationById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
@@ -2604,7 +2596,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Actor_SetAnimationAndWait, 10, 3);
-      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_SOUTH, 0);
       C2(Actor_SetAnimationById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 536);
       C2(FieldCamera_FollowActor, *owner, 1);
@@ -2631,7 +2623,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_FaceDirectionById, *owner, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_NORTH, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
@@ -3041,7 +3033,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 9, 1);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
         C2(Actor_SetMovementTypeById, 10, 1);
-        C3(Actor_FaceDirectionById, 10, 0xe000, 0);
+        C3(Actor_FaceDirectionById, 10, FACING_NORTHEAST, 0);
         C2(Actor_SetAnimationById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -3218,9 +3210,9 @@ s32 Scene_Initialize(void) {
       owner = &room->leaderActorId;
       C3(Actor_SetHorizontalPositionWithTerrain, *owner, 0x1c80000, 0x1480000);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1e80000, 0x1a80000);
-      C3(Actor_FaceDirectionById, *owner, 0, 0);
-      C3(Actor_FaceDirectionById, 11, 0, 0);
-      C3(Actor_FaceDirectionById, 10, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_EAST, 0);
+      C3(Actor_FaceDirectionById, 11, FACING_EAST, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_NORTH, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C3(Actor_ShowEmoteById, 11, 258, 30);
@@ -3231,8 +3223,8 @@ s32 Scene_Initialize(void) {
       Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_FaceDirectionById, *owner, 0x4000, 0);
-      C3(Actor_FaceDirectionById, 11, 0x4000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_SOUTH, 0);
+      C3(Actor_FaceDirectionById, 11, FACING_SOUTH, 0);
       C1(Event_Wait, 30);
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
@@ -3289,7 +3281,7 @@ s32 Scene_Initialize(void) {
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Actor_SetAnimationAndWait, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
-      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_SOUTH, 0);
       C2(Actor_SetAnimationById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
@@ -3301,7 +3293,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Actor_SetAnimationAndWait, 10, 3);
-      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, FACING_SOUTH, 0);
       C2(Actor_SetAnimationById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 536);
       C2(FieldCamera_FollowActor, *owner, 1);
@@ -3328,7 +3320,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_FaceDirectionById, *owner, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, FACING_NORTH, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
@@ -3716,10 +3708,10 @@ s32 Scene_PrepareMap(void) {
 #define GRID_WIDTH 28
 
 typedef struct {
-  Unk_Cell cells[GRID_WIDTH * GRID_WIDTH];
-} Unk_Grid;
+  PathCell cells[GRID_WIDTH * GRID_WIDTH];
+} PathGrid;
 
-#define gPath ((Unk_Path *)(gInventorySnapshot + 0x288))
+#define gPath ((Path *)(gInventorySnapshot + 0x288))
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline. */
@@ -3728,13 +3720,13 @@ static __inline__ void *Heap_AllocEwram_(s32 size) {
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
 #define AT_ADDRESS(x, y)                                                       \
-  ((Unk_Cell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))
+  ((PathCell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))
 
 void GaiaRockInside_LayMaze(s32 seed) {
-  Unk_Grid *grid;
-  Unk_Path *path;
-  Unk_Step *steps;
-  Unk_Cell *cell;
+  PathGrid *grid;
+  Path *path;
+  PathStep *steps;
+  PathCell *cell;
   s32 x, y, nx, ny, step, tries, dir, v, next;
   u32 saved;
 
@@ -3752,7 +3744,7 @@ restart:
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28
   // cells and the last row's marks land after the block.
   {
-    Unk_Cell *a, *b, *e;
+    PathCell *a, *b, *e;
     s32 o, t;
     x = GRID_WIDTH / 2;
     y = GRID_WIDTH / 2;
@@ -3763,15 +3755,15 @@ restart:
     a = grid->cells;
     e = grid->cells;
   border:
-    a->unk_0 = 99;
+    a->step = 99;
     a += GRID_WIDTH;
-    b->unk_0 = 99;
+    b->step = 99;
     b += GRID_WIDTH;
-    e->unk_0 = 99;
+    e->step = 99;
     e++;
     t = o + GRID_WIDTH * GRID_WIDTH * 4;
     ((s8 *)grid)[t] = 99;
-    o += sizeof(Unk_Cell);
+    o += sizeof(PathCell);
     step--;
     if (step >= 0)
       goto border;
@@ -3788,36 +3780,36 @@ restart:
       goto retry;
     switch (dir) {
     case 0:
-      if (AT(x, y + 1).unk_0 != 0 || AT(x, y + 2).unk_0 != 0 ||
-          AT(x - 1, y + 1).unk_0 != 0 || AT(x + 1, y + 1).unk_0 != 0)
+      if (AT(x, y + 1).step != 0 || AT(x, y + 2).step != 0 ||
+          AT(x - 1, y + 1).step != 0 || AT(x + 1, y + 1).step != 0)
         goto retry;
       ny = y + 1;
       break;
     case 1:
-      if (AT(x - 1, y).unk_0 != 0 || AT(x - 2, y).unk_0 != 0 ||
-          AT(x - 1, y - 1).unk_0 != 0 || AT(x - 1, y + 1).unk_0 != 0)
+      if (AT(x - 1, y).step != 0 || AT(x - 2, y).step != 0 ||
+          AT(x - 1, y - 1).step != 0 || AT(x - 1, y + 1).step != 0)
         goto retry;
       nx = x - 1;
       break;
     case 2:
-      if (AT(x + 1, y).unk_0 != 0 || AT(x + 2, y).unk_0 != 0 ||
-          AT(x + 1, y - 1).unk_0 != 0 || AT(x + 1, y + 1).unk_0 != 0)
+      if (AT(x + 1, y).step != 0 || AT(x + 2, y).step != 0 ||
+          AT(x + 1, y - 1).step != 0 || AT(x + 1, y + 1).step != 0)
         goto retry;
       nx = x + 1;
       break;
     case 3:
-      if (AT(x, y - 1).unk_0 != 0 || AT(x, y - 2).unk_0 != 0 ||
-          AT(x - 1, y - 1).unk_0 != 0 || AT(x + 1, y - 1).unk_0 != 0)
+      if (AT(x, y - 1).step != 0 || AT(x, y - 2).step != 0 ||
+          AT(x - 1, y - 1).step != 0 || AT(x + 1, y - 1).step != 0)
         goto retry;
       ny = y - 1;
       break;
     }
     // The same cell variable the second loop reads its steps from.
     cell = AT_ADDRESS(x, y);
-    cell->unk_0 = step;
+    cell->step = step;
     step++;
-    cell->unk_1 = nx;
-    cell->unk_2 = ny;
+    cell->nextX = nx;
+    cell->nextY = ny;
     x = nx;
     y = ny;
   }
@@ -3832,17 +3824,17 @@ restart:
       s32 c;
 
       v = step;
-      c = AT(x, y + 1).unk_0;
+      c = AT(x, y + 1).step;
 
       if (c == next)
         v = next;
       else if (c == step - 1)
         v = c;
       else {
-        Unk_Cell *p = cell;
+        PathCell *p = cell;
       scanUp:
         p -= GRID_WIDTH;
-        c = p->unk_0;
+        c = p->step;
         if (c == v - 1) {
           v = c;
           goto scanUp;
@@ -3851,23 +3843,23 @@ restart:
       if (v == 0)
         v = 1;
     }
-    steps[step].unk_2 = v;
+    steps[step].next[MAZE_SOUTH] = v;
 
     {
       s32 c;
 
       v = step;
-      c = AT(x, y - 1).unk_0;
+      c = AT(x, y - 1).step;
 
       if (c == next)
         v = next;
       else if (c == step - 1)
         v = c;
       else {
-        Unk_Cell *p = AT_ADDRESS(x, y);
+        PathCell *p = AT_ADDRESS(x, y);
       scanDown:
         p += GRID_WIDTH;
-        c = p->unk_0;
+        c = p->step;
         if (c == v - 1) {
           v = c;
           goto scanDown;
@@ -3876,13 +3868,13 @@ restart:
       if (v == 0)
         v = 1;
     }
-    steps[step].unk_5 = v;
+    steps[step].next[MAZE_NORTH] = v;
 
     {
       s32 c;
 
       v = step;
-      c = AT(x - 1, y).unk_0;
+      c = AT(x - 1, y).step;
 
       if (c == next)
         v = next;
@@ -3891,7 +3883,7 @@ restart:
       else {
         nx = x;
       scanRight:
-        c = AT(++nx, y).unk_0;
+        c = AT(++nx, y).step;
         if (c == v - 1) {
           v = c;
           goto scanRight;
@@ -3900,13 +3892,13 @@ restart:
       if (v == 0)
         v = 1;
     }
-    steps[step].unk_3 = v;
+    steps[step].next[MAZE_WEST] = v;
 
     {
       s32 c;
 
       v = step;
-      c = AT(x + 1, y).unk_0;
+      c = AT(x + 1, y).step;
 
       if (c == next)
         v = next;
@@ -3915,7 +3907,7 @@ restart:
       else {
         nx = x;
       scanLeft:
-        c = AT(--nx, y).unk_0;
+        c = AT(--nx, y).step;
         if (c == v - 1) {
           v = c;
           goto scanLeft;
@@ -3924,14 +3916,14 @@ restart:
       if (v == 0)
         v = 1;
     }
-    steps[step].unk_4 = v;
-    x = cell->unk_1;
-    steps[step].unk_0 = step;
-    y = cell->unk_2;
+    steps[step].next[MAZE_EAST] = v;
+    x = cell->nextX;
+    steps[step].number = step;
+    y = cell->nextY;
   }
-  steps[14].unk_5 = 251;
-  steps[1].unk_2 = 250;
-  path->unk_0 = 1;
+  steps[14].next[MAZE_NORTH] = MAZE_EXIT;
+  steps[1].next[MAZE_SOUTH] = 250;
+  path->current = 1;
   Heap_Release(grid);
   Event_SetFlag(FLAG_AREA_TEMP_F0);
   gRandomSeed = saved;
@@ -3984,31 +3976,28 @@ void GaiaRockInside_DrawMazeRoom(void) {
   }
 }
 
-#define GAIA_ROCK_INSIDE_PATH                                                  \
-  ((struct GaiaRockInsidePath *)(gInventorySnapshot + 0x288))
-
-/// The direction from the current node whose link is 251 or the next node:
-/// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.
+/// The way on from the step the party stands on: the facing toward the next
+/// step or the exit, or -1 if no way leads on.
 s32 GaiaRockInside_GetMazeWayOn(void) {
-  struct GaiaRockInsidePath *path = GAIA_ROCK_INSIDE_PATH;
+  Path *path = gPath;
   s32 current = path->current;
   /* FAKEMATCH(pin): the node fixed to r3 and each link to r2. */
-  register struct GaiaRockInsideNode *node asm("r3") = &path->nodes[current];
+  register PathStep *node asm("r3") = &path->steps[current];
   s32 next = current + 1;
   u32 link;
 
-  link = node->next[0];
-  if (link == 251 || link == next)
-    return 0x4000;
-  link = node->next[1];
-  if (link == 251 || link == next)
-    return 0x8000;
-  link = node->next[2];
-  if (link == 251 || link == next)
-    return 0;
-  link = node->next[3];
-  if (link == 251 || link == next)
-    return 0xc000;
+  link = node->next[MAZE_SOUTH];
+  if (link == MAZE_EXIT || link == next)
+    return FACING_SOUTH;
+  link = node->next[MAZE_WEST];
+  if (link == MAZE_EXIT || link == next)
+    return FACING_WEST;
+  link = node->next[MAZE_EAST];
+  if (link == MAZE_EXIT || link == next)
+    return FACING_EAST;
+  link = node->next[MAZE_NORTH];
+  if (link == MAZE_EXIT || link == next)
+    return FACING_NORTH;
   return -1;
 }
 

@@ -32,12 +32,6 @@
 #include "text/msg_ids.h"
 #include "system/frame.h"
 
-struct JupiterLighthouseRoom7Cell {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
-};
-
 extern s16 gJupiterLighthouse_WestPathCells[][2];
 
 void JupiterLighthouse_LightWestPath(s32 mode);
@@ -88,7 +82,7 @@ enum PathGap {
   PATH_GAP_NORTH, ///< cell (33, 10)
 };
 
-enum JupiterLighthouseRoom7ActorId {
+enum JupiterLighthouseWhorlActorId {
   ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_CONE,
   /// The six grey blocks on the third block's path, raised while it is lit.
@@ -102,7 +96,7 @@ enum JupiterLighthouseRoom7ActorId {
   ACTOR_WHORL
 };
 
-extern s16 gJupiterLighthouse_Room7PoundTargets[];
+extern s16 gJupiterLighthouse_WhorlPoundTargets[];
 extern s32 gPaletteCyclePausesInEvents;
 extern s16 gLightSpriteCount;
 void JupiterLighthouse_OpenDoor(s32 value);
@@ -182,84 +176,52 @@ void JupiterLighthouse_MoveButtonPillar(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 /// Marks the gap the first two blocks have just come to rest in; returns its
 /// flag's place after FLAG_PATH_BLOCK_IN_GAP(0, 0), or -1 for none.
 s32 JupiterLighthouse_FindBlockGap(void) {
-  s32 v5, v6, v7;
-  struct Actor *v8;
-  struct Actor *t2;
+  s32 x, z, gap;
+  struct Actor *second;
+  struct Actor *first;
 
-  v5 = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
-  t2 = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
-  v7 = 1;
-  v6 = (FIELD_AT(v5, s32, 8) >> 20);
-  v8 = t2;
-  v7 = -v7;
-  v5 = (FIELD_AT(v5, s32, 16) >> 20);
-  if (v6 != 35)
-    goto L_020081d6;
-  if (v5 != 15)
-    goto L_020081d6;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
-    goto L_020081d6;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
-  v7 = 0;
-L_020081d6:
-  if (v6 != 31)
-    goto L_020081f8;
-  if (v5 != 16)
-    goto L_020081f8;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)))
-    goto L_020081f8;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
-  v7 = 2;
-L_020081f8:
-  if (v6 != 33)
-    goto L_0200821a;
-  if (v5 != 10)
-    goto L_0200821a;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
-    goto L_0200821a;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
-  v7 = 4;
-L_0200821a:
-  v6 = (v8->x.fixed >> 20);
-  v5 = (v8->z.fixed >> 20);
-  if (v6 != 35)
-    goto L_02008244;
-  if (v5 != 15)
-    goto L_02008244;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)))
-    goto L_02008244;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
-  v7 = 1;
-L_02008244:
-  if (v6 != 31)
-    goto L_02008266;
-  if (v5 != 16)
-    goto L_02008266;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
-    goto L_02008266;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
-  v7 = 3;
-L_02008266:
-  if (v6 != 33)
-    goto L_02008288;
-  if (v5 != 10)
-    goto L_02008288;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
-    goto L_02008288;
-  Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
-  v7 = 5;
-L_02008288:
-  return v7;
+  first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
+  second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
+  gap = 1;
+  x = first->x.fixed >> 20;
+  gap = -gap;
+  z = first->z.fixed >> 20;
+  if (x == 35 && z == 15 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
+    gap = 0;
+  }
+  if (x == 31 && z == 16 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
+    gap = 2;
+  }
+  if (x == 33 && z == 10 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
+    gap = 4;
+  }
+  x = second->x.fixed >> 20;
+  z = second->z.fixed >> 20;
+  if (x == 35 && z == 15 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
+    gap = 1;
+  }
+  if (x == 31 && z == 16 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
+    gap = 3;
+  }
+  if (x == 33 && z == 10 &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
+    gap = 5;
+  }
+  return gap;
 }
 
 /// How many of the first two blocks lie in gaps.
@@ -513,7 +475,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
 
 void JupiterLighthouse_SinkPoundTarget(s32 a, s32 b) {
-  Pound_SinkTarget(gJupiterLighthouse_Room7PoundTargets, a, b);
+  Pound_SinkTarget(gJupiterLighthouse_WhorlPoundTargets, a, b);
 }
 
 /// Throws a block up out of its gap at cell (x, z) to land beside it.
@@ -671,27 +633,17 @@ void LightSprites_InitB();
 void LightSprites_AddCounted();
 
 s32 Scene_Initialize(void) {
-  s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
-      t28, t29, v5;
-
   gFieldWork->transition = 0x204;
-  if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
-    goto L_02008e6e;
-  t1 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  FIELD_AT(t1, u8, 35) = (32 | FIELD_AT(t1, u8, 35));
-L_02008e6e:
-  t2 = ((s32)Actor_Get(ACTOR_ARCHER_STATUE));
-  FIELD_AT(t2, s32, 24) = 0xc000;
-  t3 = ((s32)Actor_Get(ACTOR_ARCHER_STATUE));
-  FIELD_AT(t3, s32, 28) = 0xc000;
-  Actors_SetCellsOpen((s32)&gJupiterLighthouse_Room7PoundTargets);
-  t5 = Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED);
-  if (t5 != 0) {
+  if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
+  Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);
+  if (Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_BUTTON_PILLAR, 136, 600);
     JupiterLighthouse_OpenDoor(0);
   }
-  t8 = Event_GetFlag(FLAG_SCENE_TEMP_02);
-  if (t8 != 0) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     JupiterLighthouse_OpenDoor(0);
   }
   LightSprites_InitB();
@@ -699,45 +651,21 @@ L_02008e6e:
   LightSprites_AddCounted(ACTOR_FIRST_PATH_BLOCK, 2);
   LightSprites_AddCounted(ACTOR_SECOND_PATH_BLOCK, 1);
   LightSprites_AddCounted(ACTOR_THIRD_PATH_BLOCK, 0);
-  t15 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
-  if (t15 != 0)
-    goto L_02008f08;
-  t16 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
-  if (t16 != 0)
-    goto L_02008f08;
-  t17 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
-  if (t17 == 0)
-    goto L_02008f12;
-L_02008f08:
-  Actor_SetPosition(ACTOR_FIRST_PATH_BLOCK, 0, 0);
-L_02008f12:
-  t19 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
-  if (t19 != 0)
-    goto L_02008f3c;
-  t20 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
-  if (t20 != 0)
-    goto L_02008f3c;
-  t21 = Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
-  if (t21 == 0)
-    goto L_02008f46;
-L_02008f3c:
-  Actor_SetPosition(ACTOR_SECOND_PATH_BLOCK, 0, 0);
-L_02008f46:
-  t23 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  FIELD_AT(t23, u8, 35) = (64 | FIELD_AT(t23, u8, 35));
-  t24 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK));
-  FIELD_AT(t24, u8, 35) = (FIELD_AT(t24, u8, 35) | 128);
-  t25 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK + 1));
-  FIELD_AT(t25, u8, 35) = (FIELD_AT(t25, u8, 35) | 128);
-  t26 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK + 2));
-  FIELD_AT(t26, u8, 35) = (FIELD_AT(t26, u8, 35) | 128);
-  t27 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK + 3));
-  FIELD_AT(t27, u8, 35) = (FIELD_AT(t27, u8, 35) | 128);
-  t28 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK + 4));
-  FIELD_AT(t28, u8, 35) = (FIELD_AT(t28, u8, 35) | 128);
-  t29 = ((s32)Actor_Get(ACTOR_LAST_GREY_BLOCK));
-  v5 = (128 | FIELD_AT(t29, u8, 35));
-  FIELD_AT(t29, u8, 35) = v5;
+  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
+    Actor_SetPosition(ACTOR_FIRST_PATH_BLOCK, 0, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
+    Actor_SetPosition(ACTOR_SECOND_PATH_BLOCK, 0, 0);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 1)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 2)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 3)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 4)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_LAST_GREY_BLOCK)->priorityFlags |= 0x80;
   return 0;
 }
 
@@ -1039,7 +967,6 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef FIELD_AT
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1191,7 +1118,7 @@ LATE_DATA u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
-LATE_DATA s16 gJupiterLighthouse_Room7PoundTargets[] = {
+LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
     ACTOR_FIRST_CONE, 1, FLAG_FIRST_CONE_SUNK, ACTOR_SECOND_CONE, 1, FLAG_SECOND_CONE_SUNK, -1, 0,
 };
 

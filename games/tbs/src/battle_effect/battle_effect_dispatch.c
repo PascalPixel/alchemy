@@ -103,11 +103,11 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 scanline;
   s32 rightEdge;
 
-  baseRightEdge = (u16 *)Ram_MapGridCellBuffer;
-  scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 130);
-  edgeOffsets = Ram_MapGridCellBuffer + 2;
+  baseRightEdge = WINDOW_EDGE_RIGHT;
+  scanlineEdges = (u16 *)WINDOW_EDGE_LINES;
+  edgeOffsets = WINDOW_EDGE_INSETS;
   for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-    if (scanline >= 8 && scanline <= 135) {
+    if (scanline >= 8 && scanline < 8 + WINDOW_EDGE_INSET_LINES) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
       CLAMP(rightEdge, 0, DISPLAY_WIDTH);
       scanlineEdges[scanline] = rightEdge;
@@ -119,8 +119,8 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set(Ram_MapGridCellBuffer + 130, &REG_WIN0H,
-            DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
+    Dma_Set(WINDOW_EDGE_LINES, &REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
+            (volatile u32 *)channel);
   }
 }
 

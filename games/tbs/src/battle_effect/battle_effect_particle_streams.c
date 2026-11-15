@@ -384,8 +384,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           flame->variant = 0;
-          flame->x = px(x + 96) + Trig_Sin(angle) * 30 / 65536 * size;
-          flame->y = px(y) - Trig_Cos(angle) * 30 / 65536 * size;
+          flame->x = px(x + 96) + Trig_Sin(angle) * 30 / Q16_ONE * size;
+          flame->y = px(y) - Trig_Cos(angle) * 30 / Q16_ONE * size;
           break;
         }
       }

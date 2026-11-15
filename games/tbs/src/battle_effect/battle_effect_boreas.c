@@ -146,11 +146,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     // Open the window from the left with a ragged edge.
     if (frame >= 0 && frame < 16) {
-      u16 *edge = (u16 *)Ram_MapGridCellBuffer;
+      u16 *edge = WINDOW_EDGE_RIGHT;
       if (frame == 1) {
-        u8 *inset = Ram_MapGridCellBuffer + 2;
+        u8 *inset = WINDOW_EDGE_INSETS;
         s32 line;
-        for (line = 0; line != 128; line++) {
+        for (line = 0; line != WINDOW_EDGE_INSET_LINES; line++) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;

@@ -153,11 +153,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     // The window opens with a ragged edge.
     if (frame >= 0 && frame < 16) {
-      u16 *phase = (u16 *)Ram_MapGridCellBuffer;
+      u16 *phase = WINDOW_EDGE_RIGHT;
       if (frame == 1) {
-        u8 *noise = Ram_MapGridCellBuffer + 2;
+        u8 *noise = WINDOW_EDGE_INSETS;
         s32 k;
-        for (k = 0; k != 128; k++) {
+        for (k = 0; k != WINDOW_EDGE_INSET_LINES; k++) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;

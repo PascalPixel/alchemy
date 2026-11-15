@@ -217,8 +217,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (point[index].z > 24)
             point[index].z -= 4;
           point[index].velocityY += point[index].velocityX * 2;
-          if (point[index].velocityY > 65536)
-            point[index].velocityY -= 65536;
+          if (point[index].velocityY > TRIG_TURN)
+            point[index].velocityY -= TRIG_TURN;
           point[index].velocityX += 50;
           if (point[index].velocityX > 4096)
             point[index].velocityX = 4096;

@@ -269,6 +269,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 
+/// Ram_MapGridCellBuffer as BattleEffect_BuildWindowEdgeTable reads it: window
+/// 0's right edge, how far each of its lines is set in from that edge, and the
+/// right edge it builds for every screen line.
+#define WINDOW_EDGE_RIGHT ((u16 *)Ram_MapGridCellBuffer)
+#define WINDOW_EDGE_INSETS (Ram_MapGridCellBuffer + 2)
+#define WINDOW_EDGE_INSET_LINES 128
+#define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
+
 /// Ram_MapGridCellBuffer as the unused blue ramp uses it: a working copy of the
 /// battle background's picture.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer

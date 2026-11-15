@@ -227,9 +227,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
     SET_POSITION(point, source->x.fixed / 2, source->y.fixed + px(120),
                  source->z.fixed);
-    point->velocityX = (target->x.fixed +
-                        ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) /
-                       12;
+    point->velocityX =
+        (target->x.fixed + px((s32)((Random16() & 0x7f) - 64)) - point->x) / 12;
     point->velocityY = (target->y.fixed - point->y + px(20)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = (Random16() & 15) + delay;

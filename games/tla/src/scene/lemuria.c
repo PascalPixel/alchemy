@@ -96,6 +96,9 @@ enum LemuriaActorId {
 /// Set once the Lemurian has let a rope down from the window ("There! Is that
 /// better? Now climb up here.").
 #define FLAG_LEMURIA_ROPE_LET_DOWN 0x96f
+/// Set as Felix is taken in to King Hydros (lemuria_palace.c); the palace door
+/// is then locked while the senate meets.
+#define FLAG_MET_KING_HYDROS 0x96a
 
 void FieldCamera_WaitForArrival();
 
@@ -235,7 +238,7 @@ void Lemuria_EnterDoor(s32 exit) {
   const struct MapGridCellAnimation *door = &gLemuria_FirstDoor;
   s32 mode = 0;
 
-  if (exit == 3 && Event_GetFlag(0x96a)) {
+  if (exit == 3 && Event_GetFlag(FLAG_MET_KING_HYDROS)) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaDoorIsLockedItSounds);
     // "The exit is locked... It sounds as if there's a raucous caucus going..."
     Event_ShowMessage(-1, 0);

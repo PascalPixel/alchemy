@@ -26,6 +26,7 @@
 #include "scene/lemurian_ship.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "system/io_write.h"
 #include "djinn_ids.h"
 
 struct SwingWork {
@@ -1735,32 +1736,24 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   System_Wait(1);
 }
 
-static __inline__ void Blend_SetAlpha(s32 value) {
-  REG_BLDALPHA->value = value;
-}
-
 /// The lights go out (fading over 50 frames when asked) and the sparkle starts
 /// in the last chamber.
 void TaopoSwamp_DarkenRoom(s32 fade) {
   BlendScript_Suspend();
   if (fade) {
-    Blend_SetAlpha(BLEND_ALPHA(6, 14));
-    /* FAKEMATCH(dead): the empty once-only block finishes the blend value
-     * before the shared register address. */
-    do {
-    } while (0);
+    Io_Write16(BLEND_ALPHA(6, 14), &REG_BLDALPHA->value);
     System_Wait(10);
-    Blend_SetAlpha(BLEND_ALPHA(4, 13));
+    Io_Write16(BLEND_ALPHA(4, 13), &REG_BLDALPHA->value);
     System_Wait(10);
-    Blend_SetAlpha(BLEND_ALPHA(2, 13));
+    Io_Write16(BLEND_ALPHA(2, 13), &REG_BLDALPHA->value);
     System_Wait(10);
-    Blend_SetAlpha(BLEND_ALPHA(1, 12));
+    Io_Write16(BLEND_ALPHA(1, 12), &REG_BLDALPHA->value);
     System_Wait(10);
-    Blend_SetAlpha(BLEND_ALPHA(0, 12));
+    Io_Write16(BLEND_ALPHA(0, 12), &REG_BLDALPHA->value);
     System_Wait(10);
   }
   TaopoSwamp_FocusMapOn(100, 50);
-  Blend_SetAlpha(BLEND_ALPHA(7, 12));
+  Io_Write16(BLEND_ALPHA(7, 12), &REG_BLDALPHA->value);
   if (gMainRoutineWork.entrance == 6)
     FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, TASK_PASS_VBLANK);
 }
@@ -1793,10 +1786,7 @@ void TaopoSwamp_SinkInMud(void) {
     sprite->child[6] = 1;
   sprite->mode |= 8;
   sprite->mode &= 0xfe;
-  /* FAKEMATCH(dead): the once-only block orders this statement. */
-  do {
-    sprite->dirty = 1;
-  } while (0);
+  Io_Write8(1, &sprite->dirty);
   if (gInput & 0xf0) {
     step = 0x1400;
     if (gInput & 2)

@@ -7,6 +7,7 @@
 #include "resource_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "system/io_write.h"
 
 /// The trial grounds' actors (SceneId_ShamanVillageTrialGrounds), numbering the
 /// rows of gShamanVillageTrialGroundsActorPlacements; Moapa, his guards and
@@ -545,11 +546,8 @@ void ShamanVillage_BlowAwaySand(void) {
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_SAND_MOUND, 1);
-  do {
-    s32 control = 0x40d;
-
-    REG_BG0CNT = control;
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(1),
+             &REG_BG0CNT);
   REG_BG0CNT &= ~3;
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
@@ -643,14 +641,7 @@ swirl:
 
     MapGrid_CopyCellsTo(45, 90, 4, 19, width, height);
   }
-  {
-    s32 control = 0x602;
-
-    REG_BG2CNT = control;
-  }
-  /* FAKEMATCH(dead): the empty once-only block ends CSE's run here. */
-  do {
-  } while (0);
+  Io_Write16(BGCNT_SCREEN_BASE(6) | BGCNT_PRIORITY(2), &REG_BG2CNT);
   Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
           REG_DMA3);
   REG_BLDALPHA = 16;

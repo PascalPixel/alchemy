@@ -6,7 +6,6 @@
 
 #include "types.h"
 
-struct BobPairObject;
 struct RenderInput;
 struct WindowSprite;
 
@@ -47,7 +46,7 @@ void DjinnFigures_ReleaseTopRowFar(void);
 void DjinnFigures_SetShownFar(s32 shown);
 void DjinnFigures_SetSlotPositionFar(s32 index, s32 x, s32 y);
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
-void MenuTitle_Bob(struct BobPairObject *object);
+void MenuTitle_Bob(struct WindowSprite *object);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
 s32 FileList_SelectAction(void);

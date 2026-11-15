@@ -74,10 +74,6 @@ s32 Text_DrawWideStringInWindow__screens() __asm__(
 s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #define Window_MapTextCanvasTiles Window_MapTextCanvasTiles__screens
 
-/// A sprite of the bobbing pair of the menu titles: its render slot link, its
-/// resting y and its y this frame.
-struct BobPairObject;
-
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
 /// it stands and the command it stands for. menu_titles.c loads it,
 /// battle_command_row.c runs the row.
@@ -165,7 +161,7 @@ struct BattleSummaryStatCursor {
   u8 highlightColumn;
   u8 highlightRow;
   u8 highlightWidth;
-  u8 unk06[2];
+  u8 reserved[2]; ///< 0 in every row
 };
 
 /// A cursor stop on the Status screen's equipment or statuses: its help
@@ -174,21 +170,7 @@ struct BattleSummaryCursor {
   u8 entry;
   u8 column;
   u8 row;
-  u8 unk03;
-};
-
-/// A VRAM cache entry as the Status screen reads its tile offset.
-struct SummaryResourceEntry {
-  u16 unk00;
-  u16 offset;
-};
-
-struct BobPairObject {
-  struct BobPairObject *next;
-  u8 unk04[4];
-  u8 baseY;
-  u8 unk09[11];
-  u8 y;
+  u8 reserved; ///< 0 in every row
 };
 
 /// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is

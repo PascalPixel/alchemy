@@ -660,7 +660,6 @@ void PauseMenu_Release(void);
 struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
-void MenuTitle_Bob__window(struct WindowSprite *pair) __asm__("MenuTitle_Bob");
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);

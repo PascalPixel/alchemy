@@ -1171,7 +1171,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
   place_sprites:
     {
-      struct SummaryResourceEntry *entry;
+      struct VramCacheEntry *entry;
       s32 *slot;
       s32 iconX;
 
@@ -1189,7 +1189,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         sprite++;
       }
       if (page == STATUS_PAGE_PSYNERGY || page == STATUS_PAGE_ITEMS) {
-        struct SummaryResourceEntry *iconEntry;
+        struct VramCacheEntry *iconEntry;
         s32 iconRow;
 
         for (i = 0, iconEntry = gVramCacheEntries, sprite = iconSprites,

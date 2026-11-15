@@ -56,14 +56,14 @@ extern volatile u32 gVBlankCount;
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
 /// by gWindow_PairBobOffsets, one step every four VBlanks.
-void MenuTitle_Bob(struct BobPairObject *obj) {
+void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
   obj = obj->next;
-  value = obj->baseY + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
-  obj->y = value;
+  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  obj->sprite.oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)

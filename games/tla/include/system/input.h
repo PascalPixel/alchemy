@@ -42,5 +42,7 @@ STATIC_ASSERT(offsetof(struct InputState, repeatTimer) == 32);
 
 extern struct InputState gInput;
 void Input_UpdateKeyRepeatAndDirection(void);
+/// The keypad interrupt's handler.
+void Input_HandleKeyInterrupt(void);
 
 #endif

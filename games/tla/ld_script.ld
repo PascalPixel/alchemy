@@ -97,7 +97,7 @@ SECTIONS
     .iwram_resident 0x3000100 :
     {
         "*/games/tla/src/system/irq.o"(.text .rodata .data .padding)
-        "*/games/tla/src/system/irq_table.o"(.text .rodata .data .padding)
+        "*/games/tla/src/system/irq_table.o"(.data)
         "*/games/tla/src/system/iwram_routines.o"(.text .data .text.iwram_divide)
         "*/games/tla/src/sound/resident_mixer.o"(.text .text.resident_mixer_lanes)
         "*/games/tla/src/sound/resident_mixer_interpolate.o"(.data .text.resident_mixer_channel)
@@ -121,7 +121,7 @@ SECTIONS
         "*/games/tla/src/gamepak/flash/program_flash_sector.o"(.text)
         "*/games/tla/src/gamepak/flash/atmel.o"(.text)
         "*libgcc.a:_call_via_rX.o"(.text)
-        "*/games/tla/src/system/irq_table.o"(.rodata.irq_handlers)
+        "*/games/tla/src/system/irq_table.o"(.rodata)
         "*/games/tla/src/system/math_table.o"(.rodata)
         "*/games/tla/src/graphics/palettes/palettes.o"(.rodata)
         "*/games/tla/src/system/number_text.o"(.rodata)

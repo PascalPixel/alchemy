@@ -22,4 +22,11 @@
 /// shape.
 #define Io_Write8(v, reg) Io_Write16(v, reg)
 
+// An expression macro (S2: six sites, the saved background controls of the
+// battle's mosaic fade and the blend level of Gaia Rock's slate; the name is
+// ours): the variable is reached through its address, so a halfword one lives
+// in the frame and is read back from there after each call.
+/// Reads a 16-bit register or memory location into a variable.
+#define Io_Read16(reg, variable) (*(variable) = *(reg))
+
 #endif

@@ -27,23 +27,21 @@
 /// four random numbers a frame, which only advances the random number
 /// generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again. */
-  volatile u16 bg0cnt;
-  volatile u16 bg1cnt;
-  volatile u16 bg2cnt;
-  volatile u16 bg3cnt;
+  u16 bg0cnt;
+  u16 bg1cnt;
+  u16 bg2cnt;
+  u16 bg3cnt;
   s32 mosaicSize;
   volatile u16 *registerCursor;
 
-  bg0cnt = REG_BG0CNT;
+  Io_Read16(&REG_BG0CNT, &bg0cnt);
   REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;
-  bg1cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg1cnt);
   *registerCursor = bg1cnt | BGCNT_MOSAIC;
-  bg2cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg2cnt);
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
-  bg3cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg3cnt);
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
   // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
   registerCursor += 33;

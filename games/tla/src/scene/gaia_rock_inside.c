@@ -38,6 +38,7 @@
 #include "system/iwram_call.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "fixed_math.h"
 #include "field/actor_view.h"
 #include "field/map_grid.h"
@@ -1200,8 +1201,7 @@ void BlendScript_Resume(void);
 /// walks back into the party.
 void GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  /* FAKEMATCH(volatile): the blend level rereads through its slot. */
-  volatile u16 level;
+  u16 level;
   s32 message;
 
   Event_Start();
@@ -1241,7 +1241,8 @@ void GaiaRockInside_ReadSandTablet(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   BlendScript_Suspend();
-  level = REG_BLDALPHA & 0xff;
+  Io_Read16(&REG_BLDALPHA, &level);
+  level &= 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | BLEND_ALPHA(0, 16);
     level--;
@@ -1332,15 +1333,13 @@ void GaiaRockInside_RingOfDust(void) {
 void GaiaRockInside_RaiseSandTablet(void) {
   struct Actor *person;
   struct Actor *object;
-  /* FAKEMATCH(volatile): the form kept; as u16 level, 8 of 198 instructions
-   * differ in tla-en. */
-  volatile u16 level;
+  u16 level;
   s32 i;
 
   if (GameFlag_Get(FLAG_SAND_TABLET_RAISED) || GameFlag_Get(FLAG_LEARNED_SAND))
     return;
   person = Actor_Get(ACTOR_SAND_TABLET);
-  level = REG_BLDALPHA;
+  Io_Read16(&REG_BLDALPHA, &level);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   MapGrid_SetShakeFX(FIXED_ONE * 10, FIXED_ONE * 10, FIXED_ONE);

@@ -9,6 +9,7 @@
 /// Stone (Islets_TradeWithBird); and the Sea of Time Islet (Islets5), where
 /// Lonesome George takes the Li'l Turtle and carries the party to his secret
 /// spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
+#include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "battle/battle.h"
@@ -657,7 +658,7 @@ void Islets_TradeWithCow(void) {
       Event_Wait(20);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 98, 168);
       Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
-      Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
+      Actor_SetPositionAndResetMotion(item, px(104), px(24), px(160));
       Event_Wait(10);
       FieldPsynergy_RestoreMindReadPalette();
       Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
@@ -1261,8 +1262,8 @@ void Islets_FillWaveLines(void) {
 
 /// The water ripples by an HBlank wave on BG1.
 void Islets_StartWave(void) {
-  Task_AddFrame(Islets_FillWaveLines, 0x480);
-  Task_AddFrame(Islets_StartWaveDma, 0xc80);
+  Task_AddFrame(Islets_FillWaveLines, TASK_PASS_VBLANK);
+  Task_AddFrame(Islets_StartWaveDma, TASK_PASS_FRAME);
 }
 
 /// Once the log carrying Pengulina reaches Pengus, the two and the leader react
@@ -1341,7 +1342,7 @@ void Islets_BirdReturnsToNest(void) {
   System_Wait(1);
   object->y.fixed = px(160);
   System_Wait(1);
-  FieldTask_AddFrame(Islets_PlayFootsteps, 0x480);
+  FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_VBLANK);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
   FieldActor_WaitForMove(object);
   FieldTask_Remove(Islets_PlayFootsteps);
@@ -1841,7 +1842,7 @@ void Islets_InitializeRoom1(void) {
   } else {
     Actor_SetAnimation(11, 5);
   }
-  Task_AddFrame(Islets_SetDockBlocksByHeight, 0x480);
+  Task_AddFrame(Islets_SetDockBlocksByHeight, TASK_PASS_VBLANK);
 }
 
 void Islets_StartIceberg(s32 id) {
@@ -1954,7 +1955,7 @@ void Islets_InitializeRoom2(void) {
     *state = 0;
     *next = 0;
   }
-  FieldTask_AddFrame(Islets_DriftIcebergs, 0x480);
+  FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_VBLANK);
   if (Event_GetFlag(0xa2c)) {
     object = Actor_Get(10);
     Actor_SetPosition(10, 176, 168);
@@ -2116,13 +2117,13 @@ void Islets_InitializeRoom5(void) {
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPositionFixed(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, px(452));
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2189,13 +2190,13 @@ void Islets_InitializeRoom5(void) {
     {
       s32 a1 = 0x1280000;
 
-      Actor_SetPositionFixed(9, a1, 0x1c40000);
+      Actor_SetPositionFixed(9, a1, px(452));
     }
   }
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2277,7 +2278,7 @@ inner:
 #include "text/msg_ids.h"
 
 void Islets_StartWaterShimmer(void) {
-  Task_AddFrame(&Islets_ShimmerWater, 0x480);
+  Task_AddFrame(&Islets_ShimmerWater, TASK_PASS_VBLANK);
   return;
 }
 

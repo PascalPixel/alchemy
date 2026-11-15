@@ -13,6 +13,7 @@
 /// shared field effect object links between, and the tables are in
 /// data/gondowan_cliffs.c, which the overlay links after the field's tiles.
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -342,7 +343,7 @@ void GondowanCliffs_SetUpPass(void) {
   Tightrope_Initialize();
   Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
   Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors, 0x05000018, 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
+  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
 }
 
 void Actor_MoveToObject(s32 actor, s32 target);
@@ -468,7 +469,7 @@ s32 Scene_Initialize(void) {
   }
   Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                        (void *)&BG_PLTT_COLOR(0, 12), 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, 0x480);
+  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
   ((struct MapLayerBits *)Ram_HeapSlots->mapGrid)->priority = 1;
 done:
   return 0;
@@ -663,8 +664,8 @@ void Geysers_Start(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  FieldTask_AddFrame((s32)Geysers_Update, 0x48d);
-  FieldTask_AddFrame((s32)Geysers_Draw, 0x480);
+  FieldTask_AddFrame((s32)Geysers_Update, TASK_PASS_VBLANK + 13);
+  FieldTask_AddFrame((s32)Geysers_Draw, TASK_PASS_VBLANK);
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
 }
 

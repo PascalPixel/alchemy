@@ -255,7 +255,7 @@ void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
   s32 angle = (actor->phase << 16) / 180;
   s32 turn;
 
-  SET_VECTOR(position, (actor->centerX + 16) << 16, 0x100000,
+  SET_VECTOR(position, (actor->centerX + 16) << 16, px(16),
              actor->centerZ << 16);
   turn = gGabombaStatue_CogDirection * 0x3000 + angle;
   FieldVector_AddPolarOffset(px(13), turn + 0x8000, position);
@@ -2136,7 +2136,7 @@ void GabombaStatue_InitializeRoom6(void) {
 
   t1 = ((s32)Actor_Get(10));
   FieldActor_SetSpriteColor(t1, 3);
-  Task_AddFrame((s32)GabombaStatue_FadeByDepth, 0x480);
+  Task_AddFrame((s32)GabombaStatue_FadeByDepth, TASK_PASS_VBLANK);
   t4 = ((s32)Actor_Get(11));
   FieldActor_SetSpriteColor(t4, 11);
   t6 = ((s32)Actor_Get(12));
@@ -2193,7 +2193,7 @@ L_0200b762:
   if (t43 != 0)
     goto L_0200b78e;
   GabombaStatue_StartClock(0);
-  Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, 0x480);
+  Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, TASK_PASS_VBLANK);
 L_0200b78e:
   t46 = GabombaStatue_GetPuzzleSeed();
   table = ((u8 *)gGabombaStatue_PathLengths);

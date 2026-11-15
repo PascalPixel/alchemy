@@ -740,7 +740,7 @@ fill:
     REG_WINOUT = winout;
   } while (0);
   REG_DISPCNT |= 0x8000;
-  Task_AddFrame(AnkohlRuins_DrawSand, 0x480);
+  Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
     sprite->x = px(40);
     sprite->kind = 1;
@@ -858,7 +858,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gAnkohlRuins_SandTimer = 0;
-    Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
+    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
@@ -940,7 +940,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gAnkohlRuins_SandTimer = 0;
-    Task_AddFrame(AnkohlRuins_CountSandTime, 0x480);
+    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
@@ -1440,7 +1440,7 @@ s32 Scene_Initialize(s32 a0) {
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_575);
     task:
-      Task_AddFrame(AnkohlRuins_FlowWithSand, 0x480);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_6) {
     s16 *entrance = &work->entrance;
@@ -1706,7 +1706,7 @@ s32 Scene_Initialize(s32 a0) {
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_575);
     task:
-      Task_AddFrame(AnkohlRuins_FlowWithSand, 0x480);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_6) {
     s16 *entrance = &work->entrance;

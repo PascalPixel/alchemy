@@ -8,6 +8,7 @@
 /// Feizhi arrives with a gift (Champa_FeizhiArrives). The getters pick later
 /// tables once Briggs has sailed from Alhafra.
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -506,7 +507,7 @@ s32 Tightrope_Initialize();
 s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x100;
-  Task_AddFrame((s32)Champa_RotatePaletteColors, 0xc80);
+  Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_FRAME);
   Map_SetLayerEntryFlag(8);
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);

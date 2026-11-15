@@ -309,8 +309,8 @@ void AquaRock_DripAtRandom(struct Actor *object) {
     s32 x = object->x.fixed;
 
     x += spread * 48;
-    child = Import_ActorCreate(0x2a2, x - 0x180000, object->y.fixed,
-                               object->z.fixed);
+    child =
+        Import_ActorCreate(0x2a2, x - px(24), object->y.fixed, object->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
       child->update = (void (*)(void))AquaRock_SinkOrFlow;
@@ -1038,10 +1038,10 @@ s32 Scene_Initialize(void) {
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
-      Actor_SetHorizontalPositionWithTerrain(24, (x << 20) + 0x80000,
-                                             (z << 20) + 0x80000);
+      Actor_SetHorizontalPositionWithTerrain(24, (x << 20) + px(8),
+                                             (z << 20) + px(8));
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-    Task_Add(AquaRock_KeepLeaderPriority, 0x480);
+    Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
     Actor_SetSpritePriority(28, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, 24, 1);
     AquaRock_StartCellMarkers();
@@ -1301,7 +1301,7 @@ void AquaRock_ArriveFromPassage(void) {
     leader->motionFlags = flag;
     Actor_SetHorizontalPositionWithTerrain(
         *owner, leader->x.part[0].pixel << 16,
-        (leader->z.part[0].pixel << 16) - 0x100000);
+        (leader->z.part[0].pixel << 16) - px(16));
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();

@@ -944,8 +944,8 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       s32 z;
       u8 *cells;
 
-      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + 0x80000,
-                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + 0x80000);
+      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + px(8),
+                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + px(8));
       FieldVector_AddPolarOffset(px(16), angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
@@ -1174,7 +1174,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
     if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
       MarsLighthouseRoomF_MeltIcebergs();
-    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, 0x480);
+    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, TASK_PASS_VBLANK);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_3) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
@@ -1346,7 +1346,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
     s32 zero = 0;
 
     gPaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);

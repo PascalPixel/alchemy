@@ -3,6 +3,7 @@
 /// cable (Clear_EnterPassword, Clear_ReceiveByLink) and applied to Isaac's
 /// party (Clear_ApplyImportedData), with two secret button codes on its title
 /// (Clear_FollowSecretCodes).
+#include "system/task.h"
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -332,7 +333,7 @@ s32 Scene_Initialize(void) {
   s32 result, i, limit, status, message, failure, recovery;
 
   Clear_LoadBackground();
-  Task_Add(Clear_FollowSecretCodes, 0x480);
+  Task_Add(Clear_FollowSecretCodes, TASK_PASS_VBLANK);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -372,7 +373,7 @@ top:
   }
   if (result == 0 && !started) {
     wait(30);
-    Task_Add(Clear_FadeInBlend, 0x480);
+    Task_Add(Clear_FadeInBlend, TASK_PASS_VBLANK);
     wait(1);
     started = 1;
   }

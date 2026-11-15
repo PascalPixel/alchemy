@@ -321,7 +321,7 @@ void AlhafranCave_SetUpJail(void) {
   data = gAlhafranCave_CrateSprite;
   BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())EffectSprite_InitFromSlot94, (s32)data, 8, 15, 0x40000000);
-  FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, 0x480);
+  FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
     work = Ram_HeapSlots->fieldWork;
 
@@ -627,7 +627,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "WAHHH!"
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
   gAlhafranCave_ClearedWord = 0;
-  Task_AddFrame(AlhafranCave_IdleTask, 0x480);
+  Task_AddFrame(AlhafranCave_IdleTask, TASK_PASS_VBLANK);
   Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "I don't know why he's crying! You're his mother! Can't you do..."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);

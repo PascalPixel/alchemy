@@ -553,7 +553,7 @@ row:
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
-  Task_Add(ShamanVillage_WaveWhirlwindLines, 0xc80);
+  Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_FRAME);
   Event_PlaySound(SE_RUSH);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
@@ -574,7 +574,7 @@ rise:
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
   MapGrid_CopyCellsTo(64, 64, 2, 83, 16, 16);
   REG_BG1CNT &= ~3;
-  Task_Add(ShamanVillage_ScrollSandLayer, 0x480);
+  Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_VBLANK);
   i = 0;
 swirl:
   REG_BLDALPHA = ((16 - (i >> 2)) << 8) | (i >> 2);
@@ -2013,7 +2013,7 @@ void ShamanVillage_StartLettering(s32 modeArg, s32 paramArg) {
   gShamanVillage_LetteringMode = modeArg;
   gShamanVillage_LetteringTileOffset = paramArg << 4;
 
-  Task_Add(ShamanVillage_RunLettering, 0x480);
+  Task_Add(ShamanVillage_RunLettering, TASK_PASS_VBLANK);
 
   handler = (s32)gShamanVillage_LetteringSlideScript;
   if (modeArg == 2) {
@@ -2863,7 +2863,7 @@ void ShamanVillage_SetUpRoom6(void) {
 
   work->transition = 521;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
-    Task_Add(ShamanVillage_LayerSanctumActors, 0x480);
+    Task_Add(ShamanVillage_LayerSanctumActors, TASK_PASS_VBLANK);
   } else {
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);

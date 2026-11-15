@@ -1189,10 +1189,11 @@ s32 Scene_Initialize(void) {
       if (entrance == 11) {
         Actor_SetScript(11, gMarsLighthouseEntrance_DragonFaceAtLeft);
         Ride_SetEntryState(0, 3);
-        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, 0x480);
+        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_VBLANK);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
-      Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding, 0x480);
+      Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding,
+                    TASK_PASS_VBLANK);
       Actor_Get(11)->update =
           (void (*)(void))MarsLighthouseEntrance_FlickerDragonFace;
       Ride_SetMode(1);

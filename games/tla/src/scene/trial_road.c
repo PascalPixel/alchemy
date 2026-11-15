@@ -1051,8 +1051,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(object, mode);
-  Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
-                      z = (toZ << 20) + 0x80000);
+  Actor_SetMoveTarget(object, (toX << 20) + px(8), 0, z = (toZ << 20) + px(8));
   Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
@@ -1388,7 +1387,7 @@ void TrialRoad_SetUpPillarStage(void) {
   TrialRoad_BlockCellUnder(17);
   TrialRoad_BlockCellUnder(18);
   TrialRoad_BlockCellUnder(19);
-  Task_Add(TrialRoad_TrackLeaderOnPillars, 0x480);
+  Task_Add(TrialRoad_TrackLeaderOnPillars, TASK_PASS_VBLANK);
 }
 
 void TrialRoad_SetUpTorchStage(void) {
@@ -1654,7 +1653,7 @@ void TrialRoad_SetUpPoolRoom(void) {
       *flags = 3;
       object->y.fixed = 0;
     }
-    Task_Add(TrialRoad_GaspFlees, 0x480);
+    Task_Add(TrialRoad_GaspFlees, TASK_PASS_VBLANK);
   }
 }
 
@@ -1716,7 +1715,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     s32 zero = 0;
 
     gTrialRoad_PaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_StepAt, 0x480);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   }
 }
 
@@ -2121,7 +2120,7 @@ s32 Scene_PrepareMap(void) {
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
           TrialRoad_ShowProgress(gMainRoutineWork.leaderActorId, 8);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
-          Task_Add(TrialRoad_UpdateRival, 0x480);
+          Task_Add(TrialRoad_UpdateRival, TASK_PASS_VBLANK);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
           GameFlag_Set(FLAG_SCENE_TEMP_82);
@@ -2893,8 +2892,8 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   Heap_Release(buffer);
   work->sprites = Heap_AllocEwram(0x3c0);
   work->shape = shape;
-  Task_Add(TrialRoad_UpdateFountains, 0x48d);
-  Task_Add(TrialRoad_DrawFountains, 0x480);
+  Task_Add(TrialRoad_UpdateFountains, TASK_PASS_VBLANK + 13);
+  Task_Add(TrialRoad_DrawFountains, TASK_PASS_VBLANK);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 
@@ -3148,8 +3147,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -3618,7 +3616,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
-  Task_Add(TrialRoad_DrawProgress, 0x476);
+  Task_Add(TrialRoad_DrawProgress, TASK_PASS_VBLANK - 10);
   Heap_Release(buffer);
 }
 
@@ -3635,7 +3633,7 @@ void TrialRoad_StartRival(s32 a) {
     control->field04 = value;
     control->field08 = 0;
   }
-  Task_Add(TrialRoad_MoveRival, 0x485);
+  Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);
 }
 
 void TrialRoad_PlayRivalRecording(s32 a) {

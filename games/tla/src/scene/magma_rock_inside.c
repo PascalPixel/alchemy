@@ -1048,7 +1048,7 @@ rise:
   column:
     burstPosition[0] = baseX + ((Random16() % 48) << 16);
     FieldEffect_Spawn(burstPosition[0], burstPosition[1],
-                      burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
+                      burstPosition[2] + (row << 18) + px(8), 0, px(1), 0,
                       0x330000, effectOptions);
     i++;
     if (i != 6)
@@ -1069,7 +1069,7 @@ rise:
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
       FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                        sparkPosition[2] + 0x300000, 0, 0x10000, 0, 0x330000,
+                        sparkPosition[2] + px(48), 0, px(1), 0, 0x330000,
                         effectOptions);
       i++;
       if (i != 4)
@@ -1111,8 +1111,7 @@ last:
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
   FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                    sparkPosition[2] + 0x300000, 0, 0, 0, 0x3b0000,
-                    lastOptions);
+                    sparkPosition[2] + px(48), 0, 0, 0, 0x3b0000, lastOptions);
   if (i != 6)
     goto last;
   MapGrid_SetShake(5, 7, 1);
@@ -1246,8 +1245,8 @@ void MagmaRockInside_FloodWithLava(void) {
 
         p = position;
         p[0] = baseX + ((random % 48) << 16);
-        FieldEffect_Spawn(p[0], p[1], p[2] + (i << 18) + 0x170000, 0, 0x10000,
-                          0, 0x330000, &options);
+        FieldEffect_Spawn(p[0], p[1], p[2] + (i << 18) + px(23), 0, px(1), 0,
+                          0x330000, &options);
       }
       System_Wait(3);
       MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
@@ -1352,7 +1351,7 @@ void MagmaRockInside_ReleaseRocks(void) {
 loop:
   position[0] = ((Random16() & 31) << 16) + (190 << 18);
   position[2] = ((Random16() & 31) << 16) + (128 << 17);
-  FieldEffect_Spawn(position[0], position[1], position[2], 0, 0x10000, 0,
+  FieldEffect_Spawn(position[0], position[1], position[2], 0, px(1), 0,
                     0x3b0000, &options);
   if ((i & 7) == 0)
     Event_PlaySound(SE_POUND);
@@ -1844,7 +1843,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
   position[1] = object->y.fixed + ((Random16() & 31) << 16) + 0x80000;
   position[2] = object->z.fixed;
-  FieldEffect_Spawn(position[0], position[1], position[2] + 0x40000, 0, 0x8000,
+  FieldEffect_Spawn(position[0], position[1], position[2] + px(4), 0, 0x8000,
                     frame, 0x130000, &options);
 }
 
@@ -2873,7 +2872,7 @@ void MagmaRockInside_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 void MagmaRockInside_EndFallingRocks(void) {

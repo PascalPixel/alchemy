@@ -263,7 +263,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
     s32 zero = 0;
 
     gPaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_StepAt, 1152);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);

@@ -7,6 +7,7 @@
 /// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
 /// its rooms (AquaRockInside_FightSteam).
 
+#include "system/task.h"
 #include "types.h"
 #include "window/message_argument.h"
 #include "item_ids.h"
@@ -2500,7 +2501,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, 0x480);
+  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
 }
 
 s32 AquaRockInside_IsVentActive(s32 index) {

@@ -302,8 +302,7 @@ s32 Func_020003b4(struct Actor *object) {
   object->acceleration = px(1) / 16;
   object->speedLimit = px(1) / 16;
   z = object->z.fixed;
-  FieldActor_SetMoveTargetFixed(object, x - 0x1e0000, object->y.fixed,
-                                z + 0x80000);
+  FieldActor_SetMoveTargetFixed(object, x - px(30), object->y.fixed, z + px(8));
   return 0;
 }
 
@@ -2305,7 +2304,7 @@ void Func_02003d44(s32 mode) {
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
                       (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
-  Task_AddFrame(Func_02003c50, 0x480);
+  Task_AddFrame(Func_02003c50, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);

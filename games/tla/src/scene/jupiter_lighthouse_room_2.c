@@ -447,7 +447,7 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
 
   SET_ACTOR_POSITION(
       object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
-      (height * 3 << 16) + 0x80000, 170 << 18);
+      (height * 3 << 16) + px(8), 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
@@ -556,7 +556,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     Counter_Set(0);
-    Task_Add(PaletteCycle_StepAt, 1152);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);

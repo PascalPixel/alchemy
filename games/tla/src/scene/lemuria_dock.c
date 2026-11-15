@@ -3,6 +3,7 @@
 /// the ship and asks whether the party is ready to sail, and a house stands on
 /// the quay.
 
+#include "system/task.h"
 #include "battle/battle.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -208,7 +209,7 @@ void LemuriaDock_CyclePalette(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
-  Task_Add(LemuriaDock_CyclePalette, 0x480);
+  Task_Add(LemuriaDock_CyclePalette, TASK_PASS_VBLANK);
   Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))

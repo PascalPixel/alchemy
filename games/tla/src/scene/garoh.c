@@ -13,6 +13,7 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
+#include "system/task.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -602,7 +603,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: night colours, or by day the cells of the opened crevice.
 void Garoh_InitializeRoom1(void) {
-  FieldTask_AddFrame(Garoh_HowlAtNight, 0x480);
+  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   gFieldWork->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
@@ -642,7 +643,7 @@ void Garoh_InitializeRoom1(void) {
 
 void Garoh_InitializeRoom2(void) {
 
-  Task_AddFrame(Garoh_HowlAtNight, 0x480);
+  Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   Tightrope_Initialize();
   Tightrope_Place(0, 10, 11);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
@@ -656,7 +657,7 @@ void Garoh_InitializeRoom2(void) {
     PaletteFade_PackTarget();
     Garoh_LoadRoom2NightColors();
     PaletteFade_ApplyTarget(0x10000, 1);
-    Task_AddFrame((s32)Garoh_WaveRoom2Layer, 0xc80);
+    Task_AddFrame((s32)Garoh_WaveRoom2Layer, TASK_PASS_FRAME);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
@@ -672,7 +673,7 @@ extern s16 gGaroh_Room3Blocks[];
 /// The cave west of the village: the blocks Move, Lash and push place, darker
 /// the deeper the party goes.
 void Garoh_InitializeRoom3(void) {
-  FieldTask_AddFrame(Garoh_HowlAtNight, 1152);
+  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
       PaletteFade_ApplyTarget(0x10003, 1);

@@ -3,6 +3,7 @@
 /// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
+#include "system/task.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -323,7 +324,7 @@ void AirsRock_ClimbLedge(void) {
   leader->motionFlags |= 2;
   leader->velocityY = px(4);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
-                                z + 0xc0000);
+                                z + px(12));
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH_SOUTHWEST,
@@ -337,7 +338,7 @@ void AirsRock_ClimbLedge(void) {
   leader->motionFlags = 3;
   leader->velocityY = px(3);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
-                                z + 0x100000);
+                                z + px(16));
   FieldActor_WaitForMove(leader);
   Actor_SetSpriteFlags(leader, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -717,7 +718,7 @@ row:
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
-  Task_AddFrame(AirsRock_ScrollWave, 0xc80);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
@@ -1527,7 +1528,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(8);
-  Task_AddFrame(AirsRock_LiftFog, 0xc80);
+  Task_AddFrame(AirsRock_LiftFog, TASK_PASS_FRAME);
   Event_PlaySound(SE_163);
   REG_DISPCNT |= 0x100;
   MapGrid_SetShake(3, 3, 1);
@@ -1539,7 +1540,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     System_Wait(1);
   }
   FieldTask_Remove(AirsRock_LiftFog);
-  Task_AddFrame(AirsRock_ScrollWave, 0xc80);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
   REG_BLDALPHA = 8;
   REG_BLDCNT = 0x3f42;
   for (i = 0; i != 257; i++) {
@@ -1766,7 +1767,7 @@ s32 Scene_Initialize(void) {
     case 1:
     case 2:
     case 3:
-      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, 0x480);
+      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
       Actor_GetById(8)->motionFlags = 0;
       Actor_GetById(8)->y.fixed = 0xfff80000;
       Actor_SetSpritePriority(8, 2);
@@ -1841,7 +1842,7 @@ s32 Scene_Initialize(void) {
         dma = (volatile struct DmaRegisters *)0x040000b0;
         while ((s32)dma->control < 0)
           ;
-        Task_AddFrame(AirsRock_DriftFog, 0xc80);
+        Task_AddFrame(AirsRock_DriftFog, TASK_PASS_FRAME);
         beam = (s32 *)Ram_HeapSlots->mapGrid;
         beam = (s32 *)((u8 *)beam + 0x178);
         beam[6] = 0x4000;

@@ -3219,7 +3219,7 @@ s32 Scene_Initialize(void) {
       wait(1);
     }
     if (gMainRoutineWork.entrance <= 11 || gMainRoutineWork.entrance == 16) {
-      Task_Add(AirsRockInside_SetLedgeCellsByLevel, 0x480);
+      Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
       REG_BLDALPHA = 0x1008;
       REG_BLDCNT = 0x3f10;
       AirsRockInside_SpawnMotes();
@@ -3280,7 +3280,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Task_Add(AirsRockInside_PuffVents, 0x480);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(264), px(632));
     if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED))
@@ -3404,7 +3404,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
-    Task_Add(AirsRockInside_PuffVents, 0x480);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(280), px(472));
     if (GameFlag_Get(FLAG_AIRS_ROCK_EIGHTH_ROOM_SECOND_PILLAR_PLACED))

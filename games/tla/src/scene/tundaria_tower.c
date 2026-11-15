@@ -10,6 +10,7 @@
 /// pillars (room 6), Reveal opens an icy wall and Burst a brown one outside;
 /// Burst on the dead end by the chests (room 7) brings its rocks down.
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
@@ -465,7 +466,7 @@ void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
     FieldEffect_Spawn(object->x.fixed,
-                      object->y.fixed - ((arg1 * 3) << 16) + 0x100000,
+                      object->y.fixed - ((arg1 * 3) << 16) + px(16),
                       object->z.fixed, velocityX, 0, 0, 0x5a0000, &options);
     object->scaleY -= 7936;
   }
@@ -988,7 +989,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
       MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     } else {
-      Task_Add(TundariaTower_UpdateLedgeCell, 0x480);
+      Task_Add(TundariaTower_UpdateLedgeCell, TASK_PASS_VBLANK);
     }
     Actor_PlaceBlocks(gTundariaTower_Room7Pillar);
   }
@@ -1436,8 +1437,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1607,7 +1607,7 @@ void TundariaTower_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(TundariaTower_UpdateFallingRocks, 0x480);
+  Task_AddFrame(TundariaTower_UpdateFallingRocks, TASK_PASS_VBLANK);
 }
 
 void TundariaTower_EndFallingRocks(void) {

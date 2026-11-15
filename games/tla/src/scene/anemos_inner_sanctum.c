@@ -332,7 +332,7 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
   s32 radius;
 
   object->timer += object->userValue;
-  SET_ACTOR_POSITION(object, object->bounce, object->gravity, 0x980000);
+  SET_ACTOR_POSITION(object, object->bounce, object->gravity, px(152));
   FieldVector_AddPolarOffset(object->riseBaseY, object->timer,
                              &object->x.fixed);
   radius = object->riseBaseY - 0x10000;
@@ -387,8 +387,8 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
 
   params.kind = 2;
   params.part = *((u8 *)object + 98);
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
-                    0x10000, 0, 0x30000, &params);
+  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, px(1),
+                    0, 0x30000, &params);
   x = (object->bounce >> 20) + 64;
   y = object->gravity >> 20;
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);

@@ -141,7 +141,7 @@ void LemuriaPalace_CycleGlowColors(void) {
 /// LemuriaPalace_CycleGlowColors.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x201;
-  Task_AddFrame(LemuriaPalace_CycleGlowColors, 0xc80);
+  Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_FRAME);
   FieldActor_SetSpritePriority(8, 3);
   if (gMainRoutineWork.entrance == 6)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;

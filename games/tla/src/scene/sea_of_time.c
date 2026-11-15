@@ -8,6 +8,7 @@
 /// (SeaOfTime_CrossToLemuria).
 
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
@@ -360,13 +361,13 @@ void SeaOfTime_RideCurrent(void) {
     py = object->y.fixed;
     pz = ends[1];
     if (flip) {
-      FieldEffect_Spawn(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] - 0x30000, object->y.fixed, ends[3], -speed, 0,
-                        0, 0xb0000, &spark);
+      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] - px(3), object->y.fixed, ends[3], -speed, 0, 0,
+                        0xb0000, &spark);
     } else {
-      FieldEffect_Spawn(px - 0x30000, py, pz, -speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] + 0x30000, object->y.fixed, ends[3], speed, 0,
-                        0, 0xb0000, &spark);
+      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] + px(3), object->y.fixed, ends[3], speed, 0, 0,
+                        0xb0000, &spark);
     }
   }
 }
@@ -441,14 +442,12 @@ void SeaOfTime_FollowChannel(void) {
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          FieldEffect_Spawn(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000,
-                            &spark);
-          FieldEffect_Spawn(pos[2] - 0x40000, actor->y.fixed, pos[3], -0x8000,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -0x8000, 0,
+                            0, 0xb0000, &spark);
         } else {
-          FieldEffect_Spawn(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000,
-                            &spark);
-          FieldEffect_Spawn(pos[2] + 0x40000, actor->y.fixed, pos[3], 0x8000, 0,
+          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], 0x8000, 0,
                             0, 0xb0000, &spark);
         }
       }
@@ -625,7 +624,7 @@ s32 SeaOfTime_StartWaves(void) {
   } while (changed);
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
-  Task_Add(SeaOfTime_TrackWaves, 0x480);
+  Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
   return Event_EndWithResult();
 }
 
@@ -744,21 +743,21 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
       y = actor->y.fixed;
       z = sides[1];
       if (alternate) {
-        FieldEffect_Spawn(x + 0x40000, y, z, velocity, 0, 0,
+        FieldEffect_Spawn(x + px(4), y, z, velocity, 0, 0,
                           EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] - 0x40000, actor->y.fixed, sides[3], reverseVelocity, 0, 0,
+            sides[2] - px(4), actor->y.fixed, sides[3], reverseVelocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       } else {
-        FieldEffect_Spawn(x - 0x40000, y, z, reverseVelocity, 0, 0,
+        FieldEffect_Spawn(x - px(4), y, z, reverseVelocity, 0, 0,
                           EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] + 0x40000, actor->y.fixed, sides[3], velocity, 0, 0,
+            sides[2] + px(4), actor->y.fixed, sides[3], velocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       }
@@ -893,8 +892,8 @@ sparks:
     s32 z = Random16();
 
     burst.palette = 7;
-    FieldEffect_Spawn(((x & mask) << 16) + 0x1500000, 0,
-                      ((z & mask) << 16) + 0xb00000, 0, 0, 0, 0x10000, &burst);
+    FieldEffect_Spawn(((x & mask) << 16) + px(336), 0,
+                      ((z & mask) << 16) + px(176), 0, 0, 0, 0x10000, &burst);
     wait(1);
   }
 next:
@@ -915,8 +914,8 @@ next:
       rain.startScaleY = 0x18000;
       rain.palette = 7;
       rain.priority = 1;
-      FieldEffect_Spawn(offsetX + 0x1500000, 0, offsetZ + 0xb00000, 0, 0x10000,
-                        0, 0xb0000, &rain);
+      FieldEffect_Spawn(offsetX + px(336), 0, offsetZ + px(176), 0, px(1), 0,
+                        0xb0000, &rain);
       wait(1);
     }
     i++;
@@ -1087,7 +1086,7 @@ void SeaOfTime_AnimateSea(void) {
 
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetPositionFixed(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
+  Actor_SetPositionFixed(actor, (x << 19) + px(8), (z << 19) + px(8));
   x >>= 1;
   z >>= 1;
   SeaOfTime_SetCellCode(1, x, z, 0xff00);
@@ -1145,7 +1144,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);
-  Task_Add(SeaOfTime_AnimateSea, 0xc80);
+  Task_Add(SeaOfTime_AnimateSea, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   Event_Wait(60);
   SeaOfTime_RaiseRock(21, 23, 9);
@@ -1182,7 +1181,7 @@ void SeaOfTime_Open(void) {
       x &= mask;
       x <<= 16;
       x += 0x1500000;
-      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0, 0, 0xb0000,
+      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0, 0xb0000,
                         &params);
       wait(1);
     }
@@ -1199,8 +1198,8 @@ void SeaOfTime_Open(void) {
     x &= mask;
     x <<= 16;
     x += 0x1500000;
-    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0x10000, 0,
-                      0xb0000, &burst);
+    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0, 0xb0000,
+                      &burst);
     wait(1);
   }
   Actor_Release(actor);
@@ -1276,7 +1275,7 @@ s32 Scene_Initialize(void) {
         i++;
         offset += 2;
       } while (i != 14);
-      Task_Add(SeaOfTime_TrackWaves, 0x480);
+      Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
     }
   } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_2) {
     gSeaOfTime_WaveStartFrame = gFrameCount;

@@ -593,7 +593,7 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
                                                                                \
     if ((gGabombaStatueChamber_ShownItem = object =                            \
              ((struct GabombaStatueChamberObject *)Import_ActorCreate(         \
-                 489, x, 0x120000, z))) != NULL) {                             \
+                 489, x, px(18), z))) != NULL) {                               \
       struct FieldSprite *sprite = object->sprite;                             \
       u8 *block;                                                               \
                                                                                \

@@ -624,7 +624,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       actor32->priorityFlags |= 2;
       Actor_SetScript(31, gJupiterLighthouse_StarFallsScript);
       Actor_SetScript(32, gJupiterLighthouse_StarFallsScript);
-      Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle, 0x480);
+      Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle,
+                    TASK_PASS_VBLANK);
       Actor_SetPosition(9, 0, 0);
       Actor_SetPosition(10, 0, 0);
       Actor_SetPosition(23, 0, 0);
@@ -705,9 +706,8 @@ void JupiterLighthouse_BeaconIsLit(void) {
   MapGrid_CenterOnFollowedPoint();
   wait_(1);
   JupiterLighthouse_SetMessage(MsgWeHaveIgnited);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, 0x1fc0000, 0x1160000,
-                             facing = 0xc000);
-  Actor_SetPositionAndFacing(ACTOR_PIERS, 0x2140000, 0x1160000, facing);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, px(508), px(278), facing = 0xc000);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, px(532), px(278), facing);
   JupiterLighthouse_PlaySound(141);
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
   Event_StartScreenTransition();
@@ -2380,7 +2380,7 @@ s32 Scene_Initialize(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(36), 0);
   Actor_SetSpriteFlags(Actor_Get(36), 0);
-  Task_AddFrame((s32)JupiterLighthouse_PulseBeacon, 0x480);
+  Task_AddFrame((s32)JupiterLighthouse_PulseBeacon, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 9) {
     JupiterLighthouse_BeaconIsLit();
 
@@ -2461,7 +2461,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     Counter_Set(0);
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -2645,10 +2645,10 @@ void JupiterLighthouse_EnergizeAngels(void) {
   struct Actor *rider = Actor_GetById(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPositionFixed(24, 0x2000000, 0xf80000);
-  Actor_SetPositionFixed(23, 0x2000000, 0xf80000);
-  Actor_SetPositionFixed(9, 0x1d80000, 0x1000000);
-  Actor_SetPositionFixed(10, 0x2280000, 0x1000000);
+  Actor_SetPositionFixed(24, px(512), px(248));
+  Actor_SetPositionFixed(23, px(512), px(248));
+  Actor_SetPositionFixed(9, px(472), px(256));
+  Actor_SetPositionFixed(10, px(552), px(256));
   Actor_GetById(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;

@@ -599,7 +599,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Actor_SetModeById(8, 9);
     Event_Wait(3);
     Actor_ShowItemIconById(10, animations.animations[i]);
-    Actor_SetPositionFixed(10, 0x29c0000, 0xc80000);
+    Actor_SetPositionFixed(10, px(668), px(200));
     thrown->gravity = px(1) / 4;
     Actor_Jump(10, 4, 2);
     Actor_SetSpritePriority(10, 1);
@@ -667,7 +667,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   // "Something's happening! Is that...the legendary trident?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   FieldActor_ShowItemIconById(10, 0x146);
-  Actor_SetPositionFixed(10, 0x2980000, 0xe80000);
+  Actor_SetPositionFixed(10, px(664), px(232));
   Actor_SetSpritePriority(10, 1);
   thrown->motionFlags = 2;
   thrown->y.fixed = px(24);

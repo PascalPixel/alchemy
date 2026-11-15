@@ -822,7 +822,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     Counter_Set(0);
-    Task_Add(PaletteCycle_Step, 1152);
+    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);

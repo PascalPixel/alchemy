@@ -635,7 +635,7 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_APOJII_ISLANDS_2) {
     ApojiiIslands_InitializeRoom2();
   } else if (scene == SCENE_APOJII_ISLANDS_1) {
-    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, 0x480);
+    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
     if (Event_GetFlag(0x95e))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_3) {
@@ -863,7 +863,7 @@ void ApojiiIslands_StartCellMarkers(void) {
   Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers, 0x1004);
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
   Vram_Load(gApojiiIslands_CellMarkers.block, 0x200, 0);
-  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, 0x480);
+  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_VBLANK);
 }
 
 void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {

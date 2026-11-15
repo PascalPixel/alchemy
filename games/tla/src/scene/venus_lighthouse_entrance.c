@@ -13,6 +13,7 @@
 ///   prologue wakes them by the door, with Alex come back for them
 ///   (VenusLighthouseEntrance_WakeUp).
 
+#include "system/task.h"
 #include "battle/battle.h"
 #include "debug.h"
 #include "field/field.h"
@@ -1496,7 +1497,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->height = 0;
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
-  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, 0x480);
+  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
   if (work->stage != 999) {
   wait:
     System_Wait(1);

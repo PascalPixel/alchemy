@@ -649,7 +649,7 @@ void Contigo_BabyThinks(void) {
     if (i < 28)
       goto grow;
   }
-  Task_Add(Contigo_RaiseMotes, 0x480);
+  Task_Add(Contigo_RaiseMotes, TASK_PASS_VBLANK);
   Event_Wait(120);
   Task_Remove(Contigo_RaiseMotes);
   if (effect != 0) {
@@ -1086,7 +1086,7 @@ void Contigo_ForceFreesDjinni(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(17, 0x380000, 0x2ba0000);
+  Actor_SetHorizontalPositionWithTerrain(17, px(56), px(698));
   wait(1);
   options.priority = 2;
   Sound_Play(SE_THUMP);
@@ -2211,7 +2211,7 @@ void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
 
-  Task_Add(Contigo_KeepPriorityWithLeader, 0x480);
+  Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
   /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
    * address. */
   zero = 0;

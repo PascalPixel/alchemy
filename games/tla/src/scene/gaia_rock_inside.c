@@ -1342,9 +1342,8 @@ void GaiaRockInside_RingOfDust(void) {
       velocity[1] = 0;
       velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] / 3;
-      FieldEffect_Spawn(0x1d00000, -0x200000, 0x1480000, velocity[0],
-                        velocity[1], velocity[2], EFFECT_USE_UPDATE | 1,
-                        &options);
+      FieldEffect_Spawn(px(464), px(-32), px(328), velocity[0], velocity[1],
+                        velocity[2], EFFECT_USE_UPDATE | 1, &options);
       i += 2;
     }
   } while (i <= 16);

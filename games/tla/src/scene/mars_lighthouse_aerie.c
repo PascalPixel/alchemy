@@ -276,7 +276,7 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   object->priorityFlags |= 2;
   Actor_SetBlendMode(object, 1);
   gMarsLighthouseAerie_BeaconFlameFrame = 0;
-  FieldTask_AddFrame(MarsLighthouseAerie_SpawnBeaconFlames, 0x480);
+  FieldTask_AddFrame(MarsLighthouseAerie_SpawnBeaconFlames, TASK_PASS_VBLANK);
 }
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
@@ -2169,7 +2169,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   A(beam2)->scaleY = 0xffff0000;
   A(beam2)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(beam2, px(512), px(96), px(204));
-  Task_AddFrame(Orbs_SpawnRising, 0x480);
+  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -2268,7 +2268,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 2);
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrame = zero;
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrames = 240;
-  Task_AddFrame(MarsLighthouseAerie_RaiseBeaconFire, 0x480);
+  Task_AddFrame(MarsLighthouseAerie_RaiseBeaconFire, TASK_PASS_VBLANK);
 L_0200bcea:
   System_Wait(1);
   if ((u32)(*(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrame) <= (u32)100)

@@ -1598,7 +1598,7 @@ s32 Scene_Initialize(void) {
     } else {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      Task_Add(Prox_PuffFromRoofs, 0x480);
+      Task_Add(Prox_PuffFromRoofs, TASK_PASS_VBLANK);
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_ClearLayerEntryFlag(2);
@@ -1709,7 +1709,7 @@ void Prox_MatchRoom4Priority(void) {
 void Prox_InitializeRoom4(void) {
 
   FieldEffect_StartBlankOverlay(0);
-  Task_AddFrame((s32)Prox_MatchRoom4Priority, 0x480);
+  Task_AddFrame((s32)Prox_MatchRoom4Priority, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 0x14) {
     if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
@@ -2280,7 +2280,7 @@ UNUSED void Prox_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 struct SparkWork {

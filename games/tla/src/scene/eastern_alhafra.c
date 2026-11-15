@@ -600,8 +600,8 @@ void EasternAlhafra_FillWaveLines(void) {
 }
 
 void EasternAlhafra_StartWave(void) {
-  Task_AddFrame(EasternAlhafra_FillWaveLines, 0x480);
-  Task_AddFrame(EasternAlhafra_StartWaveDma, 0xc80);
+  Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_VBLANK);
+  Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_FRAME);
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)

@@ -1002,7 +1002,7 @@ s32 Scene_Initialize(void) {
       } else {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(0x278, 0);
-        Task_Add(YampiDesertCave_MoveSandRipple, 0x480);
+        Task_Add(YampiDesertCave_MoveSandRipple, TASK_PASS_VBLANK);
         Event_SetFlag(FLAG_SCENE_TEMP_70);
         Actor_SetSpritePriority(16, 3);
         Actor_GetById(16)->collisionFlags = 0;

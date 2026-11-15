@@ -359,7 +359,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     Event_PlaySound(MUS_PUZZLE_SOLVED);
     Sound_WaitForJingle();
     FieldEvent_Wait(10);
-    Camera_MoveWithinMapBounds_(px(984), -0x400000, px(248), 1);
+    Camera_MoveWithinMapBounds_(px(984), px(-64), px(248), 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     PaletteCycle_SetPausesInEvents(1);

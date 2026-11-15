@@ -1750,7 +1750,7 @@ waitFourthVerse:
 /// Once Force has pushed it (flag 0x300), the pillar lies where it fell.
 void Yallam_PlaceFallenPillar(void) {
   if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
-    SET_ACTOR_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
+    SET_ACTOR_POSITION(Actor_Get(9), px(168), 0, px(192));
   }
 }
 

@@ -9,6 +9,7 @@
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
+#include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "field/sprite.h"
@@ -2666,7 +2667,7 @@ void Kibombo_GabombaResponds(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_162);
-  Task_Add(Kibombo_RaiseEmbers, 0x480);
+  Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
   GameFlag_Set(0x8fc);
@@ -2697,8 +2698,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
   object->scaleY = 0x1999;
-  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
-                                  0x1340000);
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), px(264), px(24), px(308));
   wait(1);
   Actor_SetModeById(14, 3);
   for (i = 0; i < 64; i++) {
@@ -2748,8 +2748,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SetStatueMouth(1, 1);
   Kibombo_SetStatueTongue(1, 0);
   Sound_Play(SE_WATER);
-  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
-                                  0x1340000);
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), px(264), px(24), px(308));
   wait(1);
   for (i = 0; i < 8; i++) {
     object->scaleY += Q16_ONE / 8;
@@ -3150,7 +3149,7 @@ void Kibombo_InitializeRoom5(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Add(Kibombo_FlickerCeremonyFires, 0x480);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
   for (i = 0; i <= 7; i++) {
     u8 *field = &Actor_GetById(i + 18)->retainSpriteCache;
     s32 value = 2;

@@ -238,9 +238,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTargetFixed(
-      object, (object->x.fixed & 0xfff00000) + 0x80000, object->y.fixed,
-      (object->z.fixed & 0xfff00000) + 0x80000);
+  FieldActor_SetMoveTargetFixed(object, (object->x.fixed & 0xfff00000) + px(8),
+                                object->y.fixed,
+                                (object->z.fixed & 0xfff00000) + px(8));
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;

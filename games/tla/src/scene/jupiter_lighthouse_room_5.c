@@ -343,7 +343,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
-  Task_AddFrame(JupiterLighthouse_PulseAscend, 0x480);
+  Task_AddFrame(JupiterLighthouse_PulseAscend, TASK_PASS_VBLANK);
   for (i = 0; i < 20; i++) {
     gJupiterLighthouse_PulseStep = 0;
     System_Wait((20 - i) / 2);
@@ -360,7 +360,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldEvent_Wait(40);
   Bring(ACTOR_LOWER_BEAM);
   Bring(ACTOR_UPPER_BEAM);
-  Task_AddFrame(Orbs_SpawnRising, 0x480);
+  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(0x10000, 0);
@@ -634,12 +634,12 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
+  SET_ACTOR_POSITION(object, px(680), px(32), px(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
   object = Actor_Get(ACTOR_UPPER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
+  SET_ACTOR_POSITION(object, px(680), px(64), px(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
@@ -988,7 +988,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
 
     work->next = zero;
   }
-  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, 0x480);
+  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_VBLANK);
 }
 
 void JupiterLighthouse_EndSparkRing(void) {

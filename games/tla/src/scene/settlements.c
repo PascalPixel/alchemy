@@ -5,6 +5,7 @@
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
 #include "../field/object/set_sprite_priority.c"
+#include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
@@ -704,7 +705,7 @@ void Settlements_CycleWaterColors(void) {
 
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition = 514;
-  FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
+  FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
   Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();
 }

@@ -277,7 +277,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Task_Add(StaffCredit_BlendBeacon, 0x480);
+  Task_Add(StaffCredit_BlendBeacon, TASK_PASS_VBLANK);
   Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
@@ -660,7 +660,7 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     }
     IRQ_UNLOCK(saved);
   }
-  Task_AddFrame(StaffCredit_BlendPicture, 0x480);
+  Task_AddFrame(StaffCredit_BlendPicture, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);

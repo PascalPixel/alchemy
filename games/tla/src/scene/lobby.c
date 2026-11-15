@@ -1449,7 +1449,7 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(4);
   }
   func = LinkLobby_PollPeerReady;
-  Task_Add(func, 0x480);
+  Task_Add(func, TASK_PASS_VBLANK);
   Task_SetFlags(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);

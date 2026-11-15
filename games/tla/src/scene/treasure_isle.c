@@ -189,13 +189,13 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + px(8), 0, (cell->z << 20) + px(20), 0, 0,
+                    0, 0x3a0000, &options);
   options.startScaleX = 0x9999;
-  FieldEffect_Spawn((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
-  FieldEffect_Spawn((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0,
-                    0, 0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) - px(2), 0, (cell->z << 20) + px(8), 0, 0,
+                    0, 0x3a0000, &options);
+  FieldEffect_Spawn((cell->x << 20) + px(18), 0, (cell->z << 20) + px(8), 0, 0,
+                    0, 0x3a0000, &options);
   FieldEvent_Wait(10);
   MapGrid_CopyCellsLayered(6, 100, 3, 4, cell->x + 63, cell->z - 2);
   FieldEvent_Wait(10);

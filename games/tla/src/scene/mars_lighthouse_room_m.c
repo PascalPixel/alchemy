@@ -12,6 +12,7 @@
 /// floor before it breaks open, and Teleport there carries the party up to the
 /// aerie.
 
+#include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "module/scene/ride.h"
@@ -629,7 +630,7 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
                           (16 - gMarsLighthouseRoomM_DoorwayBlend) << 8,
                       0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f42, 0x20000);
-  Task_AddFrame(MarsLighthouseRoomM_FadeDoorway, 0x480);
+  Task_AddFrame(MarsLighthouseRoomM_FadeDoorway, TASK_PASS_VBLANK);
 }
 
 /// Teleport on the broken floor: the party leaves for the aerie.
@@ -834,7 +835,7 @@ s32 Scene_PrepareMap(void) {
     object = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);
     object->motionFlags = 0;
     object->z.fixed = px(104);
-    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, 0x480);
+    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_VBLANK);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
@@ -1105,7 +1106,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     gPaletteCycle_Period = period;                                             \
     gPaletteCycle_Countdown = countdown;                                       \
     gPaletteCycle_Flash = 1;                                                   \
-    Task_AddFrame(PaletteCycle_Fade, 0x480);                                   \
+    Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);                        \
   }
 
 DEFINE_TELEPORT_START_SHIMMER(Teleport_StartShimmer, 15, 16)

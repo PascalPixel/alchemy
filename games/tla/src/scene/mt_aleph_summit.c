@@ -6,6 +6,7 @@
 
 #include "../field/field_effect/move.c"
 
+#include "system/task.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -518,7 +519,7 @@ s32 Scene_Initialize(void) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, (REG_BG1CNT & ~3) | 3, 0x20000);
     Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
-    Task_AddFrame(MtAlephSummit_PulseColors, 0x480);
+    Task_AddFrame(MtAlephSummit_PulseColors, TASK_PASS_VBLANK);
     j = 0;
   L7:
     MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer, 224);

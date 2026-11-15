@@ -387,7 +387,7 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
       }
       dy = Random16() & 31;
       FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                        object->y.fixed + (dy << 16) - 0x80000, object->z.fixed,
+                        object->y.fixed + (dy << 16) - px(8), object->z.fixed,
                         0, phase, phase, 0x320001, &params);
     }
     if (gFrameCount & 4)
@@ -2360,7 +2360,7 @@ void MagmaRock_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(Particles_UpdateFalling, 0x480);
+  Task_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 void MagmaRock_EndFallingRocks(void) {

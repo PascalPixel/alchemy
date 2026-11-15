@@ -8,6 +8,7 @@
 /// it. Douse fills the two pillars that sink on their droplet tiles and open
 /// the way to the engine room, where Piers sets the Black Crystal and the
 /// ship sails.
+#include "system/task.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -902,7 +903,7 @@ void LemurianShip_DrawLightToOrb(void) {
   s32 position[3];
   struct Actor *object;
 
-  SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
+  SET_VECTOR(position, px(808), px(8), px(140));
   Vector_AddPolarOffset(0x200000, Random16(), position);
   object = ((struct Actor *)Import_ActorCreate(0x2a2, position[0], position[1],
                                                position[2]));
@@ -958,7 +959,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Actor_SetSpritePriority(ACTOR_PIERS, 1);
   Event_PlaySound(SE_SHIMMER);
-  Task_Add(LemurianShip_DrawLightToOrb, 0x480);
+  Task_Add(LemurianShip_DrawLightToOrb, TASK_PASS_VBLANK);
   Event_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(20);
@@ -1311,7 +1312,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     LemurianShip_SetUpRaisedJelly(14);
   }
   FlagBlock_PlaceAll(gLemurianShip_SixJellyRoomPuddles);
-  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, 0x480);
+  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 2))) {
     LemurianShip_MeltJellyIntoPuddle(9, 15);
     Event_ClearFlag((FLAG_JELLY_MELTING + 2));
@@ -1431,7 +1432,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     LemurianShip_SetUpJelly(15);
   }
   FlagBlock_PlaceAll(gLemurianShip_SevenJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, 0x480);
+  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 8))) {
     LemurianShip_MeltJellyIntoPuddle(9, 16);
     Event_ClearFlag((FLAG_JELLY_MELTING + 8));
@@ -1551,7 +1552,7 @@ void LemurianShip_SetUpPillarRoom(void) {
   }
   wait(1);
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, 0x480);
+  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_VBLANK);
   if (!Event_GetFlag(FLAG_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(10)), 15);
   if (!Event_GetFlag((FLAG_PUDDLE_FROZEN + 1)))

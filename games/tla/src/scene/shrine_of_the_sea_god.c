@@ -1076,7 +1076,7 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
     i++;
     velocity[0] += -0x6000;
     velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
-    FieldEffect_Spawn(leader->x, leader->y + -0x40000, leader->z, velocity[0],
+    FieldEffect_Spawn(leader->x, leader->y + px(-4), leader->z, velocity[0],
                       velocity[1], velocity[2], 0x01090001, &options);
   }
   leader->velocityY = 0x40000;
@@ -1111,7 +1111,7 @@ void ShrineOfTheSeaGod_LandPillarAsLogs(struct ShrineOfTheSeaGodObject *object,
   Actor_SetPositionAndResetMotion(Actor_GetById(base + 21), object->x, 0,
                                   object->z);
   Actor_SetPositionAndResetMotion(Actor_GetById(base + 22), object->x, 0,
-                                  object->z + -0x100000);
+                                  object->z + px(-16));
   Actor_SetModeById(base + 21, 1);
   Actor_SetModeById(base + 22, 1);
   wait(20);

@@ -2550,8 +2550,8 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  Task_Add((s32)YampiDesert_UpdateRisingSand, 0x48d);
-  Task_Add((s32)YampiDesert_DrawRisingSand, 0x480);
+  Task_Add((s32)YampiDesert_UpdateRisingSand, TASK_PASS_VBLANK + 13);
+  Task_Add((s32)YampiDesert_DrawRisingSand, TASK_PASS_VBLANK);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 

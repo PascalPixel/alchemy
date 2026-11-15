@@ -194,7 +194,7 @@ s32 Scene_Initialize(void) {
       object->groundHeight += px(16);
     }
   } else {
-    Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
+    Actor_SetHorizontalPositionWithTerrain(14, px(136), px(475));
     if (!GameFlag_Get(FLAG_BREAD_TAKEN))
       Actor_SetPosition(15, 120, 472);
     else
@@ -946,7 +946,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     s32 x = result9->x.fixed;
     s32 y = result9->y.fixed;
     result9->update = 0;
-    Actor_SetPositionAndResetMotion(result9, x + 0x160000, y + 0x80000,
+    Actor_SetPositionAndResetMotion(result9, x + px(22), y + px(8),
                                     result9->z.fixed);
   }
   Event_Wait(50);

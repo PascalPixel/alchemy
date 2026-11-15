@@ -296,7 +296,7 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
   riseSpeed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
   FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
-                    0x000b0000, &options);
+                    0xb0000, &options);
 done:
   return 0;
 }

@@ -222,24 +222,23 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-struct TrialRoadReplay {
-  s16 mode;
-  s16 mirrored;
-  s16 id;
-  s16 point;
-  s16 still;
-  s16 resource;
+/// What the rival does each frame (TrialRoad_MoveRival).
+enum TrialRoadRivalMode {
+  RIVAL_REPLAY = 1,  ///< walks the recorded path
+  RIVAL_RECORD = 2,  ///< records the actor's path
+  RIVAL_LINKED = 3,  ///< stands where the linked player's record puts it
+  RIVAL_MIRROR = 4,  ///< follows the leader mirrored across the course
+  RIVAL_WAITING = 9, ///< the path is done
 };
 
-struct TrialRoadLinkWork {
-  u8 unk00[0xe4];
-  u16 rival;
-  u16 unke6;
-  u16 linkAngle;
-  s16 resource;
-  s32 linkX;
-  s32 linkZ;
-  s16 path[0x1c20];
+/// The rival's state in gSceneState.
+struct TrialRoadReplay {
+  s16 mode; ///< enum TrialRoadRivalMode
+  s16 mirrored;
+  s16 id;       ///< the rival's actor
+  s16 point;    ///< the next x, z pair of the path
+  s16 still;    ///< frames the rival has not moved
+  s16 resource; ///< the recording's resource
 };
 
 /// One queued sprite: the three words Oam_AddSpriteAtDepth adds to OAM.
@@ -247,26 +246,24 @@ struct TrialRoadSprite {
   u32 words[3];
 };
 
-struct TrialRoadLink {
-  u8 unk00[0xd8];
+/// The heap slot TrialRoad_ShowProgress takes for the two parties' progress
+/// display and the rival's recorded path.
+struct TrialRoadLinkWork {
+  struct TrialRoadSprite sprites[18]; ///< the display's queued sprites
   s16 vramEntry;
-  u16 unkda;
-  u8 unkdc[4];
-  u16 unke0;
-  u16 a;
-  u16 b;
-  u8 unke6[6];
-  s32 height;
-  s32 unkf0;
-};
-
-struct TrialRoadControl {
-  s16 state;
-  s16 field02;
-  s16 field04;
-  s16 field06;
-  s16 field08;
-  s16 field0a;
+  s16 fade; ///< 0 hidden to 2 shown, a step a frame
+  s16 scrollX;
+  s16 scrollY;
+  s16 holdFade; ///< nonzero holds the fade at 2
+  s16 leaderId; ///< the actor the first marker follows
+  s16 rivalId;  ///< the second marker's, which the recording replays
+  /// The rival's timer in the link race, beside the far and the near side;
+  /// nothing in the overlay writes them.
+  u16 rivalTimers[2];
+  s16 resource; ///< the recorded path's resource, once decoded
+  s32 originX;  ///< the course's corner the markers measure from
+  s32 originZ;
+  s16 path[0x1c20]; ///< x, z pairs in pixels, 0, 0 ending them
 };
 
 s32 TrialRoad_IsMirrored(void);
@@ -399,12 +396,12 @@ void TrialRoad_SetUpPoolRoom(void);
 
 extern u32 gTrialRoad_RivalRecordings[];
 s32 TrialRoad_RivalIsWaiting(void);
-void TrialRoad_PlayRivalRecording(s32 a);
+void TrialRoad_PlayRivalRecording(s32 resource);
 void TrialRoad_DealStageOrder(u32 seed);
 
 void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-void TrialRoad_ShowProgress(s32 a, s32 b);
+void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId);
 
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
@@ -817,14 +814,9 @@ void TrialRoad_BlowBushOffPoundPillar(void) {
   Event_SetFlag(FLAG_AREA_TEMP_39);
 }
 
-/* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTrialRoad_PoundPartners[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:768: `gTrialRoad_PoundPartners' undeclared
- * (first use in this function). */
-extern const s8
-    gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
-#define gTrialRoad_PoundPartners gTrialRoad_PoundPartners__s0218
+/// The pillar each of the pound stage's four pillars, 18 to 21, raises when
+/// it is pounded down: they go in pairs.
+extern s8 gTrialRoad_PoundPartners[4];
 
 void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
   s32 id;
@@ -1242,7 +1234,6 @@ void TrialRoad_RevealVine(void) {
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-#undef gTrialRoad_PoundPartners
 // Trial Road's effect spawner and the sand stage's stream.
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1703,14 +1694,8 @@ void TrialRoad_GaspFlees(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
- * the joined file has another; tried as the definition's extern LAST_DATA u32
- * gTrialRoad_PaletteCycleRunning[], it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1637:
- * `gTrialRoad_PaletteCycleRunning' undeclared (first use in this function). */
-extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
-    "gTrialRoad_PaletteCycleRunning");
-#define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
+/// Whether the palette cycle runs; the frame it has reached.
+extern s32 gTrialRoad_PaletteCycleRunning;
 
 /// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
 /// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
@@ -1736,14 +1721,7 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
   gTrialRoad_PaletteCycleRunning = value;
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
- * the joined file has another; tried as the definition's extern LAST_DATA s32
- * gTrialRoad_PaletteCycleFrame[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:1651: `gTrialRoad_PaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32
-    gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
-#define gTrialRoad_PaletteCycleFrame gTrialRoad_PaletteCycleFrame__s15a8
+extern s32 gTrialRoad_PaletteCycleFrame;
 
 void PaletteCycle_StepAt(void) {
   u16 colors[16];
@@ -1833,15 +1811,8 @@ void TrialRoad_SetUpPeak(void) {
     Actor_SetPosition(10, 136, 328);
 }
 
-/* VIEW(s1fc4): variable gTrialRoad_StageSetUps as extern s32 (*const
- * gTrialRoad_StageSetUps[])(void); the definition has void
- * (*gTrialRoad_StageSetUps[])(void); called through the void type, the call's
- * result register moves 2 of 84 instructions of Scene_Initialize in tla-en;
- * tried as the rest of the object declares it, it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1757:
- * `gTrialRoad_StageSetUps' undeclared (first use in this function). */
-extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
-    "gTrialRoad_StageSetUps");
+/// Each stage pattern's set-up, by the pattern's low three bits.
+extern void (*gTrialRoad_StageSetUps[])(void);
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -1854,7 +1825,8 @@ s32 Scene_Initialize(void) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-      gTrialRoad_StageSetUps__s1fc4[pattern & 7]();
+      /* FAKEMATCH(signature): the set-up called as returning s32. */
+      ((s32 (*)(void))gTrialRoad_StageSetUps[pattern & 7])();
     } else if (entrance == 55) {
       TrialRoad_ShowTraps();
     }
@@ -1988,7 +1960,7 @@ extern s8 gTrialRoad_DemoSceneryStages[];
 extern s8 gTrialRoad_SceneryStages[];
 
 struct Unit *Unit_Get(u32 unitId);
-void TrialRoad_StartRival(s32 a);
+void TrialRoad_StartRival(s32 mirrored);
 
 /// Places `layer` `column` cells into the map: its offset (column << 20), its
 /// cells and terrain from that column on, and its position from the view.
@@ -3363,7 +3335,7 @@ void TrialRoad_WaitForBalanceState(void) {
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
-  struct TrialRoadReplay *state = &gSceneState;
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x, z, turn, dx, dz;
@@ -3371,7 +3343,7 @@ void TrialRoad_MoveRival(void) {
 
   if (rival == 0)
     return;
-  if (state->mode == 4) {
+  if (state->mode == RIVAL_MIRROR) {
     x = leader->x.fixed;
     z = leader->z.fixed;
     if ((u32)(z - 0x1000000) > 0x1300000)
@@ -3397,7 +3369,7 @@ void TrialRoad_MoveRival(void) {
       Actor_SelectAnimation(rival, 1);
     else
       Actor_SelectAnimation(rival, 5);
-  } else if (state->mode == 3) {
+  } else if (state->mode == RIVAL_LINKED) {
     s32 player;
     s16 *signature;
     s32 angle, link, ok, partner;
@@ -3414,18 +3386,18 @@ void TrialRoad_MoveRival(void) {
     link = st >> 8;
     ok = st & 0xff;
     if (GameFlag_Get(dz = 529) && link != 0) {
-      state->mode = 9;
+      state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
-      if (work->linkX < rival->x.fixed)
-        x = work->linkX + 0xc0000;
+      if (work->originX < rival->x.fixed)
+        x = work->originX + 0xc0000;
       else
-        x = work->linkX - 0xc0000;
+        x = work->originX - 0xc0000;
       if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
-        z = work->linkZ + 0x100000;
-        rival->timer = work->linkAngle;
+        z = work->originZ + 0x100000;
+        rival->timer = work->rivalTimers[1];
       } else {
-        z = work->linkZ - 0x100000;
-        rival->timer = work->unke6;
+        z = work->originZ - 0x100000;
+        rival->timer = work->rivalTimers[0];
       }
       rival->acceleration = px(1) / 4;
       rival->speedLimit = px(1);
@@ -3453,7 +3425,7 @@ void TrialRoad_MoveRival(void) {
     rival->facing = angle;
     rival->z.fixed = z << 16;
     Actor_SelectAnimation(rival, ok);
-  } else if (state->mode == 1) {
+  } else if (state->mode == RIVAL_REPLAY) {
     if (state->resource != work->resource) {
       Decompress_TaggedLz(Resource_GetTableEntry(state->resource), work->path);
       work->resource = state->resource;
@@ -3463,7 +3435,7 @@ void TrialRoad_MoveRival(void) {
     if (!GameFlag_Get(260))
       state->point += 2;
     if (x == 0 && z == 0) {
-      state->mode = 9;
+      state->mode = RIVAL_WAITING;
       return;
     }
     x <<= 16;
@@ -3494,7 +3466,7 @@ void TrialRoad_MoveRival(void) {
       Actor_SelectAnimation(rival, 1);
     else
       Actor_SelectAnimation(rival, 5);
-  } else if (state->mode == 2) {
+  } else if (state->mode == RIVAL_RECORD) {
     x = rival->x.fixed >> 16;
     z = rival->z.fixed >> 16;
     work->path[state->point] = x;
@@ -3506,33 +3478,14 @@ void TrialRoad_MoveRival(void) {
 
       work->path[state->point] = 0;
       work->path[(s16)next] = 0;
-      state->id = work->rival;
+      state->id = work->rivalId;
       state->point = 0;
-      state->mode = 1;
+      state->mode = RIVAL_REPLAY;
     }
   }
 }
 
 // next object the overlay links, and the overlay's data.
-
-/* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
- * s15a8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:3447: structure has no member named
- * `vramEntry'. */
-struct TrialRoadLinkWork__s51a0 {
-  u32 oam[54];
-  s16 vramEntry;
-  s16 fade;
-  s16 scrollX;
-  s16 scrollY;
-  s16 unke0;
-  s16 a;
-  s16 b;
-  u8 unke6[6];
-  s32 originX;
-  s32 originZ;
-};
 
 extern const u8 gTrialRoad_ProgressPicture[];
 
@@ -3584,7 +3537,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 /// the two watched actors, projected at 1/16 scale from their positions and the
 /// course side.
 void TrialRoad_DrawProgress(void) {
-  struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;
   struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
   s16 *vramEntry = &work->vramEntry;
@@ -3598,7 +3551,7 @@ void TrialRoad_DrawProgress(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
 
-  if (work->unke0 != 0) {
+  if (work->holdFade != 0) {
     work->fade = 2;
   } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->psynergy != 0) {
     if (work->fade > 0)
@@ -3645,12 +3598,12 @@ void TrialRoad_DrawProgress(void) {
   }
   if ((gFrameCount & 15) < 5)
     return;
-  actor = Actor_Lookup(work->a);
+  actor = Actor_Lookup(work->leaderId);
   if (actor != NULL) {
     MARKER(+work->fade * 6 + work->scrollX - 19,
            -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
-  actor = Actor_Lookup(work->b);
+  actor = Actor_Lookup(work->rivalId);
   if (actor == NULL || actor->x.fixed == 0)
     return;
   {
@@ -3662,38 +3615,38 @@ void TrialRoad_DrawProgress(void) {
   }
 }
 
-void TrialRoad_ShowProgress(s32 a, s32 b) {
-  struct TrialRoadLink *link =
-      HeapSlot_AllocEwram(HEAP_SLOT_TRIAL_ROAD_LINK, 0x3934);
+void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
+  struct TrialRoadLinkWork *link = HeapSlot_AllocEwram(
+      HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
   s32 owner;
-  u16 *unkda;
-  u16 *unke0;
-  s32 *height;
-  s32 *unkf0;
+  s16 *fade;
+  s16 *holdFade;
+  s32 *originX;
+  s32 *originZ;
   s16 *vramEntry;
 
-  link->a = a;
-  link->b = b;
+  link->leaderId = leaderId;
+  link->rivalId = rivalId;
   owner = gMainRoutineWork.leaderActorId;
-  height = &link->height;
-  unkf0 = &link->unkf0;
-  unkda = &link->unkda;
-  unke0 = &link->unke0;
+  originX = &link->originX;
+  originZ = &link->originZ;
+  fade = &link->fade;
+  holdFade = &link->holdFade;
   vramEntry = &link->vramEntry;
-  if (a == owner) {
-    *height = 0xa00000;
-    *unkf0 = 0xf9a00000;
+  if (leaderId == owner) {
+    *originX = px(160);
+    *originZ = px(-1632);
   } else {
-    *height = 0x700000;
-    *unkf0 = 0xf9a00000;
+    *originX = px(112);
+    *originZ = px(-1632);
   }
-  Actor_GetById(a);
-  Actor_GetById(b);
+  Actor_GetById(leaderId);
+  Actor_GetById(rivalId);
   zero = 0;
-  *unkda = zero;
-  *unke0 = zero;
+  *fade = zero;
+  *holdFade = zero;
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
@@ -3701,37 +3654,37 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   Heap_Release(buffer);
 }
 
-void TrialRoad_StartRival(s32 a) {
-  u8 *work = Ram_HeapSlots->trialRoadLink;
-  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+void TrialRoad_StartRival(s32 mirrored) {
+  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     /* FAKEMATCH(temporary): a local reads the work value before the three
      * stores. */
-    s32 value = *(u16 *)(work + 228);
+    s32 rivalId = (u16)work->rivalId;
 
-    control->field02 = a;
-    control->field04 = value;
-    control->field08 = 0;
+    state->mirrored = mirrored;
+    state->id = rivalId;
+    state->still = 0;
   }
   Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);
 }
 
-void TrialRoad_PlayRivalRecording(s32 a) {
-  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+void TrialRoad_PlayRivalRecording(s32 resource) {
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   s32 zero = 0;
 
-  *(u16 *)((Ram_HeapSlots->trialRoadLink) + 234) = zero;
-  control->field0a = a;
-  control->field06 = zero;
-  control->state = 1;
+  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = zero;
+  state->resource = resource;
+  state->point = zero;
+  state->mode = RIVAL_REPLAY;
   TrialRoad_MoveRival();
 }
 
 s32 TrialRoad_RivalIsWaiting(void) {
-  s32 state = *(s16 *)gSceneState;
+  s32 mode = ((struct TrialRoadReplay *)gSceneState)->mode;
 
-  return IsZero(state ^ 9);
+  return IsZero(mode ^ RIVAL_WAITING);
 }
 
 void TrialRoad_DoNothing(void) {}
@@ -3746,9 +3699,7 @@ s32 gTrialRoad_PillarTopScript[] = {
     SC_END,
 };
 
-u32 gTrialRoad_PoundPartners[] = {
-    0x14151213,
-};
+s8 gTrialRoad_PoundPartners[4] ALIGNED(4) = {19, 18, 21, 20};
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
@@ -3943,8 +3894,6 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
-#undef gTrialRoad_PaletteCycleRunning
-#undef gTrialRoad_PaletteCycleFrame
 
 // clang-format off
 LATE_DATA s32 gTrialRoad_RubbleScript[] = {
@@ -4576,10 +4525,6 @@ LAST_DATA s32 gTrialRoad_Room1Triggers[] = {
     (s32)gTrialRoad_FountainStageTriggers,   (s32)gTrialRoad_SandStageTriggers,
 };
 
-LAST_DATA s32 gTrialRoad_PaletteCycleFrame[] = {
-    -1,
-};
+LAST_DATA s32 gTrialRoad_PaletteCycleFrame = -1;
 
-LAST_DATA u32 gTrialRoad_PaletteCycleRunning[] = {
-    1,
-};
+LAST_DATA s32 gTrialRoad_PaletteCycleRunning = 1;

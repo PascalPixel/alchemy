@@ -42,11 +42,32 @@ s32 Title_ShowIntro(s32 value);
 
 void TitleIntro_Run(s32 value);
 
-void Title_LoadBackground(void);
+static void Title_RevealScreen(s32 unused);
+static void Title_LoadBackground(void);
 
-struct TitleSprite__title;
+/// One sprite of the logo's lettering, as Oam_AddSpriteAtDepthClamped queues
+/// it. Title_UpdateSpriteReveal rewrites every entry each frame.
+struct TitleSprite {
+  /// [0] the queue link the depth queue writes; [1] OAM attribute 0 (y, mode
+  /// and shape) in the low half and attribute 1 (x) in the high half; [2]
+  /// attribute 2 (the tile, and the palette).
+  u32 attr[3];
+};
 
-extern s16 gTitle_RevealStep;
+/// Frames since the lettering's reveal began; a column appears every two.
+extern s16 gTitleRevealFrame;
+/// The lettering's 18 sprites, in the overlay's BSS (scene/bss/title.s).
+extern struct TitleSprite gTitleSprites[];
+
+// The logo the title shows: an 8-bit background on BG2, its map in screen
+// block 6 and its tiles from tile 416 of character block 0, as The Broken
+// Seal's.
+#define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
+#define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
+#define LOGO_FIRST_TILE 416
+#define LOGO_TILES (BG_CHAR_BLOCK(0) + LOGO_FIRST_TILE * 64)
+/// The map entry after each row's 30 visible tiles.
+#define LOGO_BLANK_TILE 511
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -60,42 +81,45 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
- * scene/shared.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/title.c:194: invalid use of undefined type `struct
- * TitleSprite'. */
-struct TitleSprite__title {
-  u32 attr[3];
-};
-
-extern struct TitleSprite__title gTitle_SpriteRow[];
-
 s32 Save_ScanFileSummaries(void);
 void Title_ShowNintendoLogo(s32 value);
 void Title_ShowCamelotLogo(s32 value);
 
-/// Runs the title by entrance: at entrance 10 the title is revealed and waits
-/// up to 3600 frames for a key before the title scene starts again at
-/// entrance 2; entrances 8, 1, 2 and 3 each lead to their own scene.
-// ☀️'s Title_Run with ⚓️'s entrances.
-s32 Title_Run(void) {
+/// The title's entrances, named by what each plays.
+enum {
+  /// The Nintendo and Camelot logos and the intro, then the clear-data screen
+  /// (power-on, and after saving the clear data).
+  TITLE_START = 1,
+  /// The intro without its prompt, then the prologue with Jenna.
+  TITLE_PROLOGUE = 2,
+  /// The intro once more, then the game with Felix at Idejima.
+  TITLE_AFTER_PROLOGUE = 3,
+  /// Credits_Run, then TITLE_PROLOGUE.
+  TITLE_CREDITS = 8,
+  /// The logo revealed, held up to a minute, then TITLE_PROLOGUE.
+  TITLE_LOGO = 10,
+};
+
+/// The overlay's initialize entry, which plays what the entrance asks for.
+s32 Scene_Initialize(void) {
   s32 frames;
 
-  if (gMainRoutineWork.entrance == 10) {
+  if (gMainRoutineWork.entrance == TITLE_LOGO) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
     Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
     Title_RevealScreen(0);
+    // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
+    // press.
     wait(120);
-    for (frames = 0; frames <= 3599; frames++) {
+    for (frames = 0; frames < 3600; frames++) {
       wait(1);
       if (gInput.pressed != 0)
         break;
     }
-    Event_SetDestination(SCENE_TITLE, 2);
+    Event_SetDestination(SCENE_TITLE, TITLE_PROLOGUE);
     return 0;
   }
-  if (gMainRoutineWork.entrance == 8) {
+  if (gMainRoutineWork.entrance == TITLE_CREDITS) {
     Event_PlaySound(MUS_ENDING);
     Credits_Run(1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -103,11 +127,11 @@ s32 Title_Run(void) {
     ScreenFade_Wait();
     Event_Wait(240);
     Event_PlaySound(MUS_SILENCE);
-    Event_SetDestination(SCENE_TITLE, 2);
+    Event_SetDestination(SCENE_TITLE, TITLE_PROLOGUE);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_TitleFarCalls);
-  if (gMainRoutineWork.entrance == 1) {
+  if (gMainRoutineWork.entrance == TITLE_START) {
     for (;;) {
       Event_PlaySound(MUS_SILENCE);
       Title_ShowNintendoLogo(0);
@@ -125,31 +149,32 @@ s32 Title_Run(void) {
           do {
           } while (0);
           frames = 0;
-          goto test2;
-        next2:
+          goto test_frame;
+        next_frame:
           frames++;
-        test2:
+        test_frame:
           if (frames > 119)
             continue;
           wait(1);
           if (gInput.pressed != 0)
             continue;
-          goto next2;
+          goto next_frame;
         }
       }
       break;
     }
     Event_SetDestination(SCENE_CLEAR, 1);
   } else {
-    if (gMainRoutineWork.entrance == 2) {
+    if (gMainRoutineWork.entrance == TITLE_PROLOGUE) {
       Event_PlaySound(MUS_TITLE);
       TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                              gMainRoutineWork.windowBrightness);
       Party_SetLeaderJenna();
+      // Venus Lighthouse's ENTRANCE_OPENING.
       Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, 99);
     }
-    if (gMainRoutineWork.entrance == 3) {
+    if (gMainRoutineWork.entrance == TITLE_AFTER_PROLOGUE) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
       Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
@@ -172,13 +197,15 @@ void Title_LoadSprites(s32 unused) {
   u8 *buffer;
   volatile s32 *dma;
 
-  buffer = Heap_AllocEwram(0x520);
+  // The decoded data opens with its 16-colour palette (8 words), then 40
+  // 4-bit tiles of lettering.
+  buffer = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
                       buffer);
   Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
-  VramCache_Load(gTitleVramBlock, 0x500, buffer + 32);
+  VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
   while (dma[2] < 0)
     ;
@@ -188,21 +215,23 @@ void Title_LoadSprites(s32 unused) {
 /// Rebuilds the row of 18 sprites under the logo and pushes those the reveal
 /// has reached, hiding the two newest on odd frames, then counts the reveal
 /// on.
-// ☀️'s Title_RevealSpriteRow.
-void Title_RevealSpriteRow(void) {
+// ☀️'s Title_UpdateSpriteReveal.
+void Title_UpdateSpriteReveal(void) {
   u32 *w;
-  struct TitleSprite__title *p;
+  struct TitleSprite *p;
   s32 tile;
   s32 i;
   s32 n;
   s32 y;
   s32 x;
 
-  p = gTitle_SpriteRow;
-  w = gTitle_SpriteRow[0].attr;
+  p = gTitleSprites;
+  w = gTitleSprites[0].attr;
   tile = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   i = 0;
-  y = 0x88;
+  // One row of 18 sprites of 8 by 16 pixels at y 136 and x 88 to 224: 0x8400
+  // is the tall shape and semi-transparent, 0xf000 palette 15.
+  y = 136;
   do {
     /* FAKEMATCH(temporary): the row's y copied to n. */
     n = y;
@@ -210,7 +239,7 @@ void Title_RevealSpriteRow(void) {
     *w++ = 0;
     *w++ = (x << 16) | n | 0x8400;
     *w++ = 0xf000 | tile;
-    n = gTitle_RevealStep / 2 - i;
+    n = gTitleRevealFrame / 2 - i;
     if (n < 0)
       n = 0;
     if (n <= 2 && (gFrameCount & 1))
@@ -219,19 +248,19 @@ void Title_RevealSpriteRow(void) {
       Oam_AddSpriteAtDepthClamped(p++, 255);
     tile += 2;
   } while (++i <= 17);
-  gTitle_RevealStep++;
+  gTitleRevealFrame++;
 }
 
 /// The title screen appears: the logo and its sprite row are loaded, the
 /// blend fades the logo in over 17 steps and the screen transition opens.
-void Title_RevealScreen(void) {
+static void Title_RevealScreen(s32 unused) {
   s32 i;
 
   Title_LoadBackground();
   Event_Wait(30);
-  gTitle_RevealStep = 0;
+  gTitleRevealFrame = 0;
   Title_LoadSprites(0);
-  Task_Add(Title_RevealSpriteRow, TASK_PASS_VBLANK);
+  Task_Add(Title_UpdateSpriteReveal, TASK_PASS_VBLANK);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP,
@@ -267,7 +296,7 @@ static __inline__ void Decode_(void *source, void *destination) {
 /// The title logo: its palette, its tiles decoded and copied to VRAM, a 30 by
 /// 20 tilemap of consecutive tiles with two blank cells closing each row, and
 /// the four scroll pairs cleared.
-void Title_LoadBackground(void) {
+static void Title_LoadBackground(void) {
   u8 *encodedGraphics;
   s32 resourceId;
   u16 *tilemap;
@@ -279,19 +308,19 @@ void Title_LoadBackground(void) {
 
   resourceId = (s32)&ResourceId_LogoOnBlack;
   ScreenFade_ToBlack(0);
-  REG_BG2CNT = 0x681;
+  REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blankTile = 0x1ff;
+  blankTile = LOGO_BLANK_TILE;
   encodedGraphics = Resource_GetTableEntry(resourceId);
   Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  encodedGraphics += 0x1c0;
+  encodedGraphics += 224 * 2;
   Decode_(encodedGraphics, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
-          DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
+          REG_DMA3);
 
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
-  tilemap = (u16 *)0x06003000;
-  tileIndex = 0x1a0;
+  tilemap = LOGO_MAP;
+  tileIndex = LOGO_FIRST_TILE;
   screenY = 0;
 row:
   screenX = 0;
@@ -316,7 +345,8 @@ scroll_pair:
   if (screenY <= 3)
     goto scroll_pair;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct TitleWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
+  ((struct TitleWork *)Ram_HeapSlots->mapGrid)->mode =
+      DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
 struct SceneEntrance gSceneEntrances[] = {

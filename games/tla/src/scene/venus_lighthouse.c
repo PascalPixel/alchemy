@@ -573,7 +573,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 // The Japanese form; from patch 1, the form below also saves this scene and
 // entrance 22.
 #if !TLA_PATCH_1
-s32 VenusLighthouse_Start(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
@@ -610,7 +610,7 @@ void VenusLighthouse_DoubtLeaving(void);
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
-s32 VenusLighthouse_Start(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;

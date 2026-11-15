@@ -44,20 +44,7 @@ SECTIONS \
 }
 
 #if OVERLAY == 0x649
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/title.o"(.text)
-        "*/games/tla/src/scene/title.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/title.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/title.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(title)
 #elif OVERLAY == 0x64a
 SECTIONS
 {
@@ -126,16 +113,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x64e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/venus_lighthouse.o"(.text)
-        "*/games/tla/src/scene/venus_lighthouse.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/venus_lighthouse.o"(.data)
-    }
-}
+SCENE(venus_lighthouse)
 #elif OVERLAY == 0x64f
 SCENE(suhalla_gate)
 #elif OVERLAY == 0x650
@@ -377,20 +355,7 @@ SECTIONS
 #elif OVERLAY == 0x68e
 SCENE_WITH_BSS(lemuria_spring)
 #elif OVERLAY == 0x68f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/tundaria_tower.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/tundaria_tower.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(tundaria_tower)
 #elif OVERLAY == 0x690
 SCENE_WITH_BSS(settlements)
 #elif OVERLAY == 0x691

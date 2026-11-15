@@ -545,8 +545,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "shared/world_map_objects.c"
 
-/// The flying ship's flicker and its sparks, in flight mode 1.
-void StaffCredit_FlashInFlight(struct Actor *object) {
+/// The ship's flicker and its sparks while it powers up (flight mode 1).
+void StaffCredit_FlashPoweringUp(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
   } else {
@@ -557,19 +557,15 @@ void StaffCredit_FlashInFlight(struct Actor *object) {
   }
 }
 
-/* VIEW(first): routine gStaffCredit_ColorStep as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gStaffCredit_ColorStep[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:540: `gStaffCredit_ColorStep' undeclared
- * (first use in this function). */
-extern s32 gStaffCredit_ColorStep__first __asm__("gStaffCredit_ColorStep");
-#define gStaffCredit_ColorStep gStaffCredit_ColorStep__first
+/// The step through gStaffCredit_GlowColorModes, every other frame.
+extern s32 gStaffCredit_GlowColorStep;
 
-void Actor_CycleChildValues(struct Actor *object) {
+/// The ship's glow and its trail in flight (flight mode 2).
+void StaffCredit_GlowInFlight(struct Actor *object) {
   if (gFrameCount & 1) {
-    Actor_SetSpriteColorMode(object,
-                             gStaffCredit_ColorModes[gStaffCredit_ColorStep]);
-    gStaffCredit_ColorStep = (gStaffCredit_ColorStep + 1) & 3;
+    Actor_SetSpriteColorMode(
+        object, gStaffCredit_GlowColorModes[gStaffCredit_GlowColorStep]);
+    gStaffCredit_GlowColorStep = (gStaffCredit_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
     WorldMap_SpawnParticle(object);
@@ -582,9 +578,9 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
     Actor_SetSpriteColorMode(object, 0);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))StaffCredit_FlashInFlight;
+    object->update = (void (*)(void))StaffCredit_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))Actor_CycleChildValues;
+    object->update = (void (*)(void))StaffCredit_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
@@ -976,13 +972,12 @@ u32 gWorldMap_ParticleScript[] = {
     SC_RELEASE,
 };
 
-u32 gStaffCredit_ColorModes[] = {
+u32 gStaffCredit_GlowColorModes[] = {
     0, 9, 0, 6,
 };
 // clang-format on
 
 #undef PUSH_PICTURE
-#undef gStaffCredit_ColorStep
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1134,6 +1129,4 @@ LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
     0,
 };
 
-LATE_DATA u32 gStaffCredit_ColorStep[] = {
-    0,
-};
+LATE_DATA s32 gStaffCredit_GlowColorStep = 0;

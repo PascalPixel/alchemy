@@ -16,11 +16,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/* VIEW(placements): routine PartyInventory_GiveItem as yampi_desert/scene.h
- * declared it; the joined file declares it otherwise. */
-void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
-    "PartyInventory_GiveItem");
-#define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
 #include "item_ids.h"
 #include "system/io_reg.h"
@@ -121,7 +116,6 @@ void Actor_FaceDirectionById(s32 id, s32 angle, s32 flags);
 void FieldCamera_FollowActor(s32 id, s32 mode);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_Wait(s32 frames);
-void PartyInventory_GiveItem(s32 item, s32 flags);
 struct Actor *YampiDesert_CreateScoopGem(void);
 void Actor_Release(struct Actor *object);
 void Sound_Play(s32 cue);
@@ -762,7 +756,6 @@ void YampiDesert_WatchScorpionStop(void) {
   Event_End();
 }
 
-#undef PartyInventory_GiveItem
 #include "../field/field_effect_advance_motion_priority.c"
 
 #undef EFFECT_SPAWN
@@ -1206,22 +1199,8 @@ void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count) {
   }
 }
 
-/* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
- * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA u32 gYampiDesert_FinderRunsAhead[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1069:
- * `gYampiDesert_FinderRunsAhead' undeclared (first use in this function). */
-extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
-    "gYampiDesert_FinderRunsAhead");
-#define gYampiDesert_FinderRunsAhead gYampiDesert_FinderRunsAhead__yampi_desert
-/* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
- * declared it; the joined file has another; tried as the definition's extern
- * LATE_DATA u32 gYampiDesert_TravelersFollow[], it does not compile in tla-ja
- * (yampi_desert.c): games/tla/src/scene/yampi_desert.c:1116:
- * `gYampiDesert_TravelersFollow' undeclared (first use in this function). */
-extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
-    "gYampiDesert_TravelersFollow");
-#define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
+extern u32 gYampiDesert_FinderRunsAhead[];
+extern u32 gYampiDesert_TravelersFollow[];
 extern u32 gYampiDesert_LastTravelersFollow[];
 
 /// From the ledge, the party sees the travelers by the oasis below find their
@@ -2549,13 +2528,6 @@ loop:
 
 #include "shared/actor_set_cell_open.h"
 
-// The whole-pixel half of a 16.16 coordinate.
-/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
- * another definition; tried with the definition the rest of the object has,
- * YampiDesert_UpdateRisingSand moves: 33 of 212 instructions in tla-ja
- * (yampi_desert.c). */
-#define PIXELS__s3910(v) (((s16 *)&(v))[1])
-
 /// One rising platform and what rides it.
 struct RideEntry {
   s16 id;
@@ -2633,7 +2605,7 @@ void YampiDesert_UpdateRisingSand(void) {
     }
     index = (object->x.fixed >> 20) + (object->z.fixed >> 20) * 128;
     terrain[index] = (u8)work->value + i;
-    *collision = ((PIXELS__s3910(object->y.fixed) + entry->height) / 8) << 8;
+    *collision = ((object->y.part[0].pixel + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -2804,8 +2776,6 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
   return entry;
 }
 
-#undef PIXELS__s3910
-
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
@@ -2857,11 +2827,8 @@ u32 gYampiDesert_SlideDust[] = {
 #undef WALK_ON
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
-#undef PIXELS__s3910
 #undef Actor_SetAnimationAndWait
 #undef Actor_SetMovementTypeAndWaitById
-#undef gYampiDesert_FinderRunsAhead
-#undef gYampiDesert_TravelersFollow
 
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.

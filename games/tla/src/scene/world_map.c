@@ -68,7 +68,7 @@ void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
 void Gauge_Init(void);
-void Func_02003c3c(void);
+void WorldMap_EndFlight(void);
 void Gauge_End(void);
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -118,7 +118,7 @@ extern s32 gData_02006320[];
 extern s32 gData_02006578[];
 extern s32 gData_02006584[];
 
-extern u32 gData_02004fc8[];
+extern u32 gWorldMap_GlowColorModes[];
 
 s32 WorldMap_GetBlockPlace(s32 *position);
 
@@ -369,7 +369,7 @@ void WorldMap_SetUpShip(void) {
   s32 i;
 
   gMainRoutineWork.movementMode = 7;
-  Func_02003c3c();
+  WorldMap_EndFlight();
   Gauge_End();
   Actor_SetSpriteFlags(Actor_Get(8), 0);
   count = Party_CountMembers();
@@ -2201,8 +2201,8 @@ s32 Func_020035e0(struct Actor *object) {
 #undef Actor_SetSpriteColorMode
 #include "shared/world_map_objects.c"
 
-/// Flickers an actor, running WorldMap_SpawnSparkPair every sixteenth frame.
-void Func_02003b38(struct Actor *object) {
+/// The ship's flicker and its sparks while it powers up (flight mode 1).
+void WorldMap_FlashPoweringUp(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
   } else {
@@ -2213,43 +2213,39 @@ void Func_02003b38(struct Actor *object) {
   }
 }
 
-/* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02006be4[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/shared/actor_cycle_child_values.h:5: `gData_02006be4'
- * undeclared (first use in this function). */
-extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
-#define gData_02006be4 gData_02006be4__s3b38
+/// The step through gWorldMap_GlowColorModes, every other frame.
+extern s32 gWorldMap_GlowColorStep;
 
-/// Cycles an actor's child values, running WorldMap_SpawnParticle every fourth
-/// frame.
-void Actor_CycleChildValues(struct Actor *object) {
+/// The ship's glow and its trail in flight (flight mode 2): the colour cycles
+/// every other frame, and a particle every fourth.
+void WorldMap_GlowInFlight(struct Actor *object) {
   if (gFrameCount & 1) {
-    Actor_SetSpriteColorMode(object, gData_02004fc8[gData_02006be4]);
-    gData_02006be4 = (gData_02006be4 + 1) & 3;
+    Actor_SetSpriteColorMode(object,
+                             gWorldMap_GlowColorModes[gWorldMap_GlowColorStep]);
+    gWorldMap_GlowColorStep = (gWorldMap_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
     WorldMap_SpawnParticle(object);
   }
 }
 
-/// Sets an actor's update by mode.
+/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
 void Actor_SetFlightMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Actor_SetSpriteColorMode(object, 0);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))Func_02003b38;
+    object->update = (void (*)(void))WorldMap_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))Actor_CycleChildValues;
+    object->update = (void (*)(void))WorldMap_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
 
 #include "shared/leader_search.h"
 
-void Func_02003c3c(void) {
+void WorldMap_EndFlight(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
@@ -2720,7 +2716,7 @@ u32 gWorldMap_ParticleScript[] = {
     SC_RELEASE,
 };
 
-u32 gData_02004fc8[] = {
+u32 gWorldMap_GlowColorModes[] = {
     0, 9, 0, 6,
 };
 // clang-format on
@@ -2731,7 +2727,6 @@ u32 gData_02004fc8[] = {
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode
-#undef gData_02006be4
 
 void Func_02000038(void);
 void WorldMap_BoardShip(void);
@@ -3139,6 +3134,4 @@ LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
     0,
 };
 
-LATE_DATA u32 gData_02006be4[] = {
-    0,
-};
+LATE_DATA s32 gWorldMap_GlowColorStep = 0;

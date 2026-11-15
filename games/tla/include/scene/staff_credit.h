@@ -8,7 +8,7 @@
 
 struct Actor;
 
-extern u32 gStaffCredit_ColorModes[];
+extern u32 gStaffCredit_GlowColorModes[];
 void StaffCredit_SpawnGrowingPair(struct Actor *object);
 
 void WorldMap_UpdatePlacedActors(void);

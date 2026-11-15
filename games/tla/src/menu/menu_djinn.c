@@ -476,11 +476,13 @@ void Menu_OpenBackdropScreen(void) {
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
-  Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
-  Dma_Set(Palette_GetBasicSpriteColors(), (void *)&BG_PLTT_COLOR(5, 0),
+  Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * TILE_SIZE_4BPP,
+                  gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
+  Dma_Set(Palette_GetBasicSpriteColors(),
+          (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -499,11 +501,11 @@ void Menu_OpenBackdropScreen(void) {
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
-    icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
+    icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
     icon->sprite.oam.matrix |= 8;
-    icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
+    icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[1] = icon;
   }

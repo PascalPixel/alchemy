@@ -1003,7 +1003,7 @@ done:
 }
 
 void Palette_LightenHighlight(s32 paletteNumber) {
-  u16 *palette = (u16 *)(0x05000000 + (paletteNumber << 5));
+  u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
   u32 green;
   u32 blue;
@@ -1013,8 +1013,8 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
-  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
-  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
+  green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
+  red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
   blue += HIGHLIGHT_LIGHTEN_STEPS;
   if (blue > RGB_LEVEL_MAX)
     blue = RGB_LEVEL_MAX;
@@ -1103,7 +1103,7 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 }
 
 void Palette_LoadIconsIntoHighlight(void) {
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
@@ -1183,7 +1183,7 @@ void Menu_WatchStart(void) {
     else
       Iwram_FillWords(BG_CHAR_BLOCK(0) +
                           MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
-                      TILE_SIZE_4BPP, 0x44444444);
+                      TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
   }
   input = &gInput;
   mask = KEY_START;

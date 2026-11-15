@@ -110,7 +110,7 @@ enum {
 struct Actor;
 struct Vector3;
 
-void Leader_KnockBack(void);
+s32 Leader_KnockBack(void);
 
 s32 Fireball_CarryLeader(void);
 void Actor_LaunchAhead(struct Actor *self);
@@ -1073,7 +1073,7 @@ DEFINE_TELEPORT_START_SHIMMER(Teleport_StartShimmer, 15, 16)
 extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(void *handle);
-void Leader_KnockBack(void);
+s32 Leader_KnockBack(void);
 s32 Fireball_CarryLeader(void);
 void Actor_LaunchAhead(struct Actor *self);
 

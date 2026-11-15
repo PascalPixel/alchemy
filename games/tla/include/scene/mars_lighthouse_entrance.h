@@ -33,7 +33,7 @@ struct MarsLighthouseEntranceRideHead {
   struct Actor *handle;
 };
 
-void Leader_KnockBack(void);
+s32 Leader_KnockBack(void);
 
 void Ride_SpawnForward();
 

@@ -8,7 +8,8 @@
 /// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE,
 /// KNOCK_BACK_CHECK_COLLISION and KNOCK_BACK_SPHERES_OVERLAP.
 
-void KNOCK_BACK(void) {
+// Typed as an event that returns a value, though it returns none.
+s32 KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
   struct Vector3 position;
@@ -145,10 +146,6 @@ void KNOCK_BACK(void) {
     actor->update = 0;
     Actor_SetSpriteColorMode(actor, 0);
   }
-#if !TLA_PATCH_1
-  /* FAKEMATCH(barrier): an empty asm reading work before the last store. */
-  asm("" : : "r"(work));
-#endif
   // UB: work is set only when renderMode is 0; otherwise the store goes
   // through whatever its register holds.
 #ifdef UBFIX

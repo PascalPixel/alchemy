@@ -11,7 +11,7 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
-void Leader_KnockBack(void);
+s32 Leader_KnockBack(void);
 void Actor_LaunchAhead(struct Actor *object);
 
 void MarsLighthouseStarRoom_ShootFireballs(void);

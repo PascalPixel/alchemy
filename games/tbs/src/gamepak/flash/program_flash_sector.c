@@ -34,7 +34,7 @@ u16 ProgramFlashSector(u16 sector, u8 *source) {
     destination++;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }

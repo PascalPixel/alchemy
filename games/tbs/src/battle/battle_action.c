@@ -98,7 +98,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     switch (ability->effect) {
     case ABILITY_EFFECT_REVIVE:
     case ABILITY_EFFECT_REVIVE_HALF:
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       includeDowned = 1;
       break;
     }
@@ -614,28 +614,28 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     plan->element = ability->element;
     plan->battleEffect = 0;
     plan->abilityId = abilityId;
-    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60) {
+    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY) {
       // A double or triple blow on every target: 153, 32 or 64 in 256, the
       // multiplier rising by 1 or 2.
       s32 chance;
       s32 amount;
 
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-          ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
+      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+          ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
         chance = 153;
-      else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-               ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8)
+      else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+               ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
         chance = 32;
       else
         chance = 64;
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
+      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW)
         amount = 1;
       else
         amount = 2;
@@ -645,25 +645,25 @@ s32 BattleActionRun_Build(struct BattleAction *request,
         for (index = 0; index < plan->targetCount; index++)
           plan->targetMultiplier[index] += amount;
       }
-    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_1_IN_64 &&
-               ability->effect <= ABILITY_EFFECT_CRITICAL_1_IN_4) {
+    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_A &&
+               ability->effect <= ABILITY_EFFECT_CRITICAL_E) {
       // An ability's critical hit on every target, 1 in 64 to 1 in 4.
       s32 mask;
 
       switch (ability->effect) {
-      case ABILITY_EFFECT_CRITICAL_1_IN_64:
+      case ABILITY_EFFECT_CRITICAL_A:
         mask = 63;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_32:
+      case ABILITY_EFFECT_CRITICAL_B:
         mask = 31;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_16:
+      case ABILITY_EFFECT_CRITICAL_C:
         mask = 15;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_8:
+      case ABILITY_EFFECT_CRITICAL_D:
         mask = 7;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_4:
+      case ABILITY_EFFECT_CRITICAL_E:
       default:
         mask = 3;
         break;

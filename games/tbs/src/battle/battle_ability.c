@@ -732,8 +732,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       PUSH_MESSAGE(MsgCureCurse);
       break;
 
-    case ABILITY_EFFECT_HEAL_HP_60:
-    case ABILITY_EFFECT_HEAL_HP_30: {
+    case ABILITY_EFFECT_FIZZ:
+    case ABILITY_EFFECT_SPRITZ: {
       s32 oldHp;
       s32 maxHpBits;
       s32 hpMax;
@@ -759,7 +759,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       maxHpBits = *stat--;
       hpMax = *(s16 *)(stat + 1);
 #endif
-      if (ability->effect == ABILITY_EFFECT_HEAL_HP_60)
+      if (ability->effect == ABILITY_EFFECT_FIZZ)
         newHp += hpMax * 60 / 100;
       else
         newHp += hpMax * 30 / 100;
@@ -780,7 +780,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
     }
 
-    case ABILITY_EFFECT_HEAL_PP_7: {
+    case ABILITY_EFFECT_EMBER: {
       s32 oldPp;
       s32 ppMax;
       s32 newPp;
@@ -914,7 +914,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       Unit_RecalculateGaugesFar(targetId);
       break;
 
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);

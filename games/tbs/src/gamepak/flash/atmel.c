@@ -22,7 +22,7 @@ u16 EraseAtmelFlashChip(void) {
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
                               FLASH_ERASED_BYTE);
 
-  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }
@@ -95,7 +95,7 @@ advanceSector:
     if ((u32)sectorsErased <= 31)
       goto nextSector;
   }
-  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
 }
 
@@ -164,6 +164,6 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
     smallSector += 1;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
 }

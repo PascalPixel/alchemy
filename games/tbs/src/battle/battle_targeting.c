@@ -204,8 +204,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     case ABILITY_EFFECT_RESTORE:                                               \
       COUNT_PARTIAL_CURES((unit), (applies));                                  \
       break;                                                                   \
-    case ABILITY_EFFECT_HEAL_HP_60:                                            \
-    case ABILITY_EFFECT_HEAL_HP_30:                                            \
+    case ABILITY_EFFECT_FIZZ:                                                  \
+    case ABILITY_EFFECT_SPRITZ:                                                \
       if ((unit)->hp < (unit)->hpMax)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -241,7 +241,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       break;                                                                   \
     case ABILITY_EFFECT_REVIVE:                                                \
     case ABILITY_EFFECT_REVIVE_HALF:                                           \
-    case ABILITY_EFFECT_REVIVE_80:                                             \
+    case ABILITY_EFFECT_DEW:                                                   \
       if ((unit)->hp == 0)                                                     \
         (applies) = 100;                                                       \
       break;                                                                   \

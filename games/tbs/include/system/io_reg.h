@@ -223,11 +223,9 @@ enum DisplayControl {
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
-/// A screen block entry's 16-colour palette, in its top four bits, and its
-/// mirrors.
+/// A screen block entry's 16-colour palette, in its top four bits (its flip
+/// bits are window.h's TILE_HFLIP and TILE_VFLIP).
 #define BG_TILE_PALETTE(n) ((n) << 12)
-#define BG_TILE_HFLIP 0x400
-#define BG_TILE_VFLIP 0x800
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
@@ -444,10 +442,10 @@ enum KeyMask {
 #define REG_IE (*(volatile u16 *)0x04000200) ///< the interrupts enabled
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
-/// WAITCNT's SRAM wait (bits 1 and 0) of 8 cycles, as pret names it: the wait
-/// the flash routines read the chip with; programming and erasing use the
-/// chip's wait[0], then restore it.
-#define WAITCNT_SRAM_8 0x0003
+/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles, pret's
+/// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
+/// programming and erasing use the chip's wait[0], then restore it.
+#define WAITCNT_SRAM_SLOWEST 0x0003
 /// WAITCNT's SRAM wait bits, as pret names them.
 #define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch

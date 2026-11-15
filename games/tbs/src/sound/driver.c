@@ -68,7 +68,7 @@ void SoundInit(struct SoundInfo *work) {
   work->commands = gMPlayJumpTable;
   // Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets
   // the game's mode.
-  SampleFreqSet(SOUND_MODE_FREQ_13379);
+  SampleFreqSet(SOUND_MODE_FREQ_INITIAL);
   work->ident = ID_NUMBER;
 }
 
@@ -1049,10 +1049,10 @@ void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
 union WordBytes {
   u32 value;
   struct {
-    u32 byte0 : 8;
-    u32 byte1 : 8;
-    u32 byte2 : 8;
-    u32 byte3 : 8;
+    u32 lowest : 8;
+    u32 low : 8;
+    u32 high : 8;
+    u32 highest : 8;
   } part;
 };
 
@@ -1070,10 +1070,10 @@ void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   const u8 *source = track->cursor;
   union WordBytes targetAddress;
 
-  targetAddress.part.byte0 = source[0];
-  targetAddress.part.byte1 = source[1];
-  targetAddress.part.byte2 = source[2];
-  targetAddress.part.byte3 = source[3];
+  targetAddress.part.lowest = source[0];
+  targetAddress.part.low = source[1];
+  targetAddress.part.high = source[2];
+  targetAddress.part.highest = source[3];
   track->voice.target = (const void *)targetAddress.value;
   track->cursor = source + 4;
 }

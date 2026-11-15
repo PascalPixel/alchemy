@@ -279,7 +279,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       if (target->hp == 0) {
         target->hp = target->hpMax * 7 / 10;
         Unit_RecalculateGaugesFar(targetId);

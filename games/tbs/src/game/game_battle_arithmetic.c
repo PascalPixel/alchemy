@@ -213,7 +213,7 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_REVIVE_HALF:
     fixedChance = 60;
     break;
-  case ABILITY_EFFECT_REVIVE_80:
+  case ABILITY_EFFECT_DEW:
     fixedChance = 90;
     break;
   case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
@@ -256,7 +256,7 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
 s32 Battle_IsReviveEffect(s32 effectId) {
   if ((effectId == ABILITY_EFFECT_REVIVE) ||
       (effectId == ABILITY_EFFECT_REVIVE_HALF) ||
-      (effectId == ABILITY_EFFECT_REVIVE_80)) {
+      (effectId == ABILITY_EFFECT_DEW)) {
     return 1;
   }
   return 0;

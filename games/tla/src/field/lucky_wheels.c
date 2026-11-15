@@ -1093,7 +1093,7 @@ void LuckyWheels_Update(void) {
     work->spriteCount++;
   }
 
-  while (work->spriteCount != 128) {
+  while (work->spriteCount != OAM_SIZE / sizeof(struct OamWords)) {
     work->oam[work->spriteCount].attr01 =
         OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     work->oam[work->spriteCount].attr2 = 0;
@@ -1177,7 +1177,7 @@ void LuckyWheels_InitializeTitle(void) {
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
     letter[i].x = px(left + LUCKY_WHEELS_TITLE_X);
     left += gLuckyWheels_TitleLetterWidths[i];
-    letter[i].y = (-32 - i * 8) << 16;
+    letter[i].y = px(-32 - i * 8);
     letter[i].velocityY = 0;
     letter[i].variant = 0;
   }

@@ -370,14 +370,9 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
 void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
-  /* FAKEMATCH(pin): the angle pinned to r8. */
-  register s32 turn asm("r8") = angle;
-  s32 center = 63;
-  s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);
-  s32 y = Iwram_MulQ16(Trig_Sin(turn), radius);
-
-  BattleEffect_PlotCanvasPixel(center - FIELD_PIXEL(x), center - FIELD_PIXEL(y),
-                               color);
+  BattleEffect_PlotCanvasPixel(
+      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Cos(angle), radius)),
+      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Sin(angle), radius)), color);
 }
 
 extern const u16 gData_080f39c4[];

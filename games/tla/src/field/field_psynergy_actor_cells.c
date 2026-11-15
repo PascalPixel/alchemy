@@ -105,10 +105,6 @@ void Actor_LiftTargetBlock(u16 *actors) {
   }
 }
 
-// Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
-/// The actor's x.
-static inline s32 ActorX(struct Actor *actor) { return actor->x.fixed; }
-
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
 void Actor_PlaceMovedBlock(void) {
@@ -136,9 +132,11 @@ void Actor_PlaceMovedBlock(void) {
     shapes = &grid[index];
     key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                     target->z.fixed);
-    /* FAKEMATCH(wrapper): x read through ActorX for the height call. */
-    level = MapGrid_GetTerrainHeightFar(target->layer, ActorX(target),
-                                        target->z.fixed);
+    {
+      s32 x = target->x.fixed;
+
+      level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
+    }
     slot = Actor_GetCellIndex(target);
     shapes += slot;
     tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);

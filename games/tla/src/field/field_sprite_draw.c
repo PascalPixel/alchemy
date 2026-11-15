@@ -487,10 +487,6 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   }
 }
 
-static inline u8 PlacedObject_Height(struct Sprite *object) {
-  return object->height;
-}
-
 /// Render_ApplyProjectedPlacement into the given draw slot: the sprite and its
 /// shadow both go to depth, and mode chooses the picture as facing does there.
 void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
@@ -519,9 +515,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   struct AnimationSpritePart *part;
 
   halfWidth = object->width >> 1;
-  /* FAKEMATCH(wrapper): the height read through the inline PlacedObject_Height.
-   */
-  halfHeight = PlacedObject_Height(object) >> 1;
+  {
+    u8 height = object->height;
+
+    halfHeight = height >> 1;
+  }
   extentX = 8;
   extentY = 4;
   scaleX = *scale++;
@@ -574,9 +572,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     // extentX and extentY are reused for the anchor's offset; locals of their
     // own differ.
     extentX = object->offsetX * scaleX;
-    /* FAKEMATCH(wrapper): the height read through the inline
-     * PlacedObject_Height. */
-    extentY = ((PlacedObject_Height(object) >> 1) - object->offsetY) * scaleY;
+    {
+      u8 height = object->height;
+
+      extentY = ((height >> 1) - object->offsetY) * scaleY;
+    }
 
     anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);
     anchorY = Iwram_MulQ16(cos, extentY) - Iwram_MulQ16(sin, extentX);

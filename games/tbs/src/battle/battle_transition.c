@@ -324,8 +324,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     for (index = 0; index != visibleCount; index++)
       BattleHighlight_SetSpriteMode(visibleUnits[index],
                                     SPRITE_SEMI_TRANSPARENT);
-    for (index = 0; index != 16; index++) {
-      REG_BLDALPHA = BLEND_ALPHA(index, 16);
+    for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
+      REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
       wait(1);
     }
     for (index = 0; index != visibleCount; index++)

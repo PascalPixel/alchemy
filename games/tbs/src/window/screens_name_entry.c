@@ -63,7 +63,7 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   s32 row;
 
   Decompress_TaggedLz(source, buffer);
-  cell = window->y * 32 + window->x;
+  cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (s16 *)WINDOW_TILEMAP_VRAM + cell;
   mirror += cell;
 
@@ -90,20 +90,26 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 
   x += window->x + 1;
   y += window->y + 1;
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     y <<= 6;
@@ -298,7 +304,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
-    sprite->sentinel = 255;
+    sprite->sentinel = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;
     // The caret stands after the name, at its width in pixels.
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
@@ -563,7 +569,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
-    sprite->sentinel = 255;
+    sprite->sentinel = OAM_DEPTH_FRONT;
     sprite->oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
     x = 72 + NameEntry_CountLetters(editedName) * 10;

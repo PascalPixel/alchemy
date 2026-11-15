@@ -157,7 +157,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   y += window->y;
   for (i = 0; i < 5; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
-    tile = work->tilemap[y * 32 + x];
+    tile = work->tilemap[y * BG_SCREEN_WIDTH + x];
     bar = PIXELS_4BPP(2);
     shadow = PIXELS_4BPP(12);
     tile &= TILE_NUMBER_MASK;
@@ -349,20 +349,26 @@ void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
   x += window->x + 1;
   y += window->y + 1;
   set &= 1;
-  set <<= 12;
+  set = BG_TILE_PALETTE(set);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     // The byte offset of the first cell: 32 entries of 2 bytes a row.

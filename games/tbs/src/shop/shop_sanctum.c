@@ -417,7 +417,7 @@ void Sanctum_UpdateBurst(void) {
   burstMember = shop->burstMember;
   if (burstMember != -1)
     Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
-                                     (Random16() * 7) >> 16);
+                                     Random16_Below(7));
 }
 
 /// The tune each service's burst plays.
@@ -459,7 +459,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);

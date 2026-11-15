@@ -203,7 +203,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         entry->sprite.oam.f.affine = 3;
         entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Oam_AddSpriteAtDepth(entry, 241);
+        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
       } else {
         entry->sprite.oam.f.x = entry->positionX;
         entry->sprite.oam.f.y = entry->positionY;
@@ -338,26 +338,32 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct WindowWork *work = WINDOW_WORK;
 
   paletteBit &= 1;
-  paletteBit <<= 12;
+  paletteBit = BG_TILE_PALETTE(paletteBit);
 
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &((u16 (*)[32])work->tilemap)[y][x];
+      u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])work->tilemap)[y][x];
       s32 remaining = width;
 
       while (remaining != 0) {

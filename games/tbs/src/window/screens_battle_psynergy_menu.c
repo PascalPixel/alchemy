@@ -179,7 +179,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     }
 
     for (i = 0; i < iconCount; i++) {
-      Oam_AddSpriteAtDepth(&sprites[i], 240);
+      Oam_AddSpriteAtDepth(&sprites[i], OAM_DEPTH_WINDOW);
     }
 
     MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 4, iconSprite);
@@ -188,7 +188,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
-      Oam_AddSpriteAtDepth(iconSprite, 242);
+      Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW + 2);
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);

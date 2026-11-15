@@ -204,7 +204,7 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
         if (unit->inventory[slot] != 0) {
           icon = WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window,
                                               x, y);
-          icon->sentinel = 252;
+          icon->sentinel = OAM_DEPTH_FRONT - 3;
         }
         x += 16;
         if (slot == 4) {

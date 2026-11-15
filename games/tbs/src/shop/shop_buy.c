@@ -278,14 +278,14 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
         // Depth slots: the items 252, the chosen one 253, the prices 251
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
-        icon->sentinel = 252;
+        icon->sentinel = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 10;
-          icon->sentinel = 253;
+          icon->sentinel = OAM_DEPTH_FRONT - 2;
         }
         icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
-        icon->sentinel = 251;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
       }
     }
   }

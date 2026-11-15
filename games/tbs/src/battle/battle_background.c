@@ -366,8 +366,8 @@ void BattleBackground_FadeAlphaOut(void) {
   s32 alphaStep;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  for (alphaStep = 1; alphaStep <= 16; alphaStep += 2) {
-    REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
+  for (alphaStep = 1; alphaStep <= BLEND_WEIGHT_MAX; alphaStep += 2) {
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX) - alphaStep;
     wait(1);
   }
 }
@@ -377,8 +377,8 @@ void BattleBackground_FadeAlphaIn(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  for (step = 1; step <= 16; step += 2) {
-    REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
+  for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
+    REG_BLDALPHA = step + BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     wait(1);
   }
 }
@@ -508,7 +508,7 @@ void BattleBackground_StepHighlightBlend(void) {
 
   if (battle != NULL && battle->highlightMode != HIGHLIGHT_OFF) {
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
-    REG_BLDALPHA = BLEND_ALPHA(16, 0);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
     blendRamp = gBattleHighlight_BlendRamp;
     REG_BLDY = blendRamp[battle->highlightStep];
     // From step 15 on, the next step stays in 16 to 31.
@@ -539,7 +539,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
     unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++)

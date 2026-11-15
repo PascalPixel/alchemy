@@ -129,7 +129,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     chance -= levelTotal * 500 / livingCount;
     // A roll from 0 to 9999 against the chance.
-    if ((chance > 0) && (((10000 * Random16()) >> 16) < chance)) {
+    if ((chance > 0) && (Random16_Below(10000) < chance)) {
       escaped = 1;
     }
     *failedAttempts += 1;
@@ -213,8 +213,8 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   }
 
   for (i = 31; i >= 0; i--) {
-    u32 first = (unitCount * Random16()) >> 16;
-    u32 second = (unitCount * Random16()) >> 16;
+    u32 first = Random16_Below(unitCount);
+    u32 second = Random16_Below(unitCount);
     s32 swap = unitIds[first];
     unitIds[first] = unitIds[second];
     unitIds[second] = swap;
@@ -222,7 +222,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
 
   // A roll of 1 to 5, raised to at least 2.
   if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
-    s32 limit = ((Random16() * 5) >> 16) + 1;
+    s32 limit = Random16_Below(5) + 1;
 
     if (limit <= 1) {
       limit = 2;

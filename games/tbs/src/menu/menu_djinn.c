@@ -41,6 +41,10 @@
 #define DJINN_PREVIEW_PP_X 56
 #endif
 
+/// The y of the preview's stat row `row` (0 to 5: HP, PP, Attack, Defense,
+/// Agility and Luck) in a window whose top is tile row y.
+#define DJINN_PREVIEW_STAT_Y(y, row) ((y) * 8 + 56 + (row) * 8)
+
 /// Wraps a cursor index that has stepped one past either end of modulus
 /// entries: -1 becomes modulus - 1 and modulus becomes 0.
 s32 Menu_WrapIndex(s32 value, s32 modulus) {
@@ -661,7 +665,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   u32 masked;
 
   work = WINDOW_WORK;
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
@@ -951,14 +955,16 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             menu->helpWindow,
             DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
-        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
+        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) *
+                                        DJINN_PER_ELEMENT +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 MESSAGE_ARGUMENT_ABILITY);
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel, menu->helpWindow, 8, 0);
 #else
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel, menu->helpWindow, 0, 0);
-        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
+        MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) *
+                                        DJINN_PER_ELEMENT +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
                                 MESSAGE_ARGUMENT_ABILITY);
         Window_SetTilemapEntryFar(
@@ -1049,12 +1055,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Text_DrawMessageAsTilesFar(MsgUnleashEffect, menu->listWindow, 0, 80);
 #if LANGUAGE != LANGUAGE_JAPANESE
         Window_ClearInteriorTilesFar(menu->listWindow, 0, 96, 224, 104);
-        Text_DrawMessageAsTilesFar(DJINN_ELEMENT(djinn) * 20 +
+        Text_DrawMessageAsTilesFar(DJINN_ELEMENT(djinn) * DJINN_PER_ELEMENT +
                                        DJINN_NUMBER(djinn) + MsgDjinnEffect,
                                    menu->listWindow, 0, 96);
 #else
-        Text_DrawMessageFar(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) +
-                                MsgDjinnEffect,
+        Text_DrawMessageFar(DJINN_ELEMENT(djinn) * DJINN_PER_ELEMENT +
+                                DJINN_NUMBER(djinn) + MsgDjinnEffect,
                             menu->listWindow, 0, 96);
 #endif
       }
@@ -1532,8 +1538,8 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   s32 encodedDjinn;
 
   if (element == -1) {
-    for (elementIndex = 0; elementIndex < 4; elementIndex++) {
-      for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
+    for (elementIndex = 0; elementIndex < DJINN_ELEMENTS; elementIndex++) {
+      for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[elementIndex] & (1 << djinnIndex)) {
           encodedDjinn = (elementIndex << 5) | djinnIndex | DJINN_ENTRY_SET;
           encodedDjinn |= memberId << 8;
@@ -1545,7 +1551,7 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
       }
     }
   } else {
-    for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
+    for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex | DJINN_ENTRY_SET;
       else if (unit->djinnHeld[element] & (1 << djinnIndex))
@@ -1617,31 +1623,43 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   if (page == 0) {
     if (previewMode == DJINN_PREVIEW_NO_CHANGE) {
       Text_DrawNumberInWindowFar(unit->hpMax, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 56);
+                                 x * 8 + DJINN_PREVIEW_MAX_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 0));
       Text_DrawNumberInWindowFar(unit->ppMax, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 64);
+                                 x * 8 + DJINN_PREVIEW_MAX_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 1));
       Text_DrawNumberInWindowFar(unit->hp, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 56);
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 0));
       Text_DrawNumberInWindowFar(unit->pp, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 64);
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 1));
       Text_DrawStringAtOffsetFar(gDjinnMenu_TextSlash, window,
-                                 x * 8 + DJINN_PREVIEW_SLASH_X, y * 8 + 56);
+                                 x * 8 + DJINN_PREVIEW_SLASH_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 0));
       Text_DrawStringAtOffsetFar(gDjinnMenu_TextSlash, window,
-                                 x * 8 + DJINN_PREVIEW_SLASH_X, y * 8 + 64);
+                                 x * 8 + DJINN_PREVIEW_SLASH_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 1));
     } else {
       Text_DrawNumberInWindowFar(unit->hp, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 56);
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 0));
       Text_DrawNumberInWindowFar(unit->pp, DJINN_PREVIEW_DIGITS, window,
-                                 x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 64);
+                                 x * 8 + DJINN_PREVIEW_CURRENT_X,
+                                 DJINN_PREVIEW_STAT_Y(y, 1));
     }
     Text_DrawNumberInWindowFar(unit->atk, DJINN_PREVIEW_DIGITS, window,
-                               x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 72);
+                               x * 8 + DJINN_PREVIEW_CURRENT_X,
+                               DJINN_PREVIEW_STAT_Y(y, 2));
     Text_DrawNumberInWindowFar(unit->def, DJINN_PREVIEW_DIGITS, window,
-                               x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 80);
+                               x * 8 + DJINN_PREVIEW_CURRENT_X,
+                               DJINN_PREVIEW_STAT_Y(y, 3));
     Text_DrawNumberInWindowFar(unit->agi, DJINN_PREVIEW_DIGITS, window,
-                               x * 8 + DJINN_PREVIEW_CURRENT_X, y * 8 + 88);
+                               x * 8 + DJINN_PREVIEW_CURRENT_X,
+                               DJINN_PREVIEW_STAT_Y(y, 4));
     Text_DrawNumberInWindowFar(unit->luck, 2, window,
-                               x * 8 + DJINN_PREVIEW_LUCK_X, y * 8 + 96);
+                               x * 8 + DJINN_PREVIEW_LUCK_X,
+                               DJINN_PREVIEW_STAT_Y(y, 5));
   }
 
   // Only the temporary unit changes; the saved record is restored below.
@@ -1681,12 +1699,18 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                                y * 8 + 16);
     Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
     label = MsgPreviewStatLabel;
-    Text_DrawMessageAsTilesFar(label, window, x * 8, y * 8 + 56);
-    Text_DrawMessageAsTilesFar(label + 1, window, x * 8, y * 8 + 64);
-    Text_DrawMessageAsTilesFar(label + 2, window, x * 8, y * 8 + 72);
-    Text_DrawMessageAsTilesFar(label + 3, window, x * 8, y * 8 + 80);
-    Text_DrawMessageAsTilesFar(label + 4, window, x * 8, y * 8 + 88);
-    Text_DrawMessageAsTilesFar(label + 5, window, x * 8, y * 8 + 96);
+    Text_DrawMessageAsTilesFar(label, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 0));
+    Text_DrawMessageAsTilesFar(label + 1, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 1));
+    Text_DrawMessageAsTilesFar(label + 2, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 2));
+    Text_DrawMessageAsTilesFar(label + 3, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 3));
+    Text_DrawMessageAsTilesFar(label + 4, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 4));
+    Text_DrawMessageAsTilesFar(label + 5, window, x * 8,
+                               DJINN_PREVIEW_STAT_Y(y, 5));
     Text_DrawMessageAsTilesFar(MsgClassName + originalUnit->classId, window,
                                x * 8, y * 8 + 32);
   }
@@ -1723,62 +1747,76 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       iconX = x * 8 + 70;
 #endif
       if (unit->hp != originalUnit->hp) {
-        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
+        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
+                                   DJINN_PREVIEW_STAT_Y(y, 0));
         if (unit->hp > originalUnit->hp)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 56, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 0), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 56, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 0), 1);
       }
       if (unit->pp != originalUnit->pp) {
-        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72, y * 8 + 64);
+        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
+                                   DJINN_PREVIEW_STAT_Y(y, 1));
         if (unit->pp > originalUnit->pp)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 64, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 1), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 64, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 1), 1);
       }
       if (unit->atk != originalUnit->atk) {
         Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
-                                   y * 8 + 72);
+                                   DJINN_PREVIEW_STAT_Y(y, 2));
         if (unit->atk > originalUnit->atk)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 72, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 2), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 72, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 2), 1);
       }
       if (unit->def != originalUnit->def) {
         Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
-                                   y * 8 + 80);
+                                   DJINN_PREVIEW_STAT_Y(y, 3));
         if (unit->def > originalUnit->def)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 80, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 3), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 80, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 3), 1);
       }
       if (unit->agi != originalUnit->agi) {
         Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
-                                   y * 8 + 88);
+                                   DJINN_PREVIEW_STAT_Y(y, 4));
         if (unit->agi > originalUnit->agi)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 88, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 4), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 88, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 4), 1);
       }
       if (unit->luck != originalUnit->luck) {
         Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
-                                   y * 8 + 96);
+                                   DJINN_PREVIEW_STAT_Y(y, 5));
         if (unit->luck > originalUnit->luck)
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 96, 0);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 5), 0);
         else
-          Icon_DrawVariantWithTileOffset(
-              window, DJINN_PREVIEW_ARROW_X(x, iconX), y * 8 + 96, 1);
+          Icon_DrawVariantWithTileOffset(window,
+                                         DJINN_PREVIEW_ARROW_X(x, iconX),
+                                         DJINN_PREVIEW_STAT_Y(y, 5), 1);
       }
     }
   }

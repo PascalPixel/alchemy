@@ -530,15 +530,15 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     width += x;
     x = 0;
   }
-  if (x + width > 29)
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1)
+    width = DISPLAY_TILE_WIDTH - x;
 
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29)
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
     // Byte offsets: 32 entries of 2 bytes a row.
@@ -549,7 +549,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       s32 remaining = width;
       u16 *cell = (u16 *)(offset + (s32)tilemap);
       for (; remaining != 0; remaining--)
-        *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
+        *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
       height--;
       offset += 64;
     } while (height != 0);

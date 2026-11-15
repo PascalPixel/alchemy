@@ -94,7 +94,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   if (count == 0)
     return 0;
   // A 16-bit roll times the count, over 65536: an index below count.
-  return positions[(Random16() * count) >> 16];
+  return positions[Random16_Below(count)];
 }
 
 // XXX (no evidence): which list is the slip; Restore cures stun and never
@@ -412,13 +412,13 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       selected = 0;
       break;
     case 2:
-      roll = (11 * Random16()) >> 16;
+      roll = Random16_Below(11);
       selected = 0;
       if (roll > 5)
         selected = 1;
       break;
     case 3:
-      selected = (15 * Random16()) >> 16;
+      selected = Random16_Below(15);
       if (selected <= 5)
         selected = 0;
       else if (selected <= 10)
@@ -427,7 +427,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
         selected = 2;
       break;
     case 4:
-      selected = (18 * Random16()) >> 16;
+      selected = Random16_Below(18);
       if (selected <= 5)
         selected = 0;
       else if (selected <= 10)
@@ -442,5 +442,5 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     if (selected >= 0)
       return targetPositions[selected];
   }
-  return targetPositions[(Random16() * targetCount) >> 16];
+  return targetPositions[Random16_Below(targetCount)];
 }

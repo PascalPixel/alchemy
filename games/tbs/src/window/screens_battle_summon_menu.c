@@ -217,7 +217,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     // Each frame: the row icons and the cursor.
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth(&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
     // The cursor wobbles every four frames.
@@ -228,7 +228,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cur->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     // sprite, done with the row icons, now names the cursor.
     sprite = &cursorStorage;
-    Oam_AddSpriteAtDepth(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     // Blink required elements' standby counts every eight frames.
     {

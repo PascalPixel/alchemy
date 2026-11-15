@@ -131,13 +131,13 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width.
-    if (code > 31) {
+    if (code >= TEXT_SPACE) {
 #if LANGUAGE != LANGUAGE_JAPANESE
-      if (code == 32) {
+      if (code == TEXT_SPACE) {
         lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
       } else {
-        glyph = gFont_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         style = work->outline;
         if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
@@ -145,7 +145,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       }
 #else
       if (code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
-        if (code == 32) {
+        if (code == TEXT_SPACE) {
           lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         } else {
           // Punctuation at the end of a line takes less room than its cell.
@@ -160,7 +160,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
             trailing = 0;
           glyph = 10;
           if (code <= TEXT_LAST_FONT_CODE)
-            glyph = gFont_Glyphs[code - 32].width;
+            glyph = gFont_Glyphs[code - TEXT_SPACE].width;
           style = work->outline;
           if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
             glyph++;
@@ -320,11 +320,11 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     if (code >= 32) {
 #if LANGUAGE != LANGUAGE_JAPANESE
-      if (code == 32) {
+      if (code == TEXT_SPACE) {
         width += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
       } else {
-        glyph = gFont_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         outline = work->outline;
         if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
@@ -332,7 +332,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       }
 #else
       if (code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
-        if (code == 32) {
+        if (code == TEXT_SPACE) {
           width += WINDOW_SPRITE_SPACE_WIDTH;
         } else {
           if (code == TEXT_JAPANESE_MIDDLE_DOT)
@@ -346,7 +346,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
             trailing = 0;
           glyph = 10;
           if (code <= TEXT_LAST_FONT_CODE)
-            glyph = gFont_Glyphs[code - 32].width;
+            glyph = gFont_Glyphs[code - TEXT_SPACE].width;
           outline = work->outline;
           if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
             glyph++;

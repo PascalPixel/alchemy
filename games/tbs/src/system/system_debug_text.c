@@ -93,7 +93,7 @@ void DebugText_Print(const u8 *text) {
 
     text++;
     if (c != 0) {
-      u32 palette = WINDOW_PALETTE << 12;
+      u32 palette = BG_TILE_PALETTE(WINDOW_PALETTE);
 
       // The end of the 32 by 20 entry screen wraps to its start.
       do {

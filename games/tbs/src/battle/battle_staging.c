@@ -180,7 +180,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
       wait(22);
       completed = 1;
     }
-  } else if (((Random16() * 10) >> 16) <= 6) {
+  } else if (Random16_Below(10) <= 6) {
     // An enemy: a roll of 0 to 9, 7 in 10 away.
     s16 event[2];
 
@@ -271,8 +271,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   ElementGlow_Play(work.effect.user, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & STAGING_HIDE_ACTOR)
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = BLEND_ALPHA(16 - i, 16);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
@@ -351,8 +351,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
       BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
   }
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = BLEND_ALPHA(i, 16);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (i = 0; i != count; i++)

@@ -103,11 +103,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   work = WINDOW_WORK;
   canvas = Heap_Alloc(2048);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
-  paletteBits = work->textPalette << 12;
+  paletteBits = BG_TILE_PALETTE(work->textPalette);
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
   // leaves the background.
-  if (paletteBits == WINDOW_PALETTE << 12) {
+  if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
     Iwram_FillWords(canvas, 2048, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
@@ -209,8 +209,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
               glyphWidth = 8;
           } else
 #endif
-              if (glyphCode > 31)
-            glyphWidth = gFont_GlyphWidths[glyphCode - 32];
+              if (glyphCode >= TEXT_SPACE)
+            glyphWidth = gFont_GlyphWidths[glyphCode - TEXT_SPACE];
           else
             glyphWidth = 1;
           x += glyphWidth;
@@ -287,7 +287,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 /// tiles) for reuse: their taken and shown bits are cleared.
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
-  u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)base);
   u32 alternateTiles = ((struct WindowWork *)base)->extraTextTiles;
   u32 row;
 
@@ -303,7 +303,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
         ((struct WindowWork *)base)->textTileState[attributeIndex] &= 0xFC;
       }
     }
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
 }
 
@@ -581,7 +581,7 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
 
   cell = ((window->y + (offsetY >> 3) + 1) << 5) +
          (window->x + (offsetX >> 3)) + 1;
-  if (cell < 32 * 20) {
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     // Inside the tilemap.
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
@@ -631,7 +631,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
 
   cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
          (window->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 32 * 20) {
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
@@ -722,7 +722,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
   cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
          (window->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 32 * 20) {
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;

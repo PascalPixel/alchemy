@@ -854,7 +854,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   // The four figures stand at screen y 30; the screens raise the party member
   // chosen to 26.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
-    menu->memberY[memberIndex] = 30;
+    menu->memberY[memberIndex] = MENU_MEMBER_Y;
 
   menu->buttonHelpWindow = NULL;
   menu->statusWindow = NULL;
@@ -986,7 +986,7 @@ s32 ItemMenu_SelectMember(s32 side) {
     menu->sideIndex[side] = result;
     memberIndex = 0;
   } else {
-    MenuCursor_Slide(memberIndex * 24 - 10, 16);
+    MenuCursor_Slide(MENU_MEMBER_CURSOR_X(memberIndex), 16);
   }
   unit = Unit_GetFar(menu->memberIds[memberIndex]);
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
@@ -1042,7 +1042,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   menu->sideIcons[0]->motion = redraw; // ICON_SHOWN
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     selection = (selection + memberCount) % memberCount;
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     if (redraw) {
       sortMode = 0;
       redraw = 0;
@@ -1060,8 +1060,8 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
       }
       // Raise the chosen party member's figure.
       for (memberIndex = 3; memberIndex >= 0; memberIndex--)
-        menu->memberY[memberIndex] = 30;
-      menu->memberY[selection] = 26;
+        menu->memberY[memberIndex] = MENU_MEMBER_Y;
+      menu->memberY[selection] = MENU_MEMBER_RAISED_Y;
     }
     wait(1);
     // L + A sorts, cycling through the four sort orders.
@@ -1215,7 +1215,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         }
       }
     }
-    MenuCursor_Position(memberIndex * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(memberIndex), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       if (mode == ITEM_TARGET_GIVE && memberIndex == menu->sideIndex[0]) {
@@ -2804,7 +2804,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           // Icon_PrepareActor stills it again when the cursor leaves.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
-          icon->sentinel = 250;
+          icon->sentinel = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->partyCount; i++) {
           Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
@@ -2874,9 +2874,9 @@ s32 ItemMenu_RunList(s32 sideIndex) {
                 Unit_GetFar(menu->sideMember[sideIndex]), menu->items, 0);
           } while (menu->itemCount == 0);
           for (i = 0; i <= 3; i++) {
-            menu->memberY[i] = 30;
+            menu->memberY[i] = MENU_MEMBER_Y;
           }
-          menu->memberY[member] = 26;
+          menu->memberY[member] = MENU_MEMBER_RAISED_Y;
           break;
         }
       }

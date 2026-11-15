@@ -223,6 +223,11 @@ enum DisplayControl {
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
+/// A screen block entry's 16-colour palette, in its top four bits, and its
+/// mirrors.
+#define BG_TILE_PALETTE(n) ((n) << 12)
+#define BG_TILE_HFLIP 0x400
+#define BG_TILE_VFLIP 0x800
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
@@ -439,6 +444,8 @@ enum KeyMask {
 /// the flash routines read the chip with; programming and erasing use the
 /// chip's wait[0], then restore it.
 #define WAITCNT_SRAM_8 0x0003
+/// WAITCNT's SRAM wait bits, as pret names them.
+#define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 
 // KEYCNT values: the interrupt fires when all the listed keys are held at once.

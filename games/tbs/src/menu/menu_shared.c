@@ -468,7 +468,7 @@ struct Window *MenuCursor_Create(void *source) {
   menu->sideIcon[0] = cursor;
   // sentinel is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
-  sentinel = 254;
+  sentinel = OAM_DEPTH_FRONT - 1;
   cursor->sentinel = sentinel;
   sentinel -= 255;
   // sideIcon[1] gets slot 255.
@@ -1038,7 +1038,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 
   x += window->x + 1;
   y += window->y + 1;
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;

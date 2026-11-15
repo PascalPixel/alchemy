@@ -194,7 +194,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     for (i = 0; i < iconCount; i++) {
       iconSprite = &sprites[i];
-      Oam_AddSpriteAtDepth(iconSprite, 240);
+      Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW);
     }
 
     MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
@@ -202,7 +202,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
-      Oam_AddSpriteAtDepth(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);

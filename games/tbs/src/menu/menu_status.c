@@ -112,7 +112,7 @@ s32 PartyMemberChooser_Open(void) {
   StatusScreen_Initialize(0, 3, 0, 7);
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   for (index = 0; index < MEMBER_CHOOSER_MEMBER_COUNT; index++)
-    menu->memberY[index] = 30;
+    menu->memberY[index] = MENU_MEMBER_Y;
   menu->page = STATUS_SCREEN_PAGE_CHOOSER;
 
   result = PartyMemberChooser_Run();
@@ -190,7 +190,7 @@ s32 StatusScreen_Run(void) {
 #endif
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   for (index = 0; index < MENU_ROW_COUNT; index++)
-    menu->memberY[index] = 30;
+    menu->memberY[index] = MENU_MEMBER_Y;
   if (Party_SumDjinnCountsFar(-1) != 0)
     DjinnFigures_InitializeTopRow(menu->selectorWindow, 0);
   // The four Djinn figures in a row 32 pixels apart, at screen y 128.
@@ -317,7 +317,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   if (index == -1)
     menu->memberIndex[slot] = 0;
   else
-    MenuCursor_Slide(index * 24 - 10, 16);
+    MenuCursor_Slide(MENU_MEMBER_CURSOR_X(index), 16);
   if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     result = PsynergyMenu_ChooseMember();
   else
@@ -351,7 +351,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
     for (i = 0; i < 4; i++) {
       menu->slotX[i] = 32 + i * 56;
       menu->slotY[i] = 70;
-      menu->memberY[i] = 30;
+      menu->memberY[i] = MENU_MEMBER_Y;
     }
   }
   WindowSprite_RedrawSavedRectFar(window);
@@ -407,8 +407,8 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
   s32 rowIndex;
 
   for (rowIndex = MENU_ROW_COUNT - 1; rowIndex >= 0; rowIndex--)
-    menu->memberY[rowIndex] = 30;
-  menu->memberY[selectedMember] = 26;
+    menu->memberY[rowIndex] = MENU_MEMBER_Y;
+  menu->memberY[selectedMember] = MENU_MEMBER_RAISED_Y;
 }
 
 /// The Status menu's party row: Left and Right choose a party member, showing
@@ -465,7 +465,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Menu_ReloadMemberPortrait(menu, menu->memberIds[memberIndex]);
       StatusScreen_SetSelectedMemberRow(menu, memberIndex);
     }
-    MenuCursor_Position(memberIndex * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(memberIndex), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
@@ -552,8 +552,8 @@ s32 PsynergyMenu_ChooseMember(void) {
       StatusScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
       Menu_ReloadMemberPortrait(menu, menu->memberTable[memberIndex]);
       for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
-        menu->rowPositions[rowIndex] = 30;
-      menu->rowPositions[memberIndex] = 26;
+        menu->rowPositions[rowIndex] = MENU_MEMBER_Y;
+      menu->rowPositions[memberIndex] = MENU_MEMBER_RAISED_Y;
       menu->psynergyCount = PsynergyMenu_CollectActions(
           Unit_GetFar(menu->memberTable[memberIndex]), (u16 *)menu->psynergies,
           PSYNERGY_LIST_ALL);
@@ -561,7 +561,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       Menu_PlaceEntryActorsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->psynergies);
     }
-    MenuCursor_Position(memberIndex * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(memberIndex), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
@@ -702,7 +702,8 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
     cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
-    if ((cursor->sentinel = 240, menu->page) == STATUS_SCREEN_PAGE_CHOOSER) {
+    if ((cursor->sentinel = OAM_DEPTH_WINDOW, menu->page) ==
+        STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
     Menu_CreateEightEntryActors(window);
@@ -1762,7 +1763,7 @@ s32 ItemMenu_SelectItem(void) {
     struct WindowSprite *icon = menu->entryIcons[iconIndex];
 
     if (icon != 0)
-      icon->sentinel = 240;
+      icon->sentinel = OAM_DEPTH_WINDOW;
   }
 
   Task_Remove(Menu_PlacePartyFigures);
@@ -2122,7 +2123,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
       entry->y = shown * 16 + 88;
-      entry->sentinel = 240;
+      entry->sentinel = OAM_DEPTH_WINDOW;
       Icon_PrepareActor(entry);
       shown++;
     }
@@ -2141,7 +2142,7 @@ void ItemMenu_ResetCategory(void) {
     if (object != 0) {
       object->x = 248;
       object->y = 168;
-      object->sentinel = 240;
+      object->sentinel = OAM_DEPTH_WINDOW;
       Icon_PrepareActor(object);
     }
   }

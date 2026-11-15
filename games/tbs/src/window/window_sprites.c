@@ -142,7 +142,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       sprite = SPRITE_CELL(windowSprite);
     }
     // Glyphs are drawn at depth slot 254.
-    windowSprite->sentinel = 254;
+    windowSprite->sentinel = OAM_DEPTH_FRONT - 1;
     windowSprite->x = sprite->x;
     windowSprite->y = sprite->y;
     windowSprite->index = index;
@@ -235,7 +235,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     x++;
     y++;
     pos = (win->y + y) * 32 + (win->x + x);
-    if (pos < 32 * 20)
+    if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
   }
 }
@@ -309,7 +309,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       y++;
     }
     pos = (win->y + y) * 32 + (win->x + x);
-    if (pos < 32 * 20)
+    if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
   }
 }
@@ -340,13 +340,13 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 
   switch (mode) {
   case TILEMAP_ENTRY_WINDOW:
-    palette = WINDOW_PALETTE << 12;
+    palette = BG_TILE_PALETTE(WINDOW_PALETTE);
     break;
   case TILEMAP_ENTRY_HIGHLIGHT:
-    palette = HIGHLIGHT_PALETTE << 12;
+    palette = BG_TILE_PALETTE(HIGHLIGHT_PALETTE);
     break;
   case TILEMAP_ENTRY_ICON:
-    palette = 1 << 12;
+    palette = BG_TILE_PALETTE(1);
     break;
   default:
     palette = 0;
@@ -474,12 +474,10 @@ void WindowSprite_UpdateAll(void) {
         // Every other frame each axis moves -1 to 1 pixels from its place:
         // half the sum of two random 0 to 2, less 1.
         if (gVBlankCount & 1) {
-          sprite->x =
-              windowSprite->x +
-              (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
-          sprite->y =
-              windowSprite->y +
-              (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
+          sprite->x = windowSprite->x +
+                      (s32)((Random16_Below(3) + Random16_Below(3)) >> 1) - 1;
+          sprite->y = windowSprite->y +
+                      (s32)((Random16_Below(3) + Random16_Below(3)) >> 1) - 1;
         }
         break;
       case WINDOW_SPRITE_MOTION_POP:

@@ -39,7 +39,7 @@ void AreaNameWindow_Show(void) {
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance) +
       RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
-  x = (30 - width) >> 1;
+  x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
   nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   notice->window = nameWindow;

@@ -334,7 +334,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
     menu->tabIndex[partySlot] = 0;
     memberIndex = 0;
   } else {
-    MenuCursor_Slide(memberIndex * 24 - 10, 16);
+    MenuCursor_Slide(MENU_MEMBER_CURSOR_X(memberIndex), 16);
   }
 
   unit = Unit_GetFar(menu->memberTable[memberIndex]);
@@ -390,9 +390,9 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, memberIds[selection]);
       Menu_ReloadMemberPortrait(menu, memberIds[selection]);
       for (i = 3; i >= 0; i--)
-        menu->rowPositions[i] = 30;
+        menu->rowPositions[i] = MENU_MEMBER_Y;
       // Raise the chosen party member.
-      menu->rowPositions[selection] = 26;
+      menu->rowPositions[selection] = MENU_MEMBER_RAISED_Y;
       if (!GameFlag_GetFar(FLAG_MENU_INFO_KEPT) && !shown) {
         WindowSprite_ClearListFar((void *)menu->infoWindow);
 #if TBS_PATCH_1
@@ -404,7 +404,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
       }
     }
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
@@ -499,7 +499,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   result = 0;
   shown = 0;
   Unit_GetFar(menu->memberTable[menu->tabIndex[0]]);
-  MenuCursor_Slide(selection * 24 - 10, 16);
+  MenuCursor_Slide(MENU_MEMBER_CURSOR_X(selection), 16);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -524,7 +524,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
         }
       }
     }
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
@@ -1088,7 +1088,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           // Swell the selected icon, in depth slot 250, as in ItemMenu_RunList.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
-          icon->sentinel = 250;
+          icon->sentinel = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++) {
           Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);
@@ -1197,9 +1197,9 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         } while (menu->psynergyCount == 0);
         menu->tabIndex[sideIndex] = member;
         for (i = 0; i < 4; i++) {
-          menu->rowPositions[i] = 30;
+          menu->rowPositions[i] = MENU_MEMBER_Y;
         }
-        menu->rowPositions[member] = 26;
+        menu->rowPositions[member] = MENU_MEMBER_RAISED_Y;
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0,
                          STATUS_PANEL_EXPERIENCE);
         Menu_ReloadMemberPortrait(menu, menu->memberTable[member]);

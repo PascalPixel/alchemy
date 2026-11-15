@@ -235,6 +235,14 @@ void DjinnFigures_ReleaseBottomRow(void);
 
 #define LIST_PAGE_SIZE 5
 
+/// The y of the menus' row of party portraits, and of the chosen member's,
+/// raised above the rest.
+#define MENU_MEMBER_Y 30
+#define MENU_MEMBER_RAISED_Y 26
+/// The cursor's x beside the party row's portrait `member`: the portraits stand
+/// 24 pixels apart.
+#define MENU_MEMBER_CURSOR_X(member) ((member) * 24 - 10)
+
 s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);

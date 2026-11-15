@@ -284,7 +284,7 @@ void SelectionMenu_Draw(void) {
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       commandSprite->mode = 1;
     }
-    Oam_AddSpriteAtDepth(commandSprite, 248);
+    Oam_AddSpriteAtDepth(commandSprite, OAM_DEPTH_WINDOW + 8);
   }
   SelectionMenu_DrawArrow(state, 0);
   SelectionMenu_DrawArrow(state, 1);
@@ -323,7 +323,7 @@ void SelectionMenu_Draw(void) {
         sprite->mode = 1;
       }
     }
-    Oam_AddSpriteAtDepth(sprite, 240);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
     node = node->next;
   }
   // Point at the selected battle target, smoothing each axis separately: the
@@ -360,7 +360,7 @@ void SelectionMenu_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Oam_AddSpriteAtDepth(cursorEntry, 248);
+    Oam_AddSpriteAtDepth(cursorEntry, OAM_DEPTH_WINDOW + 8);
   }
   state->status += 1;
 }
@@ -396,7 +396,7 @@ void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
     else
       arrow->mode = 0;
   }
-  Oam_AddSpriteAtDepth(arrow, 238);
+  Oam_AddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
   if (state->records[side].base != 0)
     state->records[side].base--;
 }
@@ -1264,7 +1264,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  Oam_AddSpriteAtDepth(sprite, 252);
+  Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 
 /// Frees an arrow sprite's tile slot.

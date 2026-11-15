@@ -347,7 +347,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
     // The star field for 45 frames, the background darkening for the first 25.
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(element);
     for (frame = 0; frame <= 44; frame++) {
       brightness = &battle->brightness;

@@ -357,29 +357,28 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     CLAMP(growthBand, 0, GROWTH_POINTS - 2);
     growthDifference =
         work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
-    gains->hp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+    gains->hp += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->pp[growthBand + 1] - work->growth->pp[growthBand];
-    gains->pp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+    gains->pp += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->atk[growthBand + 1] - work->growth->atk[growthBand];
-    gains->atk += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+    gains->atk += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->def[growthBand + 1] - work->growth->def[growthBand];
-    gains->def += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+    gains->def += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->agi[growthBand + 1] - work->growth->agi[growthBand];
-    gains->agi += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+    gains->agi += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->luck[growthBand + 1] - work->growth->luck[growthBand];
-    gains->luck +=
-        ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
-        GROWTH_BAND_LEVELS;
+    gains->luck += (Random16_Below(GROWTH_BAND_LEVELS) + growthDifference) /
+                   GROWTH_BAND_LEVELS;
     // Commit the six gains before rebuilding Psynergy and derived stats.
     unit->baseHp += gains->hp;
     unit->basePp += gains->pp;

@@ -134,7 +134,7 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 /// width by height tiles, and frees the text tiles the rectangle showed.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
-  u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
   u32 row;
 
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
@@ -151,7 +151,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
     *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
-  cursor += 32 - width;
+  cursor += BG_SCREEN_WIDTH - width;
   // The sides and the fill between them.
   for (row = 1; row < height - 1; row++) {
     *cursor++ = WINDOW_TILE_BORDER_LEFT;
@@ -159,7 +159,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
     *cursor++ = WINDOW_TILE_BORDER_RIGHT;
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
   // The bottom edge.
   if (canvas->mindRead != 0)
@@ -180,7 +180,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
   struct WindowWork *canvas = WINDOW_WORK;
-  u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
   u32 row;
   u32 col;
 
@@ -198,14 +198,14 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (col - 1) * (height - 2)) &
             0xfff);
       cursor++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   } else {
     for (row = 1; row < height - 1; row++) {
       for (col = 0; col < width; col++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + col * (height - 2)) & 0xfff);
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   }
   canvas->dirty = 1;
@@ -469,7 +469,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
 
   // Centre the window across the screen, and in the top 12 rows.
-  x = (30 - width) >> 1;
+  x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (12 - height) >> 1;
 
   if (flags & FIELD_MESSAGE_LOWER) {

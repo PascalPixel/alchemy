@@ -140,7 +140,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
       36, 2, cleared);
   Sound_PlayFar(MUS_JOINED);
   do {
-    Oam_AddSpriteAtDepth(entry, 250);
+    Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
     wait(1);
   } while (Sound_GetBgmRestoreDelayFar() != 0 &&
            (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -192,7 +192,7 @@ void Party_ShowJoinedMessage(s32 member) {
                       36, 2, 0);
     Sound_PlayFar(MUS_JOINED);
     do {
-      Oam_AddSpriteAtDepth(entry, 250);
+      Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -262,8 +262,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlayFar(MUS_JOINED);
 
     do {
-      Oam_AddSpriteAtDepth(firstEntry, 250);
-      Oam_AddSpriteAtDepth(secondEntry, 250);
+      Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
+      Oam_AddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);

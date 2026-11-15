@@ -137,7 +137,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     // The stat items.
     case ABILITY_FORMULA_NO_POWER:
       // The rise varies by -1, 0 (half the time) or 1.
-      randomAdjust = (Random16() * 4) >> 16;
+      randomAdjust = Random16_Below(4);
       if (randomAdjust == 0) {
         randomAdjust = -1;
       } else {

@@ -490,7 +490,7 @@ s32 SettingsMenu_Run(void) {
       // the row's setting.
       for (i = 0; i <= 2; i++) {
         frame = work->choiceIcons[0][i];
-        frame->sentinel = 251;
+        frame->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -500,7 +500,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[1][i];
-        frame->sentinel = 251;
+        frame->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -510,7 +510,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[2][i];
-        frame->sentinel = 251;
+        frame->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -787,7 +787,7 @@ s32 PauseMenu_Choose(void) {
         pauseIcons = gPauseMenu_Icons;
         do {
           icon = work->icon[i];
-          icon->sentinel = 251;
+          icon->sentinel = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;

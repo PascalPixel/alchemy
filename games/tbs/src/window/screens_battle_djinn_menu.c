@@ -488,7 +488,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
-      Oam_AddSpriteAtDepth(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between

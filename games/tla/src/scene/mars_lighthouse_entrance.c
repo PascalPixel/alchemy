@@ -800,7 +800,9 @@ fill:
 
 #define SET_SPRITE_WINDOW_LAYERS()                                             \
   do {                                                                         \
-    u16 winout = 0xf1f;                                                        \
+    u16 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |      \
+                 WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |     \
+                 WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3;    \
                                                                                \
     REG_WINOUT = winout;                                                       \
   } while (0)
@@ -924,11 +926,13 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   leader->motionFlags = 0;
   if ((cell->attributeB & 64) == 0) {
     {
-      u16 winout = 0xf1f;
+      u16 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+                   WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
+                   WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3;
 
       REG_WINOUT = winout;
     }
-    REG_DISPCNT |= 0x8000;
+    REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     MarsLighthouseEntrance_StartHoleMask();
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
@@ -2204,13 +2208,15 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   }
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   {
-    u32 winout = 0xf1f;
+    u32 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+                 WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
+                 WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3;
 
     REG_WINOUT = winout;
   }
   do {
   } while (0);
-  REG_DISPCNT |= 0x8000;
+  REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   event->busy = 1;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(16);

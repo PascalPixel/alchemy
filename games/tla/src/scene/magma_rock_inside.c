@@ -1772,8 +1772,9 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   ((struct FieldSprite *)object->sprite)->blendMode = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  REG_WINOUT = 0x3f1f;
-  REG_DISPCNT |= 0x8000;
+  REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+               WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_ALL;
+  REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Event_PlaySound(SE_DRIP);
   i = 0;
 fadeIn:
@@ -1794,7 +1795,7 @@ fadeOut:
   Actor_Release(object);
   Event_End();
   REG_BLDCNT = 0;
-  REG_DISPCNT &= 0x7fff;
+  REG_DISPCNT &= ~DISPCNT_OBJWIN_ON;
 }
 
 /// The leader stops on a marker cell of the Blaze tablet's room: on cells 1 and

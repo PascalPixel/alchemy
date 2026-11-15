@@ -454,7 +454,7 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 facing = object->facing;
 
-  if (facing == 0 || facing == 0x8000) {
+  if (facing == FACING_EAST || facing == FACING_WEST) {
     s32 x = FIELD_CELL(object->x.fixed);
     s32 z = FIELD_CELL(object->z.fixed);
 
@@ -759,7 +759,7 @@ void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
     MapGrid_CopyCells(29, 60, 3, 4, 14, 50);
     MapGrid_CopyCellsLayered(93, 60, 3, 4, 78, 50);
     if (burst && !Flag_IsSet(FLAG_CENTER_WALL_CRACKED))
-      MarsLighthouseRoomF_ScatterRubble(14);
+      MarsLighthouseRoomF_ScatterRubble(ACTOR_CENTER_WALL);
     Flag_Set(FLAG_CENTER_WALL_CRACKED);
   }
 }
@@ -1118,7 +1118,7 @@ s32 Scene_Initialize(void) {
 
   ((struct FieldWork *)heap->fieldWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  value = 516;
+  value = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Flag_Set(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_MARS_TOWER) {

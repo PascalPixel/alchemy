@@ -311,7 +311,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_ALEX, 12);
     Actor_SetAnimationSpeedById(ACTOR_ALEX, 8);
     gFieldWork->transition = 0;
-    REG_DISPCNT &= 0xfdff;
+    REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 3;
     REG_BG3CNT &= 0xfffc;
@@ -404,14 +404,14 @@ s32 Scene_Initialize(void) {
     ACTOR(8)->z.fixed = px(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x27f, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
-    REG_DISPCNT &= 0xfdff;
+    REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 3;
     REG_BG3CNT &= 0xfffc;
     REG_BG3CNT |= 2;
     System_Wait(1);
     ((struct FieldWork *)slots->fieldWork)->transition = scale;
-    REG_DISPCNT &= 0xfdff;
+    REG_DISPCNT &= ~DISPCNT_BG1_ON;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     MapGrid_SetShake(4, 4, 1);

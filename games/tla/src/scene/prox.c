@@ -660,13 +660,14 @@ void Prox_FearForWeyard(void) {
   }
 }
 
-/// The bytes of an actor these handlers use. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
+/// The bytes of an actor these handlers use: its facing, and the last of the
+/// four scene-owned bytes The Broken Seal's actors keep at this place, which
+/// holds the children still while one is talked to.
 struct TalkActor {
-  u8 unk00[6];
+  u8 beforeAngle[6];
   u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63; ///< Prox_ChaseTarget reads it
+  u8 beforeTalking[0x5b];
+  u8 talking; ///< Prox_ChaseTarget stops the chase while it is set
 };
 
 void Prox_TalkToPlayingChild(void) {
@@ -677,7 +678,7 @@ void Prox_TalkToPlayingChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -688,7 +689,7 @@ void Prox_TalkToPlayingChild(void) {
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 
@@ -700,7 +701,7 @@ void Prox_TalkToRestlessChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
@@ -711,7 +712,7 @@ void Prox_TalkToRestlessChild(void) {
   Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 
@@ -723,7 +724,7 @@ void Prox_TalkToTrainingChild(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->talking = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -734,7 +735,7 @@ void Prox_TalkToTrainingChild(void) {
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (work->psynergy == 0)
     object->angle = angle;
-  object->unk63 = 0;
+  object->talking = 0;
   Prox_EndEvent();
 }
 

@@ -1095,7 +1095,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_PlaySound(MUS_ALEX);
   Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
                          (s32)gMarsLighthouseAerie_DoomDragonRiseScript);
-  *dispcnt = *dispcnt & 0xf9ff;
+  *dispcnt = *dispcnt & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Actor_SetSpeedAndAcceleration(ACTOR_DOOM_DRAGON, 3.2, 0.2);
@@ -1140,7 +1140,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  *dispcnt |= 0x600;
+  *dispcnt |= DISPCNT_BG1_ON | DISPCNT_BG2_ON;
   Actor_SetPosition(ACTOR_PIERS, 488, 320);
   Actor_SetPosition(work->leaderActorId, 504, 320);
   Actor_SetPosition(ACTOR_ISAAC, 520, 320);

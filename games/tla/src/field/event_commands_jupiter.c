@@ -40,7 +40,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
   // Spin, then leap high.
   Sound_PlayFar(SE_SPIN);
-  djinni->update = (void (*)(void))BattleEffect_AdvanceSpinAngle;
+  djinni->update = (void (*)(void))Djinn_AdvanceSpinAngle;
   wait(40);
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);

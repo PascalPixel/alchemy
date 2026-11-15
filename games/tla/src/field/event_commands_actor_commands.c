@@ -12,15 +12,15 @@ struct Actor *Actor_GetById(u32 objectId);
 
 /// Clears an actor's destination, puts it under script control and
 /// stands it still.
-void Actor_ClearDestinationAndStand(u32 objectId) {
-  struct Actor *object = Actor_Lookup(objectId);
+void Actor_ClearDestinationAndStand(u32 actorId) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (object != NULL) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    Actor_StartIdleFar(object);
-    Actor_SelectAnimationFar(object, 1);
+  if (actor != NULL) {
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    Actor_StartIdleFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 

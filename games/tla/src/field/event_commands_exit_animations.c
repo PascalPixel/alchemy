@@ -141,6 +141,7 @@ void Exit_PrepareAnimation(s32 animation) {
     doorway->colorMode = hidden;
     // Keep the cell and put the leader at its middle in x and its south edge in
     // z.
+    // Each coordinate read and written as the word it is.
     actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(16);
     actor->velocityX = cleared;

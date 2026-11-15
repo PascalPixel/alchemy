@@ -412,15 +412,14 @@ s32 ActorScript_PlaySoundInView(struct Actor *interpreter) {
 /// Returns -1 when an actor at position values would overlap a solid actor,
 /// each radius less 2 pixels; otherwise 0.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
-  s32 index;
-  u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->actors;
+  s32 actorIndex;
+  struct Actor *candidate = ((struct Actor *)Ram_HeapSlots->actors);
 
-  flags = &entry->collisionFlags;
-  for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-    if (entry->script != NULL && (1 & *flags) && entry != actor) {
-      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
-                                    actor->radius - 2) >= 0)
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
+      if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
+                                    values, actor->radius - 2) >= 0)
         return -1;
     }
   }
@@ -431,16 +430,15 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 /// overlap, as ActorScript_CheckOverlap tests, or NULL.
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
-  s32 index;
-  u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->actors;
+  s32 actorIndex;
+  struct Actor *candidate = ((struct Actor *)Ram_HeapSlots->actors);
 
-  flags = &entry->collisionFlags;
-  for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-    if (entry->script != NULL && (1 & *flags) && entry != actor) {
-      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
-                                    actor->radius - 2) >= 0)
-        return entry;
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
+      if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
+                                    values, actor->radius - 2) >= 0)
+        return candidate;
     }
   }
   return NULL;

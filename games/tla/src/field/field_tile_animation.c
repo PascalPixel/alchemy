@@ -504,28 +504,37 @@ void PaletteQueue_Stop(void) {
 void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK); }
 
 void PaletteCycle_Step(void) {
-  struct PaletteCycleWork *work = gPaletteWork;
-  u8 i;
-  u16 count = work->count & 3;
-  u16 buf[16];
+  struct PaletteCycleWork *paletteQueue = Ram_HeapSlots->paletteCycles;
+  u8 cycleIndex;
+  // BUG: four queued cycles become zero here, so none advance.
+  u16 activeCycles = paletteQueue->count & 3;
+  u16 rotatedColors[16];
 
-  for (i = 0; i < count; i++) {
-    struct PaletteCycle *cycle = &work->entries[i];
+  for (cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
+    struct PaletteCycle *cycle = &paletteQueue->entries[cycleIndex];
     if (cycle->timer == 0) {
-      u16 start = cycle->position;
-      u16 len = cycle->count;
-      void *dest = cycle->source;
-      u16 *src = cycle->colors;
-      u8 j;
-      for (j = len - start; j < len; j++)
-        buf[j] = *src++;
-      for (j = 0; j < len - start; j++)
-        buf[j] = *src++;
-      Dma_Set(buf, dest, DMA_COPY_HALFWORDS(len), REG_DMA3);
-      start++;
-      if (start >= len)
-        start = 0;
-      cycle->position = start;
+      u16 rotationOffset = cycle->position;
+      u16 colorCount = cycle->count;
+      void *paletteColors = cycle->source;
+      u16 *savedColors = cycle->colors;
+      u8 colorIndex;
+
+      // Each saved colour moves rotationOffset places down, the first ones
+      // wrapping round to the end.
+      for (colorIndex = colorCount - rotationOffset; colorIndex < colorCount;
+           colorIndex++)
+        rotatedColors[colorIndex] = *savedColors++;
+      for (colorIndex = 0; colorIndex < colorCount - rotationOffset;
+           colorIndex++)
+        rotatedColors[colorIndex] = *savedColors++;
+      Dma_Set(rotatedColors, paletteColors, DMA_COPY_HALFWORDS(colorCount),
+              REG_DMA3);
+      // The next step rotates one place further, back to none after a full
+      // turn, and waits delay frames.
+      rotationOffset++;
+      if (rotationOffset >= colorCount)
+        rotationOffset = 0;
+      cycle->position = rotationOffset;
       cycle->timer = cycle->delay;
     } else {
       cycle->timer--;

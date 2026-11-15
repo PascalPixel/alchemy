@@ -16,14 +16,14 @@
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
   if (gDebugMode != 0) {
-    if (((struct InputState *)&gInput)->pressed & KEY_L) {
-      work->fastForward = 0;
+    if (gInput.pressed & KEY_L) {
+      runtime->fastForward = 0;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
-      work->fastForward = -1;
+    if (gInput.pressed & KEY_R) {
+      runtime->fastForward = -1;
     }
   }
 }

@@ -122,7 +122,7 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor);
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj);
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);
 
-void BattleEffect_AdvanceSpinAngle();
+void Djinn_AdvanceSpinAngle();
 
 void Rope_Draw(void);
 void Rope_Update(void);

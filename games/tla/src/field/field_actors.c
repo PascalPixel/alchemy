@@ -205,19 +205,19 @@ UNUSED void ActorSystem_ReservedNoOpB(void) {}
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
 void *Actor_FindFree(void) {
-  struct Actor *obj = Ram_HeapSlots->actors;
-  void *ret = 0;
-  s32 n = 0;
+  struct Actor *actor = ((struct Actor *)Ram_HeapSlots->actors);
+  void *freeActor = 0;
+  s32 actorIndex = 0;
 
-  while (n <= 63) {
-    if (obj->script == 0) {
-      ret = obj;
+  while (actorIndex <= ACTOR_COUNT - 1) {
+    if (actor->script == 0) {
+      freeActor = actor;
       break;
     }
-    n++;
-    obj++;
+    actorIndex++;
+    actor++;
   }
-  return ret;
+  return freeActor;
 }
 
 /// Releases an actor's sprites and zeroes it, releasing its slot. Clearing the

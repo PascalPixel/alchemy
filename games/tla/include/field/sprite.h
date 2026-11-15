@@ -108,6 +108,10 @@ enum SpriteFlag {
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
+/// The VRAM cache entry of the actors' shared shadow (gActor_ShadowTiles),
+/// each sprite's part 1.
+#define VRAM_CACHE_ENTRY_ACTOR_SHADOW 93
+
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
 /// four sprite animations.
 struct Sprite {

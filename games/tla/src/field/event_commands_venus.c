@@ -40,7 +40,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Actor_Jump(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   wait(30);
-  djinni->update = (void (*)(void))BattleEffect_AdvanceSpinAngle;
+  djinni->update = (void (*)(void))Djinn_AdvanceSpinAngle;
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);

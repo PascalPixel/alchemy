@@ -357,9 +357,10 @@ void FieldEffect_ReleaseSlots(void) {
   wait(1);
 }
 
-/// Per-frame update: spins the actor an eighth of a turn.
-void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += TRIG_TURN / 8;
+/// Per-frame update of a joining Venus or Jupiter Djinni: spins it an eighth of
+/// a turn, as FieldEffect_AdvanceSpinAngle does.
+void Djinn_AdvanceSpinAngle(struct Actor *djinni) {
+  djinni->facing += TRIG_TURN / 8;
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each

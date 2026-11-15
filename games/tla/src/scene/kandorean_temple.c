@@ -709,28 +709,17 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
   object->z.fixed += vz;
   object->bounce = vx - vx / 18;
   object->riseBaseY = vz - vz / 16;
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
   rate = object->speedLimit;
   scale = object->scaleX;
   sprite = object->sprite;
   object->scaleX = scale + rate;
-  {
-    /* FAKEMATCH(pin): the call's first argument pinned to r0. */
-    register struct Actor *first asm("r0") = object;
-
-    object->scaleY += object->acceleration;
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
-    sprite->rotation += object->timer;
-    if (KandoreanTemple_IsOverActor(first, leader)) {
-      ((struct FieldSprite *)object->sprite)->priority = 3;
-      object->z.fixed -= object->riseBaseY;
-      object->gravity += object->riseBaseY >> 2;
-      object->riseBaseY = 0;
-    }
+  object->scaleY += object->acceleration;
+  sprite->rotation += object->timer;
+  if (KandoreanTemple_IsOverActor(object, leader)) {
+    ((struct FieldSprite *)object->sprite)->priority = 3;
+    object->z.fixed -= object->riseBaseY;
+    object->gravity += object->riseBaseY >> 2;
+    object->riseBaseY = 0;
   }
   if (KandoreanTemple_IsOverActor(object, other)) {
     ((struct FieldSprite *)object->sprite)->priority = 3;
@@ -1270,14 +1259,10 @@ void KandoreanTemple_RunWestLift(void) {
     if (*(long *)&lift->y.fixed < -px(5))
       Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
     if (lift->y.fixed <= -px(20)) {
-
-      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
-      s32 **timerRef = &timer;
-
       Scene_QueueMusic(SE_245);
       Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
       Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
-      **timerRef = 0;
+      gKandoreanTemple_LeftTimer = 0;
     }
   }
   gKandoreanTemple_LeftTimer++;
@@ -1332,14 +1317,10 @@ void KandoreanTemple_RunEastLift(void) {
     if (*(long *)&lift->y.fixed < -px(5))
       Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
     if (lift->y.fixed <= -px(20)) {
-
-      /* FAKEMATCH(temporary): the timer pointer's own address taken. */
-      s32 **timerRef = &timer;
-
       Scene_QueueMusic(SE_245);
       Actor_SetPosition(ACTOR_EAST_LIFT, 0, 0);
       Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
-      **timerRef = 0;
+      gKandoreanTemple_RightTimer = 0;
     }
   }
   gKandoreanTemple_RightTimer++;
@@ -1549,9 +1530,6 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed >> 20;
   s32 z = leader->z.fixed >> 20;
-  struct MainRoutineWork *party;
-  u8 *flags;
-  s32 zero;
 
   if (z == 5) {
     if (x == 9 && (gInput.held & KEY_RIGHT) == 0)
@@ -1563,20 +1541,16 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(temporary): the flags address and the zero held in locals, with
-   * gMainRoutineWork's address taken in the block below. */
-  flags = &leader->motionFlags;
-  zero = 0;
-  party = &gMainRoutineWork;
-  *flags = zero;
-  Actor_SetSpeed(party->leaderActorId, 1);
-  Actor_WalkToAndWaitById(party->leaderActorId, 168, 80);
-  Actor_FaceDirectionAndRefreshById(party->leaderActorId, FACING_NORTH);
-  Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
-  Actor_SetAnimationById(party->leaderActorId, 13);
+  leader->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
+  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 168, 80);
+  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                    FACING_NORTH);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTarget(leader, 168, -12, 80);
   Actor_WaitForMove(leader);
-  Actor_SetAnimationById(party->leaderActorId, 10);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 10);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -3166,15 +3140,13 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetAnimationById(ACTOR_POI, 7);
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
-  /* FAKEMATCH(temporary): the motion flags written through a byte pointer. */
-  flags = &object->motionFlags;
-  *flags = 0;
+  object->motionFlags = 0;
   object->y.fixed += px(4);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);
   Actor_SetSpeed(ACTOR_POI, 0.4);
   FieldActor_SetMoveTarget((s32)object, 444, 40, 376);
   Actor_WaitForMoveById(ACTOR_POI);
-  *flags = 3;
+  object->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 1);
   sprite->rotation = 0;
   object->scaleX = Q16_ONE;

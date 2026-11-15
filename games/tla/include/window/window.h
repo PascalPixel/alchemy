@@ -518,6 +518,8 @@ enum PauseMenuEntry {
 };
 
 #define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+/// "Window brightness" takes 0 to 14.
+#define WINDOW_BRIGHTNESS_COUNT 15
 
 /// The brightness that adds nothing to the hue's colour.
 #define WINDOW_BRIGHTNESS_NEUTRAL 7

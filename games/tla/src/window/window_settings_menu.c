@@ -30,7 +30,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
 #define GLOW_COLOR_SET(index, value)                                           \
   do {                                                                         \
     u32 color_ = (value);                                                      \
-    BG_PLTT_COLOR(15, (index)) = color_;                                       \
+    BG_PLTT_COLOR(WINDOW_PALETTE, (index)) = color_;                           \
   } while (0)
 
 void WindowColor_Apply(s32 phase, s32 brightness) {
@@ -130,9 +130,9 @@ void SettingsMenu_InitializeWork(void) {
               (sizeof(struct OptionMenuWork) / 4),
           REG_DMA3);
   work->option[0] = gMainRoutineWork.windowHue;
-  work->optionCount[0] = 24;
+  work->optionCount[0] = WINDOW_HUE_COUNT;
   work->option[1] = gMainRoutineWork.windowBrightness;
-  work->optionCount[1] = 15;
+  work->optionCount[1] = WINDOW_BRIGHTNESS_COUNT;
   work->option[2] = gMainRoutineWork.messageSpeed;
   work->optionCount[2] = 3;
   work->option[3] = gMainRoutineWork.speech;

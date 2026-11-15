@@ -1,0 +1,156 @@
+/// @file
+/// The actor scripts the field's commands start: launching and turning, the
+/// dust puffs, the emote bubble and the movement types Actor_SetMovementType
+/// starts by number; and, among them, the message voice's rates.
+
+#include "battle/battle.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "window/message_speed.h"
+
+// clang-format off
+const s32 gActor_LaunchScript[] = {
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_ANIMATION(1),
+    SC_CALL(Actor_StepAngle),
+    SC_END,
+};
+// clang-format on
+
+const s32 gFieldEffect_BurstParticleScriptA[] = {
+    SC_WAIT(1),
+    SC_LOOP(38, SC_TOP),
+    SC_RELEASE,
+};
+
+const s32 gFieldEffect_BurstParticleScriptB[] = {
+    SC_WAIT(1),
+    SC_LOOP(18, SC_TOP),
+    SC_RELEASE,
+};
+
+const s32 gActor_StepAngleScript[] = {
+    SC_CALL(Actor_StepAngle),
+    SC_END,
+};
+
+/// The frames between the voice's sounds, by message speed option.
+const u8 gMessageSpeed_VoiceRates[] = {
+    [MESSAGE_SPEED_SLOW] = 1,
+    [MESSAGE_SPEED_NORMAL] = 3,
+    [MESSAGE_SPEED_FAST] = 10,
+};
+
+const s32 gFieldEffect_WatchedActorScript[] = {
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
+    SC_WAIT(2),
+    SC_WAIT(30),
+    SC_RELEASE,
+};
+
+const s32 gActor_WaitScript[] = {
+    SC_WAIT(40),
+    SC_RELEASE,
+};
+
+const s32 gMovementType_WanderScript[] = {
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.05),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
+    SC_LABEL(1),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(4, 8, 16),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(4, 8, 16),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(4, 8, 16),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
+
+const s32 gMovementType_StandScript[] = {SC_END};
+
+const s32 gMovementType_ResetActionScript[] = {
+    SC_CALL(Actor_ClearChildAndCollisionFlags),
+    SC_END,
+};
+
+const s32 gMovementType_WanderNearScript[] = {
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.05),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
+    SC_LABEL(1),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(2, 2, 8),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(2, 2, 8),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_ANIMATION(2),
+    SC_WANDER_HOME(2, 2, 8),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(60),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
+
+const s32 gMovementType_WanderCloseScript[] = {
+    SC_SPEED(0.4), SC_ACCELERATION(0.2),          SC_ANIMATION(2),
+    SC_LABEL(1),   SC_WANDER_HOME(2, 2, 6),       SC_SYNC,
+    SC_WAIT(4),    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+const s32 gMovementType_FollowWatchedScript[] = {
+    SC_CALL(Actor_MoveTowardTarget),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+const s32 gMovementType_FaceLeaderScript[] = {
+    SC_CALL(Actor_TurnTowardWatchedActor),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+const s32 gActor_FaceWatchedScript[] = {
+    SC_FACE_WATCHED,
+    SC_WAIT(1),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};

@@ -276,7 +276,12 @@ SECTIONS
         "*/games/tbs/src/graphics/palette_editor/swatch.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/field_sequence_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/scenes.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/field/scripts.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/leader_placement.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/screen_transition_shapes.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/movement_scripts.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/field_effect_tiles.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/field_effect_tables.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/world_picture_markers.o"(.text .rodata .data .padding)
         . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
         "*/games/tbs/src/gamepak/far_call/menu.o"(.text .padding)
         "*/games/tbs/src/menu/menu.o"(.text .padding)

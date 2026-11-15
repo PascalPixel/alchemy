@@ -57,13 +57,13 @@ struct SwitchCell {
 };
 /// One of a ledge jump's dust puffs (FieldEffect_SpawnDustPuff):
 /// SC_WAIT(1) looped 38 times, then SC_RELEASE.
-extern const u8 gFieldEffect_BurstParticleScriptA[];
+extern const s32 gFieldEffect_BurstParticleScriptA[];
 /// The other dust puff: the same, looped 18 times.
-extern const u8 gFieldEffect_BurstParticleScriptB[];
+extern const s32 gFieldEffect_BurstParticleScriptB[];
 extern u32 gWorldMap_GraphicsResources[][6];
 /// SC_WAIT(40), then SC_RELEASE: the one-off attached effect that ends by
 /// itself (FieldEffect_SetAttached, ATTACHED_EFFECT_ONCE).
-extern const u8 gActor_WaitScript[];
+extern const s32 gActor_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitializeSparkles).
 extern const u8 gFieldEffect_SparkleTiles[];
 extern const u8 gField_ExamineTriggerMessageOffsets[];
@@ -106,25 +106,25 @@ extern const u8 gActor_BlinkSpriteColors[];
 // Actor_SetMovementType starts by number, and two turning scripts
 // with no movement type number.
 /// Movement type 1: a lone SC_END.
-extern const u8 gMovementType_StandScript[];
+extern const s32 gMovementType_StandScript[];
 /// Movement type 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
 /// pixel a frame.
-extern const u8 gMovementType_WanderScript[];
+extern const s32 gMovementType_WanderScript[];
 /// Movement type 3: the same within 8 pixels of home.
-extern const u8 gMovementType_WanderNearScript[];
+extern const s32 gMovementType_WanderNearScript[];
 /// Movement type 4: wanders within 6 pixels of home at 0.4 pixels a frame.
-extern const u8 gMovementType_WanderCloseScript[];
+extern const s32 gMovementType_WanderCloseScript[];
 /// Waits to arrive, then turns by Actor_StepAngle until it faces the
 /// kept angle (Actor_LaunchFromLeader).
-extern u8 gActor_LaunchScript;
+extern const s32 gActor_LaunchScript[];
 /// Movement type 5: Actor_MoveTowardTarget every frame, forever.
-extern const u8 gMovementType_FollowWatchedScript[];
+extern const s32 gMovementType_FollowWatchedScript[];
 /// Movement type 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
-extern const u8 gMovementType_ResetActionScript[];
+extern const s32 gMovementType_ResetActionScript[];
 /// Turns by Actor_StepAngle until it faces the kept angle, then SC_END.
-extern const u8 gActor_StepAngleScript[];
+extern const s32 gActor_StepAngleScript[];
 /// Movement type 6: turns toward the leader every frame, forever.
-extern const u8 gMovementType_FaceLeaderScript[];
+extern const s32 gMovementType_FaceLeaderScript[];
 extern const u8 gActor_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
 /// The gauge's tiles, packed (tagged LZ).
@@ -152,7 +152,7 @@ s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);
 
 // The field effects' scripts and tables (field/field_sequence_tables.c,
-// scripts.s and spark_tiles.s).
+// movement_scripts.c, field_effect_tables.c and spark_tiles.s).
 extern const u16 gFieldEffect_CyclePatternWords[];
 extern const s8 gFieldEffect_RandomChildValues[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;

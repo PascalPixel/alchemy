@@ -124,7 +124,7 @@ extern u32 gRandomSeed;
   (*(struct BattleBackgroundWork **)&gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 /// SC_FACE_WATCHED every frame, forever: the script of an actor told to
 /// keep facing its watched actor.
-extern const u8 gActor_FaceWatchedScript[];
+extern const s32 gActor_FaceWatchedScript[];
 /// Where the party returns after a defeat: {scene, entrance (-1 any),
 /// return scene, return entrance} rows, ended by scene -1
 /// (Scene_SetRestartPoint).
@@ -141,7 +141,7 @@ extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Message_SetVoiceFromActor). The same values as
 /// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
-extern u8 gMessageSpeed_VoiceRates[];
+extern const u8 gMessageSpeed_VoiceRates[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The World Map's area markers, {tile << 16 | flag, area} for

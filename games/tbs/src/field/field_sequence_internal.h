@@ -122,6 +122,14 @@ struct TransitionSpan {
   u8 y1; ///< screen pixels: the right edge the run moves toward
 };
 
+/// A window transition's value: from 0, the screen covered, it opens to
+/// TRANSITION_OPEN and closes again to TRANSITION_CLOSED; a mode draws the
+/// opening half and the closing half mirrored.
+#define TRANSITION_OPEN 32
+#define TRANSITION_CLOSED 64
+/// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
+#define TRANSITION_SHOW_ALL 0x7f7f
+
 /// One step of WINDOW_TRANSITION_SHAPE, a row of
 /// gScreenTransition_Shapes chosen by the progress: the WININ and WINOUT
 /// values, swapped as the transition opens or closes, and three runs of lines
@@ -132,9 +140,9 @@ struct TransitionShape {
   struct TransitionSpan spans[3];
 };
 
-extern struct TransitionShape gScreenTransition_Shapes[];
+extern struct TransitionShape gScreenTransition_Shapes[TRANSITION_OPEN];
 
-/// The party leader's actor placement table (scripts.s), which
+/// The party leader's actor placement table (leader_placement.c), which
 /// Actor_ResetForLeader copies into the field work.
 extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 

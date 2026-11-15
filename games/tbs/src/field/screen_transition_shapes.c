@@ -1,0 +1,54 @@
+/// @file
+/// The window shapes of WINDOW_TRANSITION_SHAPE, one for each step of its
+/// progress (ScreenTransition_UpdateScanlineTable).
+
+#include "system/io_reg.h"
+#include "field_sequence_internal.h"
+
+/// A run of lines all with the window from left to right; (255, 255) is a
+/// window that shows nothing.
+#define SPAN_FILL(lines, left, right) {lines, WIN_RANGE(left, right)}
+/// A run of lines whose window edges slide from (leftFrom, rightFrom) toward
+/// (leftTo, rightTo).
+#define SPAN_SLOPE(lines, leftFrom, leftTo, rightFrom, rightTo)                \
+  {lines, 0, leftFrom, leftTo, rightFrom, rightTo}
+
+// clang-format off
+struct TransitionShape gScreenTransition_Shapes[TRANSITION_OPEN] = {
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 150, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 167, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 188, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 217, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(36, 120, 240), SPAN_SLOPE(44, 120, 120, 240, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(59, 120, 240), SPAN_SLOPE(21, 120, 120, 240, 120), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_FILL(80, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(21, 120, 240, 240, 240), SPAN_FILL(59, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(44, 120, 240, 240, 240), SPAN_FILL(36, 255, 255)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(80, 120, 217, 240, 240)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(80, 120, 188, 240, 240)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(80, 120, 167, 240, 240)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(80, 120, 150, 240, 240)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(80, 120, 240), SPAN_SLOPE(80, 120, 134, 240, 240)}},
+    {1, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 120, 240)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(80, 0, 0, 120, 106)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(80, 0, 0, 120, 90)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(80, 0, 0, 120, 73)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(80, 0, 0, 120, 52)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(80, 0, 0, 120, 23)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(44, 0, 0, 120, 0), SPAN_FILL(36, 255, 255)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_SLOPE(21, 0, 0, 120, 0), SPAN_FILL(59, 255, 255)}},
+    {0x7f, 0x101, {SPAN_FILL(80, 0, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_FILL(59, 0, 120), SPAN_SLOPE(21, 0, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_FILL(36, 0, 120), SPAN_SLOPE(44, 0, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_SLOPE(80, 23, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_SLOPE(80, 52, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_SLOPE(80, 73, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_SLOPE(80, 90, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+    {0x7f, 0x101, {SPAN_SLOPE(80, 106, 120, 120, 120), SPAN_FILL(80, 255, 255)}},
+};
+// clang-format on
+
+/// Unused: twelve bytes after the shapes that no code names.
+u8 gScreenTransition_UnusedBytes[] = {0, 2, 4, 2, 0, 2, 4, 2, 0, 2, 4, 2};

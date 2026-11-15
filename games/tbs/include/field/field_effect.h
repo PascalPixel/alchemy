@@ -127,6 +127,11 @@ enum EffectDuration {
   EFFECT_SCRIPT_LONG = 2    ///< 126 repeats in a scene, 128 frames resident
 };
 
+/// The resident scripts, by EffectDuration (field_sequence_tables.c).
+extern const s32 gFieldEffect_ShortEffectScript[];
+extern const s32 gFieldEffect_MediumEffectScript[];
+extern const s32 gFieldEffect_LongEffectScript[];
+
 /// The three scripts a scene's own effect spawner picks from by
 /// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
 /// whole.

@@ -4,14 +4,6 @@
 
 #include "field_sequence_internal.h"
 
-/// A window transition's value: from 0, the screen covered, it opens to
-/// TRANSITION_OPEN and closes again to TRANSITION_CLOSED; a mode draws the
-/// opening half and the closing half mirrored.
-#define TRANSITION_OPEN 32
-#define TRANSITION_CLOSED 64
-/// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
-#define TRANSITION_SHOW_ALL 0x7f7f
-
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line

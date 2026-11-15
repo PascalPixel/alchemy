@@ -110,8 +110,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* LEFTOVER(template): cur holds &cursorStorage, as BattlePsynergyMenu_Run's
-     * iconSprite holds its cursor. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage. */
     cur = &cursorStorage;
 
     // Redraw when the page or row changes.

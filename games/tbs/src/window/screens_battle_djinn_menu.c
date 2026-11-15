@@ -135,8 +135,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   work->dirty = 1;
 
   for (;;) {
-    /* LEFTOVER(template): sprite holds &cursorStorage, as
-     * BattlePsynergyMenu_Run's iconSprite holds its cursor. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
     struct CursorSprite *sprite = &cursorStorage;
 
     // Rebuild descriptions only when the selection or preview page changes:

@@ -150,27 +150,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         x = toFIXED(80);
       }
       z = -toFIXED(96);
-      {
-        volatile u16 *ime;
-        struct IoWriteQueue *q;
-        u32 saved;
-        s32 count;
-
-        q = &gIoWriteQueue;
-        ime = &REG_IME;
-        IME_SAVE(ime, saved);
-        IME_DISABLE(ime);
-        count = *&q->count;
-        if (count <= 31) {
-          u32 *entry = q->entries[count];
-
-          *&q->count = count + 1;
-          *entry++ = 0x784;
-          *entry++ = (u32)&REG_BG2CNT;
-          *entry = IO_WRITE_HALFWORD;
-        }
-        IME_RESTORE(ime, saved);
-      }
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
+                          BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                              BGCNT_SCREEN_BASE(7),
+                          IO_WRITE_HALFWORD);
     }
     if (frame == 1) {
       transition[4] = 1;
@@ -274,10 +257,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       target->x = zero;
       target->z = zero;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;
@@ -288,27 +268,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       gProjection.centerY -= d;
     }
     if (frame == 84) {
-      {
-        volatile u16 *ime;
-        struct IoWriteQueue *q;
-        u32 saved;
-        s32 count;
-
-        q = &gIoWriteQueue;
-        ime = &REG_IME;
-        IME_SAVE(ime, saved);
-        IME_DISABLE(ime);
-        count = *&q->count;
-        if (count <= 31) {
-          u32 *entry = q->entries[count];
-
-          *&q->count = count + 1;
-          *entry++ = 0x785;
-          *entry++ = (u32)&REG_BG2CNT;
-          *entry = IO_WRITE_HALFWORD;
-        }
-        IME_RESTORE(ime, saved);
-      }
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
+                          BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
+                              BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7),
+                          IO_WRITE_HALFWORD);
       Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -388,7 +351,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       } while (0);
       model->mesh = strip;
       {
-        s32 half = 0x8000;
+        s32 half = FIXED_ONE / 2;
 
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
@@ -522,7 +485,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s = (t << 14) + 0x4000;
+          s = (t << 14) + FIXED_ONE / 4;
           model->shade = shade;
           Matrix_Initialize();
           if (i <= 1) {
@@ -555,8 +518,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (shade > 0) {
           shade = 0;
         }
-        if (s > 0x10000) {
-          s = 0x10000;
+        if (s > FIXED_ONE) {
+          s = FIXED_ONE;
         }
         if (t > 47) {
           s = s - (t << 12) + 0x30000;

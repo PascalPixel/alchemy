@@ -81,7 +81,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 i;
   u8 *cells;
   u8 *pal;
-  s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -222,7 +221,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     depth += zoom;
     if (frame <= 47) {
-      zoom -= 0x4000;
+      zoom -= FIXED_ONE / 4;
     }
     if (frame > 32) {
       zoom = zoom * 60 / DAMPING_SCALE;
@@ -623,9 +622,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                           JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 66) <= 1) {
-      /* FAKEMATCH(temporary): the width through a local set at both draws of
-       * this picture. */
-      width = 24;
+      s32 width = JUDGMENT_SHEET_FLASH_LARGE_WIDTH;
+
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
               JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }
@@ -646,7 +644,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                           JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }
     if ((u32)(frame - 80) <= 1) {
-      width = 24;
+      s32 width = JUDGMENT_SHEET_FLASH_LARGE_WIDTH;
+
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, width,
               JUDGMENT_SHEET_FLASH_LARGE_HEIGHT);
     }
@@ -855,7 +854,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           }
           scale[1] = scale[0];
           drift[0] = p->x;
-          drift[1] = 0xff0000;
+          drift[1] = toFIXED(255);
           drift[2] = p->y + toFIXED(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;

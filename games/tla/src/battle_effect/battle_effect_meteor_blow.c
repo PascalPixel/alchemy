@@ -93,9 +93,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -378,8 +376,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       z += speed;
       size += 512;
-    } else if (size > 0x10000) {
-      size = 0x10000;
+    } else if (size > FIXED_ONE) {
+      size = FIXED_ONE;
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -394,7 +392,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
-  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both\n //
+  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both
   // moves.
   hx = 200;
   hz = 0;
@@ -419,9 +417,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_BILLOW, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                       SHEET_PALETTE_BYTES);
+  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   {
     s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
 
@@ -446,7 +442,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame <= 33) {
       summonScale = gMeteorBlow_DoubleScale;
       summonPlace[3] = 0;
-      summonPlace[1] = 0xff0000;
+      summonPlace[1] = toFIXED(255);
       summonPlace[0] = INTtoFIXED(hx);
       summonPlace[2] = INTtoFIXED(hz);
       if (frame <= 15) {

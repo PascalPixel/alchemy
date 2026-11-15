@@ -13,18 +13,18 @@ struct SpritePlacement {
 #ifdef UBFIX
   union {
     struct {
-      s32 x;            ///< screen x of the sprite's centre
-      s32 height;       ///< how far the image is raised above y
-      s32 y;            ///< screen y at the ground; sets the depth slot
-      s32 groundHeight; ///< how far the shadow is raised above y
+      FIXED x;            ///< screen x of the sprite's centre
+      FIXED height;       ///< how far the image is raised above y
+      FIXED y;            ///< screen y at the ground; sets the depth slot
+      FIXED groundHeight; ///< how far the shadow is raised above y
     };
-    s32 values[4];
+    FIXED values[4];
   };
 #else
-  s32 x;            ///< screen x of the sprite's centre
-  s32 height;       ///< how far the image is raised above y
-  s32 y;            ///< screen y at the ground; sets the depth slot
-  s32 groundHeight; ///< how far the shadow is raised above y
+  FIXED x;            ///< screen x of the sprite's centre
+  FIXED height;       ///< how far the image is raised above y
+  FIXED y;            ///< screen y at the ground; sets the depth slot
+  FIXED groundHeight; ///< how far the shadow is raised above y
 #endif
 };
 

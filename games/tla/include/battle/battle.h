@@ -4,6 +4,7 @@
 /// @file
 /// The battle bank's routines and globals, as the other banks see them.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 #include "system/vector3.h"
@@ -127,9 +128,9 @@ struct ParticleEffectObject {
 };
 /// A point in the field, in 16.16 pixels.
 struct ParticlePosition {
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 };
 extern const u8 gBattleEffect_ArcTiles[];
 extern u16 gBattleEffect_EightWayHeadingWords[];

@@ -17,12 +17,12 @@ union FieldObject;
 /// pixels on the field or on the screen, and the frames since it began
 /// (negative before it starts, or while it is free).
 struct FieldPsynergyParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
   s32 timer;
 };
 

@@ -91,15 +91,15 @@ struct FxSlot {
 
 /// A point or a velocity, 16.16 pixels.
 struct Point2D {
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
 };
 
 /// A sprite's scale across and down, 16.16, as an effect keeps it in a local
 /// (struct SpriteScale is the same pair as a union with an array).
 struct Scale {
-  s32 x;
-  s32 y;
+  FIXED x;
+  FIXED y;
 };
 
 /// An effect's variant (BattleEffectParams.variant): abilities of one family

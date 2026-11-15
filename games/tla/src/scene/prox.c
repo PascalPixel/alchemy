@@ -2376,9 +2376,9 @@ extern s16 gSlideOnIce_SteerAngles[];
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 };
 
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);

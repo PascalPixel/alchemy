@@ -58,11 +58,11 @@ void SummonTablet_CyclePictures(struct Actor *object) {
 
 /// A point chasing its target on the ground, 16.16 pixels.
 struct Chase {
-  s32 x;
-  s32 z;
+  FIXED x;
+  FIXED z;
   s32 unk08;
-  s32 targetX;
-  s32 targetZ;
+  FIXED targetX;
+  FIXED targetZ;
 };
 
 /// Moves toward the target by speed, stopping on it on overshoot.

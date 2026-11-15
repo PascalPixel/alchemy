@@ -16,7 +16,7 @@ struct LayeredSprite {
   u16 priority : 2;
   u16 palette : 4;
   u8 unusedAfterPalette[2]; ///< no code names it
-  s32 scale;
+  FIXED scale;
   u8 unusedAfterScale[2]; ///< no code names it
   u16 rotation;
   u8 unk14[6];

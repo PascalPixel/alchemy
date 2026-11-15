@@ -127,7 +127,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
 /// A scale of the Champa forge's glow, 16.16; a union, so that a store to it
 /// keeps its place after the sprite's (ChampaCliffCaves_DrawSparks).
 union ChampaCliffCavesScale {
-  s32 value;
+  FIXED value;
   u16 half;
 };
 

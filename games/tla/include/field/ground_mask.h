@@ -4,6 +4,7 @@
 /// @file
 /// What The Lost Age's code declares for the files that use it, written once.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "field/sprite.h"
 
@@ -36,9 +37,9 @@ struct GroundParticle {
   u16 priority : 2;
   u16 palette : 4;
   u8 unusedAfterPalette[2]; ///< no code names it
-  s32 posX;
-  s32 posY;
-  s32 posZ;
+  FIXED posX;
+  FIXED posY;
+  FIXED posZ;
   s32 delay;
   u16 timer;
   u8 unusedAfterTimer[2]; ///< no code names it

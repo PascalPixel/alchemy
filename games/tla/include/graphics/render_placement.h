@@ -10,18 +10,18 @@ struct SpritePlacement {
 #ifdef UBFIX
   union {
     struct {
-      s32 x;
-      s32 height;
-      s32 y;
-      s32 groundHeight;
+      FIXED x;
+      FIXED height;
+      FIXED y;
+      FIXED groundHeight;
     };
-    s32 values[4];
+    FIXED values[4];
   };
 #else
-  s32 x;
-  s32 height;
-  s32 y;
-  s32 groundHeight;
+  FIXED x;
+  FIXED height;
+  FIXED y;
+  FIXED groundHeight;
 #endif
 };
 

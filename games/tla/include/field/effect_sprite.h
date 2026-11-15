@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_EFFECT_SPRITE_H
 #define ALCHEMY_EFFECT_SPRITE_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "graphics/render_input.h"
@@ -13,10 +14,10 @@
 struct EffectSprite {
   struct EffectSprite *next;
   struct RenderOam oam;
-  s32 x;
-  s32 y;
-  s32 scaleX;
-  s32 scaleY;
+  FIXED x;
+  FIXED y;
+  FIXED scaleX;
+  FIXED scaleY;
   u16 angle;
   s16 depth;
   u16 width;

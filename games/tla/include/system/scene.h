@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_SCENE_H
 #define ALCHEMY_SCENE_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 
@@ -11,9 +12,9 @@ s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 /// A position on the field in 16.16 fixed-point pixels.
 struct FieldPosition {
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 };
 
 /// The running scene's overlay, loaded into this EWRAM at each scene change;

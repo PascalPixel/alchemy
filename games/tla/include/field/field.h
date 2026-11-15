@@ -204,12 +204,12 @@ struct OamWords {
 
 /// A die of the dice game: its place and velocity, 16.16, and its variant.
 struct DiceParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
   s32 variant;
 };
 
@@ -230,8 +230,8 @@ struct DiceSprites {
 
 /// The dice games' camera: the eye and the point it looks at, 16.16.
 struct DiceCamera {
-  s32 eye[3];
-  s32 focus[3];
+  FIXED eye[3];
+  FIXED focus[3];
 };
 
 struct ObjectSystemColours {

@@ -428,9 +428,9 @@ void Sanctum_DrawFee(struct RenderInput *window, s32 unitId) {
 
 /// A position in 16.16 fixed-point pixels, as Vector_AddPolarOffset moves it.
 struct Point {
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
 };
 
 /// Runs one sparkle of the service's burst: placed on a ring 40 pixels out and

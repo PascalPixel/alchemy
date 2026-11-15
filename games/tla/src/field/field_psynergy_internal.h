@@ -58,9 +58,9 @@ void FieldEffect_AdvanceMotion(union FieldObject *object);
 /// A spark that circles a centre: the centre in 16.16 fixed-point pixels, the
 /// angle and radius it is drawn at, and its age in frames (-1 while unused).
 struct WhirlSpark {
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x;
+  FIXED y;
+  FIXED z;
   s32 angle;            ///< 1/65536 turns
   s32 unusedAfterAngle; ///< no code names it
   FIXED radius;         ///< 16.16 fixed-point pixels

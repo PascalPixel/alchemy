@@ -80,14 +80,21 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushBlock(void);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 extern u16 gPushKinds[];
-extern s16 gLightSpriteCount;
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gLighthousePalette13[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitColors[];
-extern s32 gWhirlwindRiding;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -226,8 +233,6 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 }
 
 #include "shared/palette_cycle_step.h"
-
-extern u16 gLighthousePalette13[];
 
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
@@ -483,10 +488,6 @@ void PushTarget_UpdatePusher(struct Actor *object) {
                                          object->y.fixed, object->z.fixed);
 }
 
-extern s16 gLightSpriteTile;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -541,7 +542,6 @@ struct FieldEffect;
 s32 CrackedTiles_Step(void);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void Leader_CenterInCell(void);
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -581,7 +581,6 @@ struct CellTargetEntry;
 s32 CrackedTiles_Step(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern u16 gPushKinds[];
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 #include "shared/cracked_tile_drop_in.h"

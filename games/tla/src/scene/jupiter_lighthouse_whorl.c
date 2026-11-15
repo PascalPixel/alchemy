@@ -93,7 +93,19 @@ enum JupiterLighthouseWhorlActorId {
 
 extern s16 gJupiterLighthouse_WhorlPoundTargets[];
 extern s32 gPaletteCyclePausesInEvents;
-extern s16 gLightSpriteCount;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gLighthousePalette13[2] BSS_DATA;
+u16 gLighthouseUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+u32 gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -720,12 +732,8 @@ extern s32 gPaletteCycleFrame;
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
-extern u16 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"
-
-extern u16 gLighthousePalette13[];
-extern u16 gLighthouseUnlitColors[];
 
 void MapGrid_SetAttributeBAt();
 
@@ -753,7 +761,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 #include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
-extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 FIXED Trig_Cos(s32 angle);
@@ -792,15 +799,10 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
-extern s16 gLightSpriteTile;
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
 
-extern s16 gLightSpriteCount;
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
@@ -853,9 +855,6 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 }
 
 #include "shared/actor_set_cell_open.h"
-
-extern u32 gLightSpriteActors[];
-extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
@@ -919,8 +918,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 #include "shared/cracked_tile_drop_in.h"
-
-extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 

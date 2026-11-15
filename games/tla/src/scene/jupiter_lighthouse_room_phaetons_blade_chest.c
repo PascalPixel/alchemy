@@ -25,6 +25,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
@@ -60,15 +61,22 @@ struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_LoadPalettes(s32 mode);
-extern s16 gLightSpriteTile;
-extern struct Actor *gLightSpriteActors[16];
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
 void Whirlwind_CarryLeader(void);
-extern s32 gWhirlwindRiding;
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
 
@@ -268,11 +276,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern s16 gLightSpriteCount;
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -454,7 +457,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 struct CellTarget;
 struct CellTargetEntry;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 void JupiterLighthouse_StopHovering(void);
 void Whirlwind_CarryLeader(void);

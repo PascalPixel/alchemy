@@ -408,7 +408,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_entrance.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_entrance.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x699
@@ -426,7 +426,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_basement.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69a
@@ -444,7 +444,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_gate_button.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_gate_button.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69b
@@ -462,7 +462,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_beam.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_beam.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69c
@@ -481,7 +481,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69d
@@ -499,7 +499,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_locked_doors.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_locked_doors.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69e
@@ -517,7 +517,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_red_key.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_red_key.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69f
@@ -535,7 +535,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_cracked_floor.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_cracked_floor.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a0
@@ -554,7 +554,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_whorl.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_whorl.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a1
@@ -573,7 +573,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_blue_key.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_blue_key.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a2
@@ -591,7 +591,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_phaetons_blade_chest.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_phaetons_blade_chest.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a3
@@ -610,7 +610,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_m.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a4
@@ -628,7 +628,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_aerie.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a5
@@ -647,7 +647,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_aerie_beacon.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a6

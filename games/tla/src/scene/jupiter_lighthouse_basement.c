@@ -64,10 +64,19 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOam[];
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOam[16] BSS_DATA;
+s16 gLightSpriteLargeOam BSS_DATA;
+s16 gJupiterLighthouse_LightLevel BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void Import_MapGridSetCellHeight();
 
 void Leader_CenterInCell(void);
@@ -84,10 +93,6 @@ extern u32 gFieldEffect_LongScript[];
 
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
-extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -329,8 +334,6 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-extern s16 gJupiterLighthouse_LightLevel;
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 #include "shared/whirlwind_spawn.h"
@@ -356,7 +359,6 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
 }
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
-extern s16 gLightSpriteLargeOam;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -522,7 +524,6 @@ struct CellTargetEntry;
 #undef CELL_PUSH_SLOT_ENTRY
 #include "shared/cracked_tile_drop_in.h"
 
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 

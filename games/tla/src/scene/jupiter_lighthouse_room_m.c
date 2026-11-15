@@ -116,16 +116,22 @@ void Whirlwind_CarryLeader(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritePriority;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-
-extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -135,8 +141,6 @@ s32 Event_ClearInvalidPackedValues();
 void HangingVine_Place(s32 id, s32 mode);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetAttributeBAt();
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -182,8 +186,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-extern s32 gWhirlwindRiding;
 
 struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source);
 
@@ -1661,7 +1663,6 @@ extern s32 gPaletteCycleFrame;
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
-extern u16 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"
 
@@ -1715,8 +1716,6 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
-
-extern s16 gLightSpritesLarge;
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16

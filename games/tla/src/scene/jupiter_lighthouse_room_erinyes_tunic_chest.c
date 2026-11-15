@@ -99,15 +99,24 @@ static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_JumpForward(void);
-extern s32 gWhirlwindRiding;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
+struct CellTarget gCrackedTiles BSS_DATA;
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 extern u16 gPushKinds[];
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void PaletteCycle_StepAt(void);
 
@@ -117,9 +126,6 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
 extern s32 gPaletteCyclePausesInEvents;
-extern const u16 gPaletteCycleColors[];
-extern const u16 gPaletteCycleUnlitPalette[];
-extern const u16 gPaletteCycleUnlitColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -529,8 +535,6 @@ void PushTarget_UpdatePusher(struct Actor *object) {
                                          object->y.fixed, object->z.fixed);
 }
 
-extern s16 gLightSpriteTile;
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -582,10 +586,6 @@ s32 gPushLeaderSteps[] = {
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
-/// leader steps on.
-extern struct CellTarget gCrackedTiles;
-
 void CrackedTiles_Update(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -626,7 +626,6 @@ extern u16 gPushKinds[];
 
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.
-extern struct CellTarget gCrackedTiles;
 
 #include "shared/cracked_tile_drop_in.h"
 

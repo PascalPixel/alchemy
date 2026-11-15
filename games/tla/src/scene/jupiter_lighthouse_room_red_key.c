@@ -107,15 +107,21 @@ void Actor_PlaceBlocks(void *data);
 void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
                                        s32 pivotY, u32 attributes, s32 tile);
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 
 void Leader_CenterInCell(void);
-
-extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -132,9 +138,6 @@ extern u32 gFieldEffect_LongScript[];
 struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetAttributeBAt();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
@@ -664,7 +667,6 @@ void MapGrid_SetCellHeight();
 #include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
-extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -858,8 +860,6 @@ void JupiterLighthouse_EndSparkRing(void) {
   VramCache_FreeEntry(work->vramEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
-
-extern struct LightOam gLightSpriteOams[];
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16

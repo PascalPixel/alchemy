@@ -81,23 +81,29 @@ void BattleEffect_FillOverlayTiles(s32 a);
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
-extern s32 gWhirlwindRiding;
+struct EffectSprite gJupiterLighthouse_GlowSprite BSS_DATA ALIGNED(16);
+s32 gJupiterLighthouse_GlowPosition[3] BSS_DATA;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gLighthousePalette13[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritePriority;
-
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
-
-extern struct CellTarget gCrackedTiles;
 
 void JupiterLighthouse_CycloneUpOnWestPad(void);
 void JupiterLighthouse_CycloneUpOnEastPad(void);
@@ -115,12 +121,8 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
-extern s32 gJupiterLighthouse_GlowPosition[3];
-extern const u8 gJupiterLighthouse_GlowSprite[];
 void EffectSprite_InitWithFadeOverlayBlended(const void *script, s32 a, s32 b,
                                              s32 c);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -147,7 +149,7 @@ void JupiterLighthouse_SetLayerCellsByLeader(void) {
 
 void JupiterLighthouse_DrawGlow(void) {
   BattleEffect_DrawSpriteAtWorldPosition(
-      (s32)gJupiterLighthouse_GlowSprite, gJupiterLighthouse_GlowPosition[0],
+      (s32)&gJupiterLighthouse_GlowSprite, gJupiterLighthouse_GlowPosition[0],
       gJupiterLighthouse_GlowPosition[1], gJupiterLighthouse_GlowPosition[2]);
 }
 
@@ -486,7 +488,7 @@ s32 Scene_Initialize(void) {
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlayBlended,
-        (s32)gJupiterLighthouse_GlowSprite, 0, 0, 0x80000000);
+        (s32)&gJupiterLighthouse_GlowSprite, 0, 0, 0x80000000);
   JupiterLighthouse_SetLayerCellsByLeader();
   JupiterLighthouse_SpawnBeamMotes();
   if (Event_GetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
@@ -537,8 +539,6 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 }
 
 #include "shared/palette_cycle_step_at.h"
-
-extern u16 gLighthousePalette13[];
 
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
@@ -595,8 +595,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
-
-extern s16 gLightSpritesLarge;
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16

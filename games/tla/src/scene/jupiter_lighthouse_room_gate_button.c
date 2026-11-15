@@ -24,6 +24,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/field_event.h"
@@ -63,18 +64,22 @@ enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
 struct Actor;
 struct LightOam;
 void Actor_ArriveInRing(s32 owner);
-extern s32 gWhirlwindRiding;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -224,8 +229,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern struct LightOam gLightSpriteOams[];
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -374,7 +377,6 @@ extern u32 gFieldEffect_LongScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 

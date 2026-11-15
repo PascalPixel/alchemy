@@ -43,18 +43,9 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (args->variant == EFFECT_VARIANT_BASIC) {
-    const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_RedPaletteB);
   } else if (args->variant == EFFECT_VARIANT_STRONGEST) {
-    const void *palette =
-        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-    s32 (*copy)(void *destination, const void *source, s32 size) =
-        Iwram_CopyWordsEntry;
-
-    copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

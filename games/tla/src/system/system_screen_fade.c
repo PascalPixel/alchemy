@@ -38,22 +38,15 @@ void ScreenFade_Update(void) {
       }
       *blendControl = control;
     }
-    {
-      s32 level;
-
-      // level = target + (start - target) * remaining / duration: BLDY moves
-      // in a straight line and reaches the target as remaining reaches 0.
-      gScreenFadeVBlanksLeft--;
-      /* FAKEMATCH(dead): the level and its BLDY write in a once-only block. */
-      do {
-        level = gScreenFadeTargetLevel;
-        level += (gScreenFadeStartLevel - gScreenFadeTargetLevel) *
-                 gScreenFadeVBlanksLeft / gScreenFadeVBlanks;
-        REG_BLDY = level;
-      } while (0);
-      if (gScreenFadeVBlanksLeft == 0)
-        gScreenFadeVBlanks = 0;
-    }
+    // BLDY = target + (start - target) * remaining / duration: it moves in a
+    // straight line and reaches the target as remaining reaches 0.
+    gScreenFadeVBlanksLeft--;
+    Io_Write16(gScreenFadeTargetLevel +
+                   (gScreenFadeStartLevel - gScreenFadeTargetLevel) *
+                       gScreenFadeVBlanksLeft / gScreenFadeVBlanks,
+               &REG_BLDY);
+    if (gScreenFadeVBlanksLeft == 0)
+      gScreenFadeVBlanks = 0;
   }
 }
 

@@ -1923,18 +1923,18 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
 
 /// Places each of the 32 entry icons on the grid.
 void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
-  s32 i;
-  struct WindowSprite *obj;
-  struct WindowSprite **table;
+  s32 entryIndex;
+  struct WindowSprite *icon;
+  struct WindowSprite **icons;
 
-  i = 0;
-  table = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
-  do {
-    obj = *table++;
-    if (obj != NULL)
-      Menu_PlaceEntryActorInGrid(obj, i, originX, originY, columns);
-    i += 1;
-  } while (i <= 0x1F);
+  for (entryIndex = 0,
+      icons = ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
+       entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
+    icon = *icons++;
+    if (icon != NULL) {
+      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
+    }
+  }
 }
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of

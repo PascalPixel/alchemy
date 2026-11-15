@@ -1296,16 +1296,14 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 
-s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  u8 *action = Ability_Get((u32)(no << 18) >> 18);
-  u32 flags;
+s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
+  // Mask the unsigned entry without overflowing a signed left shift.
+  struct AbilityDefinition *action =
+      Ability_Get(((u32)actionEntry << 18) >> 18);
 
-  if (action[6] == 0) {
-    flags = action[1] & 0xc0;
-    no = 1;
-    if (flags != 0xc0)
-      return no;
-  }
-  no = 0;
-  return no;
+  if (action->fieldPsynergy != 0 ||
+      (action->flags & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==
+          (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE))
+    return 0;
+  return 1;
 }

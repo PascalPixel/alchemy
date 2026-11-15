@@ -690,26 +690,26 @@ s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
 /// Counts each party member's Djinn across its set and available bitmasks:
 /// writes every party member's total, set or not, into ownedCounts by list
 /// column.
-void Djinn_CountOwned(u8 *counts) {
-  struct DjinnMenuWork *work;
+void Djinn_CountOwned(u8 *ownedCounts) {
+  struct DjinnMenuWork *menu;
   struct Unit *unit;
-  s32 ownerIndex;
+  s32 memberIndex;
   s32 element;
-  s32 bit;
-  s32 count;
+  s32 djinnIndex;
+  s32 ownedCount;
 
-  work = Ram_HeapSlots->menuWork;
-  for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
-    unit = Unit_Get(work->members[ownerIndex]);
-    count = 0;
+  menu = Ram_HeapSlots->menuWork;
+  for (memberIndex = 0; memberIndex < menu->memberCount; memberIndex++) {
+    unit = Unit_Get(menu->members[memberIndex]);
+    ownedCount = 0;
     for (element = 0; element <= 3; element++) {
-      for (bit = 0; bit <= 19; bit++) {
-        if (unit->djinnSet[element] & (1 << bit))
-          count++;
-        else if (unit->djinnHeld[element] & (1 << bit))
-          count++;
+      for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
+        if (unit->djinnSet[element] & (1 << djinnIndex))
+          ownedCount++;
+        else if (unit->djinnHeld[element] & (1 << djinnIndex))
+          ownedCount++;
       }
     }
-    counts[ownerIndex] = count;
+    ownedCounts[memberIndex] = ownedCount;
   }
 }

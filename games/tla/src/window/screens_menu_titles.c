@@ -195,45 +195,45 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
 /// shows wherever the moved pixel is colour 0.
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift) {
-  s32 neg;
-  s32 rshift;
-  s32 lshift;
-  s32 i;
+  s32 oppositeShift;
+  s32 rightShift;
+  s32 leftShift;
+  s32 row;
 
-  neg = -shift;
-  i = 0;
-  rshift = neg * 4;
-  lshift = shift * 4;
+  oppositeShift = -shift;
+  row = 0;
+  rightShift = oppositeShift * 4;
+  leftShift = shift * 4;
 
   do {
     u32 result;
     u32 shifted;
     u32 fallback;
-    s32 j;
+    s32 pixel;
 
     shifted = *second++;
     result = 0;
     fallback = *first++;
     if (shift < 0)
-      shifted >>= rshift;
+      shifted >>= rightShift;
     else
-      shifted <<= lshift;
+      shifted <<= leftShift;
 
-    j = 7;
+    pixel = 7;
     do {
       result <<= 4;
       if (shifted > 0x0FFFFFFF)
         result += shifted >> 28;
       else
         result += fallback >> 28;
-      j--;
+      pixel--;
       shifted <<= 4;
       fallback <<= 4;
-    } while (j >= 0);
+    } while (pixel >= 0);
 
     *output++ = result;
-    i++;
-  } while (i <= 7);
+    row++;
+  } while (row <= 7);
 }
 
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at
@@ -333,11 +333,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// returns the entry's first tile.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
-  u8 *work;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   Icon_DrawMisc(resource);
-  result = VramCache_Reload(index, (s32)(work + 0x400));
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -347,12 +347,12 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 /// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  u8 *work;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   ItemIcon_Compose(resource,
                    ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
-  result = VramCache_Reload(index, (s32)(work + 0x400));
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -361,17 +361,17 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
 /// slot 17, reloads VRAM cache entry `index` with it and returns the entry's
 /// first tile.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
-  s32 out;
-  s32 cur;
-  s32 ret;
-  u8 *work;
+  s32 tile;
+  s32 slot;
+  s32 result;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  cur = index;
-  Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-  ret = VramCache_Reload(index, (s32)(work + 0x400));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  slot = index;
+  Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  return ret;
+  return result;
 }
 
 s32 Portrait_Load(u32 entry, s32 slot) {

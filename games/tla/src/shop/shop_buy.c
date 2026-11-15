@@ -872,14 +872,16 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
 /// indispensable item, half the price for a broken one, three quarters
 /// otherwise.
 s32 Shop_SalePrice(s32 inventoryEntry) {
-  s32 price;
+  s32 salePrice;
 
-  price = (u16)Item_GetDirectFar(inventoryEntry)->price;
-  if (Item_GetDirectFar(inventoryEntry)->flags & ITEM_INDISPENSABLE)
-    price = 0;
-  else if (inventoryEntry & INVENTORY_BROKEN)
-    price /= 2;
-  else
-    price = price * 3 / 4;
-  return price;
+  salePrice = Item_GetDirectFar(inventoryEntry)->price;
+
+  if (Item_GetDirectFar(inventoryEntry)->flags & ITEM_INDISPENSABLE) {
+    salePrice = 0;
+  } else if (inventoryEntry & INVENTORY_BROKEN) {
+    salePrice = salePrice / 2;
+  } else {
+    salePrice = salePrice * 3 / 4;
+  }
+  return salePrice;
 }

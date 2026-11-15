@@ -13,7 +13,7 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
-  struct OwnerInventoryState *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
 
   unit = Unit_Get(memberId);

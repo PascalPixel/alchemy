@@ -34,13 +34,11 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 /// Empties the battle's spoils and the party's pending item. Called by
 /// Battle_Run.
 void BattleSpoils_Clear(void) {
-  struct BattleWork *battle;
-  struct BattleSpoils *spoils;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleSpoils *spoils = &battle->spoils;
   u16 *items;
   s32 index;
 
-  battle = Ram_HeapSlots->battleWork;
-  spoils = &battle->spoils;
   gMainRoutineWork.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;

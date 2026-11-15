@@ -861,15 +861,14 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
 
 /// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
-  s32 hiddenState = ICON_HIDDEN;
   struct WindowSprite **icons =
       ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   s32 slot;
 
-  for (slot = MENU_ENTRY_ICONS - 1; slot >= 0; slot--) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
-      icon->motion = hiddenState;
+      icon->motion = ICON_HIDDEN;
     }
   }
 }

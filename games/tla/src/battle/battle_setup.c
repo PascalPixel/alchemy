@@ -105,33 +105,35 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// Fills the battle's two unit lists: the party in its order, and the enemies
 /// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
-  u16 buf[UNIT_MAX];
+  u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
   s32 count;
   s32 i;
-  s32 index;
-  s32 kind;
+  s32 position;
+  s32 formation;
 
   battle = Ram_HeapSlots->battleWork;
-  count = BattleParty_PrepareMembers(buf);
+  count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++)
-    battle->partyUnits[i] = buf[i];
+    battle->partyUnits[i] = unitIds[i];
   battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
-  count = BattleEnemy_List(buf);
-  kind = battle->layout;
-  if (kind >= FORMATION_LAYOUT_SHUFFLED) {
-    if (kind <= FORMATION_LAYOUT_INTERLEAVED) {
+  // The shuffled and interleaved formations keep the enemies in unit order; the
+  // others put the first in the centre and the rest either side of it.
+  count = BattleEnemy_List(unitIds);
+  formation = battle->layout;
+  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
+    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
       for (i = 0; i < count; i++)
-        battle->enemyIds[i] = buf[i];
-      goto done;
+        battle->enemyIds[i] = unitIds[i];
+      goto placed;
     }
   }
   for (i = 0; i < count; i++) {
-    index = gBattleParty_CenterOrderOffsets[i] + count / 2;
-    battle->enemyIds[index] = buf[i];
+    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+    battle->enemyIds[position] = unitIds[i];
   }
-done:
+placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 

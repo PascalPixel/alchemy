@@ -131,25 +131,32 @@ s32 LinkBattle_SendParty(void) {
 /// Copies a name's first four characters, an underscore for each zero, and
 /// returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps it.
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
+#ifdef UBFIX
+  static u8 sBuffer[5];
+  u8 *base = sBuffer;
+#else
   u8 buffer[5];
   u8 *base = buffer;
+#endif
   u32 fill = '_';
-  u8 *p = base;
-  u8 *dst = p;
+  u8 *current = base;
+  u8 *dst = current;
   s32 count = 3;
 
   do {
     u32 value = *source;
 
-    source++;
     *dst = value;
+    source++;
     dst++;
     if ((u8)value == 0)
-      *p = fill;
-    p++;
+      *current = fill;
+    current++;
     count--;
   } while (count >= 0);
   base[4] = 0;
+  // BUG: the original buffer is on the stack, gone once this returns.
+  // UBFIX keeps the result until the next call in private scratch storage.
   return dst;
 }
 
@@ -313,15 +320,14 @@ s32 LinkBattle_SyncTurn(void) {
 /// Records the unit id the link opponent knows each party member by.
 s32 BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
-  u8 *battleState = (u8 *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battleState = Ram_HeapSlots->battleWork;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;
 
   for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
     unitId = activeMembers[memberSlot];
-    unitId += 72;
-    battleState[unitId] = (s8)(memberSlot - 128);
+    battleState->opponentSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
   }
 }
 

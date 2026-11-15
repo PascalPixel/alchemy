@@ -25,47 +25,47 @@
 /// four random numbers a frame, which only advances the random number
 /// generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack. */
+  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
+   * stored and loaded again. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;
   volatile u16 bg3cnt;
-  s32 i;
-  volatile u16 *reg;
-  u32 saved;
+  s32 mosaicSize;
+  volatile u16 *registerCursor;
 
   bg0cnt = REG_BG0CNT;
   REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
-  reg = &REG_BG0CNT;
-  bg1cnt = *++reg;
-  *reg = bg1cnt | BGCNT_MOSAIC;
-  bg2cnt = *++reg;
-  *reg = bg2cnt | BGCNT_MOSAIC;
-  bg3cnt = *++reg;
-  *reg = bg3cnt | BGCNT_MOSAIC;
-  reg += 0x21;
-  *reg = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_BD |
-         BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
-         BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
+  registerCursor = &REG_BG0CNT;
+  bg1cnt = *++registerCursor;
+  *registerCursor = bg1cnt | BGCNT_MOSAIC;
+  bg2cnt = *++registerCursor;
+  *registerCursor = bg2cnt | BGCNT_MOSAIC;
+  bg3cnt = *++registerCursor;
+  *registerCursor = bg3cnt | BGCNT_MOSAIC;
+  // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
+  registerCursor += 33;
+  *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                    BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
+                    BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
+                    BLDCNT_TGT2_BD;
 
   ScreenFade_ToBlack(16);
-  for (i = 0; i <= 15; i++) {
+  for (mosaicSize = 0; mosaicSize <= 15; mosaicSize++) {
     Random16();
     Random16();
     Random16();
     Random16();
-    REG_MOSAIC = (i << 8) | i;
+    REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
     wait(1);
   }
 
   REG_DISPCNT = DISPCNT_MODE_1;
   wait(4);
-  saved = bg0cnt;
-  reg = &REG_BG0CNT;
-  *reg++ = saved;
-  *reg++ = bg1cnt;
-  *reg++ = bg2cnt;
-  *reg = bg3cnt;
+  REG_BG0CNT = bg0cnt;
+  REG_BG1CNT = bg1cnt;
+  REG_BG2CNT = bg2cnt;
+  REG_BG3CNT = bg3cnt;
   return 0;
 }
 

@@ -666,31 +666,29 @@ void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
 
 /// The number writers format the value in a 16-byte buffer and draw it with
 /// the matching string writer.
-void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
-  u8 data[TEXT_NUMBER_BUFFER_SIZE];
-  s32 pinned = value;
+void Text_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
-  Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
+  Text_DrawString(String_FormatNumber(numberText, value, width), window, x, y);
 }
 
 /// Draws a number (width as String_FormatNumber) as tiles in a window at pixel
 /// (x, y) of its interior.
-void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
+void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
                              s32 x, s32 y) {
-  u8 data[TEXT_NUMBER_BUFFER_SIZE];
-  s32 pinned = value;
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
-  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
+  Text_DrawStringAtOffset(String_FormatNumber(numberText, value, width), window,
+                          x, y);
 }
 
 /// Draws a number (width as String_FormatNumber) into a window's tilemap at
 /// pixel (x, y) of its interior.
-void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
-  u8 data[TEXT_NUMBER_BUFFER_SIZE];
-  s32 pinned = value;
+void Text_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
-  Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,
-                          y);
+  Text_DrawStringInWindow(String_FormatNumber(numberText, value, width), window,
+                          x, y);
 }
 
 #undef TEXT_JAPANESE_FONT

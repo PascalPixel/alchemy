@@ -179,12 +179,12 @@ s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   return 1;
 }
 
-s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {
+s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  Icon_DrawMisc(no);
-  VramCache_Load(slot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
+  Icon_DrawMisc(icon);
+  VramCache_Load(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }

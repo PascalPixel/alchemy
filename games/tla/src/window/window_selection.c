@@ -1154,19 +1154,19 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
     if (reuse != 0)
       cacheSlot = node->slot;
     Icon_BuildCommandIconTiles(base, 0, &cacheSlot, &tile, reuse);
-    node->message = base + (s32)&MsgCommandName;
+    node->message = base + MsgCommandName;
     break;
   case ICON_KIND_ITEM:
     if (reuse != 0)
       cacheSlot = node->slot;
     Icon_BuildItemIconTiles(base, 1, &cacheSlot, &tile, reuse);
-    node->message = base + (s32)&MsgItemName;
+    node->message = base + MsgItemName;
     break;
   case ICON_KIND_ABILITY:
     if (reuse != 0)
       cacheSlot = node->slot;
     Ability_LoadGlyph(base, 1, &cacheSlot, &tile, reuse);
-    node->message = base + (s32)&MsgAbilityName;
+    node->message = base + MsgAbilityName;
     break;
   }
 
@@ -1181,6 +1181,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   sprite->mode = 0;
   sprite->colors = 0;
   sprite->mosaic = 0;
+
   sprite->size = 1;
   sprite->shape = 0;
   sprite->palette = 0;
@@ -1307,20 +1308,20 @@ void MenuArrow_NoOpCallback4(void) {}
 /// in *slot).
 /// The caller owns the cache slot and releases it through
 /// MenuArrow_Release.
-void MenuArrow_Create(struct MenuSprite *object, s32 *slot) {
+void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
   const void *data = gMenu_CursorActorTiles;
-  s32 value = VramCache_FindFreeEntry();
+  s32 cacheSlot = VramCache_FindFreeEntry();
 
-  *slot = value;
-  object->oam.f.tile = VramCache_Load(value, 0x80, data);
-  object->oam.f.mode = 0;
-  object->oam.f.mosaic = 0;
-  object->oam.f.colors = 1;
-  object->oam.f.affine = 0;
-  object->oam.f.affineIndex = 0;
-  object->oam.f.size = 0;
-  object->oam.f.shape = 2;
-  object->oam.f.priority = 0;
+  *slot = cacheSlot;
+  sprite->oam.f.tile = VramCache_Load(cacheSlot, 128, data);
+  sprite->oam.f.mode = 0;
+  sprite->oam.f.mosaic = 0;
+  sprite->oam.f.colors = 1;
+  sprite->oam.f.affine = 0;
+  sprite->oam.f.affineIndex = 0;
+  sprite->oam.f.size = 0;
+  sprite->oam.f.shape = 2;
+  sprite->oam.f.priority = 0;
 }
 
 /// Places an arrow sprite at screen pixel (x, y) and queues it for drawing

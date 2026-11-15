@@ -1337,7 +1337,8 @@ void GaiaRockInside_RingOfDust(void) {
 void GaiaRockInside_RaiseSandTablet(void) {
   struct Actor *person;
   struct Actor *object;
-  /* FAKEMATCH(volatile): the form kept. */
+  /* FAKEMATCH(volatile): the form kept; as u16 level, 8 of 198 instructions
+   * differ in tla-en. */
   volatile u16 level;
   s32 i;
 

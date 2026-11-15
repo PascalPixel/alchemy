@@ -314,16 +314,31 @@ s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
   return 1;
 }
 
+struct SpriteView {
+  u8 b0, b1, b2, b3, b4;
+  u8 mode : 2;
+  u8 b5rest : 6;
+  u8 b6;
+  u8 b7a : 1;
+  u8 affine : 5;
+  u8 b7b : 2;
+  u32 w8;
+};
+
 struct SceneState {
-  struct PuzzleCell cells[CHANNEL_CELLS];
-  u8 unk160[4];
+  struct PuzzleCell cells[CHANNEL_ROWS][CHANNEL_COLUMNS];
+  s32 count;
   s16 firstId;
   s16 endId;
-  u16 tileEntry;
+  s16 tileEntry;
   s8 redrawA;
   s8 redrawB;
   s16 originX;
   s16 originZ;
+  s16 statuesReady;
+  u8 unk172[2];
+  s32 statueOffset;
+  struct SpriteView oam[10];
 };
 
 struct IoReg16 {
@@ -1538,10 +1553,6 @@ void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef MARK
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
-/* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
- * before has its own. */
-#define Wanderer Wanderer__s2394
-#define SceneState SceneState__s2394
 /// The leader falls in from the cog above and lands with a thump beside Steel.
 void GabombaStatue_LandFromFall(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1604,11 +1615,6 @@ void GabombaStatue_LandFromFall(void) {
 }
 
 #include "text/msg_ids.h"
-
-struct Wanderer {
-  u8 unk00[98];
-  u8 timer;
-};
 
 extern u32 gGabombaStatue_LeaderFocusScript[];
 void Actor_MoveToObject(s32 id, s32 target);
@@ -1740,12 +1746,12 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
-  ((struct Wanderer *)Actor_Get(gMainRoutineWork.leaderActorId))->timer =
+  Actor_Get(gMainRoutineWork.leaderActorId)->riseCounter =
       (Random_Below(40)) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_PIERS))->timer = (Random_Below(40)) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_JENNA))->timer = (Random_Below(40)) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_SHEBA))->timer = (Random_Below(40)) + 10;
-  ((struct Wanderer *)Actor_Get(ACTOR_KRADEN))->timer = (Random_Below(40)) + 10;
+  Actor_Get(ACTOR_PIERS)->riseCounter = (Random_Below(40)) + 10;
+  Actor_Get(ACTOR_JENNA)->riseCounter = (Random_Below(40)) + 10;
+  Actor_Get(ACTOR_SHEBA)->riseCounter = (Random_Below(40)) + 10;
+  Actor_Get(ACTOR_KRADEN)->riseCounter = (Random_Below(40)) + 10;
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_StepBackScript);
@@ -2241,36 +2247,6 @@ void GabombaStatue_InitializeArrows(void) {
   }
 }
 
-struct SpriteView {
-  u8 b0, b1, b2, b3, b4;
-  u8 mode : 2;
-  u8 b5rest : 6;
-  u8 b6;
-  u8 b7a : 1;
-  u8 affine : 5;
-  u8 b7b : 2;
-  u32 w8;
-};
-
-struct SceneState {
-  struct PuzzleCell cells[CHANNEL_ROWS][CHANNEL_COLUMNS];
-  s32 count;
-  s16 firstId;
-  s16 endId;
-  s16 tileEntry;
-  s8 redrawA;
-  s8 redrawB;
-  s16 originX;
-  s16 originZ;
-  s16 statuesReady;
-  u8 unk172[2];
-  s32 statueOffset;
-  struct SpriteView oam[10];
-};
-
-extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
-#define gSceneState gSceneState__s2394
-
 void GabombaStatue_InitializePinion(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -2347,16 +2323,7 @@ void GabombaStatue_ClearGrid(void) {
     }
 }
 
-/* VIEW(s2394): routine GabombaStatue_GetPiece as s32 GabombaStatue_GetPiece(s32
- * col, s32 row, s32 turn); the definition has u8 GabombaStatue_GetPiece(s32 x,
- * s32 z, s32 direction); tried as the definition's u8
- * GabombaStatue_GetPiece(s32 x, s32 z, s32 direction), which the object already
- * declares, it does not compile in tla-ja (make modern):
- * games/tla/include/field/field.h:1125:42: note: expected 'struct Actor *' but
- * argument is of type 'struct FieldEffect *'. */
-extern s32
-GabombaStatue_GetPiece__path(s32 col, s32 row,
-                             s32 turn) __asm__("GabombaStatue_GetPiece");
+s32 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction);
 
 /// Lays this game's channel puzzle at random: paths of the given length to the
 /// head in the middle (GabombaStatue_LayPath), their pieces scattered as tiles.
@@ -2565,16 +2532,16 @@ turn_col:
     case 0:
     case 1:
     case 2:
-      piece = GabombaStatue_GetPiece__path(col, row, 0);
+      piece = GabombaStatue_GetPiece(col, row, 0);
       break;
     case 3:
     case 4:
     case 5:
-      piece = GabombaStatue_GetPiece__path(col, row, 1);
+      piece = GabombaStatue_GetPiece(col, row, 1);
       break;
     case 6:
-      GabombaStatue_GetPiece__path(col, row, 0);
-      piece = GabombaStatue_GetPiece__path(col, row, 0);
+      GabombaStatue_GetPiece(col, row, 0);
+      piece = GabombaStatue_GetPiece(col, row, 0);
       break;
     }
   }
@@ -2800,7 +2767,7 @@ void GabombaStatue_ShowTiles(s32 id, s32 show) {
 }
 #undef FIELD_AT
 
-u8 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
+s32 GabombaStatue_GetPiece(s32 x, s32 z, s32 direction) {
 
   gSceneState.cells[z][x].kind =
       gGabombaStatue_TurnedPieces[gSceneState.cells[z][x].kind * 2 + direction];
@@ -3575,9 +3542,6 @@ u32 gGabombaStatue_PinionReleaseScript[] = {
 };
 
 #undef FIELD_AT
-#undef Wanderer
-#undef SceneState
-#undef gSceneState
 
 void GabombaStatue_FightSteel(void);
 void GabombaStatue_LashRope(void);

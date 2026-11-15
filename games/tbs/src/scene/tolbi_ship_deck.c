@@ -464,14 +464,14 @@ TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
 static u16 sStrokePhase[4] ALIGNED(16);
 
 static s32 sSwayAngleY;
-UNUSED static s32 sUnused0; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterSwayY; ///< never used; keeps the statics' layout
 
 static u16 sOarAngle[8];
 
 static s32 sSeaScroll[2];
 
 static s32 sSwayAngleX;
-UNUSED static s32 sUnused1; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterSwayX; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 

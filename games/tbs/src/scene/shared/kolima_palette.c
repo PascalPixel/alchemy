@@ -36,17 +36,17 @@ void KolimaPalette_Curse(s32 strength) {
 /// One cursed colour: red gains a 4 * adj'th of itself (up to 31), and green
 /// and blue lose an adj'th.
 static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
-  s16 green = ((color >> 5) & 31);
-  s16 red = (color & 31);
-  s16 blue = ((color >> 10) & 31);
+  s16 green = RGB_GREEN(color);
+  s16 red = RGB_RED(color);
+  s16 blue = RGB_BLUE(color);
   u32 packed;
 
   red = (red + Math_Divide(red, (adj << 2)));
   green = (green - Math_Divide(green, adj));
   blue = (blue - Math_Divide(blue, adj));
 
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
 
   packed = red | ((blue << 10) | (green << 5));
   return packed;

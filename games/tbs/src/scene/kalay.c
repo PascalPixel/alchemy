@@ -144,7 +144,7 @@
 #include "window/screens.h"
 #include "text/msg_ids.h"
 
-u8 gKalay_Unk_0[12] BSS_DATA ALIGNED(8);
+u8 gKalay_UnusedBeforeDanceStep[12] BSS_DATA ALIGNED(8);
 /// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
 s32 gKalay_DanceStep BSS_DATA;
 

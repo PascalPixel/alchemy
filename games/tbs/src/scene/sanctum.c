@@ -487,9 +487,9 @@ static void Sanctum_LeaveAfterRefusing(void) {
   paletteWork = gPaletteFadeWork;
   // Colour 15 of the BG palette fades to white rather than sepia: its blue,
   // green and red channels, target[3 * 15] to target[3 * 15 + 2], at 31.
-  paletteWork->target[45] = 31 << 10;
-  paletteWork->target[46] = 31 << 10;
-  paletteWork->target[47] = 31 << 10;
+  paletteWork->target[45] = RGB_LEVEL_MAX << 10;
+  paletteWork->target[46] = RGB_LEVEL_MAX << 10;
+  paletteWork->target[47] = RGB_LEVEL_MAX << 10;
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;

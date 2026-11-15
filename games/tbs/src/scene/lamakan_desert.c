@@ -90,11 +90,11 @@
 
 /// The VRAM cache entry holding the gauge's tiles.
 s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
-u8 gLamakanDesert_Unk_2[14] BSS_DATA;
+u8 gLamakanDesert_UnusedAfterGaugeSlot[14] BSS_DATA;
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
 struct MenuSprite gHeatGauge_Sprites[5] BSS_DATA;
-u8 gLamakanDesert_Unk_4c[20] BSS_DATA;
+u8 gLamakanDesert_UnusedAfterGaugeSprites[20] BSS_DATA;
 /// The gauge's decoded tiles, which each frame's drawing starts from.
 u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
@@ -1032,23 +1032,23 @@ static void HeatGauge_Draw(void) {
   for (i = 6; i < 12; i++) {
     u16 value = *color;
 
-    red = value & 31;
-    green = (value >> 5) & 31;
-    blue = ((value >> 10) & 31) - 20;
+    red = RGB_RED(value);
+    green = RGB_GREEN(value);
+    blue = RGB_BLUE(value) - 20;
     level = gHeatGaugeLevel;
     red += level / 3;
     blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
       green += level * 64 / 120 - 32;
     }
-    if (red > 31) {
-      red = 31;
+    if (red > RGB_LEVEL_MAX) {
+      red = RGB_LEVEL_MAX;
     }
-    if (green > 31) {
-      green = 31;
+    if (green > RGB_LEVEL_MAX) {
+      green = RGB_LEVEL_MAX;
     }
-    if (blue > 31) {
-      blue = 31;
+    if (blue > RGB_LEVEL_MAX) {
+      blue = RGB_LEVEL_MAX;
     }
     *color++ = RGB(red, green, blue);
   }

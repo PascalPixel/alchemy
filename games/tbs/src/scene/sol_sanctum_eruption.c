@@ -66,10 +66,10 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
-u8 gSolSanctumEruption_Unk_0[8] BSS_DATA;
+u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
 s32 gEmberState[16] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
-u8 gSolSanctumEruption_Unk_4c[12] BSS_DATA;
+u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
 struct Actor *gArcEffects[12] BSS_DATA;
 s32 gArcEffectTimers[10] BSS_DATA;
 s32 gEmberMask BSS_DATA;

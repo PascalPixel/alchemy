@@ -128,7 +128,7 @@
 u16 gAltinPeak_FlickerTimer BSS_DATA;
 s32 gAltinPeak_SprayDirection BSS_DATA;
 s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
-u8 gAltinPeak_Unk_14[16] BSS_DATA;
+u8 gAltinPeak_UnusedAfterSprayOrigin[16] BSS_DATA;
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 s16 gAltinPeak_PaletteHold BSS_DATA;
 /// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.

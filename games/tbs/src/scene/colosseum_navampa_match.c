@@ -92,7 +92,7 @@
 #include "text/msg_ids.h"
 
 s32 gColossoParticleCount BSS_DATA ALIGNED(16);
-u8 gColosseumNavampaMatch_Unk_4[12] BSS_DATA;
+u8 gColosseumNavampaMatch_UnusedAfterParticleCount[12] BSS_DATA;
 s16 gColosso_MarkerStep BSS_DATA;
 s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
@@ -119,7 +119,7 @@ s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
 s16 *gColosso_LetteringScript BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
 s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
-u8 gColosseumNavampaMatch_Unk_6a[6] BSS_DATA;
+u8 gColosseumNavampaMatch_UnusedAfterBlendDuration[6] BSS_DATA;
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
 s32 gColosso_PointerOam[3] BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;

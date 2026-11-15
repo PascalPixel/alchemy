@@ -1421,14 +1421,15 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
       red = RGB_RED(*palette);
       green = RGB_GREEN(*palette);
       blue = RGB_BLUE(*palette);
-      if (red == 31 && green == 31 && blue == 31) {
+      if (red == RGB_LEVEL_MAX && green == RGB_LEVEL_MAX &&
+          blue == RGB_LEVEL_MAX) {
         whiteColors++;
       } else {
-        if (red <= 30)
+        if (red < RGB_LEVEL_MAX)
           red++;
-        if (green <= 30)
+        if (green < RGB_LEVEL_MAX)
           green++;
-        if (blue <= 30)
+        if (blue < RGB_LEVEL_MAX)
           blue++;
         *palette = RGB(red, green, blue);
       }

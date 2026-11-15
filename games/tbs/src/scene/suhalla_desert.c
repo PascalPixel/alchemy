@@ -686,7 +686,7 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   if (brightnessFrame > 31)
     brightnessFrame = 64 - brightnessFrame;
   grey = (brightnessFrame >> 1) + 7;
-  grey |= (grey << 10) | (grey << 5);
+  grey = RGB(grey, grey, grey);
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)grey << 16) >> 16;
 }
 

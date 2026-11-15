@@ -19,14 +19,14 @@ static void MercuryLighthouse_CyclePalette(void) {
   below = 0;
   if (gFrameCount % 5 != 0)
     return;
-  gPaletteCycleRed = (gPaletteCycleRed + 4) & 31;
+  gPaletteCycleRed = (gPaletteCycleRed + 4) & RGB_LEVEL_MAX;
   for (i = 0; i < 6; i++) {
-    below = BG_PLTT_COLOR(6, 14 - i) & 31;
+    below = RGB_RED(BG_PLTT_COLOR(6, 14 - i));
     red = below;
     if (i <= 2)
       red -= red * 4 / 10;
     color = &BG_PLTT_COLOR(6, 15 - i);
-    greenAndBlue = (gPaletteCycleBlue << 10) | (gPaletteCycleGreen << 5);
+    greenAndBlue = RGB(0, gPaletteCycleGreen, gPaletteCycleBlue);
     *color = red | greenAndBlue;
   }
   BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | greenAndBlue;

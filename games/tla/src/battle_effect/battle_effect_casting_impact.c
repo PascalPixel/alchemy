@@ -381,7 +381,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
     Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, buffer, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_JIP) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, buffer + 0x4000, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
+                               buffer + 0x4000, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_BOLT) {
     s32 j;
     s32 k;
@@ -850,11 +851,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
-      Resource_LoadAndDecompress((s32)&ResourceId_RaidensWrathSheet, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_RaidensWrathSheet, buffer, 1,
+                                 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
-      Resource_LoadAndDecompress((s32)&ResourceId_ApocalypseSheet, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_ApocalypseSheet, buffer, 1,
+                                 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_ASURA) {
@@ -865,7 +868,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
-      Resource_LoadAndDecompress((s32)&ResourceId_SarcophagusSheet, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_SarcophagusSheet, buffer, 1,
+                                 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
 

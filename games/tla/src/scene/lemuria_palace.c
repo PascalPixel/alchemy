@@ -60,7 +60,6 @@ enum LemuriaPalaceActorId {
   ACTOR_KRADEN
 };
 
-
 extern struct MapGridCellAnimation gLemuriaPalace_Doors[];
 extern struct MapGridCellAnimation gLemuriaPalace_InnerDoor;
 

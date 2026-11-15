@@ -154,7 +154,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, FLASHES, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, FLASHES, 0,
+                                   0);
       }
       if (frame == 136) {
         u8 *dst = Ram_MapCellBuffer + 0x400;

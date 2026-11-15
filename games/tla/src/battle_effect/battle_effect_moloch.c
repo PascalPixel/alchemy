@@ -350,8 +350,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 /// 96 on: each channel is darkened and the three are rotated (red to green,
 /// green to blue, blue to red).
 void Iris_ChangeBackdrop(void) {
-  struct BattleBackgroundWork *transition =
-      Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s16 list[UNIT_MAX];
   u16 *palette;

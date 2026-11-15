@@ -562,8 +562,7 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
 /// animations, except those drawn hidden.
 void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    Sprite_SetAnimationColorModes(((struct Sprite *)object->sprite),
-                                       value);
+    Sprite_SetAnimationColorModes(((struct Sprite *)object->sprite), value);
 }
 
 /// Fixes the priority of a one-sprite actor's sprite and its shadow, which

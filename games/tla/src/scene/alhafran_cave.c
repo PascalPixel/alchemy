@@ -356,7 +356,7 @@ void AlhafranCave_SetUpCave(void) {
 
 void FieldEffect_StartBlankOverlay(s32 value);
 void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
-                                 s32 pivotY, u32 attributes);
+                                      s32 pivotY, u32 attributes);
 
 /// Sets up the jail and the cave: who is held and who visits, by how far the
 /// story has gone (Briggs caught, his family's visit, the mast cleared), and
@@ -803,9 +803,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
 void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 /// While Eoleo's Psynergy runs, the actors shake.
-void AlhafranCave_ShakeUnderEoleosPower(void) {
-  Actor_CycleSpriteColors();
-}
+void AlhafranCave_ShakeUnderEoleosPower(void) { Actor_CycleSpriteColors(); }
 
 #include "shared/pillars_place.h"
 

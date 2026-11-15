@@ -20,7 +20,6 @@
 #include "window/window.h"
 #include "resource_ids.h"
 
-
 // Where the Japanese layout differs: the summon window, the item window and
 // the summon's Djinn costs, in tiles; the x of the acting member's icon and of
 // the command icon in the summon list, beside a chosen summon and in the Djinn

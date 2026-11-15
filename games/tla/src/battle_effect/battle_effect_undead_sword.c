@@ -1061,7 +1061,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
                              cells + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, cells + 0x1000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, cells + 0x1000, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                              work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);

@@ -77,7 +77,7 @@ struct WindowSprite {
   u16 x;                      ///< screen pixels
   u16 y;                      ///< screen pixels
   u16 unused;                 ///< nothing reads it
-  u16 animationStep;               ///< step of its motion's animation
+  u16 animationStep;          ///< step of its motion's animation
   s8 index;                   ///< VRAM cache slot, or a glyph's tile
   u8 depth;                   ///< depth slot it is drawn at
   struct QueuedSprite sprite; ///< queued at its depth each frame

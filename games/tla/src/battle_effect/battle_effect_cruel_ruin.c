@@ -837,8 +837,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gMapGridCellBuffer, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+                             gMapGridCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
   Picture_MirrorIntoQuadrants(

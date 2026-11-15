@@ -320,7 +320,8 @@ void FieldPsynergy_Pound(void) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;
-      if (event->mode != ACTOR_SYSTEM_WORLD_MAP && !(event->psynergyDrawFlags & 1)) {
+      if (event->mode != ACTOR_SYSTEM_WORLD_MAP &&
+          !(event->psynergyDrawFlags & 1)) {
         glow = &work->glow;
         EffectSprite_Draw(glow);
       }

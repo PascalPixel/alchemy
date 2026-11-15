@@ -23,8 +23,8 @@ enum AudioCommandMask {
 
 /// A sound for Sound_Play, as The Broken Seal's: bits 11..0 the sound number,
 /// 15..12 flags, with this game's ranges. SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM,
-/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE are rows of the song table,
-/// in sounds.h.
+/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE are rows of the song
+/// table, in sounds.h.
 enum SoundControl {
   SOUND_NUM_MASK = 0xfff,
   SOUND_FLAGS_MASK = 0xf000,

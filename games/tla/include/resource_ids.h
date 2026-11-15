@@ -481,7 +481,7 @@ extern char ResourceId_StarSparkleFade;
 extern char ResourceId_BlueRingSheet;
 extern char ResourceId_RedPaletteC;
 extern char ResourceId_OrangePaletteC;
-extern char ResourceId_CometTexture;      ///< directory row 0xd0
+extern char ResourceId_CometTexture; ///< directory row 0xd0
 extern char ResourceId_FeatherSheet; ///< directory row 0xd1
 extern char ResourceId_CrescentRowSheet;
 extern char ResourceId_SwirlTexture;

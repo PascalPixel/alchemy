@@ -122,9 +122,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   work->particles[WATER_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
   work->particles[WATER_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0,
+                               0);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0,
+                               0);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress(

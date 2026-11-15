@@ -70,7 +70,6 @@ void NaribweInteriors_ReadWeapon(void);
 
 void NaribweInteriors_ReadArmor(void);
 
-
 /// "It costs 20 coins to hear what your future holds. Will you pay?"
 #define FORTUNE_PRICE 20
 

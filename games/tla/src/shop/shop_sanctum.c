@@ -483,7 +483,7 @@ void Sanctum_UpdateBurst(void) {
   burstMember = shop->burstMember;
   if (burstMember != -1)
     Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
-                                          (Random16() * 7) >> 16);
+                                     (Random16() * 7) >> 16);
 }
 
 void Sprite_SetAnimationSpeedFar(void *object, s32 arg);
@@ -520,8 +520,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar((struct FieldParticle *)effect,
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct FieldParticle *)effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object,
-                                          (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);

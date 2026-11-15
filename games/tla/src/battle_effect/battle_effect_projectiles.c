@@ -614,7 +614,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
              mode <= PROJECTILE_VOLLEY_STUN_STING) {
     for (i = 0; i != 8; i++)
       work->sheet[i] = 60;
-    Resource_LoadAndDecompress((s32)&ResourceId_ShortStreakPicture, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ShortStreakPicture, work->sheet,
+                               1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     if (mode == PROJECTILE_VOLLEY_BEAST_NEEDLE) {
       REG_BLDCNT = 0;

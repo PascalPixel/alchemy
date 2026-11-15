@@ -496,7 +496,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     work->scrollStepX = -1;
     work->scrollStepY = 0;
     ctl[4] = 1;
-    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet, work->sheet,
+                               0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + DAEDALUS_FLASH_BURST_PICTURES, 1,
                                0);

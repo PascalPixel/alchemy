@@ -51,7 +51,6 @@
 #include "item_ids.h"
 #include "field/field_sequence.h"
 
-
 /// A question's window, left open for the Yes/No menu below it.
 #define QUESTION_MESSAGE                                                       \
   (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)

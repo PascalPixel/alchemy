@@ -485,12 +485,14 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     break;
   case WINDOW_SPRITE_MOTION_SHRINK:
     if (windowSprite->animationStep <= 7)
-      scale = gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16];
+      scale =
+          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16];
     break;
   case WINDOW_SPRITE_MOTION_SHRINK_HALF:
     if (windowSprite->animationStep <= 7)
       scale =
-          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16] >> 1;
+          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16] >>
+          1;
     break;
   }
   if (scale == 256) {

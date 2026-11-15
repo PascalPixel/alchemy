@@ -344,7 +344,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
                                            s32 y, s32 z);
 void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
-                                 s32 pivotY, u32 attributes);
+                                      s32 pivotY, u32 attributes);
 
 /// The first guest's update: draws its extra sprite 12 pixels above it.
 s32 AlhafraInteriors_DrawFirstGuestSprite(struct Actor *guest) {

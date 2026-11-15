@@ -378,7 +378,8 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ScoopEarth), work);
+    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ScoopEarth),
+                        work);
     pictureEntry = VramCache_FindFreeEntry();
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;

@@ -385,8 +385,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   }
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 6);
-  Resource_LoadAndDecompress((s32)&ResourceId_LifeShearSheet, gMapGridCellBuffer, 1,
-                             1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LifeShearSheet,
+                             gMapGridCellBuffer, 1, 1);
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
@@ -691,7 +691,8 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
                                  work->sheet, 1, 1);
       CopyPalette(Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB));
     } else {
-      Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0,
+                                 0);
       CopyPalette(Resource_GetTableEntry((s32)&ResourceId_BlastSheet));
     }
 
@@ -1103,7 +1104,8 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, work->sheet,
+                             0, 0);
 
   for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
     // The first frame scatters every bubble below the bottom left.
@@ -1240,7 +1242,8 @@ struct MeshVertex;
 
 /// Where ScaleTexture is decoded in the effect's pictures.
 #define COATLICUE_SCALES 0x4000
-/// BubbleAnimationSheet's fifteen pictures, then a copy of them at half brightness.
+/// BubbleAnimationSheet's fifteen pictures, then a copy of them at half
+/// brightness.
 #define COATLICUE_BUBBLES 0x4800
 #define BUBBLE_SHEET_BYTES 3000
 #define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
@@ -1341,12 +1344,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   {
     u8 *src = work->sheet + COATLICUE_BUBBLES;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, src, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, src, 0,
+                               0);
     for (i = 0; i != BUBBLE_SHEET_BYTES; i++) {
       work->sheet[COATLICUE_DIM_BUBBLES + i] = src[i] >> 1;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cellBuffer, 0,
+                             0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |

@@ -540,7 +540,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
               (Q_16_16_TO_INT(position.y)) - 58, 60, 100);
     }
     if (frame == 157) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, ringPixels, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, ringPixels,
+                                 0, 0);
     }
     if ((frame & 1) && skip) {
       goto shake;

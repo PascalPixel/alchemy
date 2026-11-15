@@ -77,8 +77,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gMapGridCellBuffer,
-                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+                                 gMapGridCellBuffer, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
                                  Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
                                  0);
@@ -732,8 +732,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 /// own backdrop over the summon's.
 void Iris_RestoreBattle(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BattleBackgroundWork *transition =
-      Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 

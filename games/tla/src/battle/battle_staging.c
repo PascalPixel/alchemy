@@ -374,8 +374,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 /// 7 times in 10. Returns 1 when the party got away.
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
-  struct BattleBackgroundWork *presentation =
-      Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *presentation = Ram_HeapSlots->battleBackground;
   u32 aid = plan->unitId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
   // Default: 0 until the party branch copies completed.

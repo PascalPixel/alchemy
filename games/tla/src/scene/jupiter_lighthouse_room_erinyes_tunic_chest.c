@@ -476,8 +476,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height, 255);
-  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
+                                         255);
+  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
+                                         255);
   cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];

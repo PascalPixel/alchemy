@@ -735,7 +735,8 @@ counted:
       if (sprite != NULL) {
         /* FAKEMATCH(signature): the field work read through SandTrailWork,
          * whose priority is the low byte of a halfword; as struct FieldWork *
-         * and work->sandTrailPriority & 3, 8 of 965 instructions differ in tla-en. */
+         * and work->sandTrailPriority & 3, 8 of 965 instructions differ in
+         * tla-en. */
         struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
 
         Sprite_StartAnimation(sprite, 1);

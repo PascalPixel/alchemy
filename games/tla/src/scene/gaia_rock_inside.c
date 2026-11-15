@@ -884,7 +884,6 @@ void GaiaRockInside_RestoreSusa(void) {
   Actor_SetAnimationSpeed(object, gGaiaRockInside_SavedSusaAnimation);
 }
 
-
 /// Stepping near Susa the first time: he turns on the party ("Who are you? How
 /// did you get here?"), tells them to stand aside while the camera looks at the
 /// Serpent, and goes back to his place; if he was walking back while a cask

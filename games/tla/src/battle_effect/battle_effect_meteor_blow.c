@@ -144,8 +144,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   mode = 3;
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  // DEAD: both fields are set again before anything reads them; the ROM keeps\n
-  // // the two stores.
+  // DEAD: both fields are set again before anything reads them; the ROM keeps
+  // the two stores.
   EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_FRAME + 126);

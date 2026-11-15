@@ -107,7 +107,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, (u8 *)cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, (u8 *)cells, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameZigzagTexture,
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,

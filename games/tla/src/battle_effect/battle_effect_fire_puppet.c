@@ -249,7 +249,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SlashFlameSheet, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SlashFlameSheet, work->sheet, 0,
+                             0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
                        SHEET_PALETTE_BYTES);

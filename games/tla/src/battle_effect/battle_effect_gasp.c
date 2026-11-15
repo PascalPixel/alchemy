@@ -76,7 +76,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                    screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BurningSkullSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BurningSkullSheet, work->sheet,
+                               0, 0);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     frames = 84;
@@ -122,15 +123,18 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
+                               0);
     frames = 80;
     Sound_PlayFar(MUS_CURE);
   } else if (mode == GASP_MODE_BEAT_DANCE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
+                               0);
     LOAD_BG_PALETTE(ResourceId_MarsDjinnSmallSheet);
     frames = 64;
   } else if (mode == GASP_MODE_CLARION_CRY) {
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
+                               0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
@@ -168,7 +172,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                  BGCNT_SCREEN_BASE(7);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, work->sheet,
+                               0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                                work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                0, 0);
@@ -190,7 +195,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     LOAD_BG_PALETTE(ResourceId_VioletPaletteF);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0,
+                               0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     frames = 76;
   } else if (mode == GASP_MODE_DEMON_EYE) {
@@ -235,7 +241,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       work->fadeStep = 0;
       frames = 70;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0,
+                               0);
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 1);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);

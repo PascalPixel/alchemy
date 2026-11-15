@@ -314,7 +314,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 #define FIGURE_SWING_FRAME 30 ///< the first blow
 #define FIGURE_HIT_FRAME 80   ///< the second, which starts the result phase
 
-// The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the map cells.
+// The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
+// map cells.
 #define FIGURE_BODY 0             ///< 96x83
 #define FIGURE_ARM_LOWERED 0x1f20 ///< 42x35
 #define FIGURE_ARM_RAISED 0x24de  ///< 48x51

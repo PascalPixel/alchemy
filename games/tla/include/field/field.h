@@ -285,7 +285,8 @@ struct Reel {
 struct ReelEffectWork {
   struct Particle particles[LUCKY_WHEELS_TITLE_LETTERS];
   /// No code names it.
-  u8 unusedAfterParticles[0x700 - LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
+  u8 unusedAfterParticles[0x700 -
+                          LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
   u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it

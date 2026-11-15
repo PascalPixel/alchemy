@@ -187,10 +187,11 @@ struct SnapshotCopy {
 struct Snapshot {
   u8 listed[8];
   s8 summonBoosts[3][4];
-  /// The units' SnapshotCopy rows, read as gScriptedBattle_SnapshotBytes, each padded to 28
-  /// bytes; the last overruns into vitals' unused first rows.
+  /// The units' SnapshotCopy rows, read as gScriptedBattle_SnapshotBytes, each
+  /// padded to 28 bytes; the last overruns into vitals' unused first rows.
   u8 statuses[0x80];
-  struct SnapshotVitals vitals[5]; ///< also read as gScriptedBattle_SnapshotVitals
+  struct SnapshotVitals
+      vitals[5]; ///< also read as gScriptedBattle_SnapshotVitals
 };
 
 STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 0x94);

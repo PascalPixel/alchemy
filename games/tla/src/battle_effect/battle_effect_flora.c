@@ -144,7 +144,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
                              cells + i * OBJ_32X32_8BPP_BYTES,
                              OBJ_32X32_8BPP_BYTES);
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, work->sheet,
+                                 0, 0);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;

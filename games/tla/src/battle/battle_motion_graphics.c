@@ -648,8 +648,7 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
 /// BattlePlayback_Run around the battle effect.
 s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
-  struct BattleBackgroundWork *transition =
-      Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   struct HeapSlots *heap;
   void *saved;

@@ -224,9 +224,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMarsLighthouseEntrance_Placements;
 }
 
-// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
-// mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
-// mode would settle it.
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set
+// (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
+// the mode would settle it.
 /// Unused: as the dragon hall's, readies Blaze for a dragon statue.
 UNUSED void MarsLighthouseEntrance_BeginBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -550,7 +550,7 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
 #define DEFINE_BURST_ICE_SHEET(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
-      Event_PlaySound(SE_FLASH);                                                 \
+      Event_PlaySound(SE_FLASH);                                               \
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);                \
       PaletteFade_Interpolate(60);                                             \
       MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
@@ -1195,10 +1195,10 @@ s32 Scene_Initialize(void) {
     if ((u32)(entrance - 7) <= 1 || entrance == 11) {
       struct Actor *target;
 
-      FlameThrowers_Start((s32)gMarsLighthouseEntrance_ValkyrieLowerBeamTargets,
-                          (s32)gMarsLighthouseEntrance_ValkyrieLowerBeamStops,
-                          (s32)MarsLighthouseEntrance_ShootValkyrieLowerFireball,
-                          88);
+      FlameThrowers_Start(
+          (s32)gMarsLighthouseEntrance_ValkyrieLowerBeamTargets,
+          (s32)gMarsLighthouseEntrance_ValkyrieLowerBeamStops,
+          (s32)MarsLighthouseEntrance_ShootValkyrieLowerFireball, 88);
       Ride_SetEntryCount(0, 1);
       if (entrance == 11) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
@@ -1276,32 +1276,29 @@ s32 Scene_PrepareMap(void) {
 
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void) {
   Actor_Attach(10, 19, 20, 0,
-                      gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
+               gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
   Actor_Attach(12, 19, 20, 0,
-                      gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
+               gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootBalmFireball(void) {
-  Actor_Attach(9, 18, 20, 0x4000,
-                      gMarsLighthouseEntrance_BalmFireballPath);
+  Actor_Attach(9, 18, 20, 0x4000, gMarsLighthouseEntrance_BalmFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void) {
   Actor_Attach(9, 13, 14, 0,
-                      gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
+               gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
 }
 
 void MarsLighthouseEntrance_ShootFireballThroughIce(void) {
-  Actor_Attach(11, 13, 14, 0x4000,
-                      gMarsLighthouseEntrance_FireballThroughIce);
+  Actor_Attach(11, 13, 14, 0x4000, gMarsLighthouseEntrance_FireballThroughIce);
 }
 
 void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
-  Actor_Attach(13, 21, 22, 0,
-                      gMarsLighthouseEntrance_FireballToLapisIceSheet);
+  Actor_Attach(13, 21, 22, 0, gMarsLighthouseEntrance_FireballToLapisIceSheet);
 }
 
 void Ride_UpdateDrift(struct Actor *object);

@@ -6,7 +6,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-
 /// Takes the first free effect sprite of the 64 with a new animation entry.
 /// Its callers also pass the sprite's OAM shape and mode, which it leaves for
 /// the caller to set.
@@ -174,8 +173,7 @@ void Ulysses_MoveLastParticle(void) {
     ULYSSES_LAST_PARTICLE.velocityY -= px(1) / 16;
   if (work->frame > 11)
     ULYSSES_LAST_PARTICLE.velocityX += px(1) / 16;
-  Sprite_StartAnimationFar(work->sprites[7],
-                                           work->frame / 7 % 8 + 7);
+  Sprite_StartAnimationFar(work->sprites[7], work->frame / 7 % 8 + 7);
   work->frame++;
 }
 
@@ -311,7 +309,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlutteringFlakeSheet, picture, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlutteringFlakeSheet, picture, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprites, 0, 0);
   loaded = 0;
   ship.x = px(200);
@@ -506,8 +505,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       for (i = 0; i != 96; i++) {
         q[i].variant = -1;
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_FadingCrescentSheet, gMapGridCellBuffer,
-                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FadingCrescentSheet,
+                                 gMapGridCellBuffer, 0, 0);
     }
     if (frame == 76) {
       Sound_PlayFar(SE_ITEM_BREAK);

@@ -150,11 +150,13 @@ struct MapHeader {
   s32 script;       ///< into Ram_MapCollision + 0x2000
 };
 
-/// FieldWork as the sand trail reads its priority (FieldWork.sandTrailPriority).
+/// FieldWork as the sand trail reads its priority
+/// (FieldWork.sandTrailPriority).
 struct SandTrailWork {
-  u8 unused[0xd4a];      ///< no code names it
-  u16 trailPriority : 8; ///< read as the low byte of FieldWork.sandTrailPriority
-  u16 unusedHigh : 8;    ///< no code names it
+  u8 unused[0xd4a]; ///< no code names it
+  u16 trailPriority
+      : 8;            ///< read as the low byte of FieldWork.sandTrailPriority
+  u16 unusedHigh : 8; ///< no code names it
 };
 
 /// A map layer's scroll position in whole 16-pixel cells.

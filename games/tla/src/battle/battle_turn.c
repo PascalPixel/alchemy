@@ -14,8 +14,7 @@
 /// pixels up, a quarter turn of yaw, a slight downward pitch, 750 pixels away.
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *secondary =
-      Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *secondary = Ram_HeapSlots->battleBackground;
   struct FixedPointPosition local;
   u32 result;
   s32 one;

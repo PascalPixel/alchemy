@@ -46,10 +46,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameWallTexture, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameWallTexture, work->sheet, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gData_02014000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gData_02014000,
+                             0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

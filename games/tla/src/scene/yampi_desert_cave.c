@@ -442,8 +442,10 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
                              ax + rect.word[0], az + rect.word[2]);
   MapGrid_CopyCellAttributes(rect.word[0] + bx, rect.word[2] + bz, w, h,
                              rect.word[0] + 64, rect.word[2] + 64);
-  PushedActor_FillGridAttributeRectangle(0, rect.word[0], rect.word[2], w, h, 255);
-  PushedActor_FillGridAttributeRectangle(2, rect.word[0], rect.word[2], w, h, 255);
+  PushedActor_FillGridAttributeRectangle(0, rect.word[0], rect.word[2], w, h,
+                                         255);
+  PushedActor_FillGridAttributeRectangle(2, rect.word[0], rect.word[2], w, h,
+                                         255);
   cell[0] = (from[0] + px(gYampiDesertCave_LogFootprints[kind * 4])) >> 20;
   cell[2] = (from[2] + px(gYampiDesertCave_LogFootprints[kind * 4 + 1])) >> 20;
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],

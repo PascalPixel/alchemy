@@ -45,7 +45,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, Ram_MapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+                             Ram_MapCellBuffer, 0, 0);
 
   // The streak: the 32x32 flare, then the same flare upside down below it.
   Resource_LoadAndDecompress((s32)&ResourceId_FlamePlumeSheet, work->sheet, 0,

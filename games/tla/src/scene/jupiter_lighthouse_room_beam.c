@@ -118,7 +118,7 @@ u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 extern s32 gJupiterLighthouse_GlowPosition[3];
 extern const u8 gJupiterLighthouse_GlowSprite[];
 void EffectSprite_InitWithFadeOverlayBlended(const void *script, s32 a, s32 b,
-                                        s32 c);
+                                             s32 c);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitColors[];
 

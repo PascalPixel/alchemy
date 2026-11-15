@@ -239,7 +239,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
   }
   Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningTexture, work->sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningTexture, work->sheet, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
                              work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -827,7 +828,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                  Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if (frame == 551) {
-      Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture,
+                                 work->sheet, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
                                  work->sheet + CATASTROPHE_PENTAGON_SEAL, 0, 0);
     }
@@ -1016,7 +1018,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, cellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, cellBuffer,
+                             0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
                              Ram_MapCellBuffer + CATASTROPHE_PENTAGON_SEAL, 0,
                              0);

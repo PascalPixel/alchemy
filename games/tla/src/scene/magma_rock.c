@@ -1089,13 +1089,17 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       s32 z = object->z.fixed;
 
       if (entrance <= 3)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailLowerStatues);
+        id = MagmaRock_LookUpCellStatue(x, z,
+                                        gMagmaRock_SalamanderTailLowerStatues);
       else if (entrance <= 8)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailMiddleStatues);
+        id = MagmaRock_LookUpCellStatue(x, z,
+                                        gMagmaRock_SalamanderTailMiddleStatues);
       else if (entrance <= 12)
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailUpperStatues);
+        id = MagmaRock_LookUpCellStatue(x, z,
+                                        gMagmaRock_SalamanderTailUpperStatues);
       else
-        id = MagmaRock_LookUpCellStatue(x, z, gMagmaRock_SalamanderTailTopStatues);
+        id = MagmaRock_LookUpCellStatue(x, z,
+                                        gMagmaRock_SalamanderTailTopStatues);
     }
     fifthPart = Actor_Get(id);
     fifthPart->riseCounter = 4;

@@ -130,9 +130,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set (its
-// mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
-// mode would settle it.
+// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set
+// (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
+// the mode would settle it.
 /// Blaze is cast at the dragon statue.
 void MarsLighthouseStarRoom_BeginBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -1593,8 +1593,8 @@ extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 // XXX: is the car an actor (its stopped halfword sits where an actor's action
-// is, its steps in stepX and stepZ)? The code that stores the car's pointer at the ride
-// state's 0x6c would settle it.
+// is, its steps in stepX and stepZ)? The code that stores the car's pointer at
+// the ride state's 0x6c would settle it.
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
 s32 Fireball_CarryLeader(void) {
@@ -2416,10 +2416,22 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, MarsLighthouseStarRoom, 1),
     SCENE_EXIT(3, MarsLighthouseStarRoom, 4),
     SCENE_EXIT(4, MarsLighthouseStarRoom, 3),
-    SCENE_EXIT(MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_SOUTHEAST, MarsLighthouseEntranceSolBladeChest, MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_SOUTHEAST),
-    SCENE_EXIT(MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_SOUTHEAST, MarsLighthouseEntranceValkyrieMailChest, MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_SOUTHEAST),
-    SCENE_EXIT(MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_NORTHWEST_A, MarsLighthouseEntranceSolBladeChest, MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST_A),
-    SCENE_EXIT(MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_NORTHWEST, MarsLighthouseEntranceValkyrieMailChest, MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST),
+    SCENE_EXIT(
+        MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_SOUTHEAST,
+        MarsLighthouseEntranceSolBladeChest,
+        MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_SOUTHEAST),
+    SCENE_EXIT(
+        MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_SOUTHEAST,
+        MarsLighthouseEntranceValkyrieMailChest,
+        MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_SOUTHEAST),
+    SCENE_EXIT(
+        MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_NORTHWEST_A,
+        MarsLighthouseEntranceSolBladeChest,
+        MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST_A),
+    SCENE_EXIT(
+        MARS_LIGHTHOUSE_STAR_ROOM_TO_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_NORTHWEST,
+        MarsLighthouseEntranceValkyrieMailChest,
+        MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST),
     SCENE_EXITS_END,
 };
 

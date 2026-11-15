@@ -578,7 +578,7 @@ extern s16 gTitleIntro_GullPath[];
 
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
-    u8 *buffer = gTitleIntro_LogoTileBuffer;                                                \
+    u8 *buffer = gTitleIntro_LogoTileBuffer;                                   \
     Decompress_ByteLz(Resource_GetTableEntry((s32)&(id)), buffer);             \
     Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }

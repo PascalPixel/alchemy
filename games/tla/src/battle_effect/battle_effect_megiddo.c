@@ -133,7 +133,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
                                  Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
+                                 work->sheet, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                                  work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,

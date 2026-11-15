@@ -34,7 +34,6 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }

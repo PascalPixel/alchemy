@@ -104,8 +104,8 @@ void Islets_ShimmerWater(void);
 
 void Field_TryJumpForward();
 
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
-                           s32 value);
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
+                                            u32 height, s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
 void Islets_SetLedgeBlocksByHeight(void);
@@ -2270,8 +2270,8 @@ extern s8 gPushFootprints[][4];
 /// picks one of the six footprints in gPushFootprints (four signed bytes each,
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
-/// is filled with 255 (PushedActor_FillGridAttributeRectangle). Returns 1, or 0 for a shape with
-/// no footprint.
+/// is filled with 255 (PushedActor_FillGridAttributeRectangle). Returns 1, or 0
+/// for a shape with no footprint.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -2312,8 +2312,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   return 1;
 }
 
-void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width, u32 height,
-                           s32 value) {
+void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
+                                            u32 height, s32 value) {
   struct MapCell *cells = Ram_HeapSlots->mapGrid->layers[layer].cells;
   struct MapCell *cell;
   u32 i;
@@ -2471,8 +2471,10 @@ void PushTarget_Push(struct PushTarget target) {
   originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height, 255);
-  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
+                                         255);
+  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
+                                         255);
   cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];

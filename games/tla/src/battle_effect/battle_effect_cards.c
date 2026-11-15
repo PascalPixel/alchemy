@@ -78,11 +78,13 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   if (mode == CARD_SLEEP) {
     Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet,
+                               0, 0);
     length = 96;
   } else if (mode == CARD_BAFFLE) {
     Resource_LoadAndDecompress((s32)&ResourceId_ButterflyCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet,
+                               0, 0);
     length = 80;
   } else if (mode == CARD_SWORD) {
     Resource_LoadAndDecompress((s32)&ResourceId_SwordCardSheet, CARD, 1, 1);

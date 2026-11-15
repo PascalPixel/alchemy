@@ -37,8 +37,8 @@ enum Element {
   ELEMENT_COUNT = ELEMENT_NONE
 };
 
-/// AbilityDefinition.range of an ability that reaches every unit on the side, each
-/// as if aimed at.
+/// AbilityDefinition.range of an ability that reaches every unit on the side,
+/// each as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
 /// The low four bits of AbilityDefinition.flags: the ability kind (enum
@@ -82,9 +82,9 @@ enum AbilityTarget {
   ABILITY_TARGET_SELF = 4    ///< the user alone, whatever the range
 };
 
-/// AbilityDefinition.effect: what an ability does besides its damage or healing,
-/// applied by BattleAbility_ApplyToTarget unless noted. Each is named for the
-/// abilities that have it (actions.tsv, with their English names and
+/// AbilityDefinition.effect: what an ability does besides its damage or
+/// healing, applied by BattleAbility_ApplyToTarget unless noted. Each is named
+/// for the abilities that have it (actions.tsv, with their English names and
 /// descriptions). Sidestep (48), Crazy Voice (52) and Vengeance (89) have
 /// effects no code here reads.
 enum AbilityEffect {
@@ -205,9 +205,9 @@ struct AbilityDefinition {
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 kind (ABILITY_FORMULA_MASK, enum AbilityFormula).
   u8 flags;
-  u8 element; ///< enum Element
-  u8 effect;  ///< enum AbilityEffect
-  u16 icon;   ///< the ability's icon
+  u8 element;                    ///< enum Element
+  u8 effect;                     ///< enum AbilityEffect
+  u16 icon;                      ///< the ability's icon
   u8 fieldPsynergy;              ///< enum FieldPsynergy, or 0 for none
   u8 reservedAfterFieldPsynergy; ///< 0 in every row
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL

@@ -855,8 +855,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    struct BattleBackgroundWork *transition =
-        Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
     s32 transferMode = CANVAS_COPY_AND_DARKEN;
 
     gBgScroll[1].x = 0;

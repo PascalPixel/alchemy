@@ -565,7 +565,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + 0x4000;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, mistSheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, mistSheet, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet,
                              work->sheet + SERAC_CLOUD_PUFFS, 0, 0);

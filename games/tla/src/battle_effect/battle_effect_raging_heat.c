@@ -63,7 +63,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
                              work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, TEXTURE_PIXELS, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, TEXTURE_PIXELS,
+                             0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {

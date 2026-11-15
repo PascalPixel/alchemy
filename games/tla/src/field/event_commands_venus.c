@@ -68,8 +68,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object,
-                                          SPRITE_COLOR_GREEN_TINT);
+    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = Q16_ONE / 2;
     effect->scaleY = Random16() + Q16_ONE * 3 / 2;
     remaining--;

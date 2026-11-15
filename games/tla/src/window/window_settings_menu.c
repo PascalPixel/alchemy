@@ -238,8 +238,9 @@ struct RenderInput *SettingsMenu_Open(void) {
 
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    Dma_Set(gWorkspaceOptions_SliderPalette, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
-            DMA_COPY_HALFWORDS(32), REG_DMA3);
+    Dma_Set(gWorkspaceOptions_SliderPalette,
+            (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
+            REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
     out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);

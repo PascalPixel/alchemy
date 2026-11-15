@@ -25,7 +25,11 @@ void SelectionMenu_HighlightIcon(struct MenuResourceList *state, u32 index);
 void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
                              s32 reuse);
+/// Chooses the entry under the cursor: the other icons gather into it and
+/// vanish, and it joins the chosen icons at the top left.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
+/// Opens the party status window that shows with the field menu (flags 1) and
+/// waits a frame.
 void PartyStatus_OpenAndWait(void);
 
 struct GlyphCursor {
@@ -636,6 +640,8 @@ void SelectionMenu_Close(void) {
     }
     node = node->next;
   }
+  /// Frees the large command icon, if it is shown. The large preview owns a
+  /// cache slot independently of the visible row icons.
   Resource_ResetPendingTransfer();
   if (state->records[0].y != 0) {
     VramCache_FreeEntry(state->records[0].slot);
@@ -666,6 +672,7 @@ void SelectionMenu_SetPosition(u32 first, u32 second) {
   }
 }
 
+/// Sets up both end arrows of the selection row.
 void Menu_SetupSelectionBothSides(void) {
   void *menu = Ram_HeapSlots->selectionMenu;
 
@@ -1717,6 +1724,7 @@ void PartyStatus_OpenAndWait(void) {
 /// Closes the window in heap slot 16 and releases its block.
 void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 
+/// Sets up an empty selection screen and waits a frame.
 void SelectionMenu_CreateEmpty(void) {
   SelectionMenu_Create();
   SelectionMenu_Clear();

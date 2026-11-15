@@ -113,6 +113,8 @@ void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   height = scratch.result >> 15;
 
+  /// Draws an empty window: a border around a filled interior, at tile (x, y)
+  /// of width by height tiles, and frees the text tiles the rectangle showed.
   Window_DrawBorder(x, y, width, height);
   if (save_position != 0) {
     window->previousX = x;
@@ -205,6 +207,8 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
+/// Maps the text canvas tiles into the interior of a window at tile (x, y).
+/// With fullWidth set the canvas covers the side border columns too.
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -270,8 +274,13 @@ void Text_ResetStyle(void) {
   state->unknownAfterLineSpacing = 1;
 }
 
+/// The window system's per-frame task: windows, then messages, then sprite
+/// animation.
 void WindowSystem_Update(void);
 
+/// Reserves the glyph sprites' tiles, resets the text style, starts the ring of
+/// decoded text from its beginning and starts the per-frame window update
+/// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 

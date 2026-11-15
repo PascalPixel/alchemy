@@ -145,7 +145,11 @@ s32 StatusScreen_Run(void) {
 }
 
 void MenuIcon_SetActive(s32 active);
+/// The party member's status page.
 s32 StatusScreen_SelectCommand(void);
+/// The Status menu's Psynergy page: the party member's Psynergy, PAGE_ROWS to a
+/// page, each with its PP cost and range icon; the cursor's Psynergy is
+/// described in the info window with where it can be used.
 s32 PsynergyMenu_SelectAction(void);
 s32 ItemMenu_SelectItem(void);
 
@@ -208,7 +212,13 @@ s32 StatusScreen_RunPages(void) {
   return result;
 }
 
+/// The party member chooser (menu page 3): Left and Right choose a party
+/// member, showing their status and Psynergy icons; A chooses and B backs out.
 s32 PsynergyMenu_ChooseMember(void);
+/// The Status menu's party row: Left and Right choose a party member, showing
+/// their status; L and R move the party member one place along the party order;
+/// Select lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
+/// chooses the party member and B backs out.
 s32 PartyMemberChooser_RunRearrange(void);
 
 /// Lets the player choose a party member in slot, from the one chosen last: the
@@ -244,6 +254,8 @@ s32 StatusScreen_SelectMember(s32 slot) {
   return result;
 }
 
+/// Shows every Djinn the party has found, a column of seven for each element,
+/// until A, B or Select, then puts the screen back.
 void DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 page;
@@ -1113,6 +1125,11 @@ void Menu_BuildPatternTiles(void) {
 
 #define RANGE_ICON_TILE 0xf300
 
+/// Draws a Psynergy range icon at tile (x, y) of window: three tiles from pair
+/// range of the range icon tiles (Menu_BuildPatternTiles), the side tile on
+/// both ends, mirrored on the left, and the centre tile between. range is the
+/// ability's range less one (0 for the aimed unit alone), or 11 for
+/// ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
   s32 n;
   s32 tile;

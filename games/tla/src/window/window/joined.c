@@ -38,6 +38,8 @@ s32 Message_Start__screens() __asm__("Message_Start");
 #define Message_Start Message_Start__screens
 #endif
 
+/// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
+/// plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 name;
@@ -112,6 +114,8 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
   return gCharacter_SpriteTable[index];
 }
 
+/// Shows that a party member joined the party while the join jingle
+/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = NULL;

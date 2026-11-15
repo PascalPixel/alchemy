@@ -61,6 +61,9 @@ void PartyStatus_CreateWindow(s32 flags) {
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
       window->x, window->y, window->width, window->height, 6);
+  /// Draws the party status window with `flags` (see PARTY_STATUS_*): each
+  /// party member's name, HP and optionally PP with their bars, and in battle
+  /// the standby Djinn of each element.
   PartyStatus_Draw(flags);
   work->holdTilemapUpload = zero;
 }
@@ -343,6 +346,7 @@ void PartyStatus_Draw(s32 flags) {
   work->holdTilemapUpload = 0;
 }
 
+/// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
   Window_Close(*(void **)Ram_HeapSlots->partyStatus, 1);
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);

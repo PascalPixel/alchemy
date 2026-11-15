@@ -401,6 +401,12 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
+/// Writes value into a window's tilemap at tile (x, y) of its interior, with
+/// the palette mode names (TILEMAP_ENTRY_), or as it is for
+/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the border's
+/// top row, where the menus put their page numbers and arrows
+/// (menu/menu_shared.c); a place beyond the bottom or right frame, or outside
+/// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
   u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowWork)->tilemap[0];
@@ -553,6 +559,9 @@ extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
 
+/// The per-frame sprite update: moves each sprite that an open window carries
+/// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
+/// its depth slot (WindowSprite.sentinel).
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = work->windows;

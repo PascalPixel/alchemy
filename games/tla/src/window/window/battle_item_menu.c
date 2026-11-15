@@ -113,6 +113,11 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+/// The battle item list for unit `member`: `count` inventory entries (ended by
+/// 0), five to a page, each with its icon and name: plain when usable,
+/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// when broken; the window above names the one under the cursor
+/// (MsgItemPlainName), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct WindowWork *work;
   s32 drawnFirstEntry;

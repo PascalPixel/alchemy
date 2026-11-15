@@ -230,6 +230,7 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   return 0;
 }
 
+/// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified party

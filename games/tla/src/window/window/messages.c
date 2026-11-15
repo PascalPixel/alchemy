@@ -726,6 +726,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 
+/// Returns the portrait of a character (ids below 20) or another speaker's
+/// sprite (128 and up for those), or -1 when it has none.
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;

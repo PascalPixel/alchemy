@@ -6,6 +6,9 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
+/// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
+/// 31, as a BGR555 colour. rgb holds three components, not an already packed
+/// palette word.
 u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
   s32 g = rgb[1] * scale_g >> 16;
@@ -412,6 +415,9 @@ void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
+/// Runs the settings menu (window colour and brightness, message speed, speech,
+/// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
+/// (returns -1).
 s32 SettingsMenu_Run(void) {
   struct OptionScreen *work;
   struct RenderInput *settingsWindow;

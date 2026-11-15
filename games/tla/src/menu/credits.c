@@ -190,6 +190,8 @@ void Credits_BuildBackgroundTilemap(u32 *table) {
     *table++ = 0;
 }
 
+/// A VBlank task of the credits: drifts both pictures together, keeping their
+/// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
@@ -468,6 +470,8 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   return busy;
 }
 
+/// A VBlank task added by Credits_InitTextSprites: maps the visible sixteen
+/// rows onto the tile ring and uploads their sprites.
 void Credits_UpdateTextSprites(void) {
   u32 frame = gDisplayScroll_Position;
   u32 fine = frame & 7;

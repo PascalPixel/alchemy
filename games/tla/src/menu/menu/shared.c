@@ -36,6 +36,8 @@ s32 Menu_SuspendFieldTasks(void) {
   return Task_SuspendOverlayTasks();
 }
 
+/// Clears the whole menu work and sets its defaults: no side selected, one
+/// entry in each side, and a 1x1 cursor grid.
 void Window_InitializeWork(s32 unused) {
   struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
 
@@ -668,6 +670,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
 
 void PsynergyMenu_RefreshMemberEntries(s32 x, s32 y, s32 width);
 
+/// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
 void PsynergyMenu_RefreshMemberEntriesDefault(void) {
   PsynergyMenu_RefreshMemberEntries(108, 40, 8);
 }
@@ -1145,6 +1148,7 @@ void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
   }
 }
 
+/// Plays sound cue and returns 1.
 s32 Sound_PlayReturnOne(s32 cue) {
   Sound_PlayFar(cue);
   return 1;

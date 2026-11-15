@@ -156,4 +156,8 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s16 DebugSceneSelect_Run(void);
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);
 
+/// The battle lists' two page arrow tiles in VRAM, tiles 820 and 821, which
+/// Link_DrawPageArrows draws each frame.
+#define LIST_PAGE_ARROW_VRAM ((s32)BG_CHAR_BLOCK(0) + 820 * TILE_SIZE_4BPP)
+
 #endif

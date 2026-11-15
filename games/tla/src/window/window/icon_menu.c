@@ -143,7 +143,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
-  Link_DrawPageArrows(0x06006680);
+  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
   state->lastTarget = -1;
@@ -1076,6 +1076,7 @@ redraw:
   }
 }
 
+/// Returns the distance between lhs and rhs, reusing their supplied difference.
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   if (diff >= 0)
     return diff;

@@ -41,14 +41,19 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   } while (n >= 0);
 }
 
-/// Lists into `out` the abilities usable in battle (flag 0x80) of the action
-/// list `newGrid`, in its order, marking with bit 15 those `oldGrid` lacks;
-/// then appends those of `oldGrid` that `newGrid` lacks, marked with bit 14.
+/// The marks BattleDjinnMenu_ListChangedDjinn gives an ability in its list.
+#define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
+#define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change
+
+/// Lists into `out` the abilities usable in battle (ACTION_USABLE_IN_BATTLE) of
+/// the action list `newGrid`, in its order, marking with
+/// DJINN_PREVIEW_ABILITY_GAINED those `oldGrid` lacks; then appends those of
+/// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST.
 /// Both lists are 32 slots, ended early by a 0 action. Returns the entries
 /// written, and the gained and lost counts through `gained` and `lost`.
-s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
-                                     struct DjinnSlot *newGrid, u16 *out,
-                                     s32 *gained, s32 *lost) {
+s32 BattleDjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
+                                     const struct OwnerActionSlot *newGrid,
+                                     u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
@@ -58,29 +63,34 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
   gainedCount = 0;
   lostCount = 0;
   count = 0;
-  for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
-    if (Ability_Get(newGrid[i].id)->flags & 0x80) {
-      out[count] = newGrid[i].id & 0x3fff;
+  for (i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
+    if (Ability_Get(newGrid[i].encodedAction)->flags &
+        ACTION_USABLE_IN_BATTLE) {
+      out[count] = newGrid[i].encodedAction & OWNER_ACTION_ID_MASK;
       count++;
-      for (j = 0; j < 32; j++) {
-        if (((newGrid[i].id ^ oldGrid[j].id) & 0x3fff) == 0)
+      for (j = 0; j < PSYNERGY_SLOTS; j++) {
+        if (((newGrid[i].encodedAction ^ oldGrid[j].encodedAction) &
+             OWNER_ACTION_ID_MASK) == 0)
           break;
       }
-      if (j == 32) {
+      if (j == PSYNERGY_SLOTS) {
         gainedCount++;
-        out[count - 1] |= 0x8000;
+        out[count - 1] |= DJINN_PREVIEW_ABILITY_GAINED;
       }
     }
   }
-  for (i = 0; i < 32 && oldGrid[i].id != 0; i++) {
-    if (Ability_Get(oldGrid[i].id)->flags & 0x80) {
-      for (j = 0; j < 32; j++) {
-        if (((oldGrid[i].id ^ newGrid[j].id) & 0x3fff) == 0)
+  for (i = 0; i < PSYNERGY_SLOTS && oldGrid[i].encodedAction != 0; i++) {
+    if (Ability_Get(oldGrid[i].encodedAction)->flags &
+        ACTION_USABLE_IN_BATTLE) {
+      for (j = 0; j < PSYNERGY_SLOTS; j++) {
+        if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
+             OWNER_ACTION_ID_MASK) == 0)
           break;
       }
-      if (j == 32) {
+      if (j == PSYNERGY_SLOTS) {
         lostCount++;
-        out[count] = (oldGrid[i].id & 0x3fff) | 0x4000;
+        out[count] = (oldGrid[i].encodedAction & OWNER_ACTION_ID_MASK) |
+                     DJINN_PREVIEW_ABILITY_LOST;
         count++;
       }
     }

@@ -39,6 +39,9 @@ void Menu_ResetTwoResourceEntries(void) {
   VramCache_FreeEntry((u16)state->resourceSlots[1]);
 }
 
+/// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
+/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
@@ -53,6 +56,9 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   return buffer;
 }
 
+/// Loads an icon into a free cache slot and creates its sprite when possible:
+/// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
+/// preview's Psynergy lists. Returns no value; callers ignore it.
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
                                   s32 resourceId) {
   s32 slot;
@@ -119,6 +125,8 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
+/// Moves through the status grid's irregular rows and returns row * 9 + column.
+/// Nothing calls it.
 s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   struct InputState *input = &gInput;
   s32 result = 0;

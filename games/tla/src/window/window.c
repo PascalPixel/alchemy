@@ -132,16 +132,6 @@ struct CommandRowWindowWork {
   u16 tilemap[0x400];
 };
 
-struct BgScrollPair {
-  s16 x;
-  s16 y;
-};
-
-struct DjinnSlot {
-  u16 id;
-  u16 state;
-};
-
 /// A unit as the summary screen reads it.
 struct SummaryOam {
   u8 unk00[4];
@@ -202,23 +192,6 @@ struct BattleSummaryCursor {
   u8 unk03;
 };
 
-struct SummaryRecoveryEntry {
-  u8 element;
-  u8 index;
-  u8 owner;
-  s8 turns;
-};
-
-struct SummaryRecoveryList {
-  struct SummaryRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct SummaryRecovery {
-  u8 unk000[8];
-  struct SummaryRecoveryList list;
-};
-
 struct SummaryResourceEntry {
   u16 unk00;
   u16 offset;
@@ -251,28 +224,15 @@ struct SaveGameWords {
   u32 playTime;
 };
 
-struct ObjectRowWork {
+/// The menu work as the file list reads it, ShopWork's party row: the party
+/// sprites of the file under the cursor, where each stands and its scale.
+struct FileListWork {
   u8 unk000[0xf8];
-  void *icons[4];
+  void *partyMemberIcons[4]; ///< up to four party sprites, null for none
   u8 unk108[0x10];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
-struct ObjectRowState {
-  u8 unk000[248];
-  void *objects[4];
-  u8 unk108[16];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
-/// The portion of the file summary (SaveSummary) read here.
-struct NumberRow {
-  u8 unk00[0x28];
-  s8 values[4]; ///< Djinn count for each element.
+  s16 partyMemberX[8];     ///< pixels
+  s16 partyMemberY[8];     ///< pixels
+  s32 partyMemberScale[4]; ///< 16.16 fixed point, Q16_ONE full size
 };
 
 extern const u8 gDjinnMenu_BlinkTile[32];
@@ -280,22 +240,6 @@ extern const u8 gDjinnMenu_BlinkTile[32];
 extern u8 gDjinnMenu_ElementXOffsets[4];
 
 extern u8 gDjinnMenu_ElementYOffsets[4];
-
-extern u8 Msg_0d10[];
-
-extern u8 Msg_0d11[];
-
-extern u8 Msg_0d12[];
-
-extern u8 Msg_0d13[];
-
-extern u8 Msg_0d15[];
-
-extern u8 Msg_0d16[];
-
-extern u8 Msg_0d17[];
-
-extern u8 Msg_0d19[];
 
 extern const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[];
 
@@ -390,10 +334,10 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-struct CountdownDisplayEntry {
-  u8 data[12];
-};
-
+/// The partner console's link signature (gLinkPeerSignatures) as the timer
+/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
+/// commands (Battle_CollectPartyCommands), which starts this side's
+/// countdown.
 struct LinkSignature {
   u8 padding000[8];
   u16 e;
@@ -403,19 +347,6 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-struct LinkCountdownState {
-  struct CountdownDisplayEntry entries[3];
-  u8 entryActive[3];
-  u8 padding027;
-  s32 targetOffset;
-  s32 currentOffset;
-  u8 padding030[20];
-  s32 displayHandle;
-  s32 secondaryHandle;
-  s32 timer;
-  s32 enabled;
-};
-
 extern u8 gWorkspace_ItemTitle[];
 extern u8 gWorkspace_EnergyTitle[];
 extern u8 gWorkspace_StatusTitle[];
@@ -423,8 +354,6 @@ extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
 extern s8 gMenu_SaveSlotActionByPosition[];
-
-extern struct LinkCountdownState *gLinkCountdownWork;
 
 // The parts, in ROM order.
 #include "window/battle_targets.c"

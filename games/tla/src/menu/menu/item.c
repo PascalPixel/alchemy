@@ -8,28 +8,46 @@
 
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
+/// The item command grid: Use, Equip and Details on the top row, Give, Remove
+/// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
+/// them).
 s32 ItemMenu_ChooseCommand(void);
+/// Copies the unit's items into the list items (32 entries), skipping empty
+/// slots and clearing the rest. Returns how many there are. mode is not used.
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 s32 ItemMenu_CountItems(s32 owner_id);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
+/// Shows the selected item at the top of the message window: its icon, its
+/// party member's name and its name.
 void ItemMenu_DrawItemHead(void);
+/// Clears the message window and writes message into it.
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item);
 s32 ItemMenu_IsStatRaisingItem(s32 item_id);
+/// Shows party member ownerId's items in the item window, laid out for layout
+/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode);
 s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode);
 s32 ItemMenu_SelectMember(s32 pane);
+/// Chooses the party member to use or give the selected item (enum
+/// ItemTargetMode) to.
 s32 ItemMenu_SelectTarget(s32 mode);
+/// Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWindowRow3(void);
+/// Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWindowRow5(void);
 void ItemMenu_SetMessageWindowHeight3(void);
+/// Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMessageWindowHeight5(void);
 s32 ItemMenu_ShowDetails(s32 value);
+/// After the selected item is used: an item that may break (ITEM_USE_MAY_BREAK)
+/// breaks one time in eight, with the break sound and "It broke!" in the info
+/// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_Use(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
@@ -166,6 +184,10 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 // it here.
 void Unit_RefreshPsynergyFar(s32 unit);
 #endif
+/// Shows in the status panel what the item in owner's inventory slot would mean
+/// to party member target: for a usable item, target's status; for equipment,
+/// target's stats with it equipped; for a Psynergy item, the Psynergy it
+/// teaches.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
 #if TLA_PATCH_2
 void ItemMenu_HideTradedIcons(void);
@@ -1088,12 +1110,18 @@ void ItemMenu_OpenCategory(s32 category) {
 #define IN_STOCK_LABEL_X 32
 #endif
 
+/// Task while ItemMenu_SelectTarget chooses a party member to use or give the
+/// item to, and while the command grid's cursor is on Give: every 32 frames,
+/// has each party figure nod (ANIM_NOD) if that party member can equip the
+/// item, or stand (ANIM_STAND) if not.
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item);
 
 s32 ItemMenu_IsStatRaisingItem(s32 item);
 
+/// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
+/// back to ANIM_STAND and removes the task.
 void EquipmentMenu_StopCompatibilityIndicators(void);
 
 s32 ItemMenu_SelectTarget(s32 mode) {

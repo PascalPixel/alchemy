@@ -682,15 +682,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             djinnList[djinnCount] = (element << 8) | bit;
             djinnCount++;
           } else if (unit->djinnHeld[element] & (1 << bit)) {
-            struct SummaryRecoveryList *recovery =
-                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
-                      (u32)member > 7))
+            struct DjinnRecoveryList *recovery =
+                &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+                      (u32)member > ALLY_MAX))
                      ->list;
             s32 k;
             s32 value;
 
             for (k = 0; k < recovery->count &&
-                        !(recovery->entries[k].owner == member &&
+                        !(recovery->entries[k].unitId == member &&
                           recovery->entries[k].element == element &&
                           recovery->entries[k].index == bit);
                  k++)

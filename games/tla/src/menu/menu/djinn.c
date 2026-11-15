@@ -116,6 +116,7 @@ s32 DjinnMenu_Run(void) {
 
 void Menu_OpenBackdropScreen(void);
 
+/// The Djinn list's chooser.
 s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 DjinnMenu_ShowHelp(void);
@@ -742,6 +743,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
+/// Window_SetRectPalette on a rectangle of window's interior, (x, y) and its
+/// size in tiles from the interior's corner.
 void Window_SetInteriorRectPalette(struct RenderInput *panel, s32 x, s32 y,
                                    s32 width, s32 height, s32 palette) {
   Window_SetRectPalette((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,

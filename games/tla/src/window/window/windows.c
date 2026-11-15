@@ -68,6 +68,10 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
   return fill(dst, size, value);
 }
 
+/// Sets up the window system for the field (and the other screens outside
+/// battle): allocates and clears the work block, blanks the tilemap, frees
+/// every window sprite and starts the two per-frame tasks, the tilemap upload
+/// and the window update.
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 
@@ -119,6 +123,8 @@ void WindowSystem_InitBattle(s32 kind) {
   }
 }
 
+/// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
+/// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 flags;
@@ -146,6 +152,8 @@ void WindowSystem_UploadTilemap(void) {
   }
 }
 
+/// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
+/// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
@@ -296,8 +304,10 @@ void Window_WaitZoom(void *work) {
 }
 
 void WindowSprite_PrepareForRedraw(struct Window *work);
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
+/// Closes a window: clears its contents and remembers its last rectangle.
 void Window_Close(struct Window *work, s32 release) {
   u16 zero;
 
@@ -365,6 +375,9 @@ void WindowSprite_ClearList(void *work) {
     list->head = next;
     while (node != NULL) {
       next = node->next;
+      /// Frees a window sprite: returns it to the free list, releases its VRAM
+      /// cache entry unless it is a glyph, and for a portrait frees its palette
+      /// slot too.
       WindowSprite_Release(node);
       node = next;
     }
@@ -373,9 +386,9 @@ void WindowSprite_ClearList(void *work) {
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
-// Clears an area of a window's interior to the window fill. left, top, right
-// and bottom are pixels inside the window, and the area covers every tile
-// they touch.
+/// Clears an area of a window's interior to the window fill. left, top, right
+/// and bottom are pixels inside the window, and the area covers every tile they
+/// touch.
 void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
                                u32 right, u32 bottom) {
   struct WindowWork *work;
@@ -441,6 +454,7 @@ void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   list->tailLink = tail;
 }
 
+/// Adds a window sprite to the end of a list; NULL lists are ignored.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node) {
   if (list != NULL) {
@@ -470,6 +484,11 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   entry->motion = 0;
 }
 
+/// Starts a free message typing the decoded text that begins at entry into
+/// window, with the pen at pixel (x, y). spacing gives each of four lines an
+/// extra gap between characters, in 1/256 pixels (or none for NULL), and is
+/// copied, so the caller's array need not outlive the call; flags is kept with
+/// the message (nonzero keeps the window's size from page to page).
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;

@@ -147,6 +147,8 @@ void Resource_CopyFixedBlockA(s32 slot) {
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
+/// Puts the string `str` into the UI's text entries and returns its width in
+/// pixels.
 s32 Text_SetString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;
@@ -274,6 +276,9 @@ void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 // command key turns to the other kana page. It also returns without waiting
 // for every button to be released, which the later editions added.
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// The name entry screen for party member `member`: the player types a name of
+/// up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or Start,
+/// which jumps there).
 s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;

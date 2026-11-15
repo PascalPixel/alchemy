@@ -322,6 +322,10 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   } while (bank <= 1);
 }
 
+/// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table the
+/// status icons come from (Icon_DrawMisc), in a transfer block taken from
+/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// returns the entry's first tile.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   u8 *work;
@@ -333,6 +337,9 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
+/// Builds the icon of inventory item `resource` (the count above one and both
+/// marks) in a transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM
+/// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   u8 *work;

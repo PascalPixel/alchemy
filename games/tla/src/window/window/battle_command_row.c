@@ -28,7 +28,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowWork)
 
-extern struct BgScrollPair gBgScroll[];
+#include "bg_scroll.h"
 #include "system/main_routine_work.h"
 
 /// Runs a battle command row: the commands as icons along the bottom of the

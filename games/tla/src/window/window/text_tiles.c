@@ -6,6 +6,8 @@
 
 extern char ResourceId_WindowTiles;
 
+/// Draws window tile pattern over the tile of tilemap entry *entry, with its
+/// colours mapped through remap (0 leaves a pixel as it was).
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                u8 *remap) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -597,6 +599,8 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
   Heap_Release(buffer);
 }
 
+/// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
+/// its interior.
 void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                              s32 offsetY) {
   u16 *buffer;
@@ -660,6 +664,8 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
 }
 
+/// Draws a number (width as String_FormatNumber) as tiles in a window at pixel
+/// (x, y) of its interior.
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
                              s32 x, s32 y) {
   u8 data[16];
@@ -668,6 +674,8 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
   Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
 }
 
+/// Draws a number (width as String_FormatNumber) into a window's tilemap at
+/// pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
   s32 pinned = value;

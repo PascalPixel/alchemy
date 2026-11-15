@@ -8,6 +8,8 @@
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
+/// Previews a give, trade, set or standby change without committing it. It
+/// saves and restores the units before polling for confirmation.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -624,6 +626,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   return result;
 }
 
+/// Tests whether a hypothetical give leaves every pair of party members within
+/// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the

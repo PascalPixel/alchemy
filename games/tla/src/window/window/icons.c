@@ -4,8 +4,12 @@
 
 #include "../window_internal.h"
 
+/// Returns how many item icons the icon table holds; Icon_BuildItemIconTiles
+/// draws icon 0 for a number past them.
 s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
 
+/// Returns how many Psynergy icons the icon table holds;
+/// Icon_BuildAbilityIconTiles draws icon 0 for a number past them.
 s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 
 extern u8 *gIcon_BasePointerTable[];
@@ -222,6 +226,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountPsynergyIcons(void);
 
+/// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
   Icon_BuildAbilityIconTiles(

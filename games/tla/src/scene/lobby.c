@@ -54,6 +54,41 @@ void LinkLobby_InitializeSerial(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// The lobby's people, by the rows of gActorPlacements, as The Broken Seal's
+/// Battle Arena keeps them where it has the same ones; the party's rows go to
+/// their party slots.
+enum LinkLobbyActorId {
+  ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle
+  ACTOR_LINKED_WINS_TELLER,             ///< reports the linked battles won
+  ACTOR_HEALER,                         ///< opens a Sanctum's services
+  ACTOR_GREETER, ///< "Welcome to the Battle Arena, where..."
+  /// "Hm... It comes in like this... Then you do this, and... Whoa, that's
+  /// not right..."
+  ACTOR_FUMBLING_VISITOR,
+  /// "You look a little scrawny...", then "I'll be rooting..."
+  ACTOR_ROOTING_VISITOR,
+  /// "I like my men macho"; with L or R held, takes a song request.
+  ACTOR_MACHO_LOVING_VISITOR,
+  ACTOR_DEBUG_HELPER, ///< loads a debug parameter set
+  /// Explains the linked finals' limit of three allies, then the party order.
+  ACTOR_PARTY_ORDER_VISITOR,
+  /// "In the linked finals, you can't delay after your opponent selects a
+  /// move."
+  ACTOR_COMMAND_TIME_VISITOR,
+  /// "So you win against one guy, and then you lose against the next."
+  ACTOR_WIN_AND_LOSE_VISITOR,
+  /// "You could use Psynergy, Djinn, even summons and items!"
+  ACTOR_STRATEGY_VISITOR,
+  ACTOR_WARY_VISITOR, ///< "Should I enter or not? I'm so stressed..."
+  ACTOR_MONSTER_RULES_VISITOR,
+  ACTOR_MONSTER_WINS_TELLER, ///< reports the most Monster Battles won in a row
+  /// "Sometimes, your class changes when you unleash a Djinni."
+  ACTOR_CLASS_CHANGE_VISITOR,
+  ACTOR_SONG_REQUEST_TAKER, ///< "You have a song request?"
+  /// "I don't have the guts to fight in the battle arena."
+  ACTOR_GUTLESS_VISITOR
+};
+
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
@@ -192,7 +227,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLobbyIfYouWantToParticipate);
   // "If you want to participate, please step into the circle!"
-  Event_OpenMessage(8, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   wait(5);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_End();
@@ -209,7 +244,7 @@ s32 LinkLobby_ReportDisconnection(void) {
   work->raisedTrigger = 0;
   Event_SetMessageId((s32)MsgLobbyLinkWasDisconnected);
   // "The link was disconnected."
-  Event_OpenMessage(8, 0);
+  Event_OpenMessage(ACTOR_ATTENDANT, 0);
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
   Event_End();
 }
@@ -638,10 +673,10 @@ s32 LinkLobby_EnterBattle(void) {
     wait(8);
     TilesetAnim_Pause(5);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId((s32)MsgLobbyGoodLuck);
       // "Good luck!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       wait(45);
       Actor_SetSpeed(ACTOR_FELIX, 1);
       Actor_WalkTo(ACTOR_FELIX, 216, 184);
@@ -727,7 +762,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
   msg = (s32)MsgLobbyPleaseSpeakToMeWhen;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
   if (LinkLobby_PeerSlotMatches(0) == 0)
     wait(1);
   if (LinkLobby_PeerSlotMatches(0) == 0) {
@@ -736,8 +771,8 @@ s32 LinkLobby_ChooseBattleMode(void) {
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(msg + 5);
       // "You do not have an opponent. Would you like to battle a monster?"
-      Event_OpenMessage(8, 0);
-      answer = Event_AskYesNoWithActorAnimation(4, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
+      answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
@@ -762,7 +797,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       LinkLobby_WriteSlotValue(0);
       Event_SetMessageId((s32)MsgLobbyYourOpponentHasArrived);
       // "Your opponent has arrived!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       Event_ClearFlag(FLAG_SCENE_TEMP_02);
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
     }
@@ -771,12 +806,12 @@ s32 LinkLobby_ChooseBattleMode(void) {
     message:
       Event_SetMessageId(line);
     open_message:
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01) &&
                !Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Event_SetMessageId(msg);
       // "Please speak to me when you want to fight in a battle."
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       Event_SetFlag(FLAG_AREA_TEMP_00);
     } else {
       Event_SetFlag(FLAG_AREA_TEMP_00);
@@ -785,8 +820,8 @@ s32 LinkLobby_ChooseBattleMode(void) {
       else
         Event_SetMessageId(msg + 1);
       // "Would you like to apply?"
-      Event_OpenMessage(8, 0);
-      if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
+      if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(0)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
           Event_SetFlag(0x172);
@@ -803,7 +838,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       } else {
         Event_SetMessageId(msg);
         // "Please speak to me when you want to fight in a battle."
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -914,11 +949,11 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     show:
       Event_SetMessageId(message);
       // "There's no such parameter. Ask Mr. Sugimoto."
-      Event_ShowMessage(9, 0);
+      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
     } else {
       Event_SetMessageId((s32)MsgLobbySettingsAreMadeRest);
       // "The settings are made. The rest is up to you."
-      Event_ShowMessage(9, 0);
+      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
     }
   }
   wait(10);
@@ -1095,7 +1130,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
   if (base == (s32)MsgLobbyIllFightEnoughForBoth && actor == 5) {
-    Actor_ShowEmoteById__talk(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+    Actor_ShowEmoteById__talk(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Event_Wait(10);
   }
   Event_End();
@@ -1113,22 +1148,22 @@ s32 LinkLobby_LeaveArena(void) {
 }
 
 /// The visitors' talk, by whether the party has fought here (flag 0x206);
-/// actor 14 takes song requests while L or R is held.
+/// the macho-loving visitor takes song requests while L or R is held.
 s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
-  if (actor == 14 && (gInput.held & KEYS_SHOULDERS)) {
-    LinkLobby_TakeSongRequest(14);
+  if (actor == ACTOR_MACHO_LOVING_VISITOR && (gInput.held & KEYS_SHOULDERS)) {
+    LinkLobby_TakeSongRequest(ACTOR_MACHO_LOVING_VISITOR);
     return;
   }
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SCENE_TEMP_06)) {
     switch (actor) {
-    case 13:
+    case ACTOR_ROOTING_VISITOR:
       message = (s32)MsgLobbyIllBeRooting;
       break;
-    case 14:
+    case ACTOR_MACHO_LOVING_VISITOR:
       message = (s32)MsgLobbyILikeMyMenMacho;
       break;
     default:
@@ -1137,10 +1172,10 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
     }
   } else {
     switch (actor) {
-    case 13:
+    case ACTOR_ROOTING_VISITOR:
       message = (s32)MsgLobbyYouLookLittleScrawny;
       break;
-    case 14:
+    case ACTOR_MACHO_LOVING_VISITOR:
       message = (s32)MsgLobbyILikeMyMenMacho;
       break;
     default:
@@ -1154,12 +1189,13 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
   Event_OpenMessage(actor, 0);
   Event_Wait(1);
   if (message == (s32)MsgLobbyYouLookLittleScrawny) {
-    Actor_StartRepeatedMotion(14, 1);
-    Actor_SetAnimation(14, 4);
+    Actor_StartRepeatedMotion(ACTOR_MACHO_LOVING_VISITOR, 1);
+    Actor_SetAnimation(ACTOR_MACHO_LOVING_VISITOR, 4);
     Event_Wait(15);
-    Actor_FaceActor(14, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_MACHO_LOVING_VISITOR, gMainRoutineWork.leaderActorId,
+                    0);
     Event_Wait(5);
-    Event_OpenMessage(14, 0);
+    Event_OpenMessage(ACTOR_MACHO_LOVING_VISITOR, 0);
   }
   Event_End();
 }
@@ -1325,10 +1361,10 @@ s32 LinkLobby_Initialize(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId((s32)MsgLobbyNotBadWouldYouLike + msg);
-    Event_OpenMessage(8, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+    Event_OpenMessage(ACTOR_ATTENDANT, 0);
+    if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       if (wins > 90)
         wins = 90;
       GameFlag_SetByte(0x3f8, wins);
@@ -1343,12 +1379,12 @@ s32 LinkLobby_Initialize(void) {
         gMainRoutineWork.linkTallies[2] = score;
         Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
         // "You won ... battle. You broke the record!"
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
         LinkLobby_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId((s32)MsgLobbyYouWonBattlePleaseSpeak);
         // "You won ... battle. Please speak to me when you wish to battle..."
-        Event_OpenMessage(8, 0);
+        Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
       LinkLobby_WriteSlotValue(0);
     }
@@ -1360,7 +1396,7 @@ s32 LinkLobby_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[3];
     MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
@@ -1369,12 +1405,12 @@ s32 LinkLobby_Initialize(void) {
       gMainRoutineWork.linkTallies[2] = score;
       Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
       // "You won ... battle. You broke the record!"
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
       LinkLobby_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId((s32)MsgLobbyYouWonBattleITold);
       // "You won ... battle. I told you our monsters were tough! Please..."
-      Event_OpenMessage(8, 0);
+      Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
@@ -1438,10 +1474,10 @@ s32 LinkLobby_Initialize(void) {
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId((s32)MsgLobbyNoteYouCantUseSleep);
       // "Note: you can't use the sleep function in battle stages!"
-      Event_ShowMessage(8, 0);
+      Event_ShowMessage(ACTOR_ATTENDANT, 0);
       Event_End();
     }
     gMainRoutineWork.idleSleepEnabled = 0;
@@ -1574,35 +1610,56 @@ struct ActorPlacement gLinkLobby_UnusedPlacements[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_TALK, 0, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 1, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 2, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 3, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 5, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 6, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, EVENT(LinkLobby_TalkByProgress)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseBattleMode)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(LinkLobby_ReportWinTallies)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(LinkLobby_OpenSanctum)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ISAAC, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_IVAN, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_MIA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_JENNA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_SHEBA, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_PIERS, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkByProgress)},
+    {TRIGGER_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ChooseBattleMode)},
+    {TRIGGER_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportWinTallies)},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_OpenSanctum)},
+    {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
      MSGNO(MsgLobbyWelcomeToBattleArenaWhere)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLobbyHmItComesInLike)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(LinkLobby_TalkToVisitor)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FUMBLING_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyHmItComesInLike)},
+    {TRIGGER_TALK, ACTOR_ROOTING_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkToVisitor)},
+    {TRIGGER_TALK, ACTOR_MACHO_LOVING_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TalkToVisitor)},
+    {TRIGGER_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
      EVENT(LinkLobby_ChooseDebugParameterSet)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(LinkLobby_ExplainPartyOrder)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLobbyInLinkedFinalsYouCant)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLobbySoYouWinAgainstOne)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ExplainPartyOrder)},
+    {TRIGGER_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyInLinkedFinalsYouCant)},
+    {TRIGGER_TALK, ACTOR_WIN_AND_LOSE_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbySoYouWinAgainstOne)},
+    {TRIGGER_TALK, ACTOR_STRATEGY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbyYouCouldUsePsynergyDjinn)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgLobbyShouldIEnterOrNot)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgLobbyMonsterBattleRulesSay)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(LinkLobby_ReportMonsterRecord)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyShouldIEnterOrNot)},
+    {TRIGGER_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyMonsterBattleRulesSay)},
+    {TRIGGER_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportMonsterRecord)},
+    {TRIGGER_TALK, ACTOR_CLASS_CHANGE_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbySometimesYourClassChangesWhen)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(LinkLobby_TakeSongRequest)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgLobbyIDontHaveGuts)},
+    {TRIGGER_TALK, ACTOR_SONG_REQUEST_TAKER, CONDITION_ALWAYS,
+     EVENT(LinkLobby_TakeSongRequest)},
+    {TRIGGER_TALK, ACTOR_GUTLESS_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgLobbyIDontHaveGuts)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
     {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},

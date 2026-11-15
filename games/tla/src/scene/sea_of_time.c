@@ -189,6 +189,29 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
+/// The party's ship: placed blank, it wears the boat sheet (sprite 11) on the
+/// water, and the currents, the swirl and the whirlpool move it.
+enum {
+  ACTOR_SHIP = ACTOR_FIRST_PLACED,
+  /// The five rocks (sprite 424) in the channel to Lemuria, which the ship's
+  /// Grind clears one by one.
+  ACTOR_ROCK_A,
+  ACTOR_ROCK_B,
+  ACTOR_ROCK_C,
+  ACTOR_ROCK_D,
+  ACTOR_ROCK_E
+};
+
+/// Set as Grind clears each rock; a cleared rock is not placed again.
+enum {
+  FLAG_ROCK_A_CLEARED = 0xa90,
+  FLAG_ROCK_B_CLEARED,
+  FLAG_ROCK_C_CLEARED,
+  FLAG_ROCK_D_CLEARED,
+  FLAG_ROCK_E_CLEARED,
+  FLAG_LAST_ROCK_CLEARED
+};
+
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_Room2Placements;
@@ -196,7 +219,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void SeaOfTime_CircleSwirl(void) {
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_GetById(ACTOR_SHIP);
   s32 turn[1];
   s32 center[3];
   s32 *pos;
@@ -238,7 +261,7 @@ void SeaOfTime_CircleSwirl(void) {
 
 void SeaOfTime_RideCurrent(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_GetById(ACTOR_SHIP);
   struct {
     s32 x, y, z;
   } center;
@@ -386,7 +409,7 @@ void SeaOfTime_FollowChannel(void) {
   s32 x0, y0, z0, flip;
 
   work = Ram_HeapSlots->fieldWork;
-  actor = Actor_GetById(8);
+  actor = Actor_GetById(ACTOR_SHIP);
   angle = (work->stepTrigger - 45) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -466,11 +489,12 @@ extern u16 gSeaOfTime_LastLapCell;
 extern struct Spots gSeaOfTime_LapSpots;
 extern u8 gSeaOfTime_LapsNeeded[];
 
-/// Tracks actor 8 around the ring of cells: counts steps made in one direction,
-/// spawning an effect every fourth frame once past 3, and rewards a full count.
+/// Tracks the ship around the ring of cells: counts steps made in one
+/// direction, spawning an effect every fourth frame once past 3, and rewards a
+/// full count.
 void SeaOfTime_CountLaps(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(8);
+  struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   s16 index;
   s32 now;
   s32 last;
@@ -712,7 +736,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 x, y, z;
   s32 velocity, reverseVelocity, alternate;
 
-  actor = Actor_GetById(8);
+  actor = Actor_GetById(ACTOR_SHIP);
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
@@ -812,13 +836,13 @@ void SeaOfTime_CrossToLemuria(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(0x8dd);
-  Actor_SetSpeed(8, 1);
-  Actor_GetById(8)->facing = FACING_NORTH;
-  Actor_WalkTo(8, 352, 264);
+  Actor_SetSpeed(ACTOR_SHIP, 1);
+  Actor_GetById(ACTOR_SHIP)->facing = FACING_NORTH;
+  Actor_WalkTo(ACTOR_SHIP, 352, 264);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
-  Actor_WaitForMoveById(8);
+  Actor_WaitForMoveById(ACTOR_SHIP);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_556);
   // Fills palette 3's entries 1 to 14 with one colour.
@@ -944,35 +968,35 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
-#define DEFINE_GRIND_ROCK(name, n1, n2)                                        \
+#define DEFINE_GRIND_ROCK(name, rock, flag)                                    \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    object = Actor_GetById(n1);                                                \
-    SeaOfTime_RemoveRock(object->x.fixed, Actor_GetById(n1)->z.fixed, n1);     \
-    GameFlag_Set(n2);                                                          \
+    object = Actor_GetById(rock);                                              \
+    SeaOfTime_RemoveRock(object->x.fixed, Actor_GetById(rock)->z.fixed, rock); \
+    GameFlag_Set(flag);                                                        \
     Event_End();                                                               \
   }
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, 9, 0xa90)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, 10, 0xa91)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindThirdRock, 11, 0xa92)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindThirdRock, ACTOR_ROCK_C, FLAG_ROCK_C_CLEARED)
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, 12, 0xa93)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, 13, 0xa94)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
-DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, 9, 0xa95)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
 
-#define DEFINE_LEAVE_BY_EXIT(name, n1)                                         \
+#define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
   void name(void) {                                                            \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Import_EventSetExitRequest(n1);                                            \
+    Import_EventSetExitRequest(exit);                                          \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
     Event_End();                                                               \
@@ -1286,14 +1310,14 @@ s32 Scene_Initialize(void) {
         Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
                 DMA_COPY_HALFWORDS(14), REG_DMA3);
       } else {
-        if (!GameFlag_Get(0xa90))
-          SeaOfTime_PlaceRock(21, 23, 9);
-        if (!GameFlag_Get(0xa91))
-          SeaOfTime_PlaceRock(37, 17, 10);
-        if (!GameFlag_Get(0xa93))
-          SeaOfTime_PlaceRock(47, 27, 12);
-        if (!GameFlag_Get(0xa94))
-          SeaOfTime_PlaceRock(59, 19, 13);
+        if (!GameFlag_Get(FLAG_ROCK_A_CLEARED))
+          SeaOfTime_PlaceRock(21, 23, ACTOR_ROCK_A);
+        if (!GameFlag_Get(FLAG_ROCK_B_CLEARED))
+          SeaOfTime_PlaceRock(37, 17, ACTOR_ROCK_B);
+        if (!GameFlag_Get(FLAG_ROCK_D_CLEARED))
+          SeaOfTime_PlaceRock(47, 27, ACTOR_ROCK_D);
+        if (!GameFlag_Get(FLAG_ROCK_E_CLEARED))
+          SeaOfTime_PlaceRock(59, 19, ACTOR_ROCK_E);
         {
           void *block = Ram_HeapSlots->paletteFade;
 
@@ -1306,8 +1330,8 @@ s32 Scene_Initialize(void) {
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {
-      if (!GameFlag_Get(0xa95))
-        SeaOfTime_PlaceRock(89, 85, 9);
+      if (!GameFlag_Get(FLAG_LAST_ROCK_CLEARED))
+        SeaOfTime_PlaceRock(89, 85, ACTOR_ROCK_A);
     }
   }
   {
@@ -1481,15 +1505,15 @@ struct Trigger gSeaOfTime_EntranceTriggers[] = {
     {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(SeaOfTime_RideCurrent)},
     {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(SeaOfTime_CircleSwirl)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindFirstRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_B, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindSecondRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_C, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindThirdRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_D, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindFourthRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_E, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindFifthRock)},
     {TRIGGER_TABLE_END},
 };
@@ -1501,7 +1525,7 @@ struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
     {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
     {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(SeaOfTime_FollowChannel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
      EVENT(SeaOfTime_GrindLastRock)},
     {TRIGGER_TABLE_END},
 };

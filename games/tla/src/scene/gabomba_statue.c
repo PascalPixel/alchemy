@@ -26,6 +26,14 @@
 #define FLAG_GABOMBA_FIRST_CONE_POUNDED 0x8ce
 #define FLAG_GABOMBA_SECOND_CONE_POUNDED 0x8cf
 #define FLAG_GABOMBA_MOUSE_SEEN 0xa6c
+
+/// The mouse of the turntable room that runs ahead and shows the way
+/// (GabombaStatue_MouseShowsTheWay).
+enum { ACTOR_MOUSE = 39 };
+
+/// The arrows room at the top, where Akafubu waits with Kraden for the
+/// offering (GabombaStatue_HearTheOffering, GabombaStatue_SeeHowItWorks).
+enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 #include "system/io_reg.h"
 #include "field/field.h"
 #include "types.h"
@@ -745,66 +753,66 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
-  Actor_SetPosition(39, 328, 296);
+  Actor_SetPosition(ACTOR_MOUSE, 328, 296);
   FieldEvent_Wait(30);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
-  FieldActor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 39);
+  FieldActor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_MOUSE);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  EventCamera_FollowActor(39, 1);
+  EventCamera_FollowActor(ACTOR_MOUSE, 1);
   FieldEvent_Wait(30);
-  Actor_Get(39)->priorityFlags |= 0x20;
-  Actor_SetAnimation(39, 1);
-  Actor_WalkToAndWait(39, 320, 240);
-  Actor_WalkToAndWait(39, 304, 216);
-  Actor_WalkToAndWait(39, 280, 216);
-  Actor_WalkToAndWait(39, 280, 184);
+  Actor_Get(ACTOR_MOUSE)->priorityFlags |= 0x20;
+  Actor_SetAnimation(ACTOR_MOUSE, 1);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 320, 240);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 304, 216);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 280, 216);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 280, 184);
   FieldEvent_Wait(20);
-  Actor_FaceActor(39, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_MOUSE, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(10);
   Event_PlaySound(SE_VOICE_GIRL_3);
   {
     s32 a = 256, b = 30;
 
-    Actor_ShowEmote(39, a, b);
+    Actor_ShowEmote(ACTOR_MOUSE, a, b);
   }
-  Actor_WalkToAndWait(39, 344, 184);
-  Actor_WalkToAndWait(39, 344, 200);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 344, 184);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 344, 200);
   FieldEvent_Wait(2);
-  Actor_FaceDirection(39, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MOUSE, FACING_WEST, 0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = px(4);
-  Actor_SetSpeed(39, 4);
-  Actor_WalkToAndWait(39, 312, 200);
+  Actor_Get(ACTOR_MOUSE)->velocityY = px(4);
+  Actor_SetSpeed(ACTOR_MOUSE, 4);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 312, 200);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = px(6);
-  Actor_SetSpeed(39, 4);
-  Actor_WalkToAndWait(39, 312, 168);
-  Actor_SetSpeed(39, 2);
-  Actor_WalkToAndWait(39, 328, 152);
+  Actor_Get(ACTOR_MOUSE)->velocityY = px(6);
+  Actor_SetSpeed(ACTOR_MOUSE, 4);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 312, 168);
+  Actor_SetSpeed(ACTOR_MOUSE, 2);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 328, 152);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = px(6);
-  Actor_SetSpeed(39, 4);
-  Actor_WalkToAndWait(39, 360, 152);
+  Actor_Get(ACTOR_MOUSE)->velocityY = px(6);
+  Actor_SetSpeed(ACTOR_MOUSE, 4);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 360, 152);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = px(6);
-  Actor_SetSpeed(39, 2);
-  Actor_WalkToAndWait(39, 360, 184);
-  Actor_SetSpeed(39, 2);
-  Actor_WalkToAndWait(39, 376, 184);
-  Actor_WalkToAndWait(39, 392, 200);
-  Actor_WalkToAndWait(39, 408, 184);
+  Actor_Get(ACTOR_MOUSE)->velocityY = px(6);
+  Actor_SetSpeed(ACTOR_MOUSE, 2);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 360, 184);
+  Actor_SetSpeed(ACTOR_MOUSE, 2);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 376, 184);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 392, 200);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 408, 184);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(39)->velocityY = px(6);
-  Actor_SetSpeed(39, 4);
-  Actor_WalkToAndWait(39, 440, 184);
-  Actor_SetPosition(39, 0, 0);
+  Actor_Get(ACTOR_MOUSE)->velocityY = px(6);
+  Actor_SetSpeed(ACTOR_MOUSE, 4);
+  Actor_WalkToAndWait(ACTOR_MOUSE, 440, 184);
+  Actor_SetPosition(ACTOR_MOUSE, 0, 0);
   Event_SetFlag(FLAG_GABOMBA_MOUSE_SEEN);
   Event_End();
 }
@@ -844,7 +852,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaAcceptOffering);
   // "O Great Gabomba! Please accept this, our humble gift!"
-  Event_ShowMessage(24, 0);
+  Event_ShowMessage(ACTOR_AKAFUBU, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_SHIMMER);
@@ -1601,8 +1609,8 @@ void GabombaStatue_FocusEnergies(void) {
   FieldEvent_Wait(40);
   FieldEvent_SetMessageId(MsgGabombaFocusEnergies);
   // "Focus your energies!"
-  Event_ShowMessage(24, 0);
-  Actor_MoveToObject(23, gMainRoutineWork.leaderActorId);
+  Event_ShowMessage(ACTOR_AKAFUBU, 0);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
@@ -1611,23 +1619,23 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
-  Actor_SetSpeed(23, 0.8);
-  Actor_SetScript(23, gGabombaStatue_KradenFocusScript);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_SetScript(ACTOR_KRADEN, gGabombaStatue_KradenFocusScript);
   System_Wait(10);
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gGabombaStatue_LeaderFocusScript);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_JennaFocusScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_PiersFocusScript);
-  FieldActor_WaitForScriptEndById(23);
+  FieldActor_WaitForScriptEndById(ACTOR_KRADEN);
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(434, CAMERA_KEEP, 286, 1);
-  Actor_SetSpeed(23, 1.2);
-  Actor_RunScriptAndWait(23, gGabombaStatue_KradenPointsScript);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_RunScriptAndWait(ACTOR_KRADEN, gGabombaStatue_KradenPointsScript);
   FieldEvent_Wait(40);
-  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   // "Everyone! Look over here!"
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(434, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForArrival();
@@ -1671,7 +1679,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   {
     s32 slow = 0x3000;
 
-    Actor_SetPositionAndFacing(23, px(432), px(312), slow);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(432), px(312), slow);
   }
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(448), px(312), speed);
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(468), px(312), speed);
@@ -1701,7 +1709,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirection(23, FACING_NORTH_NORTHWEST, 60);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 60);
   Event_PlaySound(SE_PSYNERGY_START);
   FieldActor_SetSpriteColor(Actor_Get(9), 7);
   FieldActor_SetSpriteColor(Actor_Get(10), 7);
@@ -1717,13 +1725,14 @@ void GabombaStatue_WatchTheChargesStick(void) {
       (Random16() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_Get(ACTOR_SHEBA))->timer =
       (Random16() * 40 >> 16) + 10;
-  ((struct Wanderer *)Actor_Get(23))->timer = (Random16() * 40 >> 16) + 10;
+  ((struct Wanderer *)Actor_Get(ACTOR_KRADEN))->timer =
+      (Random16() * 40 >> 16) + 10;
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_GirlsStepBackScript);
   Actor_SetScript(ACTOR_SHEBA, gGabombaStatue_GirlsStepBackScript);
-  Actor_SetScript(23, gGabombaStatue_GirlsStepBackScript);
+  Actor_SetScript(ACTOR_KRADEN, gGabombaStatue_GirlsStepBackScript);
   Event_PlaySound(MUS_KIBOMBO);
   GabombaStatue_RunCharges(11, 0);
   FieldEvent_Wait(80);
@@ -1753,7 +1762,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   {
     s32 facing = FACING_NORTH_NORTHWEST;
 
-    Actor_SetPositionAndFacing(23, px(432), px(312), facing);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(432), px(312), facing);
   }
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(448), px(312), north);
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(468), px(312), north);
@@ -1765,7 +1774,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_SetMessageId(MsgGabombaUnderstandsChannel);
   // "Ah! So that's how it works!"
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
@@ -1805,26 +1814,29 @@ void GabombaStatue_SeeHowItWorks(void) {
     // "I agree, Felix! Why should we help this pack of thieves?"
     Event_ShowMessage(cue, 0);
   }
-  Actor_FaceDirectionAndWait(23, FACING_WEST);
-  Actor_SetAnimationAndWait(23, 4);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
   // "Piers, I understand that you're angry at them, but it really is in..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "Think about it, Piers... Akafubu stole the orb solely to perform..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "So, what do you think he intends to do with the orb?"
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   // "He means to give it to the Great Gabomba..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Oh! So...if his ceremony succeeds, the orb will be taken into the..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   // "And we're INSIDE the statue! If the ceremony succeeds, we can go..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 10);
   // "I...don't want to help that Akafubu, but..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
@@ -1846,45 +1858,45 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   // "It looks like the energy charge is supposed to run over these blocks."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
-  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   // "If we can just move these around a little, that might be enough to..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForArrival();
   // "Ah! There we go!"
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "These panels have arrows on them... What do you think it all means?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "Look at the directions they point... I'll bet these will rotate the..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "But how do we set the blocks back in place?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   // "Just Pound them in!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimation(23, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, 3);
   // "Won't that do the trick?"
-  Event_ShowMessage(23, 0);
-  Actor_FaceDirectionAndWait(23, FACING_WEST);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
   // "We must watch the path his Psynergy takes and move the blocks..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
-  Actor_SetSpeed(23, 1.6);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_LookAtChannelScript);
-  Actor_SetScript(23, gGabombaStatue_LookAtChannelScript);
+  Actor_SetScript(ACTOR_KRADEN, gGabombaStatue_LookAtChannelScript);
   Actor_SetScript(ACTOR_SHEBA, gGabombaStatue_LookAtChannelScript);
   Actor_RunScriptAndWait(ACTOR_JENNA, gGabombaStatue_LookAtChannelScript);
   Event_SetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS);
@@ -1926,7 +1938,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   south = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(472), px(216), south);
   facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPositionAndFacing(24, px(472), px(200), facing);
+  Actor_SetPositionAndFacing(ACTOR_AKAFUBU, px(472), px(200), facing);
   System_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -1936,13 +1948,13 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 312, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
-  Actor_SetSpeed(24, 1);
+  Actor_SetSpeed(ACTOR_AKAFUBU, 1);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_JennaWatchesScript);
-  Actor_RunScriptAndWait(24, gGabombaStatue_ShebaWatchesScript);
+  Actor_RunScriptAndWait(ACTOR_AKAFUBU, gGabombaStatue_ShebaWatchesScript);
   FieldEvent_SetMessageId(MsgGabombaSawEnergyFlow);
   // "Yeah, we know... We saw your magic energy flowing past us."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_AKAFUBU, FACING_NORTH_NORTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_JENNA, 440, 296);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_EAST);
   // "See how this channel runs along the floor?"
@@ -1973,33 +1985,35 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   // "So we completed the circuit so that your magic energy could go where..."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_AKAFUBU,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   // "But...if you truly did this, then why? Why did you help me?"
-  Event_ShowMessage(24, 0);
+  Event_ShowMessage(ACTOR_AKAFUBU, 0);
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, px(472), px(204),
                              south);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(440), px(204), south);
-  Actor_SetPositionAndFacing(23, px(456), px(204), facing);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(456), px(204), facing);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(488), px(204), south);
   System_Wait(1);
   // "We were sort of hoping that we could take the orb if your ceremony..."
-  Event_ShowMessage(23, 0);
-  Actor_FaceDirection(24, FACING_NORTH_NORTHEAST, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_FaceDirection(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
-  FieldActor_Jump(24, 4, 10);
+  FieldActor_Jump(ACTOR_AKAFUBU, 4, 10);
   // "Ah, so you have taken the orb? Then begone! You have no further..."
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "But...we didn't get the orb."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
-  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "It rolled through this groove and right through this hole."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SHEBA, 0);
-  Actor_SetAnimation(23, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, 4);
   // "We saw a light through there, so we suspect there must be another..."
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 23, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
+                    0);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0, 0);
@@ -2011,13 +2025,13 @@ void GabombaStatue_SawEnergyFlow(void) {
 
 void GabombaStatue_FixTheChannel(void) {
   GabombaStatue_StopClock();
-  Actor_MoveToObject(23, gMainRoutineWork.leaderActorId);
-  FieldActor_SetSpriteColor(Actor_Get(23), 15);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_KRADEN), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
   // "It looks like just fixing the channel should do the trick... Maybe..."
-  Event_ShowMessage(23, 0);
-  Actor_SetPosition(23, 0, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   System_Wait(1);
   Event_SetFlag(FLAG_GABOMBA_CHANNEL_FIXED);
   GabombaStatue_RestartClock();

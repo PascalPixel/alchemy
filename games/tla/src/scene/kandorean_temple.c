@@ -1966,7 +1966,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   Actor_SetAnimationById(ACTOR_SECOND_TIGHTROPE_OTHER_POLE, 4);
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
   REG_BLDALPHA = 0xc08;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   Scene_QueueMusic(SE_245);
   Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
   Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
@@ -2085,7 +2085,7 @@ void KandoreanTemple_StartVentRoom(void) {
   else if (GameFlag_Get(FLAG_PILLAR_ON_EAST_PLATFORM))
     Actor_SetPosition(ACTOR_VENT_ROOM_PILLAR, 376, 248);
   REG_BLDALPHA = 0xc08;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   gKandoreanTemple_LeftVentBlowing = 0;
   gKandoreanTemple_RightVentBlowing = 0;
   Task_AddFrame(KandoreanTemple_BlowLeftVent, TASK_PASS_VBLANK);

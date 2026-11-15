@@ -174,7 +174,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     target[2] = 144 << 18;
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
@@ -237,7 +237,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     target[2] = 144 << 18;
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }

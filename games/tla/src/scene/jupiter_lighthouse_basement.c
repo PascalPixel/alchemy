@@ -259,8 +259,8 @@ s32 Scene_Initialize(void) {
       Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   }
   if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2) {
-    REG_BLDALPHA = 0x1008;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDALPHA = BLEND_ALPHA(8, 16);
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     JupiterLighthouse_SpawnSparks();
   }
   return 0;

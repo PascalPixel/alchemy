@@ -2194,7 +2194,7 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
     }
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_AddFrame(GaiaRockInside_SwayPlatforms, priority);
   }

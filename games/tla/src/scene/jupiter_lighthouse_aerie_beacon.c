@@ -844,8 +844,10 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait_(10);
-  Actor_SetAttachedEffect(ACTOR_PIERS, 258);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId, 258);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait_(30);
   ((void *)Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
   Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHWEST, 0);

@@ -240,7 +240,7 @@ void JupiterLighthouse_FlashSky(void) {
     p += 4;
   }
   Heap_Release(buffer);
-  REG_BLDALPHA = 0x1010;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0x3f41;
   gBgScroll[0].x = -104;
   gBgScroll[0].y = 16;
@@ -262,7 +262,7 @@ void JupiterLighthouse_FlashSky(void) {
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
   Actor_Get(ACTOR_STRUCK_PILLAR)->update = Actor_EmitRisingSparks;
   for (i = 0; i != 32; i++) {
-    REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
+    REG_BLDALPHA = (16 - (i >> 1)) | BLEND_ALPHA(0, 16);
     System_Wait(1);
   }
   MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
@@ -275,8 +275,8 @@ void JupiterLighthouse_FlashSky(void) {
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
-  REG_BLDALPHA = 0x1008;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= 0x100;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
@@ -636,7 +636,7 @@ void JupiterLighthouse_PlaceForTheFight(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetScript(ACTOR_GARET, gJupiterLighthouse_GaretHangsScript);
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     FieldTask_AddFrame((void (*)(void))JupiterLighthouse_SwayGaret, priority);
   }

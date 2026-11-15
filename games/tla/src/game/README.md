@@ -42,6 +42,8 @@ a class lists the ones it teaches in halfwords.
 
 ## The unit
 
+![Felix opens the field menu in Daila and picks Status: his class, stats, Echo set on him and his element levels, his other pages, and Jenna's page](https://alchemy.pascalpixel.com/tla/guides/menu/summary-screen.gif)
+
 A [unit](../../glossary.md#unit) is one fighter's whole record: HP, PP,
 stats, class, Djinn, Psynergy and items, 332 bytes of it. The eight
 playable characters each have one from the first moment of a new game,
@@ -72,6 +74,8 @@ from anything. The unit remembers each as a share of its maximum, and
 rebuilds it when the maximum changes.
 
 ## Djinn and classes
+
+![Felix opens the Djinn screen and puts Echo on standby: the preview shows his HP, PP and Attack falling, and A answers `Is this OK?`](https://alchemy.pascalpixel.com/tla/guides/menu/djinn-standby.gif)
 
 A Djinni set on a character does two things. It adds a bonus of its own to
 the stats, from its row of the Djinn table. And it raises the character's
@@ -123,6 +127,8 @@ number for everyone, 200 at a new game.
 
 ## The game flags
 
+![In Mikasalla Felix talks to the Mars Djinni Spark: the screen turns red, lights rain down, and `Felix found the Mars Djinni Spark!`; then he goes down through the passage and comes back, and no one stands there](https://alchemy.pascalpixel.com/tla/guides/game/djinni-flag.gif)
+
 The game remembers the story as 4,096 yes-or-no facts, the
 [game flags](../../glossary.md#game-flag). A chest opened, a Djinni found,
 a conversation had: each is one flag, with a name in
@@ -146,6 +152,8 @@ one off and selling one puts it back, which is why an artifact sold in one
 town can be bought back in another.
 
 ## Battle arithmetic
+
+![As above: the plain blow replaced by the weapon's unleash](https://alchemy.pascalpixel.com/tla/guides/battle/unleash.gif)
 
 The sums that decide a fight live here, not in the battle: whether a
 weapon unleashes, whether Sleep takes hold, how much a blow hurts. The

@@ -6,6 +6,8 @@ you can open, `map.txt`, one cell per square.
 
 ## Cells
 
+![Felix walks east behind the house up on Daila's rise: its roof hides him entirely, and he walks back out to the west](https://alchemy.pascalpixel.com/tla/guides/world/behind-roof.gif)
+
 A map is a grid of [cells](../../glossary.md#cell), 16 pixels square, 128
 by 128 of them. Each cell says four things. The first three are written
 together in `map.txt`, as `picture:behavior:flags`, and the fourth has a
@@ -32,6 +34,8 @@ grid of its own:
 
 ## One grid, three layers
 
+![Daila's screen taken apart: the ground, the walls and roofs, the people and the window layer spread one behind another, then closed up](https://alchemy.pascalpixel.com/tla/guides/field/layers-3d.gif)
+
 On screen a town is three layers, one over another. In the file they lie
 side by side in the same grid, each in a block of its own. The map's
 `map.inc` opens with a header and one `map_layer` line for each layer, which
@@ -51,6 +55,8 @@ field puts out each one whose flag is not yet set, at most 16. One kind of
 chest is put out either way, open once its flag is set. Other kinds hide an item in a jar or a barrel, out of sight.
 
 ## Tileset animation and blend scripts
+
+![A spot in Daila beside the tiles of its layer the tile animation repaints, laid out in grey, each outlined in red as it is repainted (the ponds' water)](https://alchemy.pascalpixel.com/tla/guides/map/tile-animation.gif)
 
 Stand still in Daila and the picture still moves in places, though no cell
 changes. The

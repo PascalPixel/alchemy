@@ -43,6 +43,8 @@ put background palettes 14 and 15 aside while they run and back after.
 
 ## The frame loop
 
+![Felix talks to the man by the pond in Daila: a window opens at the top, the line is typed with a bobbing arrow, the next page follows, and the window closes. (No portrait: Daila's villagers have none.)](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
+
 The frame loop is the inside of `wait()`. One trip round it is one frame.
 
 The rule that shapes everything here: during a frame the game never touches
@@ -131,6 +133,8 @@ everything sits is fixed, and is declared in `ewram.s` and `iwram.s`.
 
 ## Saving
 
+![As above](https://alchemy.pascalpixel.com/tla/guides/runtime/save.gif)
+
 A save is never overwritten in place. Here each file is one part of 12 KB,
 filling three sectors of the flash chip. The chip has room for five parts,
 one at every third sector, and there are three files, so two places are
@@ -155,6 +159,8 @@ players' parties for a link battle, and the scene after the Title receives
 The Broken Seal's saved Clear Data: its game flags and its characters.
 
 ## How an overlay reaches the rest of the game
+
+![Felix climbs the steps to the door of Daila's sanctum: Daila fades out and the sanctum fades in with him inside its door](https://alchemy.pascalpixel.com/tla/guides/front/sanctum-door.gif)
 
 An [overlay](../../glossary.md#overlay) is a scene's code, unpacked into
 one fixed spot when the party arrives. It and the always-loaded

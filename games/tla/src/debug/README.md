@@ -9,6 +9,8 @@ be driven from the inside. And one of them is the best first scene to read.
 
 ## How the debug scenes are reached
 
+![The debug scene selector opened in Daila: its top line starts on `DELY00 Daila` and steps down through the scene numbers (`OTMP0008 Idejima`, `SHR_M23 Suhalla Gate`, `V_ENT Venus Lighthouse`, `WORLD_END Staff Credit`, `WORLD`, `UTIL (Clear data)`), round to `SHOPTEST` and `YAMTEST2 Psynergy Test 2`; A takes the party there](https://alchemy.pascalpixel.com/tla/guides/debug/map-select.gif)
+
 The switch is debug mode, a single value start-up sets to off. With it on,
 three windows open in place of the usual menus when extra buttons are held:
 

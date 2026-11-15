@@ -7,6 +7,8 @@ know where each lives before you open the code.
 
 ## The field sequence serves requests
 
+![In Daila Felix walks up to the man by the pond and talks to him (`That tidal wave left a lot of standing water...`), then walks on](https://alchemy.pascalpixel.com/tla/guides/field/talk-walk.gif)
+
 Setting a place up always goes in the same order, because each step needs
 the one before: load the map, choose its random battles, clear room for 64
 actors, take the scene's tables, place the party and the people, put out
@@ -38,6 +40,8 @@ answers it after them.
 
 ### Leaving for a battle and coming back
 
+![Felix walks through a cave of the Kandorean Temple until a random battle starts: the battle (an Angle Worm) is fought and won, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/tla/guides/overworld/battle-return.gif)
+
 A battle is an exit like a door. The field writes a snapshot of where
 everyone stands, tells the main routine a battle comes next, and ends.
 Afterwards the scene is set up again from nothing and the snapshot is put
@@ -47,6 +51,8 @@ the fight was with a Djinni met on the field, the set-up also puts that
 Djinni back and finishes its event (`Djinn_RestoreActorAfterBattle`).
 
 ## Everything that moves runs an actor script
+
+![Felix walks down into the stream in a cave of the Kandorean Temple and along it, each step in the water a splash, an actor of its own](https://alchemy.pascalpixel.com/tla/guides/field/wading.gif)
 
 ### One actor for everything
 
@@ -134,6 +140,8 @@ standing on cells that give Felix the right number.
 
 ## The World Map in perspective
 
+![The World Map outside Daila taken apart into its tilted backgrounds and the sprites, spread one behind another, then put back together](https://alchemy.pascalpixel.com/tla/guides/field/world-map-layers-3d.gif)
+
 The World Map is a flat map. The console can stretch a layer, and it will
 take a new stretch for every line it draws. The game gives each of the 160
 lines its own: lines near the bottom show a short strip of ground drawn
@@ -170,6 +178,14 @@ PP, a Djinni waiting to recover counts down, and poison bites.
 
 ## How field Psynergy reaches its target
 
+![Lash cast at the rope at the Shrine of the Sea God: the rope ties to the far post, and the Riki and Tavi scene it starts plays](https://alchemy.pascalpixel.com/tla/guides/field/lash.gif)
+
+![Pound cast on a pillar on the Dehkan Plateau: the hammer drives it into the ground](https://alchemy.pascalpixel.com/tla/guides/field/pound.gif)
+
+![Cyclone cast on a patch of grass at the Kandorean Temple: the whirlwind blows it away](https://alchemy.pascalpixel.com/tla/guides/field/cyclone.gif)
+
+![Scoop cast at the spot under a puddle in Daila: Felix digs up a Psy Crystal](https://alchemy.pascalpixel.com/tla/guides/field/scoop.gif)
+
 The field draws the cast and finds what it touches. Among the scene's
 trigger rows for that Psynergy it looks at the cell Felix faces (for
 Teleport, the cell under him), then at the nearest target in reach, then
@@ -189,6 +205,8 @@ palette, the list of colours every picture indexes, a step each frame.
 Scenes fade in the same way.
 
 ## Lucky Dice, Lucky Wheels and Super Lucky Dice
+
+![The man in Contigo's game room offers a round of Super Lucky Dice, Yes, and the game: four dice thrown, a Pair, the Hi-Lo game, a loss and a Double Up](https://alchemy.pascalpixel.com/tla/guides/overworld/super-lucky-dice.gif)
 
 Contigo has three games, and each is a sequence of its own, started the way
 a battle is: the room asks the main routine to run one next, and ends.

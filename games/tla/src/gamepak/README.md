@@ -20,6 +20,8 @@ names the language: `AGFJ`, `AGFE`, `AGFD` and so on.
 
 ## The resource directory and table order
 
+![Felix walks north into the door of a house in Daila: Daila fades out and the room fades in with him inside the door](https://alchemy.pascalpixel.com/tla/guides/world/door.gif)
+
 Every stored thing on the ROM has a number: a map, a sprite sheet, a
 battle background, a scene's code. The
 [resource directory](../../glossary.md#resource-directory) is one table of
@@ -46,6 +48,8 @@ edition was built. A save file records it, so the game can tell a file
 written by another build when it loads one.
 
 ## The flash chip
+
+![Felix opens the Pause menu in Daila and saves: the file list, the first file, `Saving...` and the save confirmed](https://alchemy.pascalpixel.com/tla/guides/runtime/save.gif)
 
 Writing a save is slow because flash is awkward. The chip is 16 sectors of
 4 KB, and a sector cannot be changed in place: it is erased whole and

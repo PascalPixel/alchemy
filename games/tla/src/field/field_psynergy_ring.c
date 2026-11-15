@@ -125,7 +125,7 @@ void FieldPsynergy_UpdateRing(void) {
   if (event->ringTimerRunning != 0 && event->ringFrames != 0)
     event->ringFrames--;
   if (event->ringFrames == 0)
-    event->psynergy = 0x209b;
+    event->psynergy = ABILITY_155 | ACT_PACKED;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT
@@ -190,7 +190,7 @@ void FieldPsynergy_Ring(void) {
 
     wait(1);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    Io_Write16(0x480, &REG_BG0CNT);
+    Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_256_COLORS, &REG_BG0CNT);
     Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
     entry = VramCache_FindFreeEntry();
@@ -374,7 +374,7 @@ void FieldPsynergy_EndRing(void) {
   Sound_PlayFar(SE_MAP_TRANSITION);
   IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
   Window_LoadGraphics();
-  Io_Write16(0x400, &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
@@ -517,10 +517,10 @@ void ViewMove_Start(s32 direction) {
   work->savedMaxX = map->maxX;
   work->savedMinZ = map->minZ;
   work->savedMaxZ = map->maxZ;
-  map->minX = minX << 19;
-  map->maxX = maxX << 19;
-  map->minZ = minZ << 19;
-  map->maxZ = maxZ << 19;
+  map->minX = px(minX * 8);
+  map->maxX = px(maxX * 8);
+  map->minZ = px(minZ * 8);
+  map->maxZ = px(maxZ * 8);
   Actor_StartIdleFar(center);
 }
 
@@ -626,7 +626,7 @@ void ViewMove_SaveNearbySprites(void) {
 
   group->count = 0;
   objects = work->actors;
-  for (i = 0; i < 80; i++) {
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainActor)
       continue;

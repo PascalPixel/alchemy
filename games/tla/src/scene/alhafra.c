@@ -65,6 +65,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #define FLAG_GOLD_COINS_FOUND 0x8b7 ///< his mother found five gold coins
 #define FLAG_LET_INTO_CAVE 0x8b9    ///< his father let the party pass
 
+/// The chest Reveal shows among the six gravestones, holding a Psy Crystal.
+#define ACTOR_PSY_CRYSTAL_CHEST 64
+
 /// The Alhafrans of gAlhafra_ActorPlacements, who keep their rows, sprites and
 /// places to ACTOR_SAILOR_BUILDING_HOUSES once Briggs is caught and once the
 /// ship is stolen; what each says changes with the story.
@@ -474,10 +477,12 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
 }
 
 void Alhafra_RevealTreasureSpot(void) {
-  TreasureSpot_SetPosition(0x40, 0xb80000, 0x2280000);
+  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, px(184), px(552));
 }
 
-void Alhafra_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, -1, -1); }
+void Alhafra_HideTreasureSpot(void) {
+  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, -1, -1);
+}
 
 extern struct Trigger gAlhafra_Triggers[];
 extern struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[];
@@ -1465,8 +1470,8 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraIThoughtTheHardPart)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllBecauseOfMyDads)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraIReallyShouldntBePeeking)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraAhWelcomeWelcomeListenSorry)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhGoOnInThe)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraAhFelixWelcomeWelcomeListen)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhFelixGoOnIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfIdKnownBriggsWas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorWasReallyImpressed)},
     {TRIGGER_TALK, 12, FLAG_BOY_TOLD_OF_CAVE, MSGNO(MsgAlhafraNoOneIsAllowedBeyondThis)},
@@ -1580,10 +1585,10 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraImSupposedToBeGuarding)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhoCaresIfTheBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyDoIHaveTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateToTellBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateToTellFelix)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraIdBetThatBriggsFled)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsPaidALotFor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraMustHaveFoundHimselfA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraFelixMustHaveFoundHimself)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraImCertainTheOnlyPerson)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraNowThatAllTheDebris)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSaidIHad)},

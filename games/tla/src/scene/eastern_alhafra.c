@@ -119,8 +119,8 @@ enum EasternAlhafraAfterBriggsActorId {
   ACTOR_EOLEO,
   /// Alhafra's mayor, whose ship this is.
   ACTOR_ALHAFRAS_MAYOR,
-  /// The old man at the mayor's side: "Excellent news, Mayor!"
-  ACTOR_MAYORS_AIDE = ACTOR_KRADEN + 1,
+  /// Jiya, the mayor's aide (AlhafraManor's): "Excellent news, Mayor!"
+  ACTOR_JIYA = ACTOR_KRADEN + 1,
   /// The workers who find the block on the mast gone and tell the mayor,
   /// running by gEasternAlhafra_FirstWorkerCheerScript and the second's.
   ///@{
@@ -699,17 +699,17 @@ s32 Scene_Initialize(void) {
       Call3(Actor_FallOverWithAnimationById, 31, 0x8000, 13);
       Actor_FallOverWithAnimationById(ACTOR_FIRST_WORKER, 0, 13);
       Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 112, 432);
-      Actor_SetPosition(ACTOR_MAYORS_AIDE, 176, 408);
+      Actor_SetPosition(ACTOR_JIYA, 176, 408);
       Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
       Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
       FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, 0x4000);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_ALHAFRAS_MAYOR), 0);
-      FieldActor_SetSpriteRotationById(ACTOR_MAYORS_AIDE, 0xc000);
-      Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_MAYORS_AIDE), 0);
+      FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+      Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_JIYA), 0);
       FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_WORKER), 0);
       Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 13);
-      Actor_SetAnimation(ACTOR_MAYORS_AIDE, 13);
+      Actor_SetAnimation(ACTOR_JIYA, 13);
       Actor_SetAnimation(ACTOR_SECOND_WORKER, 13);
     }
     if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0) {
@@ -737,19 +737,19 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MAN_KNOCKED_DOWN), 0);
     FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, 0x4000);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WORKER), 0);
-    FieldActor_SetSpritePriority(ACTOR_MAYORS_AIDE, 2);
+    FieldActor_SetSpritePriority(ACTOR_JIYA, 2);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAS_MAYOR, 2);
     FieldActor_SetSpritePriority(ACTOR_SECOND_WORKER, 2);
     Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 160, 392);
-    Actor_SetPosition(ACTOR_MAYORS_AIDE, 176, 408);
+    Actor_SetPosition(ACTOR_JIYA, 176, 408);
     Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
-    FieldActor_SetSpriteRotationById(ACTOR_MAYORS_AIDE, 0xc000);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_MAYORS_AIDE), 0);
+    FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_JIYA), 0);
     FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
     Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
-    Actor_SetAnimation(ACTOR_MAYORS_AIDE, 13);
+    Actor_SetAnimation(ACTOR_JIYA, 13);
     Actor_SetAnimation(ACTOR_SECOND_WORKER, 13);
     Actor_SetAnimation(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 13);
     Actor_SetAnimation(ACTOR_MAN_KNOCKED_DOWN, 13);
@@ -1454,8 +1454,8 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldCamera_SetSpeed(4);
   Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 56, 632);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
-  Actor_SetPosition(ACTOR_MAYORS_AIDE, 56, 648);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_EAST, 0);
+  Actor_SetPosition(ACTOR_JIYA, 56, 648);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_EAST, 0);
   Actor_SetPosition(ACTOR_FIRST_WORKER, 48, 616);
   Actor_FaceDirection(ACTOR_FIRST_WORKER, FACING_EAST, 0);
   Actor_SetPosition(ACTOR_SECOND_WORKER, 32, 608);
@@ -1468,9 +1468,9 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetSpeed(ACTOR_FIRST_WORKER, 1);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 1);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 1);
-  Actor_SetSpeed(ACTOR_MAYORS_AIDE, 1);
+  Actor_SetSpeed(ACTOR_JIYA, 1);
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 32, 0);
-  Actor_WalkBy(ACTOR_MAYORS_AIDE, 32, 0);
+  Actor_WalkBy(ACTOR_JIYA, 32, 0);
   Actor_WalkBy(ACTOR_FIRST_WORKER, 24, 24);
   Actor_WalkBy(ACTOR_SECOND_WORKER, 24, 24);
   FieldActor_WaitForMoveById(ACTOR_FIRST_WORKER);
@@ -1498,12 +1498,12 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetSpeed(ACTOR_FIRST_WORKER, 1.6);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 1.6);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 1.6);
-  Actor_SetSpeed(ACTOR_MAYORS_AIDE, 1.6);
+  Actor_SetSpeed(ACTOR_JIYA, 1.6);
   FieldActor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 3);
   Actor_SetAttachedEffect(ACTOR_ALHAFRAS_MAYOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(ACTOR_MAYORS_AIDE, 3);
-  Actor_SetAttachedEffect(ACTOR_MAYORS_AIDE,
+  FieldActor_StartRepeatedMotion(ACTOR_JIYA, 3);
+  Actor_SetAttachedEffect(ACTOR_JIYA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_SetScript(ACTOR_FIRST_WORKER, gEasternAlhafra_FirstWorkerRunScript);
@@ -1511,21 +1511,21 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_ALHAFRAS_MAYOR, 1);
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 64, 0);
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 64, 0);
+  Actor_WalkByAndWait(ACTOR_JIYA, 64, 0);
   Actor_WalkTo(ACTOR_ALHAFRAS_MAYOR, 168, 616);
-  Actor_WalkToAndWait(ACTOR_MAYORS_AIDE, 184, 616);
+  Actor_WalkToAndWait(ACTOR_JIYA, 184, 616);
   FieldActor_WaitForScriptEndById(ACTOR_ALHAFRAS_MAYOR);
   Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 1);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTHEAST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_FIRST_WORKER);
   FieldActor_WaitForScriptEndById(ACTOR_SECOND_WORKER);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 3);
   Actor_SetAttachedEffect(ACTOR_ALHAFRAS_MAYOR,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(ACTOR_MAYORS_AIDE, 3);
-  Actor_SetAttachedEffect(ACTOR_MAYORS_AIDE,
+  FieldActor_StartRepeatedMotion(ACTOR_JIYA, 3);
+  Actor_SetAttachedEffect(ACTOR_JIYA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(6);
@@ -1562,11 +1562,11 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetAnimation(ACTOR_FIRST_WORKER, 3);
   Actor_SetAnimationAndWait(ACTOR_SECOND_WORKER, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(ACTOR_MAYORS_AIDE, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
   // "Excellent news, Mayor!"
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYORS_AIDE, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
@@ -1577,7 +1577,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetAnimationAndWait(ACTOR_SECOND_WORKER, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
                        0x1e);
@@ -1598,7 +1598,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                        0x28);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(144, CAMERA_KEEP, 544, 1);
   FieldCamera_WaitForArrival();
@@ -1607,14 +1607,14 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 1.5);
-  Actor_SetSpeed(ACTOR_MAYORS_AIDE, 1.5);
+  Actor_SetSpeed(ACTOR_JIYA, 1.5);
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, -32, -32);
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, -32, -32);
+  Actor_WalkByAndWait(ACTOR_JIYA, -32, -32);
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 0, -24);
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, -24);
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, -24);
   FieldActor_WaitForMoveById(ACTOR_ALHAFRAS_MAYOR);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                        0x1e);
@@ -1644,20 +1644,20 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(20);
   // "Felix had a hunch that we might be needed here."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_MAYORS_AIDE, 2);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_WEST, 0);
   FieldEvent_Wait(20);
   // "Mayor, not to interrupt, but shouldn't we begin repairs on your ship..."
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYORS_AIDE, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                        0x1e);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
   FieldEvent_Wait(20);
   // "Yes, yes... You're right, of course."
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_Jump(ACTOR_ALHAFRAS_MAYOR, 6, 15);
@@ -1683,7 +1683,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(60);
   Actor_SetPosition(ACTOR_FIRST_WORKER, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_WORKER, 0, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
   // "Destroying that stone must have been quite a challenge."
@@ -1719,19 +1719,19 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_MAYORS_AIDE, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.8);
-  Actor_SetSpeed(ACTOR_MAYORS_AIDE, 0.8);
+  Actor_SetSpeed(ACTOR_JIYA, 0.8);
   Actor_GetById(ACTOR_FELIX)->motionFlags = 0;
   Actor_GetById(ACTOR_KRADEN)->motionFlags = 0;
   Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->motionFlags = 0;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->motionFlags = 0;
+  Actor_GetById(ACTOR_JIYA)->motionFlags = 0;
   Actor_WalkBy(ACTOR_FELIX, 0, 120);
   Actor_WalkBy(ACTOR_KRADEN, 0, 120);
-  Actor_WalkBy(ACTOR_MAYORS_AIDE, 0, 80);
+  Actor_WalkBy(ACTOR_JIYA, 0, 80);
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 80);
   {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -1775,10 +1775,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(10);
   // "Briggs, where are you taking my boat?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_MAYORS_AIDE, 2);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   FieldEvent_Wait(10);
   // "He's attempting to steal it! Thief! Thief!"
-  FieldEvent_ShowMessageThenWait(ACTOR_MAYORS_AIDE, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
   Actor_SetPosition(ACTOR_BRIGGS, 224, 8);
   // "Did you call me a thief?"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
@@ -2134,41 +2134,41 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= 1;
   Event_PlaySound(SE_IMPACT);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 2.4);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 3);
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = 0;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 3);
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->facing = 0;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = FACING_NORTH_NORTHEAST;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 3);
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHEAST;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = FACING_NORTH_NORTHWEST;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 3);
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = FACING_WEST;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 3);
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->facing = FACING_WEST;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 3);
   FieldEvent_Wait(1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->steeringFlags |= 1;
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_GetById(ACTOR_JIYA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_JIYA)->facing = FACING_SOUTH_SOUTHWEST;
   FieldEvent_Wait(20);
   // "They're gone, and you let them escape!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
-  Actor_SetPosition(ACTOR_MAYORS_AIDE, 168, 424);
-  FieldActor_SetSpriteRotationById(ACTOR_MAYORS_AIDE, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_MAYORS_AIDE), 1);
-  Actor_GetById(ACTOR_MAYORS_AIDE)->facing = FACING_NORTH_NORTHWEST;
-  FieldActor_Jump(ACTOR_MAYORS_AIDE, 6, 40);
-  FieldActor_ShowEmote(ACTOR_MAYORS_AIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+  Actor_SetPosition(ACTOR_JIYA, 168, 424);
+  FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_JIYA), 1);
+  Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
+  FieldActor_Jump(ACTOR_JIYA, 6, 40);
+  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
@@ -2185,20 +2185,20 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   // "You all ought to be ashamed! All of you were cowering, while I was..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
-  FieldActor_ShowEmote(ACTOR_MAYORS_AIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 0x32);
+  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 0x32);
   Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 5);
   FieldEvent_Wait(30);
   // "All of you!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
   Actor_FaceDirectionById(ACTOR_SECOND_WORKER, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionById(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_SECOND_WORKER, 3);
   Actor_SetAttachedEffect(ACTOR_SECOND_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(ACTOR_MAYORS_AIDE, 3);
-  Actor_SetAttachedEffect(ACTOR_MAYORS_AIDE,
+  FieldActor_StartRepeatedMotion(ACTOR_JIYA, 3);
+  Actor_SetAttachedEffect(ACTOR_JIYA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 1.8);
@@ -2209,15 +2209,15 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 1);
   FieldEvent_Wait(30);
   Actor_FaceDirectionById(ACTOR_SECOND_WORKER, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionById(ACTOR_MAYORS_AIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   // "I'm going back to my manor!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
-  Actor_SetAnimation(ACTOR_MAYORS_AIDE, 3);
+  Actor_SetAnimation(ACTOR_JIYA, 3);
   Actor_SetAnimationAndWait(ACTOR_SECOND_WORKER, 3);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.8);
-  Actor_SetSpeed(ACTOR_MAYORS_AIDE, 0.8);
+  Actor_SetSpeed(ACTOR_JIYA, 0.8);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 0.8);
   Actor_SetSpeed(ACTOR_FIRST_WORKER, 0.8);
   Actor_SetSpeed(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0.8);
@@ -2227,15 +2227,15 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 16);
   Actor_WalkTo(ACTOR_ALHAFRAS_MAYOR, 152, 504);
   Actor_WalkBy(ACTOR_SECOND_WORKER, -16, 0);
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, -16, 16);
+  Actor_WalkByAndWait(ACTOR_JIYA, -16, 16);
   Actor_WalkBy(ACTOR_SECOND_WORKER, -16, 16);
-  Actor_WalkByAndWait(ACTOR_MAYORS_AIDE, 0, 16);
-  Actor_WalkTo(ACTOR_MAYORS_AIDE, 152, 488);
+  Actor_WalkByAndWait(ACTOR_JIYA, 0, 16);
+  Actor_WalkTo(ACTOR_JIYA, 152, 488);
   Actor_WalkToAndWait(ACTOR_SECOND_WORKER, 152, 472);
   Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 1);
-  Actor_SetAnimation(ACTOR_MAYORS_AIDE, 1);
+  Actor_SetAnimation(ACTOR_JIYA, 1);
   Actor_FaceDirectionById(ACTOR_SECOND_WORKER, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirectionById(ACTOR_MAYORS_AIDE, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 4);
@@ -2249,7 +2249,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_WalkBy(ACTOR_MAYORS_AIDE, 0, 64);
+  Actor_WalkBy(ACTOR_JIYA, 0, 64);
   Actor_WalkBy(ACTOR_SECOND_WORKER, 0, 64);
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 64);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
@@ -2305,7 +2305,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldActor_WatchAndSetScript(ACTOR_MAN_KNOCKED_DOWN, 25);
   FieldActor_WatchAndSetScript(ACTOR_FIRST_WORKER, 25);
   Actor_SetScript(ACTOR_ALHAFRAS_MAYOR, (s32)gEasternAlhafra_RunOffScript);
-  Actor_SetScript(ACTOR_MAYORS_AIDE, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_JIYA, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(10);
   Actor_SetScript(ACTOR_SECOND_WORKER, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(70);

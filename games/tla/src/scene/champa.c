@@ -65,6 +65,69 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 #define FLAG_FEIZHIS_GIFT_WAITING 0xa74  ///< Feizhi holds out her gift
 #define FLAG_FEIZHI_CAME 0xa75 ///< Feizhi came, taking Felix for a friend
 
+/// Champa's people and things, numbering the rows of gChampa_ActorPlacements
+/// whose sprites are not the party's; gChampa_ActorPlacementsOnceBriggsSailed
+/// keeps them and adds the sailors who spot Felix.
+enum ChampaActorId {
+  /// The ends of the tightrope over the gap (Tightrope_Place).
+  ///@{
+  ACTOR_TIGHTROPE_START = ACTOR_FIRST_PLACED,
+  ACTOR_TIGHTROPE_END,
+  ///@}
+  /// The village's two flags, Champa's anchor on red.
+  ///@{
+  ACTOR_FLAG,
+  ACTOR_SECOND_FLAG,
+  ///@}
+  /// "Oh, I'm so hungry... And there won't be anything to eat until..."
+  ACTOR_HUNGRY_YOUNG_MAN,
+  /// "When is Briggs going to return with food for the village?"
+  ACTOR_WOMAN_WAITING_FOR_FOOD,
+  /// "How did you find your way here, to the edge of Angara?"
+  ACTOR_MAN_AT_THE_EDGE_OF_ANGARA,
+  /// "Champa is impoverished, but soon, we will prosper again."
+  ACTOR_WOMAN_ON_PROSPERITY,
+  /// The old man who asks about Ankohl Ruins.
+  ACTOR_OLD_MAN_ON_ANKOHL_RUINS,
+  /// "The ruins at Ankohl are all that remains of a great sanctum..."
+  ACTOR_OLD_WOMAN_ON_ANKOHL_RUINS,
+  /// The boy practicing Psynergy: "If I could pick up things without using
+  /// my hands..."
+  ACTOR_PRACTICING_BOY,
+  /// "Once Briggs comes back, I can play with Eoleo again..."
+  ACTOR_EOLEOS_FRIEND,
+  /// Sailors at the cliff caves: "The cliff caves are a lot quieter with
+  /// Briggs gone..."
+  ACTOR_SAILOR_AT_THE_QUIET_CAVES,
+  /// "Our matriarch is the last successor of the Ankohl."
+  ACTOR_SAILOR_ON_THE_MATRIARCH,
+  /// The sailor who tells strangers they are not welcome.
+  ACTOR_UNWELCOMING_SAILOR,
+  /// A rock drawn at half size.
+  ACTOR_ROCK,
+  /// "I bet you're wondering why only sailors and their families..."
+  ACTOR_WOMAN_ON_THE_CLIFF,
+  /// Who meet the party on the cliff (Champa_MeetAlex).
+  ACTOR_ALEX,
+  ACTOR_KARST,
+  ACTOR_AGATIO,
+  ACTOR_KRADEN,
+  /// Feizhi, in a game linked with The Broken Seal (Champa_FeizhiArrives),
+  /// and Kraden as he meets her.
+  ACTOR_FEIZHI,
+  ACTOR_KRADEN_MEETING_FEIZHI,
+  /// Feizhi's gift, until it is taken (Champa_TakeFeizhisGift).
+  ACTOR_FEIZHIS_GIFT,
+  /// Once Briggs has sailed: "Whoa! You... You're Felix!"
+  ACTOR_SAILOR_WHO_SPOTS_FELIX,
+  /// "What? Really? It's Felix?"
+  ACTOR_SECOND_SAILOR,
+  ACTOR_BRIGGS
+};
+
+/// The chest Reveal shows by the six gravestones, holding the Viking Helm.
+#define ACTOR_VIKING_HELM_CHEST 64
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -125,12 +188,14 @@ void Champa_EnterDoor(s32 door) {
 
 void Champa_RevealTreasureSpot(void) {
 
-  TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
-  Actor_Get(64)->motionFlags = 0;
-  Actor_Get(64)->y.fixed = px(32);
+  TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, px(392), px(568));
+  Actor_Get(ACTOR_VIKING_HELM_CHEST)->motionFlags = 0;
+  Actor_Get(ACTOR_VIKING_HELM_CHEST)->y.fixed = px(32);
 }
 
-void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
+void Champa_HideTreasureSpot(void) {
+  TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, 0, 0);
+}
 
 #include "text/msg_ids.h"
 
@@ -139,72 +204,75 @@ void Champa_SailorsSpotFelix(void) {
   Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgChampaWhoaYouYoure);
-  Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_Jump(32, 6, 20);
+  FieldEvent_SetMessageId((s32)MsgChampaWhoaYouYoureFelix);
+  Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_SOUTH_SOUTHEAST, 0);
+  FieldActor_Jump(ACTOR_SAILOR_WHO_SPOTS_FELIX, 6, 20);
   // "Whoa! You... You're Felix!"
-  FieldEvent_ShowMessageThenWait(32, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 5);
   FieldCamera_MoveTo(176, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  FieldActor_StartRepeatedMotion(32, 3);
-  Actor_SetAttachedEffect(32, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_SAILOR_WHO_SPOTS_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_SAILOR_WHO_SPOTS_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirectionAndWait(33, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
-  Actor_FaceDirectionAndWait(33, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_SECOND_SAILOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
+  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_SECOND_SAILOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "What? Really? It's Felix?"
-  FieldEvent_ShowMessageThenWait(33, 0, 5);
-  FieldActor_Jump(32, 6, 0);
-  FieldActor_Jump(33, 6, 0);
-  Actor_SetSpeed(32, 1.8);
-  Actor_SetSpeed(33, 1.8);
-  Actor_Get(32)->steeringFlags &= 0xfe;
-  Actor_WalkBy(32, 0, -16);
-  Actor_Get(33)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(33, 0, -16);
+  FieldEvent_ShowMessageThenWait(ACTOR_SECOND_SAILOR, 0, 5);
+  FieldActor_Jump(ACTOR_SAILOR_WHO_SPOTS_FELIX, 6, 0);
+  FieldActor_Jump(ACTOR_SECOND_SAILOR, 6, 0);
+  Actor_SetSpeed(ACTOR_SAILOR_WHO_SPOTS_FELIX, 1.8);
+  Actor_SetSpeed(ACTOR_SECOND_SAILOR, 1.8);
+  Actor_Get(ACTOR_SAILOR_WHO_SPOTS_FELIX)->steeringFlags &= 0xfe;
+  Actor_WalkBy(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, -16);
+  Actor_Get(ACTOR_SECOND_SAILOR)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_SECOND_SAILOR, 0, -16);
   FieldEvent_Wait(1);
-  Actor_Get(33)->steeringFlags |= 1;
+  Actor_Get(ACTOR_SECOND_SAILOR)->steeringFlags |= 1;
   FieldEvent_Wait(15);
-  Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_SAILOR_WHO_SPOTS_FELIX,
+                  EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "You're awfully persistent, aren't you?"
-  FieldEvent_ShowMessageThenWait(32, 0, 5);
-  Actor_FaceDirection(32, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(33, FACING_NORTH_NORTHEAST);
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 5);
+  Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(5);
   // "Briggs, get outta here! Felix is here to finish you off!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 33, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_SECOND_SAILOR, 0,
+                                 5);
   // "What was that!? Felix? Here?"
-  FieldEvent_ShowMessageThenWait(34, 0, 5);
-  FieldActor_WatchAndSetScript(32, 34);
-  FieldActor_WatchAndSetScript(33, 34);
-  Actor_SetSpeed(34, 1.2);
-  Actor_WalkByAndWait(34, 0, 32);
-  Actor_FaceDirectionAndWait(34, FACING_SOUTH_SOUTHEAST);
+  FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  FieldActor_WatchAndSetScript(ACTOR_SAILOR_WHO_SPOTS_FELIX, 34);
+  FieldActor_WatchAndSetScript(ACTOR_SECOND_SAILOR, 34);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1.2);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 32);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST);
   FieldCamera_MoveTo(208, CAMERA_KEEP, 296, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
-  FieldActor_Jump(34, 6, 15);
-  FieldActor_Jump(34, 6, 23);
+  FieldActor_Jump(ACTOR_BRIGGS, 6, 15);
+  FieldActor_Jump(ACTOR_BRIGGS, 6, 23);
   // "Oh no! It's really him! I've got to get out of here!!!"
-  FieldEvent_ShowMessageThenWait(34, 0, 5);
-  FieldActor_Jump(34, 6, 20);
-  Actor_SetSpeed(34, 2);
-  Actor_WalkByAndWait(34, 0, -48);
-  Actor_FaceDirection(32, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirection(33, FACING_NORTH_NORTHEAST, 0);
-  Actor_SetPosition(34, 0, 0);
-  Actor_SetSpeed(32, 2);
-  Actor_SetSpeed(33, 2);
-  Actor_WalkByAndWait(32, -16, -16);
-  Actor_WalkBy(33, 16, -16);
-  Actor_WalkByAndWait(32, 0, -16);
-  Actor_SetPosition(32, 0, 0);
-  Actor_WalkByAndWait(33, 0, -16);
-  Actor_SetPosition(33, 0, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  FieldActor_Jump(ACTOR_BRIGGS, 6, 20);
+  Actor_SetSpeed(ACTOR_BRIGGS, 2);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -48);
+  Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_SAILOR, FACING_NORTH_NORTHEAST, 0);
+  Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
+  Actor_SetSpeed(ACTOR_SAILOR_WHO_SPOTS_FELIX, 2);
+  Actor_SetSpeed(ACTOR_SECOND_SAILOR, 2);
+  Actor_WalkByAndWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, -16, -16);
+  Actor_WalkBy(ACTOR_SECOND_SAILOR, 16, -16);
+  Actor_WalkByAndWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, -16);
+  Actor_SetPosition(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 0);
+  Actor_WalkByAndWait(ACTOR_SECOND_SAILOR, 0, -16);
+  Actor_SetPosition(ACTOR_SECOND_SAILOR, 0, 0);
   Event_End();
 }
 
@@ -305,11 +373,11 @@ void Champa_TakeFeizhisGift(s32 a0) {
 }
 
 void Champa_FeizhiHoldsHerGift(void) {
-  FieldActor_ShowItemIconById(31, ITEM_GOLDEN_RING);
+  FieldActor_ShowItemIconById(ACTOR_FEIZHIS_GIFT, ITEM_GOLDEN_RING);
   {
     s32 facing = FACING_NORTH;
 
-    Actor_SetPositionAndFacing(31, px(312), px(593), facing);
+    Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, px(312), px(593), facing);
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
@@ -330,131 +398,135 @@ void Champa_FeizhiArrives(void) {
       Event_SetFlag(FLAG_FEIZHI_CAME);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      FieldEvent_SetMessageId((s32)MsgChampaSilence);
+      FieldEvent_SetMessageId((s32)MsgChampaIsaac);
       {
         s32 angle = FACING_NORTH;
 
-        Actor_SetPositionAndFacing(29, px(314), px(679), angle);
+        Actor_SetPositionAndFacing(ACTOR_FEIZHI, px(314), px(679), angle);
       }
       // "Isaac!"
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_WalkToAndWait(ACTOR_FELIX, 314, 580);
       Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
       FieldEvent_Wait(10);
-      EventCamera_FollowActor(29, 1);
+      EventCamera_FollowActor(ACTOR_FEIZHI, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(40);
-      Actor_WalkToAndWait(29, 314, 624);
-      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      Actor_WalkToAndWait(ACTOR_FEIZHI, 314, 624);
+      Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
       // "Isaac, is it you? Do my eyes deceive me?"
       Event_OpenMessage(29, 0);
       if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
-        FieldEvent_ShowMessageThenWait(29, 0, 5);
+        FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
         gFieldWork->message = (gFieldWork->message + 1);
       } else {
         gFieldWork->message = (gFieldWork->message + 1);
-        FieldEvent_ShowMessageThenWait(29, 0, 5);
+        FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       }
-      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      FieldActor_LaunchFromLeader(30, 16, 0, FACING_SOUTH);
-      FieldActor_WaitForMoveById(30);
+      Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldActor_LaunchFromLeader(ACTOR_KRADEN_MEETING_FEIZHI, 16, 0,
+                                  FACING_SOUTH);
+      FieldActor_WaitForMoveById(ACTOR_KRADEN_MEETING_FEIZHI);
       FieldEvent_Wait(20);
-      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_RunRepeatedMotion(29, 2);
+      Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
+                      EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_SetAnimationAndWait(30, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       FieldEvent_Wait(10);
-      Actor_FaceDirectionAndWait(29, FACING_SOUTH);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(20);
-      Actor_FaceDirectionAndWait(29, FACING_NORTH);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
       FieldEvent_Wait(20);
-      Actor_FaceDirectionAndWait(29, FACING_SOUTH);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(20);
-      Actor_FaceDirectionAndWait(29, FACING_NORTH);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_FaceEachOther(30, ACTOR_FELIX, 0);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_FaceEachOther(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX, 0);
       FieldEvent_Wait(40);
-      Actor_FaceDirection(30, FACING_SOUTH, 0);
+      Actor_FaceDirection(ACTOR_KRADEN_MEETING_FEIZHI, FACING_SOUTH, 0);
       Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
-      Actor_SetAnimationAndWait(30, 4);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-      FieldActor_Jump(29, 2, 0);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_RunRepeatedMotion(29, 2);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 4);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+      FieldActor_Jump(ACTOR_FEIZHI, 2, 0);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
+                      EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       {
         s32 b = 0x108, c = 0x1e;
         /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(30, b, c);
+        Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, b, c);
       }
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_SetAnimationAndWait(30, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_FaceDirectionAndWait(29, FACING_SOUTH);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(10);
       {
         s32 b = 0x108, c = 0x1e;
         /* FAKEMATCH(barrier): the emote and the frames held at an empty asm. */
         __asm__ volatile("" : "+l"(b), "+l"(c));
-        Actor_ShowEmote(30, b, c);
+        Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, b, c);
       }
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_FaceDirectionAndWait(29, FACING_NORTH);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
       FieldEvent_Wait(10);
-      Actor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_SetAnimationAndWait(30, 3);
+      Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       FieldEvent_Wait(10);
-      Actor_RunRepeatedMotion(29, 2);
+      Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Champa_FeizhiHoldsHerGift();
-      Actor_FaceEachOther(30, ACTOR_FELIX, 0);
+      Actor_FaceEachOther(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX, 0);
       FieldEvent_Wait(40);
-      Actor_FaceDirection(30, FACING_SOUTH, 0);
+      Actor_FaceDirection(ACTOR_KRADEN_MEETING_FEIZHI, FACING_SOUTH, 0);
       Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_SetAnimationAndWait(29, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
-      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-      FieldEvent_ShowMessageThenWait(30, 0, 5);
-      Actor_SetAnimationAndWait(29, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
       FieldEvent_Wait(10);
-      FieldEvent_ShowMessageThenWait(29, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-      Actor_SetAnimationAndWait(30, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       FieldEvent_Wait(10);
-      Actor_SetAnimationAndWait(29, 3);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
       FieldEvent_Wait(10);
       EventCamera_FollowActor(ACTOR_FELIX, 1);
-      Actor_SetSpeed(29, 1.2);
-      Actor_WalkBy(29, 0, 100);
+      Actor_SetSpeed(ACTOR_FEIZHI, 1.2);
+      Actor_WalkBy(ACTOR_FEIZHI, 0, 100);
       FieldEvent_Wait(10);
       Actor_FaceEachOther(ACTOR_FELIX, 30, 0);
       FieldEvent_Wait(30);
-      Actor_SetAnimation(30, 3);
+      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 3);
       Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
       FieldEvent_Wait(30);
-      Actor_SetAnimation(30, 2);
+      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 2);
       Actor_HeadToward(30, 4);
-      FieldActor_WaitForMoveById(30);
-      Actor_SetPosition(30, 0, 0);
-      Actor_SetPosition(29, 0, 0);
+      FieldActor_WaitForMoveById(ACTOR_KRADEN_MEETING_FEIZHI);
+      Actor_SetPosition(ACTOR_KRADEN_MEETING_FEIZHI, 0, 0);
+      Actor_SetPosition(ACTOR_FEIZHI, 0, 0);
       Event_End();
     }
   }
@@ -509,24 +581,25 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x100;
   Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_FRAME);
   TilesetAnim_Pause(8);
-  Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
-  Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
-  FieldActor_SetSpritePriority(13, 3);
-  Actor_Get(23)->scaleX = Q16_ONE / 2;
-  Actor_Get(23)->scaleY = Q16_ONE / 2;
+  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_FLAG), 0);
+  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_FLAG), 0);
+  FieldActor_SetSpritePriority(ACTOR_WOMAN_WAITING_FOR_FOOD, 3);
+  Actor_Get(ACTOR_ROCK)->scaleX = Q16_ONE / 2;
+  Actor_Get(ACTOR_ROCK)->scaleY = Q16_ONE / 2;
   Tightrope_Initialize();
-  Tightrope_Place(0, 8, 9);
+  Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   TilesetAnim_Pause(3);
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
-    FieldActor_SetSpritePriority(20, 2);
-    FieldActor_SetSpritePriority(21, 3);
-    FieldActor_SetSpritePriority(22, 3);
-    FieldActor_SetSpritePriority(19, 3);
-    Actor_SetMovementType(Actor_Get(18), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
+    FieldActor_SetSpritePriority(ACTOR_SAILOR_AT_THE_QUIET_CAVES, 2);
+    FieldActor_SetSpritePriority(ACTOR_SAILOR_ON_THE_MATRIARCH, 3);
+    FieldActor_SetSpritePriority(ACTOR_UNWELCOMING_SAILOR, 3);
+    FieldActor_SetSpritePriority(ACTOR_EOLEOS_FRIEND, 3);
+    Actor_SetMovementType(Actor_Get(ACTOR_PRACTICING_BOY),
+                          MOVEMENT_TYPE_TAKE_LEADER_LAYER);
     if (Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
-      Actor_SetPosition(32, 0, 0);
-      Actor_SetPosition(33, 0, 0);
-      Actor_SetPosition(34, 0, 0);
+      Actor_SetPosition(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 0);
+      Actor_SetPosition(ACTOR_SECOND_SAILOR, 0, 0);
+      Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
     }
   }
   if (Event_GetFlag(FLAG_FEIZHIS_GIFT_WAITING)) {
@@ -652,76 +725,76 @@ void Champa_MeetAlex(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgChampaISeeYouveCaughtUp);
-  Actor_SetSpeed(25, 0.8);
-  Actor_SetSpeed(26, 1);
-  Actor_SetSpeed(27, 1);
-  Actor_SetPosition(25, 312, 520);
-  Actor_SetPosition(26, 456, 616);
-  Actor_SetPosition(27, 168, 616);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
+  Actor_SetSpeed(ACTOR_KARST, 1);
+  Actor_SetSpeed(ACTOR_AGATIO, 1);
+  Actor_SetPosition(ACTOR_ALEX, 312, 520);
+  Actor_SetPosition(ACTOR_KARST, 456, 616);
+  Actor_SetPosition(ACTOR_AGATIO, 168, 616);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   // "I see you've caught up with me again, Felix."
-  Event_ShowMessage(25, 0);
+  Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(ACTOR_FELIX, 312, 616);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 600, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
   Event_PlaySound(MUS_039);
-  Actor_WalkToAndWait(25, 304, 576);
+  Actor_WalkToAndWait(ACTOR_ALEX, 304, 576);
   FieldEvent_Wait(5);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -16, 0, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 0, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, -16, 16, FACING_NORTH);
-  FieldActor_LaunchFromLeader(28, -32, 0, FACING_NORTH_NORTHEAST);
-  FieldActor_WaitForMoveById(28);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, -32, 0, FACING_NORTH_NORTHEAST);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "Alex!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   // "Alex? Who is Alex?"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(10);
   // "Alex is a Water Adept. We had been traveling together, but he left..."
-  Event_ShowMessage(28, 0);
-  Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "A Water Adept?"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Champa_MessageOpen(0x2019, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(15);
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(35);
     gFieldWork->message = (gFieldWork->message + 1);
-    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   }
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(5);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -739,17 +812,17 @@ void Champa_MeetAlex(void) {
     gFieldWork->message = (gFieldWork->message + 1);
     Event_ShowMessage(ACTOR_SHEBA, 0);
   }
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(28, 0);
-  Event_ShowMessage(26, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Event_ShowMessage(ACTOR_KARST, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -762,31 +835,32 @@ void Champa_MeetAlex(void) {
   FieldActor_StartRepeatedMotion(ACTOR_SHEBA, 3);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
-  Actor_WalkToAndWait(26, 344, 616);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
+  Actor_WalkToAndWait(ACTOR_KARST, 344, 616);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(26, 0);
+  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Event_ShowMessage(27, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -799,356 +873,359 @@ void Champa_MeetAlex(void) {
   FieldActor_StartRepeatedMotion(ACTOR_SHEBA, 3);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_WEST);
-  Actor_WalkToAndWait(27, 232, 616);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+  Actor_WalkToAndWait(ACTOR_AGATIO, 232, 616);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
-  Event_ShowMessage(26, 0);
-  Actor_WalkByAndWait(27, 16, 0);
-  Event_ShowMessage(27, 0);
-  FieldActor_Jump(27, 4, 25);
-  Event_ShowMessage(27, 0);
-  Actor_FaceDirectionAndWait(27, FACING_NORTH_NORTHEAST);
-  Event_ShowMessage(27, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 16, 0);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  FieldActor_Jump(ACTOR_AGATIO, 4, 25);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTH_NORTHEAST);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(15);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 42);
-  Actor_WalkByAndWait(28, 0, -16);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
-  Event_ShowMessage(28, 0);
-  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 42);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, -16);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_SetSpeed(28, 1);
-  Actor_WalkByAndWait(28, 8, -8);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 8, -8);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(28, 0);
-  Actor_SetSpeed(25, 1);
-  Actor_Get(25)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(25, -7, 7);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetSpeed(ACTOR_ALEX, 1);
+  Actor_Get(ACTOR_ALEX)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_ALEX, -7, 7);
   FieldEvent_Wait(1);
-  Actor_Get(25)->steeringFlags |= 1;
+  Actor_Get(ACTOR_ALEX)->steeringFlags |= 1;
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_ALEX, 3);
+  Actor_SetAttachedEffect(ACTOR_ALEX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_RunRepeatedMotion(26, 2);
-  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
-  Event_ShowMessage(26, 0);
-  Actor_SetSpeed(25, 0.6);
-  Actor_FaceDirectionAndWait(25, FACING_EAST);
-  Actor_WalkBy(25, 8, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Actor_RunRepeatedMotion(ACTOR_KARST, 2);
+  Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  Actor_SetSpeed(ACTOR_ALEX, 0.6);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_EAST);
+  Actor_WalkBy(ACTOR_ALEX, 8, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(27, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(26, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_FaceDirectionAndWait(27, FACING_EAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_EAST);
   FieldEvent_Wait(5);
-  Event_ShowMessage(27, 0);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   FieldEvent_Wait(30);
-  Actor_SetSpeed(28, 0.6);
-  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.6);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(2);
-  Actor_Get(28)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(28, -8, 8);
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_KRADEN, -8, 8);
   FieldEvent_Wait(1);
-  Actor_Get(28)->steeringFlags |= 1;
-  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 28, 0);
-  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
-  FieldActor_Jump(26, 6, 15);
-  FieldActor_Jump(26, 6, 23);
-  Event_ShowMessage(26, 0);
+  Actor_Get(ACTOR_KRADEN)->steeringFlags |= 1;
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
+  Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
+  FieldActor_Jump(ACTOR_KARST, 6, 15);
+  FieldActor_Jump(ACTOR_KARST, 6, 23);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(26, FACING_WEST);
-  Event_ShowMessage(26, 0);
-  FieldActor_Jump(27, 6, 15);
-  FieldActor_Jump(27, 6, 23);
-  Event_ShowMessage(27, 0);
-  Actor_SetSpeed(26, 1.8);
-  Actor_WalkByAndWait(26, -12, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  FieldActor_Jump(ACTOR_AGATIO, 6, 15);
+  FieldActor_Jump(ACTOR_AGATIO, 6, 23);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_SetSpeed(ACTOR_KARST, 1.8);
+  Actor_WalkByAndWait(ACTOR_KARST, -12, 0);
   FieldEvent_Wait(5);
-  Event_ShowMessage(26, 0);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
-  Actor_SetSpeed(27, 1.8);
-  Actor_WalkByAndWait(27, 12, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
+  Actor_SetSpeed(ACTOR_AGATIO, 1.8);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 12, 0);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(27, 0);
+  Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_FaceDirection(26, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirection(27, FACING_NORTH_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessage(26, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
-  FieldActor_Jump(27, 6, 15);
-  FieldActor_Jump(27, 6, 23);
-  Event_ShowMessage(27, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
+  FieldActor_Jump(ACTOR_AGATIO, 6, 15);
+  FieldActor_Jump(ACTOR_AGATIO, 6, 23);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_RunRepeatedMotion(26, 2);
-  Actor_FaceDirectionAndWait(26, FACING_NORTH_NORTHWEST);
-  Event_ShowMessage(26, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_RunRepeatedMotion(ACTOR_KARST, 2);
+  Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(27, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(15);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(25);
-  Actor_RunRepeatedMotion(26, 2);
-  Event_ShowMessage(26, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_RunRepeatedMotion(ACTOR_KARST, 2);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(27, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(15);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(26, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Event_ShowMessage(ACTOR_KARST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(27, 2);
-  Event_ShowMessage(27, 0);
-  Actor_FaceDirectionAndWait(27, FACING_EAST);
-  Event_ShowMessage(27, 0);
+  Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
+  Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_EAST);
+  Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 27);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, 27);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, 27);
   FieldActor_WatchAndSetScript(ACTOR_SHEBA, 27);
-  FieldActor_WatchAndSetScript(28, 27);
-  Actor_SetSpeed(27, 1);
-  Actor_WalkByAndWait(27, 20, 0);
-  Actor_WalkByAndWait(27, 2, 32);
-  Actor_WalkByAndWait(27, 32, 32);
-  Actor_WalkByAndWait(27, 0, 32);
-  Actor_FaceDirectionAndWait(26, FACING_WEST);
-  Actor_SetAnimationAndWait(26, 3);
-  Event_ShowMessage(26, 0);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 27);
+  Actor_SetSpeed(ACTOR_AGATIO, 1);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 20, 0);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 2, 32);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 32, 32);
+  Actor_WalkByAndWait(ACTOR_AGATIO, 0, 32);
+  Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
+  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 26);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, 26);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, 26);
   FieldActor_WatchAndSetScript(ACTOR_SHEBA, 26);
-  FieldActor_WatchAndSetScript(28, 26);
-  Actor_SetSpeed(26, 1);
-  Actor_WalkByAndWait(26, 0, 32);
-  Actor_WalkByAndWait(26, -20, 24);
-  Actor_WalkByAndWait(26, 0, 48);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 26);
+  Actor_SetSpeed(ACTOR_KARST, 1);
+  Actor_WalkByAndWait(ACTOR_KARST, 0, 32);
+  Actor_WalkByAndWait(ACTOR_KARST, -20, 24);
+  Actor_WalkByAndWait(ACTOR_KARST, 0, 48);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(28, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(20);
-  Actor_SetPosition(26, 0, 0);
-  Actor_SetPosition(27, 0, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetPosition(ACTOR_KARST, 0, 0);
+  Actor_SetPosition(ACTOR_AGATIO, 0, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 25);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, 25);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, 25);
   FieldActor_WatchAndSetScript(ACTOR_SHEBA, 25);
-  FieldActor_WatchAndSetScript(28, 25);
-  Actor_SetSpeed(25, 1);
-  Actor_WalkByAndWait(25, 22, 24);
-  EventCamera_FollowActor(25, 1);
-  Actor_WalkByAndWait(25, 0, 32);
-  Actor_WalkByAndWait(25, -16, 16);
-  Actor_WalkByAndWait(25, 0, 8);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirectionAndWait(25, FACING_NORTH_NORTHWEST);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 25);
+  Actor_SetSpeed(ACTOR_ALEX, 1);
+  Actor_WalkByAndWait(ACTOR_ALEX, 22, 24);
+  EventCamera_FollowActor(ACTOR_ALEX, 1);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 32);
+  Actor_WalkByAndWait(ACTOR_ALEX, -16, 16);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 8);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_NORTH_NORTHWEST);
   FieldCamera_MoveTo(304, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_RunRepeatedMotion(28, 2);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(28, 1);
-  Actor_WalkByAndWait(28, 0, 32);
-  Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHEAST);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, 32);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(28, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(28, 0);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessage(28, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(28, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1160,28 +1237,28 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait(25);
-  Actor_SetSpeed(28, 0.4);
-  Actor_Get(28)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWait(28, 0, -24);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.4);
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, -24);
   FieldEvent_Wait(1);
-  Actor_Get(28)->steeringFlags |= 1;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags |= 1;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(28, 8);
+  Actor_SetAnimation(ACTOR_KRADEN, 8);
   FieldEvent_Wait(30);
-  Event_ShowMessage(28, 0);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   FieldEvent_Wait(40);
@@ -1191,21 +1268,21 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_SetAnimationAndWait(25, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
-  Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Actor_WalkByAndWait(25, 0, 80);
-  Actor_SetPosition(25, 0, 0);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 80);
+  Actor_SetPosition(ACTOR_ALEX, 0, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(304, CAMERA_KEEP, 624, 1);
   FieldCamera_WaitForArrival();
@@ -1230,25 +1307,25 @@ void Champa_MeetAlex(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(28, 1);
+  Actor_SetAnimation(ACTOR_KRADEN, 1);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(28, 0.8);
-  Actor_WalkByAndWait(28, 0, 16);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, 16);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(5);
-  Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_StartRepeatedMotion(ACTOR_PIERS, 3);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1270,8 +1347,8 @@ void Champa_MeetAlex(void) {
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 0x12, 8, 6, 6, 0xe, 8, 9,
                                     0);
-  Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1286,15 +1363,15 @@ void Champa_MeetAlex(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(15);
-    Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Event_ShowMessage(28, 0);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(35);
-    Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     gFieldWork->message = (gFieldWork->message + 1);
-    Event_ShowMessage(28, 0);
+    Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1302,37 +1379,37 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 45);
-  Actor_SetAnimationAndWait(28, 4);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_JENNA, 6, 15);
   FieldActor_Jump(ACTOR_JENNA, 6, 23);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_SHEBA, 6, 15);
   FieldActor_Jump(ACTOR_SHEBA, 6, 23);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(28, 3);
-  Event_ShowMessage(28, 0);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_WalkByAndWait(28, 0, -8);
-  Actor_FaceDirectionAndWait(28, FACING_EAST);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, -8);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(5);
-  Event_ShowMessage(28, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessage(28, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldEvent_Wait(5);
-  Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_RunRepeatedMotion(28, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -1343,7 +1420,7 @@ void Champa_MeetAlex(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationAndWait(28, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
@@ -1360,11 +1437,11 @@ void Champa_MeetAlex(void) {
   Actor_HeadToward(7, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  Actor_SetSpeed(28, 1.2);
-  Actor_SetAnimation(28, 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN, 2);
   Actor_HeadToward(28, gMainRoutineWork.leaderActorId);
-  FieldActor_WaitForMoveById(28);
-  Actor_SetPosition(28, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
 }
 

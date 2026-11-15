@@ -13,6 +13,36 @@
 
 /// Set once Avimander is beaten and Briggs gives in.
 #define FLAG_CHAMPA_AVIMANDER_BEATEN 0x97e
+/// Obaba hands the party pieces of the trident one by one: set as she sees the
+/// first prong, the second, and as she forges the three into the Trident.
+#define FLAG_OBABA_SAW_FIRST_PRONG 0x975
+#define FLAG_OBABA_SAW_SECOND_PRONG 0x976
+#define FLAG_TRIDENT_FORGED 0x977
+/// The Trident has been picked up from Obaba's forge.
+#define FLAG_TRIDENT_TAKEN 0x978
+
+#include "field/scene_tables.h"
+
+/// Obaba's room, numbering gChampaCliffCaves_Room4PlacementsBriggsHome and
+/// the room's other tables to ACTOR_HELD_ITEM.
+enum ChampaCliffCavesObabasRoomActorId {
+  ACTOR_OBABA = ACTOR_FIRST_PLACED,
+  /// The prong or the Trident shown as an item icon in Obaba's hands.
+  ACTOR_HELD_ITEM = ACTOR_FIRST_PLACED + 2,
+  ACTOR_BRIGGS,
+  /// Briggs's pet salamander, and Avimander as it grows to fight.
+  ACTOR_SALAMANDER,
+  ACTOR_AVIMANDER,
+  ACTOR_CHAUCHA,
+  ACTOR_KRADEN
+};
+
+/// Briggs's home once Avimander is beaten
+/// (gChampaCliffCaves_Room3PlacementsAfterAvimander).
+enum ChampaCliffCavesBriggsHomeActorId {
+  /// Briggs, lying in bed.
+  ACTOR_BRIGGS_IN_BED = ACTOR_FIRST_PLACED
+};
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
@@ -224,15 +254,15 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
                                     FACING_EAST);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
-  Actor_GetById(8)->motionFlags = 0;
-  Actor_SetPosition(8, 184, 408);
-  Actor_SetSpeed(8, 1.8);
-  Actor_WalkByAndWaitById(8, 0, 16);
-  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
+  Actor_GetById(ACTOR_OBABA)->motionFlags = 0;
+  Actor_SetPosition(ACTOR_OBABA, 184, 408);
+  Actor_SetSpeed(ACTOR_OBABA, 1.8);
+  Actor_WalkByAndWaitById(ACTOR_OBABA, 0, 16);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Event_SetMessageId(msg);
   // "Has my grandson returned? Has my Briggs come home?"
-  FieldMessage_ShowAtActor(8, 0);
+  FieldMessage_ShowAtActor(ACTOR_OBABA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -240,10 +270,10 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetSpeed(8, 0.8);
-  Actor_WalkByAndWait(8, 0, -14);
-  Actor_SetPosition(8, 0, 0);
+  Event_ShowMessageAndWait(ACTOR_OBABA, 0);
+  Actor_SetSpeed(ACTOR_OBABA, 0.8);
+  Actor_WalkByAndWait(ACTOR_OBABA, 0, -14);
+  Actor_SetPosition(ACTOR_OBABA, 0, 0);
   warp = &gChampaCliffCaves_SecondDoor;
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Sound_Play(SE_DOOR_OPEN);
@@ -304,7 +334,9 @@ void ChampaCliffCaves_CloseWall(void) {
 
 extern struct Trigger gChampaCliffCaves_Room1Triggers[];
 
-void ChampaCliffCaves_PickUpTrident(s32 a) { Event_PickUpItem(a, 326, 0x978); }
+void ChampaCliffCaves_PickUpTrident(s32 a) {
+  Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
@@ -339,17 +371,18 @@ s32 Scene_Initialize(void) {
       party->entrance = 23;
       ChampaCliffCaves_BriggsMournsSalamander();
     }
-    if (GameFlag_Get(0x977) && !GameFlag_Get(0x978)) {
-      FieldActor_ShowItemIconById(10, ITEM_TRIDENT);
-      Actor_SetPosition(10, 664, 232);
-      Actor_GetById(10)->motionFlags = 4;
+    if (GameFlag_Get(FLAG_TRIDENT_FORGED) &&
+        !GameFlag_Get(FLAG_TRIDENT_TAKEN)) {
+      FieldActor_ShowItemIconById(ACTOR_HELD_ITEM, ITEM_TRIDENT);
+      Actor_SetPosition(ACTOR_HELD_ITEM, 664, 232);
+      Actor_GetById(ACTOR_HELD_ITEM)->motionFlags = 4;
     }
-    if (GameFlag_Get(0x977))
-      Actor_SetPosition(8, 664, 200);
+    if (GameFlag_Get(FLAG_TRIDENT_FORGED))
+      Actor_SetPosition(ACTOR_OBABA, 664, 200);
   } else if (party->next == SCENE_CHAMPA_CLIFF_CAVES_OBABA) {
     if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
-      Actor_SetAnimationById(8, 11);
-      Actor_SetSpriteFlags(Actor_GetById(8), 0);
+      Actor_SetAnimationById(ACTOR_BRIGGS_IN_BED, 11);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_BRIGGS_IN_BED), 0);
     }
   }
   return 0;
@@ -364,8 +397,8 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Event_Wait(5);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 6);
   Event_Wait(7);
-  Actor_ShowItemIconById(10, actor);
-  Actor_SetPosition(10, 648, 196);
+  Actor_ShowItemIconById(ACTOR_HELD_ITEM, actor);
+  Actor_SetPosition(ACTOR_HELD_ITEM, 648, 196);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, -16, -8);
   Event_Wait(1);
@@ -376,23 +409,23 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
 }
 
 void ChampaCliffCaves_ObabaStepsForward(s32 value) {
-  Actor_SetSpeed(8, 0.8);
-  Actor_GetById(8)->steeringFlags &= 0xfe;
-  Actor_WalkByAndWaitById(8, 0, 6);
+  Actor_SetSpeed(ACTOR_OBABA, 0.8);
+  Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
+  Actor_WalkByAndWaitById(ACTOR_OBABA, 0, 6);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+  ((struct ActorSolid *)Actor_GetById(ACTOR_OBABA))->solid |= 1;
   Event_Wait(10);
-  Actor_SetAnimationById(8, 8);
+  Actor_SetAnimationById(ACTOR_OBABA, 8);
   Event_Wait(15);
-  Actor_SetPosition(10, 0, 0);
+  Actor_SetPosition(ACTOR_HELD_ITEM, 0, 0);
   Event_Wait(15);
-  Actor_SetAnimationById(8, 1);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   if (value == 0) {
-    Actor_GetById(8)->steeringFlags &= 0xfe;
-    Actor_WalkByAndWait(8, 0, -6);
+    Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
+    Actor_WalkByAndWait(ACTOR_OBABA, 0, -6);
     Event_Wait(1);
-    ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+    ((struct ActorSolid *)Actor_GetById(ACTOR_OBABA))->solid |= 1;
     Event_Wait(10);
   }
 }
@@ -435,36 +468,36 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgThisLooksLike);
   ChampaCliffCaves_HandPieceToObaba(actor);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationById(8, 7);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_SetAnimationById(8, 1);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   // "This looks like a weapon!"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetAnimationById(8, 7);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Actor_SetAnimationById(8, 1);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   // "It looks like part of a trident, but it's only one third of the..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetAnimationById(8, 7);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_SetAnimationById(8, 1);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   // "Why... Could it be? Is this the legendary trident of Ankohl?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
   Event_Wait(8);
   // "I'll hold on to this for you. It won't do you any good like this..."
-  Event_ShowMessageThenWait(8, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(0);
-  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   /* FAKEMATCH(signature): called through a type returning s32. */
   // "You seem unsure... You don't think I'll pull a fast one on you, do you?"
   // Yes: "Kids today. So mistrustful." No: "Ah, that's nice. Don't you worry!"
@@ -472,18 +505,18 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     // "Kids today. So mistrustful."
-    Event_ShowMessageThenWait(8, 0, 5);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
     gFieldWork->message++;
   } else {
     Event_Wait(35);
     gFieldWork->message++;
     // "Ah, that's nice. Don't you worry!"
-    Event_ShowMessageThenWait(8, 0, 5);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   }
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 3);
   // "If you bring me the other two pieces, I'll be happy to rebuild it..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_End();
 }
 
@@ -492,27 +525,27 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAhHaveYou);
   ChampaCliffCaves_HandPieceToObaba(actor);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationById(8, 7);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetAnimationById(8, 1);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   // "Ah, have you found the second piece, dear?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetAnimationById(8, 7);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Actor_SetAnimationById(8, 1);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   // "It's magnificent!"
-  Event_ShowMessageThenWait(8, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(0);
-  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
   // "I'll hold on to this as well. Wouldn't want it getting lost, now..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_End();
 }
 
@@ -529,7 +562,7 @@ extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
 void Actor_ShowItemIconById(s32 id, s32 animation);
 
 void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
-  struct Actor *thrown = Actor_GetById(10);
+  struct Actor *thrown = Actor_GetById(ACTOR_HELD_ITEM);
   u16 bright[5];
   u16 dim[5];
   s32 glow[3];
@@ -556,60 +589,60 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
   ChampaCliffCaves_HandPieceToObaba(value);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "Well done! You found all three pieces of the trident!"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "That means I can begin work reforging the ancient trident of Ankohl!..."
-  Event_ShowMessageThenWait(8, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(1);
-  Actor_WalkToAndWait(8, 0x298, 200);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
+  Actor_WalkToAndWait(ACTOR_OBABA, 0x298, 200);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(8, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
   // "We'll just toss all three pieces in here, shall we?" Yes: "Just leave it
   // to me..." No: "There's nothing to be afraid of, dear. Just..."
-  FieldMessage_ShowAtActor(8, 0);
+  FieldMessage_ShowAtActor(ACTOR_OBABA, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     // "Just leave it to me..."
-    Event_ShowMessageThenWait(8, 0, 5);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
     gFieldWork->message++;
   } else {
     Event_Wait(40);
     gFieldWork->message++;
     // "There's nothing to be afraid of, dear. Just leave it to me."
-    Event_ShowMessageThenWait(8, 0, 5);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   }
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+  Actor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   // "Heart of the earth, fury of the forge's flames, grant me power!"
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
     animations = gChampaCliffCaves_ThrowAnimations;
-    Actor_SetAnimationById(8, 9);
+    Actor_SetAnimationById(ACTOR_OBABA, 9);
     Event_Wait(3);
-    Actor_ShowItemIconById(10, animations.animations[i]);
-    Actor_SetPosition(10, 668, 200);
+    Actor_ShowItemIconById(ACTOR_HELD_ITEM, animations.animations[i]);
+    Actor_SetPosition(ACTOR_HELD_ITEM, 668, 200);
     thrown->gravity = px(1) / 4;
-    Actor_Jump(10, 4, 2);
-    Actor_SetSpritePriority(10, 1);
-    Actor_SetSpeed(10, 1);
-    Actor_SetDestinationOffsetById(10, 0, 40);
+    Actor_Jump(ACTOR_HELD_ITEM, 4, 2);
+    Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
+    Actor_SetSpeed(ACTOR_HELD_ITEM, 1);
+    Actor_SetDestinationOffsetById(ACTOR_HELD_ITEM, 0, 40);
     Sound_Play(SE_310);
     Event_Wait(34);
     landing[0] = thrown->x.fixed;
     landing[1] = thrown->y.fixed;
     landing[2] = thrown->z.fixed;
-    Actor_SetPosition(10, 0, 0);
+    Actor_SetPosition(ACTOR_HELD_ITEM, 0, 0);
     Event_Wait(20);
     Sound_Play(SE_HEAVY_IMPACT);
     ChampaCliffCaves_FadeColours(bright, dim, 12);
@@ -626,23 +659,23 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(10);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 22);
   Event_Wait(20);
-  Actor_SetAnimationById(8, 7);
+  Actor_SetAnimationById(ACTOR_OBABA, 7);
   Event_Wait(60);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "That's funny... Nothing happened."
-  FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   Event_Wait(20);
   Sound_Play(SE_SHIMMER);
   ChampaCliffCaves_FadeColours(bright, dim, 48);
   Actor_StartRepeatedMotion(gMainRoutineWork.leaderActorId, 3);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId, 0x102);
   Event_Wait(50);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Call2((void (*)())Field_StartColorTransition, 16, 0x1090);
   MapGrid_SetShake(2, 2, 1);
   ChampaCliffCaves_StartEmbers(glow);
-  Actor_SetAnimationById(8, 1);
+  Actor_SetAnimationById(ACTOR_OBABA, 1);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Sound_Play(SE_194);
   Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
@@ -650,31 +683,31 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(1);
   Actor_GetById(ACTOR_FELIX)->steeringFlags |= 1;
   Event_Wait(10);
-  Actor_StartRepeatedMotion(8, 3);
+  Actor_StartRepeatedMotion(ACTOR_OBABA, 3);
   FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
   // "What's going on?"
-  FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   MapGrid_SetShake(4, 4, 1);
   ChampaCliffCaves_StartSparks(glow);
   Sound_Play(SE_194);
   Event_Wait(10);
-  Actor_Jump(8, 6, 15);
-  Actor_Jump(8, 6, 23);
+  Actor_Jump(ACTOR_OBABA, 6, 15);
+  Actor_Jump(ACTOR_OBABA, 6, 23);
   Sound_Play(SE_194);
   Event_Wait(10);
   // "Something's happening! Is that...the legendary trident?"
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-  FieldActor_ShowItemIconById(10, 0x146);
-  Actor_SetPosition(10, 664, 232);
-  Actor_SetSpritePriority(10, 1);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+  FieldActor_ShowItemIconById(ACTOR_HELD_ITEM, 0x146);
+  Actor_SetPosition(ACTOR_HELD_ITEM, 664, 232);
+  Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
   thrown->motionFlags = 2;
   thrown->y.fixed = px(24);
   thrown->update = ChampaCliffCaves_GrowThrown;
   thrown->groundHeight = 0;
   thrown->scaleX = 0;
   thrown->scaleY = 0;
-  Actor_Jump(10, 5, 0);
+  Actor_Jump(ACTOR_HELD_ITEM, 5, 0);
   Field_StartPaletteTransition(8);
   ChampaCliffCaves_UpdateSparks();
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -685,17 +718,17 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   thrown->motionFlags = 4;
   Scene_PlayMusic();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
   Event_Wait(5);
   // "After all these years, the trident is complete again. But what's..."
-  FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
   // "Regardless, the trident has been fixed. It belongs to you now..."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-  Actor_FaceDirectionAndRefreshById(8, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
-  Actor_SetSpritePriority(10, 2);
+  Actor_SetSpritePriority(ACTOR_HELD_ITEM, 2);
   Event_End();
 }
 
@@ -737,31 +770,31 @@ first:
   PartyInventory_Remove(item);
 chosen:
   if (item != -1) {
-    if (!GameFlag_Test_(0x975)) {
-      GameFlag_Set(0x975);
+    if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG)) {
+      GameFlag_Set(FLAG_OBABA_SAW_FIRST_PRONG);
       ChampaCliffCaves_ObabaSeesAWeapon(item);
-    } else if (!GameFlag_Test_(0x976)) {
-      GameFlag_Set(0x976);
+    } else if (!GameFlag_Test_(FLAG_OBABA_SAW_SECOND_PRONG)) {
+      GameFlag_Set(FLAG_OBABA_SAW_SECOND_PRONG);
       ChampaCliffCaves_ObabaAsksForSecondPiece(item);
-    } else if (!GameFlag_Test_(0x977)) {
-      GameFlag_Set(0x977);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 208 << 16, 0, -4);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 224 << 16, 0, -4);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 240 << 16, 0, -4);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 128 << 17, 0, -4);
+    } else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED)) {
+      GameFlag_Set(FLAG_TRIDENT_FORGED);
+      ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, -4);
+      ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
+      ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
+      ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
       ChampaCliffCaves_ObabaForgesTrident(item);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 208 << 16, 0, 0);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 224 << 16, 0, 0);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 240 << 16, 0, 0);
-      ChampaCliffCaves_PlaceThrown(164 << 18, 128 << 17, 0, 0);
+      ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, 0);
+      ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, 0);
+      ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, 0);
+      ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, 0);
     }
   } else {
     Actor_FaceActorById(actor, gMainRoutineWork.leaderActorId, 5);
-    if (!GameFlag_Test_(0x975))
+    if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG))
       Event_SetMessageId((s32)MsgIMeanIt);
-    else if (!GameFlag_Test_(0x976))
+    else if (!GameFlag_Test_(FLAG_OBABA_SAW_SECOND_PRONG))
       Event_SetMessageId((s32)MsgTheLegendSaysThat);
-    else if (!GameFlag_Test_(0x977))
+    else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED))
       Event_SetMessageId((s32)MsgYesThereS);
     else
       Event_SetMessageId((s32)MsgTheTridentSeems);
@@ -794,7 +827,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   struct Position position;
   const u16 *colour;
   struct MainRoutineWork *party;
-  struct Actor *object = Actor_GetById(13);
+  struct Actor *object = Actor_GetById(ACTOR_AVIMANDER);
 
   if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
     return;
@@ -805,143 +838,143 @@ void ChampaCliffCaves_FightAvimander(void) {
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
     Event_SetMessageId((s32)MsgBackForMore);
     // "Back for more?"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
     Sound_Play(MUS_036);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 256, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
-    Actor_SetAnimationAndWait(8, 4);
+    Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
     // "I wouldn't be doing this if it weren't for Eoleo, you know."
-    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+    FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "I'm sorry. You look like quite a nice boy, but I just can't allow..."
-    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   } else {
     Flag_Set(0x974);
     Event_SetMessageId((s32)MsgHoldItRight);
     // "Hold it right there!"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
     Sound_Play(MUS_036);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     FieldCamera_MoveTo(664, CAMERA_KEEP, 256, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
-    Actor_Jump(11, 6, 15);
-    Actor_Jump(11, 6, 23);
+    Actor_Jump(ACTOR_BRIGGS, 6, 15);
+    Actor_Jump(ACTOR_BRIGGS, 6, 23);
     // "So, Felix, you've come."
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Don't assume I'll go so easy on you this time!"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
     Event_Wait(10);
     // "Is that boy him? The "mighty warrior" you told me about?"
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
     Event_Wait(10);
     // "I told you he didn't look like much, Grandma..."
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Weren't you even listening to me?"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Actor_SetAnimationAndWait(8, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_OBABA, 3);
     // "All you told me is that his name is Felix and that he is a "mighty..."
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndWait(8, FACING_WEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
     Event_Wait(5);
-    Actor_SetAnimationAndWait(8, 4);
+    Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
     // "He doesn't look like the sort of person who's interested in stealing..."
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndWait(11, FACING_WEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
     Event_Wait(30);
-    Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
     Event_Wait(10);
-    FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "But that's not the point, Grandma!"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Actor_FaceDirectionAndWait(11, FACING_WEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
     Event_Wait(20);
-    Actor_RunRepeatedMotion(11, 2);
+    Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
     Event_Wait(5);
     // "If you don't destroy him now, he's going to take me far away, and..."
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "Oh, now he doesn't look like the kind of boy who would do that..."
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
     Event_Wait(10);
-    FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
-    Actor_FaceDirectionAndWait(11, 0x300a);
+    FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, 0x300a);
     Event_Wait(10);
     // "If he takes me away, poor Eoleo will be so sad! What do you say..."
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
     Event_Wait(10);
     // "Oh, that's just not fair. You know I can't deny my darling..."
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(8, 4);
+    Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
     Event_Wait(5);
-    Actor_FaceDirectionAndWait(8, FACING_WEST);
+    Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
     Event_Wait(5);
     // "I don't see why I should be the one to get you out of this mess, but..."
-    FieldEvent_ShowMessageThenWait(8, 0, 5);
-    Actor_SetAnimationAndWait(11, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(11, 3);
+    Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
     Event_Wait(5);
     // "Grandma, please!"
-    FieldEvent_ShowMessageThenWait(11, 0, 5);
-    Actor_FaceDirectionAndWait(11, FACING_WEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
     Event_Wait(5);
   }
   Event_SetMessageId((s32)MsgOhAllRightListen);
-  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_NORTH_NORTHWEST);
   Event_Wait(20);
-  Actor_GetById(8)->facing = FACING_SOUTH_SOUTHWEST;
-  Actor_SetAnimationById(8, 5);
+  Actor_GetById(ACTOR_OBABA)->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_SetAnimationById(ACTOR_OBABA, 5);
   Event_Wait(30);
-  Actor_SetAnimationById(8, 6);
-  Actor_SetPosition(12, 724, 252);
-  WORD_AT(Actor_GetById(12), 24) = 0x13333;
-  WORD_AT(Actor_GetById(12), 28) = 0x13333;
-  Actor_SetSpriteFlags(Actor_GetById(12), 0);
+  Actor_SetAnimationById(ACTOR_OBABA, 6);
+  Actor_SetPosition(ACTOR_SALAMANDER, 724, 252);
+  WORD_AT(Actor_GetById(ACTOR_SALAMANDER), 24) = 0x13333;
+  WORD_AT(Actor_GetById(ACTOR_SALAMANDER), 28) = 0x13333;
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
   FieldMessage_ShowAtActor_(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Scene_PlayMusic();
     Event_Wait(15);
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetAnimationById(8, 1);
-    Actor_GetById(8)->facing = FACING_WEST;
-    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+    Actor_SetPosition(ACTOR_SALAMANDER, 0, 0);
+    Actor_SetAnimationById(ACTOR_OBABA, 1);
+    Actor_GetById(ACTOR_OBABA)->facing = FACING_WEST;
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     gFieldWork->message++;
     Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
     gFieldWork->message++;
-    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+    FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    ChampaCliffCaves_PlaceThrown(656 << 16, 208 << 16, 0, -4);
-    ChampaCliffCaves_PlaceThrown(656 << 16, 224 << 16, 0, -4);
-    ChampaCliffCaves_PlaceThrown(656 << 16, 240 << 16, 0, -4);
-    ChampaCliffCaves_PlaceThrown(656 << 16, 256 << 16, 0, -4);
+    ChampaCliffCaves_PlaceThrown(px(656), px(208), 0, -4);
+    ChampaCliffCaves_PlaceThrown(px(656), px(224), 0, -4);
+    ChampaCliffCaves_PlaceThrown(px(656), px(240), 0, -4);
+    ChampaCliffCaves_PlaceThrown(px(656), px(256), 0, -4);
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
     object->groundHeight = 0xfc190000;
-    Actor_Jump(12, 10, 0);
+    Actor_Jump(ACTOR_SALAMANDER, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
-    Actor_SetSpritePriority(12, 1);
-    Actor_SetSpeed(12, 3);
-    Actor_WalkToById(12, 644, 248);
+    Actor_SetSpritePriority(ACTOR_SALAMANDER, 1);
+    Actor_SetSpeed(ACTOR_SALAMANDER, 3);
+    Actor_WalkToById(ACTOR_SALAMANDER, 644, 248);
     Event_Wait(21);
-    Actor_SetPosition(12, 0, 0);
+    Actor_SetPosition(ACTOR_SALAMANDER, 0, 0);
     Event_Wait(50);
     MapGrid_SetShake(2, 2, 1);
     Event_Wait(70);
@@ -967,7 +1000,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     position.z = px(238);
     ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
-    Actor_SetPosition(13, 664, 248);
+    Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->groundHeight = 0;
@@ -975,10 +1008,10 @@ void ChampaCliffCaves_FightAvimander(void) {
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)ChampaCliffCaves_GrowThrownSlowly;
     WORD_AT(object, 28) = 0x4000;
-    Actor_Jump(13, 11, 0);
+    Actor_Jump(ACTOR_AVIMANDER, 11, 0);
     Sound_Play(SE_BEAST_CRY);
-    Actor_SetSpeed(13, 3.2);
-    Actor_WalkToAndWait(13, 584, 248);
+    Actor_SetSpeed(ACTOR_AVIMANDER, 3.2);
+    Actor_WalkToAndWait(ACTOR_AVIMANDER, 584, 248);
     Event_SetDefeatDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER, 98);
     Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER, 99);
     party = &gMainRoutineWork;
@@ -998,22 +1031,22 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 568, 248);
-  Actor_SetPosition(8, 584, 224);
-  Actor_SetPosition(13, 600, 240);
-  Actor_SetPosition(11, 584, 264);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
+  Actor_SetPosition(ACTOR_OBABA, 584, 224);
+  Actor_SetPosition(ACTOR_AVIMANDER, 600, 240);
+  Actor_SetPosition(ACTOR_BRIGGS, 584, 264);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 41);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Have you learned your lesson, Felix?"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(8, 4);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "Ah, such a bright lad. Now then, don't you ever try to take my..."
-  Event_ShowMessageThenWait(8, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 20);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 40;
   work->transition = 521;
@@ -1044,126 +1077,126 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   owner = (s32 *)&gMainRoutineWork;
   owner = (s32 *)((u8 *)owner + 532);
   Actor_SetPosition(*owner, 568, 256);
-  Actor_SetPosition(13, 592, 240);
-  Actor_SetAnimationById(13, 3);
+  Actor_SetPosition(ACTOR_AVIMANDER, 592, 240);
+  Actor_SetAnimationById(ACTOR_AVIMANDER, 3);
   Actor_FaceDirectionById(*owner, FACING_EAST, 0);
   FieldCamera_MoveTo(656, CAMERA_KEEP, 248, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
   // "My salamander! You... beat my salamander..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_RunRepeatedMotion(13, 2);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_AVIMANDER, 2);
   Event_Wait(5);
   ChampaCliffCaves_StartFlash(13, 1);
-  Actor_SetSpeed(8, 1);
-  Actor_WalkByAndWait(8, -12, -18);
-  Actor_WalkByAndWait(8, -10, -14);
-  Actor_WalkByAndWait(8, -18, -12);
-  Actor_WalkToAndWait(8, 664, 200);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Actor_SetSpeed(ACTOR_OBABA, 1);
+  Actor_WalkByAndWait(ACTOR_OBABA, -12, -18);
+  Actor_WalkByAndWait(ACTOR_OBABA, -10, -14);
+  Actor_WalkByAndWait(ACTOR_OBABA, -18, -12);
+  Actor_WalkToAndWait(ACTOR_OBABA, 664, 200);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   // "I thought he was unbeatable... How could this be?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_WalkByAndWait(8, -16, 0);
-  Actor_WalkByAndWait(8, -16, 8);
-  Actor_WalkByAndWait(8, -16, 16);
-  Actor_WalkByAndWait(8, -8, 16);
-  Actor_WalkToAndWait(8, 608, 248);
-  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 0);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 8);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 16);
+  Actor_WalkByAndWait(ACTOR_OBABA, -8, 16);
+  Actor_WalkToAndWait(ACTOR_OBABA, 608, 248);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   Event_Wait(5);
-  Actor_SetAnimationAndWait(8, 4);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "How did you do that? What... What are you?"
-  FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_SetSpeed(11, 1.7);
-  Actor_WalkByAndWait(11, -16, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1.7);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, -16, 0);
   Event_Wait(5);
   // "Grandma, what's going on!? I thought you were going to protect me!"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_EAST);
   Event_Wait(5);
   // "What do you mean, what am I doing? I've done everything I can!"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_Jump(11, 6, 15);
-  Actor_Jump(11, 6, 23);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_Jump(ACTOR_BRIGGS, 6, 15);
+  Actor_Jump(ACTOR_BRIGGS, 6, 23);
   // "Grandma!!! He's going to take me away! He's a bad guy! You have to..."
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "I'm sorry, Briggs, but you'll have to fight him yourself."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
   Event_Wait(38);
   // "Wha-What!?"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(8, 4);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "You heard me. I'm through pampering you. You have to get out of this..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
   Event_Wait(37);
   // "But...Grandma... Look at him! I mean, look what he can do!"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_FaceDirectionAndWait(8, 0x7ff6);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, 0x7ff6);
   Event_Wait(25);
-  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_EAST);
   Event_Wait(10);
   // "I know, dear, but there's nothing I can do to help. You don't want..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_RunRepeatedMotion(11, 2);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(30);
-  Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "But...what about poor Eoleo?"
-  Event_ShowMessageThenWait(11, 0, 10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "*Sigh* All right, all right."
-  Event_ShowMessageThenWait(8, 0, 0);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 0);
   // "Um. Excuse me... There seems to be a small misunderstanding."
-  Event_ShowMessageThenWait(15, 0, 5);
-  Actor_FaceDirectionAndRefreshById(8, 0x7ff6);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, 0x7ff6);
   Event_Wait(10);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, 0, -16, FACING_EAST);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, 0, FACING_EAST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, -16, -16, FACING_EAST);
-  FieldActor_LaunchFromLeader(15, 16, -16, FACING_EAST);
-  Actor_WaitForMoveById(15);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, 16, -16, FACING_EAST);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
   Event_Wait(10);
   FieldCamera_MoveTo(640, CAMERA_KEEP, 248, 1);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   // "Yeah! I don't like standing here listening to a pirate call us the..."
-  FieldEvent_ShowMessageThenWait(0x1006, 0, 5);
-  Actor_StartRepeatedMotion(8, 3);
-  Actor_SetAttachedEffect(8, 0x102);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_OBABA, 3);
+  Actor_SetAttachedEffect(ACTOR_OBABA, 0x102);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
   Event_Wait(40);
   // "Pirate! My Briggs?"
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
   // "He stole a ship from Alhafra and escaped from their jail! A ship we..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 5);
-  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_EAST);
   Event_Wait(5);
   // "Briggs, is this true?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_StartRepeatedMotion(11, 3);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
   FieldEffect_SetAttached(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(35);
   // "Aw... But, Grandma, they..."
-  Event_ShowMessageThenWait(11, 0, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "We should tell you, we're not here to take Briggs back to Alhafra."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
-  Actor_FaceDirectionAndRefreshById(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Event_Wait(5);
   // "So you've decided you don't want to run errands for the mayor of..." Yes:
   // "Good. That greedy bag of hot air can do his..." No: "Felix, I know you
   // can't mean that. We didn't..."
-  FieldMessage_ShowAtActor(0x200f, 0);
+  FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_SOUTHEAST);
@@ -1182,66 +1215,66 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
     // "Felix, I know you can't mean that. We didn't come to Champa for that..."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0, 5);
   }
-  Actor_FaceDirectionById(15, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_EAST);
   // "Briggs... Piracy? Why?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetSpeed(8, 2.8);
-  Actor_SetSpeed(11, 3.4);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetSpeed(ACTOR_OBABA, 2.8);
+  Actor_SetSpeed(ACTOR_BRIGGS, 3.4);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
   scriptA = gChampaCliffCaves_BriggsFirstScript;
-  Actor_SetMovementTypeById(8, scriptA);
+  Actor_SetMovementTypeById(ACTOR_OBABA, scriptA);
   Event_Wait(20);
-  Actor_WalkToById(11, 664, 290);
-  Actor_WaitForScriptEndById(8);
+  Actor_WalkToById(ACTOR_BRIGGS, 664, 290);
+  Actor_WaitForScriptEndById(ACTOR_OBABA);
   scriptB = gChampaCliffCaves_BriggsSecondScript;
-  Actor_SetMovementTypeById(8, scriptB);
-  Actor_WaitForMoveById(11);
+  Actor_SetMovementTypeById(ACTOR_OBABA, scriptB);
+  Actor_WaitForMoveById(ACTOR_BRIGGS);
   scriptC = gChampaCliffCaves_AvimanderScript;
-  Actor_SetMovementTypeById(11, scriptC);
-  Actor_WaitForScriptEndById(8);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptC);
+  Actor_WaitForScriptEndById(ACTOR_OBABA);
   scriptD = gChampaCliffCaves_BriggsLastScript;
-  Actor_SetMovementTypeById(8, scriptD);
-  Actor_WaitForScriptEndById(11);
-  Actor_SetMovementTypeById(11, scriptA);
-  Actor_WaitForScriptEndById(8);
-  Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 0);
-  Actor_WaitForScriptEndById(11);
-  Actor_FaceDirection(11, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetMovementTypeById(ACTOR_OBABA, scriptD);
+  Actor_WaitForScriptEndById(ACTOR_BRIGGS);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptA);
+  Actor_WaitForScriptEndById(ACTOR_OBABA);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_NORTH_NORTHWEST, 0);
+  Actor_WaitForScriptEndById(ACTOR_BRIGGS);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   // "Grandma, it's not what you think! These guys, they..."
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(8, 4);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "Briggs, you just hush up!!! ...It all makes sense now. The gems, the..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "What do you mean? What makes sense?"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "They're telling the truth! And you, Briggs! You've been lying to me..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
-  Actor_SetMovementTypeById(8, scriptC);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
+  Actor_SetMovementTypeById(ACTOR_OBABA, scriptC);
   Event_Wait(20);
-  Actor_WaitForMoveById(11);
-  Actor_SetMovementTypeById(11, scriptB);
-  Actor_WaitForScriptEndById(8);
-  Actor_SetMovementTypeById(8, scriptA);
-  Actor_WaitForScriptEndById(11);
-  Actor_SetMovementTypeById(11, scriptD);
-  Actor_WaitForScriptEndById(8);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_WaitForScriptEndById(11);
-  Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetAnimationAndWait(11, 4);
+  Actor_WaitForMoveById(ACTOR_BRIGGS);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptB);
+  Actor_WaitForScriptEndById(ACTOR_OBABA);
+  Actor_SetMovementTypeById(ACTOR_OBABA, scriptA);
+  Actor_WaitForScriptEndById(ACTOR_BRIGGS);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptD);
+  Actor_WaitForScriptEndById(ACTOR_OBABA);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_WaitForScriptEndById(ACTOR_BRIGGS);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
   // "You're going to take their word over your own grandson's?"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(8, 4);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "You got that right! I should have known better than to believe you..."
-  Event_ShowMessageThenWait(8, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   // "He only did it for Champa!"
-  Event_ShowMessageThenWait(14, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
   Actor_SetSpritePriority(ACTOR_FELIX, 3);
   Actor_SetSpritePriority(ACTOR_JENNA, 3);
   Actor_SetSpritePriority(ACTOR_SHEBA, 3);
@@ -1250,303 +1283,303 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(15, FACING_WEST, 0);
-  Actor_FaceDirection(11, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(8, FACING_WEST);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
   Event_Wait(10);
   FieldCamera_MoveTo(568, CAMERA_KEEP, 248, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Actor_SetSpritePriority(14, 2);
-  Actor_GetById(14)->facing = FACING_SOUTH_SOUTHEAST;
-  Actor_GetById(14)->motionFlags = 0;
-  Actor_SetPosition(14, 520, 200);
-  Actor_SetSpeed(14, 1);
-  Actor_WalkByAndWaitById(14, 0, 16);
-  Actor_FaceDirectionById(14, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetSpritePriority(ACTOR_CHAUCHA, 2);
+  Actor_GetById(ACTOR_CHAUCHA)->facing = FACING_SOUTH_SOUTHEAST;
+  Actor_GetById(ACTOR_CHAUCHA)->motionFlags = 0;
+  Actor_SetPosition(ACTOR_CHAUCHA, 520, 200);
+  Actor_SetSpeed(ACTOR_CHAUCHA, 1);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 0, 16);
+  Actor_FaceDirectionById(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
   // "Chaucha!"
-  Event_ShowMessageThenWait(11, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
   Actor_WatchAndSetScript(ACTOR_FELIX, 14);
   Actor_WatchAndSetScript(ACTOR_PIERS, 14);
   Actor_WatchAndSetScript(ACTOR_JENNA, 14);
   Actor_WatchAndSetScript(ACTOR_SHEBA, 14);
-  Actor_WatchAndSetScript(15, 14);
-  Actor_WatchAndSetScript(8, 14);
-  Actor_WalkByAndWaitById(14, 0, 16);
-  Actor_SetSpritePriority(14, 3);
-  Actor_WalkByAndWaitById(14, 0, 32);
-  Actor_WalkByAndWaitById(14, 8, 8);
-  Actor_WalkByAndWaitById(14, 64, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, 14);
+  Actor_WatchAndSetScript(ACTOR_OBABA, 14);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 0, 16);
+  Actor_SetSpritePriority(ACTOR_CHAUCHA, 3);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 0, 32);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 8, 8);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 64, 0);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
   FieldCamera_MoveTo(600, CAMERA_KEEP, 256, 1);
-  Actor_SetSpeed(11, 1);
-  Actor_WalkByAndWait(11, -32, 0);
-  Actor_WalkByAndWait(11, -16, -16);
-  Actor_FaceDirectionAndWait(11, FACING_WEST);
-  Actor_SetAnimationAndWait(14, 3);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, -32, 0);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, -16, -16);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(11, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "You came!"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHWEST);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST);
   Event_Wait(10);
   // "I heard Felix had shown up looking for you. I was worried..."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 14, 0, 5);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
   Event_Wait(10);
-  Actor_SetSpeed(8, 1);
-  Actor_WalkByAndWait(8, -16, 0);
-  Actor_WalkByAndWait(8, -16, 8);
-  Actor_WalkByAndWait(8, -16, 16);
-  Actor_WalkByAndWait(8, -8, 8);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Actor_SetSpeed(ACTOR_OBABA, 1);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 0);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 8);
+  Actor_WalkByAndWait(ACTOR_OBABA, -16, 16);
+  Actor_WalkByAndWait(ACTOR_OBABA, -8, 8);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   // "What did you mean, Briggs did it for Champa?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndRefreshById(14, FACING_NORTH_NORTHEAST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_CHAUCHA, FACING_NORTH_NORTHEAST);
   Event_Wait(15);
-  Actor_SetAnimationAndWait(8, 4);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "All of that food... Stolen goods?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetAnimationAndWait(14, 4);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 4);
   // "No, we paid for everthing we brought back with us."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "But you stole a boat to do it, didn't you?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetAnimationAndWait(11, 4);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
   // "Grandma, we found those jewels ourselves, and we paid Alhafra well..."
   // Yes: "Your story has the ring of truth to it." No: "So he's lying again?"
-  FieldMessage_ShowAtActor(11, 0);
+  FieldMessage_ShowAtActor(ACTOR_BRIGGS, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
-    Actor_RunRepeatedMotion(8, 2);
+    Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
     Event_Wait(5);
     // "Your story has the ring of truth to it."
-    Event_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndRefreshById(11, FACING_WEST);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndRefreshById(ACTOR_BRIGGS, FACING_WEST);
     Event_Wait(10);
-    Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Thank you, Felix. Your honesty speaks well of you."
-    Event_ShowMessageThenWait(11, 0, 5);
+    Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
     gFieldWork->message += 2;
   } else {
     Event_Wait(35);
     gFieldWork->message += 2;
     // "So he's lying again?"
-    Event_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionAndRefreshById(11, FACING_WEST);
+    Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+    Actor_FaceDirectionAndRefreshById(ACTOR_BRIGGS, FACING_WEST);
     Event_Wait(5);
-    Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Dang it, Felix, I'm not lying!"
-    Event_ShowMessageThenWait(11, 0, 5);
-    Actor_Jump(11, 6, 15);
-    Actor_Jump(11, 6, 23);
+    Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+    Actor_Jump(ACTOR_BRIGGS, 6, 15);
+    Actor_Jump(ACTOR_BRIGGS, 6, 23);
   }
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHEAST);
   Event_Wait(15);
-  Actor_ShowEmoteById(14, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "We...were pirates, for a short while. Until we found the jewels."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHWEST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST);
   Event_Wait(10);
-  Actor_RunRepeatedMotion(14, 2);
+  Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
   Event_Wait(5);
   // "But if not for our efforts, Champa would have starved away long ago."
-  FieldEvent_ShowMessageThenWait(0x200e, 0, 5);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 5);
+  FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "But that doesn't excuse resorting to piracy!"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
   Event_Wait(10);
   // "Hey, it's not like we were doing it for the money! We wanted to save..."
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHEAST);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_CHAUCHA, FACING_NORTH_NORTHEAST);
   Event_Wait(5);
   // "Those jewels we found are very valuable. We intend to repay each..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_FaceDirectionAndRefreshById(ACTOR_CHAUCHA, FACING_EAST);
   Event_Wait(5);
   // "Isn't that true?"
-  Event_ShowMessageThenWait(14, 0, 5);
-  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_ShowEmoteById(14, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_ShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's the matter with you!? You said on the boat that we would..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_StartRepeatedMotion(11, 3);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
   FieldEffect_SetAttached(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirectionAndWait(11, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(11, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "Oh yeah... You're right... We really ought to try to make amends for..."
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(14, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Actor_FaceDirectionAndRefreshById(14, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_CHAUCHA, FACING_NORTH_NORTHEAST);
   Event_Wait(10);
   // "That's the truth, Grandmother. Can you find it in your heart to..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   // "All right, all right. I'm too old for grudges. But what about Felix?"
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHWEST);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST);
   Event_Wait(10);
   // "What do you say, Felix? Can you forgive my husband?"
-  FieldMessage_ShowAtActor(0x200e, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(11, FACING_WEST, 0);
-  Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
+  FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(15);
-    Actor_SetAnimationAndWait(15, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
     // "I agree, Felix. If each town is repaid what was stolen, I see no..."
-    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 5);
     gFieldWork->message++;
   } else {
     Event_Wait(35);
-    Actor_SetAnimationAndWait(15, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
     gFieldWork->message++;
     // "I don't know, Felix. We didn't come to capture Briggs. Why should we..."
-    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 5);
   }
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(15, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_CHAUCHA, FACING_EAST);
   Event_Wait(10);
   // "Do you hear that? They forgive you, too. That means you can leave..."
-  Event_ShowMessageThenWait(14, 0, 10);
-  Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
   Event_Wait(50);
-  Actor_SetAnimationAndWait(11, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "I... I don't know what to say..."
-  Event_ShowMessageThenWait(11, 0, 5);
-  FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "You know, you look a little strange..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   // "Oh... Oh, really?"
-  Event_ShowMessageThenWait(11, 0, 15);
-  Actor_ShowEmoteById(14, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 15);
+  Actor_ShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "You haven't caught a cold, have you? Do you have a fever?"
-  Event_ShowMessageThenWait(14, 0, 5);
-  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
-  Actor_FaceDirectionAndWait(11, FACING_WEST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_WEST);
   Event_Wait(5);
   // "What are you talking about?"
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(14, 4);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 4);
   // "No, I'm positive... You look flush, too... You'd better lie down..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
   Event_Wait(10);
   // "She...worries about me."
-  Event_ShowMessageThenWait(11, 0, 5);
-  Actor_SetAnimationAndWait(14, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   // "Hurry up and get into bed so you can get some rest!"
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_WalkByAndWait(14, -8, 0);
-  Actor_FaceDirection(11, FACING_WEST, 0);
-  Actor_WalkByAndWait(14, -8, 0);
-  Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_WalkByAndWait(14, -56, 0);
-  Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHWEST);
-  FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_WalkByAndWait(ACTOR_CHAUCHA, -8, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
+  Actor_WalkByAndWait(ACTOR_CHAUCHA, -8, 0);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_WalkByAndWait(ACTOR_CHAUCHA, -56, 0);
+  Actor_FaceDirectionAndWait(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceDirectionAndRefreshById(ACTOR_CHAUCHA, FACING_EAST);
   Event_Wait(10);
   // "Oh, for goodness' sake! You don't want to give them your cold, do..."
-  Event_ShowMessageThenWait(14, 0, 5);
-  Actor_RunRepeatedMotion(11, 2);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(5);
-  Actor_Jump(11, 6, 20);
+  Actor_Jump(ACTOR_BRIGGS, 6, 20);
   Actor_WatchAndSetScript(ACTOR_FELIX, 11);
   Actor_WatchAndSetScript(ACTOR_PIERS, 11);
   Actor_WatchAndSetScript(ACTOR_JENNA, 11);
   Actor_WatchAndSetScript(ACTOR_SHEBA, 11);
-  Actor_WatchAndSetScript(15, 11);
-  Actor_SetSpeed(11, 2);
-  Actor_WalkByAndWaitById(11, -80, 0);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, 11);
+  Actor_SetSpeed(ACTOR_BRIGGS, 2);
+  Actor_WalkByAndWaitById(ACTOR_BRIGGS, -80, 0);
   Event_Wait(10);
-  Actor_SetSpritePriority(14, 3);
-  Actor_SetSpritePriority(11, 3);
-  Actor_SetSpeed(11, 1);
-  Actor_WalkBy(14, 0, -64);
-  Actor_WalkByAndWait(11, -16, 0);
-  Actor_WalkByById(11, 0, -64);
+  Actor_SetSpritePriority(ACTOR_CHAUCHA, 3);
+  Actor_SetSpritePriority(ACTOR_BRIGGS, 3);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1);
+  Actor_WalkBy(ACTOR_CHAUCHA, 0, -64);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, -16, 0);
+  Actor_WalkByById(ACTOR_BRIGGS, 0, -64);
   Event_Wait(15);
-  Actor_SetSpritePriority(14, 2);
-  Actor_SetSpritePriority(11, 2);
-  Actor_WaitForMoveById(14);
-  Actor_SetPosition(14, 0, 0);
-  Actor_WaitForMoveById(11);
-  Actor_SetPosition(11, 0, 0);
+  Actor_SetSpritePriority(ACTOR_CHAUCHA, 2);
+  Actor_SetSpritePriority(ACTOR_BRIGGS, 2);
+  Actor_WaitForMoveById(ACTOR_CHAUCHA);
+  Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+  Actor_WaitForMoveById(ACTOR_BRIGGS);
+  Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Event_Wait(60);
-  Actor_WalkByAndWaitById(8, 0, 16);
-  Actor_FaceDirectionAndWait(8, FACING_WEST);
+  Actor_WalkByAndWaitById(ACTOR_OBABA, 0, 16);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
   // "So...what brings you to Champa?"
-  Event_ShowMessageThenWait(8, 0, 5);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 3);
   Event_Wait(10);
   // "I mean, you didn't come here to catch Briggs, from what I gathered..."
-  Event_ShowMessageThenWait(8, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Event_Wait(40);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(8, 4);
+  Actor_SetAnimationAndWait(ACTOR_OBABA, 4);
   // "Ah, well... To be young and foolish again. If you ever need to..."
-  Event_ShowMessageThenWait(8, 0, 5);
-  Actor_SetSpeed(11, 0.7);
-  Actor_SetMovementTypeById(8, gChampaCliffCaves_BriggsFirstScript);
+  Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
+  Actor_SetSpeed(ACTOR_BRIGGS, 0.7);
+  Actor_SetMovementTypeById(ACTOR_OBABA, gChampaCliffCaves_BriggsFirstScript);
   Event_Wait(30);
-  Actor_Stop(8);
-  Actor_WalkToAndWait(8, 648, 188);
-  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+  Actor_Stop(ACTOR_OBABA);
+  Actor_WalkToAndWait(ACTOR_OBABA, 648, 188);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndRefreshById(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_FELIX, 2);
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= 1;
@@ -1576,14 +1609,14 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
                              leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  Actor_SetSpeed(15, 1.2);
-  Actor_SetAnimationById(15, 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimationById(ACTOR_KRADEN, 2);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(15, leader->x.part[0].pixel,
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
                              leader->z.part[0].pixel);
-  Actor_WaitForMoveById(15);
-  Actor_SetPosition(15, 0, 0);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_CHAMPA_AVIMANDER_BEATEN);
   Event_End();
 }
@@ -2598,9 +2631,12 @@ LATE_DATA struct Trigger gChampaCliffCaves_Room4Triggers[] = {
      EVENT(ChampaCliffCaves_FightAvimander)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS,
      EVENT(ChampaCliffCaves_ObabaOffersHelp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x975, MSGNO(MsgNowIVe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x976, MSGNO(MsgAllOfMy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x977, MSGNO(MsgSoonILl)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_OBABA_SAW_FIRST_PRONG,
+     MSGNO(MsgNowIVe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_OBABA_SAW_SECOND_PRONG,
+     MSGNO(MsgAllOfMy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TRIDENT_FORGED,
+     MSGNO(MsgSoonILl)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgAllOfMyTraining)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(ChampaCliffCaves_PickUpTrident)},

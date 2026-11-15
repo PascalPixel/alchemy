@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define GAIA_ROCKS 11 ///< rock sprites tumbling up through the wall
+#define GAIA_DUST 256 ///< dust in PARTICLES
+
 /// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
 /// rows, the standing wall's top and foot, then the flames.
 #define GAIA_ROW_HEIGHT 32
@@ -113,7 +116,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
-  for (i = 0; i != 11; i++) {
+  for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = rock;
@@ -135,7 +138,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Rocks wait their turn and tumble up through the wall.
-  for (i = 0; i != 11; i++) {
+  for (i = 0; i != GAIA_ROCKS; i++) {
     struct Particle *rock = &work->particles[10 + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
@@ -146,7 +149,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
   // Dust rises from the foot of the wall.
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != GAIA_DUST; i++) {
     struct Particle *dust = &PARTICLES[i];
 
     dust->x = px((Random16() & 63) + wallX + 32);
@@ -325,7 +328,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  for (i = 0; i != 11; i++)
+  for (i = 0; i != GAIA_ROCKS; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }

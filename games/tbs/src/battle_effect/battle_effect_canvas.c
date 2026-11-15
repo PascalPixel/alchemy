@@ -12,14 +12,14 @@
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  u8 delay[128];
+  u8 delay[CANVAS_SIZE];
   s32 x;
   s32 y;
   s32 wipePosition;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (x = 0; x != 128; x++)
+  for (x = 0; x != CANVAS_SIZE; x++)
     delay[x] = Random16() & 0x3f;
 
   if (direction == CANVAS_WIPE_ACROSS) {
@@ -33,12 +33,11 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed;
       speed++;
       for (; x != front; x++) {
-        for (y = 0; y != 128; y++) {
+        for (y = 0; y != CANVAS_SIZE; y++) {
           wipePosition = x - delay[y];
           if (wipePosition >= 0)
-            if (wipePosition <= 127)
-              canvas[(((y / 8) * 16 + wipePosition / 8) * 8 + (y & 7)) * 8 +
-                     (wipePosition & 7)] = 1 - fill;
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
@@ -54,14 +53,11 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed / 2;
       speed += 4;
       for (; y != front; y++) {
-        for (x = 0; x != 128; x++) {
+        for (x = 0; x != CANVAS_SIZE; x++) {
           wipePosition = y - delay[x];
           if (wipePosition >= 0)
-            if (wipePosition <= 127)
-              canvas[(((wipePosition / 8) * 16 + x / 8) * 8 +
-                      (wipePosition & 7)) *
-                         8 +
-                     (x & 7)] = 1 - fill;
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
@@ -275,7 +271,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   {
     s32 offset = 0;
 
-    for (row = 0; row != 16; row++) {
+    for (row = 0; row != CANVAS_TILES; row++) {
       EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     }
 
@@ -342,7 +338,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   {
     s32 offset = 0;
 
-    for (row = 0; row != 16; row++) {
+    for (row = 0; row != CANVAS_TILES; row++) {
       EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     }
 
@@ -362,7 +358,7 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
   REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     for (column = 0; column != 8; column++, offset += 2) {
       *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
@@ -456,13 +452,13 @@ void BattleEffect_SetupCanvasTileMap(void) {
   Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 8 * 64, -1);
   // The canvas's tiles, then blank tile 255 across the rest of each row.
   byteOffset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (column = 0; column != 32; column++, byteOffset += 2) {
-      if (column > 15)
+      if (column >= CANVAS_TILES)
         *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 255;
       else
         *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) =
-            row * 16 + 256 + column;
+            row * CANVAS_TILES + 256 + column;
     }
   }
   REG_DISPCNT = EFFECT_DISPCNT;

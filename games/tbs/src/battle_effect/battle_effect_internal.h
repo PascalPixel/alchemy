@@ -126,6 +126,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// BG_CHAR_BLOCK(1).
 #define CANVAS_SIZE 128
 #define CANVAS_BYTES (CANVAS_SIZE * CANVAS_SIZE)
+/// The canvas's rows and columns of 8x8 tiles.
+#define CANVAS_TILES (CANVAS_SIZE / 8)
+/// The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row
+/// by row, each tile 64 bytes row by row.
+#define CANVAS_PIXEL_OFFSET(x, y)                                              \
+  ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
 
 /// The battle view, under the top window and over the menus: screen lines 16
 /// to 135.

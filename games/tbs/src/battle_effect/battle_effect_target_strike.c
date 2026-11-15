@@ -4,8 +4,11 @@
 
 #include "battle_effect_internal.h"
 
-/// The strike sparks, after the motes in PARTICLES.
-#define TARGET_STRIKE_SPARKS (PARTICLES + 512)
+/// The motes in PARTICLES, 128 for each target, then the strike sparks.
+#define TARGET_STRIKE_MOTES_PER_TARGET 128
+#define TARGET_STRIKE_MOTE_SLOTS 512
+#define TARGET_STRIKE_SPARK_COUNT 512
+#define TARGET_STRIKE_SPARKS (PARTICLES + TARGET_STRIKE_MOTE_SLOTS)
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_PICTURES 12800
@@ -182,8 +185,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
     }
-    for (i = 0; i != 128; i++) {
-      struct Particle *step = &PARTICLES[k * 128 + i];
+    for (i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
+      struct Particle *step =
+          &PARTICLES[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
       SET_POSITION(step, target->x.fixed, px(20), target->z.fixed);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
@@ -191,7 +195,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                    ((Random16() & 255) - 128) << 11);
       step->variant = -1;
     }
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++) {
       TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
       TARGET_STRIKE_SPARKS[i].y = px(20);
       TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
@@ -270,7 +274,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(work->args, 0, 12, KNOCKBACK_HURL);
-            for (i = 0; i != 512; i++)
+            for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++)
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else {
             work->shakeFrames = 4;

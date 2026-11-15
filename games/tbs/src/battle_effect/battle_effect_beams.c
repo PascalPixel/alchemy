@@ -5,6 +5,9 @@
 
 #include "battle_effect_internal.h"
 
+#define BEAM_FRAMES 32 ///< the slash's and the critical hit's length
+#define BEAM_SPARKS 64 ///< sparks in work->particles, drawn in pairs
+
 /// The plain attack's pictures, by effect kind: the attacker's attack effect.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< drawn as BEAM_ARC_A; no attack has kind 0
@@ -134,7 +137,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // Sparks fly from the target, mostly rising.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
@@ -148,7 +151,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->id))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -211,7 +214,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != BEAM_SPARKS; i++) {
         s32 pair = i / 2;
         struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;
@@ -349,7 +352,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
-    for (frame = 0; frame != 32; frame++) {
+    for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                             work->args->firstTarget, 130);
       for (i = 0; i != 64; i++) {
@@ -402,7 +405,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
@@ -414,7 +417,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
@@ -439,7 +442,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != BEAM_SPARKS; i++) {
         s32 pair = i / 2;
         struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;

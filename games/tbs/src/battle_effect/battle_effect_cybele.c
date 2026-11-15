@@ -6,6 +6,10 @@
 
 #define CYBELE_BLAST_PICTURES                                                  \
   5760                        ///< the blast pictures, after the yellow ring
+#define CYBELE_VINES 16       ///< vines, from work->particles[0]
+#define CYBELE_SPARKS 16      ///< sparks, from CYBELE_FIRST_SPARK
+#define CYBELE_THORNS 16      ///< thorns, from CYBELE_FIRST_THORN
+#define CYBELE_CHIPS 48       ///< chips, from CYBELE_FIRST_CHIP
 #define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
 #define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
 #define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
@@ -81,7 +85,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -(32 << 8); // -32 in 20.8: the canvas shows 32 pixels right
 
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != CYBELE_VINES; i++) {
     struct Particle *vine = &work->particles[i];
 
     if (i <= 4) {
@@ -94,14 +98,14 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     vine->velocityY = (Random16() & 7) + 4;
     vine->variant = (Random16() & 15) + 16;
   }
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != CYBELE_SPARKS; i++) {
     struct Particle *spark = &work->particles[CYBELE_FIRST_SPARK + i];
 
     spark->x = (Random16() & 63) + 32;
     spark->y = (Random16() & 31) + 64;
     spark->variant = -(Random16() & 7) - 8;
   }
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != CYBELE_THORNS; i++) {
     struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
     thorn->x = px(128);
@@ -156,7 +160,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
     // Thorns fly from her mouth to the ground.
     if (frame >= 72 && frame <= 127) {
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != CYBELE_THORNS; i++) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (frame >= i + 72 && thorn->y < px(104)) {
@@ -177,7 +181,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
     if (frame == 128) {
-      for (i = 0; i != 48; i++) {
+      for (i = 0; i != CYBELE_CHIPS; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
 
         chip->x = px(Random16() % 96);
@@ -341,7 +345,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           if (y >= 0 && y <= 127) {
             s32 x = order[((y & 7) * 32 + i) * 4 + j];
 
-            canvas[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = 0;
+            canvas[CANVAS_PIXEL_OFFSET(x, y)] = 0;
           }
         }
       }
@@ -353,7 +357,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           if (y >= 0 && y <= 127) {
             s32 x = order[((y & 7) * 32 + i) * 4 + j];
 
-            canvas[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = 0;
+            canvas[CANVAS_PIXEL_OFFSET(x, y)] = 0;
           }
         }
       }

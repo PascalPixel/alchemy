@@ -208,7 +208,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 y = Random16() & 127;
     s32 shade = (Random16() & 63) + 64;
 
-    ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
+    ((u8 *)canvas)[CANVAS_PIXEL_OFFSET(x, y)] = shade;
   }
   Iwram_CopyWords(BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // The dissolve: the map is erased from the top in ragged columns.

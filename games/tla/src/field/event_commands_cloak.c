@@ -322,7 +322,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 i;
   s32 angle;
   s32 magnitude;
-  struct FxPosition *p;
 
   work = Ram_HeapSlots->fieldEffectWork;
   source = work->mainActor;
@@ -332,28 +331,29 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   FieldPsynergy_FadeToCastColor();
   source->watchedActor = target;
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
-  /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
-   * first part. */
-  p = &position;
-  SET_POSITION(p, work->x, work->y + toFIXED(16), work->z);
-  object = FieldEffect_SpawnCarryHand(p->x + toFIXED(32), p->y, p->z, 0x8000);
+  SET_POSITION(&position, work->x, work->y + toFIXED(16), work->z);
+  object = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
+                                      position.z, 0x8000);
   anchors[0] = object;
-  right = FieldEffect_SpawnCarryHand(p->x - toFIXED(32), p->y, p->z, 0);
+  right = FieldEffect_SpawnCarryHand(position.x - toFIXED(32), position.y,
+                                     position.z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + toFIXED(16),
+  SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  Actor_SetMoveTargetFar(object, p->x + toFIXED(16), p->y, p->z);
-  Actor_SetMoveTargetFar(right, p->x - toFIXED(16), p->y, p->z);
+  Actor_SetMoveTargetFar(object, position.x + toFIXED(16), position.y,
+                         position.z);
+  Actor_SetMoveTargetFar(right, position.x - toFIXED(16), position.y,
+                         position.z);
   Actor_WaitForMoveFar(object);
   Actor_WaitForMoveFar(right);
-  object->x.fixed = p->x + toFIXED(16);
+  object->x.fixed = position.x + toFIXED(16);
   object->velocityX = 0;
-  right->x.fixed = p->x - toFIXED(16);
+  right->x.fixed = position.x - toFIXED(16);
   right->velocityX = 0;
   target->update = Actor_CycleSpriteColors;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
@@ -408,7 +408,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     if (i != 0)
       goto blocked;
-    if (Actor_ProbeRaised(target, p) > 0) {
+    if (Actor_ProbeRaised(target, &position) > 0) {
     blocked:
       Actor_SelectAnimationFar(anchors[0], 4);
       Actor_SelectAnimationFar(anchors[1], 4);
@@ -422,22 +422,24 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       s32 z;
 
       Sound_PlayFar(SE_NOTE_HIGH);
-      x = p->x;
-      z = p->z;
+      x = position.x;
+      z = position.z;
       Actor_SelectAnimationFar(anchors[0], 4);
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
       target->paused = i;
       target->speedLimit = toFIXED(1) / 5;
       target->acceleration = toFIXED(1) / 5;
-      Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
+      Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
       anchors[0]->speedLimit = toFIXED(1) / 5;
       anchors[0]->acceleration = toFIXED(1) / 5;
       second = anchors[1];
       second->speedLimit = toFIXED(1) / 5;
       second->acceleration = toFIXED(1) / 5;
-      Actor_SetMoveTargetFar(anchors[0], p->x + toFIXED(16), p->y, p->z);
-      Actor_SetMoveTargetFar(second, p->x - toFIXED(16), p->y, p->z);
+      Actor_SetMoveTargetFar(anchors[0], position.x + toFIXED(16), position.y,
+                             position.z);
+      Actor_SetMoveTargetFar(second, position.x - toFIXED(16), position.y,
+                             position.z);
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -454,23 +456,19 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + toFIXED(16),
+  SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  {
-    struct Actor **walk = shards;
-
-    for (i = 0; i < 20; i++) {
-      object = Actor_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
-      *walk++ = object;
-      if (object != NULL) {
-        Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
-        object->speedLimit = Random16() + toFIXED(2);
-        object->acceleration = toFIXED(2);
-        object->motionFlags = 0;
-        magnitude = Random16() * 24 + 0x80000;
-        Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
-                                                  Random16());
-      }
+  for (i = 0; i < 20; i++) {
+    object = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+    // DEAD: nothing reads the shards back; the ROM keeps the stores.
+    shards[i] = object;
+    if (object != NULL) {
+      Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
+      object->speedLimit = Random16() + toFIXED(2);
+      object->acceleration = toFIXED(2);
+      object->motionFlags = 0;
+      magnitude = Random16() * 24 + toFIXED(8);
+      Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude, Random16());
     }
   }
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);

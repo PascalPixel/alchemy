@@ -91,8 +91,8 @@ void Rope_Draw(void) {
         prevY = (prevY + y) / 2 - originY;
         depth = (prevZ + z) / 2 - viewZ - originY;
         screenY = depth - prevY;
-        if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
-            screenY <= 0xdfffff) {
+        if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
+            screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
           s32 spriteX = (FIXEDtoINT(screenX) - 4) & 0x1ff;
           s32 spriteY = (FIXEDtoINT(screenY) - 4) & 0xff;
           struct AnimationSpritePart *sprite;
@@ -251,7 +251,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
       result = -1;
       break;
     }
-    bow = Iwram_MulFX(Trig_Sin((i << 16) / count), TRIG_TURN);
+    bow = Iwram_MulFX(Trig_Sin(i * TRIG_TURN / count), TRIG_TURN);
     SET_POSITION(node, x1 + i * dx / count + Iwram_MulFX(bow, cos),
                  y1 + i * dy / count + Iwram_MulFX(bow, sin),
                  z1 + i * dz / count);
@@ -308,7 +308,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   s32 kind = 1; // One constant for its whole life.
   {
     for (i = 0; i <= segments; i++) {
-      FIXED bow = Iwram_MulFX(Trig_Sin((i << 15) / segments), height);
+      FIXED bow = Iwram_MulFX(Trig_Sin(i * (TRIG_TURN / 2) / segments), height);
 
       SET_POSITION(node, x + i * dx / segments + Iwram_MulFX(bow, cos),
                    y + i * dy / segments + Iwram_MulFX(bow, sin),
@@ -500,7 +500,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       node = nodes[i];
       node->slot = index + 1;
       if (i == segments) {
-        ex = Iwram_MulFX(Trig_Sin((frame << 14) / i), toFIXED(8));
+        ex = Iwram_MulFX(Trig_Sin(frame * (TRIG_TURN / 4) / i), toFIXED(8));
 
         node->x = x + dx * frame / 2 / i + Iwram_MulFX(ex, cosine);
         lastX = node->x;
@@ -603,7 +603,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   Actor_SelectAnimationFar(work->recoilTo, 3);
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
-    angle = frame << 12;
+    angle = frame * (TRIG_TURN / 16);
     radius = toFIXED(4);
     for (i = 0; i <= segments; i++) {
       node = nodes[i];
@@ -651,13 +651,13 @@ void Rope_ReservedNoOp(void) {}
 
 extern s32 gRope_DebugSwinging;
 
-/// Unused: nothing refers to it. An actor hook that, once R is pressed, swings
+/// Unused: nothing refers to it. An actor hook that, once L is pressed, swings
 /// rope 0 between actors 12 and 13 every frame.
 void Rope_DebugSwing(struct Actor *object) {
-  u8 *parts = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
-  parts[22] = 253;
-  parts[23] = 12;
+  sprite->offsetX = -3;
+  sprite->offsetY = 12;
   if (gInput.repeat & KEY_L)
     gRope_DebugSwinging = 1;
   if (gRope_DebugSwinging != 0)
@@ -766,6 +766,10 @@ void Tightrope_Initialize(void) {
   Heap_Release(buffer);
 }
 
+/// The tightropes' drawing task (Tightrope_Initialize adds it): as Rope_Draw,
+/// a sprite at the midpoint of each pair of neighbouring nodes, 4 pixels up,
+/// culled to the screen and sorted by depth, all of a slot turned by its
+/// direction.
 void Tightrope_Draw(void) {
   struct TightropeWork *work = TIGHTROPE_WORK;
   s32 i;
@@ -812,8 +816,8 @@ void Tightrope_Draw(void) {
         prevZ = (prevZ + z) / 2 - viewZ - originY;
         screenY = prevZ - prevY;
 
-        if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
-            screenY <= 0xdfffff) {
+        if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
+            screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
           s32 left = (FIXEDtoINT(screenX) - 4) & 0x1ff;
           s32 top = (FIXEDtoINT(screenY) - 4) & 0xff;
           s32 key = FIXEDtoINT(prevY + prevZ) + 58;
@@ -975,6 +979,8 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
 
 FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 
+/// Rope_LayBowed for a tightrope: lays a slot's nodes evenly along the line
+/// between two points, bowed by a half sine of the given height.
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                        s32 toZ, FIXED height) {
   struct TightropeWork *work = TIGHTROPE_WORK;
@@ -993,7 +999,7 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 one = 1;
 
   for (i = 0; i <= segments; i += one) {
-    FIXED bow = IwramMulFX(Trig_Sin((i << 15) / segments), height);
+    FIXED bow = IwramMulFX(Trig_Sin(i * (TRIG_TURN / 2) / segments), height);
 
     SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
                  z + i * dz / segments);
@@ -1127,7 +1133,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         FIXED offsetX;
         FIXED offsetY;
 
-        height = Iwram_MulFX(Trig_Sin((frame << 14) / i), toFIXED(8));
+        height = Iwram_MulFX(Trig_Sin(frame * (TRIG_TURN / 4) / i), toFIXED(8));
         offsetX = Iwram_MulFX(height, cosine);
         lastX = node->x = x + dx * frame / 2 / i + offsetX;
         offsetY = Iwram_MulFX(height, sine);
@@ -1220,7 +1226,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   Actor_SelectAnimationFar(work->recoilTo, 3);
   wait(4);
   for (frame = 0; frame <= count; frame++) {
-    angle = frame << 12;
+    angle = frame * (TRIG_TURN / 16);
     dist = toFIXED(4);
     for (i = 0; i <= count; i++) {
       node = nodes[i];
@@ -1281,23 +1287,23 @@ void Tightrope_Settle(s32 index) {
 
 /// Unused: nothing refers to it. Rope_DebugSwing for a tightrope.
 void Tightrope_DebugSwing(struct Actor *object) {
-  u8 *parts = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
-  parts[22] = 253;
-  parts[23] = 12;
+  sprite->offsetX = -3;
+  sprite->offsetY = 12;
   if (gInput.repeat & KEY_L)
     gTightrope_DebugSwinging = 1;
   if (gTightrope_DebugSwinging != 0)
     Tightrope_WobbleBetween(0, 12, 13, 0);
 }
 
-// The four 256-byte pictures of each set (type-01 compressed).
+/// The four 256-byte pictures of each hanging set, a vine's and a chain's
+/// (type-01 compressed): top, upper, lower and bottom links.
 extern const u8 gHangingVine_VineTopPicture[], gHangingVine_VineUpperPicture[],
     gHangingVine_VineLowerPicture[];
 extern const u8 gHangingVine_VineBottomPicture[],
     gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
-#define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
 #define PICTURE_SIZE 0x100
 
 // The hanging vines (HEAP_SLOT_HANGING_VINE): eight slots, each seven links
@@ -1322,7 +1328,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
   pictures = Heap_Alloc(size);
   Dma_Fill32(0, work, sizeof(struct HangingVineWork));
   work->vramEntry = VramCache_FindFreeEntry();
-  if (kind == TILE_EFFECT_KIND_ALT) {
+  if (kind == SPRITE_SPROUTING_LEAVES) {
     Decompress_TaggedLz(gHangingVine_VineTopPicture, pictures);
     Decompress_TaggedLz(gHangingVine_VineUpperPicture, pictures + PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_VineLowerPicture,
@@ -1341,7 +1347,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
     VramCache_Load(work->vramEntry, size, pictures);
   }
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(HangingVine_Draw, priority);
   }
@@ -1389,8 +1395,8 @@ void HangingVine_Draw(void) {
         prevY = (prevY + y) / 2 - height;
         prevZ = (prevZ + z) / 2 - viewZ - height;
         screenY = prevZ - prevY;
-        if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
-            screenY <= 0xdfffff) {
+        if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
+            screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
           s32 sx = (FIXEDtoINT(screenX) - 8) & 0x1ff;
           s32 sy = (FIXEDtoINT(screenY) - 8) & 0xff;
           s32 priority = FIXEDtoINT(prevY + prevZ) + 34;
@@ -1423,7 +1429,6 @@ void HangingVine_Draw(void) {
       link->angle = angle;
   }
 }
-#undef TILE_EFFECT_KIND_ALT
 #undef PICTURE_SIZE
 
 /// The vines' second per-frame task: sways each active vine's links below
@@ -1458,8 +1463,8 @@ void HangingVine_Update(void) {
 
     // Swing less while the leader stands within 8 pixels across, a pixel
     // deep, and between 8 above and 80 below the anchor.
-    if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed <= 0x7ffff
-                                  : leader->x.fixed - x <= 0x7ffff) &&
+    if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed < toFIXED(8)
+                                  : leader->x.fixed - x < toFIXED(8)) &&
         (u32)(z - leader->z.fixed + 0xfffff) <= 0xffffe &&
         y + toFIXED(8) > leader->y.fixed && y - toFIXED(80) < leader->y.fixed)
       target = 32;
@@ -1556,7 +1561,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 
   object = Actor_GetById(objectId);
   running = Ram_HeapSlots->hangingVine;
-  kind = 372;
+  kind = SPRITE_SPROUTING_LEAVES;
   map = Ram_HeapSlots->mapGrid;
   if (running == 0) {
     if (object->sprite != 0 &&
@@ -1706,7 +1711,7 @@ void HangingVine_Swing(s32 id) {
     case 0:
     case 16:
       slot->s.swing = 1568;
-      slot->s.spacing = FIXED_ONE * 29 / 2;
+      slot->s.spacing = toFIXED(29) / 2;
       sprite->rotation = dir << 10;
       break;
     case 1:
@@ -1714,7 +1719,7 @@ void HangingVine_Swing(s32 id) {
     case 17:
     case 18:
       slot->s.swing += 16;
-      slot->s.spacing += FIXED_ONE / 4;
+      slot->s.spacing += toFIXED(1) / 4;
       sprite->rotation += dir << 9;
       break;
     default:
@@ -1722,8 +1727,8 @@ void HangingVine_Swing(s32 id) {
         slot->s.swing -= 32;
       else
         slot->s.swing = 1536;
-      if (slot->s.spacing > FIXED_ONE * 14)
-        slot->s.spacing -= FIXED_ONE / 32;
+      if (slot->s.spacing > toFIXED(14))
+        slot->s.spacing -= toFIXED(1) / 32;
       if (sprite->rotation != 0)
         sprite->rotation -= dir << 7;
       break;
@@ -1740,13 +1745,13 @@ void HangingVine_Swing(s32 id) {
 
   sprite->rotation = 0;
   slot->s.active = 0;
-  Actor_SelectAnimationFar(leader, 6);
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
   wait(6);
   Sound_PlayFar(SE_JUMP);
-  Actor_SelectAnimationFar(leader, 7);
-  leader->speedLimit = FIXED_ONE * 3;
-  leader->acceleration = FIXED_ONE * 2;
-  leader->velocityY = FIXED_ONE * 4;
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
+  leader->speedLimit = toFIXED(3);
+  leader->acceleration = toFIXED(2);
+  leader->velocityY = toFIXED(4);
   leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlagsFar(leader, 0);
   wait(5);
@@ -1754,12 +1759,12 @@ void HangingVine_Swing(s32 id) {
   leader->motionFlags = 0;
   rootX = slot->s.root->next->x;
   rootY = slot->s.root->next->y;
-  radius = FIXED_ONE * 65;
+  radius = toFIXED(65);
   steps = 8;
   while ((slot->s.phase & 0xff00) != SIDE_TURN(side) + TRIG_TURN * 7 / 32) {
     if (steps != 0) {
-      radius += FIXED_ONE * 5 / 16;
-      slot->s.spacing += FIXED_ONE / 16;
+      radius += toFIXED(5) / 16;
+      slot->s.spacing += toFIXED(1) / 16;
       steps--;
     }
     slot->s.swing = 2048;
@@ -1777,16 +1782,16 @@ void HangingVine_Swing(s32 id) {
     wait(1);
   }
   slot->s.active = 1;
-  Actor_SelectAnimationFar(leader, 7);
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
   leader->motionFlags = motionFlags & ~1;
-  leader->velocityY = FIXED_ONE * 4;
+  leader->velocityY = toFIXED(4);
   for (i = 7; i >= 0; i--) {
-    slot->s.spacing -= FIXED_ONE / 16;
+    slot->s.spacing -= toFIXED(1) / 16;
     wait(1);
   }
-  slot->s.spacing = FIXED_ONE * 14;
+  slot->s.spacing = toFIXED(14);
   heldSprite->rotation = 0;
-  Actor_SelectAnimationFar(leader, 6);
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
   Actor_SetSpriteFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
   wait(6);

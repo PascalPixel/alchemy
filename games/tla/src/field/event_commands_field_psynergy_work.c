@@ -346,7 +346,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
-  Ram_HeapSlots->windowWork[4] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
   p += 2;
@@ -374,7 +374,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {
-  u8 *work = Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
@@ -383,5 +383,5 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
   WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],
                        gMainRoutineWork.unusedAfterParty[6]);
-  work[4] = 0;
+  work->mindRead = 0;
 }

@@ -2024,12 +2024,7 @@ void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
   }
 }
 
-/// Keeps a pillar's sprite in VRAM (retainSpriteCache 3) and takes the pillar
-/// out of play.
-void MagmaRockInside_SetPillarMode3(s32 id) {
-  Actor_Get(id)->retainSpriteCache = 3;
-  Actor_DisableById(id);
-}
+#include "shared/pillar_take_out_of_play.c"
 
 // Places the listed actors on their cells.
 

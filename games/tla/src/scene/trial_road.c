@@ -3152,10 +3152,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
   }
 }
 
-void MagmaRockInside_SetPillarMode3(s32 id) {
-  Actor_GetById(id)->retainSpriteCache = 3;
-  Actor_DisableById(id);
-}
+#include "shared/pillar_take_out_of_play.c"
 
 void Actor_MoveToObject(s32 id, s32 owner);
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)

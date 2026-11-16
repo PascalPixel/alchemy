@@ -15,9 +15,9 @@ void MagmaRockInside_RestorePillars(u16 *list) {
   Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   System_Wait(1);
-  MagmaRockInside_SetPillarMode3(8);
-  MagmaRockInside_SetPillarMode3(9);
-  MagmaRockInside_SetPillarMode3(10);
+  Pillar_TakeOutOfPlay(8);
+  Pillar_TakeOutOfPlay(9);
+  Pillar_TakeOutOfPlay(10);
   Actor_SetAnimation(9, 0);
   System_Wait(1);
   Actor_SetPosition(8, 0, 0);

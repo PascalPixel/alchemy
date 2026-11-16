@@ -2752,10 +2752,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
   }
 }
 
-void MagmaRockInside_SetPillarMode3(s32 id) {
-  Actor_Get(id)->retainSpriteCache = 3;
-  Actor_DisableById(id);
-}
+#include "shared/pillar_take_out_of_play.c"
 
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell

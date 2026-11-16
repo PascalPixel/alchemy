@@ -1409,9 +1409,7 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_set_entry_count.c"
 
-s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
-}
+#include "shared/ride_get_entry_flags.c"
 
 #include "shared/ride_set_slot.h"
 

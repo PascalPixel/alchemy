@@ -493,8 +493,10 @@ void Menu_OpenBackdropScreen(void) {
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(7, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   DjinnMenu_BuildLists(backdrop);
 
   window = menu->statusWindow;
@@ -504,7 +506,7 @@ void Menu_OpenBackdropScreen(void) {
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
-    VramBlock_LoadResourceFar(entry, 128, RESOURCE_SHOP_GEM_TILES);
+    VramBlock_LoadResourceFar(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
     icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
@@ -632,7 +634,7 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & DJINN_ENTRY_ELEMENT) / 32;
 
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * DJINN_PER_ELEMENT +
-                                 (entry & 31),
+                                 DJINN_NUMBER(entry),
                              window, x + 8, y);
   Window_SetTilemapEntryFar(window, element + ELEMENT_ICON_TILE, x / 8, y / 8,
                             0);
@@ -721,20 +723,20 @@ void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
 /// Sets the palette of a rectangle of panel's interior, (x, y) and its size in
 /// tiles from the interior's corner, through Window_HighlightRectFar.
 void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
-                                      s32 width, s32 height, s32 style) {
+                                      s32 width, s32 height, s32 palette) {
   Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
-                          height, style);
+                          height, palette);
 }
 
 /// Highlights the cell of a four-column grid at index's column and row's line,
-/// with style 14 when selected and 15 otherwise.
+/// in HIGHLIGHT_PALETTE when selected and WINDOW_PALETTE otherwise.
 void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
                                s32 selected) {
-  s32 style = ((0u - selected) | selected) >> 31;
+  s32 palette = ((0u - selected) | selected) >> 31;
 
-  style = 15 - style;
-  Window_SetInteriorPaletteBitRect(panel, index % 4 * 7 + 1, row + 2,
-                                   GRID_CELL_WIDTH, 1, style);
+  palette = WINDOW_PALETTE - palette;
+  Window_SetInteriorPaletteBitRect(panel, index % 4 * DJINN_COLUMN_TILES + 1,
+                                   row + 2, GRID_CELL_WIDTH, 1, palette);
 }
 
 #undef GRID_CELL_WIDTH

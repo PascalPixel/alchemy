@@ -558,14 +558,16 @@ struct Window *MenuCursor_Create(void *source) {
   work->sideIcon[1]->depth = sentinel;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_UP_ARROW_TILES);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              RESOURCE_SHOP_UP_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_DOWN_ARROW_TILES);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              RESOURCE_SHOP_DOWN_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[1] = icon;

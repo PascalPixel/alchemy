@@ -20,12 +20,14 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
-    VramBlock_LoadResourceFar(firstSlot, 0x80, RESOURCE_ITEM_MENU_TILES_A);
+    VramBlock_LoadResourceFar(firstSlot, ICON_TILE_BYTES,
+                              RESOURCE_ITEM_MENU_TILES_A);
   }
   secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = (s16)secondSlot;
   if (secondSlot != -1) {
-    VramBlock_LoadResourceFar(secondSlot, 0x80, RESOURCE_ITEM_MENU_TILES_B);
+    VramBlock_LoadResourceFar(secondSlot, ICON_TILE_BYTES,
+                              RESOURCE_ITEM_MENU_TILES_B);
   }
 }
 
@@ -38,18 +40,19 @@ void Menu_ResetTwoResourceEntries(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
-/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
+/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
   s32 buffer;
-  u8 *allocation;
+  GlyphTransfer *allocation;
 
-  allocation = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  allocation =
+      HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
-  buffer = VramCache_Reload(slot, (s32)(allocation + 0x400));
+  buffer = VramCache_Reload(slot, (s32)allocation->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return buffer;
 }

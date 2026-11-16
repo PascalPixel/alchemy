@@ -301,13 +301,13 @@ void AirsRock_MoveFirstPillar(void) {
 /// Move on the second pillar: on column 32 it sets FLAG_AREA_TEMP_11 and two
 /// cells take the low attribute byte of cell (70, 67) with a high byte of 0;
 /// elsewhere the flag clears and their high byte is 0xff. With the leader 208
-/// pixels up the cell's attributes are copied over as well.
+/// to 215 pixels up the cell's attributes are copied over as well.
 void AirsRock_MoveSecondPillar(void) {
   struct Actor *object;
   struct Actor *leader;
   s32 value;
 
-  object = (struct Actor *)((s32)Actor_Get(ACTOR_SECOND_PILLAR));
+  object = Actor_Get(ACTOR_SECOND_PILLAR);
   value = MapCell_GetAttributes(3, 70, 67);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -322,13 +322,13 @@ void AirsRock_MoveSecondPillar(void) {
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
   }
-  leader = (struct Actor *)((s32)Actor_Get(gMainRoutineWork.leaderActorId));
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if ((leader->y.fixed >> 19) == 26)
     MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
   Event_End();
 }
 
-/// Move on the third pillar: on column 23 it stays moved.
+/// Move on the third pillar: set down at x 184 to 191 it stays moved.
 void AirsRock_MoveThirdPillar(void) {
   struct Actor *object;
 

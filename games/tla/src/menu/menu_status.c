@@ -83,10 +83,8 @@ s32 PartyMemberChooser_Run(void) {
   s32 finished = 0;
   s32 result = 0;
 
-  /* LEFTOVER(template): the loop over steps of StatusScreen_RunPages, which
-   * opens with this same step (the store of finished, then
-   * StatusScreen_SelectMember); here it is the only step and the loop runs
-   * once; as the step written alone, 2 of 24 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): StatusScreen_RunPages's loop over its steps, with its
+   * first step alone: it runs once. */
   while (!finished) {
     work->selectedSlots[0] = finished;
     if (StatusScreen_SelectMember(0) == -1)

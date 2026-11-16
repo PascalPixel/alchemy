@@ -113,7 +113,7 @@ s32 Stub_ReturnZero(s32 resourceId, const u8 *table) { return 0; }
 /// writes the zero word that ends it. Called at power-up, before the window
 /// graphics load.
 void System_CopyBuildStamp(void) {
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), gBuildStamp,
+  Dma_Set(Resource_GetTableEntry(RESOURCE_BUILD_STAMP), gBuildStamp,
           DMA_COPY_WORDS(3), REG_DMA3);
   gBuildStamp[3] = 0;
 }

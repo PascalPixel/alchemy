@@ -29,7 +29,10 @@ extern u16 gSleepActive;
 
 struct FlashType;
 struct FlashSetupInfo;
+/// The Atmel chip's setup, one of the flash library's chips (gFlash_Chips).
 extern const struct FlashSetupInfo gFlash_ChipAtmel;
+/// The setup IdentifyFlash gives a chip whose id it does not know, the last of
+/// gFlash_Chips.
 extern const struct FlashSetupInfo gFlash_ChipDefault;
 #ifndef OWN_gFlash
 extern const struct FlashType *gFlash;
@@ -40,8 +43,14 @@ extern u16 gFlashSavedIme;
 #ifndef OWN_gFlashTimeoutFlag
 extern u8 gFlashTimeoutFlag;
 #endif
+/// The hardware timer the flash library times its waits with
+/// (SAVE_FLASH_TIMER).
 extern u8 gFlashTimerNum;
+/// The end of String_FormatDecimal's digits: DebugText_PrintDecimal prints the
+/// last places before it.
 extern u8 gNumberTextDecimalEnd[];
+/// The end of String_FormatHex's digits: DebugText_PrintHex prints the last
+/// places before it.
 extern u8 gNumberTextHexEnd[];
 /// The link battle timer's heading: `TIME`; `TMPO.` in Spanish, `TEMPS` in
 /// French.
@@ -50,6 +59,8 @@ extern u8 gLink_TimeLabelString[];
 extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decompress_tagged_lz.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
+/// Five tables that map a picture's 256 colour indices onto a sprite's palette,
+/// one for each palette a field sprite can take (field/sprite_color_tables.c).
 extern u8 gResourceSlot_ConversionTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
@@ -69,15 +80,6 @@ void PartyStatus_Close(void);
 struct BattleObject;
 struct Actor;
 
-/// A battle object's sprite as its motion code reads it: the flags at byte 9.
-struct ParticleChild {
-  u8 padding[9];
-  u8 flags;
-};
-extern s32 gBattleMotion_VariantAcceleration[];
-extern s32 gBattleMotion_VariantDistancePercent[];
-extern s32 gBattleMotion_VariantSpeedLimit[];
-extern s32 gBattleMotion_VariantVelocityY[];
 /// The party status window's layout (struct PartyStatusWindow), the block of
 /// heap slot HEAP_SLOT_PARTY_STATUS.
 extern u8 gPartyStatusWork[];
@@ -165,15 +167,6 @@ struct BgScrollRegs {
   u32 words[4];
 };
 
-/// The serial transfer's command, as Serial_QueueCommand hands it to the save
-/// work: the command, how far it has got and its state.
-struct SerialCommandWork {
-  u8 unk0000[0x313c];
-  u32 command;
-  u16 progress;
-  u16 state;
-};
-
 /// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its
 /// constant 1 in.
 struct SerialHalfword {
@@ -235,19 +228,23 @@ s32 SuperLuckyDice_StartFar(s32 entrance);
 void Scene_Arrive(s32 unused, s32 keep);
 void Scene_LoadOverlay(s32 unused);
 
+/// The hexadecimal digits 0 to F, which String_FormatHex writes from.
 extern const u8 gString_HexDigits[];
 
 /// Where the debug text writes next on its screen in BG0.
 extern u16 *gDebugTextCursor;
 
+/// The halfword LZ decoder that Decompress_Halfwords runs from its stack.
 extern const u8 Decompress_HalfwordLz[];
+/// The size of Decompress_HalfwordLz, copied onto the stack by
+/// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 
-/// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
-/// gSoundInfo, whose bytes the frame wait reads.
 // XXX: typed as struct SoundInfo *, transferCountdown's volatile read is not
 // combined and the frame wait's registers move; whether the driver's own
 // struct is right to make it volatile would settle the type.
+/// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
+/// gSoundInfo, whose bytes the frame wait reads.
 extern u8 *gSoundInfoPointer;
 
 s32 SoundDriver_EnterVBlankUpdate(void);
@@ -258,14 +255,24 @@ void SoundDriver_VSyncRefresh(void);
 
 void ScreenFade_Update(void);
 
+/// The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where
+/// it starts (Heap_GetRemainingIwram).
 extern u8 IwramSoundMixWorkspace[];
 
+/// The routine that runs the queued register writes, which
+/// IoWriteQueue_FlushPending copies onto its stack and runs.
 extern u8 Resource_ExecuteTransferCode[];
+/// The size of Resource_ExecuteTransferCode.
 extern u8 Resource_ExecuteTransferSize[];
 
+/// Which of the 256 depth slots of gOamDepthLists hold sprites this frame, a
+/// bit a slot; Oam_ResetFrame clears it.
 extern u8 gOamBucketMasks[];
 
+/// The 256 depth slots' list heads that every drawn sprite is linked into
+/// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
 extern void *gOamDepthLists[];
+/// The sector writer of the chip IdentifyFlash found.
 extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);
 
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
@@ -283,11 +290,13 @@ void System_CopyBuildStamp(void);
 
 void System_VBlankHandler(void);
 
+/// The inner product, copied to the stack to run (system_matrix.c's
+/// RelocatedInnerProduct).
 extern const u32 Math_InnerProductCode[];
 
 s32 System_GetLanguage(void);
 
-void Serial_QueueCommand(u32 command);
+void Save_SetProgressCallback(void (*progress)(s32 step));
 
 s32 Save_WritePart(s32 partId, void *source);
 s32 Save_InitializeWork(void);
@@ -296,9 +305,17 @@ void Save_ReleaseWork(void);
 
 void Serial_Initialize(void);
 
+/// Nonzero lets DebugText_Print write; the power-on set-up and the credits
+/// clear it.
 extern u8 gDebugTextEnabled;
+/// The current save file, or -1 for none (a new game).
 extern s16 gSaveSlot;
+/// 1 when a save file on the cartridge holds a cleared game, as the save screen
+/// finds on loading the summaries; a new game keeps it in
+/// gMainRoutineWork.clearedFileAtStart.
 extern s16 gAnyFileCleared;
+/// The buffer a save file is built in and written from, in two halves; its
+/// summary's 16-byte header lies just before it.
 extern u8 gSaveBuffer[];
 
 /// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The

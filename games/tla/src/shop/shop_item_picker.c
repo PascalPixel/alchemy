@@ -15,7 +15,7 @@
 s32 Forge_Run(s32 actorId) {
   struct ShopWork *shop;
   struct WindowSprite *icon;
-  struct RenderInput *window;
+  struct Window *window;
   s32 messageBase;
   s32 result;
 
@@ -117,8 +117,8 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   s32 unitId = 0;
   s32 redraw = 1;
   s32 memberIndex = 0;
-  struct RenderInput *partyWindow;
-  struct RenderInput *cursorWindow;
+  struct Window *partyWindow;
+  struct Window *cursorWindow;
   struct WindowSprite *cursorAnchor;
   s32 itemSlot;
   s32 result;
@@ -218,9 +218,9 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
 /// Inventory_CheckUnequip, by the picker's mode). Returns the slot, or -1 when
 /// cancelled.
 s32 ItemPicker_SelectItem(s32 unitId) {
-  struct RenderInput *nameWindow;
+  struct Window *nameWindow;
   struct ShopWork *shop;
-  struct RenderInput *priceWindow;
+  struct Window *priceWindow;
   struct Unit *unit;
   s32 slot;
   s32 inventoryCount;
@@ -228,7 +228,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   s32 result;
   s32 itemId;
   s32 refusal;
-  struct RenderInput *window;
+  struct Window *window;
   s32 column;
   s32 row;
 
@@ -287,7 +287,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
     }
     if (gInput.held & KEY_SELECT) {
       u32 inventoryEntry = unit->inventory[slot];
-      struct RenderInput *detailsWindow;
+      struct Window *detailsWindow;
 
       Sound_PlayFar(SE_RECOVERY);
       detailsWindow =
@@ -375,7 +375,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 /// Draws the slot's item name and, below it, why it cannot be dropped or
 /// removed, or, for an item to drop, what the whole stack would sell for.
 /// Called by ItemPicker_SelectItem each time the cursor moves.
-void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot) {
+void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
@@ -507,7 +507,7 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
 
 /// Shows a party member's 15 inventory icons at (x, y) pixels inside `window`,
 /// five to a row, 16 pixels apart.
-void ItemIconGrid_ShowInventory(struct RenderInput *window, s32 x, s32 y,
+void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
                                 s32 unitId) {
   struct Unit *unit = Unit_Get(unitId);
   s32 left = (s16)window->x * 8 + x + 8;

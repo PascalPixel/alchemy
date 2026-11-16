@@ -32,10 +32,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, work->sheet, 1, 1);
   if (args->variant == EFFECT_VARIANT_BASIC) {
-    Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
+    Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
                                work->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
     work->transferValue = CANVAS_FADE_HALF;
   } else {
@@ -50,12 +49,11 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           pixels[i] = 63;
       }
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
-                               work->sheet + 0x3e80, 1, 1);
-    Iwram_CopyWordsEntry(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-        SHEET_PALETTE_BYTES);
+    Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, work->sheet + 0x3e80, 1,
+                               1);
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
+                         Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
+                         SHEET_PALETTE_BYTES);
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   }
   work->transferMode = CANVAS_COPY_AND_FADE;

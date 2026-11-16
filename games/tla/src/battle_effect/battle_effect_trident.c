@@ -80,24 +80,24 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
-  orangeBase = (s32)&ResourceId_OrangePaletteB - 4;
+  orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   circles = (s16 *)(work->sheet + 0x4c56);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
   offset = (s32)gMapGridCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
+  Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
   orange = orangeBase + 4;
   size = 2;
   /* FAKEMATCH(dead): a test on the blitter. */
   if (draw) {
     /* FAKEMATCH(temporary): the effect palette's id in a local. */
-    paletteBase = (s32)&ResourceId_VioletPaletteF - 4;
+    paletteBase = RESOURCE_VIOLET_PALETTE_F - 4;
     cells = (s32)gMapGridCellBuffer;
     palette = paletteBase + 4;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
   offset = 0x2400;
   // Twelve shaded droplets, 2 to 24 wide.
@@ -107,15 +107,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, (u8 *)cells, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameZigzagTexture,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, (u8 *)cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_ZIGZAG_TEXTURE,
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              Ram_MapCellBuffer + TRIDENT_BILLOW, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
+                       Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
   for (i = 0, p = work->particles; i != 32; i++, p++) {
     s32 radius = i * 2;
@@ -499,22 +498,21 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
   if (mode == LEAPING_STRIKE_PLANET_DIVER) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
                                work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
+    Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                                work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+    Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                                work->sheet + LEAPING_STRIKE_BILLOW, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
+    Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                                work->sheet + LEAPING_STRIKE_FLAME_BAND, 0, 0);
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)

@@ -388,8 +388,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
 
   work = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct IceWallWork));
   flying = 0;
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_ICE_SHARD),
+                      work);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
   i = 0;
@@ -419,8 +419,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
    * buffer. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
+                      sheet);
   sparkEntry = VramCache_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
   Heap_Release(sheet);

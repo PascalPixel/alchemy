@@ -139,18 +139,18 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_ICON_TILES);
   return slot;
 }
 
 /// Loads the UI icon tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockB(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
+  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_ICON_TILES);
 }
 
 /// Loads the UI's fixed block A tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockA(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
+  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_FIXED_BLOCK_A_TILES);
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -339,9 +339,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_FINISH_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_ICON_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)keyboardWindow, 0, 0);
+                                 (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
     MenuCursor_SetPositionImmediateFar(
@@ -352,10 +352,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128,
-                              (s32)&ResourceId_UiFixedBlockATiles);
+    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)keyboardWindow, 0, 0);
+                                 (struct Window *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
     output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;
@@ -628,9 +627,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_ICON_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)keyboardWindow, 0, 0);
+                                 (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
     MenuCursor_SetPositionImmediateFar(keyMotion,
@@ -641,10 +640,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128,
-                              (s32)&ResourceId_UiFixedBlockATiles);
+    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)keyboardWindow, 0, 0);
+                                 (struct Window *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
     output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;

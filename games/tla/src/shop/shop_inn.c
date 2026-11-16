@@ -55,7 +55,7 @@ s32 Inn_QuoteRoomPrice(s32 innId) {
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
   struct ShopWork *shop;
   struct Actor *innkeeper;
-  struct RenderInput *innkeeperWindow;
+  struct Window *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
 

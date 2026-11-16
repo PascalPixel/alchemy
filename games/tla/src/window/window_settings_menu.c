@@ -93,18 +93,18 @@ void SettingsMenu_AnimateCursors(void) {
 
   if (selection == 0) {
     firstMarkerPicture =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
-    firstMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(firstMarkerPicture));
 
   if (selection == 1) {
     secondMarkerPicture =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
-    secondMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(secondMarkerPicture));
@@ -191,8 +191,7 @@ extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
-                                        struct RenderInput *window, s32 x,
-                                        s32 y);
+                                        struct Window *window, s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
@@ -201,9 +200,9 @@ void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 /// window. Its sprites belong to the window and go when it closes. A
 /// slider's marker stands option * 60 / count pixels right of
 /// OPTION_SLIDER_X.
-struct RenderInput *SettingsMenu_Open(void) {
+struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
-  struct RenderInput *win;
+  struct Window *win;
   struct WindowSprite *out;
   s32 x;
   s32 y;
@@ -345,10 +344,10 @@ extern const u8 gOptionMenu_FirstColorPresets[],
 
 void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
-struct RenderInput *SettingsMenu_Open(void);
+struct Window *SettingsMenu_Open(void);
 void WindowColor_Apply(s32 hue, s32 brightness);
-struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
-                                      s32 x, s32 y);
+struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+                                      s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
@@ -361,8 +360,8 @@ void FieldMessage_Show(s32 message, s32 mode);
 /// (returns -1).
 s32 SettingsMenu_Run(void) {
   struct OptionMenuWork *work;
-  struct RenderInput *settingsWindow;
-  struct RenderInput *helpWindow;
+  struct Window *settingsWindow;
+  struct Window *helpWindow;
   struct WindowSprite *pair;
   s8 *hue;
   s8 *brightness;
@@ -577,14 +576,14 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 /// Opens the Pause menu's window with its entries (Save your quest, Sleep,
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
-struct RenderInput *PauseMenu_Open(void) {
+struct Window *PauseMenu_Open(void) {
   struct OptionMenuWork *work;
   s32 rows;
   s32 first;
   s32 settingsOnly;
   s32 top;
   s32 height;
-  struct RenderInput *win;
+  struct Window *win;
   s32 y;
   s32 msg;
   s32 i;
@@ -651,9 +650,9 @@ extern const s8 gMenu_WorkspaceIcons[];
 
 void PauseMenu_Initialize(void);
 void PauseMenu_Release(void);
-struct RenderInput *PauseMenu_Open(void);
-struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
-                                      s32 x, s32 y);
+struct Window *PauseMenu_Open(void);
+struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+                                      s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
@@ -667,7 +666,7 @@ void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 /// shown. The menu's window and work block are freed before it returns;
 /// PauseMenu_Run (screens/debug.c) acts on the result.
 s32 PauseMenu_Choose(s32 initial) {
-  struct RenderInput *window;
+  struct Window *window;
   s32 redraw;
   struct WindowSprite *pair;
   s32 first;

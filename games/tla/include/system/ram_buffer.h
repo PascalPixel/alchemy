@@ -26,8 +26,9 @@
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-/// Overlay 693's Func_02000c14 reads the frame counter at a constant address.
-/// Each test reloads the address; using the symbol combines the two loads.
+/// The frame counter at its constant address, as the overlays of Airs Rock,
+/// Atteka Inlet and Ancient Lemuria read it: each test reloads the address,
+/// where the symbol would combine the two loads.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
 /// The world map screen's scroll (x, then y, 16.16 pixels).
@@ -55,12 +56,16 @@
 #define Ram_WorldMapCursorStart                                                \
   FIXED_ADDRESS((s32 *), 0x0202a64c, gWorldPicture_CursorStartX)
 
+/// The map's shape grid, a byte a cell, which MapGrid_LoadMap decodes from
+/// the map header's shapes and the field's actor cells read.
 extern u8 gMapShapeGrid[];
 
 /// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
 /// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
 extern u32 gCellPictures[];
 
+/// Called once by the next VBlank, which clears it first; the world map sets it
+/// to show its next picture.
 extern void (*gVBlankCallback)(void);
 
 /// A scene's own state in EWRAM, which each scene lays out as it needs.

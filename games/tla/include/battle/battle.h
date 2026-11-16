@@ -114,7 +114,6 @@ struct BattleActionRecord;
 struct PaletteFade;
 struct BattleObject;
 struct Actor;
-struct ParticleChild;
 struct PendingEvent;
 struct SceneCueRule;
 struct WorldMapWork;

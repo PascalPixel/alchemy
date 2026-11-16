@@ -66,10 +66,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
+  Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_C,
                              work->sheet + THOR_SPRITE_PICTURES, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   // Eight copies of the dot pictures, each with its colour levels capped 7
   // lower than the one before.
@@ -107,7 +107,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
+                           RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
@@ -128,8 +128,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
   }
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(RESOURCE_BLAST_SHEET),
                   SHEET_PALETTE_BYTES);
 
   for (frame = 0; frame != THOR_OPENING_FRAMES; frame++) {
@@ -149,13 +148,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
     for (i = 0; i != 2; i++) {
       if ((frame & 63) <= 15) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
       } else if ((frame & 63) <= 31) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_MercuryDjinnSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
       } else if ((frame & 63) <= 47) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
       } else {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
       }
     }
     if (frame == 150) {
@@ -313,16 +312,15 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
-                             1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, Ram_MapCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
                              work->sheet + THOR_MOTE_CELLS, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_CrystalSheet),
+                       Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     FIXED formationX = toFIXED(80);
@@ -346,7 +344,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     for (frame = 0; frame != THOR_STORM_FRAMES; frame++) {
       s32 stormFrame;
       if (frame == 20) {
-        Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
+        Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_B,
                                    work->sheet, 1, 0);
       }
       stormFrame = frame - THOR_BOLTS_FRAME;

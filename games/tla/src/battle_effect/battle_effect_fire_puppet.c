@@ -61,14 +61,13 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   work->particles[FIRE_PUPPET_SAVED_TARGET].z = target->z;
   work->particles[FIRE_PUPPET_SAVED_TARGET].velocityX = target->scaleX;
   work->particles[FIRE_PUPPET_SAVED_TARGET].velocityY = target->scaleY;
-  Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GhostSkullTexture,
+  Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_GHOST_SKULL_TEXTURE,
                              work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
-  Iwram_CopyWordsEntry(
-      (void *)BG_PLTT,
-      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
-      SHEET_PALETTE_BYTES);
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
+                       Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET),
+                       SHEET_PALETTE_BYTES);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 
@@ -247,12 +246,10 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SlashFlameSheet, work->sheet, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
+                       Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 

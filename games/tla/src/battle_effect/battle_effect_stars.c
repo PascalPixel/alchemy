@@ -53,9 +53,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   // max blitter and the transfer.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                       Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Actor_SelectAnimationFar(caster, 2);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -233,9 +233,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                       Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

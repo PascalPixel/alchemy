@@ -65,10 +65,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   if (mode == 1) {
-    Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_GREEN_PILLAR_SHEET, work->sheet, 1, 1);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_VINE_SHEET, work->sheet, 1, 1);
   }
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
@@ -307,8 +306,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_GREEN_VINE_SHEET, work->sheet, 1, 1);
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &first);
   EffectPosition_ProjectScaledBattler(args->targets[args->targetCount - 1],
@@ -427,7 +425,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_THORN_SHEET, work->sheet, 1, 1);
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }

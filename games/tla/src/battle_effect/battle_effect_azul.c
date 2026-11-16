@@ -87,7 +87,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
@@ -114,7 +114,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     u8 *dst;
     s32 count;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, cells, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, cells, 1, 1);
     i = 0;
     count = 288;
     dst = work->sheet + AZUL_BEAM_DROP;
@@ -548,7 +548,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           v++;
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
+      Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 1, 0);
       for (i = 0; i != 6; i++) {
         for (k = 0; k != 16; k++) {
@@ -558,16 +558,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           }
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
+      Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET,
                                  (Ram_MapCellBuffer + AZUL_TEXTURES), 1, 0);
       Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + AZUL_TEXTURES,
                                   gMapGridCellBuffer, 64, 64);
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
-      Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+      Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
     }
     u = frame - 80;

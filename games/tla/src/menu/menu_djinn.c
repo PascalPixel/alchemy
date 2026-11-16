@@ -466,7 +466,7 @@ s32 Palette_GetBasicSpriteColors(void);
 void Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
-  struct RenderInput *window;
+  struct Window *window;
   struct WindowSprite *icon;
   s32 entry;
   s32 x;
@@ -500,7 +500,7 @@ void Menu_OpenBackdropScreen(void) {
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
-    VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
+    VramBlock_LoadResourceFar(entry, 128, RESOURCE_SHOP_GEM_TILES);
     icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
@@ -711,7 +711,7 @@ void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
   DjinnMenu_DrawPage(backdrop, 0);
 }
 
-void Window_SetInteriorPaletteBitRect(struct RenderInput *panel, s32 x, s32 y,
+void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
                                       s32 width, s32 height, s32 style) {
   Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
                           height, style);
@@ -719,7 +719,7 @@ void Window_SetInteriorPaletteBitRect(struct RenderInput *panel, s32 x, s32 y,
 
 /// Highlights the cell of a four-column grid at index's column and row's line,
 /// with style 14 when selected and 15 otherwise.
-void UiPanel_HighlightGridCell(struct RenderInput *panel, s32 index, s32 row,
+void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
                                s32 selected) {
   s32 style = ((0u - selected) | selected) >> 31;
 
@@ -780,7 +780,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
 
 /// Window_SetRectPalette on a rectangle of window's interior, (x, y) and its
 /// size in tiles from the interior's corner.
-void Window_SetInteriorRectPalette(struct RenderInput *panel, s32 x, s32 y,
+void Window_SetInteriorRectPalette(struct Window *panel, s32 x, s32 y,
                                    s32 width, s32 height, s32 palette) {
   Window_SetRectPalette((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
                         height, palette);
@@ -795,14 +795,14 @@ struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
 /// or Select, back to the list, or DJINN_RESULT_START for Start, which closes
 /// the Djinn menu.
 s32 DjinnMenu_ShowHelp(void) {
-  struct RenderInput *helpWindow;
-  struct RenderInput *statusWindow;
+  struct Window *helpWindow;
+  struct Window *statusWindow;
   struct DjinnMenuWork *menu;
   struct WindowWork *render;
   s32 result;
   s32 previous;
   s32 selection;
-  struct RenderInput *list;
+  struct Window *list;
   struct UiChannelSlot *channel;
   s32 message;
   s32 helpIndex;
@@ -1709,9 +1709,9 @@ extern const char gDjinnMenu_TextSlash[];
 
 #endif
 
-s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
                                   s32 resourceId);
-s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant);
 
 /// Previews a djinni change on a member's status: the unit is saved, the change

@@ -787,8 +787,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
 
   work->first = Actor_Get(a);
   work->second = Actor_Get(b);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE), work);
   smallEntry = VramCache_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
@@ -804,8 +803,7 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), work);
   largeEntry = VramCache_FindFreeEntry();
   {
     /* FAKEMATCH(temporary): sprite also holds the size. */

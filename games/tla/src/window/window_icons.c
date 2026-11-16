@@ -279,7 +279,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   u32 index;
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  table = Resource_GetTableEntry((s32)&ResourceId_Icons);
+  table = Resource_GetTableEntry(RESOURCE_ICONS);
   if (icon <= 127)
     index = icon;
   else

@@ -3424,8 +3424,7 @@ void GabombaStatue_StartClock(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ClockDigits),
-                      tiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_CLOCK_DIGITS), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
   clock->tileEntry = VramCache_FindFreeEntry();

@@ -660,8 +660,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
           REG_DMA3);
@@ -677,8 +676,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -1230,14 +1228,12 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1456,8 +1452,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
           REG_DMA3);
@@ -1473,8 +1468,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   } while (0);
   buffer = Heap_Alloc(0x240);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;

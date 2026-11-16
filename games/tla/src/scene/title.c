@@ -128,7 +128,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_TITLE, TITLE_PROLOGUE);
     return 0;
   }
-  Resource_ReservedNoOp((s32)&ResourceId_TitleFarCalls);
+  Resource_ReservedNoOp(RESOURCE_TITLE_FAR_CALLS);
   if (gMainRoutineWork.entrance == TITLE_START) {
     for (;;) {
       Event_PlaySound(MUS_SILENCE);
@@ -190,8 +190,7 @@ void Title_LoadSprites(s32 unused) {
   buffer = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B), buffer);
   Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, buffer + 32);
   dma = (volatile s32 *)REG_DMA3;
@@ -287,7 +286,7 @@ static void Title_LoadBackground(void) {
   struct BgScroll *bgScroll;
   s32 blankTile;
 
-  resourceId = (s32)&ResourceId_LogoOnBlack;
+  resourceId = RESOURCE_LOGO_ON_BLACK;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;

@@ -56,7 +56,7 @@ s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Obj;
-struct RenderInput;
+struct Window;
 struct WindowSprite;
 struct DjinnMenuBackdrop;
 
@@ -79,9 +79,9 @@ void Party_AdjustCoinsFar(s32);
 s32 Party_ListMembersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
 #ifndef OWN_WindowSprite_CreateFromResourceFar
-struct WindowSprite *
-WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
-                                   struct RenderInput *window, s32 x, s32 y);
+struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
+                                                        struct Window *window,
+                                                        s32 x, s32 y);
 #endif
 void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32, u8 *);

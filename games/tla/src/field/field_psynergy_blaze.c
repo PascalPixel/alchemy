@@ -154,19 +154,19 @@ void FieldPsynergy_Blaze(void) {
   work->targetAngle = scene->angle8;
   switch (look) {
   case 0:
-    resourceId = (s32)&ResourceId_RedFlameBurst;
+    resourceId = RESOURCE_RED_FLAME_BURST;
     break;
   case 1:
-    resourceId = (s32)&ResourceId_VioletFlameBurst;
+    resourceId = RESOURCE_VIOLET_FLAME_BURST;
     break;
   case 2:
-    resourceId = (s32)&ResourceId_YellowFlameBurst;
+    resourceId = RESOURCE_YELLOW_FLAME_BURST;
     break;
   case 3:
-    resourceId = (s32)&ResourceId_BlueFlameBurst;
+    resourceId = RESOURCE_BLUE_FLAME_BURST;
     break;
   default:
-    resourceId = (s32)&ResourceId_RedFlameBurst;
+    resourceId = RESOURCE_RED_FLAME_BURST;
     break;
   }
   Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
@@ -185,7 +185,7 @@ void FieldPsynergy_Blaze(void) {
     cursor.particle->timer = -1;
     cursor.particle++;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   puffSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(puffSlot, 0x800, work);
   work->puffTile = tile;

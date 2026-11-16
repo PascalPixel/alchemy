@@ -117,8 +117,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   BattleActor_SpawnObjectsForListFar(list, 0);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_RedHazeBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_RED_HAZE_BACKDROP,
+                           0);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
   transition[4] = 1;
   gBgScroll[1].x = 0;
@@ -155,7 +155,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
+    e = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
     Iwram_CopyWords((void *)OBJ_PLTT, e, 384);
     e += 384;
     Decompress_TaggedLz(e, cellBuffer);
@@ -190,7 +190,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
+    e = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
     Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(12, 0), e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
@@ -207,7 +207,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
+    e = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
     Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(13, 0), e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
@@ -224,7 +224,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
+    e = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
     Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, work->sheet);
@@ -239,15 +239,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
   }
   Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningTexture, work->sheet, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+                  Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   zero = 0;
   camZ = 0;
@@ -825,17 +824,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame == 552) {
-      Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+      Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                                  Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if (frame == 551) {
-      Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture,
-                                 work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
+      Resource_LoadAndDecompress(RESOURCE_TRIANGLE_SEAL_TEXTURE, work->sheet, 0,
+                                 0);
+      Resource_LoadAndDecompress(RESOURCE_PENTAGON_SEAL_TEXTURE,
                                  work->sheet + CATASTROPHE_PENTAGON_SEAL, 0, 0);
     }
     if (frame == 602) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                  Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if ((u32)(frame - 602) <= 6) {
@@ -992,12 +991,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   // Act two: the land seen from the sky, where the orb falls and bursts.
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_AerialViewBackdrop, 0);
+                           RESOURCE_AERIAL_VIEW_BACKDROP, 0);
   Palette_BrightenSavedBattleBg(0, -16, -16);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cellBuffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
   Iwram_ClearWordsEntry(work->sheet + 0x1456, 0x4000);
   for (i = 0; i != 4; i++) {
@@ -1019,12 +1017,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_TriangleSealTexture, cellBuffer,
-                             0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_PentagonSealTexture,
+  Resource_LoadAndDecompress(RESOURCE_TRIANGLE_SEAL_TEXTURE, cellBuffer, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PENTAGON_SEAL_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_PENTAGON_SEAL, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   {
     FIXED rise;
@@ -1044,10 +1041,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           rise = -toFIXED(64);
           Palette_BrightenSavedBattleBg(0, -16, -16);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-          Iwram_CopyWords(
-              (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
-              SHEET_PALETTE_BYTES);
+          Iwram_CopyWords((void *)BG_PLTT,
+                          Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
+                          SHEET_PALETTE_BYTES);
         }
         if (rise <= 0xfffff) {
           rise += toFIXED(1);
@@ -1355,17 +1351,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     gBgScroll[1].x = savedScroll;
     BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
     Palette_BrightenSavedBattleBg(-16, -16, -4);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                                work->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
-                               0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + CATASTROPHE_FLASH_BURST_PICTURES,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, bolts, 1, 0);
     Render_BuildQuadStrip(Ram_MapCellBuffer + 0x2000, 4, 32, 11);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     frame = 0;
@@ -1402,7 +1395,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                             CANVAS_FADE_THREE_QUARTERS);
       }
       if ((u32)(frame - 16) <= 47) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteF);
+        BattleEffect_StepPaletteToResource(RESOURCE_VIOLET_PALETTE_F);
       }
       if (frame == 66) {
         for (i = 0; i != args->targetCount; i++) {

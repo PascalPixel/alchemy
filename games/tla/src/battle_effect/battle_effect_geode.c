@@ -103,13 +103,13 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                              work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              work->sheet + GEODE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);

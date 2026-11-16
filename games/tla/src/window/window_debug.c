@@ -38,9 +38,9 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 /// Opens the sound test's window and places the cursor on its first row.
-struct RenderInput *DebugSoundTest_Open(void) {
+struct Window *DebugSoundTest_Open(void) {
   struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
-  struct RenderInput *window;
+  struct Window *window;
 
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   work->cursor.sprite = WindowSprite_Create(
@@ -67,7 +67,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
   s32 redraw = 1;
   s32 cursor = 0;
   u8 *work;
-  struct RenderInput *window;
+  struct Window *window;
   s32 rows = 4;
   s32 i;
   s32 y;
@@ -179,9 +179,9 @@ struct Window *DebugMenu_Open(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 2, (s32)window, 8, 52);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
-  WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16,
-      (struct RenderInput *)window, 0, 0);
+  WORD_AT(work, 1444) =
+      WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
+                          OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
   return window;
 }
 
@@ -351,9 +351,9 @@ void DebugWarp_Release(void) {
 
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
-struct RenderInput *DebugWarp_Open(void) {
+struct Window *DebugWarp_Open(void) {
   struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
-  struct RenderInput *window;
+  struct Window *window;
   const struct DebugWarpPreset *line;
   s32 i;
   s32 row;
@@ -467,7 +467,7 @@ extern const u8 gPauseMenu_Icons[];
 void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
   if (ability != 0)
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
-                            (struct RenderInput *)window, x, y);
+                            (struct Window *)window, x, y);
   else
     Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, window, x, y);
 }
@@ -494,9 +494,9 @@ struct Window *DebugShortcut_Open(void) {
     DebugShortcut_DrawAbility(gDebugShortcut_Abilities[3][i], (s32)window, 176,
                               y);
   }
-  WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16,
-      (struct RenderInput *)window, 0, 0);
+  WORD_AT(work, 1444) =
+      WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
+                          OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
   return window;
 }
 
@@ -512,7 +512,7 @@ UNUSED s32 DebugShortcut_Run(void) {
   u8 *work;
   s16 left;
   struct MainRoutineWork *party;
-  struct RenderInput *window;
+  struct Window *window;
   s32 result;
   s32 column;
   s32 ability;

@@ -336,7 +336,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                         IO_WRITE_HALFWORD);
     wait(1);
     {
-      s32 background = (s32)&ResourceId_SerpentStarsBackdrop;
+      s32 background = RESOURCE_SERPENT_STARS_BACKDROP;
       u16 *slot = &battle->background;
 
       zero = 0;

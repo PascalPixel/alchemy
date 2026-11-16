@@ -569,36 +569,36 @@ s32 Scene_Initialize(void) {
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case STAFF_CREDIT_OPENING:
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(2);
     Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 2);
     break;
   case STAFF_CREDIT_TO_BEACONS:
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(3);
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MARS_BEACON);
     break;
   case STAFF_CREDIT_MARS_BEACON:
     StaffCredit_ShowBeacon(BEACON_MARS);
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(4);
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MERCURY_BEACON);
     break;
   case STAFF_CREDIT_MERCURY_BEACON:
     StaffCredit_ShowBeacon(BEACON_MERCURY);
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(5);
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_VENUS_BEACON);
     break;
   case STAFF_CREDIT_VENUS_BEACON:
     StaffCredit_ShowBeacon(BEACON_VENUS);
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(6);
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_JUPITER_BEACON);
     break;
   case STAFF_CREDIT_JUPITER_BEACON:
     StaffCredit_ShowBeacon(BEACON_JUPITER);
-    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
+    Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
     StaffCredit_RunCredits(7);
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_BEAMS_MEET);
     break;

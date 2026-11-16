@@ -96,10 +96,10 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                             work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
+                             0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, cells, 1, 1);
   BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT,
                              BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
   BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
@@ -240,10 +240,10 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                             work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
                              work->sheet + JUPITER_FLAMEBALL_PICTURES, 1, 0);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -387,10 +387,10 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)slots->ramCode;
   draw[1] = (DrawRectangle)slots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET,
                              work->sheet + VENUS_BLUE_FLAME_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -509,10 +509,10 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
-                             1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, work->sheet, 1,
+                             0);
+  Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                              work->sheet + MARS_GLOW_ORB_PICTURES, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -561,7 +561,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     if (frame == 20)
       Iwram_CopyWordsEntry(
           (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
+          Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
           SHEET_PALETTE_BYTES);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
@@ -575,8 +575,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     if (frame == 32) {
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 8;
-      Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
-                                 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1,
+                                 1);
     }
     // Each puff plays its six cels, eight frames each, once its delay ends.
     if (frame > 31) {

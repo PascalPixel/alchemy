@@ -75,21 +75,21 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
   // Load the card and its picture; the Sword Card makes seven darker copies
   // of its shards for their fade.
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == CARD_SLEEP) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
+                               0);
     length = 96;
   } else if (mode == CARD_BAFFLE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_ButterflyCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BUTTERFLY_CARD_SHEET, CARD, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
+                               0);
     length = 80;
   } else if (mode == CARD_SWORD) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SwordCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
+    Resource_LoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                                work->sheet + CARDS_PALETTE_RAMP_PICTURES, 0, 0);
     for (i = 1; i != 8; i++) {
       for (j = 0; j != 696; j++) {
@@ -105,11 +105,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     }
     length = 116;
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_SkeletonCardSheet, CARD, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
+    Resource_LoadAndDecompress(RESOURCE_SKELETON_CARD_SHEET, CARD, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, Ram_MapCellBuffer,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA,
-                               Ram_MapCellBuffer, 1, 0);
     length = 88;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -189,13 +189,12 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
         if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
             (frame >= 40 && frame <= 47))
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_SmokeSheet);
+          BattleEffect_StepPaletteToResource(RESOURCE_SMOKE_SHEET);
         if (frame > 51) {
           if (mode == CARD_DEATH)
-            BattleEffect_StepPaletteToResource(
-                (s32)&ResourceId_RedCrescentSheetA);
+            BattleEffect_StepPaletteToResource(RESOURCE_RED_CRESCENT_SHEET_A);
           else
-            BattleEffect_StepPaletteToResource((s32)&ResourceId_DaggerSheet);
+            BattleEffect_StepPaletteToResource(RESOURCE_DAGGER_SHEET);
         }
         if (frame == 48) {
           for (i = 0; i != 256; i++)

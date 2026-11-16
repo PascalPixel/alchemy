@@ -145,7 +145,7 @@ void TitleIntro_LoadPictureTiles(void) {
   u8 *cells;
 
   REG_DISPCNT = 0;
-  source = Resource_GetTableEntry((s32)&ResourceId_IntroClouds);
+  source = Resource_GetTableEntry(RESOURCE_INTRO_CLOUDS);
   Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   BG_PLTT[0] = 0;
   cells = Ram_MapCellBuffer;
@@ -580,7 +580,7 @@ extern s16 gTitleIntro_GullPath[];
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = gTitleIntro_LogoTileBuffer;                                   \
-    Decompress_ByteLz(Resource_GetTableEntry((s32)&(id)), buffer);             \
+    Decompress_ByteLz(Resource_GetTableEntry(id), buffer);                     \
     Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
 
@@ -621,10 +621,10 @@ void TitleIntro_UpdateLogo(void) {
     }
     x = gTitleIntro_GullPath[logo->step];
     if (x == -1) {
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_SubtitlePalette),
+      Dma_Set(Resource_GetTableEntry(RESOURCE_SUBTITLE_PALETTE),
               (void *)OBJ_PLTT,
               (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
-      LOAD_LOGO_TILES(ResourceId_SubtitleA);
+      LOAD_LOGO_TILES(RESOURCE_SUBTITLE_A);
       logo->phase = TITLE_LOGO_ZOOM;
       logo->frame = 1;
       logo->timer = 0;
@@ -676,11 +676,11 @@ void TitleIntro_UpdateLogo(void) {
         REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
       }
       if (logo->timer == 8)
-        LOAD_LOGO_TILES(ResourceId_SubtitleB)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_B)
       else if (logo->timer == 16)
-        LOAD_LOGO_TILES(ResourceId_SubtitleC)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_C)
       else if (logo->timer == 24)
-        LOAD_LOGO_TILES(ResourceId_SubtitleD)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_D)
     }
   }
 }
@@ -710,13 +710,13 @@ s32 TitleIntro_ShowLighthouse(void) {
   logo = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 112);
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
-  source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
+  source = Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
   buffer = gMapGridCellBuffer;
   source += GULL_PALETTE_BYTES;
   Decompress_ByteLz(source, buffer);
   Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
   wait(1);
-  source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
+  source = Resource_GetTableEntry(RESOURCE_INTRO_LIGHTHOUSE_PICTURE);
   Dma_Set(source, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
   *(u16 *)BG_PLTT = RGB_WHITE;
@@ -780,8 +780,8 @@ s32 TitleIntro_ShowLighthouse(void) {
   map = (u16 *)TitleIntro_ScrollLighthouse(&scroll);
   if (map)
     goto stopped;
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
-          (void *)OBJ_PLTT, DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
+  Dma_Set(Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES), (void *)OBJ_PLTT,
+          DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
   logo->phase = TITLE_LOGO_GULLS;
   logo->frame = -5;
   logo->timer = 0;
@@ -932,7 +932,7 @@ s32 Title_ShowIntro(s32 prompt) {
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
-  data = Resource_GetTableEntry((s32)&ResourceId_TitleScreenPicture);
+  data = Resource_GetTableEntry(RESOURCE_TITLE_SCREEN_PICTURE);
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
           REG_DMA3);
   Decompress_TaggedLz(data + LOGO_PALETTE_BYTES, Ram_MapCellBuffer);
@@ -1045,7 +1045,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
-  resource = (s32)&ResourceId_NintendoLogo;
+  resource = RESOURCE_NINTENDO_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -1129,7 +1129,7 @@ s32 Title_ShowCamelotLogo(void) {
 
   gOamCopyEnabled = 1;
   result = 0;
-  resource = (s32)&ResourceId_CamelotLogo;
+  resource = RESOURCE_CAMELOT_LOGO;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();

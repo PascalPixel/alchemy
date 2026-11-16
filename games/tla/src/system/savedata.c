@@ -9,6 +9,7 @@ const u8 gSave_HeaderTemplate[8] = "CAMELOTT";
 /// Nothing in the game reads it.
 const u32 gLink_TestWord = 0;
 
-// The data the link test sends.
+/// The first message the link test sends.
 const u8 gLink_TestDataA[] = "Trans Data A: This is a pen.";
+/// The second message the link test sends.
 const u8 gLink_TestDataB[] = "Trans Data B: Hello world.";

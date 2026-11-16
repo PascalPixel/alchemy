@@ -90,14 +90,14 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       ActorShadow_FreeTilesFar();
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_EarthHorizonBackdrop, 0);
+                               RESOURCE_EARTH_HORIZON_BACKDROP, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       transition[4] = 1;
-      cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonTiles);
+      cells = Resource_GetTableEntry(RESOURCE_GOLDEN_DRAGON_TILES);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Decompress_TaggedLz(cells, gMapGridCellBuffer);
@@ -110,7 +110,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
         tiles += 0x400;
       }
-      cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonHeadTiles);
+      cells = Resource_GetTableEntry(RESOURCE_GOLDEN_DRAGON_HEAD_TILES);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Decompress_TaggedLz(cells, gMapGridCellBuffer);
@@ -126,7 +126,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   }
   Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   REG_BG2X = 0;
   baseX = 0;
@@ -137,7 +137,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->ramCode;
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                  Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                   SHEET_PALETTE_BYTES);
   {
     const u8 *texturePixels = (const u8 *)FLASHES;
@@ -154,8 +154,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, FLASHES, 0,
-                                   0);
+        Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, FLASHES, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Ram_MapCellBuffer + 0x400;
@@ -285,10 +284,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             }
             work->particles[i].variant = i * -8;
           }
-          Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+          Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                                      work->sheet + ECLIPSE_TORNADO_PICTURES, 1,
                                      0);
-          Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+          Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                                      work->sheet + ECLIPSE_GLOW_BAND_A, 0, 0);
         }
         verts = Heap_AllocEwram(32);
@@ -436,7 +435,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
@@ -528,15 +527,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   count = -1;
   transition[4] = 1;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_AerialViewBackdrop, 0);
+                           RESOURCE_AERIAL_VIEW_BACKDROP, 0);
   Palette_BrightenSavedBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
   gBgScroll[1].x = 0;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
+  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + ECLIPSE_FLAME_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   {
     s32 *v = &FLASHES[0].variant;
@@ -778,11 +777,10 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              (Ram_MapCellBuffer + 0x2000), 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
@@ -811,15 +809,13 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     if (frame == 0) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       if (kind == KIND_LEFT)
-        Iwram_CopyWordsEntry(
-            (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-            SHEET_PALETTE_BYTES);
+        Iwram_CopyWordsEntry((void *)BG_PLTT,
+                             Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                             SHEET_PALETTE_BYTES);
       else
-        Iwram_CopyWordsEntry(
-            (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteC),
-            SHEET_PALETTE_BYTES);
+        Iwram_CopyWordsEntry((void *)BG_PLTT,
+                             Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_C),
+                             SHEET_PALETTE_BYTES);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
     }

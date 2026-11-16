@@ -192,49 +192,49 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
 
   // The pictures, the beam packed to a byte a pixel, and the colors.
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
-                             work->sheet + BEAM_SHEET, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, work->sheet + BEAM_SHEET,
+                             1, 0);
   for (i = 0; i != 288; i++)
     work->sheet[BEAM_BYTES + i] = work->sheet[BEAM_SHEET + i * 2];
   if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
       mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC ||
       mode == HEALING_MODE_SPRING || mode == HEALING_MODE_EDDY) {
     if (args->variant == EFFECT_VARIANT_BASIC)
-      palette = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
+      palette = Resource_GetTableEntry(RESOURCE_ICE_SHARD_SHEET);
     else
-      palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+      palette = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
   } else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
+    palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
   } else if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_AURA ||
              mode == HEALING_MODE_REVERSE_STAR) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+    palette = Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B);
   } else {
-    palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+    palette = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // The Djinni: 40x40 at full width, a 20x40 picture when narrow.
   if (narrow == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
-      palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_SALT)
-      palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SHEET);
     else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER)
-      palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
     else
-      palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET);
   } else {
     if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_AURA ||
         mode == HEALING_MODE_REVERSE_STAR)
-      palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET);
     else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_SALT)
-      palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSmallSheet);
+      palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SMALL_SHEET);
     else if (mode == HEALING_MODE_BREATH || mode == HEALING_MODE_ETHER)
-      palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet);
+      palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SMALL_SHEET);
     else
-      palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
+      palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINNI_SHEET);
@@ -365,7 +365,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     if (frame == 40)
       EFFECT_SHOW_DAMAGE(0);
     if (mode == HEALING_MODE_SALT && (frame & 3) == 0)
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.

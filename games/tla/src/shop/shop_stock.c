@@ -12,8 +12,7 @@
 
 /// Gives a Game Ticket once the party's spending in shops reaches the next
 /// ticket's cost, and lets the player choose who takes it.
-void Shop_GiveGameTicket(struct RenderInput *window,
-                         struct RenderInput *itemWindow) {
+void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   u32 savedSelectedItem;
   s32 memberIndex;

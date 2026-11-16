@@ -119,7 +119,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 /// input: destination window.
 /// x, y: position within the window, in pixels.
 /// ability: ability index.
-s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,
+s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                    s32 abilityId) {
   s32 iconSlot;
 
@@ -313,7 +313,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       else
         rangePattern--;
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);
-      WindowSprite_CreateAbilityIcon((struct RenderInput *)window, 0,
+      WindowSprite_CreateAbilityIcon((struct Window *)window, 0,
                                      visibleRow * 16 - 4,
                                      changedAbilities[i] & ACTION_ID_MASK);
       if (changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED)

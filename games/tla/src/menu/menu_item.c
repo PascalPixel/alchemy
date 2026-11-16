@@ -43,7 +43,7 @@ s32 ItemMenu_ShowDetails(s32 value);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_Use(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
-void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY);
 
 /// @file
@@ -115,7 +115,7 @@ s32 ItemMenu_Run(void) {
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow =
-      (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
+      (struct Window *)Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
@@ -827,8 +827,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
     menu->buttonHelpWindow = NULL;
     menu->statusWindow = NULL;
     style = 2;
-    menu->infoWindow =
-        (struct RenderInput *)Window_CreateFar(0, 17, 30, 3, style);
+    menu->infoWindow = (struct Window *)Window_CreateFar(0, 17, 30, 3, style);
     menu->itemWindow = NULL;
     menu->selectedColumn = zero;
     menu->selectedRow = zero;
@@ -840,8 +839,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
 /// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
 /// slot of the same number.
-void Menu_SpawnIconEntries(struct ItemMenuWork *menu,
-                           struct RenderInput *window) {
+void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
   s32 firstSlot;
   struct WindowSprite **secondIcons;
@@ -2752,11 +2750,10 @@ void Resource_LoadPairedBlocks(void) {
   s32 value = VramCache_FindFreeEntry();
 
   state->resourceSlots[0] = value;
-  VramBlock_LoadResourceFar(value, 128, (s32)&ResourceId_MenuArrowTiles);
+  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_ARROW_TILES);
   value = VramCache_FindFreeEntry();
   state->resourceSlots[1] = value;
-  VramBlock_LoadResourceFar(value, 128,
-                            (s32)&ResourceId_MenuSmallDownArrowTiles);
+  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_SMALL_DOWN_ARROW_TILES);
 }
 
 /// Splits the selected slot owner's items into pages of five rows.

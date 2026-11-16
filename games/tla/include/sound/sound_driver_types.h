@@ -563,9 +563,16 @@ void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 mask, s32 value);
 void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 mask, u32 value);
 void ClearModM(struct MusicPlayerTrack *track);
 
+/// Each music player's work area, its tracks and how many it has, by enum
+/// MusicPlayerId (sound/music_player_table.s).
 extern const struct MusicPlayer gMPlayTable[];
+/// Each sound's header and music player, by sound id (sounds.h;
+/// sound/song_table.s).
 extern const struct Song gSongTable[];
+/// The song commands' handlers and the driver's helpers, which SoundInit copies
+/// from gMPlayJumpTableTemplate (MPLAY_JUMP_).
 extern MPlayFunc gMPlayJumpTable[36];
+/// The extended commands' handlers, by the byte after 0xCD (ply_xcmd).
 extern const MPlayFunc gXcmdTable[];
 
 #endif

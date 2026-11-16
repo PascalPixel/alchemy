@@ -104,36 +104,34 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   count = 16;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_TAINT) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   } else if (mode == TARGET_MOTES_PINK_SMOKE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   } else if (mode == TARGET_MOTES_DELUDE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
+    palette = Resource_GetTableEntry(RESOURCE_CYAN_PALETTE);
   } else if (mode == TARGET_MOTES_PARALYZE) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+    palette = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   } else if (mode == TARGET_MOTES_HEARTRENDER) {
-    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
-                               0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_GLOW_ORB_SHEET);
   } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = 24;
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
-                               0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   } else {
     count = 32;
-    Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
-    palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
+    Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 0);
+    palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == TARGET_MOTES_HEARTRENDER)
-    Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                                work->sheet + TORNADO_GLINT_SHEET, 1, 0);
 
   // Scatter the motes around the origin.
@@ -353,8 +351,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   scroll = 0;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = scroll;
-  Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   drawA = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -477,8 +474,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, work->sheet, 1, 1);
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
@@ -569,9 +565,9 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                             work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw = callbacks);
   actor = BattleObject_GetFar(args->user)->object;
   goal = BattleObject_GetFar(args->targets[0])->object;
@@ -695,7 +691,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                  ((Random16() & 0xff) - 127) << 15);
     spark->variant = 0;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sheet, 0, 0);
 
   for (frame = 0; frame != args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;

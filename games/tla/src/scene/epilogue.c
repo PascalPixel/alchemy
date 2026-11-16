@@ -109,8 +109,7 @@ void Epilogue_LoadNamePanel(void) {
   Dma_Set(gEpilogueNamePanelPalette, (void *)0x050003c0, DMA_COPY_HALFWORDS(16),
           REG_DMA3);
   sprite = &gEpilogueNamePanel;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GreenPanel),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GREEN_PANEL), buffer);
   slot = &gEpilogueNamePanelEntry;
   value = VramCache_FindFreeEntry();
   *slot = value;
@@ -293,7 +292,7 @@ s32 Scene_Initialize(void) {
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
-  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingCliffDayPicture,
+  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_CLIFF_DAY_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);
   Epilogue_ShowLine(SPRITE_JENNAS_FATHER, 2, 30);
@@ -309,8 +308,8 @@ s32 Scene_Initialize(void) {
   System_Wait(1);
   EndingPicture_WaitForScroll();
   FieldEvent_Wait(30);
-  Call3((void (*)())EndingPicture_Show,
-        (s32)&ResourceId_EndingCliffSunsetPicture, (s32)Ram_MapCellBuffer, 120);
+  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_CLIFF_SUNSET_PICTURE,
+        (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
   Epilogue_ShowLine(SPRITE_JENNA, 2, 30);
   Epilogue_ShowLine(SPRITE_PIERS, 2, 30);
@@ -344,8 +343,8 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_ISAAC, 2, 30);
   Epilogue_ShowLine(EPILOGUE_NO_NAME | SPRITE_BOY_WITH_ORANGE_HAIR, 2, 30);
   Epilogue_ShowLine(SPRITE_GARET, 2, 30);
-  Call3((void (*)())EndingPicture_Show,
-        (s32)&ResourceId_EndingVillagersPictureA, (s32)Ram_MapCellBuffer, 0);
+  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_VILLAGERS_PICTURE_A,
+        (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_EPILOGUE_VILLAGERS);
   FieldEvent_Wait(30);
@@ -375,8 +374,8 @@ s32 Scene_Initialize(void) {
   scroll[3].y = zero;
   scroll[2].y = zero;
   EndingPicture_LowerTopStrip(0);
-  EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture,
-                     (s32)Ram_MapCellBuffer, 0);
+  EndingPicture_Show(RESOURCE_ENDING_EMBRACE_PICTURE, (s32)Ram_MapCellBuffer,
+                     0);
   FieldEvent_Wait(60);
   // The embrace stays until a button is pressed.
   goto checkForPress;
@@ -386,18 +385,18 @@ checkForPress:
   p = &gInput;
   if (((struct InputState *)p)->pressed == 0)
     goto waitForPress;
-  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingReunionPicture,
+  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_REUNION_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
   SceneState_SetScrollTarget(120);
   System_Wait(1);
   EndingPicture_WaitForScroll();
   FieldEvent_Wait(180);
-  Call3((void (*)())EndingPicture_Show,
-        (s32)&ResourceId_EndingSunsetPlainPicture, (s32)Ram_MapCellBuffer, 0);
+  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_SUNSET_PLAIN_PICTURE,
+        (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(300);
-  EndingPicture_Show((s32)&ResourceId_EndingTheEndPicture,
-                     (s32)Ram_MapCellBuffer, 0);
+  EndingPicture_Show(RESOURCE_ENDING_THE_END_PICTURE, (s32)Ram_MapCellBuffer,
+                     0);
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   p = &gMainRoutineWork;

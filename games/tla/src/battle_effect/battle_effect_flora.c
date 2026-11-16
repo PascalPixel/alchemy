@@ -97,14 +97,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_VioletSkyBackdrop, 0);
+                               RESOURCE_VIOLET_SKY_BACKDROP, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -3;
       work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
-      e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
+      e = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
       Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
                            PALETTE_BANK_BYTES);
       e += PALETTE_BANK_BYTES;
@@ -131,7 +131,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         ((struct Sprite *)work->sprites[12 + i])->image.tile =
             w->tiles[*phase / 256];
       }
-      e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
+      e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
       e += 480;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
@@ -144,15 +144,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
                              cells + i * OBJ_32X32_8BPP_BYTES,
                              OBJ_32X32_8BPP_BYTES);
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, work->sheet,
-                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, work->sheet, 0, 0);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
     EFFECT_PRESENT_CANVAS(work);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, source, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   size = 3;
   for (i = 0; i != 10; i++) {
     for (j = 0; j != 18; j++) {
@@ -207,11 +206,11 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       REG_BG2X = -(60 << 8);
     }
     if (frame > 285) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
     } else if (frame > 199) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_TAN_PALETTE);
     } else if (frame > 180) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
     }
     if (frame == 108) {
       REG_BG2PA = Q_8_8(0.5);
@@ -235,7 +234,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     u = frame - 112;
     if (u <= 31) {
-      u16 *e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
+      u16 *e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 
       for (i = 0; i != 240; i++, e++) {
         s32 c = w->palette[i];
@@ -720,7 +719,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   {
     /* FAKEMATCH(pin): e kept in r6. */
     register u8 *e asm("r6") =
-        Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
+        Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     s32 row;
     s32 a;
     s32 b;
@@ -870,8 +869,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   s32 strikeFrame;
 
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
-                             1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -1029,9 +1027,9 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
-                             work->sheet + STAR_CELS, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET, work->sheet + STAR_CELS,
+                             1, 0);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1095,10 +1093,9 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     // The strike: pink palette, the caster lands at 120 percent and the
     // target is pushed to 80, and the stars burst upward from it.
     if (frame == STAR_BURST_FRAME) {
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_PINK_STAR_SHEET),
+                           SHEET_PALETTE_BYTES);
       casterObject->z = targetObject->z;
       casterObject->x = targetObject->x * 120 / 100;
       targetObject->x = targetObject->x * 80 / 100;

@@ -294,7 +294,7 @@ void FieldPsynergy_EndSand(void) {
   gMainRoutineWork.pendingThird = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(FieldPsynergy_WatchSandGround);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
@@ -430,7 +430,7 @@ void FieldPsynergy_Sand(void) {
   else
     event->standing = 0;
   FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   particleEntry = VramCache_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;

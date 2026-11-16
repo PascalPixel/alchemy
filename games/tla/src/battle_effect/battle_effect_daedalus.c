@@ -39,7 +39,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
 
   // Build the three cels from their halves.
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
+  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET,
                              work->sheet + PICTURE_OFFSET, 1, 1);
   Iwram_ClearWords(work->sheet, 0x4000);
   MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
@@ -47,15 +47,15 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
   if (mode == MIRRORED_WALL_SACK)
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   else if (mode == MIRRORED_WALL_RECOVERY)
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_FireballSheet),
+                    Resource_GetTableEntry(RESOURCE_FIREBALL_SHEET),
                     SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                     SHEET_PALETTE_BYTES);
 
   // Centre the canvas's x 64 on the target.
@@ -294,7 +294,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       targets[0] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_VioletSkyBackdrop, 0);
+                               RESOURCE_VIOLET_SKY_BACKDROP, 0);
       for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0;
            i != BATTLE_BACKGROUND_COLORS; i++, col++) {
         s32 mid;
@@ -325,8 +325,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       ctl[4] = 1;
-      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
-                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
+                                 0);
       off = 0x700;
       n = 3;
       for (j = 0; j != 10; j++) {
@@ -348,8 +348,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           *mp++ = v;
         } while (++i != w);
       }
-      src = (const u8 *)Resource_GetTableEntry(
-          (s32)&ResourceId_ForestCanopyTiles);
+      src = (const u8 *)Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
       Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, PALETTE_BANK_BYTES);
       src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, work->sheet);
@@ -370,8 +369,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           work->particles[j * DAEDALUS_CANOPY_ROW + i].variant =
               DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile;
       }
-      src = (const u8 *)Resource_GetTableEntry(
-          (s32)&ResourceId_BronzeAutomatonTiles);
+      src = (const u8 *)Resource_GetTableEntry(RESOURCE_BRONZE_AUTOMATON_TILES);
       Iwram_CopyWords((void *)OBJ_PLTT, src, 0x1c0);
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
@@ -397,7 +395,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER + i * 0x400, 0x800);
-      src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
+      src = (const u8 *)Resource_GetTableEntry(RESOURCE_MISSILE_TILES);
       Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, PALETTE_BANK_BYTES);
       src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, DECODE_BUFFER);
@@ -495,19 +493,17 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     work->scrollStepX = -1;
     work->scrollStepY = 0;
     ctl[4] = 1;
-    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet, work->sheet,
-                               0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_ROCKET_FLAME_SHEET, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + DAEDALUS_FLASH_BURST_PICTURES, 1,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_BirdFlockSheet,
+    Resource_LoadAndDecompress(RESOURCE_BIRD_FLOCK_SHEET,
                                work->sheet + DAEDALUS_BIRD_FLOCK, 0, 0);
     pixels = DECODE_BUFFER;
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, pixels, 0, 0);
-    Iwram_CopyWords(
-        (void *)BG_PLTT,
-        (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
-        SHEET_PALETTE_BYTES);
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    (const void *)Resource_GetTableEntry(RESOURCE_SMOKE_SHEET),
+                    SHEET_PALETTE_BYTES);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -603,7 +599,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       if (frame == 280) {
         Iwram_CopyWords(
             (void *)BG_PLTT,
-            (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
+            (const void *)Resource_GetTableEntry(RESOURCE_SMOKE_SHEET),
             SHEET_PALETTE_BYTES);
         work->particles[20].variant = 1;
       }
@@ -818,7 +814,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                                           &shipScale, 0);
         p = &work->particles[22];
         if (frame > 602)
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+          BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
         if (frame == 570) {
           p->x = toFIXED(152);
           p->y = INTtoFIXED(92 - gDaedalus_ShakeOffsets[work->shakeFrames]) +
@@ -1241,13 +1237,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       DAEDALUS_SPRITE(1 + i)->offsetX = 32;
       DAEDALUS_SPRITE(1 + i)->offsetY = 8;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                               0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RocketFlameSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_ROCKET_FLAME_SHEET,
                                work->sheet + DAEDALUS_ROCKET_FLAMES, 0, 0);
     {
       const void *colors =
-          (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+          (const void *)Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B);
       CopyFunc copy = IWRAM_COPY_WORDS_LINKED;
 
       copy((void *)BG_PLTT, colors, SHEET_PALETTE_BYTES);
@@ -1444,8 +1439,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = BLITTER;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -1459,10 +1453,9 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       ringX = toFIXED(66);
       discY = toFIXED(80);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                           SHEET_PALETTE_BYTES);
     }
     if (frame == 56) {
       Sound_PlayFar(SE_SPIN);
@@ -1597,7 +1590,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
           ring->variant = delay;
           delay -= 4;
         }
-        Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+        Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                                    work->sheet + DAEDALUS_ALT_GLOW_BAND, 0, 0);
       }
       vertices = Heap_AllocEwram(32);

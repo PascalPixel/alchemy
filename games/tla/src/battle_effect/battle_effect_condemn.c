@@ -41,9 +41,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, cells, 1, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

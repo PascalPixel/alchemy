@@ -194,7 +194,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
                                       s32 x, s32 y, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
                         s32 columns);
-void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
+void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 
 /// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
@@ -205,10 +205,10 @@ void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
 /// after their scales. The status, Psynergy and Djinn screens read the
 /// members they share with it through it too.
 struct ItemMenuWork {
-  u8 unused[8];                    ///< no view of the menu work names it
-  s32 selectedMember;              ///< the party member chosen
-  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
-  struct RenderInput *mainWindow;
+  u8 unused[8];               ///< no view of the menu work names it
+  s32 selectedMember;         ///< the party member chosen
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *mainWindow;
   /// The two sides: the party member whose items are shown, and the one an item
   /// is given to.
   ///@{
@@ -217,20 +217,19 @@ struct ItemMenuWork {
   s8 sideCount[2]; ///< party members to choose from
   ///@}
   u8 unusedAfterSides[4]; ///< no view of the menu work names it
-  struct RenderInput *itemWindow;
-  struct RenderInput *statusWindow;
-  struct RenderInput *buttonHelpWindow;
-  struct RenderInput *infoWindow;
-  struct RenderInput *equipWindow;
-  struct RenderInput *listWindow;
-  struct RenderInput *unopenedWindow; ///< never given a window; only closed
-  struct RenderInput *modalWindow;
-  struct RenderInput
-      *secondUnopenedWindow; ///< never given a window; only closed
+  struct Window *itemWindow;
+  struct Window *statusWindow;
+  struct Window *buttonHelpWindow;
+  struct Window *infoWindow;
+  struct Window *equipWindow;
+  struct Window *listWindow;
+  struct Window *unopenedWindow; ///< never given a window; only closed
+  struct Window *modalWindow;
+  struct Window *secondUnopenedWindow; ///< never given a window; only closed
   struct WindowSprite *gridCursor;
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
-  struct RenderInput *questionWindow;
+  struct Window *questionWindow;
   /// The cursor grid: its place and its size.
   ///@{
   u8 selectedColumn;
@@ -328,23 +327,23 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 0xc12);
 /// which each takes as it opens and frees before it returns. The Broken Seal's
 /// StatusScreenWork, laid out as ItemMenuWork is here.
 struct StatusScreenWork {
-  u8 unused[8];                    ///< no view of the menu work names it
-  s32 selectedMember;              ///< the party member chosen
-  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
-  struct RenderInput *memberWindow;
+  u8 unused[8];               ///< no view of the menu work names it
+  s32 selectedMember;         ///< the party member chosen
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *memberWindow;
   struct WindowSprite *memberCursors[2];
   s8 memberIndex[2];      ///< each side's party member, in memberIds
   s8 memberCount[2];      ///< party members each side chooses from
   u8 unusedAfterSides[4]; ///< no view of the menu work names it
-  struct RenderInput *actionWindow;
-  struct RenderInput *statusWindow;
-  struct RenderInput *unopenedWindow; ///< never given a window; only cleared
-  struct RenderInput *helpWindow;
+  struct Window *actionWindow;
+  struct Window *statusWindow;
+  struct Window *unopenedWindow; ///< never given a window; only cleared
+  struct Window *helpWindow;
   /// ItemMenuWork's equipWindow to gridCursor; not named here.
   u8 itemWindows[24];
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
-  struct RenderInput *selectorWindow;
+  struct Window *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
   u8 columnCount;
@@ -398,26 +397,26 @@ STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x240);
 /// Menu_PlacePartyFigures) read their cursor and figures through it, as The
 /// Broken Seal's do.
 struct PsynergyMenuWork {
-  u8 unused[8];                    ///< no view of the menu work names it
-  s32 selectedMember;              ///< the party member chosen
-  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
-  struct RenderInput *auxiliaryWindow;
+  u8 unused[8];               ///< no view of the menu work names it
+  s32 selectedMember;         ///< the party member chosen
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *auxiliaryWindow;
   struct WindowSprite *sideIcon[2]; ///< each side's cursor
   s8 tabIndex[2];         ///< each side's party member, in memberTable
   s8 tabCounts[2];        ///< party members each side chooses from
   u8 unusedAfterSides[4]; ///< no view of the menu work names it
-  struct RenderInput *psynergyWindow;
-  struct RenderInput *statusWindow;
-  struct RenderInput *shortcutWindow;
-  struct RenderInput *infoWindow;
-  struct RenderInput *equipWindow; ///< ItemMenuWork's; not named here
-  struct RenderInput *listWindow;
+  struct Window *psynergyWindow;
+  struct Window *statusWindow;
+  struct Window *shortcutWindow;
+  struct Window *infoWindow;
+  struct Window *equipWindow; ///< ItemMenuWork's; not named here
+  struct Window *listWindow;
   /// ItemMenuWork's modal window and the words around it; not named here.
   u8 modalWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[MENU_ENTRY_ICONS];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
-  struct RenderInput *messageWindow;
+  struct Window *messageWindow;
   u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here
   void *tabSprites[8];    ///< the party members' figures
   s16 tabX[8];            ///< screen pixels
@@ -475,7 +474,7 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 0x26c);
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window);
 void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
                              s32 work);
-void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
+void Text_DrawMessageAsTilesFar(s32 message, struct Window *window, s32 x,
                                 s32 y);
 
 // Tags the parts name in prototypes before the part that defines them.

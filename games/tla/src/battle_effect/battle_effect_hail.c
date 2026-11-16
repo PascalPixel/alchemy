@@ -41,8 +41,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
       screen, otherPoint);
   BattleEffect_FetchRectangleBlitters(args->side, blit);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The chips start in a 16-pixel spread at the first target and fly up
@@ -68,10 +67,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
     if (frame == 1) {
-      Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
+      Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
                                  work->sheet + HAIL_ICE_CHIP_PICTURES, 1, 1);
       Resource_LoadAndDecompress(
-          (s32)&ResourceId_MercuryDjinnSmallSheet,
+          RESOURCE_MERCURY_DJINN_SMALL_SHEET,
           work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     }
 
@@ -212,8 +211,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+  Resource_LoadAndDecompress(RESOURCE_PORTAL_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                              work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, 1,
                              1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -239,7 +238,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     for (frame = 0; frame != GROUND_FRAMES; frame++) {
       // The background takes on the portal's colours from frame 17.
       if (frame > 16)
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_PORTAL_SHEET);
 
       // With its Djinn prelude, the Djinn hovers over the anchor and rises
       // off from frame 17; the first four frames add a bright copy.

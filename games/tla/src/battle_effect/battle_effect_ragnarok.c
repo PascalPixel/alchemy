@@ -65,11 +65,10 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   else
     baseX = target.x / 2 - 92;
 
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
 
   // Each column's flashes (a ring, 2 pixels apart, living 25 to 32 frames)
   // and sparks (from y = 88, at random speeds and angles, living 32 to 39).
@@ -157,7 +156,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
 
     if (frame > FIRST_STRIKE_FRAME)
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
 
     col = 0;
     do {
@@ -313,13 +312,12 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   if (mode != 2)
-    Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
-                               work->sheet + SWORD_SHEET, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET, work->sheet + SWORD_SHEET,
+                               1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + FLASH_SHEET, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
 
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
   // to red.
@@ -379,12 +377,12 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   do {
     if (mode == FALLING_SWORD_TITAN_BLADE) {
       if (frame >= 41 && frame <= 63)
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
     } else if (mode == FALLING_SWORD_ACHERONS_GRIEF) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+            Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
             SHEET_PALETTE_BYTES);
         Palette_MirrorBgColors();
       }

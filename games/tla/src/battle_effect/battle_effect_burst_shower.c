@@ -282,20 +282,20 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           args,
           DJINNI_ENTRANCE(ELEMENT_MARS, args->side, DJINNI_ANCHOR_OVER_USER),
           origin, djinniTarget);
-      Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     } else {
       BattleEffect_RunDjinniEntrance(
           args,
           DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
           origin, djinniTarget);
-      Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                                  work->sheet + VOLLEY_B_DJINNI, 1, 0);
     }
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
@@ -335,16 +335,15 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   }
 
   // The pictures and the colors.
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING ||
       mode == BURST_SHOWER_MODE_STORM_BREATH_STRONG) {
-    Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
+    Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_A,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FUGUE ||
              mode == BURST_SHOWER_MODE_DJINNFEST) {
     // Remap the levels: 0 stays, 1-16 become 1, the rest drop by 16.
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     for (i = 0; i != 0xc00; i++) {
       u8 *cell = work->sheet + i;
       u32 value = *cell;
@@ -359,19 +358,19 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     }
     if (mode == BURST_SHOWER_MODE_DJINNFEST)
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                      Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                       SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet,
+    Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
-    Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
+    Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FURY) {
-    Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
+    Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
     // A violet ramp from color 1, blended 16:4.
@@ -381,35 +380,34 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
       BG_PLTT[i] = value;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
+    Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 4);
   } else if (mode == BURST_SHOWER_MODE_HEAT_KISS) {
-    Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_CHAR) {
     // Six smoke pictures, each with more holes punched at random.
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
     for (i = 0; i != 6; i++) {
       for (j = 0; j != i * 256 + 512; j++)
         work->sheet[VOLLEY_B_PICTURE + i * 1152 + Random16() % 1152] = 0;
     }
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
              mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
     // The beam, each 24-pixel row drawn twice side by side.
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, work->sheet, 1, 1);
     for (row = 0; row != 24; row++) {
       for (column = 0; column != 24; column++) {
         work->sheet[VOLLEY_B_BEAM + row * 48 + column] =
@@ -420,14 +418,14 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     }
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH)
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_LimePalette),
+                      Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                       SHEET_PALETTE_BYTES);
     else
       Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
+                      Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
                       SHEET_PALETTE_BYTES);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
     if (mode == BURST_SHOWER_MODE_GREY) {
       // A grey ramp, unblended.
@@ -458,35 +456,35 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           palette = NULL;
         } else if (mode == BURST_SHOWER_MODE_SAND_BREATH) {
           REG_BLDCNT = 0;
-          palette = Resource_GetTableEntry((s32)&ResourceId_RockSpireSheet);
+          palette = Resource_GetTableEntry(RESOURCE_ROCK_SPIRE_SHEET);
         } else {
-          palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+          palette = Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B);
         }
         break;
       case BURST_SHOWER_MODE_FLASH:
-        palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
+        palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
         break;
       case BURST_SHOWER_MODE_ICE:
-        palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+        palette = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
         break;
       case BURST_SHOWER_MODE_SPRAY:
       case BURST_SHOWER_MODE_TYPHOON_BLOW:
-        palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
+        palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
         break;
       case BURST_SHOWER_MODE_PINK:
-        palette = Resource_GetTableEntry((s32)&ResourceId_PinkPalette);
+        palette = Resource_GetTableEntry(RESOURCE_PINK_PALETTE);
         break;
       case BURST_SHOWER_MODE_PETRA:
-        palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
+        palette = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
         break;
       case BURST_SHOWER_MODE_AGING_GAS:
-        palette = Resource_GetTableEntry((s32)&ResourceId_GreyPaletteA);
+        palette = Resource_GetTableEntry(RESOURCE_GREY_PALETTE_A);
         break;
       case BURST_SHOWER_MODE_FIRE_DANCE:
-        palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+        palette = Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B);
         break;
       default:
-        palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+        palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
         break;
       }
       if (palette != NULL) {
@@ -623,9 +621,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       if (frame >= shots - 8)
         REG_BLDALPHA = -((frame - shots) * 2) | 0x1000;
       if (mode == BURST_SHOWER_MODE_PETRA && frame > 15)
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
       if (mode == BURST_SHOWER_MODE_AGING_GAS && frame > 31)
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
       if (frame == 4) {
         if (mode == BURST_SHOWER_MODE_FUGUE ||
             mode == BURST_SHOWER_MODE_DJINNFEST)

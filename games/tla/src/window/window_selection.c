@@ -491,17 +491,17 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
     WindowSprite_PrepareForRedraw(screen->window);
   }
   if (screen->count != 0) {
-    Text_DrawMessageAsTiles(node->message, (struct RenderInput *)screen->window,
-                            0, 0);
+    Text_DrawMessageAsTiles(node->message, (struct Window *)screen->window, 0,
+                            0);
   } else {
     switch (mode) {
     case ICON_KIND_ABILITY:
       Text_DrawMessageAsTiles((s32)MsgAbilityNotKnown,
-                              (struct RenderInput *)screen->window, 0, 0);
+                              (struct Window *)screen->window, 0, 0);
       break;
     case ICON_KIND_ITEM:
       Text_DrawMessageAsTiles((s32)MsgItemNotHeld,
-                              (struct RenderInput *)screen->window, 0, 0);
+                              (struct Window *)screen->window, 0, 0);
       break;
     }
   }
@@ -1362,7 +1362,7 @@ void SelectionMenu_LoadLargeIcon(void) {
                                            sizeof(GlyphTransfer));
   transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
   no = selection->base;
-  table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **destination = &buffer->encoded;
     resource = table + *(u16 *)(table + selection->base * 2);

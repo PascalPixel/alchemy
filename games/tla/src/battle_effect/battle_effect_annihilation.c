@@ -46,10 +46,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
   // Open the canvas, load the pictures, and dash at the target.
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burst, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
   wait(1);
   target = BattleObject_GetFar(args->targets[0])->object;

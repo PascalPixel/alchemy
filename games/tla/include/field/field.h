@@ -157,7 +157,7 @@ extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 
 struct Sprite;
-struct RenderInput;
+struct Window;
 struct ScriptOperands;
 struct SpritePlacement;
 struct TriggerView;
@@ -222,9 +222,9 @@ struct DiceWork {
 struct DiceSprites {
   u8 filler[196];
   struct OamWords oam[128];
-  struct RenderInput *coinsWindow;
-  struct RenderInput *betWindow;
-  struct RenderInput *helpWindow;
+  struct Window *coinsWindow;
+  struct Window *betWindow;
+  struct Window *helpWindow;
 };
 
 /// The dice games' camera: the eye and the point it looks at, 16.16.
@@ -250,9 +250,9 @@ struct FieldUnit {
 struct LuckyDiceSprites {
   u8 filler[196];
   struct OamWords oam[128];
-  struct RenderInput *coinsWindow;
-  struct RenderInput *winningsWindow;
-  struct RenderInput *helpWindow;
+  struct Window *coinsWindow;
+  struct Window *winningsWindow;
+  struct Window *helpWindow;
 };
 
 /// A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and

@@ -42,8 +42,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET, work->sheet, 1, 1);
 
   // The star: each half of the sheet's 24-wide picture mirrored left to
   // right and top to bottom.
@@ -64,12 +63,12 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + STAR_MINE_FLASH_BURST_PICTURES, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   work->transferMode =
       CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
@@ -310,24 +309,22 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   savedZ = victim->z;
   EffectPosition_ProjectBattler(args->targets[0], &source);
   EffectPosition_ProjectBattler(args->targets[0], &target);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(
-      (s32)&ResourceId_FlashBurstSheet,
+      RESOURCE_FLASH_BURST_SHEET,
       work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(
-      (s32)&ResourceId_ClawSlashSheet,
+      RESOURCE_CLAW_SLASH_SHEET,
       work->sheet + RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(strip, 4, 32, 32);
 
   for (frame = 0; frame != RISING_DRAGON_ENEMY_FRAMES; frame++) {
     if (frame == 0) {
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                           SHEET_PALETTE_BYTES);
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
@@ -362,10 +359,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 165) {
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                           SHEET_PALETTE_BYTES);
     }
     if (frame == 166) {
       camera->yaw = savedYaw;
@@ -396,7 +392,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
 
       // Into the sky: the red haze, its palette made grey-blue.
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_RedHazeBackdrop, 0);
+                               RESOURCE_RED_HAZE_BACKDROP, 0);
       for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31;
            i != BATTLE_BACKGROUND_COLORS; i++, color++) {
         s32 entry = *color;

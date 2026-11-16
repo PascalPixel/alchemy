@@ -4,10 +4,10 @@
 #include "types.h"
 #include "system/math_table.h"
 
+// clang-format off
 /// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees), so index 128
 /// is tan(45 degrees). Trig_Atan starts its binary search at index 127; the
 /// same as The Broken Seal's.
-// clang-format off
 const u16 gMath_TanTable[258] = {
     0, 1, 3, 4, 6, 7, 9, 11,
     12, 14, 15, 17, 18, 20, 22, 23,

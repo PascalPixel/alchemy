@@ -296,7 +296,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   cells = work->sheet + ULYSSES_PICTURES;
-  Resource_LoadAndDecompress((s32)&ResourceId_UlyssesSilhouette, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ULYSSES_SILHOUETTE, cells, 0, 0);
   for (i = 0; i != PICTURE_BYTES(ULYSSES_SILHOUETTE); i++, cells++) {
     if (*cells) {
       *cells += 128;
@@ -307,11 +307,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
            ULYSSES_SILHOUETTE_HEIGHT);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlutteringFlakeSheet, picture, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLUTTERING_FLAKE_SHEET, picture, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sprites, 0, 0);
   loaded = 0;
   ship.x = toFIXED(200);
   ship.z = toFIXED(84);
@@ -336,7 +334,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
                  TASK_PASS_FRAME + 15);
         Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
-        Resource_LoadAndDecompress((s32)&ResourceId_RuneCircleSheet,
+        Resource_LoadAndDecompress(RESOURCE_RUNE_CIRCLE_SHEET,
                                    work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES,
                                    1, 0);
         loaded = 1;
@@ -348,10 +346,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
+                           SHEET_PALETTE_BYTES);
       for (i = 0; i != 9; i++) {
         p = &work->particles[i];
         p->variant = -2 * i;
@@ -460,7 +457,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         Task_Remove(Display_ApplyBg2Affine);
         Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                  TASK_PASS_FRAME + 15);
-        Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
+        Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET,
                                    work->sheet + ULYSSES_YELLOW_ORB_PICTURES, 1,
                                    0);
         loaded = 0;
@@ -474,7 +471,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                           Resource_GetTableEntry((s32)&ResourceId_RuneSheet),
+                           Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
                            SHEET_PALETTE_BYTES);
     }
     if (frame == 133) {
@@ -505,7 +502,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       for (i = 0; i != 96; i++) {
         q[i].variant = -1;
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_FadingCrescentSheet,
+      Resource_LoadAndDecompress(RESOURCE_FADING_CRESCENT_SHEET,
                                  gMapGridCellBuffer, 0, 0);
     }
     if (frame == 76) {
@@ -529,7 +526,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       shade = 0;
       sparks = (struct Particle *)(work->sheet + 0x4b98);
       if (frame > 196) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -923,12 +920,11 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
                         BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->ramCode;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet,
-                             Ram_MapCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapCellBuffer, 1,
+                             0);
   if (mode == 0) {
-    LOAD_BG_PALETTE(ResourceId_LimePalette);
+    LOAD_BG_PALETTE(RESOURCE_LIME_PALETTE);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -1020,8 +1016,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;
-  Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   blend = &REG_BLDALPHA;

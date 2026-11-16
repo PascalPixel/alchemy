@@ -1577,8 +1577,7 @@ void TundariaTower_StartFallingRocks(void) {
   struct EffectSprite *sprite;
   s32 i;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;

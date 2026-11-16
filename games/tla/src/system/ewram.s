@@ -90,8 +90,8 @@ gIoWriteQueue:
 	.global gSerialTransfer
 gSerialTransfer:
 	.space 0x00000020
-	.global gData_02003a90
-gData_02003a90:
+	.global gMixerPcmBuffer
+gMixerPcmBuffer:
 	.space 0x00000ce8
 	.global gModelTransformWork
 gModelTransformWork:

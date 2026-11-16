@@ -54,7 +54,6 @@
 #include "version.h"
 #include "field/field_sequence_event.h"
 #include "system/scene.h"
-#include "system/object_effect.h"
 #include "game/item.h"
 #include "battle/battle_system.h"
 #include "text/msg_ids.h"

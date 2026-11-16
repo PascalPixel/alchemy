@@ -45,6 +45,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// 1 while wait() runs the frame pass's tasks (TASK_PASS_FRAME).
 extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
+/// The task table, run in priority order by each pass of wait().
 extern struct Task gTasks[];
 
 void PaletteCycle_Start(void);

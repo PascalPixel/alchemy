@@ -90,8 +90,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct AffineTransform effect;
   struct Unit *unit;
   struct BattleWork *battle;
-  struct RenderInput *window;
-  struct RenderInput *conditionWindow;
+  struct Window *window;
+  struct Window *conditionWindow;
   s32 targetIndex;
   s32 targetCount;
   s32 candidateCount;
@@ -126,7 +126,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null computed from selection. */
-  conditionWindow = (struct RenderInput *)((u32)(u16)selection >> 16);
+  conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)

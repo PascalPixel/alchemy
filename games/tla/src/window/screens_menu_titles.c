@@ -29,8 +29,8 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
 /// Shows heading `picture` of gMenuTitlePictures as two 32x16 sprites side by
 /// side at (x, y) in `window`, on draw layer 253, and returns the left one (the
 /// right one follows it in the window's list).
-struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
-                                      s32 x, s32 y) {
+struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+                                      s32 y) {
   s32 index;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -72,7 +72,7 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 void CommandIcon_Load(s32 index, s32 value, s32 flag) {
   s32 size = 1024;
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
-  u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
   if (value < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
@@ -88,8 +88,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
 /// when no VRAM slot is free. The settings menu's icons come through here
 /// (window/settings_menu.c).
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
-                                        struct RenderInput *window, s32 x,
-                                        s32 y) {
+                                        struct Window *window, s32 x, s32 y) {
   s32 index;
   struct WindowSprite *entity;
 
@@ -439,7 +438,7 @@ s32 Link_CreateCountdownLabelWindow(void) {
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   u8 **slot = &buffer->encoded;
   void *target = (void *)((u32)base + base[icon]);
   s32 ret;
@@ -465,7 +464,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
 
   decoded = (GlyphTransfer *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER,
                                             sizeof(*decoded));
-  font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
+  font = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
   remapped = Heap_Alloc(0x400);

@@ -251,7 +251,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// Loads a sheet's colours into the background palette.
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
-    void *palette = Resource_GetTableEntry((s32)&(resource));                  \
+    void *palette = Resource_GetTableEntry(resource);                          \
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;             \
                                                                                \
     copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \

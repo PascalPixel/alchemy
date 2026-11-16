@@ -76,17 +76,14 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     Actor_SelectAnimationFar(caster, 2);
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
-                               0);
-    Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                                work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES,
                                1, 1);
-    Iwram_CopyWordsEntry(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
+                         Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
+                         SHEET_PALETTE_BYTES);
     REG_BG2PA = Q_8_8(0.5);
     Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 
@@ -350,7 +347,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_HeartbreakSheet, parts, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_HEARTBREAK_SHEET, parts, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)heap->ramCode;

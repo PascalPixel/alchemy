@@ -70,7 +70,7 @@ struct DjinnMenuBackdrop {
   s32 tutorialStep;  ///< enum DjinnTutorialStep
 };
 
-/// A window as the Djinn menu's preview reads it: a RenderInput whose y it
+/// A window as the Djinn menu's preview reads it: a Window whose y it
 /// reads signed, in tiles.
 struct DjinnPreviewWindow {
   u8 sprites[8]; ///< the window's sprite list; not read here

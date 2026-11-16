@@ -755,13 +755,12 @@ void FieldPsynergy_Lash(void) {
       object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SelectAnimationFar(object, 0);
     Sound_PlayFar(SE_ITEM_BREAK);
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                        work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
     slotA = VramCache_FindFreeEntry();
     tileA = VramCache_Load(slotA, 0x100, work);
     work->tileA = tileA;
-    Decompress_TaggedLz(
-        Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
+                        work);
     slotB = VramCache_FindFreeEntry();
     work->tileB = VramCache_Load(slotB, 0x100, work);
 
@@ -1638,8 +1637,7 @@ void FieldPsynergy_Arrow(void) {
   }
 
   work->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x1800);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_BowDraw),
-                      work->tiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BOW_DRAW), work->tiles);
   bowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
   work->bowTile = tile;
@@ -1660,7 +1658,7 @@ void FieldPsynergy_Arrow(void) {
   Vector_AddPolarOffset(toFIXED(8), scene->angle8, pos);
   SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FlamingArrow),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FLAMING_ARROW),
                       work->tiles);
   arrowSlot = VramCache_FindFreeEntry();
   tile = VramCache_Load(arrowSlot, 0x100, work->tiles);

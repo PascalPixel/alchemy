@@ -44,20 +44,19 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->limitX = toFIXED(16352);
   perspective->limitY = toFIXED(16352);
   perspective->script = NULL;
-  perspective->tiles =
-      Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+  perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       gMapGridCellBuffer);
   perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
                       DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
   perspective->fadeStep = 128;
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapEntrances), gMapScene);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_ENTRANCES),
+                      gMapScene);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG3CNT);

@@ -305,10 +305,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     BattleEffect_StartCanvasLayer(0);
 
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tiles, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, buffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, tiles, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, buffer, 1, 0);
   BattleEffect_PackTileRows(buffer, work->sheet + CASTING_IMPACT_ORB_PICTURES,
                             YELLOW_ORB_WIDTH,
                             YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
@@ -316,17 +315,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   if (kind == CASTING_IMPACT_IMPACT_SCORCH ||
       kind == CASTING_IMPACT_IMPACT_BARRAGE ||
       kind == CASTING_IMPACT_IMPACT_FLARE_BURST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
              kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_WHEEZE) {
 
     s32 j;
     s32 v;
     u8 *src;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_ImpFaceSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_IMP_FACE_SHEET, buffer, 1, 0);
     for (i = 1; i != IMP_FACE_FADES; i++) {
       s32 fade;
       j = 0;
@@ -345,42 +344,42 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
     }
   } else if (kind == CASTING_IMPACT_IMPACT_CHILL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CloudPuffSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_CLOUD_PUFF_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_SQUALL ||
              kind == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
              kind == CASTING_IMPACT_IMPACT_UNUSED_BOLTS ||
              kind == CASTING_IMPACT_IMPACT_BLITZ) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                                buffer + GLINT_SET_BYTES, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                                buffer + CASTING_IMPACT_SMOKE_PICTURES, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, buffer, 1, 1);
   } else if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet, buffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_ROCK_SPIRE_SHEET, buffer, 1, 1);
   } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_FROST_BITE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_BROIL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, buffer, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, buffer, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_JIP) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
-                               buffer + 0x4000, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, buffer + 0x4000, 0,
+                               0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_BOLT) {
     s32 j;
     s32 k;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, work->sheet, 1,
+                               1);
     Iwram_ClearWords(buffer + STUN_BOLT_TEXTURES,
                      STUN_BOLT_PICTURES * PICTURE_BYTES(STUN_BOLT_TEXTURE));
     for (i = 0; i != STUN_BOLT_PICTURES; i++) {
@@ -394,26 +393,25 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                           j * LIGHTNING_BOLT_WIDTH + k];
       }
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
              kind == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_A, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_SARGASSO ||
              kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, buffer, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, buffer, 0, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
              kind == CASTING_IMPACT_IMPACT_DINOX ||
              kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, buffer, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE, buffer, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                buffer + CASTING_IMPACT_FLASH_BURST_PICTURES, 1,
                                0);
   } else if (kind == CASTING_IMPACT_IMPACT_FLASH_FORCE) {
     s32 k;
     s32 i;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
+    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET,
                                buffer + CASTING_IMPACT_RUNE_PICTURES, 1, 0);
     Iwram_ClearWords(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
     for (i = 0; i != RUNE_HALF_HEIGHT; i++) {
@@ -447,18 +445,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
     }
   } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, buffer, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
+    Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, buffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BOULDER_PICTURE,
                                buffer + CASTING_IMPACT_BOULDER_PICTURES, 1, 1);
   } else if (kind == CASTING_IMPACT_IMPACT_VEIN_TAP) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, buffer, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, buffer, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_FIREBALL_SHEET, buffer, 1, 1);
   } else if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
              kind != CASTING_IMPACT_IMPACT_ASURA) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, buffer, 1, 0);
   }
 
   switch (kind) {
@@ -481,10 +479,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   case CASTING_IMPACT_IMPACT_MOTHER_EARTH:
   case CASTING_IMPACT_IMPACT_DINOX:
   case CASTING_IMPACT_IMPACT_TERRIBLE_BITE:
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
-            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+    Dma_Set(Resource_GetTableEntry(RESOURCE_BLAST_SHEET), (void *)BG_PLTT,
+            DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 0);
     break;
   case CASTING_IMPACT_IMPACT_MIST:
@@ -506,10 +504,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   case CASTING_IMPACT_IMPACT_REVERSE_STAR:
   case CASTING_IMPACT_IMPACT_CALL_ZOMBIE:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
+      Dma_Set(Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET),
               (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
               REG_DMA3);
     break;
@@ -533,10 +531,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   case CASTING_IMPACT_IMPACT_ARMOR_CRUSH:
   case CASTING_IMPACT_IMPACT_STUN_JIP:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
+      Dma_Set(Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
               (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
               REG_DMA3);
     break;
@@ -561,21 +559,21 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   case CASTING_IMPACT_IMPACT_FLASH_PUNCH:
   case CASTING_IMPACT_IMPACT_QUICK_SLASH:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
+      Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET,
                                  buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet),
+      Dma_Set(Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SMALL_SHEET),
               (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
               REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_BOSCA_HIT:
   case CASTING_IMPACT_IMPACT_ROC:
   case CASTING_IMPACT_IMPACT_WILD_WOLF:
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_DustPuffSheet),
-            (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
+    Dma_Set(Resource_GetTableEntry(RESOURCE_DUST_PUFF_SHEET), (void *)BG_PLTT,
+            DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
     break;
   case CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI:
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                buffer + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
   }
@@ -585,7 +583,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       kind == CASTING_IMPACT_IMPACT_STUN_JIP ||
       kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
       kind == CASTING_IMPACT_IMPACT_BOSCA_HIT)
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, buffer, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, buffer, 0, 0);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
@@ -835,32 +833,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
     }
     if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-      Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet,
-                                 work->sheet, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, buffer, 1,
-                                 0);
+      Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1,
+                                 1);
+      Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, buffer, 1, 0);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
-      Resource_LoadAndDecompress((s32)&ResourceId_RaidensWrathSheet, buffer, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_RAIDENS_WRATH_SHEET, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
-      Resource_LoadAndDecompress((s32)&ResourceId_ApocalypseSheet, buffer, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_APOCALYPSE_SHEET, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_ASURA) {
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->sheet,
-                                 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, buffer, 1,
-                                 0);
+      Resource_LoadAndDecompress(RESOURCE_BLUE_BEAST_SHEET, work->sheet, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_B, buffer, 1, 0);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
     if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
-      Resource_LoadAndDecompress((s32)&ResourceId_SarcophagusSheet, buffer, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_SARCOPHAGUS_SHEET, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
 
@@ -1041,81 +1033,81 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
       switch (kind) {
       case CASTING_IMPACT_IMPACT_CHILL:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_CloudPuffSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_CLOUD_PUFF_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_POWER_DRIVE:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_FireballSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_FIREBALL_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_SEARING_FOG:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_GreyPaletteA);
+        BattleEffect_StepPaletteToResource(RESOURCE_GREY_PALETTE_A);
         break;
       case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
+        BattleEffect_StepPaletteToResource(RESOURCE_FLAME_SHEET_A);
         break;
       case CASTING_IMPACT_IMPACT_AQUA_SOCK:
       case CASTING_IMPACT_IMPACT_STUN_CLOUD:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_BLUE_FLAME_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_RuneSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_RUNE_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_TERRA_STRIKE:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_ROCK_SPIRE_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_BANE:
       case CASTING_IMPACT_IMPACT_POISON_DEATH:
       case CASTING_IMPACT_IMPACT_SCORPIONFISH:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_BAD_OMEN:
       case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
       case CASTING_IMPACT_IMPACT_ACID_BATH:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_PINK_BURST_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_LIFE_LEECH:
       case CASTING_IMPACT_IMPACT_HIGH_VITALS:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_ICE_BLOCK_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_PSY_LEECH:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_MIST:
       case CASTING_IMPACT_IMPACT_MURK:
       case CASTING_IMPACT_IMPACT_MOON_AIR:
       case CASTING_IMPACT_IMPACT_REVERSE_STAR:
       case CASTING_IMPACT_IMPACT_STUN_JIP:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_TAN_PALETTE);
         break;
       case CASTING_IMPACT_IMPACT_SMOG:
       case CASTING_IMPACT_IMPACT_FOG:
       case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
       case CASTING_IMPACT_IMPACT_FLASH_PUNCH:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
         break;
       case CASTING_IMPACT_IMPACT_FEVER:
       case CASTING_IMPACT_IMPACT_BROIL:
       case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
       case CASTING_IMPACT_IMPACT_FLARE_BURST:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_EMBER_STREAK_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_POISON_CLOUD:
       case CASTING_IMPACT_IMPACT_SUPERNOVA:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_LimePalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_LIME_PALETTE);
         break;
       case CASTING_IMPACT_IMPACT_SCORCH:
       case CASTING_IMPACT_IMPACT_BARRAGE:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_FLASH_BURST_SHEET);
         break;
       case CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE:
       case CASTING_IMPACT_IMPACT_ARMOR_CRUSH:
       case CASTING_IMPACT_IMPACT_TERRIBLE_BITE:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+        BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
         break;
       case CASTING_IMPACT_IMPACT_VEIN_TAP:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_RedPaletteB);
+        BattleEffect_StepPaletteToResource(RESOURCE_RED_PALETTE_B);
         break;
       case CASTING_IMPACT_IMPACT_STUN_BOLT:
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteG);
+        BattleEffect_StepPaletteToResource(RESOURCE_VIOLET_PALETTE_G);
         break;
       }
       if (frame < 6) {
@@ -2093,7 +2085,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 y;
         if (frame == 0) {
           struct Particle *p;
-          Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
+          Resource_LoadAndDecompress(RESOURCE_BOULDER_PICTURE,
                                      buffer + CASTING_IMPACT_BOULDER_PICTURES,
                                      1, 1);
           REG_BLDALPHA = BLEND_ALPHA(16, 4);

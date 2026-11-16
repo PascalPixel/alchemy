@@ -7,7 +7,7 @@
 #include "types.h"
 
 struct BattleActionRecord;
-struct RenderInput;
+struct Window;
 struct WindowSprite;
 void WindowSystem_InitBattleFar(s32 mode);
 /// Opens the party status window, sized by PartyStatus_BuildLayoutBounds, and
@@ -21,12 +21,11 @@ s32 WindowSprite_GetPointerTilesFar(s32 index);
 void WindowSystem_InitFieldFar(void);
 /// Opens a window at tile (x, y) of width by height tiles in the first free
 /// window slot, and returns it, or NULL when all slots are in use.
-struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                     s32 mode);
-void Window_CloseFar(struct RenderInput *window, s32 mode);
+struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
+void Window_CloseFar(struct Window *window, s32 mode);
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
 /// offsetY) of its interior.
-void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
+void Text_DrawMessageAsTilesFar(s32 message, struct Window *window, s32 x,
                                 s32 y);
 void Message_CloseFinishedWindowsFar(void);
 /// Selects Yes or No (icons 5 and 6).
@@ -59,8 +58,8 @@ s32 Portrait_GetForSpeakerFar(s32 sprite);
 /// at most capacity entries, keeping style codes with their operands.
 void Message_DecodeRawFar(s32 message, u16 *buffer, s32 length);
 struct WindowSprite *WindowSprite_CreateLoadedFar(s32 item, s32 mode,
-                                                  struct RenderInput *window,
-                                                  s32 x, s32 y);
+                                                  struct Window *window, s32 x,
+                                                  s32 y);
 /// Selects a shop command from icons 0x11-0x14, centred on row 17, showing the
 /// selected command's name in a window.
 s32 Menu_SelectShopCommandFar(s32 action);
@@ -85,7 +84,6 @@ s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);
 /// story crawl draws its lines.
 s32 Text_DrawMessageToCanvasFar(s32 message, u8 *canvas, s32 align);
 
-struct RenderInput *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y,
-                                           s32 mode);
+struct Window *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y, s32 mode);
 
 #endif

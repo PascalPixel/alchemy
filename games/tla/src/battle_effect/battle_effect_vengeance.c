@@ -121,7 +121,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
                WINOUT_WIN01_CLR | WINOUT_WINOBJ_CLR;
-  Resource_LoadAndDecompress((s32)&ResourceId_ArcherSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_ARCHER_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -385,8 +385,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   }
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 6);
-  Resource_LoadAndDecompress((s32)&ResourceId_LifeShearSheet,
-                             gMapGridCellBuffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_LIFE_SHEAR_SHEET, gMapGridCellBuffer, 1,
+                             1);
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
@@ -682,16 +682,14 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
     Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
     spawned = 0;
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
     if (mode == GEYSER_PURGATORY) {
-      Resource_LoadAndDecompress((s32)&ResourceId_CrossTextureSheet,
-                                 work->sheet, 1, 1);
-      CopyPalette(Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB));
+      Resource_LoadAndDecompress(RESOURCE_CROSS_TEXTURE_SHEET, work->sheet, 1,
+                                 1);
+      CopyPalette(Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B));
     } else {
-      Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0,
-                                 0);
-      CopyPalette(Resource_GetTableEntry((s32)&ResourceId_BlastSheet));
+      Resource_LoadAndDecompress(RESOURCE_EMBER_TEXTURE, work->sheet, 0, 0);
+      CopyPalette(Resource_GetTableEntry(RESOURCE_BLAST_SHEET));
     }
 
     for (frame = 0; frame != GEYSER_FRAMES; frame++) {
@@ -731,14 +729,11 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != 3; i++) {
           if (frame >= 8) {
             if (frame < 20)
-              BattleEffect_StepPaletteToResource(
-                  (s32)&ResourceId_MercuryDjinnSheet);
+              BattleEffect_StepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
             else if (frame < 32)
-              BattleEffect_StepPaletteToResource(
-                  (s32)&ResourceId_MarsDjinnSheet);
+              BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
             else
-              BattleEffect_StepPaletteToResource(
-                  (s32)&ResourceId_JupiterDjinnSheet);
+              BattleEffect_StepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
           }
         }
       }
@@ -895,8 +890,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -944,7 +938,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
         star->variant = 0;
       }
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                           Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                           Resource_GetTableEntry(RESOURCE_BLAST_SHEET),
                            SHEET_PALETTE_BYTES);
     }
 
@@ -952,13 +946,11 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 2; i++) {
       if (frame >= 8) {
         if (frame < 20)
-          BattleEffect_StepPaletteToResource(
-              (s32)&ResourceId_MercuryDjinnSheet);
+          BattleEffect_StepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
         else if (frame < 32)
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+          BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
         else
-          BattleEffect_StepPaletteToResource(
-              (s32)&ResourceId_JupiterDjinnSheet);
+          BattleEffect_StepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
       }
     }
 
@@ -1100,10 +1092,10 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 
   // The blue beam's palette colours the bubble cels.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlueBeamSheet),
+                       Resource_GetTableEntry(RESOURCE_BLUE_BEAM_SHEET),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, work->sheet,
-                             0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BUBBLE_ANIMATION_SHEET, work->sheet, 0,
+                             0);
 
   for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
     // The first frame scatters every bubble below the bottom left.
@@ -1301,7 +1293,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   zero = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = work->backdropLines;
   level = -8;
@@ -1316,7 +1308,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
+    u8 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
 
     Iwram_CopyWords((void *)OBJ_PLTT, e, OBJ_PLTT_SIZE);
     Decompress_TaggedLz(e + 512, cellBuffer);
@@ -1335,21 +1327,19 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     }
   }
   Graphics_LoadGreyRamp();
-  Resource_LoadAndDecompress((s32)&ResourceId_CogTexture, cellBuffer, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, cellBuffer, 0, 0);
   Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_ScaleTexture,
+  Resource_LoadAndDecompress(RESOURCE_SCALE_TEXTURE,
                              work->sheet + COATLICUE_SCALES, 0, 0);
   {
     u8 *src = work->sheet + COATLICUE_BUBBLES;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BubbleAnimationSheet, src, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_BUBBLE_ANIMATION_SHEET, src, 0, 0);
     for (i = 0; i != BUBBLE_SHEET_BYTES; i++) {
       work->sheet[COATLICUE_DIM_BUBBLES + i] = src[i] >> 1;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cellBuffer, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cellBuffer, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -1471,7 +1461,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
     }
     if (frame > 299) {
-      u16 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
+      u16 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 tr = RGB_LEVEL_MAX;
       s32 tg = RGB_LEVEL_MAX;
@@ -1540,7 +1530,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     }
     if (frame > 519) {
       s32 d = frame - 520;
-      u16 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
+      u16 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half;
 
@@ -2077,7 +2067,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   wait(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                        SHEET_PALETTE_BYTES);
   Iwram_FillWords(canvas, CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

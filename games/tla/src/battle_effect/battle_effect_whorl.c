@@ -78,8 +78,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       s32 k;
       s32 size = 0x1000;
 
-      Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, sheet + size, 1,
-                                 0);
+      Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, sheet + size, 1, 0);
       Iwram_ClearWordsEntry(sheet, size);
       for (row = 0; row != 48; row++) {
         for (k = 0; k != 24; k++) {
@@ -88,16 +87,16 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           sheet[row * 64 + 0x237 - k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
         }
       }
-      Iwram_CopyWordsEntry(
-          palette, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry(palette,
+                           Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
+                           SHEET_PALETTE_BYTES);
     } else {
-      Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, sheet, 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, sheet, 0, 0);
     }
     pos[0] = caster->x;
     pos[1] = caster->y;
     pos[2] = caster->z;
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST, 1,
                                0);
     frames = 52;
@@ -122,25 +121,23 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   work->particles[WATER_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
   work->particles[WATER_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberTexture, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_EMBER_TEXTURE, work->sheet, 0, 0);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(
-      (s32)&ResourceId_JupiterDjinnSmallSheet,
+      RESOURCE_JUPITER_DJINN_SMALL_SHEET,
       work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   if (mode == WATER_COLUMN_POISON_FLOW) {
-    Iwram_CopyWordsEntry(
-        palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry(palette,
+                         Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
+                         SHEET_PALETTE_BYTES);
   }
   if (mode == WATER_COLUMN_RAGING_FLOOD || mode == WATER_COLUMN_LETHE_ALBION) {
-    Iwram_CopyWordsEntry(
-        palette, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry(palette,
+                         Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET),
+                         SHEET_PALETTE_BYTES);
   }
   columns =
       (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD)

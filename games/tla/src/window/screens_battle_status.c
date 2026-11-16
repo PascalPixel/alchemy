@@ -185,9 +185,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   u16 itemText[64];
   u16 psynergyText[64];
   struct WindowWork *work;
-  struct RenderInput *statusWindow;
+  struct Window *statusWindow;
   s32 redraw;
-  struct RenderInput *helpWindow;
+  struct Window *helpWindow;
   s32 memberIndex;
   s32 cursorSlot;
   struct SummaryPoint cursorPosition;

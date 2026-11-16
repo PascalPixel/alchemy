@@ -175,7 +175,7 @@ void Window_CloseAll(void) {
 /// rectangle with it.
 void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   u8 *source =
-      (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash) + offset;
+      (u8 *)Resource_GetTableEntry(RESOURCE_WINDOW_BORDER_FLASH) + offset;
   struct Window *rect = *window;
   s32 x = (s16)rect->x;
   s32 y = (s16)rect->y;
@@ -210,7 +210,7 @@ void Window_StepSwellEffect(struct UiChannelSlot *window) {
     }
     window->countdown--;
     if (window->countdown == 0) {
-      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
+      Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_BORDER_FLASH),
               (void *)FLASH_FRAME_TILES, DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4),
               REG_DMA3);
       window->work->animation = 0;

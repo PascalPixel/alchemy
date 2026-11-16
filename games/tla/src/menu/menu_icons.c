@@ -20,13 +20,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
-    VramBlock_LoadResourceFar(firstSlot, 0x80, (s32)&ResourceId_ItemMenuTilesA);
+    VramBlock_LoadResourceFar(firstSlot, 0x80, RESOURCE_ITEM_MENU_TILES_A);
   }
   secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = (s16)secondSlot;
   if (secondSlot != -1) {
-    VramBlock_LoadResourceFar(secondSlot, 0x80,
-                              (s32)&ResourceId_ItemMenuTilesB);
+    VramBlock_LoadResourceFar(secondSlot, 0x80, RESOURCE_ITEM_MENU_TILES_B);
   }
 }
 
@@ -58,7 +57,7 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
 /// Loads an icon into a free cache slot and creates its sprite when possible:
 /// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
 /// preview's Psynergy lists. Returns no value; callers ignore it.
-s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
                                   s32 resourceId) {
   s32 slot;
 
@@ -71,7 +70,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
 
 /// Creates the stat change arrow from the up or down arrow resource the
 /// menu loaded.
-s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
@@ -97,7 +96,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
 
 /// As Icon_CreateStatChangeArrow, with the arrow raised 3 pixels for variant
 /// 0 and 4 for any other. Returns 1, or -1 when no window sprite is free.
-s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
@@ -316,7 +315,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
 /// Creates the first four party members' figures in a row from tile (originX,
 /// originY) inside window, three tiles apart, and starts placing them each
 /// frame (Menu_UpdateEntryObjectTransforms).
-void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
@@ -567,7 +566,7 @@ void MenuIcon_SetActive(s32 active) {
 
 /// Lists usable entries with icons and names, or "none" when no entries
 /// qualify.
-void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
+void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
   s32 icon_x = (s16)panel->x * 8 + x + 8;

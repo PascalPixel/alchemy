@@ -237,7 +237,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Camera_WorldToScreen(pos);
   targetX = pos[0];
   targetZ = pos[2];
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Runes), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work);
   moteEntry = VramCache_FindFreeEntry();
   moteTile = VramCache_Load(moteEntry, 0x800, work);
   mote = work->motes;
@@ -258,7 +258,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite++;
     mote++;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Pebbles), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work);
   sparkEntry = VramCache_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 0x800, work);
   work->sparkTile = sparkTile;

@@ -61,13 +61,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   radius = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + BOLT_TRAIL_TORNADO_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buffer, 1, 1);
   if (mode == BOLT_TRAIL_EARTH_FORCE) {
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
+                    Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_C),
                     SHEET_PALETTE_BYTES);
   }
 
@@ -342,15 +342,14 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, pictures, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots,
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS,
                              pictures + MEGAERA_SPARKLE_DOTS_PICTURES, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
@@ -372,7 +371,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     SPARKS[i].variant = -1;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                       Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                        SHEET_PALETTE_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
@@ -448,13 +447,12 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame > 103) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource(RESOURCE_TAN_PALETTE);
     }
     if (frame == 64) {
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                           SHEET_PALETTE_BYTES);
     }
 
     // The whirl of flame, and smoke.
@@ -711,11 +709,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
                              work->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   // The motes, one shade dimmer.
   for (i = 0; i != MOTE_SET_BYTES; i++) {
@@ -729,7 +726,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       sprites[i] = pixel;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
+  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET,
                              buffer + VOID_BEAM_RUNE_PICTURES, 1, 0);
   Iwram_ClearWordsEntry(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
 
@@ -746,7 +743,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     }
   }
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+                  Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                   SHEET_PALETTE_BYTES);
 
   // The beam's body: a 32-line gradient.

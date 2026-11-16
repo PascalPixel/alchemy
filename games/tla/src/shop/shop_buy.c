@@ -40,10 +40,10 @@
 /// rebuilt. Holding Select shows the item's details. Repeats until B.
 s32 Shop_SelectBuy(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct RenderInput *priceWindow = 0;
-  struct RenderInput *stockWindow;
-  struct RenderInput *messageWindow;
-  struct RenderInput *partyWindow;
+  struct Window *priceWindow = 0;
+  struct Window *stockWindow;
+  struct Window *messageWindow;
+  struct Window *partyWindow;
   s32 selected = 0;
   s32 quantity;
   s32 stockCount;
@@ -51,7 +51,7 @@ s32 Shop_SelectBuy(void) {
   struct ItemDefinition *heldDefinition;
   struct ItemDefinition *selectedDefinition;
   s32 repromptRecipient;
-  struct RenderInput *itemWindow;
+  struct Window *itemWindow;
   s32 redraw;
   s32 selectionIndex;
   s32 itemId;
@@ -109,7 +109,7 @@ next_page:
     }
     if (gInput.held & KEY_SELECT) {
       s32 held;
-      struct RenderInput *window;
+      struct Window *window;
 #if !TLA_PATCH_1
       s32 heldItem;
 #endif
@@ -269,7 +269,7 @@ close:
 
 /// Draws a page of seven stock items with their prices, the page arrows, and
 /// the chosen item lifted and pulsing.
-void Shop_DrawStock(struct RenderInput *window, s32 selected) {
+void Shop_DrawStock(struct Window *window, s32 selected) {
   struct ShopWork *shop;
   s16 *itemIds;
   s16 *stockCursor;
@@ -333,7 +333,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
 
 /// Draws the party's coins in the coins window, in the edition's layout.
 void Shop_DrawMoney(void) {
-  struct RenderInput *window =
+  struct Window *window =
       ((struct ShopWork *)Ram_HeapSlots->menuWork)->moneyWindow;
 #if LANGUAGE == LANGUAGE_JAPANESE
   s32 message;
@@ -378,7 +378,7 @@ void Shop_DrawMoney(void) {
 /// instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or that it is
 /// not broken (SHOP_PRICE_KIND_REPAIR); at the forge (SHOP_PRICE_KIND_FORGE)
 /// `price` is the item's condition, drawn as its word.
-void Shop_DrawItemPrice(struct RenderInput *window, s32 itemId, s32 price,
+void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
   s32 labelMessage;
 
@@ -426,7 +426,7 @@ void WindowSprite_ClearListFar(void *window);
 /// Shows `message`, an item's description, in the help window; a NULL window
 /// is ignored. The Japanese release clears the window and waits a frame; from
 /// patch 1 it redraws the window's saved rectangle.
-void Shop_DrawMessage(struct RenderInput *window, s32 message) {
+void Shop_DrawMessage(struct Window *window, s32 message) {
   if (window != 0) {
 #if TLA_PATCH_1
     WindowSprite_RedrawSavedRectFar(window);
@@ -445,7 +445,7 @@ void Shop_DrawMessage(struct RenderInput *window, s32 message) {
 /// Shows the chosen party member running in place and the others standing,
 /// four a page with its arrows, and draws at four fifths of their size the
 /// party members who cannot equip `itemId`.
-void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
+void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 page = selected / SHOP_PARTY_PAGE_MEMBERS;
   s32 first = page * SHOP_PARTY_PAGE_MEMBERS;
@@ -491,8 +491,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
 /// slot back and recomputes again, then draws both values with an arrow and
 /// the name of the item it would replace. Called by Shop_SelectBuy for
 /// weapons and armor.
-void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
-                              s32 itemId) {
+void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
@@ -568,7 +567,7 @@ void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
 
 /// Shows how many of the item the party member already carries and the party
 /// member's inventory icons.
-void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
+void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   struct Unit *unit;
   s32 slot;
 
@@ -680,7 +679,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 /// above `minimum`, the items already carried, or -1 when B cancels.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   u8 *tileBuffer;
-  struct RenderInput *window;
+  struct Window *window;
   s32 changed;
   s32 resourceSlot;
   s32 count;

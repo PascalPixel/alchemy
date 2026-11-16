@@ -132,9 +132,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   {
     u8 *c = work->sheet;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_ChainTexture, c, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
     Picture_MirrorIntoQuadrants(c, SCRATCH, 64, 64);
-    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
       u8 v = *c;
 
@@ -147,7 +147,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     u32 *w;
     u32 mask;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+    Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                                w = (u32 *)(work->sheet + 0x4000), 0, 0);
     mask = 0x7f7f7f7f;
     for (i = 0; i != 1024; i++) {
@@ -215,8 +215,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       *dst = b << 10 | (i + 2) << 5 | r;
     }
   }
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_MossCaveBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_MOSS_CAVE_BACKDROP,
+                           0);
   frame = 0;
   if (!(gInput.repeat & (KEY_A | KEY_B))) {
     do {
@@ -531,11 +531,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             }
             *dst++ = v;
           }
-          Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB,
-                                     work->sheet, 1, 0);
+          Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1,
+                                     0);
           Iwram_CopyWordsEntry(
               (void *)BG_PLTT,
-              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+              Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
               SHEET_PALETTE_BYTES);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(1));
         }
@@ -771,9 +771,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   BattleEffect_SpawnObjects(11, SPRITE_HAURES, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 0);
   {
     Iwram_ClearWords(buffer, 0x6c00);
     for (i = 0; i != 6; i++) {
@@ -789,9 +789,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

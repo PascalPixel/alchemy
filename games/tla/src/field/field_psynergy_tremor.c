@@ -83,7 +83,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     goto release;
 
   FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ShakeTiles),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SHAKE_TILES),
                       work->picture);
   tiles = VramCache_FindFreeEntry();
   tile = VramCache_Load(tiles, 64, work->picture);

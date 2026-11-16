@@ -4,6 +4,25 @@
 #include "types.h"
 #include "static_assert.h"
 
+enum {
+  SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
+  SAVE_FLASH_IDENTIFY_ATTEMPTS = 8, ///< tries, a frame apart
+  /// Flash sectors used; as a sector number, "none" in the save functions.
+  SAVE_SECTOR_COUNT = 15,
+  SAVE_SECTORS_PER_PART = 3, ///< a part fills three sectors in a row
+  SAVE_SECTOR_SIZE = 0x1000,
+  SAVE_PART_NONE = 16, ///< the part id of a free or invalidated sector
+  SAVE_FILE_COUNT = 3, ///< the save files, parts 0 to 2
+  /// The part after the files, whose summary is the save work's extra one.
+  SAVE_PART_EXTRA = 3,
+  /// The highest counter a write keeps; a copy written past it is
+  /// rewritten as 1.
+  SAVE_COUNTER_LIMIT = 65000,
+  /// Payload bytes summed into the checksum: a part's three sectors less its
+  /// header.
+  SAVE_CHECKSUM_BYTES = 0x2ff0
+};
+
 /// A save file's summary for the file screen: the leader's name, level and
 /// class, the area, play time, coins, Djinn and party.
 struct SaveSummary {
@@ -32,15 +51,19 @@ struct SaveSummary {
 /// The save work: which of the 15 flash sectors hold a part, their part
 /// ids and counters, one part's three sectors and the summaries.
 struct SaveWorkspace {
-  u8 occupied[15]; ///< 1 for a sector holding the current copy of a part
-  u8 partId[15];   ///< each sector's part
-  u16 counter[15]; ///< each sector's counter
-  u8 slot[0x3000]; ///< one part's sectors, read from or written to flash
-  struct SaveSummary summary[3]; ///< each file's, from parts 0 to 2
-  struct SaveSummary extra;      ///< part 3's summary
-  void (*progress)(s32 step);    ///< called between sector writes, if set
-  u16 sectorCount;               ///< 0 when a write starts
-  u16 sectorTotal;               ///< 3 or 6 sectors to write
+  u8 occupied[SAVE_SECTOR_COUNT]; ///< 1 for a sector holding the current copy
+                                  ///< of a part
+  u8 partId[SAVE_SECTOR_COUNT];   ///< each sector's part
+  u16 counter[SAVE_SECTOR_COUNT]; ///< each sector's counter
+  u8 slot[SAVE_SECTORS_PER_PART *
+          SAVE_SECTOR_SIZE]; ///< one part's sectors, read from or written to
+                             ///< flash
+  struct SaveSummary
+      summary[SAVE_FILE_COUNT]; ///< each file's, from parts 0 to 2
+  struct SaveSummary extra;     ///< part 3's summary
+  void (*progress)(s32 step);   ///< called between sector writes, if set
+  u16 sectorCount;              ///< 0 when a write starts
+  u16 sectorTotal;              ///< 3 or 6 sectors to write
 };
 
 /// The header of a save sector in flash: its signature, the part it holds,

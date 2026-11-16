@@ -96,19 +96,16 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (variant 5's four half pictures all there).
   if (variant == 0) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapCellBuffer, 1, 1);
   } else if (variant == 1) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
   } else if (variant == 4) {
     s32 i;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
     // Turn the first 64 BG colours: red to blue, blue to green, green to red.
     for (i = 0; i != 64; i++) {
       s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
@@ -118,16 +115,14 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
   } else if (variant == 3) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
   } else if (variant == 5) {
-    Resource_LoadAndDecompress((s32)&ResourceId_ArcFragmentsSheet,
-                               Ram_MapCellBuffer, 1, 1);
-  } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->sheet, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
+    Resource_LoadAndDecompress(RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapCellBuffer,
                                1, 1);
+  } else {
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 

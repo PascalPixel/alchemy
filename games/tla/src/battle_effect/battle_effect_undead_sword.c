@@ -54,10 +54,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   {
     REG_BG2PA = Q_8_8(1);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
                              work->sheet + BLAST_SHEET_OFFSET, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -192,16 +191,15 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   pillarY = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              work->sheet + PLUME_EDGE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
-      Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
+      Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET),
       SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES, 1,
                              0);
   for (i = 0; i != 1024; i++)
@@ -427,16 +425,15 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = (s16)camera->yaw;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
-                             1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CRACKED_TEXTURE_SHEET, work->sheet, 1, 1);
   Picture_MirrorIntoQuadrants(work->sheet, work->sheet + WATER_SHEET_MIRRORED,
                               32, 32);
-  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+  Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              work->sheet + WATER_SHEET_SWIRL, 0, 0);
   if (mode == WATER_SHEET_WATERY_GRAVE) {
     u8 *pixel;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                                work->sheet + WATER_SHEET_SMOKE_PUFFS, 1, 0);
     for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS; i != 0x1b00;
          i++, pixel++) {
@@ -447,7 +444,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         }
       }
     }
-    LOAD_BG_PALETTE(ResourceId_CrystalSheet);
+    LOAD_BG_PALETTE(RESOURCE_CRYSTAL_SHEET);
   }
 
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
@@ -819,10 +816,10 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   if (mode == WIND_FUNNEL_AROMA && args->targetCount > 4) {
     frames = args->targetCount * 6 + 12;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_StreakTexture, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(
-      (s32)&ResourceId_JupiterDjinnSmallSheet,
+      RESOURCE_JUPITER_DJINN_SMALL_SHEET,
       work->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   Render_BuildQuadStrip(Ram_MapCellBuffer + 0x318, 4, 32, 32);
 
@@ -864,9 +861,9 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     }
     if (frame > 19) {
       if (mode == WIND_FUNNEL_WAFT) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
       } else if (mode == WIND_FUNNEL_AROMA) {
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
+        BattleEffect_StepPaletteToResource(RESOURCE_TAN_PALETTE);
       }
     }
 
@@ -1051,16 +1048,15 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   centerX = pos.x / 2;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 0);
   cells = gMapGridCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet,
+  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_BITMAP_SHEET,
                              cells + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture, cells + 0x1000, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, cells + 0x1000, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // DEAD: frame 0 sets top to -104 before anything reads it; the ROM keeps

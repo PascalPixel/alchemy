@@ -187,8 +187,8 @@ void FieldPsynergy_Ring(void) {
     wait(1);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
     Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_256_COLORS, &REG_BG0CNT);
-    Decompress_TaggedLz(
-        Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
+                        work);
     entry = VramCache_FindFreeEntry();
     tile = VramCache_Load(entry, 0x100, work);
     for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
@@ -275,11 +275,9 @@ void FieldPsynergy_Ring(void) {
       timer++;
     } while (phase != FIELD_PSYNERGY_FINISHED);
 
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
-                        picture);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_ARCS), picture);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingWaves),
-                        work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_WAVES), work);
     {
       s32 heading;
       s32 moteEntry = VramCache_FindFreeEntry();
@@ -376,8 +374,7 @@ void FieldPsynergy_EndRing(void) {
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
   slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x100, work);
 

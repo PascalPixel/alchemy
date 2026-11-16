@@ -111,7 +111,7 @@ void TileMap_ConvertBuffer(void) {
 
 /// A layout's resource, counted in gMaps from the empty map.
 #define MAPGRID_RESOURCE(offset)                                               \
-  Resource_GetTableEntry((offset) + (u32)&ResourceId_EmptyMap)
+  Resource_GetTableEntry((offset) + RESOURCE_EMPTY_MAP)
 
 /// Decodes the palette resource of a map's header row (its second halfword)
 /// and copies its 224 colors to destination, keeping the current backdrop

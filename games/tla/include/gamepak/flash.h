@@ -80,6 +80,8 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
 s32 Flash_VerifySector(u16 sector, u8 *source);
 
+/// The byte reader copied to RAM (CopyFlashReadRoutineToRam), good only until
+/// the caller that holds the copy returns.
 extern u8 (*gFlashReadRoutine)(u8 *source);
 
 // The flash library's state, after pret's agb_flash: IdentifyFlash installs the

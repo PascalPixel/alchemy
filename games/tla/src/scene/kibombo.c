@@ -23,6 +23,7 @@
 #include "graphics/resource.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/ground_mask.h"
 #include "field/field_psynergy_work.h"
 #include "game/game.h"
@@ -2259,7 +2260,8 @@ void Kibombo_LeaveRoom(void) {
 void Kibombo_LeaveRoomFading(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Kibombo_LeaveRoom();
 }
 
@@ -2577,7 +2579,8 @@ void Kibombo_PresentOrbToGabomba(void) {
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 40);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(10);
@@ -2631,7 +2634,8 @@ void Kibombo_GabombaNotPleased(void) {
   GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
   Sound_Play(MUS_KIBOMBO);
   Event_Wait(80);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(11);
@@ -2690,7 +2694,8 @@ void Kibombo_OpenCeremonyScene(void) {
   }
   wait(1);
   work = Ram_HeapSlots->fieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2938,7 +2943,8 @@ void Kibombo_GabombaRespondsToGift(void) {
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 320);
   Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_GABOMBA_RESPONDED);
@@ -3039,7 +3045,8 @@ void Kibombo_CeremonyEnds(void) {
   Actor_SetPosition(ACTOR_KRADEN_AT_HOME, 0, 0);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 16;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_GABOMBA_CEREMONY_ENDED);
   Event_End();
 }
@@ -3356,7 +3363,8 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Kibombo_InitializeHouses(void) {
   struct Actor *object;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Kibombo_HideHousesPair();
   if (gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {

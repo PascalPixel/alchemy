@@ -594,7 +594,8 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
     Event_ClearFlag(FLAG_ALEX_WAITING);
   if (Event_GetFlag(FLAG_ALEX_WAITING)) {

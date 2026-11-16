@@ -15,6 +15,7 @@
 
 #include "shared/tables.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
 #include "field/field.h"
@@ -109,17 +110,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Reveal: shows the hidden passage and its block, and lets the party jump
+/// the gap there; once the lighthouse is activated the block hovers.
 void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
-  FieldMapGrid_SetCellBehavior(0x1300000, 0xa00000, 0, 254);
+  FieldMapGrid_SetCellBehavior(toFIXED(304), toFIXED(160), 0,
+                               CELL_BEHAVIOR_JUMP_FORWARD);
   Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
-    ((u8)FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 0,
+                                      CELL_BEHAVIOR_JUMP_FORWARD));
   }
 }
 
+/// As Reveal fades, and on entering the room: covers the passage again and
+/// puts its block away.
 void JupiterLighthouse_HideThePassage(void) {
   MapGrid_CopyCellsLayered(16, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(16, 10, 1, 1, 19, 10);
@@ -127,10 +134,13 @@ void JupiterLighthouse_HideThePassage(void) {
   MapGrid_CopyCellAttributes(30, 10, 1, 1, 31, 10);
 }
 
+/// As Move is cast on the bridge block: puts its sprite at priority 2.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
   Actor_SetSpritePriority(id, 2);
 }
 
+/// After Move: once the bridge block sits on its cell over the gap, it rises
+/// 32 pixels and hovers there for good.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *object;
   s32 i;
@@ -147,24 +157,34 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   }
 }
 
+/// Takes the party down the first Cyclone teleporter, to the southwest of
+/// the Erinyes Tunic's room.
 void JupiterLighthouse_LeaveByFirstCyclone(void) {
-  Import_EventSetExitRequest(12);
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST);
 }
 
+/// Takes the party down the second Cyclone teleporter, to the southeast of
+/// the Erinyes Tunic's room.
 void JupiterLighthouse_LeaveBySecondCyclone(void) {
-  Import_EventSetExitRequest(13);
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST);
 }
 
+/// Draws the red door open and lets the party through it.
 void JupiterLighthouse_OpenRedDoor(void) {
   MapGrid_CopyCellsLayered(73, 18, 1, 4, 74, 18);
   MapGrid_CopyCellAttributes(10, 9, 1, 1, 10, 20);
 }
 
+/// Draws the blue door open and lets the party through it.
 void JupiterLighthouse_OpenBlueDoor(void) {
   MapGrid_CopyCellsLayered(103, 18, 1, 4, 104, 18);
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
 
+/// The Red Key used on its door: the door opens with a thud and the key is
+/// used up.
 void JupiterLighthouse_UseRedKey(s32 item) {
   Event_SetFlag(FLAG_RED_DOOR_OPENED);
   Event_PlaySound(SE_HEAVY_IMPACT);
@@ -172,6 +192,8 @@ void JupiterLighthouse_UseRedKey(s32 item) {
   PartyInventory_Remove(item);
 }
 
+/// The Blue Key used on its door: the door opens with a thud and the key is
+/// used up.
 void JupiterLighthouse_UseBlueKey(s32 item) {
   Event_SetFlag(FLAG_BLUE_DOOR_OPENED);
   Event_PlaySound(SE_HEAVY_IMPACT);
@@ -179,6 +201,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
   PartyInventory_Remove(item);
 }
 
+/// Examining a locked door: says it is locked.
 void JupiterLighthouse_TryLockedDoor(void) {
   gFieldWork->fieldMenu = 1;
   Message_ShowCentered(MsgFieldDoorLocked, 1);
@@ -188,9 +211,10 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// A particle's step, Jupiter Lighthouse room 2's
 /// JupiterLighthouse_CircleTheMote with other numbers: it circles at its angle
-/// (action) around x 232 and rises with its phase (unk66) from 120 pixels down,
-/// taking mode 7 at phase 1 and mode 2 at phase 38 and starting over once above
-/// the ground; drawn in front while the sine is negative and behind otherwise.
+/// (timer) around x 232 and rises with its phase (userValue) from 120 pixels
+/// down, taking mode 7 at phase 1 and mode 2 at phase 38 and starting over once
+/// above the ground; drawn in front while the sine is negative and behind
+/// otherwise.
 void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 angle = object->timer;
   s16 height = object->userValue;
@@ -203,7 +227,7 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   if ((s16)object->userValue == 38)
     Actor_SelectAnimation(object, 2);
   if (object->y.fixed > 0)
-    object->userValue = 0xffff;
+    object->userValue = -1;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
   else
@@ -212,6 +236,8 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   object->userValue++;
 }
 
+/// Sends up seven motes of light, each at its own radius, speed and angle and
+/// five steps of rise apart, to circle the room's middle.
 void JupiterLighthouse_SpawnCirclingMotes(void) {
   struct Actor *object;
   s32 i;
@@ -239,7 +265,8 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 i;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(FLAG_RED_DOOR_OPENED))
     JupiterLighthouse_OpenRedDoor();
@@ -247,9 +274,11 @@ s32 Scene_Initialize(void) {
     JupiterLighthouse_OpenBlueDoor();
   JupiterLighthouse_SpawnCirclingMotes();
   flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
-  if (flag == 0 && gMainRoutineWork.entrance == 11) {
+  if (flag == 0 &&
+      gMainRoutineWork.entrance ==
+          JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_BEAM) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    leader->priorityFlags &= ~64;
+    leader->priorityFlags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
@@ -272,13 +301,14 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     FieldEvent_Wait(40);
     leader->gravity = toFIXED(1);
-    leader->priorityFlags |= 64;
+    leader->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
     Event_End();
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.entrance == 12)
+      gMainRoutineWork.entrance ==
+          JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST)
     Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   return 0;
 }
@@ -288,7 +318,8 @@ void JupiterLighthouse_LoadPalettes(s32 value);
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_BLOCK + 1);
@@ -375,10 +406,6 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-/// Unused here: places the aerie's two angels and the lid between them, each
-/// angel the archers have energized raised with its half of the lid, and all
-/// three lifted clear once both are. The aerie's beacon floor keeps the same
-/// routine.
 /// The aerie beacon's actors, which the unused copy below of its
 /// JupiterLighthouse_EnergizeAngels places (jupiter_lighthouse_aerie_beacon.c).
 enum {
@@ -390,6 +417,10 @@ enum {
   ACTOR_LID_B
 };
 
+/// Unused here: places the aerie's two angels and the lid between them, each
+/// angel the archers have energized raised with its half of the lid, and all
+/// three lifted clear once both are. The aerie's beacon floor keeps the same
+/// routine.
 UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
   struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
@@ -479,8 +510,8 @@ void LightSprites_Draw(void) {
         oy &= 0xff;
         word = (u32 *)oam;
         *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
+        *word++ = oy | (ox << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
@@ -500,8 +531,8 @@ void LightSprites_Draw(void) {
         oy &= 0xff;
         word = (u32 *)oam;
         *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
+        *word++ = oy | (ox << 16) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
+        *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
@@ -606,8 +637,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXAMINE, 20, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
     {TRIGGER_EXAMINE, 21, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
-    {USE_ITEM(243), 20, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_UseRedKey)}, // the Red Key
-    {USE_ITEM(244), 21, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_UseBlueKey)}, // the Blue Key
+    {USE_ITEM(ITEM_RED_KEY), 20, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_UseRedKey)},
+    {USE_ITEM(ITEM_BLUE_KEY), 21, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_UseBlueKey)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RevealThePassage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_HideThePassage)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
@@ -692,6 +723,9 @@ extern u32 gFieldEffect_LongScript[];
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
+/// Watches the leader's steps over the cracked tiles: the first step on one
+/// cracks it, a second step after leaving it drops the party through, saving
+/// the cell in the flag bytes for the floor below. Returns 1 on a fall.
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -720,25 +754,27 @@ s32 CrackedTiles_Step(void) {
   return 0;
 }
 
-void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
+/// On landing below a cracked tile, puts the leader on the cell the flag bytes
+/// saved, offset by (dx, dz), and starts the screen transition.
+void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
   s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
 
   if (x != 0 || z != 0) {
-    struct Actor *shadow;
+    struct Actor *camera;
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
     object->x.fixed = FIELD_CELL_CENTER(x + dx);
     object->z.fixed = FIELD_CELL_CENTER(z + dz);
-    shadow = *(struct Actor **)(event + 460);
-    shadow->x.fixed = object->x.fixed;
-    shadow->z.fixed = object->z.fixed;
+    camera = event->camera;
+    camera->x.fixed = object->x.fixed;
+    camera->z.fixed = object->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    gFieldWork->transition = value;
+    gFieldWork->transition = transition;
   }
 }

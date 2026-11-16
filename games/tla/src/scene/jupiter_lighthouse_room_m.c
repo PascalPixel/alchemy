@@ -200,7 +200,7 @@ void JupiterLighthouse_RideWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->movementMode == 10) {
+    if (party->movementMode == LEADER_MOVEMENT_HOVER) {
       struct Actor *object = Actor_Get(party->leaderActorId);
 
       party->movementMode = LEADER_MOVEMENT_NONE;
@@ -1564,7 +1564,8 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   HangingVine_Place(8, 1);
   HangingVine_Place(9, 1);
   HangingVine_Place(10, 1);

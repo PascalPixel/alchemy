@@ -93,15 +93,21 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 s32 CrackedTiles_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
+/// As Hover lifts the party: while the leader hovers, walls off the cell at
+/// (544, 272).
 void JupiterLighthouse_StartHovering(void) {
-  if (gMainRoutineWork.movementMode == 10)
-    FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0, 255);
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_HOVER)
+    FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
+                                 CELL_BEHAVIOR_WALL);
 }
 
+/// As Hover ends: gives the cell at (544, 272) back its event 6.
 void JupiterLighthouse_StopHovering(void) {
-  MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 6);
+  MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0, 6);
 }
 
+/// Stepping on event 30 or 31 on the floor: unless a whirlwind is already
+/// carrying the party, the stone face there blows one across the hall.
 void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   struct Actor *object;
 
@@ -121,6 +127,9 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   }
 }
 
+/// On the upper ledges, events 50 to 53: unless a whirlwind is already
+/// carrying the party, the stone face there blows a slower one, at a pixel a
+/// frame, from 32 pixels up.
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *object;
   struct Actor *motion;
@@ -152,12 +161,17 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   }
 }
 
+/// A step on a cracked tile of the floor: a fall drops the party to the floor
+/// below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
+/// A step on a cracked tile of the upper ledges, on the floor's level: two
+/// cells draw the leader behind the ledge, and a fall drops the party below
+/// (exit 14).
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   struct Actor *leader;
   s32 x;
@@ -176,6 +190,8 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   }
 }
 
+/// A step on event 34: on the floor, a lower cracked tile; up on the ledges,
+/// the four cells that raise the upper whirlwinds.
 void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   struct Actor *leader;
   s32 x;
@@ -209,20 +225,27 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldActor_SetSpritePriority(64, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     CrackedTiles_Find(33, 0x280, 0x380, 48, 1);
-    CrackedTile_PlaceLanding(0, 0, 0x204);
+    CrackedTile_PlaceLanding(
+        0, 0,
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
     CrackedTiles_Find(43, 0x280, 0x380, 49, 1);
-    CrackedTile_PlaceLanding(-21, 32, 0x204);
+    CrackedTile_PlaceLanding(
+        -21, 32,
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else {
     CrackedTiles_Find(43, 0x280, 0x380, 0, 0);
-    CrackedTile_PlaceLanding(-2, -27, 0x204);
+    CrackedTile_PlaceLanding(
+        -2, -27,
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   }
   return 0;
 }

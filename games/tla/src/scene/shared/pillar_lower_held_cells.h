@@ -17,14 +17,16 @@ void Pillar_LowerHeldCells(u16 *list) {
   work->movedBlock = NULL;
   while (*list != ACTOR_LIST_END) {
     if (held == Actor_GetById(*list)) {
-      u8 *layer = &held->layer;
-      u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
+      u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[held->layer].cells;
       struct ShapeCell *slot =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
-      s32 kind = MapGrid_GetTerrainKind(*layer, held->x.fixed, held->z.fixed);
-      s32 height = Map_GetTerrainHeight(*layer, held->x.fixed, held->z.fixed);
+      s32 kind =
+          MapGrid_GetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
       s32 index = Actor_GetCellIndex(held);
-      s32 result = MapCollision_FindOrAddTag(*layer, kind, (height >> 19) - 4);
+      s32 result =
+          MapCollision_FindOrAddTag(held->layer, kind, (height >> 19) - 4);
 
       slot += index;
       // The index goes on as the cell offset, four bytes a cell.

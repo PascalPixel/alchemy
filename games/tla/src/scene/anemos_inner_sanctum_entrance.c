@@ -76,8 +76,8 @@ enum AnemosInnerSanctumEntranceActorId {
   ACTOR_STATUE_F,
   ///@}
   ACTOR_BLUE_ORB,
-  /// The room's fourteen torches.
-  ACTOR_FIRST_TORCH
+  /// The fourteen coiled dragon statues, hidden by their script.
+  ACTOR_FIRST_DRAGON_STATUE
 };
 
 #define EFFECT_SPAWN FieldEffect_Spawn
@@ -96,7 +96,7 @@ void AnemosInnerSanctumEntrance_StartLightSprites(void);
 void AnemosInnerSanctumEntrance_SetLightPriority(u16 value);
 void AnemosInnerSanctumEntrance_OpenTheWay(void);
 
-extern s32 gAnemosInnerSanctumEntrance_TorchScript[];
+extern s32 gAnemosInnerSanctumEntrance_DragonStatueScript[];
 
 struct Actor;
 
@@ -112,8 +112,8 @@ s16 gAnemosInnerSanctumEntrance_LightPicture BSS_DATA;
 
 #include "text/msg_ids.h"
 
-/// The call gAnemosInnerSanctumEntrance_TorchScript makes: clears the actor's
-/// sprite flags, hiding it.
+/// The call gAnemosInnerSanctumEntrance_DragonStatueScript makes: clears the
+/// actor's sprite flags, hiding it.
 s32 AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags(
     struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -582,9 +582,9 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The torches' script, from ACTOR_FIRST_TORCH on: hides each one's sprite,
-/// then stops.
-LATE_DATA s32 gAnemosInnerSanctumEntrance_TorchScript[] = {
+/// The coiled dragon statues' script, from ACTOR_FIRST_DRAGON_STATUE on: hides
+/// each one's sprite, then stops.
+LATE_DATA s32 gAnemosInnerSanctumEntrance_DragonStatueScript[] = {
     SC_CALL(AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags),
     SC_END,
 };
@@ -627,48 +627,48 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
                     FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
     ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 152, 0, 168,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 152, 0, 216,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 248, 0, 168,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 248, 0, 216,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 696, 0, 240,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 744, 0, 240,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 424, 0, 232,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 424, 0, 288,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 504, 0, 232,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 504, 0, 288,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 424, 0, 712,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 424, 0, 768,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 504, 0, 712,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
-                    (s32)gAnemosInnerSanctumEntrance_TorchScript, 504, 0, 768,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 152, 0,
+                    168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 152, 0,
+                    216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 248, 0,
+                    168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 248, 0,
+                    216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 696, 0,
+                    240, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 744, 0,
+                    240, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 424, 0,
+                    232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 424, 0,
+                    288, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 504, 0,
+                    232, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 504, 0,
+                    288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 424, 0,
+                    712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 424, 0,
+                    768, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 504, 0,
+                    712, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
+                    (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 504, 0,
+                    768, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 

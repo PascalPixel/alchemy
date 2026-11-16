@@ -91,10 +91,11 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       /* FAKEMATCH(pin): x held in r0 from its shift. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
-      // Matrix_CallInThumb jumps to the target it finds in ip; the asm
-      // keeps ip set for the call, which C cannot say.
+      CAMELOT_ASM("ip holds the target Matrix_CallInThumb jumps to, a "
+                  "linkage no procedure-call standard produces")
       register void *entry __asm__("ip") = table->arcTan2.target;
 
+      CAMELOT_ASM("the empty asm keeps ip set for the call, which C cannot say")
       __asm__("" : : "r"(entry));
       angle = (u16)Matrix_CallInThumb(x, y);
     }

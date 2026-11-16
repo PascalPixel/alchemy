@@ -72,7 +72,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != (gFire_Counts[args->variant] >> 1) + 132; frame++) {
     if (frame > 16 && frame < 80)
-      work->cameraDelta = 0x100;
+      work->cameraDelta = TRIG_TURN / 256;
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)

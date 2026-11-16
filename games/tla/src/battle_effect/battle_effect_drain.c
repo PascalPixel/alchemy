@@ -292,8 +292,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
               mote->velocityX += dx;
               mote->velocityY += dy;
               mote->velocityZ += dz;
-              if ((dx > -0x1000 && dx < 0x1000) &&
-                  (dz > -0x1000 && dz < 0x1000))
+              if ((dx > -toFIXED(1) / 16 && dx < toFIXED(1) / 16) &&
+                  (dz > -toFIXED(1) / 16 && dz < toFIXED(1) / 16))
                 mote->variant = -1;
             }
           }

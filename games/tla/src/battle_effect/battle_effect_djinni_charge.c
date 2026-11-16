@@ -21,6 +21,9 @@ struct StripQuad;
 /// Where GlowOrbSheet (Core) or FlashBurstSheet (Cannon) is decoded in the
 /// effect's pictures.
 #define DJINNI_CHARGE_BURST_PICTURES 0x2000
+/// The ball's projected corners and its mesh, in the map cell buffer.
+#define DJINNI_CHARGE_VERTICES (Ram_MapCellBuffer + 0x2000)
+#define DJINNI_CHARGE_MESH (Ram_MapCellBuffer + 0x4000)
 
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 /// the target. For Core it pulls back, then drives in and strikes four times
@@ -47,8 +50,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   s32 count;
   s32 i;
 
-  mesh = Ram_MapCellBuffer + 0x4000;
-  projected = Ram_MapCellBuffer + 0x2000;
+  mesh = DJINNI_CHARGE_MESH;
+  projected = DJINNI_CHARGE_VERTICES;
   cells = gMapGridCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -120,10 +123,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         // DEAD: both arms alike; the ROM keeps the test.
         if (mode == DJINNI_CHARGE_CORE) {
           work->particles[DJINNI_CHARGE_STEP].velocityY =
-              target->y - focus[1] + 0x1e0000;
+              target->y - focus[1] + toFIXED(30);
         } else {
           work->particles[DJINNI_CHARGE_STEP].velocityY =
-              target->y - focus[1] + 0x1e0000;
+              target->y - focus[1] + toFIXED(30);
         }
         work->particles[DJINNI_CHARGE_STEP].velocityZ = target->z - focus[2];
         for (i = 0; i != DJINNI_CHARGE_START; i++) {
@@ -352,7 +355,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           s32 angle;
 
           Mesh_BuildGrid(mesh, 8, 8, 8, 8);
-          for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
+          for (row = 0, angle = 0; row != 8; angle += TRIG_TURN / 14, row++) {
             s32 y = FIXEDtoINT(-Trig_Cos(angle) * 48);
             s32 radius = FIXEDtoINT(Trig_Sin(angle) * 48);
             struct ModelVertex *vertex = (struct ModelVertex *)cells;
@@ -377,9 +380,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         if (args->side == EFFECT_SIDE_ENEMIES) {
           Matrix_RotateZ(20576);
         } else {
-          Matrix_RotateZ(44960);
+          Matrix_RotateZ(TRIG_TURN - 20576);
         }
-        scale = 0xa000;
+        scale = FIXED_ONE * 5 / 8;
         if (frame > 31) {
           scale = (frame << 10) + FIXED_ONE / 8;
         }

@@ -194,6 +194,8 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The bytes of a 64x64 sprite's tiles in 256 colours, and in 16.
 #define OBJ_64X64_8BPP_BYTES (64 * 64)
 #define OBJ_64X64_4BPP_BYTES (64 * 64 / 2)
+/// The bytes of a 16x16 sprite's tiles in 16 colours.
+#define OBJ_16X16_4BPP_BYTES (16 * 16 / 2)
 /// The byte of the first pixel of canvas row y, y not negative.
 #define CANVAS_ROW_OFFSET(y) ((((y) & 7) << 3) + (((y) >> 3) << 10))
 /// The brightest canvas level: the additive blitters and
@@ -687,7 +689,9 @@ enum TumblingQuadsMode {
 /// effect that plays it.
 enum GaspMode {
   GASP_MODE_GASP,
-  GASP_MODE_REFLUX = 2,
+  /// Unused: no wrapper passes it; a Mercury Djinni and a burst of light.
+  GASP_MODE_UNUSED,
+  GASP_MODE_REFLUX,
   GASP_MODE_DJINN_COUNTER,
   GASP_MODE_MOLD,
   GASP_MODE_SHINE,

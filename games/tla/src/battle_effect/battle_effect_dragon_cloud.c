@@ -23,13 +23,18 @@
 #define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
 #define DRAGON_CLOUD_EMBERS 40      ///< embers, from DRAGON_CLOUD_FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16     ///< flashes, after the embers
+/// The trail's copies of the flame's path, the older ten drawn darker.
+#define DRAGON_CLOUD_TRAIL_LENGTH 20
+/// Variant 1's sparks come in three batches: at the target, thrown up from
+/// the user's side, and shed by the flame.
+#define DRAGON_CLOUD_SPARK_BATCH 128
 
 /// A flame leaves the user along a stored path with a fading trail behind it,
 /// strikes the first target and bursts into embers and flashes.
 ///
 /// Abilities: Dragon Cloud, Epicenter.
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
-  struct Point2D trail[20];
+  struct Point2D trail[DRAGON_CLOUD_TRAIL_LENGTH];
   struct ScreenPoint target;
   struct ScreenPoint position;
   DrawRectangle draw[2];
@@ -59,7 +64,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // The pillar sheet, and darker copies of the trail picture, for the trail's
   // tail.
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, work->sheet, 1, 1);
-  for (i = 1; i != 20; i++) {
+  for (i = 1; i != DRAGON_CLOUD_TRAIL_LENGTH; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
       s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
 
@@ -104,7 +109,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // draws them).
   for (i = 0; i != SPARK_COUNT; i++)
     SPARKS[i].variant = -1;
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != DRAGON_CLOUD_SPARK_BATCH; i++) {
     step = &SPARKS[i];
     SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
     step->velocityX = ((Random16() & 63) - 32) << 14;
@@ -143,10 +148,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // For 64 frames the camera turns away from the user's side.
     if (args->side == EFFECT_SIDE_ENEMIES) {
       if (frame <= 63)
-        camera->yaw -= 0x100;
+        camera->yaw -= TRIG_TURN / 256;
     } else {
       if (frame <= 63)
-        camera->yaw += 0x100;
+        camera->yaw += TRIG_TURN / 256;
     }
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
 
@@ -179,11 +184,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // Variant 1: 128 sparks thrown up from the user's side at the start.
     if (args->variant == EFFECT_VARIANT_STRONGER) {
       if (frame == 0) {
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != DRAGON_CLOUD_SPARK_BATCH; i++) {
           s32 angle;
           s32 force;
 
-          step = &SPARKS[128 + i];
+          step = &SPARKS[DRAGON_CLOUD_SPARK_BATCH + i];
           step->x = toFIXED(60);
           step->y = toFIXED(108);
           angle = (Random16() & 0x7fff) + DEGtoANG(90);
@@ -194,7 +199,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != 64; i++) {
-        step = &SPARKS[128 + i];
+        step = &SPARKS[DRAGON_CLOUD_SPARK_BATCH + i];
         if (step->variant >= 0 && frame >= i / 8) {
           s32 size = (step->variant >> 4) + 1;
 
@@ -234,7 +239,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
     // The trail: each copy takes the place of the one before, the older
     // ones darker.
-    for (j = 19; j != 0; j--) {
+    for (j = DRAGON_CLOUD_TRAIL_LENGTH - 1; j != 0; j--) {
       if (frame > j + 18 && frame <= j + 83) {
         trail[j].x = trail[j - 1].x;
         trail[j].y = trail[j - 1].y;
@@ -339,7 +344,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
       // Variant 1's 128 sparks at the target.
       if (args->variant == EFFECT_VARIANT_STRONGER) {
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != DRAGON_CLOUD_SPARK_BATCH; i++) {
           s32 size;
 
           step = &SPARKS[i];
@@ -361,9 +366,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
     // Variant 1: the sparks the head shed.
     if (args->variant == EFFECT_VARIANT_STRONGER) {
-      struct Particle *spark = &SPARKS[256];
+      struct Particle *spark = &SPARKS[DRAGON_CLOUD_SPARK_BATCH * 2];
 
-      for (i = 0; i != 128; i++, spark++) {
+      for (i = 0; i != DRAGON_CLOUD_SPARK_BATCH; i++, spark++) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 4) + 1;
 

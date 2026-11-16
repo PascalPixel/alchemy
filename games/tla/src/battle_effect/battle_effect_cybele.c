@@ -12,12 +12,6 @@
 #include "window/screens.h"
 #include "resource_ids.h"
 
-/// The menu work as Cybele reads it: its busy flag.
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
 /// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(BGCNT_PRIORITY(1));
@@ -25,7 +19,7 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 }
 
 /// Runs the impact burst at (x, y) in a formation.
-static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
+static __inline__ void Cybele_RunImpactBurst(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
 
@@ -55,6 +49,11 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 #define CYBELE_THORNS 16      ///< thorns, from CYBELE_FIRST_THORN
 #define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
 #define CYBELE_VINE_TIP_HEIGHT 8
+/// A vine picture: its tip, then its stem; the second vine's picture follows
+/// the first.
+#define CYBELE_VINE_TIP_BYTES (CYBELE_VINE_WIDTH * CYBELE_VINE_TIP_HEIGHT)
+#define CYBELE_VINE_PICTURE_BYTES                                              \
+  (CYBELE_VINE_WIDTH * (CYBELE_VINE_TIP_HEIGHT + CYBELE_VINE_STEM_HEIGHT))
 
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
 /// vines grow out of the ground, lifting the targets while sparks flash around
@@ -245,16 +244,16 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           s32 k;
 
           if (i > 5)
-            sheet = work->sheet + 0x6c0;
+            sheet = work->sheet + CYBELE_VINE_PICTURE_BYTES;
           top = (rise - vine->variant) * vine->velocityY;
-          for (wrap = top; wrap > 184; wrap -= 64)
+          for (wrap = top; wrap > 184; wrap -= CYBELE_VINE_STEM_HEIGHT)
             ;
           if (wrap <= 119)
             draw[i & 1](canvas, sheet, vine->x,
-                        vine->y - wrap - CYBELE_VINE_TIP_HEIGHT, 24,
-                        CYBELE_VINE_TIP_HEIGHT);
+                        vine->y - wrap - CYBELE_VINE_TIP_HEIGHT,
+                        CYBELE_VINE_WIDTH, CYBELE_VINE_TIP_HEIGHT);
           for (k = 0; k != 3; k++) {
-            s32 y = vine->y - wrap + k * 64;
+            s32 y = vine->y - wrap + k * CYBELE_VINE_STEM_HEIGHT;
             s32 skip = 0;
             s32 rows = CYBELE_VINE_STEM_HEIGHT;
 
@@ -266,7 +265,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               }
               if (y + rows > vine->y)
                 rows -= y + rows - vine->y;
-              draw[i & 1](canvas, sheet + skip + 192, vine->x, y, 24, rows);
+              draw[i & 1](canvas, sheet + skip + CYBELE_VINE_TIP_BYTES, vine->x,
+                          y, CYBELE_VINE_WIDTH, rows);
             }
           }
           if ((i & 1) != 0) {
@@ -424,7 +424,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             BattleObject_GetFar(args->targets[i])->object;
 
         object->y = toFIXED(96);
-        object->verticalMotionStrength = 0xab85;
+        object->verticalMotionStrength = toFIXED(67) / 100;
       }
       if (frame == i * 5 + CYBELE_LANDING_FRAME) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -526,8 +526,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   // Tear down.
-  /* FAKEMATCH(wrapper): the burst through BurstAt_. */
-  BurstAt_(2, toFIXED(128), height);
+  /* FAKEMATCH(wrapper): the burst through Cybele_RunImpactBurst. */
+  Cybele_RunImpactBurst(2, toFIXED(128), height);
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();

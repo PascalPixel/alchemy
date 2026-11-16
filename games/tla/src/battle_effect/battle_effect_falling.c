@@ -101,21 +101,21 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     line = gMapGridCellBuffer;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
-        line[i] = (0xf0 - i) | ((0x70 - i) << 8);
+        line[i] = WIN_RANGE(112 - i, 240 - i);
       else if (i <= 135)
-        line[i] = 0x888;
+        line[i] = WIN_RANGE(8, 136);
       else
-        line[i] = 0x100;
+        line[i] = WIN_RANGE(1, 0);
     }
   } else {
     line = gMapGridCellBuffer;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 95)
-        line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
+        line[i] = WIN_RANGE(i + 24, i - 8 + 160);
       else if (i <= 135)
-        line[i] = 0x78f8;
+        line[i] = WIN_RANGE(120, 248);
       else
-        line[i] = 0x100;
+        line[i] = WIN_RANGE(1, 0);
     }
   }
 
@@ -169,8 +169,10 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         if (shard->variant >= 1 && shard->variant <= 14) {
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
-              canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
-              ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
+              canvas,
+              work->sheet + PICTURE_BYTES(ICE_SHARD) +
+                  ((shard->variant / 3) << 10),
+              x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
           for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
@@ -242,6 +244,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
+/// The small and the large splash in ParticleSpritesD, decoded at the start
+/// of the effect's pictures.
+#define DOUSE_SPLASH 0x844
+#define DOUSE_BURST 0xa84
+#define DOUSE_BURST_PICTURE_WIDTH 42
 #define DOUSE_BURST_PICTURE_HEIGHT 42
 
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
@@ -250,7 +257,6 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 ///
 /// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
-  void **heapCache;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -261,9 +267,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
 
-  heapCache = (void **)Ram_HeapSlots;
-  work = heapCache[23];
-  canvas = heapCache[24];
+  work = Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
 
   // Set up the canvas, the drop pictures and the droplets.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
@@ -277,12 +282,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Drops draw at their maximum; droplets add their light.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
-  draw[0] = heapCache[26];
+  draw[0] = Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, COMPOSITE_CLIP_Y,
                       BLITTER_ADDITIVE);
-  draw[1] = heapCache[47];
+  draw[1] = Ram_HeapSlots->ramCodePaired;
 
-  for (i = 0; i != 512; i++)
+  for (i = 0; i != ARRAY_COUNT(gDropSplashes->splashes); i++)
     gDropSplashes->splashes[i].variant = -1;
 
   // Line the drops up above the screen along the slant, each the variant's
@@ -309,21 +314,21 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
     line = gMapGridCellBuffer;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
-        line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
+        line[i] = WIN_RANGE(52 - i / 2, 180 - i / 2);
       else if (i <= 135)
-        line[i] = 0x80;
+        line[i] = WIN_RANGE(0, 128);
       else
-        line[i] = 0x100;
+        line[i] = WIN_RANGE(1, 0);
     }
   } else {
     line = gMapGridCellBuffer;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
       if (i >= 8 && i <= 103)
-        line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
+        line[i] = WIN_RANGE(i / 2 + 60, i / 2 + 188);
       else if (i <= 135)
-        line[i] = 0x70f0;
+        line[i] = WIN_RANGE(112, 240);
       else
-        line[i] = 0x100;
+        line[i] = WIN_RANGE(1, 0);
     }
   }
 
@@ -384,18 +389,18 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       } else {
         // Landed: four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          draw[0](canvas, work->sheet + 0x844, x, y, DOUSE_DROP_WIDTH,
+          draw[0](canvas, work->sheet + DOUSE_SPLASH, x, y, DOUSE_DROP_WIDTH,
                   DOUSE_DROP_HEIGHT);
         else if (drop->variant <= 7)
-          draw[0](canvas, work->sheet + 0xa84, x - 9, y - 9, 42,
-                  DOUSE_BURST_PICTURE_HEIGHT);
+          draw[0](canvas, work->sheet + DOUSE_BURST, x - 9, y - 9,
+                  DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
         if (drop->variant <= 14)
           drop->variant++;
       }
     }
 
     // Each droplet shrinks as its life runs out, centred on its point.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != ARRAY_COUNT(gDropSplashes->splashes); i++) {
       splash = &gDropSplashes->splashes[i];
       if (splash->variant != -1) {
         s32 size = splash->variant + 1;

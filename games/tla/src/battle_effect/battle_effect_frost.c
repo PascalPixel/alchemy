@@ -112,7 +112,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                 mote->z -= 2;
               if (mote->y < toFIXED(48))
                 mote->y += toFIXED(5);
-              mote->x += 0x200;
+              mote->x += TRIG_TURN / 128;
             }
           } else {
             mote->z += 8;

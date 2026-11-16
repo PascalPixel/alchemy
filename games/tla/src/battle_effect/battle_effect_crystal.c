@@ -8,6 +8,10 @@
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
+/// The sixteen shaded discs, 2 to 32 pixels across, and where their offsets
+/// in the map cell buffer are kept in the effect's pictures.
+#define CRYSTAL_DISCS 16
+#define CRYSTAL_DISC_OFFSETS 10000
 
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
 #define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 0x65c0
@@ -38,10 +42,10 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  discOffsets = (u16 *)(work->sheet + 0x2710);
+  discOffsets = (u16 *)(work->sheet + CRYSTAL_DISC_OFFSETS);
   cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
-  for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
+  for (offset = 0, i = 0, size = 2; i != CRYSTAL_DISCS; size += 2, i++) {
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
@@ -96,7 +100,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         }
       }
       if (frame > 95) {
-        REG_BLDALPHA = BLEND_ALPHA(0xce - frame * 2, BLEND_WEIGHT_MAX);
+        REG_BLDALPHA = BLEND_ALPHA(206 - frame * 2, BLEND_WEIGHT_MAX);
       }
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
@@ -172,11 +176,11 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         if (frame > 15) {
           FIXED scale = (frame << 12) - FIXED_ONE;
 
-          if (scale > 0x1bd50) {
-            scale = 0x1bd50;
+          if (scale > 114000) {
+            scale = 114000;
           }
           model->shade = 0;
-          Matrix_RotateX(-0xbb8);
+          Matrix_RotateX(-3000);
           Matrix_Translate(INTtoFIXED(center[0] / 2 - 64), toFIXED(40), 0);
           Matrix_ScaleUniform(scale >> 1);
           Matrix_RotateY(frame << 9);
@@ -197,3 +201,5 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef CRYSTAL_FRAMES
 #undef CRYSTAL_SHARDS
+#undef CRYSTAL_DISCS
+#undef CRYSTAL_DISC_OFFSETS

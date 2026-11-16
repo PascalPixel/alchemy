@@ -725,7 +725,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ObjectSystemWork *objects = Ram_HeapSlots->actorSystem;
+  struct ActorSystemWork *objects = Ram_HeapSlots->actorSystem;
   s16 blend;
   s32 messageShown = 0;
   s32 zoomed = 0;

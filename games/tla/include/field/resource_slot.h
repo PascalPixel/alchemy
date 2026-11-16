@@ -11,7 +11,7 @@ struct Actor;
 struct SpriteAnimation;
 
 struct MetadataSlotState {
-  u8 unused[0x0c]; ///< no code names it
+  u8 unused[12]; ///< no code names it
   s32 scale;
   u8 unusedAfterScale[4]; ///< no code names it
   u8 width;
@@ -20,7 +20,7 @@ struct MetadataSlotState {
   s8 offsetY;
   u8 unusedAfterOffsetY[3]; ///< no code names it
   u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
+  u8 unusedAfterCount[12]; ///< no code names it
   s32 slots[4];
 };
 

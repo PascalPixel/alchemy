@@ -174,7 +174,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// updates. The battle's mode, 4, moves the actors with Actor_UpdateAllMotion;
 /// modes 3 and 4 place their sprites with the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct Actor *pool;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.
   volatile u32 zero;
@@ -673,7 +673,7 @@ void ActorSystem_PlaceSprites(void) {
   s32 *view;
   s32 viewX;
   s32 viewZ;
-  struct ObjectSystemWork *system;
+  struct ActorSystemWork *system;
   struct Actor *object;
   u32 kind;
   FIXED dx;
@@ -919,7 +919,7 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
 /// the fixed view matrix and turns the objects by an eighth of a turn less.
 void ActorSystem_ProjectSprites(void) {
   struct ActorCameraFixed *camera = Ram_HeapSlots->cameraWork;
-  struct ObjectSystemWork *system = Ram_HeapSlots->actorSystem;
+  struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
   struct ActorCameraPoint *eye;
   struct ActorCameraPoint *target;
   struct Actor *actor;

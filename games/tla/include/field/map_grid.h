@@ -119,7 +119,7 @@ struct MapWork {
   /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;
   struct MapLayer layers[4];
-  u8 unusedAfterLayers[0x774]; ///< no code names it
+  u8 unusedAfterLayers[1908]; ///< no code names it
   s32 farPlane;
   s32 zoom;
   s32 zoomFrom;
@@ -136,9 +136,9 @@ struct MapWork {
 /// control bits, the window edges and interrupt lines of a transition, and
 /// the map's resources.
 struct MapViewWork {
-  u32 unused[5];               ///< map work fields no window view names
-  u16 dispcnt;                 ///< display control bits ORed into DISPCNT
-  u8 unusedAfterDispcnt[0xea]; ///< no code names it
+  u32 unused[5];              ///< map work fields no window view names
+  u16 dispcnt;                ///< display control bits ORed into DISPCNT
+  u8 unusedAfterDispcnt[234]; ///< no code names it
   s8 animationActive;
   u8 unusedAfterAnimationActive[3]; ///< no code names it
   u16 windowTop;
@@ -146,9 +146,9 @@ struct MapViewWork {
   u16 irqFirstLine;
   u16 irqSecondLine;
   u16 irqPhase;
-  u8 unusedAfterIrqPhase[0x12]; ///< no code names it
+  u8 unusedAfterIrqPhase[18]; ///< no code names it
   u32 *resources;
-  u8 unusedAfterResources[0x84c]; ///< no code names it
+  u8 unusedAfterResources[2124]; ///< no code names it
   s8 extraTiles;
   u8 pictureShown;
   u8 picturePending;

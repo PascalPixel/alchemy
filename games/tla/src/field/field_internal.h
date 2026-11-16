@@ -98,12 +98,12 @@ struct PlayerSprite {
   u8 unusedD[5]; ///< no code names it
   u8 dirty;
   u8 flags;
-  u8 unusedE[0x11];                    ///< no code names it
+  u8 unusedE[17];                      ///< no code names it
   struct SpriteAnimation *secondLayer; ///< entries[1]; above priority 3 hidden
 };
 
 struct MapFlagsWork {
-  u8 unused[0x17];  ///< no code names it
+  u8 unused[23];    ///< no code names it
   u8 groundEffects; ///< bits: 3..2 the wading kind | 1..0 footprints
 };
 
@@ -149,7 +149,7 @@ struct MapHeader {
 /// FieldWork as the sand trail reads its priority
 /// (FieldWork.sandTrailPriority).
 struct SandTrailWork {
-  u8 unused[0xd4a]; ///< no code names it
+  u8 unused[3402]; ///< no code names it
   u16 trailPriority
       : 8;            ///< read as the low byte of FieldWork.sandTrailPriority
   u16 unusedHigh : 8; ///< no code names it
@@ -176,18 +176,18 @@ struct Child {
   u8 tileHigh : 2; ///< tile number bits 9..8
   u8 layer : 2;
   u8 palette : 4;
-  u8 unusedB[0x10]; ///< no code names it
+  u8 unusedB[16]; ///< no code names it
   u8 flags;
 };
 
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
 /// axis and blocked count.
 struct WaitingActor {
-  u8 unused[0x38]; ///< no code names it
+  u8 unused[56]; ///< no code names it
   s32 targetX;
   s32 targetY;
   s32 targetZ;
-  u8 unusedAfterTargetZ[0x12]; ///< no code names it
+  u8 unusedAfterTargetZ[18]; ///< no code names it
   u8 arrivalAxis;
   u8 unusedAfterArrivalAxis[9]; ///< no code names it
   u8 refused;
@@ -227,10 +227,10 @@ enum AnimationCommand {
 
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
-  RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
-  ACTOR_COUNT = 64,        ///< Ram_HeapSlots->actors
-  ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite animations
-  ANIM_LAYER_COUNT = 4,    ///< Sprite.entries
+  SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemWork.pictureCaches
+  ACTOR_COUNT = 64,               ///< Ram_HeapSlots->actors
+  ANIM_OBJECT_COUNT = 64,         ///< sprites and sprite animations
+  ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
   /// frame.
   SPRITE_ANIMATION_NORMAL_STEP = 16
@@ -267,10 +267,10 @@ enum CellPicturePacking {
   CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
-/// A row of gResourceSlot_NumberTable: the resource holding the pictures of
-/// sprite animation number, which SpritePictureCache_Load decodes into a
-/// resource slot; a number of 0 ends the table.
-struct ResourceSlotNumber {
+/// A row of gSpritePictureCache_Sources: the packed resource that holds an
+/// animation number's pictures, which SpritePictureCache_Load decodes into a
+/// sprite picture cache; a number of 0 ends the table.
+struct SpritePictureCacheSource {
   u16 resource;
   s16 number;
 };
@@ -283,7 +283,7 @@ extern u8 Render_ConvertMapCodeSize[];
 
 extern u8 gMapSceneEditsOffset[];
 
-extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
+extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 
 extern const u8 gActor_ShadowTiles[];
 

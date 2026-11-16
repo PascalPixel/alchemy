@@ -13,9 +13,9 @@
 struct FieldBlendWork {
   /// The storm's dark colours (PALETTE_TRANSFORM_WARM), as the colour buffer's
   /// B, G and R channels: each flash fades back to them.
-  s16 from[0x540];
-  s16 to[0x540];    ///< the lit colours (PALETTE_TRANSFORM_PALE), as from
-  s16 delta[0x540]; ///< the 12-frame steps from to back to from
+  s16 from[1344];
+  s16 to[1344];    ///< the lit colours (PALETTE_TRANSFORM_PALE), as from
+  s16 delta[1344]; ///< the 12-frame steps from to back to from
   /// Frames to the next flash; below 0 stops the lightning.
   s16 timer;
   /// Nonzero arms the next flash a random 51 to 549 frames after each, with

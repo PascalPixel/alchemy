@@ -20,7 +20,7 @@ struct ReflectionSprite {
 };
 
 struct ReflectionAnimation {
-  u8 unused[0x28]; ///< no code names it
+  u8 unused[40]; ///< no code names it
   struct ReflectionSprite *sprite;
 };
 
@@ -62,9 +62,9 @@ struct SpriteViewerLayer {
 };
 
 struct ViewerSprite {
-  u8 unused[0x1a]; ///< no code names it
+  u8 unused[26]; ///< no code names it
   u8 flags;
-  u8 unusedAfterFlags[0x1d]; ///< no code names it
+  u8 unusedAfterFlags[29]; ///< no code names it
 };
 
 struct ProbeShape {

@@ -440,7 +440,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   s32 vramEntry = VramCache_FindFreeEntry();
   struct SpriteWords *sprite = Ram_HeapSlots->sprites;
   s32 i = 0;
-  struct ObjectSystemWork *objects;
+  struct ActorSystemWork *objects;
   s32 size;
   s32 tile;
   struct VramCacheEntry *entries;

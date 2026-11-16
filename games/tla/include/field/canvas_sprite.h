@@ -33,7 +33,7 @@
 /// drawn.
 struct CanvasSpriteWork {
   struct EffectSprite sprite;
-  u8 unusedAfterSprite[0x78]; ///< no code names it
+  u8 unusedAfterSprite[120]; ///< no code names it
   s32 drawnFrames;
   s32 frame;
   s32 x; ///< whole pixels

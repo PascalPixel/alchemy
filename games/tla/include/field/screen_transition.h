@@ -60,7 +60,7 @@ struct TransitionShape {
 };
 
 struct MapLayerFlags {
-  u8 unused[0x14]; ///< no code names it
+  u8 unused[20]; ///< no code names it
   u16 flags;
 };
 

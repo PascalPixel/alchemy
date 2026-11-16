@@ -17,7 +17,7 @@ struct SpriteAnimation;
 /// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
 /// sprites and particles, the actor it scatters from, and its stage.
 struct ScatterWork {
-  u8 tiles[0x1000];
+  u8 tiles[4096];
   struct EffectSprite sprites[64];
   struct FieldPsynergyParticle particles[64];
   struct Actor *object;
@@ -75,7 +75,7 @@ struct BowWork {
 /// FieldWork as FieldPsynergy_GatherNearbyCells writes it: the cells a Psynergy
 /// touches and the Cyclone's two spots, here unsigned.
 struct PointWork {
-  u8 unused[0xcc0]; ///< no code names it
+  u8 unused[3264]; ///< no code names it
   s16 points[62];
   u16 cycloneCarryX;
   u16 cycloneCarryZ;

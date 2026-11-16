@@ -49,7 +49,7 @@ struct SpriteAnimation {
   u8 colorMode;    ///< SpriteColorMode its pixels are drawn with
   u8 priority;     ///< drawing order 0 to 3 among the layers; above 3 not drawn
   u8 mode;         ///< picture codec: 1 type-01, 3 LZ, anything else raw
-  void **pictures; ///< picture pointers, from the metadata or a resource slot
+  void **pictures; ///< picture pointers, from the metadata or a picture cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null once command 239 ends it
   u8 scriptOffset; ///< byte offset of the next command in script
@@ -58,30 +58,31 @@ struct SpriteAnimation {
   u8 pictureBase; ///< picture the script chose, before facing; 255 blank
 };
 
-/// A resource slot: the tag of the animation loaded into it (slot number and
-/// animation id) and the buffer holding its pictures.
-struct ResourceSlot {
-  s32 tag;      ///< (slot << 12) | animation id
-  void *buffer; ///< the decoded pictures, their offsets made pointers
+/// A sprite picture cache: the tag of the animation loaded into it (slot number
+/// and animation id) and the buffer holding its pictures.
+struct SpritePictureCache {
+  s32 tag;        ///< (slot << 12) | animation id
+  void *pictures; ///< the decoded pictures, their offsets made pointers
 };
 
-/// The object system's work: the flag that suspends sprite projection, the
-/// outline's edge and fill colours, and the resource slots.
-struct ObjectSystemWork {
-  u16 used;
+/// The actor system's work: the flag that suspends sprite projection, the
+/// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
+struct ActorSystemWork {
+  u16 used; ///< sprite pixel bytes composed since the camera reset it
   u8 unusedAfterUsed[2]; ///< no code names it
-  s16 suspended; ///< nonzero while a menu has suspended sprite projection
-  u8 edge;       ///< outline edge colour
-  u8 fill;       ///< outline fill colour
-  u8 unk08[0x10];
-  s32 count;
-  struct ResourceSlot slots[8];
+  s16 suspended;       ///< nonzero while a menu has suspended sprite projection
+  u8 edge;             ///< outline edge colour; 15 when the field sets up
+  u8 fill;             ///< outline fill colour; 0 when the field sets up
+  u8 spriteGroups[16]; ///< the sprite group tables, taken in turn by count
+  s32 count;           ///< sprite group tables taken from spriteGroups
+  struct SpritePictureCache
+      pictureCaches[8]; ///< found by tag (SpritePictureCache_FindByTag)
 };
 
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, suspended) == 4);
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, count) == 0x18);
-STATIC_ASSERT(offsetof(struct ObjectSystemWork, slots) == 0x1c);
-STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 0x1c);
+STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
 
 void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
 
@@ -169,7 +170,7 @@ struct PlacedSprite {
   u8 unusedAfterRotation[5]; ///< no code names it
   u8 dirty;
   u8 flags;
-  u8 unusedAfterFlags[0x0a]; ///< no code names it
+  u8 unusedAfterFlags[10]; ///< no code names it
   u8 shadowTileHigh : 2;
   u8 shadowPriority : 2;
   u8 shadowPalette : 4;

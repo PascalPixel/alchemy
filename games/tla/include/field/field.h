@@ -264,10 +264,10 @@ struct LuckyDiceSprites {
 };
 
 struct BattleFxTransferWork {
-  u8 unused[0x7780]; ///< no code names it
+  u8 unused[30592]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
-  u8 unusedAfterTransferValue[0x78e4 - 0x7788]; ///< no code names it
+  u8 unusedAfterTransferValue[348]; ///< no code names it
   s32 vblanksSinceTransfer;
   s32 transferPending;
 };
@@ -288,20 +288,20 @@ struct ReelEffectWork {
   /// No code names it.
   u8 unusedAfterParticles[0x700 -
                           LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
-  u16 bgShade[0x100];
-  u16 objShade[0x100];
-  u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
+  u16 bgShade[256];
+  u16 objShade[256];
+  u8 unusedAfterObjShade[27776]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
   u8 unusedAfterTransferValue[4]; ///< no code names it
   s32 frame;
-  u8 unusedAfterFrame[0x78e8 - 0x7790]; ///< no code names it
+  u8 unusedAfterFrame[344]; ///< no code names it
   s32 transferPending;
 };
 
 /// The save as Lucky Wheels reads it: the prizes won.
 struct ReelSave {
-  u8 unused[0x140]; ///< no code names it
+  u8 unused[320]; ///< no code names it
   s8 wonPrizes[16];
 };
 
@@ -389,7 +389,7 @@ struct TightropeWork {
 
 /// unk26a from main_routine_work.h.
 struct PartyPauseView {
-  u8 unused[0x26a]; ///< no code names it
+  u8 unused[618]; ///< no code names it
   s16 pausedObject;
 };
 
@@ -409,7 +409,7 @@ struct DepthScroll {
 /// view, through a pointer to the pair.
 struct DepthMap {
   struct DepthOrigin *origin;
-  u8 unusedAfterOrigin[0xe0]; ///< no code names it
+  u8 unusedAfterOrigin[224]; ///< no code names it
   struct DepthScroll view;
 };
 
@@ -457,7 +457,7 @@ struct RisingParticleWork {
 struct EffectOwner {
   u8 unused[8]; ///< no code names it
   struct Vector3 position;
-  u8 unusedAfterPosition[0x3c]; ///< no code names it
+  u8 unusedAfterPosition[60]; ///< no code names it
   struct Sprite *sprite;
 };
 
@@ -521,13 +521,13 @@ struct RopeWork {
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
 
 struct AnimationGroup {
-  u8 unused[0x16]; ///< no code names it
+  u8 unused[22]; ///< no code names it
   s8 offsetX;
   s8 offsetY;
   u8 lastNo;
   u8 unusedAfterLastNo[2]; ///< no code names it
   u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
+  u8 unusedAfterCount[12]; ///< no code names it
   struct SpriteAnimation *entries[4];
 };
 

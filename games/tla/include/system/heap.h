@@ -19,20 +19,20 @@
 struct BattleBackgroundWork;
 struct BattleWork;
 struct MapWork;
-struct ObjectSystemWork;
+struct ActorSystemWork;
 struct ScreenTransitionState;
 
 /// The heap's 64 words in IWRAM (gHeapSlots, 0x03000000): the two pools' next
 /// free addresses, then each slot's block once allocated, else null.
 struct HeapSlots {
-  void *nextEwram;        ///< the EWRAM pool's next free byte
-  void *nextIwram;        ///< the IWRAM pool's next free byte
-  u8 *transformStack;     ///< the 3D transform's one saved level
-  void *spriteAnimations; ///< the actor system's sprite animations
-  void *sprites;          ///< the actor system's sprite pool
-  void *actors;           ///< the 64 actors (struct Actor)
-  struct ObjectSystemWork *actorSystem; ///< the actor system's work
-  void *worldMapAffine;                 ///< the world map's affine work
+  void *nextEwram;                     ///< the EWRAM pool's next free byte
+  void *nextIwram;                     ///< the IWRAM pool's next free byte
+  u8 *transformStack;                  ///< the 3D transform's one saved level
+  void *spriteAnimations;              ///< the actor system's sprite animations
+  void *sprites;                       ///< the actor system's sprite pool
+  void *actors;                        ///< the 64 actors (struct Actor)
+  struct ActorSystemWork *actorSystem; ///< the actor system's work
+  void *worldMapAffine;                ///< the world map's affine work
   /// The field map's scrolling work, or on the world map its perspective view
   /// (struct WorldMapView).
   struct MapWork *mapGrid;

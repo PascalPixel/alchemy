@@ -117,7 +117,7 @@ struct BurstCell {
 };
 
 struct ScaledSprite {
-  u8 unused[0xc]; ///< no code names it
+  u8 unused[12]; ///< no code names it
   s32 scale;
 };
 
@@ -312,13 +312,13 @@ void Party_RemoveMemberRestored(s32 owner);
 struct Actor;
 
 struct FallingObject {
-  u8 unused[0xc]; ///< no code names it
+  u8 unused[12]; ///< no code names it
   s32 y;
   u8 unusedAfterY[4]; ///< no code names it
   s32 floor;
-  u8 unusedAfterFloor[0x46]; ///< no code names it
+  u8 unusedAfterFloor[70]; ///< no code names it
   s16 dispatchState;
-  u8 unusedAfterDispatchState[0xc]; ///< no code names it
+  u8 unusedAfterDispatchState[12]; ///< no code names it
   void *update;
 };
 
@@ -365,7 +365,7 @@ struct Actor;
 struct Vec3;
 
 struct ResourceEntry {
-  u8 unused[0x10]; ///< no code names it
+  u8 unused[16]; ///< no code names it
   u8 vramBlock;
 };
 
@@ -404,9 +404,9 @@ struct BurstParticleVisualGroup {
 struct EffectChild {
   u8 unused[12]; ///< no code names them
   s32 y;
-  u8 unusedAfterY[0x55 - 0x10]; ///< no code names them
+  u8 unusedAfterY[69]; ///< no code names them
   u8 flag;
-  u8 unusedAfterFlag[0x6c - 0x56]; ///< no code names them
+  u8 unusedAfterFlag[22]; ///< no code names them
   void (*callback)(void);
 };
 

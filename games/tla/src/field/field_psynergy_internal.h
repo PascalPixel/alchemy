@@ -89,7 +89,7 @@ enum RetreatParticleState {
 /// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
 /// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
 struct CycloneWork {
-  u8 particleBurst[0x1b08];
+  u8 particleBurst[6920];
   s16 count;
   u8 unusedAfterCount[2]; ///< no code names it
   struct Actor *follower; ///< the actor carried with the leader

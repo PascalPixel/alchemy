@@ -470,10 +470,14 @@ struct YampiDesertVisual {
 
 void MapGrid_CenterOnFollowedPoint(void);
 
+/// Compressed tiles the scenes unpack into the VRAM cache
+/// (graphics/field/cached_a.png to cached_d.png).
 extern u8 gField_CachedTilesA[];
 
+/// See gField_CachedTilesA (graphics/field/cached_d.png).
 extern u8 gField_CachedTilesD[];
 
+/// Compressed ground tiles (graphics/field/ground_tiles.png).
 extern const u8 gField_GroundTiles[];
 
 s32 Speaker_GetVoice(s32 object);
@@ -485,10 +489,13 @@ void FieldPsynergy_StartCast(void);
 
 void EasternAlhafraShip_CountAnswer();
 
+/// A geyser's compressed tiles (graphics/field/geyser.png).
 extern const u8 gField_GeyserTiles[];
 
+/// See gField_CachedTilesA (graphics/field/cached_b.png).
 extern u8 gField_CachedTilesB[];
 
+/// See gField_CachedTilesA (graphics/field/cached_c.png).
 extern u8 gField_CachedTilesC[];
 
 // The cell stampers keep their last cell and the block they copy.
@@ -497,6 +504,8 @@ void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
+/// The World Picture's third set of compressed tiles
+/// (graphics/world_map/storyc.png).
 extern const u8 gWorldMapPackedTilesC[];
 
 struct Vector3;

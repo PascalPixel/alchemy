@@ -1334,7 +1334,7 @@ extern const u8 gUlysses_ObjectZ[];
 extern const u8 gUlysses_PictureWidths[];
 extern const u8 gUlysses_PictureHeights[];
 extern const u16 gUlysses_Pictures[];
-extern const s8 gUlysses_ParticleStarts[];
+extern const s8 gUlysses_ParticleStarts[][5];
 extern const u8 gSpiderWeb_PictureWidths[];
 extern const u8 gSpiderWeb_PictureHeights[];
 extern const u16 gSpiderWeb_Pictures[];

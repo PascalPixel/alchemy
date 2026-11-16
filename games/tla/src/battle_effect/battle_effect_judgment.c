@@ -246,12 +246,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        /* FAKEMATCH(dead): the push with an empty once-only block before each
-         * of its three stores (QUEUE_PUSH_PARTED); as IO_WRITE_QUEUE_PUSH, 23
-         * of 2680 instructions differ in tla-en. */
-        QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
-                          (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
-                          DMA_COPY_WORDS(256));
+        IO_WRITE_QUEUE_PUSH(OBJ_TILES((struct Sprite *)work->sprites[i]),
+                            (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
+                            DMA_COPY_WORDS(256));
       }
     }
     if (frame == 76) {

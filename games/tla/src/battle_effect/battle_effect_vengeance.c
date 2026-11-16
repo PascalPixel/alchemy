@@ -697,13 +697,10 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       // The geyser follows the targets' midpoint while it rises.
       if (frame < GEYSER_PEAK_FRAME)
         BattleEffect_GetTargetsMidpoint(&midpoint);
-      if (frame == 0) {
+      if (frame == 0)
         Sound_PlayFar(SE_CLATTER);
-        /* FAKEMATCH(dead): an empty once-only loop after the call. */
-        do {
-        } while (0);
+      if (frame == 0)
         work->shakeFrames = 16;
-      }
       if (frame == GEYSER_PEAK_FRAME) {
         work->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

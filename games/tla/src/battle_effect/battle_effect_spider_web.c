@@ -487,7 +487,6 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                            SHEET_PALETTE_BYTES);
     }
     if (frame == 133) {
-      const s8 *src;
       struct Particle *p;
       struct Particle *q;
 
@@ -496,19 +495,15 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                     DISPCNT_WIN1_ON;
-      src = gUlysses_ParticleStarts;
       q = (struct Particle *)(work->sheet + ULYSSES_SPARKS);
-      for (i = 0; i != 6; i++, src += 5) {
+      for (i = 0; i != 6; i++) {
         p = &work->particles[i];
-        p->x = INTtoFIXED(src[0]);
+        p->x = INTtoFIXED(gUlysses_ParticleStarts[i][0]);
         p->variant = -8 * i;
-        /* FAKEMATCH(barrier): an empty asm parts the particle's first stores
-         * from the rest. */
-        __asm__("");
-        p->y = INTtoFIXED(src[1]);
-        p->z = src[2] << 6;
-        p->velocityX = src[3] << 15;
-        p->velocityY = src[4] << 15;
+        p->y = INTtoFIXED(gUlysses_ParticleStarts[i][1]);
+        p->z = gUlysses_ParticleStarts[i][2] << 6;
+        p->velocityX = gUlysses_ParticleStarts[i][3] << 15;
+        p->velocityY = gUlysses_ParticleStarts[i][4] << 15;
         p->velocityZ = 0;
       }
       for (i = 0; i != ULYSSES_SPARK_COUNT; i++) {

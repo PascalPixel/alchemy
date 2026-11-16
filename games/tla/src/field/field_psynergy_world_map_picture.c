@@ -27,10 +27,6 @@
 
 // The world map screen's work, laid out as field/world_map.h has it.
 
-// The place's position on the world map screen.
-#define PLACE_SCREEN_X(place) ((place)->x * 853 / 16384 - 269)
-#define PLACE_SCREEN_Y(place) ((place)->z * 640 / 16384 - 112)
-
 /// R (step 1) and L (step -1) on the world map screen: the cursor jumps to the
 /// next or the previous marked place round from the one nearest it, and its
 /// point on the picture is written to screenX and screenY.
@@ -50,7 +46,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 
   Party_GetLeaderActor();
   places = FlagEntries_GetTable();
-  bestDistance = 0x4000000;
+  bestDistance = 8192 * 8192;
   best = -1;
   cursorX = FIXEDtoINT(work->x);
   cursorY = FIXEDtoINT(work->z);
@@ -58,8 +54,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
     cursorX = FIXEDtoINT(work->searchX);
     cursorY = FIXEDtoINT(work->searchZ);
   }
-  for (count = 0; count < 128; count++) {
-
+  for (count = 0; count < WORLD_PICTURE_PLACE_COUNT; count++) {
     place = &places[count];
     if (place->flag == 0)
       break;
@@ -68,8 +63,8 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 
     if (state != WORLD_MAP_MARKER_NONE && state != WORLD_MAP_MARKER_SHIP &&
         GameFlag_Get(flag)) {
-      s32 sx = PLACE_SCREEN_X(place);
-      s32 sy = PLACE_SCREEN_Y(place);
+      s32 sx = WORLD_PICTURE_X(place->x);
+      s32 sy = WORLD_PICTURE_Y(place->z);
       s32 dx = sx - cursorX;
       s32 dy = sy - cursorY;
       s32 distance = dx * dx + dy * dy;
@@ -110,8 +105,8 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
       }
     } while (wraps <= 1);
   }
-  *screenX = PLACE_SCREEN_X(place);
-  *screenY = PLACE_SCREEN_Y(place);
+  *screenX = WORLD_PICTURE_X(place->x);
+  *screenY = WORLD_PICTURE_Y(place->z);
 }
 
 // Moves a list of window sprites.
@@ -134,8 +129,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
     sprite->oam.y += dy;
   }
 }
-#undef PLACE_SCREEN_X
-#undef PLACE_SCREEN_Y
 
 // The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -264,8 +257,8 @@ void WorldPicture_UpdateMarkers(void) {
     if (place->flag == 0) {
       if (gWorldPicture_FirstListOnly != 0)
         break;
-      place = &places[128];
-      i = 128;
+      place = &places[WORLD_PICTURE_PLACE_COUNT];
+      i = WORLD_PICTURE_PLACE_COUNT;
       name = -1;
       tile = 0;
       always = 0;
@@ -285,14 +278,14 @@ void WorldPicture_UpdateMarkers(void) {
         name = -2;
         tile = 2;
         always = 0;
-        placeX = FIXEDtoINT(gMainRoutineWork.shipX) * 853 / 16384 - 269;
-        placeY = FIXEDtoINT(gMainRoutineWork.shipZ) * 640 / 16384 - 112;
+        placeX = WORLD_PICTURE_X(FIXEDtoINT(gMainRoutineWork.shipX));
+        placeY = WORLD_PICTURE_Y(FIXEDtoINT(gMainRoutineWork.shipZ));
       } else {
         if (!GameFlag_Get(flag))
           continue;
         always = 1;
-        placeX = place->x * 853 / 16384 - 269;
-        placeY = place->z * 640 / 16384 - 112;
+        placeX = WORLD_PICTURE_X(place->x);
+        placeY = WORLD_PICTURE_Y(place->z);
       }
     }
     marker->objectMode = always;
@@ -323,8 +316,8 @@ void WorldPicture_UpdateMarkers(void) {
       nearestY = placeY;
     }
     if (always != 0 || (gFrameCount & 15) <= 7)
-      Oam_AddSpriteAtDepthClamped(marker++, 246);
-  } while (++i, place++, i < 128);
+      Oam_AddSpriteAtDepthClamped(marker++, WORLD_PICTURE_MARKER_DEPTH);
+  } while (++i, place++, i < WORLD_PICTURE_PLACE_COUNT);
 
   if (gInput.held == 0) {
     if (nearest != -1) {
@@ -358,7 +351,7 @@ void WorldPicture_UpdateMarkers(void) {
       marker->x = WORLD_MAP_SCALE(nearestX) - 2;
       marker->y = WORLD_MAP_SCALE(nearestY) - 2;
     }
-    Oam_AddSpriteAtDepthClamped(marker, 246);
+    Oam_AddSpriteAtDepthClamped(marker, WORLD_PICTURE_MARKER_DEPTH);
   }
 
   marker = &gWorldPicture_CursorMarker;
@@ -370,7 +363,7 @@ void WorldPicture_UpdateMarkers(void) {
     marker->x = WORLD_MAP_SCALE(cursorX) - 17;
     marker->y = WORLD_MAP_SCALE(cursorY) + 1;
   }
-  Oam_AddSpriteAtDepthClamped(marker, 246);
+  Oam_AddSpriteAtDepthClamped(marker, WORLD_PICTURE_MARKER_DEPTH);
 
   if (work->shown != nearest) {
     // The Japanese release prepares the window and draws the new name in the
@@ -531,7 +524,7 @@ void WorldMapPicture_Draw(void) {
       s32 to;
 
       i = 0;
-      to = 0x06000000;
+      to = VRAM;
       x <<= 6;
       x += (s32)buffer;
       /* FAKEMATCH(barrier): VRAM's address through an empty asm that also reads
@@ -649,11 +642,11 @@ void WorldMapPicture_UpdateScroll(void) {
   u32 column;
   u32 row;
   s32 limit;
-  s32 bottom = 0xe00000;
+  s32 bottom = toFIXED(224);
 
   if (x < 0)
     x = 0;
-  limit = 0x1100000;
+  limit = toFIXED(272);
   if (x > limit)
     x = limit;
   if (y < 0)
@@ -672,7 +665,7 @@ void WorldMapPicture_UpdateScroll(void) {
     step = distance / 4;
     if (step > toFIXED(8))
       step = toFIXED(8);
-    if (distance >= 0x4000) {
+    if (distance >= toFIXED(1) / 4) {
       if (distance > step) {
         dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
         dy = Iwram_MulFX(Iwram_RatioMulQ14(distance, dy), step);
@@ -690,13 +683,13 @@ void WorldMapPicture_UpdateScroll(void) {
     }
     column = (u32)x >> 19;
     row = (u32)y >> 19;
-    if ((SCROLL_X ^ x) & 0x80000) {
+    if ((SCROLL_X ^ x) & toFIXED(8)) {
       if (SCROLL_X < x)
         WorldMapPicture_DrawColumn(column + 30, row);
       else
         WorldMapPicture_DrawColumn(column, row);
     }
-    if ((SCROLL_Y ^ y) & 0x80000) {
+    if ((SCROLL_Y ^ y) & toFIXED(8)) {
       if (SCROLL_Y < y)
         WorldMapPicture_DrawRow(column, row + 20);
       else
@@ -709,10 +702,13 @@ void WorldMapPicture_UpdateScroll(void) {
   SCROLL_Y = y;
 }
 
+/// Where the cursor goes back to when Start is let go: the place R or L last
+/// stepped to, 16.16 pixels.
 extern s32 gWorldPicture_CursorStartX;
-extern s32 gWorldPicture_CursorStartY;
+extern s32 gWorldPicture_CursorStartY; ///< as gWorldPicture_CursorStartX
+/// The world map picture's scroll as Select toggles the zoom, 16.16 pixels.
 extern s32 gWorldPicture_ScrollX;
-extern s32 gWorldPicture_ScrollY;
+extern s32 gWorldPicture_ScrollY; ///< as gWorldPicture_ScrollX
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
@@ -832,7 +828,8 @@ s32 WorldPicture_Show(s32 mode) {
     Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                    DISPCNT_OBJ_ON,
                &REG_DISPCNT);
-    if ((GameFlag_Get(FLAG_WORLD_MAP_LEFT) || GameFlag_Get(0x11e)) &&
+    if ((GameFlag_Get(FLAG_WORLD_MAP_LEFT) ||
+         GameFlag_Get(FLAG_LEADER_OFF_MAP_PICTURE)) &&
         !messageShown) {
       FieldMessage_ShowFar((s32)MsgNotOnMap, FIELD_MESSAGE_ZOOM);
       messageShown = 1;
@@ -890,12 +887,12 @@ s32 WorldPicture_Show(s32 mode) {
           world->x = *cursorX;
           world->z = *cursorZ;
           zero = 0;
-          limitX = 0x1100000;
-          limitZ = 0xe00000;
+          limitX = toFIXED(272);
+          limitZ = toFIXED(224);
           scrollX = &gWorldPicture_ScrollX;
-          *scrollX = world->x - 0x780000;
+          *scrollX = world->x - toFIXED(120);
           scrollZ = &gWorldPicture_ScrollY;
-          *scrollZ = world->z - 0x500000;
+          *scrollZ = world->z - toFIXED(80);
           value = *scrollX;
           if (value < 0) {
             *scrollX = zero;
@@ -964,6 +961,7 @@ done:
   return 0;
 }
 
+/// The World Map's places, ended by a zero flag.
 extern const struct FlagEntry gFlagEntries[];
 
 /// On the world map, zooms the view out to eight thirteenths while L is held,

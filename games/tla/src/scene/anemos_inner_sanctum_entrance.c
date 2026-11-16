@@ -426,7 +426,7 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | (frame & LIGHT_SPRITE_MIRRORED) << 21 |
                   0x40002000;
-        *word = (tile + picture + (frame & 7) * 8) | 0x800;
+        *word = (tile + picture + (frame & 7) * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
@@ -446,7 +446,7 @@ void LightSprites_Draw(void) {
         word = (u32 *)oam;
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
+        *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else

@@ -296,7 +296,7 @@ again:
     p->x = object->x.fixed;
     p->y = object->y.fixed;
     p->z = object->z.fixed;
-    distance = Iwram_MulFX(Random16(), 0x80000) + 0x40000;
+    distance = Iwram_MulFX(Random16(), toFIXED(8)) + toFIXED(4);
     a = Random16();
     b = Random16();
     Vector_AddPolarOffset(distance, object->facing + (a >> 2) - (b >> 2), p);
@@ -1511,7 +1511,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
         screenY &= 255;
         entry->oam[0] = 0;
         entry->oam[1] = screenY | (x << 16) | 0x2000;
-        entry->oam[2] = (tile + (entry->age & 3) * 2) | 0x400;
+        entry->oam[2] = (tile + (entry->age & 3) * 2) | OBJ_PRIORITY(1);
         Oam_AddSpriteAtDepth(entry->oam, z);
       }
     }
@@ -1570,7 +1570,7 @@ void AquaRock_DrawFallingCellMarkers(void) {
         screenY &= 255;
         bubble->oam[0] = 0;
         bubble->oam[1] = screenY | (x << 16) | 0x2000;
-        bubble->oam[2] = (tile + (bubble->age & 3) * 2) | 0x400;
+        bubble->oam[2] = (tile + (bubble->age & 3) * 2) | OBJ_PRIORITY(1);
         Oam_AddSpriteAtDepth(bubble->oam, depth);
       }
     }
@@ -1647,9 +1647,9 @@ void AquaRock_StartSparkles(void) {
     size = (u32)p;
     *(u32 *)size = 0;
     size += 4;
-    *(u32 *)size = 0x40000400;
+    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(1);
     size += 4;
-    *(u32 *)size = 0xb400;
+    *(u32 *)size = OBJ_PRIORITY(1) | OBJ_PALETTE(11);
     p->posX = 0;
     p->posZ = 0;
     p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));

@@ -931,15 +931,15 @@ step:
 
     object->z.fixed += toFIXED(2);
     x = object->x.fixed;
-    offset = (x & 0xfffff) - 0x80000;
+    offset = (x & 0xfffff) - toFIXED(8);
     {
       s32 limit = 0x10001;
 
       if (offset >= limit)
-        offset = 0x10000;
+        offset = toFIXED(1);
       limit = -0x10001;
       if (offset <= limit)
-        offset = -0x10000;
+        offset = -toFIXED(1);
     }
     object->x.fixed = x - offset;
   }
@@ -2240,9 +2240,9 @@ void AquaRockInside_DrawPillars(void) {
         screenY = z - y;
       }
       if (entry->height != entry->base || entry->state == 2)
-        attributes = 0x800;
+        attributes = OBJ_PRIORITY(2);
       else
-        attributes = 0xc00;
+        attributes = OBJ_PRIORITY(3);
       x = (x >> 16) - 8;
       screenY = (screenY >> 16) - 8;
       depth = ((y + z) >> 16) + 50;
@@ -2255,7 +2255,7 @@ void AquaRockInside_DrawPillars(void) {
           rise = entry->kind * 8;
           entry->top[0] = 0;
           screenY |= x << 16;
-          screenY |= 0x40002000;
+          screenY |= OBJ_SIZE_16X16 | OBJ_256_COLORS;
           entry->top[1] = screenY;
           entry->top[2] = (tile + rise) | attributes;
           Oam_AddSpriteAtDepthClamped(entry->top, depth);
@@ -2434,9 +2434,7 @@ void AquaRockInside_DrawSplashes(void) {
   struct Splash *splash;
   s32 i;
   u32 tile;
-  // The sprite word's priority bits (priority 2): a local that holds this one
-  // value.
-  s32 priority = 0x800;
+  s32 priority = OBJ_PRIORITY(2);
 
   viewX &= FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -2467,7 +2465,8 @@ void AquaRockInside_DrawSplashes(void) {
 
         screenY &= 255;
         splash->sprite[0] = 0;
-        splash->sprite[1] = screenY | (column << 16) | 0x40002000;
+        splash->sprite[1] =
+            screenY | (column << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
         *frame = (tile + ((Random_Below(3)) << 3)) | priority;
         Oam_AddSpriteAtDepthClamped(splash->sprite, z);
       }
@@ -2502,7 +2501,7 @@ s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind) {
 
   if (entry->x != 0)
     entry++;
-  SET_POSITION(entry, (x << 20) + 0x80000, y << 20, (z << 20) + 0x80000);
+  SET_POSITION(entry, (x << 20) + toFIXED(8), y << 20, (z << 20) + toFIXED(8));
   entry->direction = kind;
 }
 

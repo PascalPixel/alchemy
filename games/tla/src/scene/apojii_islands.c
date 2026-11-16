@@ -956,9 +956,10 @@ void ApojiiIslands_DrawCellMarkers(void) {
     picture = kind * 4;
     flip = 0;
     if (kind == 2)
-      flip = 0x10000000;
+      flip = OBJ_HFLIP;
     *attr++ = clear;
-    *attr++ = top | (left << 16) | flip | 0x40000400;
+    *attr++ = top | (left << 16) | flip | OBJ_SIZE_16X16 |
+              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     *attr = palette | (tile + picture);
     Oam_AddSpriteAtDepth(record->oam, 0);
   }

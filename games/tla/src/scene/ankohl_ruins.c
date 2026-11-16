@@ -792,8 +792,8 @@ void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
 void AnkohlRuins_DrawSand(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s32 *origin = map->origin;
   // Unused: gives the stack frame its 4 bytes; the original stores it there
@@ -803,7 +803,7 @@ void AnkohlRuins_DrawSand(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < 0x200000) {
+  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < toFIXED(32)) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       FIXED x = sprite->x;
@@ -815,7 +815,7 @@ void AnkohlRuins_DrawSand(void) {
       case 0:
         x -= work->level;
         y += work->level;
-        if (work->level > 0x100000)
+        if (work->level > toFIXED(16))
           x = -toFIXED(16);
         break;
       case 1:
@@ -829,11 +829,11 @@ void AnkohlRuins_DrawSand(void) {
       case 3:
         x += work->level;
         y += work->level;
-        if (work->level > 0x100000)
+        if (work->level > toFIXED(16))
           x = -toFIXED(16);
         break;
       case 4:
-        if (work->level < 0x100000)
+        if (work->level < toFIXED(16))
           y += work->level;
         else
           x = -toFIXED(16);
@@ -847,8 +847,9 @@ void AnkohlRuins_DrawSand(void) {
         sx &= 511;
         sy &= 255;
         sprite->oam[0] = 0;
-        sprite->oam[1] = sy | (sx << 16) | 0x40000800;
-        sprite->oam[2] = tile | 0x400;
+        sprite->oam[1] =
+            sy | (sx << 16) | OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
+        sprite->oam[2] = tile | OBJ_PRIORITY(1);
         Oam_AddSpriteAtDepthClamped(sprite->oam, OAM_DEPTH_FRONT);
       }
       sprite++;
@@ -1007,7 +1008,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  if (work->level < 0x200000) {
+  if (work->level < toFIXED(32)) {
     gAnkohlRuins_SandTimer = 0;
     Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
   } else {
@@ -1092,7 +1093,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  if (work->level < 0x200000) {
+  if (work->level < toFIXED(32)) {
     gAnkohlRuins_SandTimer = 0;
     Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
   } else {
@@ -1630,7 +1631,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         GameFlag_Get(FLAG_SCENE_TEMP_04)) {
-      FIXED level = 0x200000;
+      FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
@@ -1895,7 +1896,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         GameFlag_Get(FLAG_SCENE_TEMP_04)) {
-      FIXED level = 0x200000;
+      FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.

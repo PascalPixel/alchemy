@@ -101,11 +101,18 @@ s32 StatusScreen_RunPages(void);
 void MenuIcon_LoadSlots(void);
 void MenuIcon_ReleaseSlots(void);
 
+/// The window tiles the Status menu saves and restores.
+#define STATUS_SAVED_TILE_BYTES 10240
+
+/// The Status screen, the field menu's Status, over the field: saves the
+/// background palettes and the window tiles it draws over, sets up the party
+/// row, the five command icons and, when the party has Djinn, the Djinn
+/// figures, runs the status pages, then puts everything back.
 s32 StatusScreen_Run(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, 0x0cec);
+      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Heap_AllocEwram(64);
-  void *tiles = Heap_AllocEwram(0x2800);
+  void *tiles = Heap_AllocEwram(STATUS_SAVED_TILE_BYTES);
   s32 result = -1;
   struct HeapSlots *heap;
   struct ScreenTransitionState *transition;
@@ -117,8 +124,9 @@ s32 StatusScreen_Run(void) {
   heap->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  saved = *(u16 *)&transition->active;
-  transition->active = 17;
+  saved = (u16)transition->active;
+  // Window 0 shows only the windows' layer and the sprites.
+  transition->active = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
   page = &state->page;
@@ -126,7 +134,7 @@ s32 StatusScreen_Run(void) {
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
-  Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
+  Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -158,7 +166,7 @@ s32 StatusScreen_Run(void) {
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, 0x2800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
   Heap_Release(tiles);
   Heap_Release(palette);
   ((struct WindowWork *)heap->windowWork)->holdTilemapUpload = 1;
@@ -1751,6 +1759,8 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #define CURSOR_X 96
 #endif
 
+/// The Status menu's equipment page: the party member's items, PAGE_ROWS to a
+/// page, beside the equipment window of what they wear.
 s32 ItemMenu_SelectItem(void) {
   struct ItemMenuWork *menu;
   struct Unit *owner;

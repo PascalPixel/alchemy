@@ -569,6 +569,9 @@ struct Window *MenuCursor_Create(void *source) {
   return window;
 }
 
+/// Task: each frame, places every party member sprite created by
+/// Menu_CreatePartyFigures at its menu position and scale, through the field's
+/// projected placement.
 void Menu_PlacePartyFigures(void) {
   struct PsynergyMenuWork *menu =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
@@ -580,18 +583,19 @@ void Menu_PlacePartyFigures(void) {
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct Sprite *figure = menu->tabSprites[i];
-    s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
+    // 114.5 less half the row's screen y, in 16.16.
+    FIXED placeY = toFIXED(229) / 2 - menu->rowPositions[i] * (FIXED_ONE / 2);
 
     if (figure != 0) {
       figure->image.priority = 0;
       scale.x = menu->memberScale[i];
       scale.y = menu->memberScale[i];
-      position.x = menu->tabX[i] << 16;
+      position.x = toFIXED(menu->tabX[i]);
       position.height = placeY;
-      position.y = (menu->rowPositions[i] << 16) + placeY;
+      position.y = toFIXED(menu->rowPositions[i]) + placeY;
       position.groundHeight = 0;
       Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
-                                               0x4000, 250);
+                                               FACING_SOUTH, MENU_FIGURE_DEPTH);
     }
   }
 }
@@ -1000,6 +1004,9 @@ done:
   return result;
 }
 
+/// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
+/// WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
+/// highlight colour of the menu's selected rows.
 void Palette_LightenHighlight(s32 paletteNumber) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
@@ -1060,38 +1067,48 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
   }
 }
 
-void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+/// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
+/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
+/// is the new palette number.
+void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
+  // by 20 tilemap into the windows after it.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *entry = &work->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
+        u32 value = *entry;
         value &= 0xFFFFEFFF;
-        value |= field;
+        value |= palette;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *entry = value;
+        entry++;
       }
       height--;
       y++;
@@ -1100,6 +1117,9 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
+/// Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
+/// palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
+/// TEXT_BACKGROUND_COLOR.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);

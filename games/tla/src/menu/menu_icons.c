@@ -231,17 +231,19 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
   if (menu->memberSpritesShown != 0) {
     for (i = 0; i <= 7; i++) {
-      s32 top = 0x728000 - (menu->memberY[i] << 15);
+      // 114.5 less half the figure's screen y, in 16.16.
+      FIXED top = toFIXED(229) / 2 - menu->memberY[i] * (FIXED_ONE / 2);
 
       if (menu->memberSprites[i] != NULL) {
         scale[0] = menu->memberScale[i];
         scale[1] = menu->memberScale[i];
-        transform[0] = menu->memberX[i] << 16;
+        transform[0] = toFIXED(menu->memberX[i]);
         transform[1] = top;
-        transform[2] = (menu->memberY[i] << 16) + top;
+        transform[2] = toFIXED(menu->memberY[i]) + top;
         transform[3] = 0;
-        Render_ApplyProjectedPlacementAtDepthFar(
-            menu->memberSprites[i], transform, scale, FIXED_ONE / 4, 250);
+        Render_ApplyProjectedPlacementAtDepthFar(menu->memberSprites[i],
+                                                 transform, scale, FACING_SOUTH,
+                                                 MENU_FIGURE_DEPTH);
       }
     }
   }
@@ -371,7 +373,8 @@ void DjinnFigures_UpdateTopRow(void) {
     struct Sprite *figure = menu->figures[i];
 
     if (figure != NULL) {
-      s32 placeY = 0x00728000 - (menu->memberY[i] << 15);
+      // 114.5 less half the figure's screen y, in 16.16.
+      FIXED placeY = toFIXED(229) / 2 - menu->memberY[i] * (FIXED_ONE / 2);
       s32 value = menu->figureScales[i];
 
       s32 next;
@@ -381,17 +384,17 @@ void DjinnFigures_UpdateTopRow(void) {
         scale.x = next;
         scale.y = next;
       } else {
-        next = value + (0x10000 - value) / 4;
+        next = value + (FIXED_ONE - value) / 4;
         scale.x = next;
         scale.y = next;
         menu->figureScales[i] = next;
       }
-      position.x = menu->figureX[i] << 16;
+      position.x = toFIXED(menu->figureX[i]);
       position.height = placeY;
-      position.y = (menu->figureY[i] << 16) + placeY;
+      position.y = toFIXED(menu->figureY[i]) + placeY;
       position.groundHeight = 0;
-      Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
-                                               menu->figureDepths[i], 250);
+      Render_ApplyProjectedPlacementAtDepthFar(
+          figure, &position, &scale, menu->figureFacings[i], MENU_FIGURE_DEPTH);
     }
   }
 }
@@ -423,7 +426,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->figureX[i] = 16;
     menu->figureY[i] = 200;
     menu->figureScales[i] = FIXED_ONE;
-    menu->figureDepths[i] = 0x4000;
+    menu->figureFacings[i] = FACING_SOUTH;
   }
   menu->figuresShown = 1;
   Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_VBLANK);
@@ -471,12 +474,12 @@ void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
   }
 }
 
-/// Sets the depth Djinn figure index is drawn at, if it exists.
-void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
+/// Turns Djinn figure index to face facing (enum Facing), if it exists.
+void DjinnFigures_SetSlotDepth(s32 index, s32 facing) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL)
-    menu->figureDepths[index] = frame;
+    menu->figureFacings[index] = facing;
 }
 
 /// Sets Djinn figure index's scale, if it exists: positive grows towards full
@@ -540,6 +543,8 @@ void MenuIcon_LoadSlots(void) {
   Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }
 
+/// Stops MenuIcon_PushSlots and frees the five command icons' entries
+/// MenuIcon_LoadSlots took in the sprite cache.
 void MenuIcon_ReleaseSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 *resource;
@@ -551,6 +556,7 @@ void MenuIcon_ReleaseSlots(void) {
     VramCache_FreeEntry(*resource++);
 }
 
+/// Moves command icon index to screen position (x, y).
 void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -558,6 +564,7 @@ void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   menu->menuIcons[index].attr.y = y;
 }
 
+/// Shows the five command icons MenuIcon_PushSlots draws (1) or hides them (0).
 void MenuIcon_SetActive(s32 active) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 

@@ -637,6 +637,10 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
+/// Draws four party members' Djinn into the list window, one column of 56
+/// pixels each from party member page: each member's Djinn grouped by element,
+/// standby in red, set in white and the rest in yellow. Over the list it
+/// labels the unleash effects when the party has few enough Djinn to show them.
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
   u8 *tiles = Ram_HeapSlots->windowWork;
@@ -707,10 +711,13 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
 #define GRID_CELL_WIDTH 6
 #endif
 
+/// Draws the Djinn list's first page, the first four party members.
 void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
   DjinnMenu_DrawPage(backdrop, 0);
 }
 
+/// Sets the palette of a rectangle of panel's interior, (x, y) and its size in
+/// tiles from the interior's corner, through Window_HighlightRectFar.
 void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
                                       s32 width, s32 height, s32 style) {
   Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
@@ -929,7 +936,7 @@ extern u8 gDjinnMenu_TextLevel[];
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
-void DjinnFigures_SetSlotDepth(s32 index, s32 frame);
+void DjinnFigures_SetSlotDepth(s32 index, s32 facing);
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
 void DjinnRecovery_CountDownFar(void);
@@ -1082,26 +1089,26 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow == -1) {
         DjinnFigures_SetSlotPosition(mode, 0, 200);
       } else {
-        s32 frame;
+        s32 facing;
         s32 animation;
 
         switch (state) {
         case DJINNI_STATE_STANDBY:
           animation = 1;
-          frame = 0x4000;
+          facing = FACING_SOUTH;
           break;
         case DJINNI_STATE_SET:
           animation = 2;
-          frame = 0x4000;
+          facing = FACING_SOUTH;
           break;
         default:
           animation = 1;
-          frame = 0x8000;
+          facing = FACING_WEST;
           break;
         }
         DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
                                      mode == DJINN_SELECT_DJINNI ? 62 : 54);
-        DjinnFigures_SetSlotDepth(mode, frame);
+        DjinnFigures_SetSlotDepth(mode, facing);
         if (redraw & 2)
           DjinnFigures_SetSlotPhase(mode, 0);
         DjinnFigures_ReplaceSlot(mode, element, animation);
@@ -1581,7 +1588,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
-  DjinnFigures_SetSlotDepth(mode, 0x4000);
+  DjinnFigures_SetSlotDepth(mode, FACING_SOUTH);
   return result;
 }
 

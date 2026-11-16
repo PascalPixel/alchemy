@@ -35,7 +35,7 @@ s32 PsynergyMenu_Run(void) {
   s32 owner;
   s32 result;
 
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_2
   savedTiles = Heap_AllocEwram(0x2000);
 #endif
@@ -123,7 +123,7 @@ enum PsynergyMenuMode {
 
 s16 Unit_AddPpFar(s32 unit, s32 amount);
 
-s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
@@ -549,13 +549,14 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 #endif
           // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-          Text_DrawMessageFar((menu->sideAction[0] & 0x3fff) +
+          Text_DrawMessageFar((menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
                                   MsgAbilityDescription,
                               menu->infoWindow, 0, 0);
 #else
-          Text_DrawMessageAsTilesFar((menu->sideAction[0] & 0x3fff) +
-                                         MsgAbilityDescription,
-                                     menu->infoWindow, 0, 0);
+          Text_DrawMessageAsTilesFar(
+              (menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
+                  MsgAbilityDescription,
+              menu->infoWindow, 0, 0);
 #endif
           shown = 1;
         } else {
@@ -593,10 +594,11 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   return result;
 }
 
-/// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
+/// Sets the L Psynergy shortcut, or the R one when second is set, to
 /// memberId << 10 | the Psynergy's id. Returns 1.
-s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second) {
-  u32 packed = (kind << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | (id & 0x3fff);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second) {
+  u32 packed = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) |
+               (id & PSYNERGY_ABILITY_MASK);
 
   if (second == 0)
     gMainRoutineWork.firstShortcut = packed;
@@ -625,11 +627,7 @@ extern const u8 gMenu_ShortcutRString[];
 extern const u8 gMenu_ShortcutRColonString[];
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-
-#else
-#endif
-
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws the two packed values of gMainRoutineWork (owner << 10 | ability), the
 /// shortcuts' messages, into a window: a heading (one when both are set,
 /// another otherwise), then for each its ability's name and the owner's name,
@@ -639,7 +637,6 @@ extern const u8 gMenu_ShortcutRColonString[];
 /// name when the ability's name is wide. Japanese draws "L" or "L:" (and "R"
 /// or "R:") itself, then the name, dropping the colon for a wide name. Returns
 /// 1. owner is not used.
-#if LANGUAGE != LANGUAGE_JAPANESE
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   s32 left;
   s32 top;
@@ -656,7 +653,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -679,7 +677,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
 
-  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -705,6 +704,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   return 1;
 }
 #else
+/// Japanese: draws "L" or "L:" and "R" or "R:" itself before each shortcut's
+/// name, dropping the colon for a wide name. Returns 1.
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   s32 left;
   s32 top;
@@ -718,7 +719,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.firstShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -736,7 +738,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
   }
 
-  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.secondShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -1255,6 +1258,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 
+/// Returns 1 when actionEntry cannot be used from the menu: it has no field
+/// effect and is not usable both in the field and in battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
   struct AbilityDefinition *action =

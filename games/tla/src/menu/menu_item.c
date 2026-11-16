@@ -100,7 +100,7 @@ s32 ItemMenu_Run(void) {
   s32 size;
 #endif
 
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_1
   size = 0x2000;
   backup = Heap_AllocEwram(size);
@@ -979,7 +979,7 @@ extern const u8 gItemMenu_ArrangeKeysString[];
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
-void ItemMenu_OpenCategory(s32 owner);
+void ItemMenu_OpenCategory(s32 ownerId);
 
 void ItemMenu_RefreshMember(s32 owner, s32 mode);
 
@@ -1093,12 +1093,14 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
-void ItemMenu_OpenCategory(s32 category) {
+/// Shows the equipment view of party member ownerId's items in the item
+/// window.
+void ItemMenu_OpenCategory(s32 ownerId) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   ItemMenu_PositionCategory();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_DrawCategory(menu->itemWindow, category, 0);
+  ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -1331,6 +1333,8 @@ s32 ItemMenu_CountItems(s32 owner_id) {
   return count;
 }
 
+/// Returns how many of item party member owner holds, adding up every stack
+/// of it in the inventory.
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
   struct Unit *state;
   s32 i;
@@ -1946,7 +1950,7 @@ void ItemMenu_TryBreak(void) {
 
 #undef ITEM_COMMAND_TEXT_X
 
-void ItemMenu_DrawItemDetails(s32, s32);
+void ItemMenu_DrawItemDetails(s32 window, s32 item);
 
 /// Opens the details window (top left, 13 by 10 tiles) and describes the item
 /// in side itemIndex there. Returns 1.
@@ -2054,10 +2058,12 @@ s32 ItemMenu_ShowDetails(s32 value) {
 
 #undef DETAILS_WINDOW_WIDTH
 
-void ItemMenu_DrawItemDetailsWithCount(s32 a, s32 b, s32 c);
+void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count);
 
-void ItemMenu_DrawItemDetails(s32 a, s32 b) {
-  ItemMenu_DrawItemDetailsWithCount(a, b, -1);
+/// Describes item in window with the entry's own count, through
+/// ItemMenu_DrawItemDetailsWithCount.
+void ItemMenu_DrawItemDetails(s32 window, s32 item) {
+  ItemMenu_DrawItemDetailsWithCount(window, item, -1);
 }
 
 // The headings are indented in English and Japanese; German, Spanish and

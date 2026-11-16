@@ -41,9 +41,13 @@
 #define INTRO_CARD_SCREEN 29
 #define INTRO_CARD_BLEND_SCREEN 28
 
+/// One step of the intro picture's scroll (Title_RunScrollStep, TITLE_STEP).
 struct TitleScrollStep {
-  s32 frames;
+  s32 frames; ///< how long the step lasts
+  /// Pixels a frame: BG1's y and x, then BG2's y and x.
   s32 speed[4];
+  /// For each speed, the frame count bits that must be clear for it to move;
+  /// 0 moves it every frame.
   u32 mask[4];
 };
 
@@ -51,11 +55,11 @@ struct TitleScrollStep {
 /// where it stops, the pixels a step, the picture's rows streamed into VRAM
 /// behind it and the frames each step waits.
 struct TitleScroll {
-  s16 pos;
+  s16 position;
   s16 limit;
   u16 step;
-  u8 *src;
-  u8 *dst;
+  u8 *source;
+  u8 *destination;
   u16 *cursor;
   u16 tile;
   s16 scroll;
@@ -80,15 +84,15 @@ struct OamEntry {
   u16 unused;
 };
 
-/// The title intro's state (HEAP_SLOT_TITLE_INTRO): the logo's phase, frame,
-/// timer, step and delay, and the countdowns to the fade to white and back that
-/// the lighthouse scroll starts.
 /// TitleLogoState.phase: what TitleIntro_UpdateLogo draws.
 enum TitleLogoPhase {
   TITLE_LOGO_GULLS = 0, ///< the gulls fly by (gTitleIntro_GullPath)
   TITLE_LOGO_ZOOM = 1   ///< the logo's three pieces zoom in and fade up
 };
 
+/// The title intro's state (HEAP_SLOT_TITLE_INTRO): the logo's phase, frame,
+/// timer, step and delay, and the countdowns to the fade to white and back that
+/// the lighthouse scroll starts.
 struct TitleLogoState {
   s16 phase; ///< enum TitleLogoPhase
   s16 frame; ///< index into gTitleIntro_GullFrames (5 halfwords a frame)
@@ -477,20 +481,20 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
 
   step = s->step;
   if ((s16)step > 0) {
-    for (i = s->pos; i < s->limit; i += (s16)s->step) {
+    for (i = s->position; i < s->limit; i += (s16)s->step) {
       if (Title_WaitOrPress(s->frames))
         goto fail;
       if (s->scroll > 0) {
-        Dma_Set(s->src, s->dst, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4),
-                REG_DMA3);
-        s->src += LIGHTHOUSE_ROW_BYTES;
-        s->dst += LIGHTHOUSE_ROW_BYTES;
+        Dma_Set(s->source, s->destination,
+                DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
+        s->source += LIGHTHOUSE_ROW_BYTES;
+        s->destination += LIGHTHOUSE_ROW_BYTES;
         for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
           *s->cursor++ = s->tile++;
         *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
         *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
         if (++s->rows == BG_SCREEN_WIDTH) {
-          s->dst = (u8 *)BG_CHAR_BLOCK(0);
+          s->destination = (u8 *)BG_CHAR_BLOCK(0);
           s->rows = 0;
           s->tile = 0;
           s->cursor = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
@@ -512,17 +516,17 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
   fail:
     return 1;
   } else {
-    for (i = s->pos; i > s->limit; i += (s16)step) {
+    for (i = s->position; i > s->limit; i += (s16)step) {
       gBgScroll[1].y += step;
       s->scroll -= step;
       if (s->scroll > 8) {
         s->rows--;
         if (s->rows == 0) {
           s->rows = 1;
-          Dma_Set(s->src, s->dst, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4),
-                  REG_DMA3);
-          s->src -= LIGHTHOUSE_ROW_BYTES;
-          s->dst -= LIGHTHOUSE_ROW_BYTES;
+          Dma_Set(s->source, s->destination,
+                  DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4), REG_DMA3);
+          s->source -= LIGHTHOUSE_ROW_BYTES;
+          s->destination -= LIGHTHOUSE_ROW_BYTES;
           for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
             *s->cursor++ = s->tile++;
           s->cursor -= DISPLAY_TILE_WIDTH;
@@ -536,7 +540,7 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
     }
   }
 done:
-  s->pos = i;
+  s->position = i;
   return 0;
 }
 
@@ -763,11 +767,11 @@ s32 TitleIntro_ShowLighthouse(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   TitlePaletteFade_Start(10);
 
-  scroll.pos = 0;
+  scroll.position = 0;
   scroll.limit = 176;
   scroll.step = i;
-  scroll.src = gTitleIntro_LighthouseTilesTail;
-  scroll.dst = (u8 *)BG_CHAR_BLOCK(0) + LIGHTHOUSE_SCREEN_BYTES;
+  scroll.source = gTitleIntro_LighthouseTilesTail;
+  scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + LIGHTHOUSE_SCREEN_BYTES;
   scroll.cursor = map;
   scroll.tile = tile;
   scroll.scroll = 0;
@@ -802,8 +806,8 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;
-  scroll.src = Data_02017080;
-  scroll.dst = (u8 *)BG_SCREEN_BLOCK(15);
+  scroll.source = Data_02017080;
+  scroll.destination = (u8 *)BG_SCREEN_BLOCK(15);
   scroll.cursor = (u16 *)0x0600f9c2;
   scroll.tile = 450;
   scroll.rows = 11;
@@ -1179,13 +1183,10 @@ s32 Title_ShowCamelotLogo(void) {
 /// Unused: an empty routine in the far-call table.
 void Title_NoOpColor(void) {}
 
-/// Writes to step, for each of the 1536 RGB components of 512 colours, the
-/// difference between current and target values divided by frames.
-/// src: current components.
-/// dst: target components.
-/// step: destination for component increments.
-/// frames: fade duration; nothing is written if zero or negative.
-void TitlePaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step,
+/// Writes to step, for each of the three components of the 512 colours, the
+/// difference between current and target divided by frames; nothing when frames
+/// is zero or less.
+void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
                                      s32 frames) {
   s32 n;
   s32 from;
@@ -1193,11 +1194,11 @@ void TitlePaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step,
 
   if (frames > 0) {
     for (n = 0; n < 3 * 512; n++) {
-      from = *src;
-      to = *dst;
+      from = *current;
+      to = *target;
       *step = Iwram_SignedDivide(to - from, frames);
-      src++;
-      dst++;
+      current++;
+      target++;
       step++;
     }
   }

@@ -151,10 +151,15 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), angle, &pos);
     i = ActorScript_CheckOverlapFar(target, (s32 *)&pos);
-    if (i != 0)
-      goto blocked;
+    // A solid actor or raised ground in the way: a buzzer every 16 frames.
+    if (i != 0) {
+      Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
+      Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
+      if ((gFrameCount & 15) == 0)
+        Sound_PlayFar(SE_MENU_ERROR);
+      continue;
+    }
     if (FieldEffect_CheckRaisedTargetCollision(target, &pos) > 0) {
-    blocked: // the way is blocked: a buzzer every 16 frames
       Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
       Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
       if ((gFrameCount & 15) == 0)

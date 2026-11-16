@@ -18,7 +18,9 @@ enum GeyserMode { GEYSER_PURGATORY, GEYSER_DJINN_STORM, GEYSER_DJINN_BLAST };
 struct StripQuad;
 
 #define VENGEANCE_FRAMES 124
-#define VENGEANCE_ARROWS 7 ///< arrows shot, one every twelve frames
+#define VENGEANCE_ARROWS 7 ///< arrows shot, one every VENGEANCE_SHOT_INTERVAL
+#define VENGEANCE_FIRST_SHOT 22    ///< the frame the first arrow flies
+#define VENGEANCE_SHOT_INTERVAL 12 ///< frames from one arrow to the next
 /// Vengeance's sheet: the archer twice, her bow at rest and drawn, then the
 /// flame at an arrow's tail, the flaming arrow and a glint.
 #define VENGEANCE_ARCHER_WIDTH 88
@@ -190,9 +192,11 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     speed = speed * 52 / DAMPING_SCALE;
 
     drawn = 0;
-    if (frame > 105) {
+    if (frame >=
+        VENGEANCE_FIRST_SHOT + VENGEANCE_ARROWS * VENGEANCE_SHOT_INTERVAL) {
       drawn = 1;
-    } else if (frame > 21 && (frame - 22) % 12 > 3) {
+    } else if (frame >= VENGEANCE_FIRST_SHOT &&
+               (frame - VENGEANCE_FIRST_SHOT) % VENGEANCE_SHOT_INTERVAL > 3) {
       drawn = 1;
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -214,10 +218,12 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     // The arrows.
     for (i = 0; i != VENGEANCE_ARROWS; i++) {
       arrow = &work->particles[i];
-      if (frame < i * 12 + 22 && (frame > 21 || i != 0)) {
+      if (frame < i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT &&
+          (frame >= VENGEANCE_FIRST_SHOT || i != 0)) {
         continue;
       }
-      if (frame >= i * 12 + 26 && arrow->variant == 0) {
+      if (frame >= i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT + 4 &&
+          arrow->variant == 0) {
         arrow->x -= arrow->velocityX;
         arrow->y += arrow->velocityY;
       }
@@ -239,7 +245,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
         }
         if (hit == 1) {
           work->shakeFrames = 4;
-          if (i == 6) {
+          if (i == VENGEANCE_ARROWS - 1) {
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {

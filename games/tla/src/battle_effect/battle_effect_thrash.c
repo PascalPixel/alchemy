@@ -150,7 +150,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   else if (variant == FLASHING_STRIKE_BOOST_HACK) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-    Actor_SelectAnimationFar(user, 2);
+    Actor_SelectAnimationFar(user, POSE_LEAP);
     Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);

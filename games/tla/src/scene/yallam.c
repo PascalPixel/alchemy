@@ -143,6 +143,7 @@ struct SongRunnerState {
   s32 riseEnabled;
 };
 
+/// The song game's five runners, kept while it is paused.
 struct SongRunnerState gYallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
 extern struct MapGridCellAnimation gYallam_Doors[];
 
@@ -1558,6 +1559,7 @@ void Yallam_ShowSongGame(void) {
   }
 }
 
+/// The moon song's words, sung verse by verse.
 extern u8 MsgIfYouWant[];
 
 /// "If you want to go to the moon, if you want to go to the moon."
@@ -1625,6 +1627,7 @@ void Yallam_SingMoonSong(void) {
   }
 }
 
+/// The sun song's words, sung verse by verse.
 extern u8 MsgIfYouWantTo[];
 
 /// "If you want to go to the sun, if you want to go to the sun."
@@ -1854,8 +1857,7 @@ s32 gYallam_PillarShadowSunk[] = {
 };
 
 // clang-format off
-/// Two children run round the same six-sided ring by the playground, half a lap
-/// apart: each table is one child.
+/// The circles child runs round a six-sided ring by the playground.
 u32 gYallam_CirclesChildRuns[] = {
     SC_ANIMATION(2),
     SC_SPEED(1),
@@ -1875,6 +1877,7 @@ u32 gYallam_CirclesChildRuns[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// As gYallam_CirclesChildRuns, for the game child, half a lap ahead of it.
 u32 gYallam_GameChildRuns[] = {
     SC_ANIMATION(2),
     SC_SPEED(1),
@@ -1906,6 +1909,7 @@ u32 gYallam_CirclesChildGathers[] = {
     SC_END,
 };
 
+/// As gYallam_CirclesChildGathers, for the game child.
 u32 gYallam_GameChildGathers[] = {
     SC_ANIMATION(2),
     SC_MOVE(352, 0, 792),
@@ -1933,6 +1937,7 @@ u32 gYallam_SongLeaderForms[] = {
     SC_END,
 };
 
+/// As gYallam_SongLeaderForms, for the circles child.
 u32 gYallam_CirclesChildForms[] = {
     SC_ANIMATION(2),
     SC_MOVE(362, 0, 792),
@@ -1948,6 +1953,7 @@ u32 gYallam_CirclesChildForms[] = {
     SC_END,
 };
 
+/// As gYallam_SongLeaderForms, for the game child.
 u32 gYallam_GameChildForms[] = {
     SC_ANIMATION(2),
     SC_MOVE(364, 0, 808),
@@ -1963,6 +1969,7 @@ u32 gYallam_GameChildForms[] = {
     SC_END,
 };
 
+/// As gYallam_SongLeaderForms, for the story child.
 u32 gYallam_StoryChildForms[] = {
     SC_ANIMATION(2),
     SC_MOVE(274, 0, 888),
@@ -1984,6 +1991,7 @@ u32 gYallam_SongLeaderStarts[] = {
     SC_END,
 };
 
+/// As gYallam_SongLeaderStarts, for the game child.
 u32 gYallam_GameChildStarts[] = {
     SC_ANIMATION(2),
     SC_MOVE(344, 0, 888),
@@ -1995,6 +2003,7 @@ u32 gYallam_GameChildStarts[] = {
     SC_END,
 };
 
+/// As gYallam_SongLeaderStarts, for the circles child.
 u32 gYallam_CirclesChildStarts[] = {
     SC_ANIMATION(2),
     SC_MOVE(344, 0, 888),
@@ -2091,16 +2100,19 @@ s16 gYallam_DoorOpening[] = {
     2, 6, -1,
 };
 
+/// The second shape of door's opening, as gYallam_DoorOpening.
 s16 gYallam_SecondDoorOpening[] = {
     95, 28, 1, 2, 6, 94, 28, 1,
     2, 6, -1,
 };
 
+/// The third shape of door's opening, as gYallam_DoorOpening.
 s16 gYallam_ThirdDoorOpening[] = {
     89, 28, 1, 2, 6, 90, 28, 1,
     2, 6, -1,
 };
 
+/// The fourth shape of door's opening, as gYallam_DoorOpening.
 s16 gYallam_FourthDoorOpening[] = {
     92, 30, 2, 2, 6, 94, 30, 2,
     2, 6, -1,

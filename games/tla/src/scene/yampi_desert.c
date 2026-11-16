@@ -2799,6 +2799,7 @@ LATE_DATA u32 gYampiDesert_TravelerLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// As gYampiDesert_TravelerLooksAround, for the other traveler, out of step with the first.
 LATE_DATA u32 gYampiDesert_OtherTravelerLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(20),
@@ -2824,6 +2825,7 @@ LATE_DATA u32 gYampiDesert_FinderRunsAhead[] = {
     SC_END,
 };
 
+/// As gYampiDesert_FinderRunsAhead, for the travelers who follow.
 LATE_DATA u32 gYampiDesert_TravelersFollow[] = {
     SC_ANIMATION(2),
     SC_MOVE(240, 0, 280),
@@ -2834,6 +2836,7 @@ LATE_DATA u32 gYampiDesert_TravelersFollow[] = {
     SC_END,
 };
 
+/// As gYampiDesert_FinderRunsAhead, for the last travelers, from further back.
 LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
     SC_ANIMATION(2),
     SC_MOVE(216, 0, 232),
@@ -2852,26 +2855,32 @@ LATE_DATA u16 gYampiDesertGuardianRingChestStakes[] = {
     STAKE_ROW(4), STAKE_ROW(5), STAKE_LIST_END,
 };
 
+/// Blitz's room's stakes.
 LATE_DATA u16 gYampiDesertBlitzStakes[] = {
     STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3),
     STAKE_ROW(4), STAKE_ROW(5), STAKE_ROW(6), STAKE_ROW(7),
     STAKE_ROW(8), STAKE_ROW(9), STAKE_ROW(10), STAKE_LIST_END,
 };
 
+/// The Psynergy Stone's room's stakes.
 LATE_DATA u16 gYampiDesertPsynergyStoneStakes[] = {
     STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3), STAKE_LIST_END,
 };
 
+/// The King Scorpion's room's stakes.
 LATE_DATA u16 gYampiDesertKingScorpionStakes[] = {
     STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_LIST_END,
 };
 
+/// The Blow Mace chest's room's stake.
 LATE_DATA ALIGNED(4) u16 gYampiDesertBlowMaceChestStakes[] = {
     STAKE_ROW(0), STAKE_LIST_END,
 };
 
+/// The trigger the scorpions raise for the scene to run, or 0.
 LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 
+/// The sand ripple that follows the room's King Scorpion under the sand.
 LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
 /// Where the party arrives in the desert's rooms; the cave under the oasis has
@@ -2881,6 +2890,7 @@ LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// Where the party arrives in the cave under the oasis.
 LATE_DATA struct SceneEntrance gYampiDesertOasisCaveEntrances[] = {
     {1, CONDITION_ALWAYS, 408, 0, 480, FACING_NORTH, 0, 288, 376, 528, 536, 0},
     {2, CONDITION_ALWAYS, 408, 0, 456, FACING_SOUTH, 0, 288, 376, 528, 536, 0},
@@ -2959,6 +2969,7 @@ LATE_DATA struct ActorPlacement gYampiDesert_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The Guardian Ring chest's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertGuardianRingChestActorPlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2969,6 +2980,7 @@ LATE_DATA struct ActorPlacement gYampiDesertGuardianRingChestActorPlacements[] =
     {SCENE_TABLE_END},
 };
 
+/// The oasis's actors before the party meets the travelers.
 LATE_DATA struct ActorPlacement gYampiDesertOasisActorPlacements[] = {
     ACTOR_PLACEMENT(88, CONDITION_ALWAYS, (s32)gYampiDesert_TravelerLooksAround, 200, 0, 216, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(88, CONDITION_ALWAYS, (s32)gYampiDesert_OtherTravelerLooksAround, 216, 0, 200, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
@@ -2980,6 +2992,7 @@ LATE_DATA struct ActorPlacement gYampiDesertOasisActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The oasis's actors once the party has met the travelers.
 LATE_DATA struct ActorPlacement gYampiDesertOasisActorPlacementsAfterMeeting[] = {
     ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 242, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 533, 0, 271, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -2991,6 +3004,7 @@ LATE_DATA struct ActorPlacement gYampiDesertOasisActorPlacementsAfterMeeting[] =
     {SCENE_TABLE_END},
 };
 
+/// Blitz's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertBlitzActorPlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3007,6 +3021,7 @@ LATE_DATA struct ActorPlacement gYampiDesertBlitzActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The Psynergy Stone's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertPsynergyStoneActorPlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3021,6 +3036,7 @@ LATE_DATA struct ActorPlacement gYampiDesertPsynergyStoneActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The King Scorpion's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertKingScorpionActorPlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3041,6 +3057,7 @@ LATE_DATA struct ActorPlacement gYampiDesertKingScorpionActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The Trainer's Whip chest's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertTrainersWhipChestActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -3050,12 +3067,14 @@ LATE_DATA struct ActorPlacement gYampiDesertTrainersWhipChestActorPlacements[] =
     {SCENE_TABLE_END},
 };
 
+/// The scorpion's pit's actors.
 LATE_DATA struct ActorPlacement gYampiDesertScorpionPitActorPlacements[] = {
     ACTOR_PLACEMENT(103, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The Blow Mace chest's room's actors.
 LATE_DATA struct ActorPlacement gYampiDesertBlowMaceChestActorPlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3073,6 +3092,7 @@ LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Guardian Ring chest's room's triggers.
 LATE_DATA struct Trigger gYampiDesertGuardianRingChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3087,6 +3107,7 @@ LATE_DATA struct Trigger gYampiDesertGuardianRingChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The oasis's triggers.
 LATE_DATA struct Trigger gYampiDesertOasisTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3130,6 +3151,7 @@ LATE_DATA struct Trigger gYampiDesertOasisTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Blitz's room's triggers.
 LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3152,6 +3174,7 @@ LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Psynergy Stone's room's triggers.
 LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3170,6 +3193,7 @@ LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The King Scorpion's room's triggers.
 LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3186,6 +3210,7 @@ LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The treasure pit's triggers.
 LATE_DATA struct Trigger gYampiDesertTreasurePitTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3195,6 +3220,7 @@ LATE_DATA struct Trigger gYampiDesertTreasurePitTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The sand pass's triggers.
 LATE_DATA struct Trigger gYampiDesertSandPassTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3203,6 +3229,7 @@ LATE_DATA struct Trigger gYampiDesertSandPassTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Trainer's Whip chest's room's triggers.
 LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3219,6 +3246,7 @@ LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The medal spot's room's triggers.
 LATE_DATA struct Trigger gYampiDesertMedalSpotTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3227,6 +3255,7 @@ LATE_DATA struct Trigger gYampiDesertMedalSpotTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The scorpion's pit's triggers.
 LATE_DATA struct Trigger gYampiDesertScorpionPitTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
@@ -3234,6 +3263,7 @@ LATE_DATA struct Trigger gYampiDesertScorpionPitTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The cave under the oasis's triggers.
 LATE_DATA struct Trigger gYampiDesertOasisCaveTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbOutOfOasisCave)},

@@ -85,7 +85,8 @@ void InventorySnapshot_Save(void) {
   }
   GameFlag_Set(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT);
   Party_RestoreHpPp(1);
-  for (slot = 0xe50; slot <= 0xe59; slot++)
+  for (slot = FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST;
+       slot <= FLAG_TRIAL_ROAD_STAGE_ITEM_LAST; slot++)
     GameFlag_Clear(slot);
 }
 

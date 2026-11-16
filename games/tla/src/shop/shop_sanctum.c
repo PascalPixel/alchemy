@@ -393,9 +393,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 
       if (shop->partyMemberIcons[i] != 0) {
         if (first + i == selected)
-          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 30);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], ANIM_PARTY_RUN);
         else
-          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 1);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], ANIM_STAND);
         shop->partyMemberScale[i] = FIXED_ONE;
         if (!Sanctum_NeedsService(unitId, serviceKind))
           shop->partyMemberScale[i] = FIXED_ONE * 7 / 10;
@@ -478,7 +478,7 @@ void Sanctum_UpdateBurst(void) {
   s32 i;
   s32 burstMember;
 
-  for (i = 0; i < 24; i++)
+  for (i = 0; i < SANCTUM_PARTICLE_COUNT; i++)
     FieldParticle_UpdateFar(&shop->effects[i]);
   burstMember = shop->burstMember;
   if (burstMember != -1)
@@ -486,16 +486,16 @@ void Sanctum_UpdateBurst(void) {
                                      (Random16() * 7) >> 16);
 }
 
-void Sprite_SetAnimationSpeedFar(void *object, s32 arg);
+void Sprite_SetAnimationSpeedFar(void *object, s32 speed);
 
 /// Plays the service's burst on a party member's icon: its tune, the colours
-/// tinted, and 18 sparkles flying in around the icon as it changes colour.
+/// tinted, and SANCTUM_BURST_SPARKLES sparkles flying in around the icon as it
+/// changes colour.
 void Sanctum_RunMemberIconBurst(s32 member) {
   struct ShopWork *shop;
   s8 savedCursorMode;
   struct Point position;
   struct FieldParticle *effect;
-  s32 taskPriority;
   s32 effectIndex;
 
   shop = Ram_HeapSlots->menuWork;
@@ -506,20 +506,17 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
-  taskPriority = TASK_PASS_VBLANK;
-  Task_Add(Sanctum_UpdateBurst, taskPriority);
+  Task_Add(Sanctum_UpdateBurst, TASK_PASS_VBLANK);
 
-  position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - toFIXED(12);
+  position.x = toFIXED(shop->partyMemberX[member]);
+  position.z = toFIXED(shop->partyMemberY[member]) - toFIXED(12);
 
-  effectIndex = 0;
-  effect = shop->effects;
-  do {
-    FieldParticle_InitializeFar((struct FieldParticle *)effect, SPRITE_PARTICLE,
-                                position.x, position.z);
-    FieldParticle_SetCallbackFar((struct FieldParticle *)effect,
-                                 Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetActorModeFar((struct FieldParticle *)effect, 7);
+  for (effectIndex = 0; effectIndex < SANCTUM_BURST_SPARKLES; effectIndex++) {
+    effect = &shop->effects[effectIndex];
+    FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
+                                position.z);
+    FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
+    FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
@@ -527,23 +524,14 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     if (effectIndex == 5) {
       shop->burstMember = member;
     }
-    effectIndex++;
-    effect++;
-  } while (effectIndex < 18);
+  }
 
   Sound_WaitForJingle();
   // Every sparkle still flying makes its last flight.
   {
-    u8 lastFlight = SANCTUM_SPARKLE_LAST_FLIGHT;
-    s8 *state = &shop->effects[0].state;
-
-    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
-      // The particle's active flag, five bytes on from its state.
-      if (state[offsetof(struct FieldParticle, active) -
-                offsetof(struct FieldParticle, state)] != 0)
-        *state = lastFlight;
-      state = (s8 *)((u8 *)state + sizeof(struct FieldParticle));
-    }
+    u8 *entry;
+    FIELD_PARTICLES_SET_ACTIVE_STATE(entry, effectIndex, shop, effects,
+                                     SANCTUM_SPARKLE_LAST_FLIGHT);
   }
 
   wait(20);
@@ -556,14 +544,15 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     u8 *active = (u8 *)&shop->effects[0].active;
     struct FieldParticle *particle = shop->effects;
 
-    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
+    for (effectIndex = SANCTUM_PARTICLE_COUNT - 1; effectIndex >= 0;
+         effectIndex--) {
       s32 flag = *active;
 
       flag <<= 24;
 
       active += sizeof(struct FieldParticle);
       if (flag != 0) {
-        FieldEffect_ClearOwnedSlotFar((struct FieldParticle *)particle);
+        FieldEffect_ClearOwnedSlotFar(particle);
       }
       particle++;
     }

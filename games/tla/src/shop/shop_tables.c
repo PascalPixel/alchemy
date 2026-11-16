@@ -8,10 +8,10 @@
 #include "item_ids.h"
 #include "sounds.h"
 
+// clang-format off
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
 /// 32 bytes on, eight tiles in all.
-// clang-format off
 const u16 gShop_SelectorTileOffsets[30] = {
     0, 1, 2, 3,
     32, 33, 34, 35,

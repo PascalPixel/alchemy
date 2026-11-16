@@ -181,7 +181,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// sanctum. It opens the empty stock row 0.
 s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
-  gMainRoutineWork.shopGifts = 28;
+  gMainRoutineWork.shopGifts = SHOP_GIFTS_MAX;
   Inventory_EquipFar(
       GARET,
       Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));

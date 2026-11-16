@@ -45,12 +45,12 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the definition of enemy selector; enemy ids start past the eight
+/// Returns the definition of enemy `enemyId`; enemy ids start past the eight
 /// characters', so that one id names any unit.
-const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
+const struct EnemyDefinition *Enemy_GetDefinition(s32 enemyId) {
   u32 recordIndex;
 
-  recordIndex = selector - ENEMY_ID_FIRST;
+  recordIndex = enemyId - ENEMY_ID_FIRST;
   // BUG: the table has ENEMY_COUNT rows, but only rows past 999 are refused, so
   // the rows from ENEMY_COUNT read the tables after it.
 #ifdef BUGFIX
@@ -421,7 +421,7 @@ static __inline__ FIXED Owner_GetPpRatio(s32 owner) {
 
   if (unit->ppMax <= 0)
     return 0;
-  return (unit->pp << 16) / unit->ppMax;
+  return toFIXED(unit->pp) / unit->ppMax;
 }
 
 /// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
@@ -441,7 +441,7 @@ FIXED Party_GetPpRatio(void) {
   }
   if (max == 0)
     return 0;
-  return (pp << 16) / max;
+  return toFIXED(pp) / max;
 }
 
 /// Takes 1 PP from the member whose PP is fullest for its maximum.
@@ -714,7 +714,7 @@ void Party_RestorePpOfLitElements(void) {
 
 /// Writes the element and index of unit's last Djinni and returns 0, or
 /// returns -1 when it has none.
-s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
+s32 Unit_FindLastDjinn(s32 unit, s32 *elementOut, s32 *indexOut) {
   u32 *sets = Unit_Get(unit)->djinnHeld;
   s32 element = -1;
   s32 index = -1;
@@ -731,8 +731,8 @@ s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
   }
   if (element == -1)
     return element;
-  *element_out = element;
-  *index_out = index;
+  *elementOut = element;
+  *indexOut = index;
   return 0;
 }
 
@@ -788,11 +788,9 @@ void Party_BalanceDjinn(void) {
 /// flags, as DataTransfer_Apply reads them.
 s32 FlagBits_Test(u8 *bytes, s32 flag) {
   s32 bit;
-  u32 index;
 
   bit = flag & 7;
-  index = (u32)flag << 20;
-  flag = index >> 23;
+  flag = GAME_FLAG_BYTE(flag);
   return (bytes[flag] >> bit) & 1;
 }
 
@@ -966,7 +964,7 @@ void Party_AddIsaacsParty(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gSceneLocalState[0x1950 + i] = djinni;
+    gSceneLocalState[SCENE_STATE_REUNION_DJINN + i] = djinni;
   }
   // The Psynergy items Isaac's party carried in The Broken Seal.
   Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);

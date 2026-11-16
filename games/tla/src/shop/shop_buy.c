@@ -475,9 +475,9 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 
       if (figure != NULL) {
         if (first + i == selected)
-          Sprite_StartAnimationFar(figure, 30);
+          Sprite_StartAnimationFar(figure, ANIM_PARTY_RUN);
         else
-          Sprite_StartAnimationFar(figure, 1);
+          Sprite_StartAnimationFar(figure, ANIM_STAND);
         shop->partyMemberScale[i] = FIXED_ONE;
         if (!Item_IsCompatibleWithUnitFar(unitId, itemId))
           shop->partyMemberScale[i] = FIXED_ONE * 4 / 5;
@@ -729,6 +729,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           count = (count + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
                   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
+          // Paint capacity, available stock, selection and carried items in
+          // that order; each shorter prefix overwrites the previous colour.
           QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);
           QuantityBar_Fill(minimum + maximum, 0, tileBuffer);
           QuantityBar_Fill(minimum + count + 1, 10, tileBuffer);

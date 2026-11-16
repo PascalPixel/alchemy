@@ -261,6 +261,11 @@
 /// Broken Seal's FLAG_COLOSSO_HOLDS_EQUIPMENT; the Trial Road's music rule and
 /// its triggers test it.
 #define FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT 0x9ff
+/// The ten items of the Trial Road's stages (SCENE_TRIAL_ROAD_STAGES in
+/// scene_items.c), set as each is taken; InventorySnapshot_Save clears them as
+/// a race starts, so that every race finds them again.
+#define FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST 0xe50
+#define FLAG_TRIAL_ROAD_STAGE_ITEM_LAST 0xe59
 
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.

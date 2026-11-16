@@ -91,12 +91,16 @@ extern const struct EnemyDefinition gEnemy_Definitions[];
 /// The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit
 /// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];
+/// Counts the Djinn recovery down twenty times, setting every recovering Djinni
+/// of a party member with HP (DjinnRecovery_CountDownTwenty).
 void DjinnRecovery_CountDownTwentyFar(void);
 /// Gives a Djinni to a unit.
 s32 Djinn_GiveFar(s32, s32, s32);
+/// Clears each button shortcut whose Psynergy can no longer be cast
+/// (Party_ClearUnusableShortcuts).
 void Party_ClearUnusableShortcutsFar(void);
-/// Gives a unit one item, joining its first matching stack (up to 30) or taking
-/// the first free slot.
+/// Gives a unit one item, joining its first matching stack (up to
+/// INVENTORY_STACK_MAX) or taking the first free slot.
 s32 Inventory_AddItemFar(s32, s32);
 /// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
@@ -222,6 +226,8 @@ extern const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT];
 extern const s16 gDataTransfer_DjinnChances[ELEMENT_COUNT]
                                            [TRANSFERRED_DJINN_PER_ELEMENT];
 void Party_BalanceDjinn(void);
+/// Adds delta to unit `owner`'s PP, clamped to 0 and its maximum, and returns
+/// the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta);
 s32 PartyInventory_Remove(s32 item_id);
 s32 PartyInventory_CountItem(s32 itemId);

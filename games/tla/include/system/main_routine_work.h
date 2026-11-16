@@ -44,6 +44,10 @@ enum HazardMode {
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
+/// The most Game Tickets counted in MainRoutineWork.shopGifts, the last of
+/// gShop_GameTicketCreditCosts' prices that is used.
+#define SHOP_GIFTS_MAX 28
+
 /// The first pending Djinni battle event: DJINNI_BATTLE_EVENT_FIRST plus the
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300
@@ -65,8 +69,8 @@ struct MainRoutineWork {
   /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[292];
-  s32 shopCredit; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
-  s8 shopGifts;   ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
+  s32 shopCredit; ///< shop credit, at most COINS_MAX (Party_AdjustShopCredit)
+  s8 shopGifts;   ///< shop gifts, 0 to SHOP_GIFTS_MAX (Party_AdjustShopGifts)
   /// The weights of the spring game's 15 prizes, as ☀️'s prizeWeights: three
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.

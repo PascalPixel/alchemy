@@ -303,8 +303,7 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// 82, and a character effect 82 too.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
-  u8 *state = Unit_Get(target);
-  struct Unit *unit = (struct Unit *)state;
+  struct Unit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;
   s32 attempt;
@@ -334,15 +333,15 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   // sleep, seal or curse, tested in that order.
   goto check_restore;
 check_restore_others:
-  if (unit->stun == 0 && unit->sleep == 0 &&
-      state[(u32)&((struct Unit *)0)->psySeal] == 0 && unit->grimReaper == 0) {
+  if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
+      unit->grimReaper == 0) {
     return 0;
   }
   goto restore_checked;
 check_restore:
   if (effectId == ABILITY_EFFECT_RESTORE) {
-    if (unit->delusion == 0 &&
-        state[(u32)&((struct Unit *)0)->confusion] == 0 && unit->charm == 0) {
+    if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
+        unit->charm == 0) {
       goto check_restore_others;
     }
   }
@@ -356,8 +355,7 @@ restore_checked:
   sleep = &unit->sleep;
   if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
       *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
-      unit->psySeal == 0 && unit->grimReaper == 0 &&
-      state[(u32)&((struct Unit *)0)->haunt] == 0) {
+      unit->psySeal == 0 && unit->grimReaper == 0 && *(u8 *)&unit->haunt == 0) {
     return 0;
   }
 

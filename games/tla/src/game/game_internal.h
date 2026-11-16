@@ -63,9 +63,9 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
     inventory[usedSlots] = 0;
 }
 
-/// The rare item counters RareItemStock_Adjust keeps; an index from here on
-/// has no stock.
-enum { ITEM_COUNTER_COUNT = 300 };
+/// The rare item counters RareItemStock_Adjust keeps (an index from here on
+/// has no stock), and the most one counts.
+enum { ITEM_COUNTER_COUNT = 300, ITEM_COUNTER_MAX = 99 };
 
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 

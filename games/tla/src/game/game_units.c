@@ -45,12 +45,12 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the definition of enemy selector; enemy ids start past the eight
+/// Returns the definition of enemy `enemyId`; enemy ids start past the eight
 /// characters', so that one id names any unit.
-const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
+const struct EnemyDefinition *Enemy_GetDefinition(s32 enemyId) {
   u32 recordIndex;
 
-  recordIndex = selector - ENEMY_ID_FIRST;
+  recordIndex = enemyId - ENEMY_ID_FIRST;
   // BUG: the table has ENEMY_COUNT rows, but only rows past 999 are refused, so
   // the rows from ENEMY_COUNT read the tables after it.
 #ifdef BUGFIX

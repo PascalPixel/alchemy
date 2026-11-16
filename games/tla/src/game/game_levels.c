@@ -154,20 +154,20 @@ s32 Owner_UpdateClassActions(s32 owner) {
   return 0;
 }
 
-/// Teaches a character action `value` for good (or makes a class action
+/// Teaches character `owner` ability `ability` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full.
-s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
-  struct Unit *state = Unit_Get(stateIndex);
-  s32 key = value & PSYNERGY_ABILITY_MASK;
+s32 Unit_LearnPsynergy(s32 owner, s32 ability) {
+  struct Unit *unit = Unit_Get(owner);
+  s32 key = ability & PSYNERGY_ABILITY_MASK;
   s32 found = -1;
   s32 index;
 
   for (index = 0; index <= 30; index++) {
-    s32 masked = state->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
+    s32 masked = unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
     if ((masked ^ key) == 0) {
-      state->psynergy[index].encodedAction = masked;
+      unit->psynergy[index].encodedAction = masked;
       found = index;
       break;
     }
@@ -175,10 +175,10 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 
   if (found < 0) {
     for (index = 0; index <= 30; index++) {
-      s32 action = state->psynergy[index].encodedAction;
+      s32 action = unit->psynergy[index].encodedAction;
 
       if (action == 0) {
-        state->psynergy[index].encodedAction = key;
+        unit->psynergy[index].encodedAction = key;
         found = index;
         break;
       }
@@ -188,9 +188,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
     }
   }
 
-  Unit_RefreshPsynergy(stateIndex);
+  Unit_RefreshPsynergy(owner);
   for (index = 0; index < PSYNERGY_SLOTS; index++) {
-    if (state->psynergy[index].encodedAction == key) {
+    if (unit->psynergy[index].encodedAction == key) {
       break;
     }
   }

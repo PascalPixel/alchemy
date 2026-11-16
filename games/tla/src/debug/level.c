@@ -32,6 +32,9 @@
 #include "window/window.h"
 #include "graphics/text_render.h"
 #include "graphics/uiflow.h"
+#include "fixed_math.h"
+#include "field/field_psynergy_work.h"
+#include "field/sprite.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
@@ -56,7 +59,11 @@ enum {
   ENTRANCE_NAMES_FOURTH = 96,
   ENTRANCE_NAMES_THIRD = 97,
   ENTRANCE_NAMES_SECOND = 98,
-  ENTRANCE_NAMES_FIRST = 99
+  ENTRANCE_NAMES_FIRST = 99,
+  /// The entrances the code tests against: up to the first is the debug
+  /// room's, above the second the rooms of names'.
+  ENTRANCE_DEBUG_ROOM_LAST = 89,
+  ENTRANCE_NAMES_ABOVE = 94
 };
 
 /// The debug room's actors, numbering the rows of
@@ -92,14 +99,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIncreaseItemAndLevel_ActorPlacements;
 }
 
-#define ITEM_DEBUG_DETAILS_WIDTH 28
-#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
-#define ITEM_DEBUG_DETAILS_WIDTH 13
-#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
-#define DEBUG_ITEM_COUNT                                                       \
-  270 ///< The browser's item numbers, 0 to 269, wrapping.
-#define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
-#define LEVEL_EDITOR_SCALE (FIXED_ONE * 8 / 5)
+/// How much larger ACTOR_LEVEL_EDITOR is drawn in the debug room.
 #define LEVEL_EDITOR_SCALE (FIXED_ONE * 17 / 10)
 
 /// Shows the name of the person talked to in a room of names: actor `actorId`
@@ -139,7 +139,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
 /// The scene's triggers: the rooms of names' for any entrance above 94, else
 /// the debug room's.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance > 94)
+  if (gMainRoutineWork.entrance > ENTRANCE_NAMES_ABOVE)
     return gIncreaseItemAndLevel_NameTriggers;
   return gIncreaseItemAndLevel_Triggers;
 }
@@ -264,9 +264,10 @@ void IncreaseItemAndLevel_SelectItem(void) {
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
   // over its text background.
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   wait(1);
   while (1) {
@@ -342,21 +343,13 @@ void IncreaseItemAndLevel_SelectItem(void) {
     // Skip items with no icon in the chosen direction.
     if (seekDirection == -1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      goto check_back;
-    back:
-      selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
-    check_back:
-      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        goto back;
+      while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
+        selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     }
     if (seekDirection == 1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      goto check_ahead;
-    ahead:
-      selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
-    check_ahead:
-      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        goto ahead;
+      while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
+        selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     }
     seekDirection = 0;
     wait(1);
@@ -573,23 +566,23 @@ s32 Scene_Initialize(void) {
 
   event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   event->transitionFrames = 24;
-  if (gMainRoutineWork.entrance <= 89) {
-    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
-    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
+  if (gMainRoutineWork.entrance <= ENTRANCE_DEBUG_ROOM_LAST) {
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
   }
   return 0;
 }
 
 /// Runs the animation test, then moves ACTOR_LEVEL_EDITOR to its test
 /// position, as The Broken Seal's Japanese edition: Force cast at
-/// ACTOR_PORTRAIT_BROWSER gives it mode 2 and ACTOR_LEVEL_EDITOR mode 4; once
+/// ACTOR_PORTRAIT_BROWSER walks it and ACTOR_LEVEL_EDITOR shakes its head; once
 /// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, 2);
-  Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, 4);
+  Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
+  Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, 312, 416);
   Event_End();
@@ -599,7 +592,9 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
 void IncreaseItemAndLevel_EnableEffectChildMode(void) {
-  *((u8 *)Ram_HeapSlots->fieldEffectWork + 53) = 1;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+
+  effectWork->childMode = 1;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }

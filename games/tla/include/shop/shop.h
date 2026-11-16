@@ -42,7 +42,7 @@ struct WindowSprite *
 Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y);
 
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
-                    s8 kind);
+                    s8 frames);
 void MenuCursor_Advance(struct MenuCursor *cursor);
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y);
 void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId);

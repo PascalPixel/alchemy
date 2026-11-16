@@ -37,10 +37,14 @@ extern u8 gMenu_ListOrderItemsFirst[];
 extern u8 gMenu_ListOrderEquippedThenItems[];
 extern u8 gMenu_ListOrderEquippedThenEquipment[];
 extern u8 gMenu_ListOrderEquipmentFirst[];
+/// `-`, before a stat change that is not a gain (ItemMenu_DrawStat).
 extern u8 gMenu_MinusSignString;
+/// `+`, before a stat gain.
 extern u8 gMenu_PlusSignString;
 extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
+/// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
+/// sprite's tiles (Shop_CopyGlyphs).
 extern u8 gShop_GlyphBytes[];
 extern const u8 gStatusMenu_LevelLetterString[];
 void *IconMenu_Open(void);
@@ -56,6 +60,8 @@ struct RenderInput;
 struct WindowSprite;
 struct DjinnMenuBackdrop;
 
+/// One 4-bit tile (backdrop.4bpp) the Start prompt blinks while a menu watches
+/// for Start (MENU_START_PROMPT_TILE), every four frames.
 extern u8 gMenu_StartPromptTile[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);

@@ -1,7 +1,7 @@
 	.section .rodata
 	.4byte 0
-	.global gResource_FixedBlockBTiles
-gResource_FixedBlockBTiles:
+	.global gPointingHandTiles
+gPointingHandTiles:
 	.incbin "games/tla/src/graphics/ui/menu_sprites/hand.4bpp16x16"
 	.global gDjinnMenu_ArrowUpTiles
 gDjinnMenu_ArrowUpTiles:

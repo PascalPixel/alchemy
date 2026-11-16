@@ -198,13 +198,13 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 up) {
     struct WindowSprite *output = WindowSprite_AcquireFree();
-    struct ArrowSprite *entry;
+    struct PreviewSprite *entry;
 
     if (output) {
       output->motion = WINDOW_SPRITE_MOTION_STILL;
       output->kind = WINDOW_SPRITE_ICON;
       output->index = VramCache_AllocEntry(128);
-      entry = (struct ArrowSprite *)&output->sprite;
+      entry = (struct PreviewSprite *)&output->sprite;
       output->depth = OAM_DEPTH_WINDOW;
       output->x = 120;
       output->y = 120;

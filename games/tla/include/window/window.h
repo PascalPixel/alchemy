@@ -130,7 +130,7 @@ enum GlyphDrawMode {
 
 void WindowSprite_InitializeFreeList(void);
 
-struct NameCursorMotion;
+struct MenuCursor;
 struct Window;
 
 void Message_CloseFinishedWindows(void);
@@ -379,6 +379,8 @@ void WindowSprite_RedrawSavedRect(struct Window *window);
 
 void MessageArgument_ClearAll(void);
 
+/// The spinning hand of the selection screen and the battle target cursor,
+/// 16 by 16 pixels in 256 colours, 256 bytes a frame (sprite_cursors.s).
 extern const u8 gMenu_AnimatedCursorTiles[];
 
 extern const u8 gOwnerStatus_HpString[];
@@ -408,12 +410,15 @@ void Window_MarkVisibleTextTiles(void);
 
 s32 Djinn_GetGiveTutorialMessage(void);
 
+/// Nonzero offers Battle on the File Screen, when a file has any game flag
+/// counted in its summary (Save_ScanFileSummaries).
 extern s16 gTitleBattleOptionEnabled;
+/// Nonzero offers Update on the File Screen, when a file has a party whose
+/// summary is not marked reunited (Save_ScanFileSummaries).
 extern s16 gTitleUpdateOptionEnabled;
 
 s32 Save_ScanFileSummaries(void);
 
-extern s32 gKeyState;
 
 void Text_UseExtraTiles(s32 allowAlternateTiles);
 
@@ -421,8 +426,8 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 s32 Message_DecodeMode1(s32 message);
 void Message_DecodeAppend(s32 message);
 
-void MenuCursor_AdvanceFar(struct NameCursorMotion *cursor);
-void MenuCursor_MoveTowardTargetFar(struct NameCursorMotion *cursor);
+void MenuCursor_AdvanceFar(struct MenuCursor *cursor);
+void MenuCursor_MoveTowardTargetFar(struct MenuCursor *cursor);
 
 void Portrait_CloseWindow(s32 id);
 
@@ -436,7 +441,9 @@ void MessageArgument_Push(u32 value, u32 kind);
 
 void FileList_PlacePartySprites(void);
 
-extern const u8 gResource_FixedBlockBTiles[];
+/// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
+/// name entry screen and the talk choices.
+extern const u8 gPointingHandTiles[];
 
 void Text_FillCanvasBackground(void);
 

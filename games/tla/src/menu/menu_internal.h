@@ -493,7 +493,6 @@ void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
-extern u8 MsgShortcutHelp[];
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
 void Link_DrawPageArrowsFar(s32 addr);
 void Menu_UpdateEntryObjectTransforms(void);
@@ -505,6 +504,9 @@ s32 Ability_PlayUseAnimation(s32 action);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
 void Menu_ResetTwoResourceEntries(void);
+/// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
+/// frame; the Djinn preview blinks it, drawing it and a fill of the window
+/// background in turn every four frames.
 extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);

@@ -298,8 +298,8 @@ gEndingPicture_Scroll:
 	.global gEndingPicture_Row
 gEndingPicture_Row:
 	.space 0x00000002
-	.global gScrollTarget
-gScrollTarget:
+	.global gEndingPicture_TargetRow
+gEndingPicture_TargetRow:
 	.space 0x00000002
 	.global gEndingPicture_Speed
 gEndingPicture_Speed:

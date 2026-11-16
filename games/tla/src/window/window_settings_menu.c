@@ -180,7 +180,7 @@ void SettingsMenu_Release(void) {
 /// The pixels a settings slider's marker runs across, from OPTION_SLIDER_X.
 #define OPTION_SLIDER_WIDTH 60
 
-extern const u8 gResource_FixedBlockBTiles[];
+extern const u8 gPointingHandTiles[];
 extern const u8 gSettingsMenu_SliderTiles[];
 extern const u16 gWorkspaceOptions_SliderPalette[];
 

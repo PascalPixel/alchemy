@@ -491,7 +491,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
     MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
     sprite->oam.index =
-        VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
+        VramCache_Reload(cursorSlot, gPointingHandTiles);
     sprite->oam.x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->oam.y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)

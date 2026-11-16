@@ -7,6 +7,8 @@
 
 #include "types.h"
 
+/// The stat arrows a Djinni preview shows beside a stat that would rise or
+/// fall, 16 by 16 pixels each (graphics/ui/pointing_hand.s).
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 

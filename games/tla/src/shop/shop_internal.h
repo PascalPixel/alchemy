@@ -248,8 +248,10 @@ STATIC_ASSERT(sizeof(struct ShopWork) == 0xcec);
 #define SHOP_QUANTITY_CURSOR_X 128
 #endif
 
-extern const u8 gShop_QuantityTiles[];
+/// The shop's price and quantity labels, sprite tiles beside the price and
+/// the count of an item bought (price.4bpp, quantity.4bpp).
 extern const u8 gShop_PriceTiles[];
+extern const u8 gShop_QuantityTiles[];
 
 extern const u16 gShop_SelectorTileOffsets[30];
 extern const u16 gShop_PriceDigitTileOffsets[5];

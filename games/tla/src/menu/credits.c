@@ -31,7 +31,6 @@
 #include "system/input.h"
 #include "system/task.h"
 #include "system/bg_scroll.h"
-#include "menu/display_scroll.h"
 #include "graphics/render_input.h"
 #include "text/msg_ids.h"
 
@@ -58,6 +57,8 @@ extern s16 gEndingPicture_Block; ///< which character block the picture is in
 extern s16 gEndingPicture_FadeFrames; ///< frames of the fade-in, to 64
 extern u32 gEndingPicture_MapScroll;  ///< the tilemap's scroll, 16.16 pixels
 extern volatile s32 gEndingPicture_Scroll; ///< the scroll, 16.16 pixels
+/// The row a scene asks for (SceneState_SetScrollTarget); Row moves toward it.
+extern s16 gEndingPicture_TargetRow;
 extern s16 gEndingPicture_Row;   ///< the row the scroll is heading for
 extern s16 gEndingPicture_Speed; ///< the most rows a frame moves
 extern u8 *gEndingPicture_Map;   ///< the picture's map
@@ -841,7 +842,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 UNUSED void Credits_ReservedNoOp(void) {}
 
 /// Sets the position the credits' scroll moves to.
-void SceneState_SetScrollTarget(u16 value) { gScrollTarget = value; }
+void SceneState_SetScrollTarget(u16 value) { gEndingPicture_TargetRow = value; }
 
 /// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position
@@ -856,7 +857,7 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
   u32 from;
 
   start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
-  gScrollTarget = gEndingPicture_Row = position;
+  gEndingPicture_TargetRow = gEndingPicture_Row = position;
   {
     volatile s32 *word = &gEndingPicture_Scroll;
 
@@ -879,7 +880,7 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /// The ending picture's VBlank task: fades the new picture in over 64
-/// frames, moves the row toward gScrollTarget by at most gEndingPicture_Speed,
+/// frames, moves the row toward gEndingPicture_TargetRow by at most gEndingPicture_Speed,
 /// eases the 16.16 scroll after it, and copies the map strip that scrolls into
 /// view.
 void EndingPicture_Scroll(void) {
@@ -905,8 +906,8 @@ void EndingPicture_Scroll(void) {
       REG_BLDALPHA = alpha;
     }
   }
-  if (gScrollTarget != gEndingPicture_Row) {
-    d = gScrollTarget - gEndingPicture_Row;
+  if (gEndingPicture_TargetRow != gEndingPicture_Row) {
+    d = gEndingPicture_TargetRow - gEndingPicture_Row;
     if (ABS(d) > gEndingPicture_Speed) {
       if (d > 0)
         d = gEndingPicture_Speed;
@@ -981,7 +982,7 @@ void EndingPicture_Start(void) {
   gEndingPicture_Scroll = 0;
   // One chained assignment: the three addresses are loaded nested, the map
   // pointer's innermost.
-  gScrollTarget = gEndingPicture_Row = (s32)(gEndingPicture_Map = NULL);
+  gEndingPicture_TargetRow = gEndingPicture_Row = (s32)(gEndingPicture_Map = NULL);
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_VBLANK);
@@ -1016,7 +1017,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
   u32 from;
 
   start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
-  gScrollTarget = gEndingPicture_Row = position;
+  gEndingPicture_TargetRow = gEndingPicture_Row = position;
   gEndingPicture_Scroll = position << 16;
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     u8 *to = destination + column * ENDING_PICTURE_SCREEN_BYTES;

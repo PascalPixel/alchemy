@@ -60,7 +60,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 
         for (i = 0; i != OCEAN_DROPS; i++) {
           *life = -1;
-          life += sizeof(struct Particle) / sizeof(*life);
+          life += sizeof(struct Particle) / sizeof(s32);
         }
         Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,
                                    0);

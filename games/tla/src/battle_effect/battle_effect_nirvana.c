@@ -215,7 +215,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       cell = (i % 5) * 3 + rock->velocityZ / 96 % 3;
       width = gSpire_ShardWidths[cell];
 
-      blit(canvas, work->sheet + gSpire_ShardPictures[cell] + 0x83c,
+      // The shard pictures follow BoulderSheet's 34x62 boulder, as Spire's do.
+      blit(canvas, work->sheet + gSpire_ShardPictures[cell] + 34 * 62,
            Fixed_Halves(&rock->x)[1] - width / 2 + scrollX,
            Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
            gSpire_ShardHeights[cell]);

@@ -717,18 +717,18 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           Matrix_Translate(toFIXED(8), 0, 0);
           Matrix_RotateX(DEGtoANG(90));
           if (j == 0) {
-            sc = t * (toFIXED(3) / 64) - toFIXED(9) / 8;
+            sc = t * (FIXED_ONE * 3 / 64) - FIXED_ONE * 9 / 8;
             if (t <= 39) {
               sc = t << 11;
-              if (sc > toFIXED(3) / 4) {
-                sc = toFIXED(3) / 4;
+              if (sc > FIXED_ONE * 3 / 4) {
+                sc = FIXED_ONE * 3 / 4;
               }
             }
             Matrix_ScaleUniform(sc);
             Matrix_RotateY(-t * 512);
           } else {
             if (t > 23) {
-              sc = toFIXED(7) / 4 - (t << 11);
+              sc = FIXED_ONE * 7 / 4 - (t << 11);
               Matrix_ScaleUniform(sc);
             } else {
               Matrix_RotateX(0x3ff0 - t * 682);

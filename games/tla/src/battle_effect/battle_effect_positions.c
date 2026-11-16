@@ -330,7 +330,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct MotionObject *object;
   struct MotionObject *target;
   u16 *background;
-  s32 words = CANVAS_VIEW_BYTES;
+  s32 bytes = CANVAS_VIEW_BYTES;
   s32 big;
   s32 half;
   s32 frame;
@@ -453,8 +453,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   // The burst: clear both canvases, blend, and centre the layer on the
   // first target, kept within 128 pixels.
-  Iwram_ClearWordsEntry(canvas, words);
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
+  Iwram_ClearWordsEntry(canvas, bytes);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), bytes);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(args->targets[0], &anchor);

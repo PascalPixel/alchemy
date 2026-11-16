@@ -297,7 +297,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
     for (i = 0; i != SPARK_COUNT; i++) {
       *life = -1;
-      life += sizeof(struct Particle) / sizeof(*life);
+      life += sizeof(struct Particle) / sizeof(s32);
     }
   }
 

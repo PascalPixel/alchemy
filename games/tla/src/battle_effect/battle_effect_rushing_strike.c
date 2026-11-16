@@ -248,7 +248,7 @@ void BattleEffect_BuildRepeatingTilemap(void) {
         *dst++ = y * 32 + (x & 15) + 48;
     } else {
       for (x = 0; x != 32; x++)
-        *dst++ = y * 32 + (x & 15) + 0x210;
+        *dst++ = y * 32 + (x & 15) + 528;
     }
   }
 }

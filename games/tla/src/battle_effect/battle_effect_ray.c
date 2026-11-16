@@ -59,7 +59,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     if (work->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(16 << 8);
     else
-      REG_BG2X = 0x1000;
+      REG_BG2X = 16 << 8;
   } else {
     BattleEffect_GetTargetsMidpoint(&midpoint);
     midpoint.x -= 64;

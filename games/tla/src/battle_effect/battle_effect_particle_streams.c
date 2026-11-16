@@ -50,7 +50,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 #define EMBER_COUNT 1024
 #define PILLAR_SHEET 0x6e4 ///< the fire pillar after the spray in the sheet
 
-#define FORMATION SPRITE_NEREID
 #define FORMATION_SIZE 12
 
 #define SCENE_FRAMES 124
@@ -133,7 +132,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     embers = EMBERS;
     BattleEffect_SelectLivingTargets(work->args);
     wait(1);
-    BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
+    BattleEffect_SpawnObjects(FORMATION_SIZE, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != SCENE_FRAMES; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > SKIP_FROM_FRAME &&
@@ -963,7 +962,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       position[3] = 0;
       position[1] = toFIXED(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = angle + 0xa000;
+        size = angle + FIXED_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
         position[0] = INTtoFIXED(x) + toFIXED(80);
@@ -973,7 +972,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
                                           0);
       } else {
-        size = angle + TRIG_TURN;
+        size = angle + FIXED_ONE;
         scale.x = size;
         scale.y = size;
         position[0] = INTtoFIXED(x) + toFIXED(96);
@@ -1220,7 +1219,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    grow = (frame << 8) + toFIXED(2);
+    grow = (frame << 8) + FIXED_ONE * 2;
     position[3] = 0;
     position[1] = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {

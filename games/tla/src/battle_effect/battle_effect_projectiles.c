@@ -1092,7 +1092,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
             u32 width;
             u32 height;
-            u8 *picture = work->sheet + gPrism_ShardPictures[cel] + 0x800;
+            u8 *picture = work->sheet + gPrism_ShardPictures[cel] +
+                          PICTURE_BYTES(CRYSTAL);
             s32 left;
             s32 top;
 

@@ -233,11 +233,11 @@ enum StormNightAnimation {
 /// Vale's area flags this scene keeps while the party is in Vale.
 enum StormNightAreaFlag {
   /// The strongman at the river tried to go for help and could not.
-  FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO = 0x305,
+  FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO = FLAG_AREA_TEMP_05,
   /// Garet has said once that they cannot get around a fallen rock.
-  FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH = 0x30c,
+  FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH = FLAG_AREA_TEMP_0C,
   /// Kyle has greeted Isaac at the river.
-  FLAG_VALE_STORM_KYLE_GREETED_ISAAC = 0x30d,
+  FLAG_VALE_STORM_KYLE_GREETED_ISAAC = FLAG_AREA_TEMP_0D,
   /// The party has passed each rock's spot since coming to Vale, so its event
   /// does not play again.
   FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_AREA_TEMP_10,

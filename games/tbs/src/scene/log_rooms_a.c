@@ -98,8 +98,11 @@
 #include "text/msg_ids.h"
 
 /// Each stop links to up to three others, with a heading for each connection.
+/// A connection's stopIndex when there is none.
+enum { LOG_STOP_NONE = 255 };
+
 struct LogRoomsAStopConnection {
-  u8 stopIndex; ///< the stop it leads to; 0xff for no connection
+  u8 stopIndex; ///< the stop it leads to, or LOG_STOP_NONE
   u8 facing;    ///< the heading toward it, a facing's high byte
   u8 padding[2];
 };
@@ -2975,7 +2978,7 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     if (angleDifference < 0)
       angleDifference = -angleDifference;
     /* FAKEMATCH(volatile): the stop is tested through a volatile read. */
-    if (*(volatile u8 *)&connection->stopIndex != 0xff &&
+    if (*(volatile u8 *)&connection->stopIndex != LOG_STOP_NONE &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
       stopIndex = connection->stopIndex;
@@ -3209,7 +3212,7 @@ static void LogRoomsA_StartActorStops(void) {
 // clang-format off
 // A missing edge keeps both sentinel bytes; valid facings use the angle's high
 // byte.
-#define NO_CONNECTION {255, 0xff, {0, 0}}
+#define NO_CONNECTION {LOG_STOP_NONE, 255, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 struct LogRoomsAStop gLogRoomsA_Stops[] = {
     {4, 0, {0},

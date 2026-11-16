@@ -391,7 +391,7 @@ static void Xian_TalkToWaterCarrier(void) {
     puddle->scaleY = scaleY + FIXED_ONE / 10;
     scaleX += FIXED_ONE / 10;
     puddle->scaleX = scaleX;
-  } while (scaleX <= 0xffff);
+  } while (scaleX <= FIXED_ONE - 1);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   70);
   Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);

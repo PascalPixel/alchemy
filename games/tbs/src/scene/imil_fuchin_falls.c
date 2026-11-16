@@ -134,6 +134,10 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+/// A key heading table's entry when no direction is held, or only an
+/// opposite pair.
+enum { KEY_HEADING_NONE = -1 };
+
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct Actor *gImilFuchinFalls_DragonsEye;
@@ -1725,7 +1729,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *actor) {
   }
   actor->steeringFlags = 0;
   direction = gImilFuchinFalls_KeyHeadings[DPAD_INDEX(gKeysHeld)];
-  if (direction == -1) {
+  if (direction == KEY_HEADING_NONE) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
   }
@@ -1755,7 +1759,7 @@ static void Imil_SlideActorAcrossIce(void) {
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[DPAD_INDEX(gKeysHeld)];
-    if ((u16)heading == 0xffff) {
+    if ((u16)heading == (u16)KEY_HEADING_NONE) {
       return;
     }
 
@@ -1833,15 +1837,15 @@ tail:
 
 // clang-format off
 s16 gImilFuchinFalls_KeyHeadings[] = {
-    0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
-    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
-    0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
-    FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
+    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
+    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
+    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 };
 
 s16 gImilFuchinFalls_SlideHeadings[] = {
-    0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
-    FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
+    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
+    FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
     FACING_EAST, FACING_EAST,
 };
 

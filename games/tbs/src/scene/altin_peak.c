@@ -859,7 +859,7 @@ static void AltinPeak_ForceLogOver(void) {
     sprite->rotation += rotationStep;
     cosine = Trig_Cos(sprite->rotation + DEGtoANG(90));
     actor->x.fixed = (cosine << 4) + originX;
-    if (sprite->rotation > 0x8fff) {
+    if (sprite->rotation > TRIG_TURN * 9 / 16 - 1) {
       break;
     }
     wait(1);
@@ -885,7 +885,7 @@ static void AltinPeak_ForceLogOver(void) {
     if (sprite->rotation > DEGtoANG(180)) {
       actor->y.fixed = originHeight - (sine << 3);
     }
-    if (sprite->rotation + rotationStep > 0xbfff) {
+    if (sprite->rotation + rotationStep > TRIG_TURN * 3 / 4 - 1) {
       break;
     }
     wait(1);

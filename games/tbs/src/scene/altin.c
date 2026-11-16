@@ -227,7 +227,8 @@ enum {
 #define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
 #else
 #define ALTIN_FACES_COUNTER(facing)                                            \
-  ((u32)(((facing) + 0x5fff) << 16) <= 0x3ffe0000)
+  ((u32)(((facing) + TRIG_TURN - (FACING_NORTHWEST + 1)) << 16) <=             \
+   (u32)(FACING_NORTHEAST - FACING_NORTHWEST - 2) << 16)
 #endif
 
 // UB: the random wobble can be negative. Both factors fit in signed32 bits

@@ -80,8 +80,8 @@ extern u16 gSolSanctumElementalStarRoom_StarCells[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];
 extern s8 gSolSanctum_RingDirection[][3];
-extern s32 gSolSanctum_RingMaxScales[];
-extern s32 gSolSanctum_RingScaleSteps[];
+extern FIXED gSolSanctum_RingMaxScales[];
+extern FIXED gSolSanctum_RingScaleSteps[];
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);

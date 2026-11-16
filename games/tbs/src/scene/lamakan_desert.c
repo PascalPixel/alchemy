@@ -739,7 +739,7 @@ static void LamakanDesert_FallIntoPit(void) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
-  min = 0x100000;
+  min = 1 << 20;
   // The nearest pit still there, by the distance along x plus along z.
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
     pit = Actor_Get(id);

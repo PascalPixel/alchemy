@@ -1342,7 +1342,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     case 3:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3,
-          Vector3_Coordinates(&obstacle->position), 0xffff - obstacle->heading,
+          Vector3_Coordinates(&obstacle->position),
+          TRIG_TURN - 1 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;

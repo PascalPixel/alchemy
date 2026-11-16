@@ -975,4 +975,4 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
 }
 
 /// Lets an actor's rings climb out.
-void PsynergyTest_StopRings(struct Actor *object) { ((u8 *)object)[98] = 1; }
+void PsynergyTest_StopRings(struct Actor *object) { object->riseCounter = 1; }

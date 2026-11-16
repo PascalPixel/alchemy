@@ -374,14 +374,17 @@ void ShopTest_OpenPortraitBrowser(void);
 
 void ShopTest_NoOp(void);
 
-/// The debug windows' own strings, as Increase item and level's: the level
-/// label, and the item selector's prompt, help line and full-bags line.
+/// The level editor's label before a member's level, as
+/// gIncreaseItemAndLevel_LvLabel.
 char gShopTest_LvLabel[4] = "Lv";
 
+/// The item selector's prompt, before the item number.
 char gShopTest_ItemPrompt[12] = "Item No:";
 
+/// The item selector's help line, while the bags have room.
 char gShopTest_ItemHelp[24] = "A:Get Item  B:Return";
 
+/// The item selector's line when the party's bags are full.
 char gShopTest_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -705,7 +708,6 @@ void ItemMenu_DrawItemDetails(void *window, s32 item);
 #define ITEM_COUNT 500
 #define BROWSER_ROW_STEP 10  ///< Right and Left move ten items.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
-#define INVENTORY_ITEM_ID_MASK 0x1ff
 
 /// The item selector, as Increase item and level's
 /// (IncreaseItemAndLevel_SelectItem): Up and Down move one item, Right and Left

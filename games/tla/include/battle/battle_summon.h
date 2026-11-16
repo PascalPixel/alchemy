@@ -15,15 +15,17 @@ enum AttackEffect {
   ATTACK_EFFECT_THRUST,       ///< a beam reaching further each picture
   ATTACK_EFFECT_WAVE,         ///< a wave, played backwards
   ATTACK_EFFECT_RISING_SLASH, ///< the arc upside down; the target hops
-  ATTACK_EFFECT_UPPERCUT, ///< as ATTACK_EFFECT_RISING_SLASH, 16 pixels lower
-  ATTACK_EFFECT_HURL,     ///< no beam; the target is hurled (KNOCKBACK_HURL)
-  ATTACK_EFFECT_SHOVE,    ///< no beam; the target is pushed to 150 percent
-  ATTACK_EFFECT_BLOW,     ///< no beam; the target is nudged
-  ATTACK_EFFECT_BURST     ///< BattleEffect_RunCanvasModeByCount's small ball
+  /// As ATTACK_EFFECT_RISING_SLASH, drawn 16 pixels lower.
+  ATTACK_EFFECT_RISING_SLASH_LOW,
+  ATTACK_EFFECT_HURL,  ///< no beam; the target is hurled (KNOCKBACK_HURL)
+  ATTACK_EFFECT_SHOVE, ///< no beam; the target is pushed to 150 percent
+  ATTACK_EFFECT_BLOW,  ///< no beam; the target is nudged
+  ATTACK_EFFECT_BURST  ///< BattleEffect_RunCanvasModeByCount's small ball
 };
 
-/// A fallen class's cry (BattleSpriteDefinition.defeatSound): the sound is
-/// SE_ENEMY_CRY plus it, after one less as the class flashes.
+/// A fallen class's cry (BattleSpriteDefinition.defeatSound): BattlePlayback
+/// plays SE_ENEMY_CRY plus it, or one less (never below SE_ENEMY_CRY) when the
+/// playback's flags are set.
 enum DefeatSound {
   DEFEAT_SOUND_ENEMY_CRY,    ///< SE_ENEMY_CRY
   DEFEAT_SOUND_BEAST_CRY,    ///< SE_BEAST_CRY

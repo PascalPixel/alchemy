@@ -445,14 +445,14 @@ struct BattleSpriteDefinition gBattleSprites[] = {
     [ENEMY_PUNCH_ANT] = {
         .animation = SPRITE_BATTLE_PUNCH_ANT,
         .isSmall = 1,
-        .attackEffect = ATTACK_EFFECT_UPPERCUT,
+        .attackEffect = ATTACK_EFFECT_RISING_SLASH_LOW,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Flash Ant
     [ENEMY_FLASH_ANT] = {
         .animation = SPRITE_BATTLE_PUNCH_ANT,
         .isSmall = 1,
-        .attackEffect = ATTACK_EFFECT_UPPERCUT,
+        .attackEffect = ATTACK_EFFECT_RISING_SLASH_LOW,
         .palette = 3,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
@@ -460,7 +460,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
     [ENEMY_NUMB_ANT] = {
         .animation = SPRITE_BATTLE_PUNCH_ANT,
         .isSmall = 1,
-        .attackEffect = ATTACK_EFFECT_UPPERCUT,
+        .attackEffect = ATTACK_EFFECT_RISING_SLASH_LOW,
         .palette = 2,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },

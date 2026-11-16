@@ -136,8 +136,8 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_End();
 }
 
-/// The scene's triggers: the rooms of names' for any entrance above 94, else
-/// the debug room's.
+/// The scene's triggers: the rooms of names' for any entrance above
+/// ENTRANCE_NAMES_ABOVE, else the debug room's.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance > ENTRANCE_NAMES_ABOVE)
     return gIncreaseItemAndLevel_NameTriggers;
@@ -232,7 +232,6 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 #define ITEM_COUNT 512      ///< The browser's item numbers, 0 to 511, wrapping.
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
-#define INVENTORY_ITEM_ID_MASK 0x1ff
 
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
@@ -360,14 +359,16 @@ void IncreaseItemAndLevel_SelectItem(void) {
   Window_Close(details, 1);
 }
 
-/// The debug windows' own strings: the level label, and the item selector's
-/// prompt, help line and the line it shows with the party's bags full.
+/// The level editor's label before a member's level.
 char gIncreaseItemAndLevel_LvLabel[4] = "Lv";
 
+/// The item selector's prompt, before the item number.
 char gIncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
 
+/// The item selector's help line, while the bags have room.
 char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
+/// The item selector's line when the party's bags are full.
 char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gSceneEntrances[] = {

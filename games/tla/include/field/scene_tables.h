@@ -186,6 +186,9 @@ struct Trigger {
 /// an item trigger's event shows its own message in place of the "uses"
 /// message (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
+/// caster nor announces the ability (FieldEffectWork.visible and .active).
+#define TRIGGER_SUBJECT_QUIET 0x200
 /// An item trigger's subject, as The Broken Seal's: the heading it needs in
 /// bits 15..12, whether it needs one, and its target, an actor or a cell
 /// behavior.

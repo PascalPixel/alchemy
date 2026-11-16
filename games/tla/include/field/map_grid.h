@@ -53,6 +53,9 @@ struct MapCell {
   u8 collisionCode;
   u8 attributeB;
 };
+/// MapCell.attributeB bit 6: the cell can be climbed, as a wall of vines or a
+/// ladder is (MapGrid_IsClimbableCell).
+#define MAP_CELL_CLIMBABLE 0x40
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {

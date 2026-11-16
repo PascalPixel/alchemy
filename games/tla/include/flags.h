@@ -22,6 +22,11 @@
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 
+/// The Broken Seal's FLAG_ISAAC_WEARS_TUNIC, which The Lost Age tests only
+/// where its twin does: World Map actor placements keep their full size while
+/// it is set (Event_SpawnObjectTable). No code of this game sets it.
+#define FLAG_ISAAC_WEARS_TUNIC 0x21
+
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
 /// after it is "Post-Reunion Data" (MsgSavePostReunion).
 #define FLAG_REUNITED 0x22
@@ -115,6 +120,10 @@
 #define FLAG_FAST_WALK 0x17f
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 #define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+/// Set when Hover is cast on the World Map from the winged ship: the ship
+/// takes off and the World Map announces "Hover" (WorldMap_SetUpFlyingShip);
+/// taking off with the dash keys clears it.
+#define FLAG_HOVER_CAST 0x147
 /// While set, the save screen refuses to save with "Cannot save here".
 #define FLAG_CANNOT_SAVE_HERE 0x17c
 /// While set, the save screen refuses to save with "This is no place for

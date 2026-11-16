@@ -1132,8 +1132,7 @@ void EndingPicture_InitStrips(void) {
   gEndingPicture_Strips = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
                                           sizeof(struct QueuedSprite));
   tile = VramCache_Load(slot, 512, 0);
-  Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP),
-             512);
+  Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP), 512);
   words = (u32 *)gEndingPicture_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;

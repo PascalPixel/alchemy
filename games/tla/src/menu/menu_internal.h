@@ -472,8 +472,7 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 452);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 534);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 542);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, useResult) == 606);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
-              612);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) == 612);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 620);
 
 // The menu object's functions its parts call before their definitions, or

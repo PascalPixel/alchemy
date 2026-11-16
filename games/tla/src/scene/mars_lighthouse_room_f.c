@@ -657,7 +657,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
   struct Actor *origin = Actor_Get(id);
   s32 i;
 
-  for (i = 11; i >= 0; i--) {
+  for (i = 0; i < 12; i++) {
     s32 a = Random16();
     FIXED x = origin->x.fixed + (a << 4) - (Random16() << 4);
     s32 b = Random16();

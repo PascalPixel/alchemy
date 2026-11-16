@@ -148,7 +148,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   actor = Actor_Get(id);
   if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 32) {
     actor->motionFlags = 0;
-    for (i = 15; i >= 0; i--) {
+    for (i = 0; i < 16; i++) {
       actor->y.fixed += toFIXED(2);
       System_Wait(1);
     }

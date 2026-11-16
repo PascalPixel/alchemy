@@ -1773,14 +1773,14 @@ void Yallam_ForcePillarDown(void) {
   Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(actor, 176, 40, 184);
   step = 0;
-  for (i = 15; i >= 0; i--) {
+  for (i = 0; i < 16; i++) {
     sprite->rotation -= step;
     System_Wait(1);
     step += 40;
   }
   FieldActor_SetMoveTarget(actor, 168, 16, 184);
   step = 400;
-  for (i = 25; i >= 0; i--) {
+  for (i = 0; i < 26; i++) {
     sprite->rotation -= step;
     System_Wait(1);
     step += 40;

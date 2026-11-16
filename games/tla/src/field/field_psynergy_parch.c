@@ -192,7 +192,7 @@ loaded:
     }
     particle = work->particles;
     cursor = work->sprites;
-    for (i = PARCH_PUFF_COUNT - 1; i >= 0; i--) {
+    for (i = 0; i < PARCH_PUFF_COUNT; i++) {
       if (particle->timer >= 0) {
         s32 grown;
         /* FAKEMATCH(temporary): sprite holds a copy of cursor. */

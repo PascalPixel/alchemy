@@ -346,7 +346,7 @@ void Menu_ReleaseEntryObjects(void) {
   void **objects = menu->memberSprites;
   s32 i;
 
-  for (i = 7; i >= 0; i--) {
+  for (i = 0; i < 8; i++) {
     void *object = *objects++;
 
     if (object != NULL)
@@ -504,7 +504,7 @@ void MenuIcon_PushSlots(void) {
 
   if (menu->menuIconsShown != 0) {
     slot = menu->menuIcons;
-    for (i = 4; i >= 0; i--) {
+    for (i = 0; i < 5; i++) {
       Oam_AddSpriteAtDepth(slot, OAM_DEPTH_WINDOW);
       slot++;
     }
@@ -557,7 +557,7 @@ void MenuIcon_ReleaseSlots(void) {
 
   Task_Remove(MenuIcon_PushSlots);
   resource = menu->menuIconSlots;
-  for (i = 4; i >= 0; i--)
+  for (i = 0; i < 5; i++)
     VramCache_FreeEntry(*resource++);
 }
 

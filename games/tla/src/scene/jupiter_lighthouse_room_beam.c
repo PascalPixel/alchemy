@@ -192,7 +192,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
   EventCamera_FollowActor(owner, 1);
-  for (i = 35; i >= 0; i--) {
+  for (i = 0; i < 36; i++) {
     leader->y.fixed += -toFIXED(1);
     System_Wait(1);
   }
@@ -281,7 +281,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   }
   effect->scaleX = FIXED_ONE / 2;
   effect->scaleY = FIXED_ONE * 3 / 4;
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     effect->scaleX += FIXED_ONE / 32;
     effect->scaleY += FIXED_ONE / 128;
     System_Wait(1);
@@ -356,7 +356,7 @@ void JupiterLighthouse_RideTheBeam(void) {
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
     Actor_SetAnimationSpeed(actor, 64);
     actor->motionFlags = 0;
-    for (i = 109; i >= 0; i--) {
+    for (i = 0; i < 110; i++) {
       actor->y.fixed += toFIXED(3);
       angle = actor->facing;
       angle += TRIG_TURN * 3 / 32;
@@ -434,7 +434,7 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
       FIELD_CELL(actor->x.fixed) == 18 && FIELD_CELL(actor->z.fixed) == 6) {
     actor->motionFlags = 0;
-    for (i = 15; i >= 0; i--) {
+    for (i = 0; i < 16; i++) {
       actor->y.fixed += toFIXED(2);
       System_Wait(1);
     }

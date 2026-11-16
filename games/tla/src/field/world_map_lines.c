@@ -107,7 +107,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     sinYaw = table->sin.target(angle);
     cosYaw = table->cos.target(angle);
     negativeSinYaw = -sinYaw;
-    for (scanline = 159; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < 160; scanline++) {
       FIXED widthScale = line->x;
       s32 centerX;
       s32 horizontalOffset;
@@ -135,7 +135,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       affine += 2;
     }
   } else {
-    for (scanline = 159; scanline >= 0; scanline--) {
+    for (scanline = 0; scanline < 160; scanline++) {
       if (gFrameCount & 1) {
         // sampleOffset is reused for u; two plain expressions differ.
         s32 sampleOffset;

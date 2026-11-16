@@ -248,7 +248,7 @@ void PsynergyTest_GiveTreasureTestStock(void) {
 
   Message_ShowCentered((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
-  for (i = 9; i >= 0; i--) {
+  for (i = 0; i < 10; i++) {
     Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
     Inventory_AddItem(FELIX, ITEM_LUCKY_MEDAL);
   }

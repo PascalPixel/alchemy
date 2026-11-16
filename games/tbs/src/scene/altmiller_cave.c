@@ -2163,7 +2163,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   position.z = toFIXED(144);
   Camera_WorldToScreen(&position);
   fragment = effectWork->particles;
-  for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
+  for (fragmentIndex = 0; fragmentIndex < 24; fragmentIndex++) {
     FIXED scale;
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);

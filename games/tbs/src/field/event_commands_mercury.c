@@ -91,7 +91,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   }
   Actor_ReleaseFar(djinni);
   list = copies;
-  for (i = MERCURY_AFTERIMAGE_MAX - 1; i >= 0; i--)
+  for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++)
     Actor_ReleaseFar((*list++));
   if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);

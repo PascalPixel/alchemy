@@ -75,7 +75,7 @@ void SaveProgress_Advance(s32 step) {
   dst = (u16 *)BG_SCREEN_BLOCK(4) + PROGRESS_BAR_Y * BG_SCREEN_WIDTH +
         PROGRESS_BAR_X;
   src = gWindow_ProgressBarRows + row * PROGRESS_BAR_WIDTH;
-  for (i = PROGRESS_BAR_WIDTH - 1; i >= 0; i--)
+  for (i = 0; i < PROGRESS_BAR_WIDTH; i++)
     *dst++ = *src++ + WINDOW_TILE(PROGRESS_BAR_FIRST_TILE);
 }
 
@@ -411,7 +411,7 @@ s32 Save_BuildFileSummary(void) {
   leader = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = leader->name;
-  for (i = 11; i >= 0; i--)
+  for (i = 0; i < 12; i++)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gMainRoutineWork.playTime;

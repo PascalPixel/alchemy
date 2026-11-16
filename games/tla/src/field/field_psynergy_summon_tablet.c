@@ -268,7 +268,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   work->sparkTile = sparkTile;
   mote = work->sparks;
   sprite = work->sparkSprites;
-  for (i = TABLET_SPARK_COUNT - 1; i >= 0; i--) {
+  for (i = 0; i < TABLET_SPARK_COUNT; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -363,7 +363,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       if (timer == 0) {
         mote = work->motes;
         delay = 0;
-        for (i = TABLET_MOTE_COUNT - 1; i >= 0; i--) {
+        for (i = 0; i < TABLET_MOTE_COUNT; i++) {
           mote->timer = delay;
           delay -= 3;
           mote++;

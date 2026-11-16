@@ -607,7 +607,7 @@ void MadraRooms_InterrogatePiers(void) {
   FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR,
                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, -8);
     Event_PlaySound(SE_HEAVY_IMPACT);
     Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, 8);

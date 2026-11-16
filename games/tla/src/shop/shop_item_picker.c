@@ -422,7 +422,7 @@ void ItemIconGrid_Draw(void) {
     u16 *iconSlot = shop->iconSlots;
     s32 i;
 
-    for (i = INVENTORY_SLOTS - 1; i >= 0; i--) {
+    for (i = 0; i < INVENTORY_SLOTS; i++) {
       if (*iconSlot++ != ICON_NONE)
         Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
       sprite++;

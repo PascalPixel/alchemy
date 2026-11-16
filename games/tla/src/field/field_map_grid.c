@@ -660,7 +660,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   u32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     pos->x = FIELD_CELL(layer->x);
     pos->y = FIELD_CELL(layer->y);
     pos++;
@@ -836,7 +836,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   struct MapGridTilePosition *view = views;
   s32 x;
 
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     view->x = FIELD_CELL(layer->x);
     view->y = FIELD_CELL(layer->y);
     view++;

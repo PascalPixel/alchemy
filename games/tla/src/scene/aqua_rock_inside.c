@@ -780,7 +780,7 @@ void AquaRockInside_DouseAquariusStoneWaterStone(void) {
   AquaRockInside_StartSplashes();
   AquaRockInside_AddSplash(16, 4, 16, 2);
   AquaRockInside_AddSplash(22, 4, 16, 0);
-  for (i = 5; i >= 0; i--) {
+  for (i = 0; i < 6; i++) {
     AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND, COLLISION_STREAM_GOAL);
     System_Wait(15);
   }
@@ -849,7 +849,7 @@ void AquaRockInside_DouseRustySwordChestWaterStone(void) {
                                   COLLISION_STREAM_BEND + 5);
     AquaRockInside_StartSplashes();
     AquaRockInside_AddSplash(12, 2, 45, 1);
-    for (i = 3; i >= 0; i--)
+    for (i = 0; i < 4; i++)
       result = AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                              COLLISION_STREAM_GOAL);
     Event_SetFlag(FLAG_SCENE_TEMP_48);
@@ -873,7 +873,7 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     layer->offsetY += toFIXED(1);
     System_Wait(4);
   }
@@ -960,7 +960,7 @@ void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
 
   AquaRockInside_StartSplashes();
   AquaRockInside_AddSplash(44, 0, 34, 2);
-  for (i = 4; i >= 0; i--) {
+  for (i = 0; i < 5; i++) {
     AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND, COLLISION_STREAM_GOAL);
     System_Wait(15);
   }
@@ -1015,7 +1015,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
     Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
     MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
-    for (i = 31; i >= 0; i--) {
+    for (i = 0; i < 32; i++) {
       layer->offsetY -= toFIXED(1);
       System_Wait(4);
     }
@@ -1134,7 +1134,7 @@ void AquaRockInside_DouseTearStoneWaterStone(void) {
                                   COLLISION_STREAM_BEND + 4);
     AquaRockInside_StartSplashes();
     AquaRockInside_AddSplash(38, 2, 19, 1);
-    for (i = 8; i >= 0; i--)
+    for (i = 0; i < 9; i++)
       result = AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                              COLLISION_STREAM_GOAL);
     Event_SetFlag(FLAG_SCENE_TEMP_4A);
@@ -1157,7 +1157,7 @@ void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     layer->offsetY += toFIXED(1);
     System_Wait(4);
   }
@@ -1189,7 +1189,7 @@ void AquaRockInside_WaterSinks(void) {
     i--;
   } while (i >= 0);
   System_Wait(10);
-  for (i = 127; i >= 0; i--) {
+  for (i = 0; i < 128; i++) {
     layer->offsetY += toFIXED(1) / 4;
     System_Wait(1);
   }
@@ -2395,7 +2395,7 @@ void AquaRockInside_SetPillarsHeight(s32 height) {
   *(s32 *)(Ram_MapCollision + MAP_SHAPE_MARKED * 4) =
       ((height / toFIXED(8)) & 0xff) << 8;
   entry = work->entries;
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     if (entry->x != 0)
       entry->height = height;
     entry++;

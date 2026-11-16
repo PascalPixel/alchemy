@@ -205,7 +205,7 @@ void wait(s32 frames) {
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
         Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
-        for (j = 9; j >= 0; j--)
+        for (j = 0; j < 10; j++)
           System_WaitForFrameInterrupt();
         while (gInput.held)
           System_WaitForFrameInterrupt();
@@ -216,7 +216,7 @@ void wait(s32 frames) {
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
         Io_Write16(0, &gSleepActive);
-        for (j = 9; j >= 0; j--)
+        for (j = 0; j < 10; j++)
           System_WaitForFrameInterrupt();
         while (gInput.held)
           System_WaitForFrameInterrupt();

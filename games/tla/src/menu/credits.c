@@ -798,7 +798,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
       for (row = 0; row < 8; row++) {
         glyphBits = *sourceBytes++;
         glyphMask = 0x80;
-        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+        for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
             destination[CREDITS_RASTER_STRIDE + 1] = 1;
             destination[0] = 15;

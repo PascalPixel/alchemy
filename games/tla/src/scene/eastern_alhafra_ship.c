@@ -163,7 +163,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_Wait(30);
   flags = &actor->motionFlags;
   *flags = 4;
-  for (i = 39; i >= 0; i--) {
+  for (i = 0; i < 40; i++) {
     actor->y.fixed += toFIXED(1) / 5;
     Event_Wait(1);
   }

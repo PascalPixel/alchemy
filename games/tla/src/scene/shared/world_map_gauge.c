@@ -70,7 +70,7 @@ void Gauge_Draw(s32 progress) {
               dest += 4;
             }
           } else {
-            for (j = 2; j >= 0; j--) {
+            for (j = 0; j < 3; j++) {
               *dest = (*dest & 15) | (*source & 240);
               source += 4;
               dest += 4;

@@ -315,7 +315,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Event_Wait(3);
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
-  for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
+  for (spinFrame = 0; spinFrame < COCOON_FALL_SPIN_FRAMES; spinFrame++) {
     actor->facing += 2 * FACING_STEP;
     wait(1);
   }

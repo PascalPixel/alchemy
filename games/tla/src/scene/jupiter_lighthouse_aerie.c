@@ -191,7 +191,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(left);
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
-  for (i = 255; i >= 0; i--) {
+  for (i = 0; i < 256; i++) {
     Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += toFIXED(1) / 10;
     Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += toFIXED(1) / 10;
     lid->y.fixed += toFIXED(1) / 10;

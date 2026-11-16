@@ -900,7 +900,7 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
     break;
   case ACTOR_SPRITE_GROUP:
     sprites = actor->sprite;
-    for (remaining = 3; remaining >= 0; remaining--) {
+    for (remaining = 0; remaining < 4; remaining++) {
       sprite = *sprites++;
       if (sprite != NULL)
         Render_PlaceProjectedSprite(sprite, &actor->x.fixed, scale,

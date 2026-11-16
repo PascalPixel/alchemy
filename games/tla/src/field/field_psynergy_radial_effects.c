@@ -755,7 +755,7 @@ void FieldPsynergy_Lash(void) {
 
     particle = work->particles;
     sprite = work->sprites;
-    for (i = SCATTER_PARTICLE_COUNT - 1; i >= 0; i--) {
+    for (i = 0; i < SCATTER_PARTICLE_COUNT; i++) {
       EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
@@ -772,13 +772,13 @@ void FieldPsynergy_Lash(void) {
                                  scene->z);
     Actor_SelectAnimationFar(actor, 1);
     wait(10);
-    for (i = 15; i >= 0; i--) {
+    for (i = 0; i < 16; i++) {
       actor->y.fixed += -toFIXED(2);
       wait(1);
     }
     Sound_PlayFar(SE_WATER);
     if (scene->enabled != 0) {
-      for (i = 15; i >= 0; i--)
+      for (i = 0; i < 16; i++)
         BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
                                           actor->z.fixed);
       wait(1);
@@ -1557,7 +1557,7 @@ again:
 
   if (work->sparking != 0) {
     motion = work->sparks;
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       if (motion->delay == 0) {
         s32 speed;
         s32 angle;

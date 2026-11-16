@@ -309,7 +309,7 @@ void FieldPsynergy_Pound(void) {
       while (work->state != FIELD_PSYNERGY_FINISHED)
         wait(1);
       Task_Remove(BattleEffect_SinkAndShrinkObject);
-      for (j = 15; j >= 0; j--)
+      for (j = 0; j < 16; j++)
         BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
                                           shine->z.fixed);
       Sound_PlayFar(SE_MENU_ERROR);

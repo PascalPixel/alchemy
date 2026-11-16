@@ -1241,10 +1241,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   {
     s32 *slot = iconSlots;
 
-    for (i = 3; i >= 0; i--)
+    for (i = 0; i < 4; i++)
       VramCache_FreeEntry(*slot++);
     slot = statusSlots;
-    for (i = STATUS_ICON_COUNT - 1; i >= 0; i--)
+    for (i = 0; i < STATUS_ICON_COUNT; i++)
       VramCache_FreeEntry(*slot++);
   }
   VramCache_FreeEntry(portraitSlot);

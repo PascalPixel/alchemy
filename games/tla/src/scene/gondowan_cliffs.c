@@ -356,7 +356,7 @@ void GondowanCliffs_CycleWaterColors(void) {
   u32 phase = gFrameCount >> 4;
   s32 i;
 
-  for (i = 3; i >= 0; i--) {
+  for (i = 0; i < 4; i++) {
     u32 index = 3;
 
     index &= phase;

@@ -102,7 +102,7 @@ void InventorySnapshot_Restore(void) {
       u16 *dst = Unit_Get(unitId)->inventory;
       s32 slot;
 
-      for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--)
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *dst++ = *src++;
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);

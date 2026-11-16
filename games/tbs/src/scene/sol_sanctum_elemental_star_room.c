@@ -909,7 +909,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Event_Wait(20);
   starCount = 0;
   inventoryEntry = Unit_Get(GARET)->inventory;
-  for (remainingSlots = 14; remainingSlots >= 0; remainingSlots--) {
+  for (remainingSlots = 0; remainingSlots < 15; remainingSlots++) {
     u32 item = *inventoryEntry & 0x1ff;
     inventoryEntry++;
     if (item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||

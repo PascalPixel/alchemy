@@ -183,7 +183,7 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
 
-  for (i = 5; i >= 0; i--) {
+  for (i = 0; i < 6; i++) {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *actor = MarsLighthouseStarRoom_CreateActor(
         ICE_CHIP_SPRITE, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
@@ -1570,7 +1570,7 @@ void Actor_ScatterCrumbs(struct Actor *actor) {
     return;
   // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
   // decrement and test.
-  for (i = 0; i >= 0; i--) {
+  for (i = 0; i < 1; i++) {
     struct Actor *object;
     s32 a, b, c, d, e;
     FIXED x, y, z;

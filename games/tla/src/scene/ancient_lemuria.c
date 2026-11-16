@@ -153,7 +153,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_Jump(ACTOR_RIME, 9, 0);
   actor->scaleY = FIXED_ONE / 2;
   actor->scaleX = FIXED_ONE / 2;
-  for (i = 29; i >= 0; i--) {
+  for (i = 0; i < 30; i++) {
     actor->facing += TRIG_TURN / 16;
     if (actor->scaleX < FIXED_ONE)
       actor->scaleX += FIXED_ONE * 5 / 128;
@@ -243,7 +243,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   actor->scaleX = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
-  for (i = 23; i >= 0; i--) {
+  for (i = 0; i < 24; i++) {
     actor->facing += TRIG_TURN / 8;
     if (actor->scaleX < FIXED_ONE)
       actor->scaleX += FIXED_ONE * 5 / 128;

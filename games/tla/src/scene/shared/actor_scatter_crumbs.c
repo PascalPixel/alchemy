@@ -14,7 +14,7 @@ void Actor_ScatterCrumbs(struct Actor *actor) {
     return;
   // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
   // decrement and test.
-  for (i = 0; i >= 0; i--) {
+  for (i = 0; i < 1; i++) {
     struct Actor *object;
     s32 a, b, c, d, e;
     FIXED x, y, z;

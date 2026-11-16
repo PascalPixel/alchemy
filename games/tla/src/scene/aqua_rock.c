@@ -584,7 +584,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
   else
     AquaRock_SetSparkleAnchor(0);
-  for (i = 3; i >= 0; i--) {
+  for (i = 0; i < 4; i++) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
@@ -721,7 +721,7 @@ void AquaRock_RideStreamUp(void) {
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
       AquaRock_SpawnSplash(leader);
       Event_Wait(5);
-      for (i = 59; i >= 0; i--) {
+      for (i = 0; i < 60; i++) {
         leader->y.fixed += toFIXED(2);
         leader->facing += TRIG_TURN / 16;
         if (Random16() <= 4095)
@@ -877,7 +877,7 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   wait(30);
   AquaRock_SetSparkleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   Sound_Play(SE_SHIMMER);
-  for (i = 3; i >= 0; i--) {
+  for (i = 0; i < 4; i++) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
@@ -909,7 +909,7 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   Actor_GetById(ACTOR_STREAM_SOURCE)->update =
       (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
-  for (i = 5; i >= 0; i--) {
+  for (i = 0; i < 6; i++) {
     Sound_Play(SE_WADE);
     wait(10);
   }
@@ -962,7 +962,7 @@ void AquaRock_SpinOut(void) {
   actor->motionFlags = 0;
   actor->y.fixed = -toFIXED(16);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
-  for (i = 15; i >= 0; i--) {
+  for (i = 0; i < 16; i++) {
     actor->y.fixed += toFIXED(1);
     angle = actor->facing;
     angle += DEGtoANG(45);
@@ -996,7 +996,7 @@ void AquaRock_DropIn(void) {
   actor->motionFlags = 0;
   actor->y.fixed = -toFIXED(64);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
-  for (i = 23; i >= 0; i--) {
+  for (i = 0; i < 24; i++) {
     actor->y.fixed += toFIXED(2);
     angle = actor->facing;
     angle += DEGtoANG(45);

@@ -405,7 +405,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
 
   actor->spriteStorageKind = 0;
   actor->y.fixed = 0;
-  for (i = 1; i >= 0; i--) {
+  for (i = 0; i < 2; i++) {
     spark = (FieldActor_Create(269, actor->x.fixed, actor->y.fixed,
                                actor->z.fixed));
     if (spark != 0) {
@@ -853,7 +853,7 @@ void TaopoSwamp_TremorPillar(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  for (i = 9; i >= 0; i--) {
+  for (i = 0; i < 10; i++) {
     System_Wait(1);
     ((struct FieldSprite *)rock->sprite)->rotation += turn;
     rock->x.fixed -=
@@ -1847,7 +1847,7 @@ void TaopoSwamp_SinkInMud(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->spriteStorageKind = 0;
-  for (i = 1; i >= 0; i--) {
+  for (i = 0; i < 2; i++) {
     spark = (FieldActor_Create(269, actor->x.fixed, actor->y.fixed,
                                actor->z.fixed));
     if (spark != 0) {

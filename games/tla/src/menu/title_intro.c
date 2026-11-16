@@ -739,7 +739,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
   tile = 0;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
-    for (i = DISPLAY_TILE_WIDTH - 1; i >= 0; i--) {
+    for (i = 0; i < DISPLAY_TILE_WIDTH; i++) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;

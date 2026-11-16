@@ -1926,7 +1926,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(10303, CAMERA_KEEP, 7820, 1);
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     map->unk11e += 0xff80;
     map->unk11c += 128;
     Actor_Get(ACTOR_IDEJIMA)->scaleY += -(FIXED_ONE * 3 / 256);
@@ -2535,7 +2535,7 @@ void WorldMap_LoadTidalWave(void) {
                       IO_WRITE_HALFWORD);
   y = 11616;
   x = 561;
-  for (i = 95; i >= 0; i--) {
+  for (i = 0; i < 96; i++) {
     scrollX = (s32)(x * 16) / 128;
     scrollY = -y / 128 + 352;
     gBgScroll[0].x = scrollX;

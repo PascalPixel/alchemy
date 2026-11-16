@@ -1670,7 +1670,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   FIXED z;
 
   if (mode == 0) {
-    for (i = 15; i >= 0; i--) {
+    for (i = 0; i < 16; i++) {
       s32 angle = actor->facing;
       angle += DEGtoANG(45);
       actor->facing = angle;

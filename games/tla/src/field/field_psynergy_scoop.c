@@ -258,7 +258,7 @@ void FieldPsynergy_Scoop(void) {
       wait(10);
       Actor_SelectAnimationFar(actor, 1);
       wait(15);
-      for (i = 9; i >= 0; i--) {
+      for (i = 0; i < 10; i++) {
         actor->y.fixed += -(toFIXED(5) / 2);
         wait(1);
       }
@@ -289,7 +289,7 @@ void FieldPsynergy_Scoop(void) {
         failed = 3;
       if (failed) {
         wait(2);
-        for (i = 15; i >= 0; i--)
+        for (i = 0; i < 16; i++)
           BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
                                             actor->z.fixed);
         Sound_PlayFar(SE_MENU_ERROR);

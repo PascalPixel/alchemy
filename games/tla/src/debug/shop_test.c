@@ -322,7 +322,7 @@ void ShopTest_GiveEquipmentTestStock(void) {
 
   FieldMessage_Show((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
-  for (i = 9; i >= 0; i--) {
+  for (i = 0; i < 10; i++) {
     Event_GiveItemTo(ITEM_GAME_TICKET, FELIX);
     Event_GiveItemTo(ITEM_LUCKY_MEDAL, FELIX);
   }

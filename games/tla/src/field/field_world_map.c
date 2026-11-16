@@ -281,21 +281,21 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01810180;
   for (row = 0; row < 20; row++) {
-    for (column = 15; column >= 0; column--) {
+    for (column = 0; column < 16; column++) {
       *screenTiles++ = tilePair;
       tilePair += 0x00020002;
     }
   }
   tilePair = 0x01010100;
   for (row = 0; row < 24; row++) {
-    for (column = 15; column >= 0; column--) {
+    for (column = 0; column < 16; column++) {
       *screenTiles++ = tilePair;
       tilePair += 0x20002;
     }
   }
   tilePair = 0x01010100;
   for (row = 0; row < 4; row++) {
-    for (column = 15; column >= 0; column--) {
+    for (column = 0; column < 16; column++) {
       *screenTiles++ = tilePair;
       tilePair += 0x20002;
     }

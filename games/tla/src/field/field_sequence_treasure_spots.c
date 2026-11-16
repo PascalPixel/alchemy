@@ -242,7 +242,7 @@ void Actor_ShakeAngle(u32 objectId) {
   if (actor == 0)
     return;
   angle = actor->facing;
-  for (i = 15; i >= 0; i--) {
+  for (i = 0; i < 16; i++) {
     u32 a = Random16();
     u32 b = Random16();
     u32 cur;

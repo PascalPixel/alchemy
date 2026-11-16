@@ -599,7 +599,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   struct MapGridTilePosition *visibleLayer = visibleLayers;
   u32 x;
 
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     visibleLayer->x = FIELD_CELL(layer->x);
     visibleLayer->y = FIELD_CELL(layer->y);
     visibleLayer++;
@@ -728,7 +728,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
   struct MapGridTilePosition *visibleLayer = visibleLayers;
   s32 x;
 
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     visibleLayer->x = FIELD_CELL(layer->x);
     visibleLayer->y = FIELD_CELL(layer->y);
     visibleLayer++;
@@ -821,7 +821,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
   struct MapGridTilePosition *visibleLayer = visibleLayers;
   s32 x;
 
-  for (i = 2; i >= 0; i--) {
+  for (i = 0; i < 3; i++) {
     visibleLayer->x = FIELD_CELL(layer->x);
     visibleLayer->y = FIELD_CELL(layer->y);
     visibleLayer++;

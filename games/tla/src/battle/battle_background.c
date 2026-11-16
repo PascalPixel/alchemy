@@ -722,7 +722,7 @@ void ElementGlow_UpdateStarField(void) {
         spark->life--;
         mul = Iwram_MulFX;
         pos = spark->pos;
-        for (k = 2; k >= 0; k--) {
+        for (k = 0; k < 3; k++) {
           step = mul(mul(-*pos >> 8, scale), FIXED_ONE * 19 / 16);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
           *pos += pos[3];

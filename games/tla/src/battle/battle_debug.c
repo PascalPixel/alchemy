@@ -194,8 +194,8 @@ s32 DebugParameterSet_Load(s32 preset) {
     Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
     state = Unit_Get(owner);
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      state->djinnOwnedCounts[i] = 0;
-      state->djinnActiveCounts[i] = 0;
+      state->djinnHeldCounts[i] = 0;
+      state->djinnSetCounts[i] = 0;
       state->djinnHeld[i] = 0;
       state->djinnSet[i] = 0;
     }

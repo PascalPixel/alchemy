@@ -95,42 +95,36 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Lunpa's tower.
 /// "Are you the travelers that came here with Piers?"
 void LemuriaInteriors_TalkToPiersUncle(s32 actorId) {
-
-  if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) == 0)
-    goto notMourning;
-  Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
-  // "Go to Lunpa's tower. He will see you."
-  Event_ShowMessage(actorId, 0);
-  Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, 4);
-  goto done;
-notMourning:
-  if (Event_GetFlag(FLAG_PIERS_VISITED_UNCLE) == 0)
-    goto notVisited;
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSoRelieved);
-  // "I am so relieved that Piers has returned to me alive. He is the last..."
-  Event_ShowMessage(actorId, 0);
-  Actor_FaceDirection(actorId, FACING_SOUTH_SOUTHEAST, 0);
-  Event_End();
-  goto done;
-notVisited:
-  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouTravelersThatCame);
-  // "Are you the travelers that came here with Piers?"
-  Event_OpenMessage(actorId, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      0)
-    goto declined;
-  LemuriaInteriors_PiersVisitsUncle();
-  goto done;
-declined:
-  Event_Wait(20);
-  Event_ShowMessage(actorId, 0);
-  Actor_FaceDirection(actorId, FACING_WEST, 0);
-done:
-  return;
+  if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) != 0) {
+    Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
+    // "Go to Lunpa's tower. He will see you."
+    Event_ShowMessage(actorId, 0);
+    Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, 4);
+  } else if (Event_GetFlag(FLAG_PIERS_VISITED_UNCLE) != 0) {
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSoRelieved);
+    // "I am so relieved that Piers has returned to me alive. He is the last..."
+    Event_ShowMessage(actorId, 0);
+    Actor_FaceDirection(actorId, FACING_SOUTH_SOUTHEAST, 0);
+    Event_End();
+  } else {
+    Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouTravelersThatCame);
+    // "Are you the travelers that came here with Piers?"
+    Event_OpenMessage(actorId, 0);
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+        0) {
+      LemuriaInteriors_PiersVisitsUncle();
+    } else {
+      Event_Wait(20);
+      Event_ShowMessage(actorId, 0);
+      Actor_FaceDirection(actorId, FACING_WEST, 0);
+    }
+  }
 }
 
+/// Mind Read on Piers' uncle: his thoughts follow how far Piers' homecoming
+/// has gone.
 void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     Event_SetMessageId((s32)MsgLemuriaInteriorsLunpaHasGivenKingTremendous);
@@ -153,16 +147,14 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 actorId) {
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond);
   // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(actorId, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      0)
-    goto answeredNo;
-  Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 1);
-  goto answered;
-answeredNo:
-  Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 2);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
+    Event_Wait(10);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 1);
+  } else {
+    Event_Wait(20);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 2);
+  }
   Event_ShowMessage(actorId, 0);
   return;
 }
@@ -174,16 +166,14 @@ void LemuriaInteriors_AskAboutDraughts(s32 actorId) {
   Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow);
   // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(actorId, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      0)
-    goto answeredNo;
-  Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 1);
-  goto answered;
-answeredNo:
-  Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 2);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
+    Event_Wait(10);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 1);
+  } else {
+    Event_Wait(20);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 2);
+  }
   Event_ShowMessage(actorId, 0);
   return;
 }
@@ -201,16 +191,14 @@ void LemuriaInteriors_ScoffAtMindRead(s32 unused, s32 actorId) {
   Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm);
   // "Was that some form of Psynergy?"
   Event_OpenMessage(actorId, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      0)
-    goto answeredNo;
-  Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 1);
-  goto answered;
-answeredNo:
-  Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 2);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
+    Event_Wait(10);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 1);
+  } else {
+    Event_Wait(20);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 2);
+  }
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, facing, 0);
   Event_Wait(10);
@@ -459,17 +447,15 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(20);
   // "What should we do, Felix? Should we follow Piers?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
-    goto answeredNo;
-  Event_Wait(20);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-  gFieldWork->message += 1;
-  goto answered;
-answeredNo:
-  Event_Wait(40);
-  gFieldWork->message += 1;
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Event_Wait(20);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+    gFieldWork->message += 1;
+  } else {
+    Event_Wait(40);
+    gFieldWork->message += 1;
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+  }
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
@@ -477,11 +463,9 @@ answered:
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (leader == 0)
-    goto noLeader;
-  Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
-                       leader->z.part[0].integer);
-noLeader:
+  if (leader != 0)
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
@@ -502,10 +486,8 @@ void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
 
   actor = Actor_GetById(ACTOR_BIRD);
   result = Event_GetFlag(FLAG_PIERS_VISITED_UNCLE);
-  if (result != 0)
-    goto visited;
-  return;
-visited:
+  if (result == 0)
+    return;
   Event_SetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE);
   {
     struct Actor *other = Actor_GetById(ACTOR_PIERS_UNCLE);
@@ -1435,6 +1417,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
+/// The houses' exit regions.
 s16 gSceneRegions[] = {
     416, 32, 592, 432, 48, 608, -1, 13,
     688, -24, 608, 704, -8, 624, -1, 14,
@@ -1465,21 +1448,21 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 480, 0, 144, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(219, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 480, 0, 144, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_BIRD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 328, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 588, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 552, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 328, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 552, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(43, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 416, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 792, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 328, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 588, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 552, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 328, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 552, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LUNPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 416, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 792, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -1580,6 +1563,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The script each floating note runs.
 u32 gLemuriaInteriors_NoteFloats[] = {
     38,
 };

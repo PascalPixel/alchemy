@@ -297,6 +297,7 @@ void LemuriaPalace_FreeMaps(void) {
   VramCache_FreeEntry(gLemuriaPalace_SecondMapVram);
 }
 
+/// Writes the alpha blend weights, REG_BLDALPHA.
 static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
 
 #define BLEND_SET_ALPHA(value)                                                 \
@@ -310,13 +311,10 @@ void LemuriaPalace_FadeMapsIn(void) {
 
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   gLemuriaPalace_MapMode = 0;
-  i = 0;
-loop:
-  BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
-  System_Wait(4);
-  i++;
-  if (i < BLEND_WEIGHT_MAX)
-    goto loop;
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
+    BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
+    System_Wait(4);
+  }
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
   gLemuriaPalace_MapMode = 1;
 }
@@ -327,13 +325,10 @@ void LemuriaPalace_FadeMapsOut(void) {
 
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
   gLemuriaPalace_MapMode = 0;
-  i = 0;
-loop:
-  BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
-  System_Wait(3);
-  i++;
-  if (i < BLEND_WEIGHT_MAX)
-    goto loop;
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
+    BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
+    System_Wait(3);
+  }
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
 }
 
@@ -346,7 +341,6 @@ void Field_StartPaletteTransition();
 /// "You are Lord Felix, correct?"
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 answer, frame, i;
-  s32 result;
   struct Actor *target;
 
   Event_Start();
@@ -359,18 +353,16 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   // "You are Lord Felix, correct?"
   Event_OpenMessage(ACTOR_PALACE_GUARD, 0);
   answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-  if (answer == 0)
-    goto answeredYes;
-  Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
-  // "Then you have no business here! His Majesty is involved in a most..."
-  Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
-  Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
-  Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
-  Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
-  result = Event_End();
-  goto done;
-answeredYes:
+  if (answer != 0) {
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
+    // "Then you have no business here! His Majesty is involved in a most..."
+    Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
+    Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
+    Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
+    return Event_End();
+  }
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 3);
   Event_Wait(10);
   Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
@@ -1168,9 +1160,7 @@ answeredYes:
   Actor_FaceDirectionAndWait(ACTOR_LUNPA, FACING_SOUTH_SOUTHEAST);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(10);
-  result = Event_End();
-done:
-  return result;
+  return Event_End();
 }
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1202,14 +1192,14 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 912, 0, 624, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 520, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 456, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(165, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 360, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(164, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(31, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 864, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(43, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 408, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(34, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 912, 0, 624, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 520, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 456, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_IN_TEAL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 360, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HYDROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 864, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LUNPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 408, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CONSERVATO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 560, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1232,11 +1222,13 @@ u16 gLemuriaPalace_DoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// The palace's two doors' openings, at their places on the map grid.
 struct MapGridCellAnimation gLemuriaPalace_Doors[] = {
     {gLemuriaPalace_DoorOpening, 5, 23},
     {gLemuriaPalace_DoorOpening, 30, 23},
 };
 
+/// The palace's inner door opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuriaPalace_InnerDoor = {
     gLemuriaPalace_DoorOpening, 56, 4};
 
@@ -1258,17 +1250,17 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, ACTOR_CONSERVATO, CONDITION_ALWAYS, 15},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_PALACE_GUARD, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
     {TRIGGER_EXIT, ACTOR_KRADEN, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, 0x96a, EVENT(LemuriaPalace_MeetKingHydros)},
-    {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, 0x196a, MSGNO(MsgLemuriaPalaceLordConservatoSeemedVeryAngry)},
-    {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, 0x196a, MSGNO(MsgLemuriaPalaceBothLordConservatoAndKing)},
-    {TRIGGER_TALK, ACTOR_MAN_ON_THE_KINGS_MOOD, 0x196a, MSGNO(MsgLemuriaPalaceMaybeOnceYouHaveLeft)},
-    {TRIGGER_TALK, ACTOR_LEMURIAN_WHO_HEARD_THE_YELLING, 0x196a, MSGNO(MsgLemuriaPalaceTodayHisHighnessAndLord)},
-    {TRIGGER_TALK, ACTOR_LEMURIAN_PRAISING_HYDROS, 0x196a, MSGNO(MsgLemuriaPalaceIfHydrosPlansToUnleash)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_WAITING_ON_THE_KING, 0x196a, MSGNO(MsgLemuriaPalaceSenatesReportsUsuallyTend)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SHOWING_THE_WAY, 0x196a, MSGNO(MsgLemuriaPalaceKingsLeadershipIsTooProgressive)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_KINGS_MOOD, 0x196a, MSGNO(MsgLemuriaPalaceWheneverOutsidersArriveInLemuria)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIAN_WHO_HEARD_THE_YELLING, 0x196a, MSGNO(MsgLemuriaPalaceWhatWillHappenToUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIAN_PRAISING_HYDROS, 0x196a, MSGNO(MsgLemuriaPalaceAsLongAsICan)},
+    {TRIGGER_STEP, 20, FLAG_MET_KING_HYDROS, EVENT(LemuriaPalace_MeetKingHydros)},
+    {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceLordConservatoSeemedVeryAngry)},
+    {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceBothLordConservatoAndKing)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_KINGS_MOOD, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceMaybeOnceYouHaveLeft)},
+    {TRIGGER_TALK, ACTOR_LEMURIAN_WHO_HEARD_THE_YELLING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceTodayHisHighnessAndLord)},
+    {TRIGGER_TALK, ACTOR_LEMURIAN_PRAISING_HYDROS, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceIfHydrosPlansToUnleash)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_WAITING_ON_THE_KING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceSenatesReportsUsuallyTend)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SHOWING_THE_WAY, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceKingsLeadershipIsTooProgressive)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_KINGS_MOOD, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceWheneverOutsidersArriveInLemuria)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIAN_WHO_HEARD_THE_YELLING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceWhatWillHappenToUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIAN_PRAISING_HYDROS, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceAsLongAsICan)},
     {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalaceHeIsStillInChambers)},
     {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalaceIfYouSeekCounsel)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_KINGS_MOOD, CONDITION_ALWAYS, MSGNO(MsgLemuriaPalaceHisHighnessNeverLeavesMeeting)},
@@ -1297,6 +1289,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The twelve colours of the glow, in turn.
 s16 gLemuriaPalace_GlowColors[] = {
     0x7b00, 0x76c0, 0x7280, 0x6e40, 0x6a00, 0x65c0,
     0x6180, 0x65c0, 0x6a00, 0x6e40, 0x7280, 0x76c0,
@@ -1306,6 +1299,8 @@ s16 gLemuriaPalace_GlowColors[] = {
 
 #undef BLEND_SET_ALPHA
 
+/// The blend weights the hall's two maps flicker between as one fades into
+/// the other.
 LATE_DATA ALIGNED(4) u16 gLemuriaPalace_MapCrossfade[] = {
     BLEND_ALPHA(2, 14), BLEND_ALPHA(4, 12), BLEND_ALPHA(6, 10),
     BLEND_ALPHA(8, 8),  BLEND_ALPHA(10, 6), BLEND_ALPHA(12, 4),

@@ -66,18 +66,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShipDeck_Placements;
 }
 
-/// Once flag 0x985 is set, the leader goes through the cabin door, the door
-/// opening first unless it already has (flag 0x201).
+/// Once Piers is back on his ship, the leader goes through the cabin door, the
+/// door opening first unless it already has (FLAG_SCENE_TEMP_01).
 void LemurianShipDeck_EnterCabin(void) {
-  if (Event_GetFlag(0x985)) {
+  if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     u32 i;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    i = ACTOR_FIRST_PLACED;
-  loop:
-    {
+    for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
       struct Actor *object = Actor_Get(i);
 
       if (object != 0) {
@@ -85,9 +83,6 @@ void LemurianShipDeck_EnterCabin(void) {
         object->y.fixed = toFIXED(32);
       }
     }
-    i++;
-    if (i < FIELD_TREASURE_ACTOR)
-      goto loop;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
@@ -115,6 +110,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLemurianShipDeck_Triggers;
 }
 
+/// The cabin door, examined before Piers is back aboard: it is held closed.
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -135,18 +131,16 @@ void LemurianShipDeck_TryHeldDoor(void) {
       s16 saved = DECK_PALETTE[last];                                          \
       s32 i;                                                                   \
                                                                                \
-      i = last;                                                                \
-    loop:                                                                      \
-      DECK_PALETTE[i] = DECK_PALETTE[i - 1];                                   \
-      i--;                                                                     \
-      if (i != first)                                                          \
-        goto loop;                                                             \
+      for (i = last; i != first; i--)                                          \
+        DECK_PALETTE[i] = DECK_PALETTE[i - 1];                                 \
       DECK_PALETTE[first] = saved;                                             \
     }                                                                          \
   }
 
+/// A task: turns colours 12 to 15 of DECK_PALETTE round by one.
 DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHighColors, 15, 12)
 
+/// A task: turns colours 4 to 9 of DECK_PALETTE round by one.
 DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateLowColors, 9, 4)
 
 void TilesetAnim_Resume(s32 a);
@@ -567,14 +561,15 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Unless flag 0x8ff is set: the crew sights the ship from the deck and the
-/// leader is asked about it. Either way flag 0x980 is set.
+/// Before the message of the Gabomba is carried, the crew sights Menardi's ship
+/// from the deck and the leader is asked about it; either way it is sighted
+/// once only (FLAG_MENARDIS_SHIP_SIGHTED).
 void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
 
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0) {
-    Event_SetFlag(0x980);
+    Event_SetFlag(FLAG_MENARDIS_SHIP_SIGHTED);
     return;
   }
   Event_Start();
@@ -678,22 +673,24 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
-  Event_SetFlag(0x980);
+  Event_SetFlag(FLAG_MENARDIS_SHIP_SIGHTED);
 }
 
-/// Frost freezes the deck's puddle (flag 0x200).
+/// Frost freezes the deck's puddle (FLAG_SCENE_TEMP_00).
 void LemurianShipDeck_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShipDeck_Puddles);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-void LemurianShipDeck_LeaveToFindCrew(void) {
+/// Stepping toward the gangway before Piers is back aboard: on the third step
+/// Kraden tires of waiting and goes to find a ship the party can use.
+void LemurianShipDeck_KradenGoesToFindShip(void) {
   struct Actor *object;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_12))
     return;
-  if (Event_GetFlag(0x988))
+  if (Event_GetFlag(FLAG_KRADEN_WENT_TO_FIND_A_SHIP))
     return;
   Event_SetFlag(FLAG_SCENE_TEMP_12);
   if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
@@ -715,7 +712,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
                            object->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Event_SetFlag(0x988);
+    Event_SetFlag(FLAG_KRADEN_WENT_TO_FIND_A_SHIP);
     Event_End();
   } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
     Event_SetFlag(FLAG_SCENE_TEMP_11);
@@ -724,9 +721,9 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
   }
 }
 
-/// Stepping back off the gangway clears flag 0x212, so the crew is sought
-/// again.
-void LemurianShipDeck_ResetCrewSearch(void) {
+/// Stepping back off the gangway lets Kraden's next step toward leaving count
+/// again (FLAG_SCENE_TEMP_12).
+void LemurianShipDeck_StepBackFromGangway(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_12);
 }
 
@@ -753,10 +750,10 @@ void LemurianShipDeck_EmitSparkle(void) {
   }
 }
 
-/// The Black Crystal (item 242's icon) as an actor on the deck.
+/// The Black Crystal, drawn from its item icon, as an actor on the deck.
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object = (struct Actor *)Import_ActorCreate(
-      0x1e9, toFIXED(360), toFIXED(64), toFIXED(424));
+      SPRITE_UNSEEN_MARKER, toFIXED(360), toFIXED(64), toFIXED(424));
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -777,16 +774,17 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   return object;
 }
 
-/// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
-/// leader, which ends by setting flags 0x201 and 0x985.
+/// Once Piers is in the party, the first time: "At last, I'm back on my ship."
+/// He opens the cabin door (FLAG_SCENE_TEMP_01) and leads the way belowdecks
+/// (FLAG_PIERS_BACK_ON_HIS_SHIP).
 void LemurianShipDeck_ReturnToShip(void) {
   struct Actor *handle;
   void (*func)(void);
   struct Actor *object;
 
-  if (Event_GetFlag(0x985) != 0)
+  if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP) != 0)
     return;
-  if (Event_GetFlag(7) == 0)
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) == 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -851,17 +849,18 @@ void LemurianShipDeck_ReturnToShip(void) {
                          object->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  Event_SetFlag(0x985);
+  Event_SetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP);
   Event_End();
 }
 
-/// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
-/// over the ship, the leader answers two prompts, and everyone leaves by
-/// script gLemurianShipDeck_ReachPiersShipScript; it sets flag 0x981.
+/// Once the message of the Gabomba is carried, until Madra welcomes Piers home:
+/// Piers reaches his ship, the crew asks him to take them to Lemuria, the
+/// leader answers two prompts, and Piers agrees
+/// (FLAG_PIERS_WILL_SAIL_TO_LEMURIA).
 void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return;
-  if (Event_GetFlag(0x989) != 0)
+  if (Event_GetFlag(FLAG_PIERS_WELCOMED_IN_MADRA) != 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1126,11 +1125,11 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_ReachPiersShipScript);
   Actor_RunScriptAndWait(ACTOR_PIERS, gLemurianShipDeck_ReachPiersShipScript);
   FieldEvent_Wait(20);
-  Event_SetFlag(0x981);
+  Event_SetFlag(FLAG_PIERS_WILL_SAIL_TO_LEMURIA);
   Event_End();
 }
 
-/// Smoke rises from an actor on the frames 7 picks.
+/// Smoke rises from an actor every eighth frame.
 void Actor_EmitSmoke(struct Actor *object) {
   struct Actor *spawned;
 
@@ -1145,8 +1144,10 @@ void Actor_EmitSmoke(struct Actor *object) {
   }
 }
 
+/// With Piers in the party, before Madra has welcomed him home: "Then let's
+/// waste no time! We should set out for Madra at once!"
 void LemurianShipDeck_SetOutForMadra(void) {
-  if (Event_GetFlag(7)) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     struct Actor *object;
 
     Event_Start();
@@ -1181,10 +1182,12 @@ void LemurianShipDeck_SetOutForMadra(void) {
 }
 
 // clang-format off
+/// The deck's puddle, by actor id and flag.
 s16 gLemurianShipDeck_Puddles[] = {
-    8, 512, -1, 0,
+    ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
+/// The crew walking off the deck after Piers agrees to sail for Lemuria.
 s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(263, 0, 176),
@@ -1196,6 +1199,7 @@ s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_END,
 };
 
+/// The crew following Piers belowdecks.
 s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(368, 0, 448),
@@ -1211,6 +1215,7 @@ s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
+/// The first of the crew looking about the deck.
 s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
       SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
@@ -1219,6 +1224,7 @@ s32 gLemurianShipDeck_FirstCrewLooksAround[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The second of the crew looking about the deck.
 s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
@@ -1227,6 +1233,7 @@ s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The third of the crew looking about the deck.
 s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
@@ -1256,6 +1263,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The main deck's actors.
 struct ActorPlacement gLemurianShipDeck_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1265,6 +1273,7 @@ struct ActorPlacement gLemurianShipDeck_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tiller deck's actors.
 struct ActorPlacement gLemurianShipDeck_TillerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1274,29 +1283,33 @@ struct ActorPlacement gLemurianShipDeck_TillerPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tiller deck's triggers: none.
 struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The main deck's triggers.
 struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
-    {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},
-    {TRIGGER_STEP, 12, 0x989, EVENT(LemurianShipDeck_SetOutForMadra)},
-    {TRIGGER_STEP, 1, 0x985, EVENT(LemurianShipDeck_ReturnToShip)},
-    {TRIGGER_EXAMINE, 14, 0x985, EVENT(LemurianShipDeck_TryHeldDoor)},
-    {TRIGGER_STEP, 15, 0x985, EVENT(LemurianShipDeck_LeaveToFindCrew)},
-    {TRIGGER_STEP, 16, 0x985, EVENT(LemurianShipDeck_ResetCrewSearch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(LemurianShipDeck_FreezePuddle)},
+    {TRIGGER_STEP, 10, FLAG_MENARDIS_SHIP_SIGHTED, EVENT(LemurianShipDeck_SightMenardisShip)},
+    {TRIGGER_STEP, 11, FLAG_PIERS_WILL_SAIL_TO_LEMURIA, EVENT(LemurianShipDeck_ReachPiersShip)},
+    {TRIGGER_STEP, 12, FLAG_PIERS_WELCOMED_IN_MADRA, EVENT(LemurianShipDeck_SetOutForMadra)},
+    {TRIGGER_STEP, 1, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ReturnToShip)},
+    {TRIGGER_EXAMINE, 14, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
+    {TRIGGER_STEP, 15, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},
+    {TRIGGER_STEP, 16, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_StepBackFromGangway)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(LemurianShipDeck_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
+/// A sparkle fading as it rises.
 u32 gLemurianShipDeck_SparkleFades[] = {
     0, 10, 1, 3, 0, 1,
     38,
 };
 
+/// A puff of smoke rising and fading.
 u32 gLemurianShipDeck_SmokePuff[] = {
     0, 15, 3, 0, 1, 38,
 };

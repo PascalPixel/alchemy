@@ -60,9 +60,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The dock leads back to the way into Lemuria the party came by: Lemuria's
-/// entrance sets flag 0x960 when the party leaves by its fifth exit.
+/// entrance sets FLAG_LEMURIA_OTHER_WAY_IN when the party leaves by its fifth
+/// exit.
 s32 *Scene_GetExits(void) {
-  if (!Event_GetFlag(0x960))
+  if (!Event_GetFlag(FLAG_LEMURIA_OTHER_WAY_IN))
     return gLemuriaDock_Exits;
   return gLemuriaDock_ExitsToOtherWayIn;
 }
@@ -178,41 +179,31 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_End();
 }
 
+/// The leader walks into the dock's house through its door.
 void LemuriaDock_EnterHouse(s32 door) {
   LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// A palette task: every 8 frames it turns colours 4 to 9 and 12 to 15 of
-/// background palette 11 round by one.
+/// The background palette the dock's colour cycle turns.
+#define DOCK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+
+/// A palette task: every eighth frame it turns colours 4 to 9 and 12 to 15 of
+/// DOCK_PALETTE round by one.
 void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
-    volatile u16 *palette;
-    volatile u16 *slot;
     s16 saved;
-    s32 index;
+    s32 i;
 
-    saved = *(volatile u16 *)&BG_PLTT_COLOR(11, 9);
-    index = 9;
-  first:
-    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 4)
-      goto first;
-    slot = (volatile u16 *)&BG_PLTT_COLOR(11, 4);
-    *slot = saved;
-    slot += 11;
-    saved = *slot;
-    index = 15;
-  second:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(11, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 12)
-      goto second;
-    *(volatile u16 *)&BG_PLTT_COLOR(11, 12) = saved;
+    saved = DOCK_PALETTE[9];
+    for (i = 9; i != 4; i--)
+      DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
+    DOCK_PALETTE[4] = saved;
+    saved = DOCK_PALETTE[15];
+    for (i = 15; i != 12; i--)
+      DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
+    DOCK_PALETTE[12] = saved;
   }
 }
 
@@ -249,10 +240,8 @@ struct SceneEntrance gSceneEntrances[] = {
 
 // clang-format off
 /// The dock's exits: which of Ancient Lemuria's entrances the way north leads
-/// to follows flag 0x960, which Ancient Lemuria sets by the way the party last
+/// to follows FLAG_LEMURIA_OTHER_WAY_IN, which Ancient Lemuria sets by the way the party last
 /// came.
-// XXX: what flag 0x960 records; Ancient Lemuria's entrances 1, 4 and 5
-// against 2 and 3 would settle it, read from that scene's map.
 s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 3, EXIT_FLAG_NONE),
@@ -261,6 +250,7 @@ s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS_END,
 };
 
+/// The dock's exits once the party came by Lemuria's other way in.
 s32 gLemuriaDock_ExitsToOtherWayIn[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
@@ -277,11 +267,13 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The steps of the dock house's door opening.
 s16 gLemuriaDock_HouseDoorOpening[] = {
     51, 38, 1, 1, 6, -1,
 };
 // clang-format on
 
+/// The dock house's door opening, at its place on the map grid.
 struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
                                             70, 22};
 

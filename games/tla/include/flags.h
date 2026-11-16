@@ -969,6 +969,32 @@
 /// (WorldMap_DeliverLohoCannon), and by the Northern Reaches' entrance 90;
 /// Loho, Atteka Inlet and the Lemurian dock then place the cannon aboard.
 #define FLAG_SHIP_CARRIES_CANNON 0x90a
+/// Set as Loho's cannon, loaded with the Magma Ball, breaches the ancient wall
+/// (Loho_FireCannon); the miners then give the party the cannon.
+#define FLAG_LOHO_WALL_BREACHED 0xa5f
+/// Set as the first Lucky Medal to land in the middle of Lemuria's spring wins
+/// the summon Eclipse (LemuriaSpring_GivePrize).
+#define FLAG_LEMURIA_SPRING_ECLIPSE_WON 0x90b
+/// Set as the ship reaches Lemuria's harbour (Lemuria's entrance).
+#define FLAG_LEMURIA_REACHED 0x907
+/// Set while the party last came by Lemuria's other way in: leaving Lemuria's
+/// entrance by its fifth exit, or coming into Ancient Lemuria by its entrances
+/// 1, 4 or 5; Lemuria's dock then leads there.
+#define FLAG_LEMURIA_OTHER_WAY_IN 0x960
+/// Set as the crew, on the Lemurian ship's deck, sights Menardi's ship, or at
+/// once if the message of the Gabomba was carried first.
+#define FLAG_MENARDIS_SHIP_SIGHTED 0x980
+/// Set as Piers, back aboard his ship with the party, says he will take them to
+/// Lemuria.
+#define FLAG_PIERS_WILL_SAIL_TO_LEMURIA 0x981
+/// Set as Piers, now in the party, comes back aboard: "At last, I'm back on my
+/// ship."; the cabin door then opens.
+#define FLAG_PIERS_BACK_ON_HIS_SHIP 0x985
+/// Set as Kraden, tired of waiting on the deck, goes to find a ship the party
+/// can use.
+#define FLAG_KRADEN_WENT_TO_FIND_A_SHIP 0x988
+/// Set as Madra welcomes Piers home (MadraInteriors_WelcomePiersHome).
+#define FLAG_PIERS_WELCOMED_IN_MADRA 0x989
 /// Set as the parties, reunited at Atteka Inlet (or Contigo), set out on the
 /// winged ship.
 #define FLAG_SET_OUT_WITH_WINGS 0x9b2

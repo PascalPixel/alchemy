@@ -87,32 +87,34 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The party leaves for Lemuria by one of its two ways in, Ancient Lemuria
-/// clearing or setting flag 0x960 to remember which.
-void LemuriaEntrance_LeaveByExit3(s32 arg) {
+/// The party leaves the harbour for Lemuria by its first way in, clearing
+/// FLAG_LEMURIA_OTHER_WAY_IN.
+void LemuriaEntrance_LeaveByExit3(s32 exit) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
-  Event_ClearFlag(0x960);
+  Event_ClearFlag(FLAG_LEMURIA_OTHER_WAY_IN);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = ACTOR_SHIP;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
-  FieldEvent_SetExitRequest(arg);
+  FieldEvent_SetExitRequest(exit);
 }
 
-void LemuriaEntrance_LeaveByExit5(s32 arg) {
+/// The party leaves for Lemuria by its other way in
+/// (FLAG_LEMURIA_OTHER_WAY_IN).
+void LemuriaEntrance_LeaveByExit5(s32 exit) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
-  Event_SetFlag(0x960);
+  Event_SetFlag(FLAG_LEMURIA_OTHER_WAY_IN);
   Event_PlaySound(SE_MAP_EXIT);
   party->leaderActorId = ACTOR_SHIP;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   party->leaderActorId = ACTOR_FELIX;
-  FieldEvent_SetExitRequest(arg);
+  FieldEvent_SetExitRequest(exit);
 }
 
 /// Grind breaks up the rock in the way, for good (FLAG_ROCK_GROUND_AWAY).
@@ -159,8 +161,8 @@ s32 Scene_Initialize(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
-  Event_SetFlag(0x907);
-  Event_ClearFlag(0x9b4);
+  Event_SetFlag(FLAG_LEMURIA_REACHED);
+  Event_ClearFlag(FLAG_SHIP_AT_ATTEKA_INLET);
   if (Event_GetFlag(FLAG_ROCK_GROUND_AWAY))
     Actor_SetPosition(ACTOR_ROCK, 0, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_A), 0);
@@ -319,6 +321,7 @@ s32 gLemuriaEntrance_ShipSailsOut[] = {
 };
 // clang-format on
 
+/// The ship's animation as it rests in the harbour.
 s32 gLemuriaEntrance_ShipAtRest[] = {
     SC_CALL(LemuriaEntrance_ResetAnimationFrame),
     SC_ANIMATION(7),
@@ -344,14 +347,14 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
                     (s32)gLemuriaEntrance_ShipAtRest, 14, 0, 4, FACING_NORTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 112,
-                    FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 112,
-                    FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 216,
-                    FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 216,
-                    FACING_WEST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_MOORED_BOAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    636, 0, 112, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MOORED_BOAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    668, 0, 112, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_MOORED_BOAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    668, 0, 216, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_MOORED_BOAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    732, 0, 216, FACING_WEST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_WINGED_SHIP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     736, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WINGED_SHIP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -364,8 +367,8 @@ struct ActorPlacement gActorPlacements[] = {
                     52, 0, 828, FACING_WEST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_WINGED_SHIP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     52, 0, 860, FACING_WEST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(424, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 160,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEA_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144,
+                    0, 160, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

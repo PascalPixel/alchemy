@@ -46,10 +46,12 @@ void Event_End(void);
 void Sanctum_Run(s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 
+/// Stores a byte in the eight game flags from `flag`.
 static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
   GameFlag_SetByte(flag, value);
 }
 
+/// Restarts the link with interrupts locked.
 void LinkLobby_InitializeSerial(void) {
   u32 saved;
 
@@ -105,8 +107,38 @@ struct LinkPeer {
   s32 values[6];
 };
 
-extern struct LinkPeer gLinkPeerSignatures[2];
+extern struct LinkPeer gLinkPeerSignatures[4];
 
+/// The words of gLinkLobby_SlotValues, by slot, as The Broken Seal's Battle
+/// Arena numbers them. They are the signature, then the state a console
+/// publishes.
+enum LobbySlot {
+  LOBBY_SLOT_SIGNATURE = 0,
+  LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
+  LOBBY_SLOT_IN_CIRCLE = 2, ///< stands in the circle
+  LOBBY_SLOT_UNUSED = 3,
+  LOBBY_SLOT_IDLE = 4,
+  /// Replaces the signature when no partner answers the attendant and during
+  /// a monster series.
+  LOBBY_SLOT_ALONE = 5
+};
+
+/// The lobby's raised triggers (FieldWork.raisedTrigger).
+enum LobbyRaisedTrigger {
+  LOBBY_EVENT_NONE = 0,
+  LOBBY_EVENT_PROMPT = 1,      ///< LinkLobby_PromptToParticipate
+  LOBBY_EVENT_DISCONNECTED = 2 ///< LinkLobby_ReportDisconnection
+};
+
+/// Frames without a link before the lobby gives the partner up.
+#define LOBBY_PEER_WAIT_FRAMES 25
+
+/// The first of eight flags, one per character from Isaac, each set while that
+/// character is in the battle party (LinkLobby_Initialize).
+#define FLAG_LINK_LOBBY_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
+
+/// Returns 1 when the partner's payload holds slot's word in slot's column, 0
+/// when it does not or there is no link.
 s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 id = -1;
 
@@ -136,6 +168,8 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   return 0;
 }
 
+/// Publishes slot's word in its column of this console's link payload, where
+/// the partner's LinkLobby_PeerSlotMatches reads it.
 void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
   const s32 *src = &gLinkLobby_SlotValues[slot];
@@ -148,7 +182,6 @@ s32 gLinkLobby_CallFrames BSS_DATA;
 /// The lobby's task each frame: counts frames without the opponent, clears
 /// the peer signatures after 25, and raises the event trigger when both sides
 /// are ready or the link is lost. Returns whether the peer answered.
-// Ported from ☀️'s LinkLobby_PollPeerReady.
 s32 LinkLobby_PollPeerReady(void) {
   struct FieldWork *work;
   s32 result;
@@ -162,32 +195,26 @@ s32 LinkLobby_PollPeerReady(void) {
 
   if (z > toFIXED(224))
     Event_ClearFlag(FLAG_AREA_TEMP_04);
-  if (work->raisedTrigger != 2) {
-    LinkLobby_PeerSlotMatches(0);
+  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
+    LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
     set = Event_GetFlag(FLAG_AREA_TEMP_03);
     if (!set) {
-      if (++gLinkLobby_WaitFrames > 25) {
-        s32 offset = 0;
-
-        i = 3;
-      clear:
-        Iwram_ClearWordsEntry((u8 *)gLinkPeerSignatures + offset, 20);
-        i--;
-        offset += 24;
-        if (i >= 0)
-          goto clear;
+      if (++gLinkLobby_WaitFrames > LOBBY_PEER_WAIT_FRAMES) {
+        for (i = 0; i < 4; i++)
+          Iwram_ClearWordsEntry(&gLinkPeerSignatures[i], 20);
         gLinkLobby_WaitFrames = 0;
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
       }
     } else {
       gLinkLobby_WaitFrames = 0;
     }
     if (gLinkLobby_WaitFrames == 0) {
-      if (LinkLobby_PeerSlotMatches(0) &&
-          (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
+      if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
+          (LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
+           LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Event_SetFlag(FLAG_SCENE_TEMP_01);
         if (Event_GetFlag(FLAG_SCENE_TEMP_02))
-          work->raisedTrigger = 1;
+          work->raisedTrigger = LOBBY_EVENT_PROMPT;
         result = 1;
       } else {
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
@@ -196,23 +223,26 @@ s32 LinkLobby_PollPeerReady(void) {
     }
     if (Event_GetFlag(FLAG_SCENE_TEMP_01) &&
         Event_GetFlag(FLAG_SCENE_TEMP_02) && !Event_GetFlag(FLAG_SCENE_TEMP_00))
-      work->raisedTrigger = 1;
+      work->raisedTrigger = LOBBY_EVENT_PROMPT;
   }
   if ((Event_GetFlag(FLAG_SCENE_TEMP_01) ||
        Event_GetFlag(FLAG_SCENE_TEMP_02)) &&
-      !Event_GetFlag(FLAG_MONSTER_BATTLE) && !LinkLobby_PeerSlotMatches(0) &&
+      !Event_GetFlag(FLAG_MONSTER_BATTLE) &&
+      !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       gLinkLobby_WaitFrames > 24) {
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     Event_SetFlag(FLAG_SCENE_TEMP_05);
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(FLAG_SCENE_TEMP_02);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_05))
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   return result;
 }
 
+/// The attendant asks the player into the circle once both consoles agree, and
+/// again after 300 calls.
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -238,15 +268,16 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_End();
 }
 
+/// The attendant says the link was disconnected.
 s32 LinkLobby_ReportDisconnection(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Event_ClearFlag(FLAG_SCENE_TEMP_00);
   Event_ClearFlag(FLAG_SCENE_TEMP_03);
   Event_Start();
   Event_ResolvePendingActions(0);
-  work->raisedTrigger = 0;
+  work->raisedTrigger = LOBBY_EVENT_NONE;
   Event_SetMessageId((s32)MsgLobbyLinkWasDisconnected);
   // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -261,6 +292,41 @@ s32 LinkLobby_ReportDisconnection(void) {
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
+// Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
+// a block and ends a send only when its count reaches exactly 0.
+/// The bytes sent for each party member: a Unit (332 bytes) and the eight
+/// bytes after it, 17 blocks of 20.
+#define LOBBY_UNIT_RECORD_BYTES (17 * 20)
+/// The bytes received for the Djinn recovery table after the party members,
+/// 17 blocks of 20.
+#define LOBBY_RECOVERY_RECORD_BYTES (17 * 20)
+/// The party members a linked battle takes. A smaller party sends absent
+/// records.
+#define LOBBY_UNIT_RECORD_COUNT 3
+/// gLinkStatus bits 0 and 1: both consoles were heard this frame.
+#define LOBBY_LINK_READY_MASK 3
+/// A record fails on the 25th frame it waits without a link or past the
+/// timeout.
+#define LOBBY_TRANSFER_RETRY_LIMIT 24
+/// Frames, about ten seconds, for the three party member records, and again
+/// for the recovery table.
+#define LOBBY_SEND_TIMEOUT_FRAMES 600
+/// Frames, about fifteen seconds, for all four records received.
+#define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
+
+/// gMainRoutineWork.linkTallies, as the lobby keeps them.
+enum LinkTally {
+  LINK_TALLY_MONSTER_WINS = 0,
+  LINK_TALLY_MONSTER_LOSSES = 1,
+  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
+  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
+  LINK_TALLY_LINKED_WINS = 4,
+  LINK_TALLY_LINKED_LOSSES = 5,
+  /// The most linked battles won in a row, on the wall board.
+  LINK_TALLY_LINKED_BEST_STREAK = 6,
+  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
+};
+
 /// The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
 /// party records over the link.
 s32 LinkLobby_ReceivePartyRecords(void) {
@@ -274,17 +340,17 @@ s32 LinkLobby_ReceivePartyRecords(void) {
   s32 transfer;
   s32 i;
   s32 length;
-  u8 *record;
+  struct Unit *unit;
 
-  size = 0x154;
+  size = LOBBY_UNIT_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   result = 0;
-  timeout = 900;
+  timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   for (slot = 0;; slot++) {
-    if (slot > 2)
+    if (slot >= LOBBY_UNIT_RECORD_COUNT)
       goto second;
-    record = Unit_Get(slot + 128);
-    transfer = Serial_StartReceive(record);
+    unit = Unit_Get(slot + 128);
+    transfer = Serial_StartReceive(unit);
     tries = 0;
     if (transfer == -1)
       break;
@@ -294,8 +360,9 @@ s32 LinkLobby_ReceivePartyRecords(void) {
         goto done;
       }
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
@@ -305,7 +372,7 @@ s32 LinkLobby_ReceivePartyRecords(void) {
       result = -1;
       goto done;
     }
-    if (record[0x12a] != 0)
+    if (unit->side != BATTLE_SIDE_NONE)
       result++;
     wait(2);
     FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
@@ -317,38 +384,39 @@ s32 LinkLobby_ReceivePartyRecords(void) {
 #else
     length = i;
 #endif
-    for (i = 14; i >= length; i--)
-      record[i] = record[i - length];
+    for (i = UNIT_NAME_SIZE - 1; i >= length; i--)
+      unit->name[i] = unit->name[i - length];
     for (i = 0; i < length; i++)
-      record[i] = namePrefix[i];
-    record[14] = 0;
+      unit->name[i] = namePrefix[i];
+    unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
   goto failed;
   for (;;) {
   second:
     Heap_Release(heap);
-    size = 0x154;
+    size = LOBBY_RECOVERY_RECORD_BYTES;
     heap = Heap_AllocEwram(size);
     transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
     tries = 0;
     if (transfer == -1)
       break;
     while (Serial_GetActiveTransfers() != 0) {
-      s32 limit = 0x154;
+      s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
 
       if (gSerialReceivedSize > limit) {
         result = -1;
         goto done;
       }
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
       }
     }
-    if (gSerialReceivedSize != 0x154)
+    if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
       result = -1;
     else
       wait(2);
@@ -389,18 +457,6 @@ done:
   return count;
 }
 
-/// The list inside a sent recovery table, as ☀️'s DjinnRecoveryList.
-struct OfferList {
-  struct DjinnRecoveryEntry offers[72];
-  s32 count;
-};
-
-/// The recovery table as sent: the list from its eighth byte.
-struct OfferTable {
-  u8 unk00[8];
-  struct OfferList list;
-};
-
 s32 Serial_StartSend(void *data, s32 size);
 
 /// The Broken Seal's BattleArena_SendPartyRecords: sends the party's records to
@@ -418,12 +474,12 @@ s32 LinkLobby_SendPartyRecords(void) {
   s32 j;
   s32 k;
   u32 size;
-  struct OfferList *list;
+  struct DjinnRecoveryList *list;
 
-  size = 0x154;
+  size = LOBBY_UNIT_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   result = 0;
-  timeout = 600;
+  timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = LinkLobby_CopyPartyOwnerIds(memberIds);
   for (i = 0; i <= 7; i++)
     peerSlots[i] = 0;
@@ -436,7 +492,7 @@ s32 LinkLobby_SendPartyRecords(void) {
       s32 tries = 0;
 
       Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
-      heap[0x12a] = 2;
+      ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
       peerSlots[memberIds[i]] = i - 128;
       if ((transferResult = Serial_StartSend(heap, size)) == -1) {
         result = transferResult;
@@ -445,8 +501,9 @@ s32 LinkLobby_SendPartyRecords(void) {
       goto testMember;
     waitMember:
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
@@ -467,8 +524,9 @@ s32 LinkLobby_SendPartyRecords(void) {
   }
 wait:
   wait(1);
-  if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-    if (++tries > 24) {
+  if (--timeout < 0 ||
+      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
       result = -1;
       goto done;
     }
@@ -479,29 +537,29 @@ test:
   wait(2);
   i++;
 next:
-  if (i <= 2) {
-    heap[0x12a] = tries = 0;
+  if (i < LOBBY_UNIT_RECORD_COUNT) {
+    ((struct Unit *)heap)->side = tries = 0;
     if ((transferResult = Serial_StartSend(heap, size)) != -1)
       goto test;
     result = transferResult;
     goto done;
   }
   Heap_Release(heap);
-  size = 0x154;
+  size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   IWRAM_COPY_WORDS(heap, Djinn_GetRecoveryTable(0), size);
   {
     s32 timeout;
     s32 tries;
 
-    list = &((struct OfferTable *)heap)->list;
+    list = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
-    timeout = 600;
+    timeout = LOBBY_SEND_TIMEOUT_FRAMES;
     for (j = 0; j < list->count; j++) {
-      list->offers[j].unitId = peerSlots[list->offers[j].unitId];
-      if (list->offers[j].unitId == 0) {
+      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+      if (list->entries[j].unitId == 0) {
         for (k = j; k < list->count - 1; k++)
-          list->offers[k] = list->offers[k + 1];
+          list->entries[k] = list->entries[k + 1];
         list->count--;
         j--;
       }
@@ -513,8 +571,9 @@ next:
     goto testOffers;
   waitOffers:
     wait(1);
-    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-      if (++tries > 24) {
+    if (--timeout < 0 ||
+        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
         result = -1;
         goto done;
       }
@@ -531,7 +590,6 @@ done:
 }
 
 /// Resets the transfer state, as LinkBattle_ResetTransferState does.
-// In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
@@ -627,28 +685,29 @@ s32 LinkLobby_EnterBattle(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
-    LinkLobby_WriteSlotValue(2);
-    if (!LinkLobby_PeerSlotMatches(2))
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
+    if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4, 1);
-    while (!LinkLobby_PeerSlotMatches(2)) {
+    while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);
       stop = 0;
       if (!Event_GetFlag(FLAG_SCENE_TEMP_01))
         stop = 1;
       if (Event_GetFlag(FLAG_SCENE_TEMP_05))
         stop = 1;
-      if (!LinkLobby_PeerSlotMatches(2) && !LinkLobby_PeerSlotMatches(1)) {
+      if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
+          !LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
         if (++cnt > 25)
           stop = 1;
       } else {
         cnt = 0;
       }
       if (stop) {
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Event_SetFlag(FLAG_SCENE_TEMP_05);
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
         Event_ClearFlag(FLAG_SCENE_TEMP_02);
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         Event_ClearFlag(FLAG_SCENE_TEMP_00);
         break;
@@ -689,8 +748,8 @@ s32 LinkLobby_EnterBattle(void) {
         TilesetAnim_Pause(5);
         Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
-        LinkLobby_WriteSlotValue(0);
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
         Task_SetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
@@ -698,7 +757,7 @@ s32 LinkLobby_EnterBattle(void) {
         Event_ClearFlag(FLAG_AREA_TEMP_03);
         Event_ClearFlag(FLAG_SCENE_TEMP_03);
         Event_ClearFlag(FLAG_SCENE_TEMP_00);
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Event_End();
         return;
       }
@@ -714,27 +773,28 @@ s32 LinkLobby_EnterBattle(void) {
     }
     gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
+    // EXEC fills the payload's first four halfwords, where the link battle's
+    // command entry looks for it in the partner's.
     table = (u16 *)gSerialTransfer.payload;
-    table[0] = 0x45;
-    table[1] = 0x58;
-    table[2] = 0x45;
-    table[3] = 0x43;
+    table[0] = 'E';
+    table[1] = 'X';
+    table[2] = 'E';
+    table[3] = 'C';
     {
-      u32 last = 0x7c7;
+      /* FAKEMATCH(temporary): the bound in a local, and the destination
+       * indexed afresh each byte. */
+      u32 last = 1991;
 
       i = 0;
       src = buf;
-    copy:
-      {
+      do {
         u8 *dst = Ram_MapCellBuffer + 0x8000 + i;
         u8 b = *src;
 
         i++;
         src++;
         *dst = b;
-      }
-      if (i <= last)
-        goto copy;
+      } while (i <= last);
     }
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
@@ -751,10 +811,10 @@ s32 LinkLobby_ChooseBattleMode(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
-  if (LinkLobby_PeerSlotMatches(0) == 0)
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0)
     wait(1);
-  if (LinkLobby_PeerSlotMatches(0) == 0) {
-    LinkLobby_WriteSlotValue(5);
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     LinkLobby_InitializeSerial();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(msg + 5);
@@ -768,12 +828,12 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_ClearFlag(FLAG_LINK_BATTLE);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
         line = msg + 7;
-        gMainRoutineWork.linkTallies[3] = answer;
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
       }
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       Event_SetFlag(FLAG_LINK_BATTLE);
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       line = msg + 6;
       goto message;
     } else {
@@ -782,7 +842,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
     }
   } else {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       Event_SetMessageId((s32)MsgLobbyYourOpponentHasArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -810,14 +870,14 @@ s32 LinkLobby_ChooseBattleMode(void) {
       // "Would you like to apply?"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-        if (LinkLobby_PeerSlotMatches(0)) {
+        if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
           Event_SetFlag(FLAG_LINK_BATTLE_ARRANGED);
           if (Event_GetFlag(FLAG_SCENE_TEMP_01))
             Event_SetMessageId(msg + 3);
           else
             Event_SetMessageId(msg + 4);
-          LinkLobby_WriteSlotValue(1);
+          LinkLobby_WriteSlotValue(LOBBY_SLOT_ASKED);
           Event_SetFlag(FLAG_SCENE_TEMP_02);
           goto open_message;
         } else {
@@ -847,7 +907,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgLobbyItLooksLike;
-    count = &gMainRoutineWork.linkTallies[4];
+    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*count != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
@@ -861,7 +921,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gMainRoutineWork.linkTallies[7];
+    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*count != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
@@ -881,6 +941,7 @@ void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
 s32 DebugParameterSet_Load();
 
+/// Talking to ACTOR_DEBUG_HELPER loads a debug parameter set.
 s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
   s32 choice;
@@ -949,10 +1010,10 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 }
 
 /// The lobby's healer opens the sanctum.
-void LinkLobby_OpenSanctum(s32 value) {
+void LinkLobby_OpenSanctum(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sanctum_Run(value);
+  Sanctum_Run(actor);
   Event_End();
 }
 
@@ -1079,17 +1140,19 @@ void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
+/// Talking to a party member waiting in the lobby: what they say follows the
+/// last linked battle.
 s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgLobbyItsOurTurnLetsGo;
-  s32 lead = LinkLobby_PartyContains(4);
+  s32 lead = LinkLobby_PartyContains(ACTOR_FELIX);
   s32 own = LinkLobby_PartyContains(actor);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
-    Event_GetFlag(FLAG_SCENE_TEMP_F4);
-    base = Event_GetFlag(actor + 0x2f0);
+    Event_GetFlag(FLAG_LINK_LOBBY_IN_PARTY_FIRST + ACTOR_FELIX);
+    base = Event_GetFlag(actor + FLAG_LINK_LOBBY_IN_PARTY_FIRST);
     if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
       if (base)
         base = (s32)MsgLobbyEverybodyDeservesLittleCredit;
@@ -1127,8 +1190,9 @@ s32 LinkLobby_LeaveArena(void) {
 #endif
 }
 
-/// The visitors' talk, by whether the party has fought here (flag 0x206);
-/// the macho-loving visitor takes song requests while L or R is held.
+/// The visitors' talk, by whether the party has fought here
+/// (FLAG_SCENE_TEMP_06); the macho-loving visitor takes song requests while L
+/// or R is held.
 s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
@@ -1180,6 +1244,8 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
   Event_End();
 }
 
+/// Talking to ACTOR_PARTY_ORDER_VISITOR, who explains how up to three allies
+/// are chosen for a linked battle, by the party's size.
 s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1204,6 +1270,8 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Event_End();
 }
 
+/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most Monster Battles
+/// won in a row, or before any, that he will count them.
 s32 LinkLobby_ReportMonsterRecord(s32 id) {
   struct MainRoutineWork *gs;
 
@@ -1211,8 +1279,9 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
   Actor_FaceActor(id, gs->leaderActorId, 0);
-  if (gs->linkTallies[2] != 0) {
-    MessageArgument_Push(gs->linkTallies[2], MESSAGE_ARGUMENT_NUMBER);
+  if (gs->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+    MessageArgument_Push(gs->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId((s32)MsgLobbyYouveWonConsecutiveMonsterBattle);
   } else {
     Event_SetMessageId((s32)MsgLobbyICantWaitToSee);
@@ -1248,13 +1317,10 @@ void LinkLobby_DrawThreeDigitValue(s32 value) {
 
   if (value > 999)
     value = 999;
-  i = 0;
-next:
-  MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
-  value /= 10;
-  i++;
-  if (i <= 2)
-    goto next;
+  for (i = 0; i <= 2; i++) {
+    MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
+    value /= 10;
+  }
   MapGrid_CenterOnFollowedPoint();
 }
 
@@ -1266,7 +1332,7 @@ void Serial_Initialize(void);
 void TilesetAnim_Pause(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
-void LinkLobby_WriteSlotValue(s32 value);
+void LinkLobby_WriteSlotValue(s32 slot);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 /// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
@@ -1285,9 +1351,10 @@ s32 LinkLobby_Initialize(void) {
   gLinkLobby_WaitFrames = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadReverbCode(2);
-  LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
+  LinkLobby_DrawThreeDigitValue(
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   wait(1);
   TilesetAnim_Pause(5);
   {
@@ -1299,7 +1366,7 @@ s32 LinkLobby_Initialize(void) {
     name[7] = 'K';
   }
   for (i = 0; i < 8; i++) {
-    s32 flag = 0x2f0 + i;
+    s32 flag = FLAG_LINK_LOBBY_IN_PARTY_FIRST + i;
 
     Event_ClearFlag(flag);
     if (LinkLobby_PartyContains(i))
@@ -1313,9 +1380,9 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(5);
-    gMainRoutineWork.linkTallies[0]++;
-    gMainRoutineWork.linkTallies[3]++;
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     wins = (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     msg = wins * 2 + 2;
     if (msg > 14)
@@ -1339,11 +1406,12 @@ s32 LinkLobby_Initialize(void) {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       // score holds the row's address, then the score read through it.
-      score = (u32)&gMainRoutineWork.linkTallies[3];
+      score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
       MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
       score = *(u16 *)score;
-      if (gMainRoutineWork.linkTallies[2] < score) {
-        gMainRoutineWork.linkTallies[2] = score;
+      if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+          score) {
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
         Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
         // "You won ... battle. You broke the record!"
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1353,23 +1421,23 @@ s32 LinkLobby_Initialize(void) {
         // "You won ... battle. Please speak to me when you wish to battle..."
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == 9) {
-    gMainRoutineWork.linkTallies[1]++;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(5);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
-    score = (u32)&gMainRoutineWork.linkTallies[3];
+    score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
     MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
     score = *(u16 *)score;
-    if (gMainRoutineWork.linkTallies[2] < score) {
-      gMainRoutineWork.linkTallies[2] = score;
+    if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
+      gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
       Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
       // "You won ... battle. You broke the record!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1379,10 +1447,10 @@ s32 LinkLobby_Initialize(void) {
       // "You won ... battle. I told you our monsters were tough! Please..."
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
-    gMainRoutineWork.linkTallies[3] = 0;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-    LinkLobby_WriteSlotValue(0);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     Event_End();
   } else if (gMainRoutineWork.entrance == 10) {
     s32 v;
@@ -1391,22 +1459,22 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
       work = Ram_HeapSlots->fieldWork;
       Event_ClearFlag(FLAG_AREA_TEMP_E8);
-      work->raisedTrigger = 2;
+      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Event_ClearFlag(FLAG_AREA_TEMP_04);
       wait(20);
       LinkLobby_InitializeSerial();
-      LinkLobby_WriteSlotValue(0);
-      LinkLobby_WriteSlotValue(4);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     } else {
-      gMainRoutineWork.linkTallies[4]++;
-      v = gMainRoutineWork.linkTallies[7] + 1;
-      gMainRoutineWork.linkTallies[7] = v;
-      score = (u32)&gMainRoutineWork.linkTallies[6];
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS]++;
+      v = gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
+      score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;
       LinkLobby_DrawThreeDigitValue(*(u16 *)score);
@@ -1422,11 +1490,11 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     if ((v = Event_GetFlag(FLAG_MONSTER_BATTLE)) == 0) {
-      gMainRoutineWork.linkTallies[5]++;
-      gMainRoutineWork.linkTallies[7] = v;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       LinkLobby_SaveBattleResults();
     }
     Event_SetFlag(FLAG_AREA_TEMP_04);
@@ -1449,8 +1517,8 @@ s32 LinkLobby_Initialize(void) {
     }
     gMainRoutineWork.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   func = LinkLobby_PollPeerReady;
   Task_Add(func, TASK_PASS_VBLANK);
@@ -1464,21 +1532,38 @@ s32 LinkLobby_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Edition-specific link handshake values (each word is four ASCII characters).
+/// A word of four characters, the first in its lowest byte, as The Broken
+/// Seal's Battle Arena writes them.
+#define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
+
+/// The words the lobby publishes in its link payload, by enum LobbySlot; the
+/// partner compares them with its own (LinkLobby_PeerSlotMatches).
 // clang-format off
 s32 gLinkLobby_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-    0x32674d43, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
+    PEER_TAG('C', 'M', 'g', '2'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('S', 'G', 'M', 'C')
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-    0x47357343, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43534747,
+    PEER_TAG('C', 's', '5', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'G', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-    0x47733743, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43535347,
+    PEER_TAG('C', '7', 's', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'S', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-    0x32475363, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x4353474d,
+    PEER_TAG('c', 'S', 'G', '2'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('M', 'G', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-    0x31494773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x53474943,
+    PEER_TAG('s', 'G', 'I', '1'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
 #else
-    0x43314773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
+    PEER_TAG('s', 'G', '1', 'C'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('S', 'G', 'M', 'C')
 #endif
 };
 
@@ -1522,8 +1607,8 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 272, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 380, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 252, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 284, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_STRIPED_TOP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 252, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 284, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 216, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 216, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1535,13 +1620,13 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, 8, 360, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_ISAAC, 0x1000, MOVEMENT_TYPE_STAND, 324, 0, 216, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_GARET, 0x1001, MOVEMENT_TYPE_STAND, 296, 0, 168, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IVAN, 0x1002, MOVEMENT_TYPE_STAND, 352, 0, 152, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MIA, 0x1003, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SHEBA, 0x1006, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_PIERS, 0x1007, MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_JENNA, 0x1005, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_ISAAC)), MOVEMENT_TYPE_STAND, 324, 0, 216, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_GARET)), MOVEMENT_TYPE_STAND, 296, 0, 168, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_IVAN)), MOVEMENT_TYPE_STAND, 352, 0, 152, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_MIA)), MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_SHEBA)), MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_PIERS)), MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_JENNA)), MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1551,27 +1636,27 @@ struct ActorPlacement gLinkLobby_UnusedPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 272, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, 0x0, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(86, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 116, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_WITH_SWORD, FLAG_IN_PARTY(ACTOR_ISAAC), MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_STRIPED_TOP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 116, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 248, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 248, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SOLDIER, 0x1, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, 0x2, MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, 0x3, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, FLAG_IN_PARTY(ACTOR_GARET), MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, FLAG_IN_PARTY(ACTOR_IVAN), MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, FLAG_IN_PARTY(ACTOR_MIA), MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 288, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 360, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_ISAAC, 0x1000, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_GARET, 0x1001, MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IVAN, 0x1002, MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MIA, 0x1003, MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SHEBA, 0x1006, MOVEMENT_TYPE_STAND, 152, 0, 144, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_PIERS, 0x1007, MOVEMENT_TYPE_STAND, 104, 0, 144, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_JENNA, 0x1005, MOVEMENT_TYPE_STAND, 128, 0, 124, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_ISAAC)), MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_GARET)), MOVEMENT_TYPE_STAND, 352, 0, 108, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_IVAN)), MOVEMENT_TYPE_STAND, 352, 0, 156, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_MIA)), MOVEMENT_TYPE_STAND, 376, 0, 136, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_SHEBA)), MOVEMENT_TYPE_STAND, 152, 0, 144, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_PIERS)), MOVEMENT_TYPE_STAND, 104, 0, 144, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_IN_PARTY(ACTOR_JENNA)), MOVEMENT_TYPE_STAND, 128, 0, 124, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -1629,7 +1714,9 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgLobbyIDontHaveGuts)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
-    {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
-    {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(LinkLobby_ReportDisconnection)},
+    {TRIGGER_RAISED, LOBBY_EVENT_PROMPT, CONDITION_ALWAYS,
+     EVENT(LinkLobby_PromptToParticipate)},
+    {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportDisconnection)},
     {TRIGGER_TABLE_END},
 };

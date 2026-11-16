@@ -15,6 +15,7 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "scene/scene.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -120,8 +121,8 @@ enum KibomboMountainsDiskAxeChestActorId {
   ACTOR_WARRIOR_F
 };
 
-void KibomboMountains_GuardSpotsParty(s32 value);
-void KibomboMountains_DogSpotsParty(s32 value);
+void KibomboMountains_GuardSpotsParty(s32 guard);
+void KibomboMountains_DogSpotsParty(s32 dog);
 
 void KibomboMountains_TremorDropsBone(void);
 
@@ -168,6 +169,7 @@ static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
 
 void Field_TryJumpForward(void);
 
+/// Talking to Waft starts its battle.
 void KibomboMountains_FightWaft(void) {
   Field_RequestDjinnBattle(ACTOR_WAFT, DJINNI_WAFT);
 }
@@ -194,7 +196,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKibomboMountains_Placements;
 }
 
-void Pillar_SetMoved(void) {
+/// Frost freezes the puddle into a pillar to climb.
+void KibomboMountains_FreezePuddle(void) {
   struct Actor *object = Actor_Get(ACTOR_PUDDLE);
 
   object->priorityFlags = 0;
@@ -212,6 +215,7 @@ void KibomboMountains_GrowVine(void) {
 
 #include "shared/actor_wait_to_land.h"
 
+/// Before the crate over the lower guard is moved, it is drawn above him.
 void KibomboMountains_StartPushingCrate(s32 unused, s32 id) {
   if (id == ACTOR_GUARD_CRATE)
     FieldActor_SetSpritePriority(ACTOR_GUARD_CRATE, 1);
@@ -330,8 +334,10 @@ void KibomboMountains_WhirlwindClearsOvergrowth(void) {
   GameFlag_Set(FLAG_KIBOMBO_OVERGROWTH_CLEARED);
 }
 
+/// The leader jumps the gap ahead.
 void KibomboMountains_JumpForward(void) { Field_TryJumpForward(); }
 
+/// Frost freezes the chest room's first puddle into a pillar.
 void KibomboMountains_FreezeFirstPuddle(void) {
   struct Actor *object = Actor_Get(ACTOR_FIRST_PUDDLE);
 
@@ -341,6 +347,7 @@ void KibomboMountains_FreezeFirstPuddle(void) {
   Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
 }
 
+/// Frost freezes the chest room's second puddle into a pillar.
 void KibomboMountains_FreezeSecondPuddle(void) {
   struct Actor *object = Actor_Get(ACTOR_SECOND_PUDDLE);
 
@@ -350,23 +357,29 @@ void KibomboMountains_FreezeSecondPuddle(void) {
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
-void KibomboMountains_StartPushingChestRoomCrate(s32 unused, s32 cell) {
-  if (cell == ACTOR_LOWER_WEST_CRATE || cell == ACTOR_LOWER_EAST_CRATE)
+/// As a pair of the chest room's crates starts to move, the cells under them
+/// are cleared.
+void KibomboMountains_StartPushingChestRoomCrate(s32 unused, s32 id) {
+  if (id == ACTOR_LOWER_WEST_CRATE || id == ACTOR_LOWER_EAST_CRATE)
     MapGrid_CopyCellAttributes(120, 33, 8, 2, 20, 33);
-  if (cell == ACTOR_WEST_CRATE || cell == ACTOR_EAST_CRATE)
+  if (id == ACTOR_WEST_CRATE || id == ACTOR_EAST_CRATE)
     MapGrid_CopyCellAttributes(112, 15, 16, 4, 8, 15);
 }
 
-void KibomboMountains_SetCrateCell(s32 id, s32 a, s32 b) {
+/// Copies the cell at (sourceX, sourceY) of the map grid to the cell actor `id`
+/// stands on.
+void KibomboMountains_SetCrateCell(s32 id, s32 sourceX, s32 sourceY) {
   struct Actor *object = Actor_Get(id);
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);
 
-  MapGrid_CopyCellAttributes(a, b, 1, 1, x, z);
+  MapGrid_CopyCellAttributes(sourceX, sourceY, 1, 1, x, z);
 }
 
-void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 cell) {
-  if (cell == ACTOR_FIRST_DROPPED_PILLAR) {
+/// A crate or pillar moved in the chest room: a pillar pushed off its ledge
+/// lands for good, and a pair of crates leaves its cells solid.
+void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 id) {
+  if (id == ACTOR_FIRST_DROPPED_PILLAR) {
     struct Actor *object = Actor_Get(ACTOR_FIRST_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
@@ -379,7 +392,7 @@ void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 cell) {
       }
     }
   }
-  if (cell == ACTOR_SECOND_DROPPED_PILLAR) {
+  if (id == ACTOR_SECOND_DROPPED_PILLAR) {
     struct Actor *object = Actor_Get(ACTOR_SECOND_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_SECOND_PILLAR_DROPPED)) {
@@ -396,11 +409,11 @@ void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 cell) {
       }
     }
   }
-  if (cell == ACTOR_WEST_CRATE || cell == ACTOR_EAST_CRATE) {
+  if (id == ACTOR_WEST_CRATE || id == ACTOR_EAST_CRATE) {
     KibomboMountains_SetCrateCell(ACTOR_WEST_CRATE, 8, 17);
     KibomboMountains_SetCrateCell(ACTOR_EAST_CRATE, 8, 17);
   }
-  if (cell == ACTOR_LOWER_WEST_CRATE || cell == ACTOR_LOWER_EAST_CRATE) {
+  if (id == ACTOR_LOWER_WEST_CRATE || id == ACTOR_LOWER_EAST_CRATE) {
     KibomboMountains_SetCrateCell(ACTOR_LOWER_WEST_CRATE, 22, 33);
     KibomboMountains_SetCrateCell(ACTOR_LOWER_EAST_CRATE, 22, 33);
   }
@@ -580,6 +593,7 @@ void KibomboMountains_GuardsReport(void) {
   Event_SetFlag(FLAG_KIBOMBO_GUARDS_REPORTED);
 }
 
+/// Sets an actor walking slowly, at half a pixel a frame.
 void KibomboMountains_WalkSlowly(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -740,6 +754,8 @@ void KibomboMountains_StepWestOfCrate(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_LOOKOUT);
 }
 
+/// Stepping in the first lookout's sight east of the crates, unless the east
+/// crate hides the leader.
 void KibomboMountains_StepEastOfCrate(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *crate = Actor_Get(ACTOR_EAST_CRATE);
@@ -752,47 +768,60 @@ void KibomboMountains_StepEastOfCrate(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_LOOKOUT);
 }
 
+/// Stepping into the second lookout's sight.
 void KibomboMountains_StepBeforeSecondLookout(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_SECOND_LOOKOUT);
 }
 
+/// Stepping into the second lookout's sight further on.
 void KibomboMountains_StepBeforeSecondLookoutAgain(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_SECOND_LOOKOUT);
 }
 
+/// Stepping into the third lookout's sight, unless crossing the rope.
 void KibomboMountains_StepBeforeThirdLookout(void) {
-  if (gMainRoutineWork.movementMode != 3)
+  if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_ROPE)
     KibomboMountains_GuardSpotsParty(ACTOR_THIRD_LOOKOUT);
 }
 
+/// Stepping into the third lookout's sight further on.
 void KibomboMountains_StepBeforeThirdLookoutAgain(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_THIRD_LOOKOUT);
 }
 
+/// Stepping into the upper guard's sight.
 void KibomboMountains_StepBeforeUpperGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_UPPER_GUARD);
 }
 
+/// Stepping into the upper guard's sight further on.
 void KibomboMountains_StepBeforeUpperGuardAgain(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_UPPER_GUARD);
 }
 
+/// Stepping north of the dog: it spots the party unless it is eating the bone
+/// or shut in to the south.
 void KibomboMountains_StepNorthOfDog(void) {
   if (!Event_GetFlag(FLAG_DOG_EATING_BONE) &&
       !Event_GetFlag(FLAG_DOG_SHUT_SOUTH))
     KibomboMountains_DogSpotsParty(ACTOR_GUARD_DOG);
 }
 
+/// Stepping into the lower guard's sight, unless a crate knocked him out.
 void KibomboMountains_StepBeforeLowerGuard(void) {
   if (!Event_GetFlag(FLAG_GUARD_KNOCKED_OUT))
     KibomboMountains_GuardSpotsParty(ACTOR_LOWER_GUARD);
 }
 
+/// Stepping into the lower guard's sight further on, unless a crate knocked
+/// him out.
 void KibomboMountains_StepBeforeLowerGuardAgain(void) {
   if (!Event_GetFlag(FLAG_GUARD_KNOCKED_OUT))
     KibomboMountains_GuardSpotsParty(ACTOR_LOWER_GUARD);
 }
 
+/// Stepping south of the dog: it spots the party unless it is eating the bone
+/// or shut in to the north.
 void KibomboMountains_StepSouthOfDog(void) {
   if (!Event_GetFlag(FLAG_DOG_SHUT_NORTH) &&
       !Event_GetFlag(FLAG_DOG_EATING_BONE))
@@ -802,7 +831,7 @@ void KibomboMountains_StepSouthOfDog(void) {
 #undef EVENT_WORK_VALUE
 
 void KibomboMountains_FightWaft(void);
-void Pillar_SetMoved(void);
+void KibomboMountains_FreezePuddle(void);
 void KibomboMountains_GrowVine(void);
 void KibomboMountains_WhirlwindClearsOvergrowth(void);
 void KibomboMountains_StepNorthOfDog(void);
@@ -810,6 +839,7 @@ void KibomboMountains_StepNorthOfDog(void);
 extern s32 gKibomboMountains_FirstLookoutScript[];
 
 // clang-format off
+/// A pillar risen out of a frozen puddle.
 s32 gKibomboMountains_RaisedPillarScript[] = {
     SC_ANIMATION(2),
     SC_END,
@@ -845,15 +875,18 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// A crate held still.
 s32 gKibomboMountains_CrateScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
 
+/// The mountain path's actors.
 struct ActorPlacement gKibomboMountains_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The upper guard's patrol.
 s32 gKibomboMountains_PatrolScript[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.1),
@@ -871,6 +904,7 @@ s32 gKibomboMountains_PatrolScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The lower guard's patrol.
 s32 gKibomboMountains_LowerGuardPatrolScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -896,11 +930,13 @@ s32 gKibomboMountains_LowerGuardPatrolScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The crate over the knocked-out guard, bobbing.
 s32 gKibomboMountains_BobScript[] = {
     SC_CALL(Actor_Bob),
     SC_END,
 };
 
+/// The guard dog's patrol.
 s32 gKibomboMountains_DogPatrolScript[] = {
     SC_SPEED(1.25),
     SC_ACCELERATION(0.25),
@@ -949,22 +985,24 @@ s32 gKibomboMountains_DogPatrolScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Waft's ledges' actors, by enum KibomboMountainsWaftActorId.
 struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DOG, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_DogPatrolScript, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 520, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 712, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 888, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 888, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 732, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_WAFT), MOVEMENT_TYPE_STAND, 440, 0, 472, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The first lookout's watch, back and forth.
 s32 gKibomboMountains_FirstLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -990,6 +1028,7 @@ s32 gKibomboMountains_FirstLookoutScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The second lookout's watch, back and forth.
 s32 gKibomboMountains_SecondLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -1015,35 +1054,38 @@ s32 gKibomboMountains_SecondLookoutScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The chest room's actors, by enum KibomboMountainsDiskAxeChestActorId.
 struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_FirstLookoutScript, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_SecondLookoutScript, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(250, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_FirstLookoutScript, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_SecondLookoutScript, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_VINE_PILLAR, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, gKibomboMountains_CrateScript, 88, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, gKibomboMountains_RaisedPillarScript, 232, 0, 536, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, gKibomboMountains_RaisedPillarScript, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(83, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_PatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The mountain path's triggers.
 struct Trigger gKibomboMountains_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of Waft's ledges.
 struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1067,17 +1109,18 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_TALK, ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsHeyWhosThereGetMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsItsDarkItsCrampedSomebody)},
     {TRIGGER_TALK, ACTOR_WAFT, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(Pillar_SetMoved)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT(KibomboMountains_GrowVine)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_OVERGROWTH, CONDITION_ALWAYS, EVENT(KibomboMountains_WhirlwindClearsOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOG_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_DropCrate)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_DropCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), -14320, FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 2064, FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
     {TRIGGER_TABLE_END},
 };
 
+/// The chest room's triggers.
 struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1099,8 +1142,8 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_DROPPED_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DROPPED_PILLAR, FLAG_KIBOMBO_FIRST_PILLAR_DROPPED, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WEST_CRATE, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_EAST_CRATE, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATE, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
@@ -1110,6 +1153,7 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The small cavern's triggers.
 struct Trigger gKibomboMountains_CavernTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

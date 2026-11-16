@@ -320,14 +320,14 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   height =
       Map_GetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed) >> 19;
   if (Event_GetFlag(cone->timer)) {
-    upperCell &= -0xff01;
-    groundCell &= -129;
+    upperCell &= ~0xff00;
+    groundCell &= ~0x80;
     if ((cone->groundHeight >> 19) != height)
       height -= 4;
   } else {
-    upperCell &= 255;
+    upperCell &= 0xff;
     upperCell |= 0xff00;
-    groundCell |= 128;
+    groundCell |= 0x80;
     height += 4;
     Scene_SetActorSpritePriority(cone, 2);
   }

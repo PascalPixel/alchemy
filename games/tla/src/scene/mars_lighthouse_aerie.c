@@ -998,7 +998,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_PlaySound(SE_ASCEND);
   FieldActor_SetAnimation(ACTOR_WISE_ONE, 14);
   FieldEvent_Wait(10);
-  Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0x100);
+  Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
   Actor_RunRepeatedMotion(work->leaderActorId, 2);
   Actor_SetSpeed(work->leaderActorId, 1.6);
   FieldActor_Jump(work->leaderActorId, 4, 0);
@@ -1028,7 +1028,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(work->leaderActorId, FACING_WEST, 40);
   Event_ShowMessage(ACTOR_PIERS, 0);
   Event_PlaySound(SE_CRUMBLE);
-  Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
+  Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), SPRITE_COLOR_WHITE);
   FieldEvent_Wait(20);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), SPRITE_COLOR_NORMAL);
@@ -1633,7 +1633,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetAnimation(ACTOR_JENNA, 5);
   Actor_MoveToAndWait(ACTOR_JENNA, 460, 288);
-  Actor_SetAnimation(ACTOR_JENNA, 0x16);
+  Actor_SetAnimation(ACTOR_JENNA, 22);
   // "Mom... Wake up! It's me... It's Jenna! ...Don't leave me..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);

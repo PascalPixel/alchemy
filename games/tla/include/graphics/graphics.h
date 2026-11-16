@@ -17,9 +17,9 @@ extern u8 gScreenFadeToWhite;
 // fade's end while ScreenFade_Wait waits on it, so it is no device.
 extern volatile u8
     gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
-/// VBlanks until the running fade reaches its target.
 // volatile: the fade starts set it for ScreenFade_Update, which the VBlank
 // handler runs and which counts it down, so it is no device.
+/// VBlanks until the running fade reaches its target.
 extern volatile u8 gScreenFadeVBlanksLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
@@ -28,15 +28,22 @@ extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
 // handler runs, so it is no device.
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
+/// The two tiles of the link screen's page arrows, which Link_DrawPageArrows
+/// shifts and merges into the window border each frame.
 extern u8 gRomShiftedTilePair[];
 /// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedInnerProduct[];
+/// The size of Decompress_MoveToFrontLzCommandsCode, which
+/// Decompress_MoveToFrontLz copies to the heap.
 extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
+/// The size of Resource_DecodeByteLzCode, which Decompress_ByteLz copies to
+/// the heap.
 extern u8 Resource_DecodeByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
 /// string, drawn by the unit summary.
 extern const u8 gStatusPanel_PpRowString[];
+/// The window sprites' fixed tile blocks (window/fixed_tile_blocks.c).
 extern s32 gWindow_FixedTileBlocks[];
 /// The Japanese status panel's HP row, "HP    /", the slash already in its
 /// cell at 48.
@@ -91,16 +98,35 @@ void WindowSystem_UploadTilemap(void);
 
 struct WindowSprite;
 
+/// 0 while the credits text scrolls; once a line stops it, the line's stop
+/// (1 at a page mark, which A or B releases), then counted up each frame after
+/// the end (CREDITS_FRAMES_AFTER_END).
 extern s16 gDisplayScroll_Busy;
+/// gDisplayScroll_Position when the credits last drew a line.
 extern s16 gDisplayScroll_LastPosition;
+/// How far the credits text has scrolled, in pixels: one every four VBlanks,
+/// faster while B is held.
 extern u16 gDisplayScroll_Position;
+/// The digits String_FormatHex and String_FormatDecimal write, right-aligned
+/// up to gNumberTextHexEnd and gNumberTextDecimalEnd.
 extern u8 gNumberTextBuffer[];
+/// The file menu's 64x16 headings by number, each drawn as two 32x16 sprites
+/// (MenuTitle_Load; graphics/ui/menu_titles.s).
 extern s32 gRenderResource_PairSourceTable[];
+/// The tagged LZ decoder in ARM, run by Decompress_TaggedLz from a heap copy.
 extern const u8 Decompress_TaggedLzArmCode[];
+/// The size of Decompress_TaggedLzArmCode, which Decompress_TaggedLz copies to
+/// the heap.
 extern u8 Decompress_TaggedLzCodeSize[];
+/// The move-to-front LZ decoder's command loop, run by
+/// Decompress_MoveToFrontLz from a heap copy.
 extern const u8 Decompress_MoveToFrontLzCommandsCode[];
+/// The byte LZ decoder, run by Decompress_ByteLz from a heap copy.
 extern const u8 Resource_DecodeByteLzCode[];
+/// The text decoder's symbol lookup, which Message_Find copies to the heap to
+/// run (window/lookup_symbol.s).
 extern const u8 Text_LookupSymbolCode[];
+/// The size of Text_LookupSymbolCode.
 extern u8 Text_LookupSymbolCodeSize[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
 s32 BattleParty_PrepareMembersFar(u16 *owners);

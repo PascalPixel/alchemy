@@ -2,8 +2,10 @@
 /// The staff credits font's advance widths in pixels, characters 0x20 to
 /// 0x7f, beside the font (font.png). menu/credits.c includes it after its
 /// line tables, as The Broken Seal's credits.c includes its own copy.
-// clang-format off
 #include "edition.h"
+
+// clang-format off
+/// The credits font's advance widths, by character code from 0x20.
 const u8 gCredits_GlyphWidths[96] = {
     7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7,

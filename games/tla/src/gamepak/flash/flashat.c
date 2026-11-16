@@ -6,9 +6,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+// clang-format off
 /// The Atmel chip's waits by timing: milliseconds, the timer's reload value
 /// and its control.
-// clang-format off
 const u16 Flash_MaxTimeAtmel[] = {
     10, 0xffbd, 0xc2,
     40, 0xffbd, 0xc2,

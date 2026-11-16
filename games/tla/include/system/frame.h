@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_FRAME_H
 #define ALCHEMY_FRAME_H
 
+/// @file
+/// The frame loop's globals: the VBlanks a frame takes, the CPU load
+/// display and the VBlank flags, which wait() (system/system_frame.c) and the
+/// VBlank handler share.
+
 #include "types.h"
 
 /// Frames in a second: the screen refreshes about 60 times a second.
@@ -28,8 +33,11 @@ extern u32 gCpuLoadPeak;
 extern volatile u8 gSleepDisabled;
 /// Sleep after three idle minutes.
 extern volatile u8 gIdleSleepEnabled;
+/// Frames since a key was last held.
 extern volatile u16 gIdleFrames;
+/// 1: sleep this frame; more: count down to it.
 extern volatile u8 gSleepRequested;
+/// Debug builds: Start+Select pauses the frame loop.
 extern u8 gDebugMode;
 extern u8 gDebugPaused; ///< the debug pause is on
 /// Set by the keypad interrupt; wait() performs the soft reset.
@@ -37,15 +45,18 @@ extern u8 gResetRequested;
 /// Written by the soft reset just before it restarts the cartridge, and
 /// cleared by System_Initialize; nothing else reads it.
 extern u32 gCartridgeResetMarker;
+/// Frames wait() has finished.
 extern u32 gFrameCount;
 extern u32 gPlayTimeFrames; ///< the play time clock, in frames
 
 /// Stops the sound DMA and its timer.
 void Sound_SuspendDirectSoundFar(void);
 
-extern u32 gVBlankCount;
+extern u32 gVBlankCount; ///< counted up by every VBlank
 // volatile: the VBlank handler sets it while System_WaitForFrameInterrupt
 // waits on it, so it is no device.
+/// Bit 0 is set by the VBlank handler; System_WaitForFrameInterrupt clears it
+/// and halts until it is set again.
 extern volatile u16 gVBlankDone;
 
 #endif

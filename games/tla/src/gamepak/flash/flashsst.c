@@ -5,9 +5,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+// clang-format off
 /// The SST chip's waits by timing: milliseconds, the timer's reload value and
 /// its control.
-// clang-format off
 const u16 Flash_MaxTimeSst[] = {
     10, 0xffbd, 0xc2,
     10, 0xffbd, 0xc2,

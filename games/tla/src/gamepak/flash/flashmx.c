@@ -5,9 +5,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+// clang-format off
 /// The Macronix chip's waits by timing: milliseconds, the timer's reload value
 /// and its control.
-// clang-format off
 const u16 Flash_MaxTimeMacronix[] = {
     10, 0xffbd, 0xc2,
     10, 0xffbd, 0xc2,
@@ -16,8 +16,8 @@ const u16 Flash_MaxTimeMacronix[] = {
 };
 // clang-format on
 
-/// The Panasonic chip's waits, as Flash_MaxTimeMacronix's.
 // clang-format off
+/// The Panasonic chip's waits, as Flash_MaxTimeMacronix's.
 const u16 Flash_MaxTimePanasonic[] = {
     10, 0xffbd, 0xc2,
     10, 0xffbd, 0xc2,

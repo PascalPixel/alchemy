@@ -81,10 +81,15 @@ struct SoundVBlankState {
 };
 
 // volatile: the VBlank handler and the frame wait share it.
+/// Who runs the sound update this frame: the frame wait or the VBlank handler.
 extern volatile struct SoundVBlankState gSoundVBlankState;
 
+/// The music's volume, 8.8 fixed point (BGM_UNITY_SCALE is full), ramped
+/// toward gBgmVolumeTarget by gBgmVolumeStep each VBlank.
 extern u16 gBgmVolume;
+/// The volume gBgmVolume ramps toward.
 extern u16 gBgmVolumeTarget;
+/// How far gBgmVolume moves each VBlank (BGM_DEFAULT_RAMP_STEP).
 extern u16 gBgmVolumeStep;
 /// VBlanks after a jingle starts before the music waits for its end; held
 /// at 1 until the jingle's player stops, then 0.
@@ -92,8 +97,13 @@ extern u8 gBgmRestoreDelay;
 /// Set by Sound_UpdateCommandMask; nothing reads it.
 extern u8 gSoundCommandMask;
 
+/// The tempo and pitch gBgmTempoPitch ramps toward.
 extern u16 gBgmTempoPitchTarget;
+/// The music's combined tempo and pitch, 8.8 fixed point (BGM_UNITY_SCALE is
+/// the song's own), ramped toward gBgmTempoPitchTarget by gBgmTempoPitchStep
+/// each VBlank.
 extern u16 gBgmTempoPitch;
+/// How far gBgmTempoPitch moves each VBlank.
 extern u16 gBgmTempoPitchStep;
 
 /// The BIOS CpuSet service (bios.s).

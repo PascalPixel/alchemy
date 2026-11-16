@@ -23,6 +23,8 @@ STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 #define OUTPUT_SIZE_32X16 0x80004000
 #define OUTPUT_SIZE_16X32 0x80008000
 
+/// The OAM entries the frame's list holds and the most it may; wait() empties
+/// it each frame.
 extern struct OamUsage gOamUsage;
 void Render_BuildOamList(void *work);
 

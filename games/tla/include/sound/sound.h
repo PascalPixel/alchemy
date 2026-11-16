@@ -63,9 +63,11 @@ void SoundMainBTM(void *block);
 /// (SoundInfo.cgbNotes).
 extern struct CgbChannel gCgbChans[4];
 
-// The music player table (sound/music_player_table.s) supplies the music
-// player count and the mixer's line limit as the addresses of these symbols.
+/// The music player count, gMPlayTable's rows, as this symbol's address
+/// (sound/music_player_table.s).
 extern char gNumMusicPlayers[];
+/// The mixer's line limit, 0 for none, as this symbol's address
+/// (sound/music_player_table.s).
 extern char gMaxLines[];
 
 // The song commands (gMPlayJumpTableTemplate) and the extended commands
@@ -176,7 +178,10 @@ extern u16 gMusicPlayerLastSound[MUSIC_PLAYER_COUNT];
 
 void Sound_SetFixedSampleFreq(u32 mode);
 
+/// Plays the field's and the battle's action sounds (MUSIC_PLAYER_ACTION_SE);
+/// SOUND_FADE_OUT_ACTION_SE fades it.
 extern struct MusicPlayerInfo gMPlayInfo_ActionSE;
+/// One of the sound effects' shared players (MUSIC_PLAYER_SE5).
 extern struct MusicPlayerInfo gMPlayInfo_SE5;
 /// Plays jingles; the music returns once it stops.
 extern struct MusicPlayerInfo gMPlayInfo_Jingle;

@@ -23,8 +23,8 @@ STATIC_ASSERT(offsetof(struct GlyphPalette, count) == 0x100);
 
 /// A character of the text font: its width and its rows of pixels.
 struct FontGlyph {
-  u16 width;
-  u16 rows[FONT_GLYPH_ROWS];
+  u16 width;                 ///< pixels
+  u16 rows[FONT_GLYPH_ROWS]; ///< its pixels, a halfword a row, top first
 } __attribute__((packed, aligned(2)));
 
 STATIC_ASSERT(offsetof(struct FontGlyph, rows) == 2);
@@ -33,15 +33,18 @@ STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 /// The main font, from character code 32: its glyphs in code order.
 extern const struct FontGlyph gFont_Glyphs[];
 
-/// The glyph transfer's work, the block of heap slot HEAP_SLOT_GLYPH_TRANSFER:
-/// the glyphs drawn one byte a pixel, the 4bpp tiles made from them, the size
-/// drawn and the encoded text read.
+/// The buffers an icon or a portrait is decoded through, in
+/// HEAP_SLOT_GLYPH_TRANSFER for one build: Icon_Decode unpacks encoded into
+/// input, then expands input into tiles.
 typedef struct {
-  u8 input[0x400];
-  u8 tiles[0x200];
-  s16 width;
-  s16 height;
-  u8 *encoded;
+  /// The icon unpacked a byte a pixel; a 256-colour command icon
+  /// (ResourceId_CommandIcons) is unpacked here by Decompress_ByteLz and used
+  /// as it is.
+  u8 input[1024];
+  u8 tiles[512]; ///< the icon as sprite tiles, ready for VRAM
+  s16 width;     ///< tiles
+  s16 height;    ///< tiles
+  u8 *encoded;   ///< the compressed icon
 } GlyphTransfer;
 
 STATIC_ASSERT(sizeof(GlyphTransfer) == 0x608);

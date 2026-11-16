@@ -51,14 +51,14 @@ struct MainRoutineWork {
   s32 coins; ///< at most 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
-  u8 djinnRecovery[0x124];
+  u8 djinnRecovery[292];
   s32 shopCredit; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
   s8 shopGifts;   ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
   /// The weights of the spring game's 15 prizes, as ☀️'s prizeWeights: three
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
-  u8 unusedAfterPrizeWeights[0x94]; ///< no code names it
+  u8 unusedAfterPrizeWeights[148]; ///< no code names it
   s16 next;
   s16 entrance;
   u16 restartScene;    ///< where a defeat returns to without a defeat point
@@ -182,7 +182,7 @@ struct MainRoutineWork {
   /// The Broken Seal's coins, kept from the data transfer (DataTransfer_Apply)
   /// until Isaac's party joins and Party_AddIsaacsParty adds them.
   s32 transferredCoins;
-  u8 unusedAfterTransferredCoins[0x2c]; ///< no code names it
+  u8 unusedAfterTransferredCoins[44]; ///< no code names it
   u16 forgeItem; ///< the item left at the forge (Forge_SetItem)
   /// Teleport's destination: SCENE_WORLD_MAP once a place is chosen on the
   /// world picture (WorldPicture_Show), -1 after cancelling.

@@ -1309,10 +1309,11 @@ const u16 gUlysses_Pictures[] = {0,    216,  369,  459,  519,  631,
                                  766,  958,  1075, 1139, 1171, 1203,
                                  1263, 1362, 1452, 1532, 1592, 1670};
 
-/// The frame each particle starts on.
-const s8 gUlysses_ParticleStarts[] = {100, 60, 64, -6, -6, 112, 44, -64, -6, 4,
-                                      96,  28, 64, -6, -5, 112, 80, -64, -6, 4,
-                                      104, 32, 64, -6, 5,  102, 68, -64, -6, 4};
+/// Where each of the six particles starts: x and y in pixels, z in 1024ths of
+/// a pixel, and its x and y speeds in halves of a pixel a frame.
+const s8 gUlysses_ParticleStarts[][5] = {
+    {100, 60, 64, -6, -6}, {112, 44, -64, -6, 4}, {96, 28, 64, -6, -5},
+    {112, 80, -64, -6, 4}, {104, 32, 64, -6, 5},  {102, 68, -64, -6, 4}};
 
 /// Each Spider Web picture's width, in pixels.
 const u8 gSpiderWeb_PictureWidths[] = {40, 112, 112, 112, 88, 64};

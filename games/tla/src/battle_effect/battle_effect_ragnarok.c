@@ -643,31 +643,3 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 struct StripQuad;
 
 extern const struct Scale gJudgment_UnitScale;
-
-// IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
-// the value store and the address store: the first tile queue matches only
-// with each of the three parted from the one before.
-#define QUEUE_PUSH_PARTED(address, value, control)                             \
-  {                                                                            \
-    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
-    u32 saved;                                                                 \
-    s32 count;                                                                 \
-                                                                               \
-    IRQ_LOCK(saved);                                                           \
-    count = *&q->count;                                                        \
-    if (count <= 31) {                                                         \
-      u32 *entry = q->entries[count];                                          \
-                                                                               \
-      do {                                                                     \
-      } while (0);                                                             \
-      *&q->count = count + 1;                                                  \
-      do {                                                                     \
-      } while (0);                                                             \
-      *entry++ = (value);                                                      \
-      do {                                                                     \
-      } while (0);                                                             \
-      *entry++ = (address);                                                    \
-      *entry = (control);                                                      \
-    }                                                                          \
-    IRQ_UNLOCK(saved);                                                         \
-  }

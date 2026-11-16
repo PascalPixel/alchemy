@@ -255,14 +255,12 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   s32 selected = -1;
   s32 nearby = -1;
   s32 fallback = -1;
-  s32 flags;
 
-  flags = event->control;
-  while (flags != -1) {
+  for (; event->control != -1; event++) {
     s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
     s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
-    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldPsynergy;
+    s32 eventKind = Ability_Get((u16)event->control >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
@@ -272,7 +270,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
         if (distance < 0)
           distance = -distance;
         if (distance > TRIG_TURN * 3 / 32 - 1)
-          goto next;
+          continue;
       }
       if (event->control & TRIGGER_PSYNERGY_ANYWHERE) {
         fallback = PSYNERGY_TARGET_ANYWHERE;
@@ -294,11 +292,6 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
         break;
       }
     }
-  next:
-    event++;
-    if (event->control == -1)
-      break;
-    flags = event->control;
   }
   if (selected != -1)
     result = selected;
@@ -319,16 +312,14 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->triggers;
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
-  s32 flags;
 
   if (selector == -1)
     return NULL;
-  flags = event->control;
-  while (flags != -1) {
+  for (; event->control != -1; event++) {
     s32 high = event->trigger & TRIGGER_SUBJECT_FACING;
     s16 hasFacing = (u16)event->trigger & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 target = (u16)event->trigger & TRIGGER_SUBJECT_TARGET;
-    s32 eventKind = Ability_Get((u16)flags >> 8)->fieldPsynergy;
+    s32 eventKind = Ability_Get((u16)event->control >> 8)->fieldPsynergy;
 
     if ((event->control & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         eventKind == kind && GameFlag_IsConditionActive(event->condition)) {
@@ -338,32 +329,24 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
         if (distance < 0)
           distance = -distance;
         if (distance > TRIG_TURN * 3 / 32 - 1)
-          goto next;
+          continue;
       }
       if (filter != PSYNERGY_TRIGGER_ANY &&
           (event->control & (PSYNERGY_PHASE_MASK | TRIGGER_KIND_MASK)) !=
               filter)
-        goto next;
-      flags = event->control;
-      {
-        if (flags & TRIGGER_PSYNERGY_ANYWHERE) {
-          if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ANYWHERE)
-            return event;
-        } else if (flags & TRIGGER_PSYNERGY_ON_ACTOR) {
-          if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ACTOR &&
-              (selector & PSYNERGY_TARGET_ID) == target)
-            return event;
-        } else if ((selector & PSYNERGY_TARGET_KIND) == 0 &&
-                   (selector & PSYNERGY_TARGET_ID) == target) {
+        continue;
+      if (event->control & TRIGGER_PSYNERGY_ANYWHERE) {
+        if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ANYWHERE)
           return event;
-        }
+      } else if (event->control & TRIGGER_PSYNERGY_ON_ACTOR) {
+        if ((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ACTOR &&
+            (selector & PSYNERGY_TARGET_ID) == target)
+          return event;
+      } else if ((selector & PSYNERGY_TARGET_KIND) == 0 &&
+                 (selector & PSYNERGY_TARGET_ID) == target) {
+        return event;
       }
     }
-  next:
-    event++;
-    if (event->control == -1)
-      break;
-    flags = event->control;
   }
   return NULL;
 }

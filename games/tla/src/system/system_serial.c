@@ -392,12 +392,11 @@ void Serial_HandleTransferInterrupt(void) {
   if (gSerialWork.sendIndex <= SERIAL_PACKET_HALFWORDS)
     gSerialWork.sendIndex++;
 
-  channel = 0;
-receive_loop:
-  // Hand complete packets to the frame code without overwriting its buffers.
-  {
+  for (channel = 0; channel <= 1; channel++) {
     s32 receiveIndex;
     u16 *incoming;
+
+    // Hand complete packets to the frame code without overwriting its buffers.
 
     if (recv[channel] == SERIAL_IDLE_HALFWORD &&
         gSerialWork.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
@@ -414,14 +413,11 @@ receive_loop:
         gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
       }
     }
+    if (gSerialWork.transferError != 0)
+      gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
+    if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
+      gSerialWork.receiveIndex[channel]++;
   }
-  if (gSerialWork.transferError != 0)
-    gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
-  if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
-    gSerialWork.receiveIndex[channel]++;
-  channel++;
-  if (channel <= 1)
-    goto receive_loop;
 
   // The console that clocks the transfers starts the next one, and restarts
   // timer 3 so its count reloads

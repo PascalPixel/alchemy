@@ -758,18 +758,14 @@ void AirsRock_WhirlwindClearsWall(void) {
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  {
-    s32 zero = 0;
-
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = zero;
-    System_Wait(30);
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
-                              SPRITE_COLOR_GREY);
-    FieldMapGrid_WaitForShakeToSettle();
-    FieldEvent_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 0;
+  System_Wait(30);
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = NULL;
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
+                            SPRITE_COLOR_GREY);
+  FieldMapGrid_WaitForShakeToSettle();
+  FieldEvent_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   work = &gMainRoutineWork;
@@ -800,7 +796,6 @@ void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
-  u8 *riding, *motion;
   s32 rise;
   FIXED dx, dz;
   s32 moved, i, height;
@@ -810,14 +805,12 @@ void AirsRock_RideWhirlwind(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  motion = &leader->motionFlags;
-  *motion = ACTOR_FLOATS;
+  leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
   Sound_Play(SE_KIRIN);
-  riding = &ride->riseEnabled;
   rise = 0;
-  while (*riding != 0) {
+  while (ride->riseEnabled != 0) {
     leader->x.fixed = ride->x.fixed;
     leader->y.fixed = ride->y.fixed + rise;
     leader->z.fixed = ride->z.fixed;
@@ -838,55 +831,51 @@ void AirsRock_RideWhirlwind(void) {
     i = 0;
     leader->y.fixed = (((ride->y.fixed >> 19) & ~1) + 3) << 19;
     leader->z.fixed = (((leader->z.fixed >> 19) & ~1) + 1) << 19;
-  waiting:
-    moved = 0;
-    if (gInput.held & KEY_UP) {
-      dx = 0;
-      dz = -toFIXED(16);
-      leader->facing = FACING_NORTH;
-      moved = 1;
-    }
-    if (gInput.held & KEY_RIGHT) {
-      dx = toFIXED(16);
-      dz = 0;
-      leader->facing = dz;
-      moved = 1;
-    }
-    if (gInput.held & KEY_LEFT) {
-      dx = -toFIXED(16);
-      leader->facing = FACING_WEST;
-      dz = 0;
-      moved = 1;
-    }
-    if (moved &&
-        MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
-                              (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
-                8 !=
-            255)
-      goto found;
-    wait(1);
-    if (++i != 60)
-      goto waiting;
+    do {
+      moved = 0;
+      if (gInput.held & KEY_UP) {
+        dx = 0;
+        dz = -toFIXED(16);
+        leader->facing = FACING_NORTH;
+        moved = 1;
+      }
+      if (gInput.held & KEY_RIGHT) {
+        dx = toFIXED(16);
+        dz = 0;
+        leader->facing = dz;
+        moved = 1;
+      }
+      if (gInput.held & KEY_LEFT) {
+        dx = -toFIXED(16);
+        leader->facing = FACING_WEST;
+        dz = 0;
+        moved = 1;
+      }
+      if (moved &&
+          MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
+                                (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
+                  8 !=
+              255)
+        goto found;
+      wait(1);
+    } while (++i != 60);
     dx = 0;
     leader->facing = FACING_NORTH;
     dz = -toFIXED(16);
-    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
-                                    (ride->z.fixed - ride->y.fixed + dz) >> 20)
-              << 8) >>
-            16 !=
-        255)
-      goto found;
-    dx = toFIXED(16);
-    dz = 0;
-    leader->facing = dz;
-    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
-                                    (ride->z.fixed - ride->y.fixed) >> 20)
-              << 8) >>
-            16 !=
-        255)
-      goto found;
-    dx = -toFIXED(16);
-    leader->facing = FACING_WEST;
+    if ((u16)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
+                                    (ride->z.fixed - ride->y.fixed + dz) >>
+                                        20) >>
+              8) == 255) {
+      dx = toFIXED(16);
+      dz = 0;
+      leader->facing = dz;
+      if ((u16)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
+                                      (ride->z.fixed - ride->y.fixed) >> 20) >>
+                8) == 255) {
+        dx = -toFIXED(16);
+        leader->facing = FACING_WEST;
+      }
+    }
   found:
     height = Map_GetTerrainHeight(rider->riseCounter, ride->x.fixed + dx,
                                   ride->z.fixed + dz);
@@ -899,7 +888,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->speedLimit = toFIXED(2);
     leader->acceleration = toFIXED(1) / 2;
     leader->velocityY = toFIXED(4);
-    *motion = ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FALLS;
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     leader->layer = rider->riseCounter;
     FieldActor_SetMoveTargetFX(leader, leader->x.fixed + dx, leader->y.fixed,
@@ -907,7 +896,7 @@ void AirsRock_RideWhirlwind(void) {
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   } else {
     angle = ride->facing;
     leader->x.fixed = (((ride->x.fixed >> 19) & ~1) + (angle >>= 13) - 1) << 19;
@@ -916,7 +905,7 @@ void AirsRock_RideWhirlwind(void) {
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
     dust->speedLimit = toFIXED(8);
@@ -1137,8 +1126,6 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   struct Vector3 scatter;
   s32 i;
   FIXED radius = toFIXED(64);
-  FIXED shakeA = -1;
-  FIXED shakeC = FIXED_ONE * 9 / 10;
 
   first = FieldActor_Create(SPRITE_ROCK, x, 0, z);
   options.priority = 1;
@@ -1179,7 +1166,7 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
                                rock->z.fixed + scatter.z);
   }
   MapGrid_SetShake(5, 7, 1);
-  MapGrid_SetShakeFX(shakeA, shakeA, shakeC);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
 /// Whirlwind on the purple twister rock (actor 14): it glows, the rocks in the
@@ -1516,18 +1503,14 @@ void AirsRock_WhirlwindClearsFog(void) {
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  {
-    s32 zero = 0;
-
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = zero;
-    System_Wait(30);
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
-                              SPRITE_COLOR_GREY);
-    FieldMapGrid_WaitForShakeToSettle();
-    FieldEvent_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 0;
+  System_Wait(30);
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = NULL;
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
+                            SPRITE_COLOR_GREY);
+  FieldMapGrid_WaitForShakeToSettle();
+  FieldEvent_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,

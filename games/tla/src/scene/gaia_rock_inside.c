@@ -829,11 +829,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   FieldEvent_Wait(30);
   MapGrid_CopyCellsLayered(117, 20, 7, 8, 104, 20);
   MapGrid_CopyCellsLayered(111, 12, 1, 6, 111, 20);
-  {
-    s32 destX = 40;
-    s32 destY = 84;
-    MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
-  }
+  MapGrid_CopyCellAttributes(49, 84, 8, 8, 40, 84);
   FieldEvent_Wait(30);
   OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(490), SPRITE_CRATE);
@@ -1552,7 +1548,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_191);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1566,7 +1562,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
       eastFace->velocityY = Random16();
       System_Wait(1);
     }
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1576,7 +1572,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
     MapGrid_CopyCells(119, 31, 1, 2, 100, i);
     Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1630,7 +1626,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1648,7 +1644,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1673,7 +1669,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1723,7 +1719,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1741,7 +1737,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1766,7 +1762,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1816,7 +1812,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1834,7 +1830,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1858,7 +1854,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -2063,11 +2059,7 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
       GaiaRockInside_SetPlatformMode(id, mode);
     }
   }
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_AddFrame(GaiaRockInside_SwayPlatforms, priority);
-  }
+  Task_AddFrame(GaiaRockInside_SwayPlatforms, TASK_PASS_VBLANK);
 }
 
 /// Opens the passages on each side of the hall by how many of its two pairs of
@@ -2254,202 +2246,201 @@ s32 Scene_Initialize(void) {
       FIXED none;
       s32 found;
 
-      if (Test(FLAG_SERPENT_SLAIN))
-        goto end;
-      Sound_Play(MUS_FLAME_DRAGONS);
-      found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
-      none = -1;
-      if (found != none) {
-        s32 flag;
-        struct Actor *susa;
-        struct Actor *serpent;
-        s32 width;
-        s32 height;
-        s32 mask;
-        FIXED fast;
-        s32 i;
-        s32 dx;
-        s32 dz;
-        s32 movement;
-        struct Actor *actor;
-        struct Actor *shards[4];
+      if (!Test(FLAG_SERPENT_SLAIN)) {
+        Sound_Play(MUS_FLAME_DRAGONS);
+        found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
+        none = -1;
+        if (found != none) {
+          s32 flag;
+          struct Actor *susa;
+          struct Actor *serpent;
+          s32 width;
+          s32 height;
+          s32 mask;
+          FIXED fast;
+          s32 i;
+          s32 dx;
+          s32 dz;
+          s32 movement;
+          struct Actor *actor;
+          struct Actor *shards[4];
 
-        flag = Test(FLAG_SUSA_ATTACKED_SERPENT);
-        if (flag != 0) {
-          Actor_SetAnimationById(ACTOR_SERPENT, 2);
-          Actor_SetPosition(ACTOR_CASK, 0, 0);
-          Actor_SetPosition(ACTOR_SUSA, 432, 320);
-          Actor_SetSpritePriority(ACTOR_SUSA, 3);
-          MapGrid_CopyCellAttributes(30, 19, 1, 1, 27, 19);
-          Actor_SetAnimationById(ACTOR_SUSA, 5);
-          goto end;
+          flag = Test(FLAG_SUSA_ATTACKED_SERPENT);
+          if (flag != 0) {
+            Actor_SetAnimationById(ACTOR_SERPENT, 2);
+            Actor_SetPosition(ACTOR_CASK, 0, 0);
+            Actor_SetPosition(ACTOR_SUSA, 432, 320);
+            Actor_SetSpritePriority(ACTOR_SUSA, 3);
+            MapGrid_CopyCellAttributes(30, 19, 1, 1, 27, 19);
+            Actor_SetAnimationById(ACTOR_SUSA, 5);
+          } else {
+            susa = Actor_GetById(ACTOR_SUSA);
+            serpent = Actor_GetById(ACTOR_SERPENT);
+            Sound_Play(SOUND_FADE_OUT_ACTION_SE);
+            GameFlag_Set(FLAG_SUSA_ATTACKED_SERPENT);
+            GameFlag_Set(FLAG_MET_SUSA);
+            Event_Start();
+            Event_ResolvePendingActions(0);
+            Actor_SetPosition(ACTOR_CASK, 0, 0);
+            Actor_SetMovementTypeById(ACTOR_CASK, MOVEMENT_TYPE_STAND);
+            Actor_SetPosition(ACTOR_SUSA, 456, 360);
+            Actor_SetMovementTypeById(ACTOR_SUSA, MOVEMENT_TYPE_STAND);
+            Actor_FaceDirection(ACTOR_SUSA, FACING_NORTHEAST, 0);
+            Actor_SetAnimationById(ACTOR_SERPENT, 2);
+            Event_StartScreenTransition();
+            Event_WaitTransitionFrames();
+            FieldCamera_MoveToFX(toFIXED(488), none, toFIXED(384), 1);
+            FieldCamera_WaitForArrival();
+            Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+            Event_Wait(40);
+            Event_SetMessageId((s32)MsgFieldAtLastTheSerpentHas);
+            Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+            Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
+            Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+            Actor_SetAnimationById(ACTOR_SUSA, 8);
+            Event_ShowMessageAndWait(
+                SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
+            susa->speedLimit = toFIXED(3) / 2;
+            Actor_SetDestinationById(ACTOR_SUSA, 488, 328);
+            Event_Wait(5);
+            Actor_SetAnimationById(ACTOR_SUSA, 6);
+            Event_Wait(10);
+            susa->velocityY = toFIXED(6);
+            Event_Wait(10);
+            susa->paused = 1;
+            serpent->paused = 1;
+            Actor_SetAnimationSpeed(susa, 0);
+            Actor_SetAnimationSpeed(serpent, 0);
+            Actor_SetSpriteColorMode(susa, 6);
+            Actor_SetSpriteColorMode(serpent, 6);
+            width = 30;
+            height = 19;
+            MapGrid_CopyCellPictureCellsRect(85, 76, 5, 2, width, height);
+            Sound_Play(SE_CRUMBLE);
+            PaletteFade_SetTarget(RGB_WHITE, 0);
+            PaletteFade_StartInterpolation(10);
+            Event_Wait(10);
+            PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+            PaletteFade_StartInterpolation(10);
+            Event_Wait(10);
+            Event_Wait(60);
+            Actor_SetSpriteColorMode(susa, 0);
+            Actor_SetSpriteColorMode(serpent, 0);
+            MapGrid_CopyCellPictureCellsRect(85, 74, 5, 2, width, height);
+            susa->paused = 0;
+            serpent->paused = 0;
+            Actor_SetAnimationSpeed(susa, ANIMATION_STEP_NORMAL);
+            Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
+            mask = 254;
+            Actor_GetById(ACTOR_SUSA)->steeringFlags &= mask;
+            Actor_WalkTo(ACTOR_SUSA, 456, 360);
+            fast = toFIXED(4);
+            susa->velocityY = fast;
+            Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+            Actor_WaitForMoveById(ACTOR_SUSA);
+            Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                                20);
+            Event_Wait(30);
+            Actor_SetAnimationById(ACTOR_SUSA, 8);
+            Event_Wait(10);
+            susa->speedLimit = toFIXED(3) / 2;
+            Actor_SetDestinationById(ACTOR_SUSA, 488, 328);
+            Event_Wait(14);
+            susa->velocityY = toFIXED(6);
+            Actor_SetAnimationById(ACTOR_SUSA, 6);
+            Event_Wait(10);
+            Sound_Play(SE_CRUMBLE);
+            {
+              struct Actor *a = Actor_GetById(ACTOR_SUSA);
+              mask &= a->steeringFlags;
+              a->steeringFlags = mask;
+            }
+            Actor_WalkToById(ACTOR_SUSA, 456, 360);
+            susa->velocityY = fast;
+            Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+            Actor_WaitForMoveById(ACTOR_SUSA);
+            Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+            Event_Wait(15);
+            Actor_SetAnimationSpeed(serpent, 0);
+            Event_Wait(15);
+            Sound_Play(SE_SPLASH_SMALL);
+            actor = FieldActor_Create(SPRITE_DUST_CLOUD, toFIXED(488),
+                                      -toFIXED(16), toFIXED(345));
+            Actor_SetSpriteFlags(actor, 0);
+            Actor_StartScript(actor, gGaiaRockInside_SerpentSmokeScript);
+            Actor_SelectAnimation(actor, 1);
+            Actor_SetSpriteColorMode(actor, 6);
+            Actor_Jump(ACTOR_SUSA, 2, 0);
+            Event_Wait(5);
+            Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+            Event_Wait(55);
+            Event_Wait(5);
+            Sound_Play(SE_WHOOSH);
+            actor = FieldActor_Create(SPRITE_FIREBALL, toFIXED(488),
+                                      -toFIXED(16), toFIXED(345));
+            Actor_SetSpriteFlags(actor, 0);
+            Actor_StartScript(actor, gGaiaRockInside_SerpentGlowScript);
+            ((struct FieldSprite *)actor->sprite)->rotation = DEGtoANG(45);
+            actor->speedLimit = toFIXED(3) / 2;
+            *(u8 *)&actor->motionFlags = 0;
+            actor->targetX = toFIXED(456);
+            actor->targetY = -toFIXED(32);
+            actor->targetZ = toFIXED(358);
+            actor->scaleX = FIXED_ONE * 3 / 8;
+            actor->scaleY = FIXED_ONE * 3 / 8;
+            Event_Wait(10);
+            Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
+            Event_Wait(10);
+            Sound_Play(SE_IMPACT);
+            actor->x.fixed = 0;
+            actor->z.fixed = 0;
+            MapGrid_SetScreenShake(fast, fast, FIXED_ONE);
+            for (i = 0; i < 4; i++) {
+              dx = -8;
+              if (i > 1)
+                dx = 8;
+              dz = -8;
+              if ((i & 1) == 0)
+                dz = 8;
+              shards[i] = (struct Actor *)Import_ActorCreate(
+                  SPRITE_FLAME_PUFF, toFIXED(456) + INTtoFIXED(dx),
+                  -toFIXED(32), toFIXED(358) + INTtoFIXED(dz));
+              Actor_SelectAnimation(shards[i], 2);
+              Actor_SetSpriteFlags(shards[i], 0);
+              Actor_StartScript(shards[i], gGaiaRockInside_SerpentSmokeScript);
+            }
+            susa->velocityY = toFIXED(10);
+            Actor_GetById(ACTOR_SUSA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+            Actor_WalkToById(ACTOR_SUSA, 432, 320);
+            Event_Wait(10);
+            MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
+            Actor_SetAnimationById(ACTOR_SUSA, 5);
+            Event_Wait(30);
+            FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
+            FieldCamera_WaitForArrival();
+            movement = (s32)gGaiaRockInside_SquashXScript;
+            Actor_SetMovementTypeById(ACTOR_SUSA, movement);
+            Actor_WaitForScriptEndById(ACTOR_SUSA);
+            Event_Wait(20);
+            Actor_SetMovementTypeById(ACTOR_SUSA, movement);
+            Event_Wait(20);
+            Event_ShowMessageAndWait(
+                SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
+            FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+            FieldCamera_WaitForArrival();
+            Actor_SetSpritePriority(ACTOR_SUSA, 3);
+            MapGrid_CopyCellAttributes(30, 19, 1, 1, 27, 19);
+            Event_End();
+          }
+        } else {
+          if (!Test(FLAG_KEEP_PARTY_POSITION)) {
+            Actor_SetPosition(ACTOR_SUSA, 472, 456);
+            Actor_SetMovementTypeById(ACTOR_SUSA,
+                                      gGaiaRockInside_SusaWalksOffScript);
+          }
         }
-        susa = Actor_GetById(ACTOR_SUSA);
-        serpent = Actor_GetById(ACTOR_SERPENT);
-        Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-        GameFlag_Set(FLAG_SUSA_ATTACKED_SERPENT);
-        GameFlag_Set(FLAG_MET_SUSA);
-        Event_Start();
-        Event_ResolvePendingActions(0);
-        Actor_SetPosition(ACTOR_CASK, 0, 0);
-        Actor_SetMovementTypeById(ACTOR_CASK, MOVEMENT_TYPE_STAND);
-        Actor_SetPosition(ACTOR_SUSA, 456, 360);
-        Actor_SetMovementTypeById(ACTOR_SUSA, MOVEMENT_TYPE_STAND);
-        Actor_FaceDirection(ACTOR_SUSA, FACING_NORTHEAST, 0);
-        Actor_SetAnimationById(ACTOR_SERPENT, 2);
-        Event_StartScreenTransition();
-        Event_WaitTransitionFrames();
-        FieldCamera_MoveToFX(toFIXED(488), none, toFIXED(384), 1);
-        FieldCamera_WaitForArrival();
-        Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-        Event_Wait(40);
-        Event_SetMessageId((s32)MsgFieldAtLastTheSerpentHas);
-        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-        Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
-        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-        Actor_SetAnimationById(ACTOR_SUSA, 8);
-        Event_ShowMessageAndWait(
-            SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
-        susa->speedLimit = toFIXED(3) / 2;
-        Actor_SetDestinationById(ACTOR_SUSA, 488, 328);
-        Event_Wait(5);
-        Actor_SetAnimationById(ACTOR_SUSA, 6);
-        Event_Wait(10);
-        susa->velocityY = toFIXED(6);
-        Event_Wait(10);
-        susa->paused = 1;
-        serpent->paused = 1;
-        Actor_SetAnimationSpeed(susa, 0);
-        Actor_SetAnimationSpeed(serpent, 0);
-        Actor_SetSpriteColorMode(susa, 6);
-        Actor_SetSpriteColorMode(serpent, 6);
-        width = 30;
-        height = 19;
-        MapGrid_CopyCellPictureCellsRect(85, 76, 5, 2, width, height);
-        Sound_Play(SE_CRUMBLE);
-        PaletteFade_SetTarget(RGB_WHITE, 0);
-        PaletteFade_StartInterpolation(10);
-        Event_Wait(10);
-        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
-        PaletteFade_StartInterpolation(10);
-        Event_Wait(10);
-        Event_Wait(60);
-        Actor_SetSpriteColorMode(susa, 0);
-        Actor_SetSpriteColorMode(serpent, 0);
-        MapGrid_CopyCellPictureCellsRect(85, 74, 5, 2, width, height);
-        susa->paused = 0;
-        serpent->paused = 0;
-        Actor_SetAnimationSpeed(susa, ANIMATION_STEP_NORMAL);
-        Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
-        mask = 254;
-        Actor_GetById(ACTOR_SUSA)->steeringFlags &= mask;
-        Actor_WalkTo(ACTOR_SUSA, 456, 360);
-        fast = toFIXED(4);
-        susa->velocityY = fast;
-        Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
-                                                ATTACHED_EFFECT_ONCE);
-        Actor_WaitForMoveById(ACTOR_SUSA);
-        Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-        Event_Wait(30);
-        Actor_SetAnimationById(ACTOR_SUSA, 8);
-        Event_Wait(10);
-        susa->speedLimit = toFIXED(3) / 2;
-        Actor_SetDestinationById(ACTOR_SUSA, 488, 328);
-        Event_Wait(14);
-        susa->velocityY = toFIXED(6);
-        Actor_SetAnimationById(ACTOR_SUSA, 6);
-        Event_Wait(10);
-        Sound_Play(SE_CRUMBLE);
-        {
-          struct Actor *a = Actor_GetById(ACTOR_SUSA);
-          mask &= a->steeringFlags;
-          a->steeringFlags = mask;
-        }
-        Actor_WalkToById(ACTOR_SUSA, 456, 360);
-        susa->velocityY = fast;
-        Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
-                                                ATTACHED_EFFECT_ONCE);
-        Actor_WaitForMoveById(ACTOR_SUSA);
-        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-        Event_Wait(15);
-        Actor_SetAnimationSpeed(serpent, 0);
-        Event_Wait(15);
-        Sound_Play(SE_SPLASH_SMALL);
-        actor = FieldActor_Create(SPRITE_DUST_CLOUD, toFIXED(488), -toFIXED(16),
-                                  toFIXED(345));
-        Actor_SetSpriteFlags(actor, 0);
-        Actor_StartScript(actor, gGaiaRockInside_SerpentSmokeScript);
-        Actor_SelectAnimation(actor, 1);
-        Actor_SetSpriteColorMode(actor, 6);
-        Actor_Jump(ACTOR_SUSA, 2, 0);
-        Event_Wait(5);
-        Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-        Event_Wait(55);
-        Event_Wait(5);
-        Sound_Play(SE_WHOOSH);
-        actor = FieldActor_Create(SPRITE_FIREBALL, toFIXED(488), -toFIXED(16),
-                                  toFIXED(345));
-        Actor_SetSpriteFlags(actor, 0);
-        Actor_StartScript(actor, gGaiaRockInside_SerpentGlowScript);
-        ((struct FieldSprite *)actor->sprite)->rotation = DEGtoANG(45);
-        actor->speedLimit = toFIXED(3) / 2;
-        *(u8 *)&actor->motionFlags = 0;
-        actor->targetX = toFIXED(456);
-        actor->targetY = -toFIXED(32);
-        actor->targetZ = toFIXED(358);
-        actor->scaleX = FIXED_ONE * 3 / 8;
-        actor->scaleY = FIXED_ONE * 3 / 8;
-        Event_Wait(10);
-        Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
-        Event_Wait(10);
-        Sound_Play(SE_IMPACT);
-        actor->x.fixed = 0;
-        actor->z.fixed = 0;
-        MapGrid_SetScreenShake(fast, fast, FIXED_ONE);
-        for (i = 0; i < 4; i++) {
-          dx = -8;
-          if (i > 1)
-            dx = 8;
-          dz = -8;
-          if ((i & 1) == 0)
-            dz = 8;
-          shards[i] = (struct Actor *)Import_ActorCreate(
-              SPRITE_FLAME_PUFF, toFIXED(456) + INTtoFIXED(dx), -toFIXED(32),
-              toFIXED(358) + INTtoFIXED(dz));
-          Actor_SelectAnimation(shards[i], 2);
-          Actor_SetSpriteFlags(shards[i], 0);
-          Actor_StartScript(shards[i], gGaiaRockInside_SerpentSmokeScript);
-        }
-        susa->velocityY = toFIXED(10);
-        Actor_GetById(ACTOR_SUSA)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        Actor_WalkToById(ACTOR_SUSA, 432, 320);
-        Event_Wait(10);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
-        Actor_SetAnimationById(ACTOR_SUSA, 5);
-        Event_Wait(30);
-        FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
-        FieldCamera_WaitForArrival();
-        movement = (s32)gGaiaRockInside_SquashXScript;
-        Actor_SetMovementTypeById(ACTOR_SUSA, movement);
-        Actor_WaitForScriptEndById(ACTOR_SUSA);
-        Event_Wait(20);
-        Actor_SetMovementTypeById(ACTOR_SUSA, movement);
-        Event_Wait(20);
-        Event_ShowMessageAndWait(
-            SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
-        FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
-        FieldCamera_WaitForArrival();
-        Actor_SetSpritePriority(ACTOR_SUSA, 3);
-        MapGrid_CopyCellAttributes(30, 19, 1, 1, 27, 19);
-        Event_End();
-        goto end;
-      } else {
-        if (Test(FLAG_KEEP_PARTY_POSITION))
-          goto end;
-        Actor_SetPosition(ACTOR_SUSA, 472, 456);
-        Actor_SetMovementTypeById(ACTOR_SUSA,
-                                  gGaiaRockInside_SusaWalksOffScript);
-        goto end;
       }
     } else if (*entrance == ENTRANCE_SERPENT_BEATEN) {
       s32 flag;
@@ -2464,176 +2455,176 @@ s32 Scene_Initialize(void) {
 
       Sound_Play(MUS_IZUMO);
       flag = Test(FLAG_SERPENT_SLAIN);
-      if (flag != 0)
-        goto end;
-      Event_Start();
-      Event_ResolvePendingActions(0);
-      GameFlag_Set(FLAG_SERPENT_SLAIN);
-      Event_SetMessageId((s32)MsgFieldItLooksLikeTheDragon);
-      Actor_SetPosition(ACTOR_CASK, 0, 0);
-      Actor_SetAnimationById(ACTOR_SERPENT, 3);
-      Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = toFIXED(1);
-      slow = FACING_WEST;
-      susa = Actor_GetById(ACTOR_SUSA);
-      susa->speedLimit = slow;
-      Actor_SetPosition(ACTOR_KRADEN, 440, 312);
-      owner = &room->leaderActorId;
-      Actor_SetPosition(*owner, 456, 328);
-      Actor_SetPosition(ACTOR_SUSA, 488, 424);
-      Actor_FaceDirectionById(*owner, FACING_EAST, 0);
-      Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
-      Actor_FaceDirection(ACTOR_SUSA, FACING_NORTH, 0);
-      Event_StartScreenTransition();
-      Event_WaitTransitionFrames();
-      Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-      Event_PlaySound(SE_SEA_OF_TIME_OPENS);
-      Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-      Event_PlaySound(SE_SEA_OF_TIME_OPENS);
-      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      Event_Wait(15);
-      Actor_FaceDirection(*owner, FACING_SOUTH, 0);
-      Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
-      Event_Wait(30);
-      FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
-      FieldCamera_WaitForArrival();
-      Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
-      FieldCamera_FollowActor(ACTOR_SUSA, 1);
-      Actor_WalkTo(ACTOR_SUSA, 488, 376);
-      Actor_WaitForMoveById(ACTOR_SUSA);
-      Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
-      Event_Wait(20);
-      Actor_WalkToById(ACTOR_SUSA, 472, 360);
-      Actor_WaitForMoveById(ACTOR_SUSA);
-      Actor_FaceActorById(*owner, ACTOR_SUSA, 0);
-      Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
-      Actor_FaceActorById(ACTOR_SUSA, ACTOR_SERPENT, 0);
-      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-      Actor_SetAnimationById(ACTOR_SUSA, 8);
-      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      susa->speedLimit = toFIXED(3) / 2;
-      Actor_SetDestination(ACTOR_SUSA, 488, 328);
-      Event_Wait(5);
-      Actor_SetAnimationById(ACTOR_SUSA, 6);
-      Event_Wait(10);
-      susa->velocityY = toFIXED(6);
-      Event_Wait(10);
-      Sound_Play(SE_CRUMBLE);
-      susa->paused = 1;
-      PaletteFade_ApplyTarget(RGB_WHITE, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(10);
-      Sound_Play(SE_SEA_OF_TIME_OPENS);
-      PaletteFade_SetTarget(scale, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(10);
-      PaletteFade_ApplyTarget(RGB_WHITE, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(10);
-      PaletteFade_SetTarget(scale, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(10);
-      PaletteFade_SetTarget(RGB_WHITE, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(60);
-      Actor_SetAnimationById(ACTOR_SERPENT, 4);
-      MapGrid_CopyCellsLayered(85, 72, 5, 2, 30, 19);
-      susa->y.fixed = -toFIXED(32);
-      susa->velocityY = 0;
-      susa->speedLimit = slow;
-      Actor_SetPosition(ACTOR_SUSA, 456, 360);
-      Actor_SetAnimationById(ACTOR_SUSA, ANIM_STAND);
-      PaletteFade_SetTarget(scale, 0);
-      PaletteFade_StartInterpolation(10);
-      Event_Wait(10);
-      Actor_FaceActorById(ACTOR_SUSA, *owner, 0);
-      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
-      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
-      Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
-      Actor_WalkTo(ACTOR_SUSA, 488, 392);
-      Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
-      Event_Wait(5);
-      Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-      Actor_WaitForMoveById(ACTOR_SUSA);
-      Actor_SetAnimationById(ACTOR_SUSA, ANIM_STILL);
-      Actor_FaceActorById(ACTOR_SUSA, ACTOR_KRADEN, 0);
-      Event_Wait(15);
-      Event_ShowMessageAndWait(ACTOR_SUSA, 0);
-      Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
-      Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
-      Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
-      Actor_WalkTo(ACTOR_SUSA, 488, 536);
-      FieldCamera_FollowActor(*owner, 1);
-      Actor_FaceActorById(*owner, ACTOR_KRADEN, 0);
-      Actor_FaceActorById(ACTOR_KRADEN, *owner, 0);
-      Event_Wait(30);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-      Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-      {
-        struct Actor *ownerActor = Actor_GetById(*owner);
+      if (flag == 0) {
+        Event_Start();
+        Event_ResolvePendingActions(0);
+        GameFlag_Set(FLAG_SERPENT_SLAIN);
+        Event_SetMessageId((s32)MsgFieldItLooksLikeTheDragon);
+        Actor_SetPosition(ACTOR_CASK, 0, 0);
+        Actor_SetAnimationById(ACTOR_SERPENT, 3);
+        Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = toFIXED(1);
+        slow = FACING_WEST;
+        susa = Actor_GetById(ACTOR_SUSA);
+        susa->speedLimit = slow;
+        Actor_SetPosition(ACTOR_KRADEN, 440, 312);
+        owner = &room->leaderActorId;
+        Actor_SetPosition(*owner, 456, 328);
+        Actor_SetPosition(ACTOR_SUSA, 488, 424);
+        Actor_FaceDirectionById(*owner, FACING_EAST, 0);
+        Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
+        Actor_FaceDirection(ACTOR_SUSA, FACING_NORTH, 0);
+        Event_StartScreenTransition();
+        Event_WaitTransitionFrames();
+        Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+        Event_PlaySound(SE_SEA_OF_TIME_OPENS);
+        Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+        Event_PlaySound(SE_SEA_OF_TIME_OPENS);
+        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+        Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+        Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+        Event_Wait(15);
+        Actor_FaceDirection(*owner, FACING_SOUTH, 0);
+        Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
+        Event_Wait(30);
+        FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
+        FieldCamera_WaitForArrival();
+        Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
+        FieldCamera_FollowActor(ACTOR_SUSA, 1);
+        Actor_WalkTo(ACTOR_SUSA, 488, 376);
+        Actor_WaitForMoveById(ACTOR_SUSA);
+        Actor_StartRepeatedMotion(ACTOR_SUSA, 2);
+        Event_Wait(20);
+        Actor_WalkToById(ACTOR_SUSA, 472, 360);
+        Actor_WaitForMoveById(ACTOR_SUSA);
+        Actor_FaceActorById(*owner, ACTOR_SUSA, 0);
+        Actor_FaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
+        Actor_FaceActorById(ACTOR_SUSA, ACTOR_SERPENT, 0);
+        FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+        Actor_SetAnimationById(ACTOR_SUSA, 8);
+        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+        susa->speedLimit = toFIXED(3) / 2;
+        Actor_SetDestination(ACTOR_SUSA, 488, 328);
+        Event_Wait(5);
+        Actor_SetAnimationById(ACTOR_SUSA, 6);
+        Event_Wait(10);
+        susa->velocityY = toFIXED(6);
+        Event_Wait(10);
+        Sound_Play(SE_CRUMBLE);
+        susa->paused = 1;
+        PaletteFade_ApplyTarget(RGB_WHITE, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(10);
+        Sound_Play(SE_SEA_OF_TIME_OPENS);
+        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(10);
+        PaletteFade_ApplyTarget(RGB_WHITE, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(10);
+        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(10);
+        PaletteFade_SetTarget(RGB_WHITE, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(60);
+        Actor_SetAnimationById(ACTOR_SERPENT, 4);
+        MapGrid_CopyCellsLayered(85, 72, 5, 2, 30, 19);
+        susa->y.fixed = -toFIXED(32);
+        susa->velocityY = 0;
+        susa->speedLimit = slow;
+        Actor_SetPosition(ACTOR_SUSA, 456, 360);
+        Actor_SetAnimationById(ACTOR_SUSA, ANIM_STAND);
+        PaletteFade_SetTarget(scale, 0);
+        PaletteFade_StartInterpolation(10);
+        Event_Wait(10);
+        Actor_FaceActorById(ACTOR_SUSA, *owner, 0);
+        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+        Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
+        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+        Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
+        Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
+        Actor_WalkTo(ACTOR_SUSA, 488, 392);
+        Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
+        Event_Wait(5);
+        Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+        Actor_WaitForMoveById(ACTOR_SUSA);
+        Actor_SetAnimationById(ACTOR_SUSA, ANIM_STILL);
+        Actor_FaceActorById(ACTOR_SUSA, ACTOR_KRADEN, 0);
+        Event_Wait(15);
+        Event_ShowMessageAndWait(ACTOR_SUSA, 0);
+        Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
+        Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
+        Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
+        Actor_WalkTo(ACTOR_SUSA, 488, 536);
+        FieldCamera_FollowActor(*owner, 1);
+        Actor_FaceActorById(*owner, ACTOR_KRADEN, 0);
+        Actor_FaceActorById(ACTOR_KRADEN, *owner, 0);
+        Event_Wait(30);
+        Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+        Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
+        {
+          struct Actor *ownerActor = Actor_GetById(*owner);
 
-        if (ownerActor != NULL)
-          Actor_SetDestinationById(ACTOR_KRADEN,
-                                   FIXEDtoINT(ownerActor->x.fixed),
-                                   FIXEDtoINT(ownerActor->z.fixed));
-      }
-      Actor_WaitForMoveById(ACTOR_KRADEN);
-      Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-      Actor_WaitForMoveById(ACTOR_KRADEN);
-      Actor_SetPosition(ACTOR_SUSA, 0, 0);
-      Actor_WalkToById(*owner, 488, 376);
-      Actor_WaitForMoveById(*owner);
-      MapGrid_SetShakeFX(toFIXED(5), toFIXED(5), scale);
-      Sound_Play(SE_TREMOR);
-      Event_Wait(30);
-      Actor_ShowEmoteById(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      Event_Wait(15);
-      Actor_FaceDirectionById(*owner, FACING_NORTH, 0);
-      Event_Wait(15);
-      other = Actor_GetById(ACTOR_SAND_TABLET);
-      alpha = REG_BLDALPHA;
-      MapGrid_SetShakeFX(toFIXED(10), toFIXED(10), scale);
-      Sound_Play(SE_TREMOR);
-      BlendScript_Suspend();
-      alpha = *(u8 *)&alpha;
-      while (alpha != 0) {
+          if (ownerActor != NULL)
+            Actor_SetDestinationById(ACTOR_KRADEN,
+                                     FIXEDtoINT(ownerActor->x.fixed),
+                                     FIXEDtoINT(ownerActor->z.fixed));
+        }
+        Actor_WaitForMoveById(ACTOR_KRADEN);
+        Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+        Actor_WaitForMoveById(ACTOR_KRADEN);
+        Actor_SetPosition(ACTOR_SUSA, 0, 0);
+        Actor_WalkToById(*owner, 488, 376);
+        Actor_WaitForMoveById(*owner);
+        MapGrid_SetShakeFX(toFIXED(5), toFIXED(5), scale);
+        Sound_Play(SE_TREMOR);
+        Event_Wait(30);
+        Actor_ShowEmoteById(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+        Event_Wait(15);
+        Actor_FaceDirectionById(*owner, FACING_NORTH, 0);
+        Event_Wait(15);
+        other = Actor_GetById(ACTOR_SAND_TABLET);
+        alpha = REG_BLDALPHA;
+        MapGrid_SetShakeFX(toFIXED(10), toFIXED(10), scale);
+        Sound_Play(SE_TREMOR);
+        BlendScript_Suspend();
+        alpha = *(u8 *)&alpha;
+        while (alpha != 0) {
+          REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
+          alpha = alpha - 1;
+          wait(1);
+        }
+        REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
+        Event_Wait(30);
+        actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
+                                            toFIXED(348), SPRITE_SLATE);
+        Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
+        for (i = 0; i < 20; i++) {
+          if (i % 5 == 0)
+            GaiaRockInside_RingOfDust();
+          other->z.fixed += -toFIXED(1);
+          Event_Wait(2);
+        }
+        GameFlag_Set(FLAG_SAND_TABLET_RAISED);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
+        actor->x.fixed = 0;
+        actor->z.fixed = 0;
+        Event_Wait(1);
+        Actor_Release(actor);
+        Sound_Play(SOUND_FADE_OUT_ACTION_SE);
+        Event_Wait(30);
+        REG_DISPCNT |=
+            DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON;
         REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
-        alpha = alpha - 1;
-        wait(1);
+        REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+        while (alpha != 8) {
+          REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
+          alpha++;
+          wait(1);
+        }
+        BlendScript_Resume();
+        Event_End();
       }
-      REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
-      Event_Wait(30);
-      actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
-                                          toFIXED(348), SPRITE_SLATE);
-      Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
-      for (i = 0; i < 20; i++) {
-        if (i % 5 == 0)
-          GaiaRockInside_RingOfDust();
-        other->z.fixed += -toFIXED(1);
-        Event_Wait(2);
-      }
-      GameFlag_Set(FLAG_SAND_TABLET_RAISED);
-      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
-      actor->x.fixed = 0;
-      actor->z.fixed = 0;
-      Event_Wait(1);
-      Actor_Release(actor);
-      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-      Event_Wait(30);
-      REG_DISPCNT |=
-          DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON;
-      REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
-      REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      while (alpha != 8) {
-        REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
-        alpha++;
-        wait(1);
-      }
-      BlendScript_Resume();
-      Event_End();
     } else if (*entrance == ENTRANCE_BEATEN_BY_SERPENT) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -2827,7 +2818,6 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
     }
   }
-end:
   FieldEffect_StartBlankOverlay(0);
   return 0;
 }
@@ -2863,12 +2853,10 @@ s32 Scene_PrepareMap(void) {
           ACTOR_PRIORITY_IGNORES_RISES;
       ((struct MapWork *)map)->enabled[1] = 1;
       {
-        volatile u16 control = REG_BG2CNT & ~3;
-        // Once-only block: keeps the sky cell window's store after its read.
-        do {
-        } while (0);
+        u16 control;
 
-        REG_BG2CNT = control | 1;
+        *&control = REG_BG2CNT & ~3;
+        Io_Write16(control | 1, &REG_BG2CNT);
       }
       GaiaRockInside_DrawMazeRoom();
       stage = &gPath->current;
@@ -2901,9 +2889,6 @@ s32 Scene_PrepareMap(void) {
       layer->scaleX = FIXED_ONE;
       layer->scaleY = FIXED_ONE;
       layer->maskY = 0x3f80;
-      // Once-only block: keeps the scale defaults before the position sums.
-      do {
-      } while (0);
       layer->x = Iwram_MulFX(((struct MapWork *)map)->viewX, layer->scaleX) +
                  layer->offsetX;
       layer->y = Iwram_MulFX(((struct MapWork *)map)->viewZ, layer->scaleY) +
@@ -3003,54 +2988,55 @@ restart:
     step = GRID_WIDTH;
     a = grid->cells;
     e = grid->cells;
-  border:
-    a->step = 99;
-    a += GRID_WIDTH;
-    b->step = 99;
-    b += GRID_WIDTH;
-    e->step = 99;
-    e++;
-    t = o + GRID_WIDTH * GRID_WIDTH * 4;
-    ((s8 *)grid)[t] = 99;
-    o += sizeof(PathCell);
-    step--;
-    if (step >= 0)
-      goto border;
+    do {
+      a->step = 99;
+      a += GRID_WIDTH;
+      b->step = 99;
+      b += GRID_WIDTH;
+      e->step = 99;
+      e++;
+      t = o + GRID_WIDTH * GRID_WIDTH * 4;
+      ((s8 *)grid)[t] = 99;
+      o += sizeof(PathCell);
+      step--;
+    } while (step >= 0);
   }
   for (step = 1; step <= 14;) {
     tries = 0;
-  retry:
-    if (++tries > 16)
-      goto restart;
-    nx = x;
-    ny = y;
-    dir = Random_Below(4);
-    if (dir == 0 && (step == 1 || step == 13))
-      goto retry;
-    switch (dir) {
-    case 0:
-      if (AT(x, y + 1).step != 0 || AT(x, y + 2).step != 0 ||
-          AT(x - 1, y + 1).step != 0 || AT(x + 1, y + 1).step != 0)
-        goto retry;
-      ny = y + 1;
-      break;
-    case 1:
-      if (AT(x - 1, y).step != 0 || AT(x - 2, y).step != 0 ||
-          AT(x - 1, y - 1).step != 0 || AT(x - 1, y + 1).step != 0)
-        goto retry;
-      nx = x - 1;
-      break;
-    case 2:
-      if (AT(x + 1, y).step != 0 || AT(x + 2, y).step != 0 ||
-          AT(x + 1, y - 1).step != 0 || AT(x + 1, y + 1).step != 0)
-        goto retry;
-      nx = x + 1;
-      break;
-    case 3:
-      if (AT(x, y - 1).step != 0 || AT(x, y - 2).step != 0 ||
-          AT(x - 1, y - 1).step != 0 || AT(x + 1, y - 1).step != 0)
-        goto retry;
-      ny = y - 1;
+    for (;;) {
+      if (++tries > 16)
+        goto restart;
+      nx = x;
+      ny = y;
+      dir = Random_Below(4);
+      if (dir == 0 && (step == 1 || step == 13))
+        continue;
+      switch (dir) {
+      case 0:
+        if (AT(x, y + 1).step != 0 || AT(x, y + 2).step != 0 ||
+            AT(x - 1, y + 1).step != 0 || AT(x + 1, y + 1).step != 0)
+          continue;
+        ny = y + 1;
+        break;
+      case 1:
+        if (AT(x - 1, y).step != 0 || AT(x - 2, y).step != 0 ||
+            AT(x - 1, y - 1).step != 0 || AT(x - 1, y + 1).step != 0)
+          continue;
+        nx = x - 1;
+        break;
+      case 2:
+        if (AT(x + 1, y).step != 0 || AT(x + 2, y).step != 0 ||
+            AT(x + 1, y - 1).step != 0 || AT(x + 1, y + 1).step != 0)
+          continue;
+        nx = x + 1;
+        break;
+      case 3:
+        if (AT(x, y - 1).step != 0 || AT(x, y - 2).step != 0 ||
+            AT(x - 1, y - 1).step != 0 || AT(x + 1, y - 1).step != 0)
+          continue;
+        ny = y - 1;
+        break;
+      }
       break;
     }
     // The same cell variable the second loop reads its steps from.
@@ -3081,13 +3067,14 @@ restart:
         v = c;
       else {
         PathCell *p = cell;
-      scanUp:
-        p -= GRID_WIDTH;
-        c = p->step;
-        if (c == v - 1) {
+        do {
+          p -= GRID_WIDTH;
+          c = p->step;
+          if (c != v - 1) {
+            break;
+          }
           v = c;
-          goto scanUp;
-        }
+        } while (1);
       }
       if (v == 0)
         v = 1;
@@ -3106,13 +3093,14 @@ restart:
         v = c;
       else {
         PathCell *p = AT_ADDRESS(x, y);
-      scanDown:
-        p += GRID_WIDTH;
-        c = p->step;
-        if (c == v - 1) {
+        do {
+          p += GRID_WIDTH;
+          c = p->step;
+          if (c != v - 1) {
+            break;
+          }
           v = c;
-          goto scanDown;
-        }
+        } while (1);
       }
       if (v == 0)
         v = 1;
@@ -3131,12 +3119,13 @@ restart:
         v = c;
       else {
         nx = x;
-      scanRight:
-        c = AT(++nx, y).step;
-        if (c == v - 1) {
+        do {
+          c = AT(++nx, y).step;
+          if (c != v - 1) {
+            break;
+          }
           v = c;
-          goto scanRight;
-        }
+        } while (1);
       }
       if (v == 0)
         v = 1;
@@ -3155,12 +3144,13 @@ restart:
         v = c;
       else {
         nx = x;
-      scanLeft:
-        c = AT(--nx, y).step;
-        if (c == v - 1) {
+        do {
+          c = AT(--nx, y).step;
+          if (c != v - 1) {
+            break;
+          }
           v = c;
-          goto scanLeft;
-        }
+        } while (1);
       }
       if (v == 0)
         v = 1;
@@ -3216,7 +3206,7 @@ void GaiaRockInside_DrawMazeRoom(void) {
     struct MapLayer *layer = map->layers;
     s32 i;
 
-    for (i = 1; i >= 0; i--, layer++) {
+    for (i = 0; i < 2; i++, layer++) {
       s32 x = FIELD_CELL(layer->offsetX);
       s32 z = FIELD_CELL(layer->offsetY);
 

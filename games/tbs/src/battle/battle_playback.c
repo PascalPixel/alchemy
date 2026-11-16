@@ -412,11 +412,8 @@ UNREAD_RESULT BattlePlayback_WaitForReady(void) {
     events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     state = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
   }
-  if (state != BATTLE_PLAYBACK_PHASE_READY) {
-    do {
-      wait(1U);
-    } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
-  }
+  while (events->phase != BATTLE_PLAYBACK_PHASE_READY)
+    wait(1U);
   Task_Remove(BattlePlayback_Run);
   BattlePlayback_Reset();
 }

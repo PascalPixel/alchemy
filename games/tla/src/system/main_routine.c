@@ -92,13 +92,12 @@ void Scene_TakeExit(s32 exitId) {
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
         // As one condition the two flag tests fold into a range check.
-        if (flag == 0)
-          goto take;
-        if (flag == -1)
-          goto take;
-        if (GameFlag_Get(flag))
-          continue;
-      take:
+        if (flag != 0) {
+          if (flag != -1) {
+            if (GameFlag_Get(flag))
+              continue;
+          }
+        }
         destinationScene = sceneId;
         destinationEntrance = entrance;
         break;

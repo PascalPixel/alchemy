@@ -45,6 +45,7 @@
 #include "version.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/heap_release.h"
 #include "graphics/palette_snapshots.h"
 #include "scene/scene.h"
@@ -607,10 +608,6 @@ void Islets_TradeWithBird(void) {
 void Islets_TradeWithCow(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
-  /* FAKEMATCH(temporary): zero wrapped in a struct of one u16. */
-  struct {
-    u16 v;
-  } zero;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -677,7 +674,6 @@ void Islets_TradeWithCow(void) {
         Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
-        zero.v = 0;
         item->retainSpriteCache = 1;
       }
       STEP(gMainRoutineWork.leaderActorId, 120, 190);
@@ -713,7 +709,7 @@ void Islets_TradeWithCow(void) {
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(noticed + 4);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_COW, 0);
-        HAND_BACK(item, item, zero.v)
+        HAND_BACK(item, item, 0)
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1036,7 +1032,7 @@ void Islets_GiveTurtle(void) {
         Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
         leader->update = (void (*)(void))a;
         STEP(gMainRoutineWork.leaderActorId, 302, 424);
-        SPAWN(a, b, answer)
+        SPAWN(a, b, 0)
         STEP(gMainRoutineWork.leaderActorId, 318, 424);
         leader->update = 0;
         Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,
@@ -1276,22 +1272,14 @@ s32 gIslets_FirstCrateX BSS_DATA;
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Islets_StartWaveDma(void) {
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex];
-  s32 first = lines[0];
-  volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH(barrier): an asm reading the first line keeps its load before the
-   * register address is built. */
-  __asm__("" : : "r"(first));
-  scroll = &REG_BG1HOFS;
-  *scroll = first;
+  Io_Write16(lines[0], &REG_BG1HOFS);
   dma = REG_DMA0;
-
   dma[5] &= ~(DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT);
   dma[5] &= ~DMA_ENABLE;
-  lines++;
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(lines + 1, (void *)&REG_BG1HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }
 
@@ -2113,14 +2101,13 @@ void Islets_InitializePier(void) {
   struct Actor *actor = Actor_Get(ACTOR_BIRD);
   struct Actor *last;
   s32 set;
-  s32 zero = 0;
 
-  map->layers[2].speedX = zero;
-  map->layers[2].speedY = zero;
+  map->layers[2].speedX = 0;
+  map->layers[2].speedY = 0;
   if (gMainRoutineWork.entrance == 11)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    actor->motionFlags = zero;
+    actor->motionFlags = 0;
     FieldActor_SetSpritePriority(ACTOR_BIRD, 1);
   }
   Actor_SetPosition(11, 0, 0);
@@ -2131,15 +2118,11 @@ void Islets_InitializePier(void) {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
 
-    first->motionFlags = zero;
-    second->motionFlags = zero;
+    first->motionFlags = 0;
+    second->motionFlags = 0;
     first->riseCounter = 1;
     second->riseCounter = 1;
-    {
-      s32 held = 29;
-
-      MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, held);
-    }
+    MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
   } else {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
@@ -2151,12 +2134,8 @@ void Islets_InitializePier(void) {
   }
   Actor_DisableById(ACTOR_PIER_PUDDLE);
   last = Actor_Get(ACTOR_PIER_PUDDLE);
-  {
-    s32 still = 0;
-
-    last->riseCounter = 1;
-    last->motionFlags = still;
-  }
+  last->riseCounter = 1;
+  last->motionFlags = 0;
   Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, 255);
   if (Event_GetFlag(FLAG_SCENE_TEMP_13))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
@@ -2236,39 +2215,27 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
 /// entries cleared.
 void Islets_StartPaletteCycle(void) {
-  struct PaletteCycleWork *queue;
-  struct PaletteCycle *entry;
-  s16 i, j;
+  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycle *cycle;
+  u16 cycleIndex;
+  u16 colorIndex;
 
-  queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                              sizeof(struct PaletteCycleWork));
-  entry = queue->entries;
-  i = 0;
-outer:
-  entry->source = 0;
-  entry->position = 0;
-  entry->timer = 0;
-  entry->delay = 0;
-  entry->count = 0;
-  j = 0;
-inner:
-  entry->colors[(u16)j] = 0;
-  {
-    s32 next = ((u16)j + 1) << 16;
-
-    j = next >> 16;
-    if (next != toFIXED(16))
-      goto inner;
+  paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                                      sizeof(struct PaletteCycleWork));
+  cycle = paletteCycles->entries;
+  // Four cycles of up to 16 saved colours each.
+  for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
+    cycle->source = 0;
+    cycle->position = 0;
+    cycle->timer = 0;
+    cycle->delay = 0;
+    cycle->count = 0;
+    for (colorIndex = 0; colorIndex != 16; colorIndex++) {
+      cycle->colors[colorIndex] = 0;
+    }
+    cycle++;
   }
-  entry++;
-  {
-    FIXED next = (i << 16) + toFIXED(1);
-
-    i = next >> 16;
-    if (next != toFIXED(4))
-      goto outer;
-  }
-  queue->count = 0;
+  paletteCycles->count = 0;
 }
 
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
@@ -2372,12 +2339,11 @@ s32 PushTarget_FillFootprint(s32 id) {
   s32 width, height, x, z;
 
   if ((u16)kind != gPushKinds[(u16)i]) {
-  again:
-    next = (i + 1) * 65536;
-    index = (u32)next >> 16;
-    i = next >> 16;
-    if (index <= 5 && (u16)kind != gPushKinds[index])
-      goto again;
+    do {
+      next = (i + 1) * 65536;
+      index = (u32)next >> 16;
+      i = next >> 16;
+    } while (index <= 5 && (u16)kind != gPushKinds[index]);
   }
   // fromX and b are reused for the next values they hold.
   fromX = (u16)i;

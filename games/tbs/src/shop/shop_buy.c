@@ -323,31 +323,26 @@ void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
 
   if (window == 0)
     return;
-  goto draw;
-cannot_buy:
-  Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
-  return;
-show_price:
-  labelMessage = MsgPrice;
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
-  labelMessage -= 3;
-  Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
-  return;
-draw:
-  WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
-  if (price != 0)
-    goto show_price;
-  switch (priceKind) {
-  case SHOP_PRICE_KIND_SELL:
-    goto cannot_buy;
-  case SHOP_PRICE_KIND_REPAIR:
-    Text_DrawMessageAsTilesFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
-    break;
-  default:
-    goto show_price;
-  }
+  do {
+    WindowSprite_RedrawSavedRectFar(window);
+    Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
+    if (price == 0) {
+      if (priceKind == SHOP_PRICE_KIND_SELL) {
+        Text_DrawMessageAsTilesFar(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X,
+                                   8);
+        break;
+      }
+      if (priceKind == SHOP_PRICE_KIND_REPAIR) {
+        Text_DrawMessageAsTilesFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
+        break;
+      }
+    }
+    labelMessage = MsgPrice;
+    Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
+    labelMessage -= 3;
+    Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
+    Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  } while (0);
 }
 
 /// Shows `message`, an item's description, in the help window; a NULL window is
@@ -670,25 +665,21 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 /// equip it and to sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
-  s32 remainingQuantity;
+  s32 i;
   s32 lastAddedSlot;
   struct ItemDefinition *item;
 
-  remainingQuantity = quantity;
   item = Item_GetDirectFar(itemId);
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   // Keep each inventory addition, coin debit and shop-credit increment in
   // order.
   Sound_PlayFar(SE_SHOP_PURCHASE);
-  if (lastAddedSlot < remainingQuantity) {
-    do {
-      lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
-      Party_AdjustCoinsFar(0 - item->price);
-      remainingQuantity--;
-      Party_AdjustShopCreditFar(item->price);
-      Shop_DrawMoney();
-    } while (remainingQuantity != 0);
+  for (i = 0; i < quantity; i++) {
+    lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
+    Party_AdjustCoinsFar(0 - item->price);
+    Party_AdjustShopCreditFar(item->price);
+    Shop_DrawMoney();
   }
   Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
   if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {

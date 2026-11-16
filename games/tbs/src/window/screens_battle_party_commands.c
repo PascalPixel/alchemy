@@ -339,21 +339,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         pick = state->listSlots;
         state->icons[0].oam.f.x = 48;
         count = 0;
-        k = 0;
-        entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;
-        if (entryValue != 0) {
-          do {
-            if ((Ability_Get(entryValue)->flags & BATTLE_OK) != 0) {
-              pick[count] = k;
-              list[count] = entryValue;
-              count++;
-            }
-            k++;
-            if (k == PSYNERGY_SLOTS) {
-              break;
-            }
-            entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;
-          } while (entryValue != 0);
+        for (k = 0; k != PSYNERGY_SLOTS &&
+                    (entryValue =
+                         unit->psynergy[k].encodedAction & ACTION_ID_MASK) != 0;
+             k++) {
+          if ((Ability_Get(entryValue)->flags & BATTLE_OK) != 0) {
+            pick[count] = k;
+            list[count] = entryValue;
+            count++;
+          }
         }
         pick[count] = 0;
         list[count] = 0;
@@ -608,37 +602,23 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         pick = state->listSlots;
         list = state->listAbilities;
         count = 0;
-        k = 0;
-        entryValue = unit->inventory[k];
-        if (entryValue != 0) {
-          do {
-            Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(unitId, entryValue) == 0) {
-              list[count] = entryValue;
-              pick[count++] = k;
-            }
-            k++;
-            if (k == 15) {
-              break;
-            }
-            entryValue = unit->inventory[k];
-          } while (entryValue != 0);
+        for (k = 0;
+             k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
+             k++) {
+          Item_GetDirectFar(entryValue);
+          if (Item_ClassifyUseAbility(unitId, entryValue) == 0) {
+            list[count] = entryValue;
+            pick[count++] = k;
+          }
         }
-        k = 0;
-        entryValue = unit->inventory[k];
-        if (entryValue != 0) {
-          do {
-            Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(unitId, entryValue) != 0) {
-              list[count] = entryValue;
-              pick[count++] = k;
-            }
-            k++;
-            if (k == 15) {
-              break;
-            }
-            entryValue = unit->inventory[k];
-          } while (entryValue != 0);
+        for (k = 0;
+             k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
+             k++) {
+          Item_GetDirectFar(entryValue);
+          if (Item_ClassifyUseAbility(unitId, entryValue) != 0) {
+            list[count] = entryValue;
+            pick[count++] = k;
+          }
         }
         list[count] = 0;
         mode = BattleItemMenu_Run(unitId, list, count);

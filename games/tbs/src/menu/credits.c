@@ -141,33 +141,22 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
 /// Builds the 512 tilemap words surrounding a sliding credits picture: blank
 /// margins, 240 consecutive tile pairs, then a zero-filled tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
-  s32 remaining;
+  s32 i;
   u32 blankTiles = 0x01FF01FF;
   u32 tilePair = 0x10000;
 
   // Pad above and below the picture so vertical wrapping stays blank.
-  remaining = 31;
-  do {
-    remaining--;
+  for (i = 0; i < 32; i++)
     *destination++ = blankTiles;
-  } while (remaining >= 0);
-  remaining = 239;
-  do {
-    remaining--;
+  for (i = 0; i < 240; i++) {
     *destination++ = tilePair;
     tilePair += 0x20002;
-  } while (remaining >= 0);
-  remaining = 47;
-  do {
-    remaining--;
+  }
+  for (i = 0; i < 48; i++)
     *destination++ = blankTiles;
-  } while (remaining >= 0);
   tilePair = 0;
-  remaining = 191;
-  do {
-    remaining--;
+  for (i = 0; i < 192; i++)
     *destination++ = tilePair;
-  } while (remaining >= 0);
 }
 
 /// A VBlank task of the credits: drifts both pictures together, keeping their

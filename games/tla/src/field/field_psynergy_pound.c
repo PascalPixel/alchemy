@@ -50,14 +50,13 @@ void FieldPsynergy_UpdatePound(void) {
     base = 9;
     base <<= 16;
     blue = RGB(0, 0, 31);
-  palette:
-    red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
-    green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
-    red = (red >> 16) + 16;
-    green = (green >> 16) + 16;
-    Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
-    if (++i < 32)
-      goto palette;
+    for (; i < 32; i++) {
+      red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
+      green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
+      red = (red >> 16) + 16;
+      green = (green >> 16) + 16;
+      Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
+    }
   }
   if (work->sparkles) {
     particle = work->particles;
@@ -216,134 +215,133 @@ void FieldPsynergy_Pound(void) {
   Sound_PlayFar(SE_ITEM_BREAK);
   shine = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
   work->actor = shine;
-  if (shine == NULL)
-    goto end;
-  shine->motionFlags = 0;
-  if (event->psynergyDrawFlags & 2) {
-    if ((shine->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
-      ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
-      shine->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  if (shine != NULL) {
+    shine->motionFlags = 0;
+    if (event->psynergyDrawFlags & 2) {
+      if ((shine->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+        ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
+        shine->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      }
+    } else {
+      shine->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-  } else {
-    shine->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-  }
-  shine->facing = caster->facing;
-  Actor_SelectAnimationFar(shine, 2);
-  if (!(event->psynergyDrawFlags & 1))
-    FieldPsynergy_StartSceneSprite();
+    shine->facing = caster->facing;
+    Actor_SelectAnimationFar(shine, 2);
+    if (!(event->psynergyDrawFlags & 1))
+      FieldPsynergy_StartSceneSprite();
 
-  BattleEffect_StartCanvasSprite();
-  canvas = Ram_HeapSlots->canvasSprite;
-  canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  canvas->depth = 1;
-  canvas->mode = CANVAS_SPRITE_256_COLORS;
-  canvas->scaleX = 0;
-  canvas->scaleY = 0;
-  pos[0] = scene->x;
-  pos[1] = scene->y;
-  pos[2] = scene->z;
-  Camera_WorldToScreen(pos);
-  canvas->x = (s16)FIXEDtoINT(pos[0]);
-  canvas->y = (s16)FIXEDtoINT(pos[2]);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC),
-                      Ram_HeapSlots->battleCanvas);
-  canvas->command = CANVAS_UPLOAD;
-
-  IWRAM_FILL_WORDS(work, size, 0);
-  glowEntry = VramCache_FindFreeEntry();
-  glowTile = VramCache_Load(glowEntry, size, work);
-  glow = &work->glow;
-  EffectSprite_Init(glow, 32, 32, OBJ_SIZE_64X64, glowTile);
-  glow->oam.priority = 0;
-  glow->oam.fullColor = 0;
-  glow->oam.palette = 0;
-  glow->depth = 0;
-  glow->scaleY = glow->scaleX = FIXED_ONE * 4 / 5;
-  pos[0] = scene->x;
-  pos[1] = scene->y;
-  pos[2] = scene->z;
-  Camera_WorldToScreen(pos);
-  glow->x = pos[0];
-  glow->y = pos[2];
-
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), work);
-  starEntry = VramCache_FindFreeEntry();
-  starTile = VramCache_Load(starEntry, 256, work);
-  for (j = 0, particle = work->particles; j < POUND_SPARK_COUNT;
-       j++, particle++) {
-    sprite = &work->sprites[j];
-    speed = Random16() * 18 / 10;
-    speed += toFIXED(5) / 2;
-    angle = j * (DEGtoANG(30)) + (Random16() >> 5);
+    BattleEffect_StartCanvasSprite();
+    canvas = Ram_HeapSlots->canvasSprite;
+    canvas->priority = BattleEffect_GetObjectPriority(scene->mainActor);
+    canvas->depth = 1;
+    canvas->mode = CANVAS_SPRITE_256_COLORS;
+    canvas->scaleX = 0;
+    canvas->scaleY = 0;
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
-    Vector_AddPolarOffset(toFIXED(4), angle, pos);
     Camera_WorldToScreen(pos);
-    particle->x = pos[0];
-    particle->y = pos[2];
-    particle->velocityX = Iwram_MulFX(Trig_Cos(angle), speed);
-    particle->velocityY = Iwram_MulFX(Trig_Sin(angle), speed);
-    particle->timer = -j;
-    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, starTile);
-    sprite->oam.fullColor = 1;
-    sprite->oam.palette = 0;
-    sprite->oam.priority = 0;
-    sprite->depth = OAM_DEPTH_WINDOW;
-    sprite->scaleY = sprite->scaleX = FIXED_ONE * 4 / 5;
-  }
-  wait(1);
-  FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
-  Actor_SelectAnimationFar(shine, 1);
-  wait(15);
-  rise = 24;
-  do {
-    shine->y.fixed += toFIXED(1) / 2;
-    rise--;
-    wait(1);
-  } while (rise >= 0);
-  wait(15);
-  work->state = 0;
-  work->timer = 0;
-  work->sparkles = 0;
-  if (!inReach) {
-    Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_VBLANK);
-    while (work->state != FIELD_PSYNERGY_FINISHED)
-      wait(1);
-    Task_Remove(BattleEffect_SinkAndShrinkObject);
-    for (j = 15; j >= 0; j--)
-      BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
-                                        shine->z.fixed);
-    Sound_PlayFar(SE_MENU_ERROR);
-    wait(1);
-  } else {
-    pending = Scene_FindPsynergyTrigger(
-        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
-        Scene_SelectPsynergyTarget(scene->fieldPsynergy));
-    Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
-    frame = 0;
-    while (work->state != FIELD_PSYNERGY_FINISHED) {
-      wait(1);
-      scene->stage = work->fading;
-      scene->frame = frame;
-      if (event->mode != ACTOR_SYSTEM_WORLD_MAP &&
-          !(event->psynergyDrawFlags & 1)) {
-        glow = &work->glow;
-        EffectSprite_Draw(glow);
-      }
-      Field_RunPsynergyEvent(pending, work->fading, frame++);
+    canvas->x = (s16)FIXEDtoINT(pos[0]);
+    canvas->y = (s16)FIXEDtoINT(pos[2]);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC),
+                        Ram_HeapSlots->battleCanvas);
+    canvas->command = CANVAS_UPLOAD;
+
+    IWRAM_FILL_WORDS(work, size, 0);
+    glowEntry = VramCache_FindFreeEntry();
+    glowTile = VramCache_Load(glowEntry, size, work);
+    glow = &work->glow;
+    EffectSprite_Init(glow, 32, 32, OBJ_SIZE_64X64, glowTile);
+    glow->oam.priority = 0;
+    glow->oam.fullColor = 0;
+    glow->oam.palette = 0;
+    glow->depth = 0;
+    glow->scaleY = glow->scaleX = FIXED_ONE * 4 / 5;
+    pos[0] = scene->x;
+    pos[1] = scene->y;
+    pos[2] = scene->z;
+    Camera_WorldToScreen(pos);
+    glow->x = pos[0];
+    glow->y = pos[2];
+
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), work);
+    starEntry = VramCache_FindFreeEntry();
+    starTile = VramCache_Load(starEntry, 256, work);
+    for (j = 0, particle = work->particles; j < POUND_SPARK_COUNT;
+         j++, particle++) {
+      sprite = &work->sprites[j];
+      speed = Random16() * 18 / 10;
+      speed += toFIXED(5) / 2;
+      angle = j * (DEGtoANG(30)) + (Random16() >> 5);
+      pos[0] = scene->x;
+      pos[1] = scene->y;
+      pos[2] = scene->z;
+      Vector_AddPolarOffset(toFIXED(4), angle, pos);
+      Camera_WorldToScreen(pos);
+      particle->x = pos[0];
+      particle->y = pos[2];
+      particle->velocityX = Iwram_MulFX(Trig_Cos(angle), speed);
+      particle->velocityY = Iwram_MulFX(Trig_Sin(angle), speed);
+      particle->timer = -j;
+      EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, starTile);
+      sprite->oam.fullColor = 1;
+      sprite->oam.palette = 0;
+      sprite->oam.priority = 0;
+      sprite->depth = OAM_DEPTH_WINDOW;
+      sprite->scaleY = sprite->scaleX = FIXED_ONE * 4 / 5;
     }
-    Task_Remove(FieldPsynergy_UpdatePound);
-    wait(10);
-    Sound_PlayFar(SE_MENU_ERROR);
-    FieldPsynergy_ShrinkToCaster(shine, shine->x.fixed, shine->y.fixed,
-                                 shine->z.fixed);
+    wait(1);
+    FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
+    Actor_SelectAnimationFar(shine, 1);
+    wait(15);
+    rise = 24;
+    do {
+      shine->y.fixed += toFIXED(1) / 2;
+      rise--;
+      wait(1);
+    } while (rise >= 0);
+    wait(15);
+    work->state = 0;
+    work->timer = 0;
+    work->sparkles = 0;
+    if (!inReach) {
+      Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_VBLANK);
+      while (work->state != FIELD_PSYNERGY_FINISHED)
+        wait(1);
+      Task_Remove(BattleEffect_SinkAndShrinkObject);
+      for (j = 15; j >= 0; j--)
+        BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
+                                          shine->z.fixed);
+      Sound_PlayFar(SE_MENU_ERROR);
+      wait(1);
+    } else {
+      pending = Scene_FindPsynergyTrigger(
+          PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
+          Scene_SelectPsynergyTarget(scene->fieldPsynergy));
+      Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
+      frame = 0;
+      while (work->state != FIELD_PSYNERGY_FINISHED) {
+        wait(1);
+        scene->stage = work->fading;
+        scene->frame = frame;
+        if (event->mode != ACTOR_SYSTEM_WORLD_MAP &&
+            !(event->psynergyDrawFlags & 1)) {
+          glow = &work->glow;
+          EffectSprite_Draw(glow);
+        }
+        Field_RunPsynergyEvent(pending, work->fading, frame++);
+      }
+      Task_Remove(FieldPsynergy_UpdatePound);
+      wait(10);
+      Sound_PlayFar(SE_MENU_ERROR);
+      FieldPsynergy_ShrinkToCaster(shine, shine->x.fixed, shine->y.fixed,
+                                   shine->z.fixed);
+    }
+    Actor_ReleaseFar(shine);
+    VramCache_FreeEntry(starEntry);
+    VramCache_FreeEntry(glowEntry);
+    BattleEffect_EndCanvasSprite();
   }
-  Actor_ReleaseFar(shine);
-  VramCache_FreeEntry(starEntry);
-  VramCache_FreeEntry(glowEntry);
-  BattleEffect_EndCanvasSprite();
-end:
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

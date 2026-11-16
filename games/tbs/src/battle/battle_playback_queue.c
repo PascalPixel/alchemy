@@ -13,7 +13,7 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   s32 element;
 
   unit = Unit_GetFar(unitId);
-  for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+  for (element = 0; element < ELEMENT_COUNT; element++)
     unit->summonBoost[element] = 0;
 
   unit->poison = 0;

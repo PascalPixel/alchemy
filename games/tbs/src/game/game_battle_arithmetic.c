@@ -289,22 +289,17 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
 
   // Restore needs a delusion, confusion or charm, or failing those a stun,
   // sleep, seal or curse, tested in that order.
-  goto check_restore;
-check_restore_others:
-  if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
-      unit->grimReaper == 0) {
-    return 0;
-  }
-  goto restore_checked;
-check_restore:
-  if (effectId == ABILITY_EFFECT_RESTORE) {
-    if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
-        unit->charm == 0) {
-      goto check_restore_others;
+  // DEAD: the loop never repeats; the ROM keeps its jump to the test below
+  // the body.
+  while (effectId == ABILITY_EFFECT_RESTORE && unit->delusion == 0 &&
+         *(u8 *)&unit->confusion == 0 && unit->charm == 0) {
+    if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
+        unit->grimReaper == 0) {
+      return 0;
     }
+    break;
   }
 
-restore_checked:
   poison = &unit->poison;
   delusion = &unit->delusion;
   confusion = &unit->confusion;

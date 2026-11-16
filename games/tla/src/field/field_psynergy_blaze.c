@@ -120,124 +120,121 @@ void FieldPsynergy_Blaze(void) {
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
     actor = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
-    if (actor == NULL)
-      goto end;
-    actor->motionFlags = 0;
-    actor->scaleX = FIXED_ONE * 5 / 4;
-    actor->scaleY = FIXED_ONE * 5 / 4;
-    Actor_SelectAnimationFar(actor, 2);
-    Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
-    wait(50);
-    Actor_ReleaseFar(actor);
-    wait(10);
-    goto end;
-  }
-  if (mode == BLAZE_FLICKER) {
+    if (actor != NULL) {
+      actor->motionFlags = 0;
+      actor->scaleX = FIXED_ONE * 5 / 4;
+      actor->scaleY = FIXED_ONE * 5 / 4;
+      Actor_SelectAnimationFar(actor, 2);
+      Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
+      wait(50);
+      Actor_ReleaseFar(actor);
+      wait(10);
+    }
+  } else if (mode == BLAZE_FLICKER) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
     actor = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
-    if (actor == NULL)
-      goto end;
-    actor->motionFlags = mode;
-    Actor_SelectAnimationFar(actor, 2);
-    Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
-    wait(45);
-    Actor_ReleaseFar(actor);
-    wait(10);
-    goto end;
-  }
-
-  Sound_PlayFar(SE_RUSH);
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
-  work->angle = scene->angle8;
-  work->targetAngle = scene->angle8;
-  switch (look) {
-  case 0:
-    resourceId = RESOURCE_RED_FLAME_BURST;
-    break;
-  case 1:
-    resourceId = RESOURCE_VIOLET_FLAME_BURST;
-    break;
-  case 2:
-    resourceId = RESOURCE_YELLOW_FLAME_BURST;
-    break;
-  case 3:
-    resourceId = RESOURCE_BLUE_FLAME_BURST;
-    break;
-  default:
-    resourceId = RESOURCE_RED_FLAME_BURST;
-    break;
-  }
-  Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
-  dropSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(dropSlot, 4096, work);
-  work->dropTile = tile;
-  cursor.particle = work->dropMotion;
-  for (j = 0; j < BLAZE_DROPS; j++) {
-    sprite = &work->drops[j];
-
-    EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-    sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
-    sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
-    sprite->oam.fullColor = 1;
-    sprite->oam.palette = 0;
-    cursor.particle->timer = -1;
-    cursor.particle++;
-  }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
-  puffSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(puffSlot, 2048, work);
-  work->puffTile = tile;
-  cursor.particle = work->puffMotion;
-  for (j = 0; j < BLAZE_DROPS; j++) {
-    sprite = &work->puffs[j];
-
-    EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
-    sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
-    sprite->depth = 250;
-    sprite->oam.priority = 0;
-    sprite->oam.fullColor = 1;
-    sprite->oam.palette = 0;
-    cursor.particle->timer = -1;
-    cursor.particle++;
-  }
-  wait(1);
-  work->emitting = 1;
-  Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
-  for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
-    wait(1);
-    if (work->hit != 0) {
-      pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS),
-                                          scene->fieldPsynergy,
-                                          (s16)(work->hitObject | 0x100));
-      if (pending != NULL)
-        Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
-      if (Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
-                                    scene->fieldPsynergy,
-                                    (s16)(work->hitObject | 0x100)) != NULL) {
-        event->psynergyHitObject = work->hitObject;
-        break;
-      }
+    if (actor != NULL) {
+      actor->motionFlags = mode;
+      Actor_SelectAnimationFar(actor, 2);
+      Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
+      wait(45);
+      Actor_ReleaseFar(actor);
+      wait(10);
     }
-    if (gInput.pressed & KEY_B)
+  } else {
+
+    Sound_PlayFar(SE_RUSH);
+    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    work->angle = scene->angle8;
+    work->targetAngle = scene->angle8;
+    switch (look) {
+    case 0:
+      resourceId = RESOURCE_RED_FLAME_BURST;
       break;
-  }
-  Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
-  work->emitting = 0;
-  for (k = 0; k < 60; k++) {
+    case 1:
+      resourceId = RESOURCE_VIOLET_FLAME_BURST;
+      break;
+    case 2:
+      resourceId = RESOURCE_YELLOW_FLAME_BURST;
+      break;
+    case 3:
+      resourceId = RESOURCE_BLUE_FLAME_BURST;
+      break;
+    default:
+      resourceId = RESOURCE_RED_FLAME_BURST;
+      break;
+    }
+    Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
+    dropSlot = VramCache_FindFreeEntry();
+    tile = VramCache_Load(dropSlot, 4096, work);
+    work->dropTile = tile;
     cursor.particle = work->dropMotion;
-    for (j = 0; j < BLAZE_DROPS && cursor.particle->timer == -1;
-         j++, cursor.particle++)
-      ;
-    if (j == BLAZE_DROPS)
-      break;
+    for (j = 0; j < BLAZE_DROPS; j++) {
+      sprite = &work->drops[j];
+
+      EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
+      sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
+      sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
+      sprite->oam.fullColor = 1;
+      sprite->oam.palette = 0;
+      cursor.particle->timer = -1;
+      cursor.particle++;
+    }
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
+    puffSlot = VramCache_FindFreeEntry();
+    tile = VramCache_Load(puffSlot, 2048, work);
+    work->puffTile = tile;
+    cursor.particle = work->puffMotion;
+    for (j = 0; j < BLAZE_DROPS; j++) {
+      sprite = &work->puffs[j];
+
+      EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
+      sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
+      sprite->depth = 250;
+      sprite->oam.priority = 0;
+      sprite->oam.fullColor = 1;
+      sprite->oam.palette = 0;
+      cursor.particle->timer = -1;
+      cursor.particle++;
+    }
     wait(1);
+    work->emitting = 1;
+    Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
+    for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
+      wait(1);
+      if (work->hit != 0) {
+        pending = Scene_FindPsynergyTrigger(
+            PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS), scene->fieldPsynergy,
+            (s16)(work->hitObject | 0x100));
+        if (pending != NULL)
+          Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
+        if (Scene_FindPsynergyTrigger(
+                PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
+                scene->fieldPsynergy, (s16)(work->hitObject | 0x100)) != NULL) {
+          event->psynergyHitObject = work->hitObject;
+          break;
+        }
+      }
+      if (gInput.pressed & KEY_B)
+        break;
+    }
+    Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
+    work->emitting = 0;
+    for (k = 0; k < 60; k++) {
+      cursor.particle = work->dropMotion;
+      for (j = 0; j < BLAZE_DROPS && cursor.particle->timer == -1;
+           j++, cursor.particle++)
+        ;
+      if (j == BLAZE_DROPS)
+        break;
+      wait(1);
+    }
+    Task_Remove(Blaze_UpdateSpray);
+    VramCache_FreeEntry(dropSlot);
+    VramCache_FreeEntry(puffSlot);
   }
-  Task_Remove(Blaze_UpdateSpray);
-  VramCache_FreeEntry(dropSlot);
-  VramCache_FreeEntry(puffSlot);
-end:
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

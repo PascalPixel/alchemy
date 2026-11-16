@@ -92,12 +92,10 @@ void InventorySnapshot_Restore(void) {
   if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
     for (unitId = 0; unitId <= 3; unitId++) {
       u16 *inventory = Unit_Get(unitId)->inventory;
-      s32 remaining = 14;
+      s32 slot;
 
-      do {
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++)
         *inventory++ = *source++;
-        remaining--;
-      } while (remaining >= 0);
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
     }

@@ -278,10 +278,7 @@ void Caverns_LayerLeaderByStack(struct Actor *actor) {
   u8 *flags = &leader->priorityFlags;
 
   if (leaderZ > z) {
-    s32 value = 4;
-
-    value |= *flags;
-    *flags = value;
+    ActorFlags_Set(flags, 4);
   } else {
     *flags &= ~6;
   }
@@ -353,8 +350,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[1] = 0;
         velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
-        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - (toFIXED(3) / 8);
-        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (toFIXED(3) / 16);
+        velocity[0] += (u16)(Random16() * 3 >> 2) - (toFIXED(3) / 8);
+        velocity[2] += (u16)(Random16() * 3 >> 3) - (toFIXED(3) / 16);
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
         FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
@@ -459,8 +456,7 @@ void Caverns_MoveIndraPillar(s32 unused, s32 id) {
 }
 
 s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
-  u8 *flags = &actor->motionFlags;
-  s32 saved = *flags;
+  s32 saved = actor->motionFlags;
   s32 blocked = MapGrid_CheckCollision(actor, position);
 
   if (blocked == 0) {
@@ -473,7 +469,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
     actor->speedLimit = toFIXED(3);
     actor->acceleration = toFIXED(2);
     actor->velocityY = toFIXED(4);
-    *flags &= 0x7e;
+    actor->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
@@ -485,7 +481,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
     }
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
-    *flags = saved;
+    actor->motionFlags = saved;
     Event_End();
     return 1;
   }

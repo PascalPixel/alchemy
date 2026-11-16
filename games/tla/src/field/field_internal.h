@@ -23,6 +23,7 @@
 #include "system/heap_release.h"
 #include "system/iwram_call.h"
 #include "graphics/resource.h"
+#include "graphics/vram_tab.h"
 #include <system/affine.h>
 #include "system/sprite_metadata.h"
 #include "field/actor.h"

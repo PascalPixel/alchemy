@@ -27,8 +27,7 @@ struct StripQuad;
 // DEAD: each test reads the count twice and drops the first read; the ROM
 // keeps both loads.
 #define WAIT_TRANSFER(work)                                                    \
-  while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
-         *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
+  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
 
 /// The last three particles: the point a mode centres on (Shine's Djinni in
 /// flight, Emu's target), Shine's fall towards the target, and where its

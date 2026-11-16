@@ -281,8 +281,10 @@ prompt:
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
-  if (choice == -1)
-    goto end;
+  if (choice == -1) {
+    Event_End();
+    return 0;
+  }
   if (choice == 0) {
     if (coins != 0)
       goto toss;
@@ -353,8 +355,10 @@ toss:
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
-    if (choice == -1)
-      goto end;
+    if (choice == -1) {
+      Event_End();
+      return 0;
+    }
     if (choice == 0) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);

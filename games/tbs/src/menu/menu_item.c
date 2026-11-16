@@ -853,7 +853,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   Menu_CreatePartyFigures(MenuCursor_Create(menu), 2, 2, 8, 0);
   // The four figures stand at screen y 30; the screens raise the party member
   // chosen to 26.
-  for (memberIndex = 3; memberIndex >= 0; memberIndex--)
+  for (memberIndex = 0; memberIndex < 4; memberIndex++)
     menu->memberY[memberIndex] = MENU_MEMBER_Y;
 
   menu->buttonHelpWindow = NULL;
@@ -1060,7 +1060,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
                          STATUS_PANEL_EXPERIENCE);
       }
       // Raise the chosen party member's figure.
-      for (memberIndex = 3; memberIndex >= 0; memberIndex--)
+      for (memberIndex = 0; memberIndex < 4; memberIndex++)
         menu->memberY[memberIndex] = MENU_MEMBER_Y;
       menu->memberY[selection] = MENU_MEMBER_RAISED_Y;
     }
@@ -1343,7 +1343,7 @@ s32 ItemMenu_CountItems(s32 memberId) {
   u16 *inventory = Unit_GetFar(memberId)->inventory;
   s32 slot;
 
-  for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if ((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
       count++;
   }

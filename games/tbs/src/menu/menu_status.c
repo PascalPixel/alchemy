@@ -421,7 +421,7 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenWork *menu,
                                   s32 selectedMember) {
   s32 rowIndex;
 
-  for (rowIndex = MENU_ROW_COUNT - 1; rowIndex >= 0; rowIndex--)
+  for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
     menu->memberY[rowIndex] = MENU_MEMBER_Y;
   menu->memberY[selectedMember] = MENU_MEMBER_RAISED_Y;
 }
@@ -754,7 +754,7 @@ s32 StatusScreen_SelectCommand(void) {
   // The help window covers the top of the screen.
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   Task_Remove(Menu_PlacePartyFigures);
-  for (i = 3; i >= 0; i--)
+  for (i = 0; i < 4; i++)
     menu->rowY[i] = 104;
   done = 0;
   MenuCursor_Slide(-10, 88);
@@ -872,7 +872,7 @@ s32 StatusScreen_SelectCommand(void) {
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Window_ClearInteriorTilesFar(menu->statusWindow, 64, 56, 224, 96);
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
-  for (i = 3; i >= 0; i--)
+  for (i = 0; i < 4; i++)
     menu->rowY[i] = STATUS_FIGURE_ROW_Y;
   ItemMenu_ResetCategory();
   return result;
@@ -1170,7 +1170,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   s32 poison;
 
   unit = Unit_GetFar(memberId);
-  for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
+  for (ailmentIndex = 0; ailmentIndex < 5; ailmentIndex++)
     ailments[ailmentIndex] = 0;
 
   count = 0;
@@ -1492,7 +1492,7 @@ s32 PsynergyMenu_SelectAction(void) {
   // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
   // screen (y -16) while this page is up, until the party member row or the
   // status page puts them back.
-  for (iconIndex = 3; iconIndex >= 0; iconIndex--)
+  for (iconIndex = 0; iconIndex < 4; iconIndex++)
     menu->slotY[iconIndex] = -16;
   {
     s32 priority = 245;
@@ -2097,9 +2097,9 @@ void ItemMenu_PositionCategory(void) {
   s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = menu->entryIcons;
   s32 y = MENU_ICON_HIDDEN_Y;
-  s32 remaining = MENU_ENTRY_ICONS - 1;
+  s32 i;
 
-  do {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     struct WindowSprite *object = *entry++;
 
     if (object != 0) {
@@ -2107,8 +2107,7 @@ void ItemMenu_PositionCategory(void) {
       object->y = y;
       Icon_PrepareActor(object);
     }
-    remaining--;
-  } while (remaining >= 0);
+  }
 }
 
 /// Creates the eight category sprites in window, off screen at

@@ -3,14 +3,12 @@ void Actor_LaunchAhead(struct Actor *self) {
   struct Actor *actor = Actor_Get(self->riseCounter);
   s32 angle = (s16)self->userValue;
   struct FieldSprite *sprite = actor->sprite;
-  /* FAKEMATCH(volatile): the form kept; as a plain s32 position[3], 2 of 86
-   * instructions differ in tla-en. */
-  volatile s32 position[3];
+  FIXED position[3];
 
   position[0] = self->x.fixed;
   position[1] = self->y.fixed - toFIXED(12);
   position[2] = self->z.fixed;
-  FieldVector_AddPolarOffset(32, angle, (struct Vector3 *)position);
+  FieldVector_AddPolarOffset(32, angle, position);
   actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],

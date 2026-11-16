@@ -710,7 +710,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   u8 *source;
   u16 *map;
   s16 tile;
-  s32 q16One;
+  s32 q16One = FIXED_ONE;
   s32 number;
   s32 row;
   s32 i;
@@ -738,15 +738,13 @@ s32 TitleIntro_ShowLighthouse(void) {
 
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
   tile = 0;
-  q16One = FIXED_ONE;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     for (i = DISPLAY_TILE_WIDTH - 1; i >= 0; i--) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;
       tile = ((tile << 16) + q16One) >> 16;
-      *map = number;
-      map++;
+      *map++ = number;
     }
     *map++ = LIGHTHOUSE_BLANK_TILE;
     *map++ = LIGHTHOUSE_BLANK_TILE;
@@ -762,13 +760,13 @@ s32 TitleIntro_ShowLighthouse(void) {
   Dma_Set((void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
   wait(1);
-  TitlePaletteFade_SetTarget(q16One, PALETTES_ALL);
+  TitlePaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   TitlePaletteFade_Start(10);
 
   scroll.position = 0;
   scroll.limit = 176;
-  scroll.step = i;
+  scroll.step = 4;
   scroll.source = gTitleIntro_LighthouseTilesTail;
   scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + LIGHTHOUSE_SCREEN_BYTES;
   scroll.cursor = map;
@@ -798,8 +796,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   logo->delay = 0;
   scroll.step = 1;
   scroll.limit = 224;
-  i = TitleIntro_ScrollLighthouse(&scroll);
-  if (i)
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   Task_Add(TitleIntro_UpdateLogo, TASK_PASS_VBLANK);
   scroll.limit = 160;
@@ -811,8 +808,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.tile = 450;
   scroll.rows = 11;
   scroll.frames = 8;
-  i = TitleIntro_ScrollLighthouse(&scroll);
-  if (i)
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   TitlePaletteFade_Start(20);

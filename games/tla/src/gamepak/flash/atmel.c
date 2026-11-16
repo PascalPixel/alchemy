@@ -76,24 +76,15 @@ u16 EraseAtmelFlashBlock(u16 sector) {
 
   smallSector = sector << 4;
   smallSector = (u16)(smallSector << 1);
-  sectorsErased = 0;
-nextSector:
-  attemptsRemaining = 2;
-  goto eraseAttempt;
-retryErase:
-  attemptsRemaining -= 1;
-  if (attemptsRemaining == 0)
-    goto advanceSector;
-eraseAttempt:
-  result = EraseAtmelFlashSector(smallSector);
-  if (result != 0)
-    goto retryErase;
-advanceSector:
-  smallSector += 1;
-  if (result == 0) {
-    sectorsErased += 1;
-    if ((u32)sectorsErased <= 31)
-      goto nextSector;
+  for (sectorsErased = 0; (u32)sectorsErased <= 31; sectorsErased++) {
+    for (attemptsRemaining = 2; attemptsRemaining != 0; attemptsRemaining--) {
+      result = EraseAtmelFlashSector(smallSector);
+      if (result == 0)
+        break;
+    }
+    smallSector += 1;
+    if (result != 0)
+      break;
   }
   REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
@@ -146,15 +137,11 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   gFlashNumRemainingBytes = gFlash_ChipAtmel.type.sector.size;
 
   while (gFlashNumRemainingBytes != 0) {
-    attemptsRemaining = 2;
-    goto programAttempt;
-    do {
-      attemptsRemaining -= 1;
-      if (attemptsRemaining == 0)
-        break;
-    programAttempt:
+    for (attemptsRemaining = 2; attemptsRemaining != 0; attemptsRemaining--) {
       result = ProgramAtmelFlashSector(smallSector, source);
-    } while (result != 0);
+      if (result == 0)
+        break;
+    }
 
     if (result != 0)
       break;

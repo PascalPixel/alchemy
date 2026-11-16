@@ -155,7 +155,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   }
   Sound_PlayFar(SE_MENU_CONFIRM);
 
-  for (i = 4; i >= 0; i--) {
+  for (i = 0; i < 5; i++) {
     cursor.groupPositions[i] = 0;
   }
   cursor.helpEntry = 0;

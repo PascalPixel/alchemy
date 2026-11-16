@@ -297,16 +297,14 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
 /// A villager at a door asks whether the party wants to come in, and answers
 /// the choice.
 void ChampaCliffCaves_AskToComeIn(s32 actor) {
-  s32 msg = (s32)MsgWhatYouWant;
-
-  Event_SetMessageId(msg);
+  Event_SetMessageId((s32)MsgWhatYouWant);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
-    Event_SetMessageId(msg + 1);
+    Event_SetMessageId((s32)MsgWhatYouWant + 1);
   } else {
     Event_Wait(20);
-    Event_SetMessageId(msg + 2);
+    Event_SetMessageId((s32)MsgWhatYouWant + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
 }
@@ -1751,15 +1749,10 @@ void ChampaCliffCaves_LoadDisc(void) {
   s32 vram;
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC), work);
-  i = 0;
-  tile = work->tiles;
-next:
-  if ((*tile & 0xf0) == 0xf0)
-    *tile = (*tile & 0xf) + 0x60;
-  tile++;
-  i++;
-  if (i < (s32)sizeof(work->tiles))
-    goto next;
+  for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); tile++, i++) {
+    if ((*tile & 0xf0) == 0xf0)
+      *tile = (*tile & 0xf) + 0x60;
+  }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 64 * 64, work);
   work->discEntry = entry;
@@ -1786,15 +1779,10 @@ void ChampaCliffCaves_LoadColumn(void) {
   s32 vram;
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIRE_COLUMN), work);
-  i = 0;
-  tile = work->tiles;
-next:
-  if ((*tile & 0xf0) == 0xf0)
-    *tile = (*tile & 0xf) + 0x60;
-  i++;
-  tile++;
-  if (i < (s32)sizeof(work->tiles))
-    goto next;
+  for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); i++, tile++) {
+    if ((*tile & 0xf0) == 0xf0)
+      *tile = (*tile & 0xf) + 0x60;
+  }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 32 * 64, work);
   work->columnEntry = entry;
@@ -1819,13 +1807,10 @@ void ChampaCliffCaves_DrawGlow(void) {
   struct EffectSprite *sprite;
   s32 i;
 
-  i = 0;
-loop:
-  {
+  for (i = 0; i <= 31; i++) {
     s32 red = 31;
-    s16 *frame = &work->frame;
-    s32 wave = Trig_Sin((*frame + i) << 11) * 6;
-    s32 blue = Trig_Sin(((*frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
+    s32 wave = Trig_Sin((work->frame + i) << 11) * 6;
+    s32 blue = Trig_Sin(((work->frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
     s32 colour;
     wave >>= 16;
     blue >>= 16;
@@ -1838,10 +1823,7 @@ loop:
       colour = blue << 10 | wave << 5 | red;
       ((u16 *)&OBJ_PLTT_COLOR(0, 0))[255 - i] = colour;
     }
-    i++;
   }
-  if (i <= 31)
-    goto loop;
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
@@ -1882,11 +1864,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   ChampaCliffCaves_LoadColumn();
   work->frame = 0;
   time = 0;
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   MapGrid_SetShake(4, 4, 1);
   state = 0;
   do {
@@ -1982,11 +1960,7 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   work->columnScale.value = 0;
   work->columnTrailingScale.value = 0;
   work->frame = 0;
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   Sound_Play(SE_DJINNI_SET);
   state = 0;
   do {
@@ -2008,11 +1982,7 @@ void ChampaCliffCaves_RaiseColumn(void) {
   s32 state;
 
   ChampaCliffCaves_LoadColumn();
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   Sound_Play(SE_CLATTER);
   state = 0;
   do {

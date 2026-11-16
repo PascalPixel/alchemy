@@ -15,16 +15,14 @@ void MagmaRockInside_CheckCrumblingStep(const u16 *table) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
-  if (trap != 0)
-    goto test;
-  return;
-next:
-  id = table[0];
-  if (Actor_GetById(id) != trap) {
-    table += 2;
-    goto test;
-  }
-  {
+  if (trap == 0)
+    return;
+  while (*table != ACTOR_LIST_END) {
+    id = table[0];
+    if (Actor_GetById(id) != trap) {
+      table += 2;
+      continue;
+    }
     flag = table[1];
     Event_Start();
     if (!GameFlag_Get(flag)) {
@@ -68,7 +66,4 @@ next:
     Event_End();
     return;
   }
-test:
-  if (*table != ACTOR_LIST_END)
-    goto next;
 }

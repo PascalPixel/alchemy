@@ -1273,20 +1273,16 @@ void GabombaStatue_RestoreHiddenActors(void) {
 }
 #define DEFINE_GABOMBA_STATUE_RAISE_ACTORS(name, n1, n2)                       \
   void name(void) {                                                            \
-    u32 i = 0;                                                                 \
+    u32 i;                                                                     \
                                                                                \
-  next:                                                                        \
-    {                                                                          \
+    for (i = 0; i < n2; i++) {                                                 \
       s32 id = i + n1;                                                         \
       struct Actor *actor = Actor_Get(id);                                     \
                                                                                \
       GabombaStatue_DimActor(id);                                              \
       actor->motionFlags = 0;                                                  \
       actor->y.fixed = toFIXED(36);                                            \
-      i++;                                                                     \
     }                                                                          \
-    if (i < n2)                                                                \
-      goto next;                                                               \
     GabombaStatue_RestoreHiddenActors();                                       \
   }
 
@@ -2335,26 +2331,6 @@ s32 GabombaStatue_LayChannel(s32 value) {
   struct PuzzleCell *cell;
 
   state->count = value - 1;
-  /* FAKEMATCH(dead): the form kept. */
-  {
-    s32 mark = state->cells[0][0].occupied;
-    if (mark & 0x100) {
-      if (value == 1)
-        goto draw_next;
-      if (value == 2)
-        goto count_next;
-      if (value == 3)
-        goto turn_next;
-      if (value == 4)
-        goto start_miss;
-      if (value == 5)
-        goto corner_miss;
-      if (value == 6)
-        goto straight_miss;
-      if (value == 7)
-        goto plain_miss;
-    }
-  }
 retry:
   state->count += 1;
   gRandomSeed = state->count;
@@ -2366,22 +2342,10 @@ retry:
   state->cells[7][2].blocked = 1;
   state->cells[7][8].blocked = 1;
   state->cells[7][10].blocked = 1;
-  row = 0;
-draw_row:
-  col = 0;
-draw_col:
-  /* FAKEMATCH(temporary): the form kept. */
-  {
-    s32 drawn = state->cells[row][col].kind;
-    s32 drawZ, drawX = state->originX;
-    drawZ = state->originZ + row;
-    Map_CopyCellsRect(0, drawn, 1, 1, drawX + col, drawZ);
-  }
-draw_next:
-  if (++col < CHANNEL_COLUMNS)
-    goto draw_col;
-  if (++row < CHANNEL_ROWS)
-    goto draw_row;
+  for (row = 0; row < CHANNEL_ROWS; row++)
+    for (col = 0; col < CHANNEL_COLUMNS; col++)
+      MapGrid_CopyCells(0, state->cells[row][col].kind, 1, 1,
+                        state->originX + col, state->originZ + row);
   n = 0;
   if (Random16() < 32768) {
     n |= GabombaStatue_LayPath(2, 7, 5, 7, 4, 0, 3, 2);
@@ -2405,158 +2369,115 @@ draw_next:
   straight = 0;
   corner = 0;
   cross = 0;
-  row = 0;
-count_row:
-  col = 0;
-count_col:
-  piece = state->cells[row][col].kind;
-  shape = state->cells[row][col].state;
-  if (shape == 5)
-    straight++;
-  if (shape == 10)
-    corner++;
-  if (shape == 12 && (u32)(piece - 8) <= 1)
-    cross++;
-count_next:
-  if (++col < CHANNEL_COLUMNS)
-    goto count_col;
-  if (++row < CHANNEL_ROWS)
-    goto count_row;
-  if (straight == 0)
-    goto retry;
-  if (corner == 0)
-    goto retry;
-  if (cross == 0)
+  for (row = 0; row < CHANNEL_ROWS; row++)
+    for (col = 0; col < CHANNEL_COLUMNS; col++) {
+      piece = state->cells[row][col].kind;
+      shape = state->cells[row][col].state;
+      if (shape == 5)
+        straight++;
+      if (shape == 10)
+        corner++;
+      if (shape == 12 && (u32)(piece - 8) <= 1)
+        cross++;
+    }
+  if (straight == 0 || corner == 0 || cross == 0)
     goto retry;
   mode = Random_Below(2);
   left = 7;
-  tries = 1;
-start_try:
-  col = Random_Below(CHANNEL_COLUMNS);
-  row = (Random_Below(3)) + 5;
-  if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row][col].kind;
-    if ((u32)(piece - 1) <= 1) {
-      shape = state->cells[row][col].state;
-      if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
-        state->cells[row][col].kind = 10;
-        state->cells[row][col].occupied = 1;
-        left = 6;
-        goto start_done;
-      }
-    }
-  }
-start_miss:
-  if (++tries <= CHANNEL_CELLS)
-    goto start_try;
-start_done:
-  n = 3;
-corner_next:
-  tries = 1;
-corner_try:
-  col = Random_Below(CHANNEL_COLUMNS);
-  row = Random_Below(8);
-  if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row][col].kind;
-    if (piece == 3 || piece == 8 || piece == 9) {
-      cell = &state->cells[row][col];
-      shape = cell->state;
-      if (shape != 6 && shape != 9) {
-        switch (piece) {
-        case 3:
-          cell->kind = (Random_Below(2)) + 1;
-          break;
-        case 8:
-          cell->kind = ((Random_Below(2)) << 1) + 4;
-          break;
-        case 9:
-          cell->kind = ((Random_Below(2)) << 1) + 5;
+  for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
+    col = Random_Below(CHANNEL_COLUMNS);
+    row = (Random_Below(3)) + 5;
+    if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+      piece = state->cells[row][col].kind;
+      if ((u32)(piece - 1) <= 1) {
+        shape = state->cells[row][col].state;
+        if ((mode == 0 && (shape & 6) != 0) ||
+            (mode == 1 && (shape & 9) != 0)) {
+          state->cells[row][col].kind = 10;
+          state->cells[row][col].occupied = 1;
+          left = 6;
           break;
         }
-        state->cells[row][col].occupied = 1;
-        left--;
-        goto corner_done;
       }
     }
   }
-corner_miss:
-  if (++tries <= CHANNEL_CELLS)
-    goto corner_try;
-corner_done:
-  if (--n >= 0)
-    goto corner_next;
-  tries = 1;
-straight_try:
-  col = Random_Below(CHANNEL_COLUMNS);
-  row = Random_Below(8);
-  if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
-    piece = state->cells[row][col].kind;
-    if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
-      state->cells[row][col].occupied = 1;
-      left--;
-      goto straight_done;
+  for (n = 0; n < 4; n++)
+    for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
+      col = Random_Below(CHANNEL_COLUMNS);
+      row = Random_Below(8);
+      if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+        piece = state->cells[row][col].kind;
+        if (piece == 3 || piece == 8 || piece == 9) {
+          cell = &state->cells[row][col];
+          shape = cell->state;
+          if (shape != 6 && shape != 9) {
+            switch (piece) {
+            case 3:
+              cell->kind = (Random_Below(2)) + 1;
+              break;
+            case 8:
+              cell->kind = ((Random_Below(2)) << 1) + 4;
+              break;
+            case 9:
+              cell->kind = ((Random_Below(2)) << 1) + 5;
+              break;
+            }
+            state->cells[row][col].occupied = 1;
+            left--;
+            break;
+          }
+        }
+      }
     }
-  }
-straight_miss:
-  if (++tries <= CHANNEL_CELLS)
-    goto straight_try;
-straight_done:
-  if (left > 0) {
-    n = left;
-  plain_next:
-    tries = 1;
-  plain_try:
+  for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
     col = Random_Below(CHANNEL_COLUMNS);
     row = Random_Below(8);
     if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
       piece = state->cells[row][col].kind;
-      if ((u32)(piece - 1) <= 1) {
+      if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
         state->cells[row][col].occupied = 1;
-        goto plain_done;
+        left--;
+        break;
       }
     }
-  plain_miss:
-    if (++tries <= CHANNEL_CELLS)
-      goto plain_try;
-  plain_done:
-    if (--n != 0)
-      goto plain_next;
   }
-  row = 0;
-turn_row:
-  col = 0;
-turn_col:
-  piece = state->cells[row][col].kind;
-  shape = state->cells[row][col].occupied;
-  if (shape != 0) {
-    switch (Random_Below(8)) {
-    case 0:
-    case 1:
-    case 2:
-      piece = GabombaStatue_GetPiece(col, row, 0);
-      break;
-    case 3:
-    case 4:
-    case 5:
-      piece = GabombaStatue_GetPiece(col, row, 1);
-      break;
-    case 6:
-      GabombaStatue_GetPiece(col, row, 0);
-      piece = GabombaStatue_GetPiece(col, row, 0);
-      break;
+  for (n = 0; n < left; n++)
+    for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
+      col = Random_Below(CHANNEL_COLUMNS);
+      row = Random_Below(8);
+      if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+        piece = state->cells[row][col].kind;
+        if ((u32)(piece - 1) <= 1) {
+          state->cells[row][col].occupied = 1;
+          break;
+        }
+      }
     }
-  }
-  /* FAKEMATCH(temporary): the form kept. */
-  {
-    s32 drawZ, drawX = state->originX;
-    drawZ = state->originZ + row;
-    Map_CopyCellsRect(shape, piece, 1, 1, drawX + col, drawZ);
-  }
-turn_next:
-  if (++col < CHANNEL_COLUMNS)
-    goto turn_col;
-  if (++row < CHANNEL_ROWS)
-    goto turn_row;
+  for (row = 0; row < CHANNEL_ROWS; row++)
+    for (col = 0; col < CHANNEL_COLUMNS; col++) {
+      piece = state->cells[row][col].kind;
+      shape = state->cells[row][col].occupied;
+      if (shape != 0) {
+        switch (Random_Below(8)) {
+        case 0:
+        case 1:
+        case 2:
+          piece = GabombaStatue_GetPiece(col, row, 0);
+          break;
+        case 3:
+        case 4:
+        case 5:
+          piece = GabombaStatue_GetPiece(col, row, 1);
+          break;
+        case 6:
+          GabombaStatue_GetPiece(col, row, 0);
+          piece = GabombaStatue_GetPiece(col, row, 0);
+          break;
+        }
+      }
+      MapGrid_CopyCells(shape, piece, 1, 1, state->originX + col,
+                        state->originZ + row);
+    }
   return state->count;
 }
 
@@ -2623,57 +2544,49 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
     tries = 0;
     while (1) {
       u32 value;
-      if (++tries > 63)
-        goto back;
-      value = Random16();
-      dir = direction;
-      if (value > 32767)
-        dir = Random_Below(4);
-      tried = gGabombaStatue_PathTried[step];
-      if ((tried >> dir) & one)
-        continue;
-      {
-        s8 *steps = gGabombaStatue_PathSteps + 1;
-        index = dir * 2;
-        nextX = x + steps[index];
-        index += 1;
-        nextZ = z + steps[index];
+      if (++tries <= 63) {
+        value = Random16();
+        dir = direction;
+        if (value > 32767)
+          dir = Random_Below(4);
+        tried = gGabombaStatue_PathTried[step];
+        if ((tried >> dir) & one)
+          continue;
+        {
+          s8 *steps = gGabombaStatue_PathSteps + 1;
+          index = dir * 2;
+          nextX = x + steps[index];
+          index += 1;
+          nextZ = z + steps[index];
+        }
+        if (nextX <= 10 && nextZ <= 7 &&
+            !(step == length - 1 && (nextX != endX || nextZ != endZ))) {
+          u8 *cell = cells + (nextZ * CHANNEL_COLUMNS + nextX) * 4;
+          if (cell[1] == 0 && (used = (cell[2] >> bit) & one) == 0 &&
+              cell[0] != 10) {
+            tried |= one << dir;
+            gGabombaStatue_PathTried[step] = tried;
+            kinds = gGabombaStatue_PathKinds;
+            piece = GabombaStatue_PickPiece(direction, dir, kinds[step]);
+            {
+              s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
+              GabombaStatue_WritePiece(x, z, piece,
+                                       (cells + offset)[2] | one << bit);
+            }
+            step++;
+            x = nextX;
+            z = nextZ;
+            direction = dir;
+            if (step == length)
+              goto done;
+            gGabombaStatue_PathTried[step] = 0;
+            break;
+          }
+        }
+        gGabombaStatue_PathTried[step] |= 1 << dir;
+        if (gGabombaStatue_PathTried[step] != 0x0f)
+          continue;
       }
-      if (nextX > 10 || nextZ > 7)
-        goto blocked;
-      if (step == length - 1 && (nextX != endX || nextZ != endZ))
-        goto blocked;
-      {
-        u8 *cell = cells + (nextZ * CHANNEL_COLUMNS + nextX) * 4;
-        if (cell[1] != 0)
-          goto blocked;
-        used = (cell[2] >> bit) & one;
-        if (used != 0)
-          goto blocked;
-        if (cell[0] == 10)
-          goto blocked;
-      }
-      tried |= one << dir;
-      gGabombaStatue_PathTried[step] = tried;
-      kinds = gGabombaStatue_PathKinds;
-      piece = GabombaStatue_PickPiece(direction, dir, kinds[step]);
-      {
-        s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
-        GabombaStatue_WritePiece(x, z, piece, (cells + offset)[2] | one << bit);
-      }
-      step++;
-      x = nextX;
-      z = nextZ;
-      direction = dir;
-      if (step == length)
-        goto done;
-      gGabombaStatue_PathTried[step] = 0;
-      goto top;
-    blocked:
-      gGabombaStatue_PathTried[step] |= 1 << dir;
-      if (gGabombaStatue_PathTried[step] != 0x0f)
-        continue;
-    back:
       gGabombaStatue_PathTried[step] = 0;
       if (step == 0)
         return -1;
@@ -2683,9 +2596,8 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       direction = gGabombaStatue_PathDirections[step];
       GabombaStatue_WritePiece(x, z, gGabombaStatue_PathKinds[step],
                                gGabombaStatue_PathFlags[step]);
-      goto top;
+      break;
     }
-  top:;
   }
 done:
   {
@@ -3037,133 +2949,132 @@ void GabombaStatue_MoveCharge(struct Actor *charge, s32 step, s32 id) {
       Actor_StartScript(charge, gGabombaStatue_TileFallScript);
       charge->chargeState = goal;
     }
-    goto done;
-  }
-  switch (key) {
-  case 514:
-  case 515:
-    col--;
-    x -= INTtoFIXED(d);
-    break;
-  case 2:
-  case 3:
-    col++;
-    x += INTtoFIXED(d);
-    break;
-  case 257:
-  case 259:
-    row++;
-    z += INTtoFIXED(d);
-    break;
-  case 769:
-  case 771:
-    row--;
-    z -= INTtoFIXED(d);
-    break;
-  case 516:
-  case 520:
-    row++;
-    heading = 1;
-    x = x - s + toFIXED(8);
-    z = z - c + toFIXED(8);
-    angle = DEGtoANG(180) - arc;
-    break;
-  case 773:
-  case 777:
-    col--;
-    heading = 2;
-    x = x + c - toFIXED(8);
-    z = z - s + toFIXED(8);
-    angle = TRIG_TURN * 3 / 4 - arc;
-    break;
-  case 6:
-  case 8:
-    row--;
-    heading = 3;
-    x = x + s - toFIXED(8);
-    z = z + c - toFIXED(8);
-    angle = -arc;
-    break;
-  case 263:
-  case 265:
-    col++;
-    heading = 0;
-    x = x - c + toFIXED(8);
-    z = z + s - toFIXED(8);
-    angle = DEGtoANG(90) - arc;
-    break;
-  case 519:
-  case 521:
-    row--;
-    heading = 3;
-    x = x - s + toFIXED(8);
-    z = z + c - toFIXED(8);
-    angle = arc + DEGtoANG(180);
-    break;
-  case 262:
-  case 264:
-    col--;
-    heading = 2;
-    x = x + c - toFIXED(8);
-    z = z + s - toFIXED(8);
-    angle = arc + DEGtoANG(90);
-    break;
-  case 5:
-  case 9:
-    row++;
-    heading = 1;
-    x = x + s - toFIXED(8);
-    z = z - c + toFIXED(8);
-    angle = arc;
-    break;
-  case 772:
-  case 776:
-    col++;
-    heading = 0;
-    x = x - c + toFIXED(8);
-    z = z - s + toFIXED(8);
-    angle = arc + TRIG_TURN * 3 / 4;
-    break;
-  case 11:
-    heading = row = col = 0;
-    break;
-  case 267:
-    heading = row = col = 0;
-    break;
-  case 523:
-    heading = row = col = 0;
-    break;
-  case 10:
-  case 266:
-  case 522:
-  case 778:
-    if (charge->chargeState == 1) {
-      charge->x.fixed = x;
-      charge->y.fixed = 0;
-      charge->z.fixed = z;
-      charge->facing = angle;
-      if (FIELD_CELL(x) == 24 && FIELD_CELL(z) == 14) {
-        charge->chargeState = 7;
-      } else {
-        Sound_Play(SE_DUST_PUFF);
-        Actor_StartScript(charge, gGabombaStatue_TileFallScript);
+  } else {
+    switch (key) {
+    case 514:
+    case 515:
+      col--;
+      x -= INTtoFIXED(d);
+      break;
+    case 2:
+    case 3:
+      col++;
+      x += INTtoFIXED(d);
+      break;
+    case 257:
+    case 259:
+      row++;
+      z += INTtoFIXED(d);
+      break;
+    case 769:
+    case 771:
+      row--;
+      z -= INTtoFIXED(d);
+      break;
+    case 516:
+    case 520:
+      row++;
+      heading = 1;
+      x = x - s + toFIXED(8);
+      z = z - c + toFIXED(8);
+      angle = DEGtoANG(180) - arc;
+      break;
+    case 773:
+    case 777:
+      col--;
+      heading = 2;
+      x = x + c - toFIXED(8);
+      z = z - s + toFIXED(8);
+      angle = TRIG_TURN * 3 / 4 - arc;
+      break;
+    case 6:
+    case 8:
+      row--;
+      heading = 3;
+      x = x + s - toFIXED(8);
+      z = z + c - toFIXED(8);
+      angle = -arc;
+      break;
+    case 263:
+    case 265:
+      col++;
+      heading = 0;
+      x = x - c + toFIXED(8);
+      z = z + s - toFIXED(8);
+      angle = DEGtoANG(90) - arc;
+      break;
+    case 519:
+    case 521:
+      row--;
+      heading = 3;
+      x = x - s + toFIXED(8);
+      z = z + c - toFIXED(8);
+      angle = arc + DEGtoANG(180);
+      break;
+    case 262:
+    case 264:
+      col--;
+      heading = 2;
+      x = x + c - toFIXED(8);
+      z = z + s - toFIXED(8);
+      angle = arc + DEGtoANG(90);
+      break;
+    case 5:
+    case 9:
+      row++;
+      heading = 1;
+      x = x + s - toFIXED(8);
+      z = z - c + toFIXED(8);
+      angle = arc;
+      break;
+    case 772:
+    case 776:
+      col++;
+      heading = 0;
+      x = x - c + toFIXED(8);
+      z = z - s + toFIXED(8);
+      angle = arc + TRIG_TURN * 3 / 4;
+      break;
+    case 11:
+      heading = row = col = 0;
+      break;
+    case 267:
+      heading = row = col = 0;
+      break;
+    case 523:
+      heading = row = col = 0;
+      break;
+    case 10:
+    case 266:
+    case 522:
+    case 778:
+      if (charge->chargeState == 1) {
+        charge->x.fixed = x;
+        charge->y.fixed = 0;
+        charge->z.fixed = z;
+        charge->facing = angle;
+        if (FIELD_CELL(x) == 24 && FIELD_CELL(z) == 14) {
+          charge->chargeState = 7;
+        } else {
+          Sound_Play(SE_DUST_PUFF);
+          Actor_StartScript(charge, gGabombaStatue_TileFallScript);
+          charge->chargeState = 2;
+        }
+      }
+      break;
+    case 779:
+      heading = row = col = 0;
+      break;
+    default:
+      heading = row = col = 0;
+      if (charge->chargeState == 1) {
+        Sound_Play(SE_WATER);
+        Actor_StartScript(charge, gGabombaStatue_TileRiseScript);
         charge->chargeState = 2;
       }
+      break;
     }
-    break;
-  case 779:
-    heading = row = col = 0;
-    break;
-  default:
-    heading = row = col = 0;
-    if (charge->chargeState == 1) {
-      Sound_Play(SE_WATER);
-      Actor_StartScript(charge, gGabombaStatue_TileRiseScript);
-      charge->chargeState = 2;
-    }
-    break;
   }
-done:
   if (step == 15) {
     *colp = col;
     *rowp = row;

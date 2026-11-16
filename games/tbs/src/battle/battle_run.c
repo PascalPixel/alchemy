@@ -380,13 +380,10 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
-  u16 *base;
-  s32 remaining;
-  s32 lastEnemy;
+  s32 i;
   u16 *output;
   s32 livingCount;
   s32 enemyCapacity;
-  u16 *member;
   s32 unitId;
   s16 hp;
   s32 activeCount;
@@ -399,41 +396,29 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    base = activeMembers;
-    activeCount = BattleParty_PrepareMembers(base);
-    if (livingCount < activeCount) {
-      member = base;
-      remaining = activeCount;
-      do {
-        unitId = *member;
-        member++;
-        hp = Unit_GetFar(unitId)->hp;
-        if (hp > 0) {
-          if (output != NULL) {
-            *output = unitId;
-            output++;
-          }
-          livingCount++;
+    activeCount = BattleParty_PrepareMembers(activeMembers);
+    for (i = 0; i < activeCount; i++) {
+      unitId = activeMembers[i];
+      hp = Unit_GetFar(unitId)->hp;
+      if (hp > 0) {
+        if (output != NULL) {
+          *output = unitId;
+          output++;
         }
-        remaining--;
-      } while (remaining != 0);
+        livingCount++;
+      }
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = FIRST_ENEMY_UNIT;
-    lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
-    if (remaining < lastEnemy) {
-      do {
-        unit = Unit_GetFar(remaining);
-        if ((unit->side != BATTLE_SIDE_NONE) && (unit->hp > 0)) {
-          if (output != NULL) {
-            *output = remaining;
-            output++;
-          }
-          livingCount++;
+    for (i = FIRST_ENEMY_UNIT; i < enemyCapacity + FIRST_ENEMY_UNIT; i++) {
+      unit = Unit_GetFar(i);
+      if ((unit->side != BATTLE_SIDE_NONE) && (unit->hp > 0)) {
+        if (output != NULL) {
+          *output = i;
+          output++;
         }
-        remaining++;
-      } while (remaining < lastEnemy);
+        livingCount++;
+      }
     }
   }
   if (output != NULL) {

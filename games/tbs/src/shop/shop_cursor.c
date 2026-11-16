@@ -52,9 +52,9 @@ static const u16 sPriceDigitTileOffsets[5] = {
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + (digit << 5);
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
-  s32 count = 3;
+  s32 count;
 
-  do {
+  for (count = 0; count < 4; count++) {
     if (*src != 0) {
       dst[0] = *src++;
       if (*src != 0) {
@@ -67,8 +67,7 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
       }
     }
     dst += 4;
-    count--;
-  } while (count >= 0);
+  }
 }
 
 /// Builds a price of up to five digits as a sprite on window at (x, y). Returns

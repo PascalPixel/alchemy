@@ -191,33 +191,21 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
     if (freeBlocks - 136 < 0)
       Sound_PlayFar(SE_CLICK);
   }
-  // Debug: holding L spins through four empty loops (511, 96, 64 and 64
-  // passes), a short stall each frame.
+  // Debug: holding L spins through four empty loops (512, 96, 64 and 64
+  // passes), a short stall each frame; the last three count in a halfword.
   if (gDebugMode != 0) {
-    s32 delayKeyMask = KEY_L;
-    if (gKeysHeld & delayKeyMask) {
-      s32 delayIterations;
+    if (gKeysHeld & KEY_L) {
+      s32 i;
+      s16 j;
 
-      delayIterations = delayKeyMask;
-    wait_a:
-      --delayIterations;
-      if (delayIterations != 0)
-        goto wait_a;
-      delayIterations = 95;
-    wait_b:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_b;
-      delayIterations = 63;
-    wait_c:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_c;
-      delayIterations = 63;
-    wait_d:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_d;
+      for (i = 0; i < 512; i++) {
+      }
+      for (j = 0; j < 96; j++) {
+      }
+      for (j = 0; j < 64; j++) {
+      }
+      for (j = 0; j < 64; j++) {
+      }
     }
   }
   // Walk, or run with the dash keys; with FLAG_FAST_WALK, B moves faster

@@ -265,31 +265,28 @@ void Party_InitializeCharacters(void) {
 
   // gCharacter_StartingEquipUnitIds lists the characters given starting
   // equipment, ended by -1 (starting_equipment.c).
-  if (*startingUnitId != -1) {
-    do {
-      unit = Unit_Get(*startingUnitId);
-      if (unit != 0) {
-        unit->id = *startingUnitId;
-        character = Character_GetDefinition(unit->id);
+  for (; *startingUnitId != -1; startingUnitId++) {
+    unit = Unit_Get(*startingUnitId);
+    if (unit != 0) {
+      unit->id = *startingUnitId;
+      character = Character_GetDefinition(unit->id);
 
-        for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
-          unit->inventory[i] = 0;
+      for (i = 0; i < INVENTORY_SLOTS; i++)
+        unit->inventory[i] = 0;
 
-        for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
-             i++) {
-          slot = Inventory_AddItem(*startingUnitId, character->items[i] &
-                                                        INVENTORY_ITEM_ID_MASK);
-          Inventory_Equip(*startingUnitId, slot);
-        }
-
-        Unit_UpdateClass(*startingUnitId);
-        unit->ppGauge = UNIT_GAUGE_FULL;
-        unit->hpGauge = UNIT_GAUGE_FULL;
-        Unit_LevelUpTo(*startingUnitId, character->startingLevel);
-        Unit_Calculate(*startingUnitId);
+      for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
+           i++) {
+        slot = Inventory_AddItem(*startingUnitId,
+                                 character->items[i] & INVENTORY_ITEM_ID_MASK);
+        Inventory_Equip(*startingUnitId, slot);
       }
-      startingUnitId++;
-    } while (*startingUnitId != -1);
+
+      Unit_UpdateClass(*startingUnitId);
+      unit->ppGauge = UNIT_GAUGE_FULL;
+      unit->hpGauge = UNIT_GAUGE_FULL;
+      Unit_LevelUpTo(*startingUnitId, character->startingLevel);
+      Unit_Calculate(*startingUnitId);
+    }
   }
 }
 

@@ -394,7 +394,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
                        STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, memberIds[selection]);
       Menu_ReloadMemberPortrait(menu, memberIds[selection]);
-      for (i = 3; i >= 0; i--)
+      for (i = 0; i < 4; i++)
         menu->rowPositions[i] = MENU_MEMBER_Y;
       // Raise the chosen party member.
       menu->rowPositions[selection] = MENU_MEMBER_RAISED_Y;

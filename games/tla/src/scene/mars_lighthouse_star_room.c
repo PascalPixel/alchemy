@@ -1113,6 +1113,7 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
 
   if (frame & 1)
     return;
+  // Each side makes its own spark, the west at column 155 and the east at 178.
   if ((frame >> 1) & 1) {
     r = Random16();
     x = r << 3;
@@ -1121,6 +1122,14 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
     x <<= 2;
     x >>= 16;
     column = 155;
+    column <<= 18;
+    z <<= 3;
+    x <<= 16;
+    x += column;
+    z = (u32)z >> 16;
+    z <<= 16;
+    z += toFIXED(460);
+    actor = MarsLighthouseStarRoom_CreateActor(SPARK_SPRITE, x, toFIXED(32), z);
   } else {
     r = Random16();
     x = r << 3;
@@ -1129,19 +1138,16 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
     x <<= 2;
     x >>= 16;
     column = 178;
+    column <<= 18;
+    z <<= 3;
+    x <<= 16;
+    x += column;
+    z = (u32)z >> 16;
+    z <<= 16;
+    z += toFIXED(460);
+    actor = MarsLighthouseStarRoom_CreateActor(SPARK_SPRITE, x, toFIXED(32), z);
   }
-  column <<= 18;
-  z <<= 3;
-  x <<= 16;
-  x += column;
-  z = (u32)z >> 16;
-  z <<= 16;
-  z += toFIXED(460);
-  actor = MarsLighthouseStarRoom_CreateActor(SPARK_SPRITE, x, toFIXED(32), z);
   if (actor != NULL) {
-    /* FAKEMATCH(barrier): an empty asm that clobbers r0 once the spark is
-     * created; without it 7 of 91 instructions differ in tla-en. */
-    asm("" : : : "r0");
     actor->retainSpriteCache = 2;
     actor->motionFlags = 0;
     actor->timer = 0;

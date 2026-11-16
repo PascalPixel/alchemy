@@ -102,7 +102,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     s32 noSlot = 255;
 
     battle = gBattleWork;
-    for (i = 7; i >= 0; i--)
+    for (i = 0; i < 8; i++)
       battle->opponentSlots[i] = noSlot;
 
     // The party members, each marked as the opponent's.
@@ -158,9 +158,9 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB,
   u32 fill = '_';
   u8 *current = base;
   u8 *dst = current;
-  s32 count = 3;
+  s32 i;
 
-  do {
+  for (i = 0; i < 4; i++) {
     u32 value = *source;
 
     *dst = value;
@@ -169,8 +169,7 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB,
     if ((u8)value == 0)
       *current = fill;
     current++;
-    count--;
-  } while (count >= 0);
+  }
   base[4] = 0;
   // BUG: the original buffer is on the stack, gone once this returns.
   // UBFIX keeps the result until the next call in private scratch storage.

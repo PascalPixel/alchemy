@@ -84,7 +84,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
         scale = Iwram_RatioMulQ14(distance, FIXED_ONE);
         spark->life--;
         axisPosition = spark->motion;
-        for (axis = 2; axis >= 0; axis--) {
+        for (axis = 0; axis < 3; axis++) {
           coordinate = *axisPosition;
           acceleration = Iwram_MulFX(Iwram_MulFX(-coordinate >> 8, scale),
                                      FIXED_ONE * 19 / 16);

@@ -374,10 +374,8 @@ void Serial_HandleTransferInterrupt(void) {
   if (gSerialWork.sendIndex <= SERIAL_PACKET_HALFWORDS)
     gSerialWork.sendIndex++;
 
-  channel = 0;
-receive_loop:
   // Hand complete packets to the frame code without overwriting its buffers.
-  {
+  for (channel = 0; channel <= 1; channel++) {
     s32 receiveIndex;
     u16 *incoming;
 
@@ -396,14 +394,11 @@ receive_loop:
         gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
       }
     }
+    if (gSerialWork.transferError != 0)
+      gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
+    if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
+      gSerialWork.receiveIndex[channel]++;
   }
-  if (gSerialWork.transferError != 0)
-    gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
-  if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
-    gSerialWork.receiveIndex[channel]++;
-  channel++;
-  if (channel <= 1)
-    goto receive_loop;
 
   // The console that clocks the transfers starts the next one, and restarts
   // timer 3 so its count reloads
@@ -675,11 +670,9 @@ restart:
     if (gKeysHeld & KEY_B)
       Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
     if (gKeysHeld & KEY_START) {
-      delay = 9999;
-      do {
-        delay--;
+      for (delay = 0; delay < 10000; delay++) {
         SerialTest_Delay();
-      } while (delay >= 0);
+      }
     }
     if (gSerialReceiveDestination == 0) {
       Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 128 * TILE_SIZE_4BPP,

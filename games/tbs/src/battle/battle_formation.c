@@ -300,35 +300,21 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   struct Unit *unit;
   s32 enemyIndex;
   s32 nameIndex;
-  s32 terminatorIndex;
-  u8 nameByte;
 
   for (enemyIndex = 0; enemyIndex <= 5; enemyIndex++) {
     unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
-    nameByte = unit->side;
-    if (nameByte != BATTLE_SIDE_ENEMY)
+    if (unit->side != BATTLE_SIDE_ENEMY)
       continue;
     if (unit->id != classId)
       continue;
-    // nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
-    // the letter; nameIndex holds the terminator, 0.
-    nameIndex = 0;
-    if (unit->name[0] == 0) {
-      unit->name[0] = LIST_MARKER_CHAR;
-      unit->name[nameByte] = nameIndex;
-      return;
-    }
     // The name's end, then the letter and a new terminator after it.
-  scan_slots:
-    nameIndex++;
-    if (nameIndex > 13)
-      return;
-    nameByte = unit->name[nameIndex];
-    if (nameByte != 0)
-      goto scan_slots;
-    terminatorIndex = nameIndex + 1;
-    unit->name[nameIndex] = LIST_MARKER_CHAR;
-    unit->name[terminatorIndex] = nameByte;
+    for (nameIndex = 0; nameIndex <= 13; nameIndex++) {
+      if (unit->name[nameIndex] == 0) {
+        unit->name[nameIndex] = LIST_MARKER_CHAR;
+        unit->name[nameIndex + 1] = 0;
+        break;
+      }
+    }
     return;
   }
 }

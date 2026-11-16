@@ -57,15 +57,10 @@ void UpdateLinkSessionCountdown(void) {
       BattleCamera_SetCommandViewFar(newOffset);
     }
 
-    entry = state->icons;
-    active = state->iconShown;
-    i = 2;
-    do {
-      if (*active++ != 0)
-        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW);
-      i--;
-      entry++;
-    } while (i >= 0);
+    for (i = 0; i < 3; i++) {
+      if (state->iconShown[i] != 0)
+        Oam_AddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
+    }
     Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
 
     // Local battles still animate the UI, but do not run the link timer.
@@ -73,38 +68,33 @@ void UpdateLinkSessionCountdown(void) {
       return;
 
     runtime = gBattleWork;
-    if (runtime->linkPaused == 0)
-      goto load_timer;
-    state->timer = 0;
-    return;
-
-  signature_tail:
-    if (signature->v != 'V')
-      goto signature_done;
-    if (signature->s != 'S')
-      goto signature_done;
-    state->timer = COUNTDOWN_START_FRAMES;
-    timer = state->timer;
-    goto signature_done;
+    if (runtime->linkPaused != 0) {
+      state->timer = 0;
+      return;
+    }
 
     // -1 until the partner's signature reads "EDVS", then the countdown.
-  load_timer:
     timer = state->timer;
-    if (timer >= 0)
-      goto timer_ready;
-    signature =
-        (struct LinkSignature *)gLinkPeerSignatures[runtime->linkSide ^ 1];
-    if (signature->e != 'E')
-      goto signature_done;
-    if (signature->d == 'D')
-      goto signature_tail;
-
-  signature_done:
+    do {
+      if (timer >= 0)
+        break;
+      signature =
+          (struct LinkSignature *)gLinkPeerSignatures[runtime->linkSide ^ 1];
+      if (signature->e != 'E')
+        break;
+      if (signature->d != 'D')
+        break;
+      if (signature->v != 'V')
+        break;
+      if (signature->s != 'S')
+        break;
+      state->timer = COUNTDOWN_START_FRAMES;
+      timer = state->timer;
+    } while (0);
     if (timer < 0)
       return;
 
     // The window opens the first frame the Status screen is not up.
-  timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = Link_CreateCountdownLabelWindow();
       timer = state->timer;

@@ -192,15 +192,10 @@ s32 Text_SetString(const u8 *str) {
 /// the name and the two-byte colour code before the underscores.
 void NameEntry_DrawName(struct Window *window, u8 *name) {
   u8 text[20];
-  s32 length = 0;
+  s32 length;
 
-  if (*name != 0) {
-    do {
-      text[length] = *name;
-      name++;
-      length++;
-    } while (*name != 0);
-  }
+  for (length = 0; name[length] != 0; length++)
+    text[length] = name[length];
 
   text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_RED;

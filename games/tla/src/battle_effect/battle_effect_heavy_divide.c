@@ -646,28 +646,26 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     texture.logHeight = 5;
     model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
-    splash = 25000;
-    /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
-    asm("" : "+r"(splash));
-    i = 0;
-    drop = work->particles;
-  nextSplash:
-    if (frame > i * 4 + 64) {
-      model->shade = zero;
-      texture.pixels =
-          work->sheet + WYRD_CURSE_BURNING_SKULLS + ((i % 2) << 10);
-      Matrix_Initialize();
-      Matrix_Translate(drop->x - toFIXED(64), drop->y - toFIXED(48), 0);
-      Matrix_Scale(splash >> 1, splash, splash >> 1);
-      Matrix_RotateX(-DEGtoANG(90));
-      Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
-      Render_DrawModelList(model);
-      Particle_AdvanceWithGravity2D(drop, 60, -toFIXED(1) / 2);
-    }
-    i++;
-    drop++;
-    if (i != 6) {
-      goto nextSplash;
+    for (i = 0; i != 6; i++) {
+      drop = &work->particles[i];
+      /* FAKEMATCH(dead): splash set through its own address in every turn, so
+       * the first CSE cannot fold splash >> 1 and the loop pass lifts the
+       * constant out; as splash = 25000 before the loop, 137 of 568
+       * instructions differ in tla-en. */
+      *&splash = 25000;
+      if (frame > i * 4 + 64) {
+        model->shade = zero;
+        texture.pixels =
+            work->sheet + WYRD_CURSE_BURNING_SKULLS + ((i % 2) << 10);
+        Matrix_Initialize();
+        Matrix_Translate(drop->x - toFIXED(64), drop->y - toFIXED(48), 0);
+        Matrix_Scale(splash >> 1, splash, splash >> 1);
+        Matrix_RotateX(-DEGtoANG(90));
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
+        Render_DrawModelList(model);
+        Particle_AdvanceWithGravity2D(drop, 60, -toFIXED(1) / 2);
+      }
     }
     Heap_Release(model);
     Heap_Release(vertices);

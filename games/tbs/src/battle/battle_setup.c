@@ -120,18 +120,20 @@ void BattleUnit_Collect(void) {
   // others put the first in the centre and the rest either side of it.
   count = BattleEnemy_List(unitIds);
   formation = battle->layout;
-  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
-    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
-      for (i = 0; i < count; i++)
-        battle->enemyIds[i] = unitIds[i];
-      goto placed;
+  switch (formation) {
+  case FORMATION_LAYOUT_SHUFFLED:
+  case FORMATION_LAYOUT_INTERLEAVED:
+    for (i = 0; i < count; i++)
+      battle->enemyIds[i] = unitIds[i];
+    break;
+  case FORMATION_LAYOUT_CENTERED:
+  default:
+    for (i = 0; i < count; i++) {
+      position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+      battle->enemyIds[position] = unitIds[i];
     }
+    break;
   }
-  for (i = 0; i < count; i++) {
-    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
-    battle->enemyIds[position] = unitIds[i];
-  }
-placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
@@ -165,7 +167,7 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
     s32 element;
 
     // The four element levels, cleared from the last.
-    for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+    for (element = 0; element < ELEMENT_COUNT; element++)
       unit->summonBoost[element] = 0;
 
     unit->attackTurns = 0;

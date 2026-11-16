@@ -1334,11 +1334,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   // "Hey! That block on the mast has disappeared!"
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_WORKER, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
-  {
-    s32 mode = 1;
-
-    FieldCamera_MoveTo(328, CAMERA_KEEP, 632, mode);
-  }
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 632, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_FIRST_WORKER, 3);
@@ -2510,7 +2506,6 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
   s32 direction, kind, width, height, dx;
   FIXED dz;
   s32 steps, i, j, offset;
-  u8 *layer;
 
   actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
   if (actor != 0) {
@@ -2524,8 +2519,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     dz = toFIXED(offset);
     target->callback = 0;
     steps = 0;
-    layer = &actor->layer;
-    *layer = 2;
+    actor->layer = 2;
     target->x = actor->x.fixed + dx;
     target->z = actor->z.fixed + dz;
     cell.y = actor->y.fixed;
@@ -2545,7 +2539,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
       target->z += dz;
     }
   blocked:
-    *layer = 0;
+    actor->layer = 0;
     if (steps == 0)
       return 0;
     {

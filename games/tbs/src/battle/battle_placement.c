@@ -369,7 +369,7 @@ void BattleUnit_RefreshPlacement(void) {
   // objectIndex[0..7] is each party unit id's place and objectIndex[8..13]
   // the enemy places, numbered 8 to 13.
   number = BATTLE_OBJECT_NONE;
-  for (i = UNIT_MAX - 1; i >= 0; i--)
+  for (i = 0; i < UNIT_MAX; i++)
     battle->objectIndex[i] = number;
   place = &battle->objectIndex[UNIT_MAX - 1];
   for (enemy = ENEMY_BATTLE_SIZE - 1, number = UNIT_MAX - 1; enemy >= 0;

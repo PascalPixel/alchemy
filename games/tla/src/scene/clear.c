@@ -275,7 +275,7 @@ void StatusScreen_Run(void);
 s32 Scene_Initialize(void) {
   s32 started = 0;
   u32 mask;
-  s32 result, i, limit, status, message, failure, recovery;
+  s32 result, i, limit, status, message, recovery;
 
   Clear_LoadBackground();
   Task_Add(Clear_CheckButtonCodes, TASK_PASS_VBLANK);
@@ -283,12 +283,14 @@ s32 Scene_Initialize(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   if (gMainRoutineWork.entrance == 2) {
-  ask_save:
-    message = (s32)MsgSaveYourAdventure;
-    FieldMessage_Show(message, 5);
-    i = FieldYesNo_Ask(1);
-    Message_CloseFinishedWindows();
-    if (i == 0) {
+    do {
+      message = (s32)MsgSaveYourAdventure;
+      FieldMessage_Show(message, 5);
+      i = FieldYesNo_Ask(1);
+      Message_CloseFinishedWindows();
+      if (i != 0) {
+        break;
+      }
       FieldMessage_Show(message + 1, 1);
       gMainRoutineWork.sendFlag = 1;
       Party_AddMember(5);
@@ -298,9 +300,7 @@ s32 Scene_Initialize(void) {
       Party_AddMember(2);
       Party_AddMember(3);
       i = Save_ToChosenFile();
-      if (i == -1)
-        goto ask_save;
-    }
+    } while (i == -1);
     Event_Wait(60);
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
@@ -332,70 +332,84 @@ top:
                       gMainRoutineWork.windowBrightness);
     i = 4;
     limit = 5;
-  open:
-    wait(6);
-    result = NameEntry_EditMemberName(i);
-    if (result == -1) {
-      if (i == 4)
-        goto top;
-      i--;
-      goto open;
+    for (;;) {
+      wait(6);
+      result = NameEntry_EditMemberName(i);
+      if (result == -1) {
+        if (i == 4) {
+          goto top;
+        }
+        i--;
+        continue;
+      }
+      if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
+        limit = 8;
+      }
+      if (++i >= limit) {
+        break;
+      }
     }
-    if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0)
-      limit = 8;
-    if (++i < limit)
-      goto open;
   ask:
     // "Transfer data from Golden Sun?"
     FieldMessage_Show((s32)MsgTransferDataFromGoldenSun, QUESTION_MESSAGE);
     result = YesNoMenu_Run(1, 0, 0, 0);
     Message_CloseFinishedWindows();
     if (result == 0) {
-    enter:
-      result = IconMenu_ChooseSendOption(0);
-      if (result == -1)
-        goto top;
-      if (result == 1) {
-        SAVE_CELLS();
-        status = Clear_ReceiveByLink();
-        if (status != -1)
-          StatusScreen_Run();
-        RESTORE_CELLS()
-        if (status == -1)
-          goto enter;
-        DataTransfer_Apply(MAP_CELL_BACKUP, 0, 0);
-      } else if (result == 0) {
-        SAVE_CELLS();
-        MainRoutineWork_InitializeDefaults();
+      for (;;) {
+        result = IconMenu_ChooseSendOption(0);
+        if (result == -1) {
+          goto top;
+        }
+        if (result == 1) {
+          SAVE_CELLS();
+          status = Clear_ReceiveByLink();
+          if (status != -1) {
+            StatusScreen_Run();
+          }
+          RESTORE_CELLS()
+          if (status == -1) {
+            continue;
+          }
+          DataTransfer_Apply(MAP_CELL_BACKUP, 0, 0);
+        } else if (result == 0) {
+          SAVE_CELLS();
+          MainRoutineWork_InitializeDefaults();
 #if !TLA_PATCH_2
-        status = Clear_EnterPassword();
-        RESTORE_CELLS()
-        if (status == -1)
-          goto enter;
+          status = Clear_EnterPassword();
+          RESTORE_CELLS()
+          if (status == -1) {
+            continue;
+          }
 #else
-        Clear_EnterPassword();
-        RESTORE_CELLS()
+          Clear_EnterPassword();
+          RESTORE_CELLS()
 #endif
-        DataTransfer_Apply(MAP_CELL_BACKUP, 1, 0);
+          DataTransfer_Apply(MAP_CELL_BACKUP, 1, 0);
+        }
+        break;
       }
     } else {
       DataTransfer_GiveDefaultDjinn();
     }
     i = 0;
     limit = 1;
-  close:
-    wait(6);
-    result = NameEntry_EditMemberName(i);
-    if (result == -1) {
-      if (i == 0)
-        goto ask;
-      i--;
-      goto close;
+    for (;;) {
+      wait(6);
+      result = NameEntry_EditMemberName(i);
+      if (result == -1) {
+        if (i == 0) {
+          goto ask;
+        }
+        i--;
+        continue;
+      }
+      if (gClear_ExtraCodeUnlocked != 0) {
+        limit = 4;
+      }
+      if (++i >= limit) {
+        break;
+      }
     }
-    if (gClear_ExtraCodeUnlocked != 0)
-      limit = 4;
-    if (++i < limit)
-      goto close;
     if (gAnyFileCleared != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
@@ -454,8 +468,9 @@ top:
         RETURN_TO_SAVED(party)
       } else if (mask = KEY_L | KEY_START, (gInput.held & mask) == mask) {
         if (Clear_IsRetreatBlocked()) {
-          failure = (s32)MsgDataCouldNotBeRecovered;
-          goto refuse;
+          FieldMessage_Show((s32)MsgDataCouldNotBeRecovered,
+                            FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+          goto top;
         }
         RETURN_TO_SAVED(party)
         Event_SetFlag(FLAG_SAVE_RESTARTED_AT_SANCTUM);
@@ -469,9 +484,8 @@ top:
         }
         Message_CloseFinishedWindows();
         if (Clear_IsRetreatBlocked()) {
-          failure = recovery + 2;
-        refuse:
-          FieldMessage_Show(failure, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+          FieldMessage_Show(recovery + 2,
+                            FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
           goto top;
         }
         RETURN_TO_SAVED(party)
@@ -516,44 +530,54 @@ link:
     goto top;
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
-again:
-  result = IconMenu_ChooseSendOption(2);
-  if (result == -1)
-    goto link;
-  if (result == 1) {
-    SAVE_CELLS();
-    status = Clear_ReceiveByLink();
-    if (status != -1)
-      StatusScreen_Run();
-    RESTORE_CELLS()
-    if (status == -1)
-      goto again;
-    DataTransfer_Apply(MAP_CELL_BACKUP, 0, 1);
-  } else if (result == 0) {
-    SAVE_CELLS();
-    MainRoutineWork_InitializeDefaults();
-    status = Clear_EnterPassword();
-    RESTORE_CELLS()
-    if (status == -1)
-      goto again;
-    DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
+  for (;;) {
+    result = IconMenu_ChooseSendOption(2);
+    if (result == -1) {
+      goto link;
+    }
+    if (result == 1) {
+      SAVE_CELLS();
+      status = Clear_ReceiveByLink();
+      if (status != -1) {
+        StatusScreen_Run();
+      }
+      RESTORE_CELLS()
+      if (status == -1) {
+        continue;
+      }
+      DataTransfer_Apply(MAP_CELL_BACKUP, 0, 1);
+    } else if (result == 0) {
+      SAVE_CELLS();
+      MainRoutineWork_InitializeDefaults();
+      status = Clear_EnterPassword();
+      RESTORE_CELLS()
+      if (status == -1) {
+        continue;
+      }
+      DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
+    }
+    break;
   }
   if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
     i = 0;
     limit = 1;
-  shut:
-    wait(6);
-    result = NameEntry_EditMemberName(i);
-    if (result == -1) {
-      if (i == 0)
-        goto link;
-      i--;
-      goto shut;
+    for (;;) {
+      wait(6);
+      result = NameEntry_EditMemberName(i);
+      if (result == -1) {
+        if (i == 0) {
+          goto link;
+        }
+        i--;
+        continue;
+      }
+      if (gClear_ExtraCodeUnlocked != 0) {
+        limit = 4;
+      }
+      if (++i >= limit) {
+        break;
+      }
     }
-    if (gClear_ExtraCodeUnlocked != 0)
-      limit = 4;
-    if (++i < limit)
-      goto shut;
   }
 #if TLA_PATCH_1
   Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
@@ -786,10 +810,9 @@ done:
   if (!ok) {
     WindowSprite_PrepareForRedraw(window);
     Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
-  interrupted:
-    System_Wait(1);
-    if (!(gInput.pressed & KEY_A))
-      goto interrupted;
+    do {
+      System_Wait(1);
+    } while (!(gInput.pressed & KEY_A));
   close:
     Window_Close(window, 2);
     return -1;
@@ -1082,17 +1105,14 @@ s32 Clear_EnterPassword(void) {
       if (gInput.repeat & KEY_UP) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 3) % 4;
-        if (column != SIDE_COLUMN)
-          goto not_side;
-        if (row == 2)
+        if (column == SIDE_COLUMN && row == 2)
           row = 1;
       }
     }
-    drawMode = SIDE_HIGHLIGHT_WIDTH;
-    if (column != SIDE_COLUMN) {
-    not_side:
+    if (column == SIDE_COLUMN)
+      drawMode = SIDE_HIGHLIGHT_WIDTH;
+    else
       drawMode = 1;
-    }
     drawColumn = column;
     drawRow = row;
     if (column > 4)
@@ -1203,10 +1223,9 @@ s32 Clear_EnterPassword(void) {
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
-          wait_accepted:
-            System_Wait(1);
-            if (!(gInput.pressed & KEY_A))
-              goto wait_accepted;
+            do {
+              System_Wait(1);
+            } while (!(gInput.pressed & KEY_A));
             Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
@@ -1236,10 +1255,9 @@ s32 Clear_EnterPassword(void) {
           }
           Sound_Play(SE_MENU_CANCEL);
           Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
-        wait_rejected:
-          System_Wait(1);
-          if (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B))
-            goto wait_rejected;
+          do {
+            System_Wait(1);
+          } while (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B));
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)

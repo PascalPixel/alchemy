@@ -45,7 +45,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   // The party figures go below the screen (y 200), except the two party members
   // concerned: the first over the left window, the second over the right.
-  for (memberIndex = 3; memberIndex >= 0; memberIndex--) {
+  for (memberIndex = 0; memberIndex < 4; memberIndex++) {
     menu->memberY[memberIndex] = 200;
   }
   menu->memberX[menu->selectedColumn[1]] = 120;
@@ -565,7 +565,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   frame = 0;
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = selectedPages[0] = result;
-  for (side = 3; side >= 0; side--)
+  for (side = 0; side < 4; side++)
     menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);

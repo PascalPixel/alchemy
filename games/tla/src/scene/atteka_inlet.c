@@ -558,33 +558,21 @@ void AttekaInlet_ShareLeadersPriorityWithRock(void) {
 /// Rotates palette colours 5-9 and 13-15 by one entry every eight frames.
 void AttekaInlet_RotateWaterColors(void) {
   if ((*Ram_FrameCount & 7) == 0) {
-    volatile u16 *palette;
     s16 saved;
     s32 index;
 
     saved = BG_PLTT_COLOR(11, 9);
-    index = 9;
-  first:
-    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 4)
-      goto first;
+    for (index = 9; index != 4; index--)
+      BG_PLTT_COLOR(11, index) = BG_PLTT_COLOR(11, index - 1);
     BG_PLTT_COLOR(11, 4) = saved;
   }
   if ((*Ram_FrameCount & 7) == 0) {
-    volatile u16 *palette;
     s16 saved;
     s32 index;
 
     saved = BG_PLTT_COLOR(11, 15);
-    index = 15;
-  second:
-    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 12)
-      goto second;
+    for (index = 15; index != 12; index--)
+      BG_PLTT_COLOR(11, index) = BG_PLTT_COLOR(11, index - 1);
     BG_PLTT_COLOR(11, 12) = saved;
   }
 }
@@ -692,11 +680,7 @@ void AttekaInlet_SetUpTheShore(void) {
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00))
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, priority);
-  }
+  Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_VBLANK);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -47,7 +47,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   tradeCount = 0;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
-  for (i = 255; i >= 0; i--)
+  for (i = 0; i < 256; i++)
     selectionUi->palette.slot[i] = 255;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)

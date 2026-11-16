@@ -24,9 +24,9 @@ void Field_StartColorTransition(s32 frames, s32 color);
 
 /// Blaze: a jet of flame sprays from the caster, with smoke, for up to 80
 /// frames or until B is pressed: red, or violet, yellow or blue to match the
-/// torch (sprite 418) it is cast at. Each actor it reaches runs its Blaze
-/// event, and one that is lit by it ends the jet, its actor id kept in the
-/// field work. Cast at nothing, the nearest torch in reach is the target.
+/// torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs its
+/// Blaze event, and one that is lit by it ends the jet, its actor id kept in
+/// the field work. Cast at nothing, the nearest torch in reach is the target.
 void FieldPsynergy_Blaze(void) {
   struct BlazeWork *work;
   struct FieldWork *event;
@@ -61,7 +61,7 @@ void FieldPsynergy_Blaze(void) {
   caster = scene->mainActor;
   look = 0;
   object = scene->child;
-  if (Actor_GetSpriteIdFar(object) == 418) {
+  if (Actor_GetSpriteIdFar(object) == SPRITE_MARS_TORCH_LIT) {
     kind = ACTOR_FIRST_LAYER(object)->colorMode;
     if (kind == 4)
       look = 1;
@@ -71,7 +71,7 @@ void FieldPsynergy_Blaze(void) {
       look = 3;
   }
   Field_StartColorTransition(8, gBlaze_TintColors[look]);
-  work->mode = 0;
+  work->mode = BLAZE_FLICKER;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + toFIXED(16);
@@ -88,7 +88,7 @@ void FieldPsynergy_Blaze(void) {
           height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
                                ACTOR_FIRST_LAYER(cursor.object)->animationId)
                                ->boxX);
-          work->mode = 1;
+          work->mode = BLAZE_LIGHT_TORCH;
           work->origin[0] = cursor.object->x.fixed;
           work->origin[1] = cursor.object->y.fixed + height;
           work->origin[2] = cursor.object->z.fixed;
@@ -100,9 +100,9 @@ void FieldPsynergy_Blaze(void) {
     }
   } else {
     if (event->blazeLongSpray == 0)
-      work->mode = 2;
+      work->mode = BLAZE_SPRAY;
     else
-      work->mode = 3;
+      work->mode = BLAZE_LONG_SPRAY;
     if (scene->child != NULL)
       height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
                            ACTOR_FIRST_LAYER(scene->child)->animationId)
@@ -115,7 +115,7 @@ void FieldPsynergy_Blaze(void) {
   }
 
   mode = work->mode;
-  if (mode == 1) {
+  if (mode == BLAZE_LIGHT_TORCH) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
@@ -132,7 +132,7 @@ void FieldPsynergy_Blaze(void) {
     wait(10);
     goto end;
   }
-  if (mode == 0) {
+  if (mode == BLAZE_FLICKER) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
@@ -171,10 +171,10 @@ void FieldPsynergy_Blaze(void) {
   }
   Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
   dropSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(dropSlot, 0x1000, work);
+  tile = VramCache_Load(dropSlot, 4096, work);
   work->dropTile = tile;
   cursor.particle = work->dropMotion;
-  for (j = 0; j < 16; j++) {
+  for (j = 0; j < BLAZE_DROPS; j++) {
     sprite = &work->drops[j];
 
     EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
@@ -187,10 +187,10 @@ void FieldPsynergy_Blaze(void) {
   }
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   puffSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(puffSlot, 0x800, work);
+  tile = VramCache_Load(puffSlot, 2048, work);
   work->puffTile = tile;
   cursor.particle = work->puffMotion;
-  for (j = 0; j < 16; j++) {
+  for (j = 0; j < BLAZE_DROPS; j++) {
     sprite = &work->puffs[j];
 
     EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
@@ -227,9 +227,10 @@ void FieldPsynergy_Blaze(void) {
   work->emitting = 0;
   for (k = 0; k < 60; k++) {
     cursor.particle = work->dropMotion;
-    for (j = 0; j < 16 && cursor.particle->timer == -1; j++, cursor.particle++)
+    for (j = 0; j < BLAZE_DROPS && cursor.particle->timer == -1;
+         j++, cursor.particle++)
       ;
-    if (j == 16)
+    if (j == BLAZE_DROPS)
       break;
     wait(1);
   }
@@ -249,6 +250,7 @@ end:
 /// The event work's mode in which the cell test is skipped.
 #define EVENT_MODE_NO_CELL_TEST 3
 
+/// Nonzero when the map blocks an actor at (x, z) on a layer at a height.
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 
 /// Says whether object is blocked: 1 when, outside event mode 3,
@@ -268,7 +270,7 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   }
   other = Ram_HeapSlots->actors;
   for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
-    if (other->script != NULL && (other->collisionFlags & 1) &&
+    if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
         other != object) {
       if (Field_CheckSpheresOverlapFar(&object->x.fixed, object->radius - 2,
                                        &other->x.fixed, other->radius - 2) >= 0)

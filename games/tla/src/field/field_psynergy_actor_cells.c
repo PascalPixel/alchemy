@@ -12,7 +12,7 @@
 /// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
 /// as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
-  struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
@@ -63,19 +63,19 @@ struct Actor *Leader_FindActorAhead(void);
 /// listed actors. Its cell goes back to the ground and its old mark, and the
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target;
 
-  if (effect != NULL && *(s16 *)(event + 358) != 0)
+  if (effect != NULL && event->psynergy != 0)
     target = effect->child;
   else
     target = Leader_FindActorAhead();
-  *(struct Actor **)(event + 0xcbc) = NULL;
+  event->movedBlock = NULL;
 
   for (; *actors != 0xffff; actors++) {
     if (target == Actor_GetById(*actors)) {
-      struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
+      struct MapWork *map = Ram_HeapSlots->mapGrid;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
       struct MapCell *cells = map->layers[target->layer].cells;
@@ -95,7 +95,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       ((struct ShapeCell *)shapes)->shape = tag;
       cells->attributeB = target->riseBaseY;
       blocks->collisionCode = zero;
-      *(struct Actor **)(event + 0xcbc) = target;
+      event->movedBlock = target;
     }
   }
 }
@@ -106,10 +106,10 @@ void Actor_PlaceMovedBlock(void) {
   struct Actor *target = gFieldWork->movedBlock;
 
   if (target != NULL) {
-    struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
+    struct MapWork *map = Ram_HeapSlots->mapGrid;
     /* FAKEMATCH(temporary): the cell table read split into its byte offset and
      * the read. */
-    s32 offset = offsetof(struct RestoreMap, layers[target->layer].cells);
+    s32 offset = offsetof(struct MapWork, layers[target->layer].cells);
     u8 *grid = gMapShapeGrid;
     struct MapCell *cells = *(struct MapCell **)((u8 *)map + offset);
     struct MapCell *blocks = map->layers[2].cells;
@@ -211,7 +211,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   Iwram_FillWordsEntry(sprite, sizeof(*sprite), 0);
   sprite->scaleX = FIXED_ONE;
   sprite->scaleY = FIXED_ONE;
-  sprite->depth = 255;
+  sprite->depth = OAM_DEPTH_FRONT;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
   shape = ((attributes >> 30) | (attributes >> 12)) & 15;
@@ -225,9 +225,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->oam.index = tile;
 }
 
-#include <system/affine.h>
-
-#define FIXED_ONE 0x10000
+#include "system/affine.h"
 
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a
@@ -319,15 +317,8 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
   Oam_AddSpriteAtDepthClamped(sprite, sprite->depth);
 }
 
-struct ScreenSprite {
-  u8 unused[0xc]; ///< no code names it
-  s32 x;
-  s32 y;
-  u8 unk14[0x14];
-};
-
 /// Places sprite at the screen position of world position and draws it.
-void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       s32 *position) {
   s32 screen[3];
 

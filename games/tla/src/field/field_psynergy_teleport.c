@@ -17,17 +17,17 @@
 /// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
 /// then the 100 sparks and their sprites.
 struct TeleportWhirlWork {
-  u8 picture[0x400];
+  u8 picture[1024];
   struct WhirlSpark sparks[WHIRL_COUNT];
   struct EffectSprite sprites[WHIRL_COUNT];
 };
 
-/// A whirl of coloured orbs (ResourceId_ColouredOrbs) round the leader, with
-/// sound 200. The scenes with Teleport circles call it (Mars Lighthouse, the
-/// Anemos Inner Sanctum, the Yampi Desert and Islet caves, Contigo).
-// XXX: whether the whirl is the leaving or the arriving half of a teleport;
-// a render of a Teleport circle would settle it.
-/// Teleport's whirl: 100 sparks circle round the leader as they fall in.
+/// The arriving half of a teleport: a whirl of coloured orbs
+/// (RESOURCE_COLOURED_ORBS) falls in round the hidden leader with
+/// SE_SPARKLE_FALL, the leader spins and grows back to full size inside it, and
+/// the whirl dies away. The scenes with Teleport circles call it (Mars
+/// Lighthouse, the Anemos Inner Sanctum, the Yampi Desert and Islet caves,
+/// Contigo).
 void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct TeleportWhirlWork *work =
@@ -47,14 +47,14 @@ void Teleport_PlayWhirl(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 0x400, work);
+  tiles = VramCache_Load(entry, 1024, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     spark->age = -1;
   }
   Sound_PlayFar(SE_SPARKLE_FALL);
@@ -121,7 +121,7 @@ void Teleport_PlayWhirl(void) {
       break;
     case 1:
       object->facing += DEGtoANG(45);
-      object->scaleX = (frame << 16) / 30;
+      object->scaleX = FIXED_ONE * frame / 30;
       if (object->scaleX > FIXED_ONE)
         object->scaleX = FIXED_ONE;
       object->scaleY = object->scaleX;
@@ -157,13 +157,14 @@ void Teleport_PlayWhirl(void) {
 /// Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
 /// then the sparks and their sprites.
 struct SparkWork {
-  u8 picture[0x400];
+  u8 picture[1024];
   struct FieldPsynergyParticle particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
 
-/// Sparks burst from the leader, Teleport_PlayWhirl's companion in the same
-/// scenes.
+/// The leaving half of a teleport, Teleport_PlayWhirl's companion in the same
+/// scenes: the leader raises both arms in changing colours, spins faster and
+/// faster as sparks burst from it, shrinks away and is hidden.
 void Teleport_PlaySparks(void) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
@@ -187,20 +188,20 @@ void Teleport_PlaySparks(void) {
   FieldPsynergy_FadeToCastColor();
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 0x400, work);
+  tiles = VramCache_Load(entry, 1024, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
   }
   wait(10);
   Actor_FaceDirectionById(owner, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(object, 28);
+  Actor_SelectAnimationFar(object, ANIM_LEADER_ARMS_RAISED);
   object->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
@@ -248,10 +249,10 @@ void Teleport_PlaySparks(void) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
-            BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
+            BattleEffect_IntegrateVector3(&particle->x, 63, toFIXED(1) / 2);
             age = particle->timer;
           } else {
-            BattleEffect_IntegrateVector3(&particle->x, 63, -0xa000);
+            BattleEffect_IntegrateVector3(&particle->x, 63, -(toFIXED(5) / 8));
             age = particle->timer;
           }
         }
@@ -278,7 +279,7 @@ void Teleport_PlaySparks(void) {
       break;
     case 1:
       object->facing += DEGtoANG(45);
-      object->scaleX = FIXED_ONE - (frame << 16) / 30;
+      object->scaleX = FIXED_ONE - FIXED_ONE * frame / 30;
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;
@@ -318,3 +319,5 @@ void FieldPsynergy_Teleport(void) {
   Actor_Lookup(Party_GetLeaderActor());
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
+#undef WHIRL_COUNT
+#undef SPARK_COUNT

@@ -10,6 +10,11 @@
 #include "field/field_event.h"
 #include "field/field_sequence.h"
 
+/// The levels in gHoverGlow_Levels's cycle, and the steps of the glow's
+/// colours.
+#define HOVER_GLOW_WAVE_LENGTH 96
+#define HOVER_GLOW_STEPS 24
+
 /// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
 /// read a third of a turn apart for red, green and blue.
 extern const u8 gHoverGlow_Levels[];
@@ -28,14 +33,17 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   s32 step;
   const u8 *wave;
 
-  step = (counter + 12) % 24;
+  step = (counter + HOVER_GLOW_STEPS / 2) % HOVER_GLOW_STEPS;
   wave = gHoverGlow_Levels;
-  phase = step * 4;
-  redLevel = wave[(s16)(phase % 96)];
+  phase = step * (HOVER_GLOW_WAVE_LENGTH / HOVER_GLOW_STEPS);
+  redLevel = wave[(s16)(phase % HOVER_GLOW_WAVE_LENGTH)];
   bias = level - 7;
   red = redLevel + bias;
-  green = wave[(phase + 32) % 96] + bias;
-  blue = wave[(phase + 64) % 96] + bias;
+  green = wave[(phase + HOVER_GLOW_WAVE_LENGTH / 3) % HOVER_GLOW_WAVE_LENGTH] +
+          bias;
+  blue =
+      wave[(phase + HOVER_GLOW_WAVE_LENGTH * 2 / 3) % HOVER_GLOW_WAVE_LENGTH] +
+      bias;
   if (red < 0)
     red = 0;
   if (red > RGB_LEVEL_MAX)
@@ -51,13 +59,13 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-/// The glow's colours: sprite palette 14.
-#define HOVER_GLOW_PALETTE ((u16 *)&OBJ_PLTT_COLOR(14, 0))
+/// The glow's colours: sprite palette CANVAS_PALETTE.
+#define HOVER_GLOW_PALETTE ((u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.
 #define GLOW_FULL 112
-#define GLOW_SPENT_CUE 0x2099
+#define GLOW_SPENT_CUE (ABILITY_HOVER | ACT_PACKED)
 
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
@@ -67,6 +75,8 @@ struct HoverWork {
   s32 scale;
   s16 resource;
   u16 tile;
+  // XXX: only cleared as Hover starts and read nowhere in this file; a reader
+  // of offset 0x1030 elsewhere would say what it is.
   u16 unk1030;
   u16 phase;
   s16 fading;
@@ -77,7 +87,7 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 /// Hover's frame callback: keeps the glow's strength full while the player
 /// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
 /// is fading, the glow shrinks with it and the event takes its cue when it is
-/// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
+/// spent). It cycles HOVER_GLOW_PALETTE through HoverGlow_GetColor's colours,
 /// flickers between two pictures every other frame, and draws the glow under
 /// the player, flattened to three quarters of its height.
 void HoverGlow_Update(void) {
@@ -115,9 +125,10 @@ void HoverGlow_Update(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = HOVER_GLOW_PALETTE;
   for (i = 0; i < 16; i++) {
-    Io_Write16(HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
-                                  i == 15 ? 14 : i),
-               palette++);
+    Io_Write16(
+        HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % HOVER_GLOW_STEPS,
+                           i == 15 ? 14 : i),
+        palette++);
   }
   work->phase++;
 
@@ -147,7 +158,6 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
 #undef HOVER_GLOW_PALETTE
-#undef GLOW_FULL
 #undef GLOW_SPENT_CUE
 
 /// Hover: a glowing ring grows under the leader, who rises and floats (movement
@@ -199,10 +209,10 @@ void FieldPsynergy_Hover(void) {
       0) {
     blocked = 1;
   } else {
-    for (n = 0; n < 80; n++) {
+    for (n = 0; n < FIELD_ACTOR_COUNT; n++) {
       other = event->actors[n];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainActor) {
+          (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor) {
         position[0] = other->x.fixed;
         position[1] = other->groundHeight;
         position[2] = other->z.fixed;
@@ -220,7 +230,7 @@ void FieldPsynergy_Hover(void) {
     wait(5);
     Sound_PlayFar(SE_GLITTER);
     for (i = 0; i < 32; i++) {
-      work->scale = i << 11;
+      work->scale = FIXED_ONE * i / 32;
       wait(1);
     }
     wait(10);
@@ -228,7 +238,7 @@ void FieldPsynergy_Hover(void) {
       Field_RunPsynergyEvent(pending, scene->firstActorId,
                              scene->secondActorId);
     for (i = 31; i != 0; i--) {
-      work->scale = i << 11;
+      work->scale = FIXED_ONE * i / 32;
       wait(1);
     }
     wait(5);
@@ -245,18 +255,20 @@ void FieldPsynergy_Hover(void) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
       player->y.fixed += toFIXED(1);
-      work->scale = i << 11;
+      work->scale = FIXED_ONE * i / 32;
       wait(1);
     }
-    player->motionFlags = 4;
-    player->y.fixed = player->groundHeight + 0x248000;
+    player->motionFlags = ACTOR_FLOATS;
+    player->y.fixed = player->groundHeight + toFIXED(73) / 2;
     player->gravity = toFIXED(3);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_HOVER;
     work->fading = 1;
     event->glowHeld = 1;
-    event->glow = 112;
+    event->glow = GLOW_FULL;
   }
 }
+
+#undef GLOW_FULL
 
 /// Ends Hover: the leader drops back to the ground with a splash and the ring
 /// is freed.
@@ -268,7 +280,7 @@ void FieldPsynergy_EndHover(void) {
   Task_Remove(HoverGlow_Update);
   Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
                                      object->z.fixed);
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   for (i = 0; i < 60; i++) {
     if (object->y.fixed <= object->groundHeight)

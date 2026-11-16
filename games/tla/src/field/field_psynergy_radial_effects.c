@@ -30,21 +30,17 @@
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
-struct OrbitEffect {
-  u8 unused[6]; ///< no code names it
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[20];
-  s32 scale;
-  u8 unusedAfterScale[28]; ///< no code names it
-  s32 speed;
-  u8 unusedAfterSpeed[24]; ///< no code names it
-  u16 timer;
-  s16 pause;
-  struct OrbitEffect *anchor;
-  void (*update)(struct OrbitEffect *);
+/// Whirlwind: its leaves, their circling and wandering, the target's shrinking
+/// and the orb's flight, in frames.
+enum {
+  WHIRLWIND_LEAF_COUNT = 16,
+  WHIRLWIND_ORBIT_RADIUS = toFIXED(8),
+  WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
+  WHIRLWIND_ORBIT_FRAMES = 121,
+  WHIRLWIND_WANDER_FRAMES = 101,
+  WHIRLWIND_TARGET_SCALE_STEP = FIXED_ONE / 512,
+  WHIRLWIND_TARGET_MIN_SCALE = FIXED_ONE / 2,
+  WHIRLWIND_TRAVEL_FRAMES = 10
 };
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x velocity
@@ -59,11 +55,11 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
 
   options.palette = 0;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xCCCC;
-  options.startScaleY = 0xCCCC;
+  options.startScaleX = FIXED_ONE * 4 / 5;
+  options.startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
   do {
-    angle = i << 12;
+    angle = i * (TRIG_TURN / 16);
     velocity[0] = Trig_Cos(angle) * 3 / 2;
     velocity[1] = 0;
     sine = Trig_Sin(angle);
@@ -77,56 +73,56 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
 /// and then turning sharply; after 101 frames it hands over to the shared
 /// particle script.
-void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
+void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   FIXED radius;
   s32 angle;
   FIXED dx;
   FIXED dz;
 
   radius = Random16() + toFIXED(2);
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
-  effect->x += dx;
-  effect->z += dz;
-  effect->angle += 0xfff0;
-  if (effect->pause != 0) {
-    effect->pause--;
-    effect->angle += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) {
-    effect->pause = ((Random16() << 4) >> 16) + 8;
+  effect->x.fixed += dx;
+  effect->z.fixed += dz;
+  // The u16 angle wraps: 0xfff0 gives a small backwards drift.
+  effect->facing += 0xfff0;
+  if (effect->turnFrames != 0) {
+    effect->turnFrames--;
+    effect->facing += TRIG_TURN / 32;
+  } else if ((Random16() << 5) >> 16 == 0) {            // one chance in 32
+    effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
-  if (++effect->timer == 101)
-    Actor_StartScriptFar((struct Actor *)effect,
-                         (u32)gBattleEffect_SharedParticleScript);
+  if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
+    Actor_StartScriptFar(effect, gBattleEffect_SharedParticleScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
-/// a sixteenth of a turn a frame; after 121 frames it starts to wander
+/// a 32nd of a turn a frame; after 121 frames it starts to wander
 /// (FieldEffect_WanderAroundAnchor) with upward speed and gravity. As The
 /// Broken Seal's FieldEffect_CircleAnchor.
-void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
-  struct OrbitEffect *anchor;
+void FieldEffect_CircleAnchor(struct Actor *effect) {
+  struct Actor *anchor;
   s32 angle;
   FIXED radius;
   FIXED dx;
   FIXED dz;
 
-  anchor = effect->anchor;
-  radius = toFIXED(8);
-  angle = effect->angle;
+  anchor = effect->watchedActor;
+  radius = WHIRLWIND_ORBIT_RADIUS;
+  angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
-  effect->x = anchor->x + dx;
-  effect->z = anchor->z + dz;
-  effect->angle += TRIG_TURN / 32;
-  if (++effect->timer == 121) {
-    effect->update = FieldEffect_WanderAroundAnchor;
-    effect->timer = 0;
-    effect->pause = 0;
-    effect->speed = 0x1999;
-    effect->scale = FIXED_ONE * 3;
-    effect->angle = Random16();
+  effect->x.fixed = anchor->x.fixed + dx;
+  effect->z.fixed = anchor->z.fixed + dz;
+  effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
+  if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
+    effect->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
+    effect->swirlFrames = 0;
+    effect->turnFrames = 0;
+    effect->gravity = toFIXED(1) / 10;
+    effect->velocityY = toFIXED(3);
+    effect->facing = Random16();
   }
 }
 
@@ -138,10 +134,10 @@ void FieldEffect_CircleAnchor(struct OrbitEffect *effect) {
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
   s32 scale;
 
-  scale = object->scaleX - 0x80;
+  scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
   object->scaleY = scale;
   object->scaleX = scale;
-  if (scale < FIXED_ONE / 2) {
+  if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
     Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
     object->update = 0;
   }
@@ -152,17 +148,8 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
 
-// An orbiting mote: field_psynergy.c's OrbitEffect.
-
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 void BattleEffect_AgeAndCueAtEighty(struct Actor *object);
-
-#define ORB_OBJECT 280
-#define MOTE_OBJECT 308
-
-// The two targets Whirlwind treats apart, by their first animation.
-#define TARGET_ANIMATION_A 372
-#define TARGET_ANIMATION_B 373
 
 /// Whirlwind: carries an orb from the caster to the Psynergy's position over
 /// ten frames, growing it from a quarter size, then plays out what it does
@@ -176,11 +163,11 @@ void FieldPsynergy_Whirlwind(void) {
   struct Vector3 from;
   struct Vector3 to;
   struct Actor *orb;
-  struct OrbitEffect *mote;
+  struct Actor *leaf;
   s32 kind = ORB_PLAIN;
   s32 step;
   s32 i;
-  s32 frames = 11;
+  s32 frames = WHIRLWIND_TRAVEL_FRAMES + 1;
 
   if (scene->childOption != 0)
     return;
@@ -189,15 +176,15 @@ void FieldPsynergy_Whirlwind(void) {
 
     kind = ORB_ORBITING;
     animation = sprite->entries[0]->animationId;
-    if (animation == TARGET_ANIMATION_A)
+    if (animation == SPRITE_SPROUTING_LEAVES)
       kind = ORB_WANDER;
-    if (animation == TARGET_ANIMATION_B)
+    if (animation == SPRITE_SEEDLING)
       kind = ORB_HANDOFF;
   }
 
   SET_POSITION(&from, caster->x.fixed, caster->y.fixed, caster->z.fixed);
   SET_POSITION(&to, scene->x, scene->y - toFIXED(4), scene->z);
-  orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
+  orb = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
   if (orb == 0)
     return;
 
@@ -207,17 +194,19 @@ void FieldPsynergy_Whirlwind(void) {
   do {
     FIXED scale;
 
-    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
-                       from.y + (to.y - from.y) * step / 10,
-                       from.z + (to.z - from.z) * step / 10);
-    scale = step * 0x10ccc / 10 + FIXED_ONE / 4; // from 0.25 to 1.3
+    SET_ACTOR_POSITION(
+        orb, from.x + (to.x - from.x) * step / WHIRLWIND_TRAVEL_FRAMES,
+        from.y + (to.y - from.y) * step / WHIRLWIND_TRAVEL_FRAMES,
+        from.z + (to.z - from.z) * step / WHIRLWIND_TRAVEL_FRAMES);
+    scale = step * (FIXED_ONE * 21 / 20) / WHIRLWIND_TRAVEL_FRAMES +
+            FIXED_ONE / 4; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
     step++;
   } while (step < frames);
-  orb->scaleX = 0x1b333; // 1.7 wide
-  orb->scaleY = 0x14ccc; // 1.3 high
+  orb->scaleX = FIXED_ONE * 17 / 10;
+  orb->scaleY = FIXED_ONE * 13 / 10;
   Sound_PlayFar(SE_RUSH);
 
   if (kind == ORB_PLAIN) {
@@ -227,26 +216,26 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
-    // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
+    // Sixteen leaves, one every six frames, 4 pixels above the orb and 0.8
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
       target->update = (void (*)(void))FieldEffect_ShrinkActorScaleUntilHalf;
-    for (i = 0; i <= 15; i++) {
+    for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
       s32 distance;
 
       SET_POSITION(&position, orb->x.fixed,
-                   orb->y.fixed + i * 0xcccc + toFIXED(4), orb->z.fixed);
+                   orb->y.fixed + i * (toFIXED(4) / 5) + toFIXED(4),
+                   orb->z.fixed);
       distance = Random16() * 5 + toFIXED(3);
       Vector_AddPolarOffset(distance, Random16(), &position);
-      mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                               position.y, position.z);
-      if (mote != 0) {
-        mote->update = FieldEffect_CircleAnchor;
-        mote->anchor = orb;
-        mote->timer = 0;
-        mote->pause = 0;
-        mote->angle = Random16();
+      leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
+      if (leaf != 0) {
+        leaf->update = (void (*)(void))FieldEffect_CircleAnchor;
+        leaf->watchedActor = orb;
+        leaf->swirlFrames = 0;
+        leaf->turnFrames = 0;
+        leaf->facing = Random16();
       }
       wait(6);
     }
@@ -261,30 +250,31 @@ void FieldPsynergy_Whirlwind(void) {
     wait(5);
     Actor_SelectAnimationFar(orb, 1);
     if (kind == ORB_WANDER) {
-      // Sixteen motes that wander about the orb, the first pausing longest.
-      for (i = 0; i <= 15; i++) {
+      // Sixteen leaves that wander off the orb, the first handed to the shared
+      // particle script soonest.
+      for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
         s32 distance;
 
         SET_POSITION(&position, orb->x.fixed,
-                     orb->y.fixed + i * 0xcccc + toFIXED(4), orb->z.fixed);
+                     orb->y.fixed + i * (toFIXED(4) / 5) + toFIXED(4),
+                     orb->z.fixed);
         distance = Random16() * 5;
         distance += toFIXED(3);
         Vector_AddPolarOffset(distance, Random16(), &position);
-        mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                                 position.y, position.z);
-        if (mote != 0) {
-          mote->update = FieldEffect_WanderAroundAnchor;
-          mote->timer = 20 + i * -2;
-          mote->pause = 0;
-          mote->speed = 0x1999;
-          mote->scale = FIXED_ONE * 3;
-          mote->angle = Random16();
+        leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
+        if (leaf != 0) {
+          leaf->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
+          leaf->swirlFrames = 20 + i * -2;
+          leaf->turnFrames = 0;
+          leaf->gravity = toFIXED(1) / 10;
+          leaf->velocityY = toFIXED(3);
+          leaf->facing = Random16();
         }
       }
     }
     BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
     FieldPsynergy_FadeFromCastColor();
-    ((struct OrbitEffect *)orb)->timer = 0;
+    orb->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty;
     HangingVine_Swing(scene->secondActorId);
     Actor_WaitForTrackEndFar(orb);
@@ -292,10 +282,6 @@ void FieldPsynergy_Whirlwind(void) {
   }
   FieldPsynergy_FadeFromCastColor();
 }
-#undef ORB_OBJECT
-#undef MOTE_OBJECT
-#undef TARGET_ANIMATION_A
-#undef TARGET_ANIMATION_B
 
 /// Per-frame update: counts the actor's frames and, at frame 80, plays
 /// SE_WHOOSH and stops itself.
@@ -493,7 +479,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
       Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineWork.pausedPose);
     }
     actor->paused = 0;
-    Actor_SetAnimationSpeedFar(actor, 16);
+    Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
   }
 }
 
@@ -515,9 +501,9 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
   return from + (to - from) * step / 10;
 }
 
-/// Catch: carries the hand (sprite 278) from 16 pixels above the caster to the
-/// goal in 10 steps, growing from a quarter to full size, presses down 20
-/// pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back.
+/// Catch: carries the hand (SPRITE_MOVE_HAND) from 16 pixels above the caster
+/// to the goal in 10 steps, growing from a quarter to full size, presses down
+/// 20 pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor = scene->mainActor;
@@ -546,7 +532,7 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = mainActor->facing;
-  object->speedLimit = 0x14ccc;
+  object->speedLimit = toFIXED(13) / 10;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
@@ -625,14 +611,15 @@ void FieldPsynergy_UpdateLash(void) {
     particle->velocityX = 0;
     particle->velocityY = toFIXED(2) - Random16() * 2;
     particle->velocityZ = 0;
-    speed = Random16() + 0x18000;
+    speed = Random16() + toFIXED(3) / 2;
     Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
     particle->timer = 0;
     work->next++;
-    work->next &= 63;
+    work->next &= SCATTER_PARTICLE_COUNT - 1;
   }
 
-  for (i = 0, particle = work->particles; i <= 63; i++, particle++) {
+  for (i = 0, particle = work->particles; i < SCATTER_PARTICLE_COUNT;
+       i++, particle++) {
     s32 timer = particle->timer;
 
     if (timer >= 0) {
@@ -642,7 +629,7 @@ void FieldPsynergy_UpdateLash(void) {
       else
         sprite->oam.index = work->tileB + (timer & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
-      BattleEffect_IntegrateVector3(particle, 63, -0x1400);
+      BattleEffect_IntegrateVector3(particle, 63, -(toFIXED(5) / 64));
       if (++particle->timer == 32)
         particle->timer = -1;
     }
@@ -730,7 +717,8 @@ void FieldPsynergy_LashOnTarget(s32 value) {
 /// bursts into sparkles; cast on a rope's end it whips out and ties the rope
 /// (Rope_Lash) at the event's target.
 void FieldPsynergy_Lash(void) {
-  struct ScatterWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2114);
+  struct ScatterWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
@@ -757,16 +745,16 @@ void FieldPsynergy_Lash(void) {
     Sound_PlayFar(SE_ITEM_BREAK);
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
     slotA = VramCache_FindFreeEntry();
-    tileA = VramCache_Load(slotA, 0x100, work);
+    tileA = VramCache_Load(slotA, 256, work);
     work->tileA = tileA;
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
                         work);
     slotB = VramCache_FindFreeEntry();
-    work->tileB = VramCache_Load(slotB, 0x100, work);
+    work->tileB = VramCache_Load(slotB, 256, work);
 
     particle = work->particles;
     sprite = work->sprites;
-    for (i = 63; i >= 0; i--) {
+    for (i = SCATTER_PARTICLE_COUNT - 1; i >= 0; i--) {
       EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = 250;
       sprite->oam.priority = 0;
@@ -834,12 +822,12 @@ void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
-/// frame; released once its scale falls below 0x3000.
+/// frame; its sprite is hidden once its scale falls below 3/16.
 void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
   u32 scale;
 
-  actor->scaleY -= 640;
-  scale = actor->scaleX - 640;
+  actor->scaleY -= FIXED_ONE * 5 / 512;
+  scale = actor->scaleX - FIXED_ONE * 5 / 512;
   actor->facing += DEGtoANG(45);
   actor->y.fixed += toFIXED(1);
   actor->scaleX = scale;
@@ -1193,10 +1181,10 @@ void BattleEffect_WaitForArcGroups(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 i = 0;
 
-  while (work->age[0] <= 31 || work->age[1] <= 31) {
+  while (work->age[0] < ARC_GROUP_FRAMES || work->age[1] < ARC_GROUP_FRAMES) {
     wait(1);
     i++;
-    if (i > 89)
+    if (i >= 90)
       return;
   }
 }
@@ -1273,11 +1261,11 @@ void BattleEffect_UpdateArcEffect(void) {
   s32 i;
 
   for (group = 0; group < 2; group++) {
-    FIXED scale = Trig_Sin(work->age[group] << 10);
+    FIXED scale = Trig_Sin(work->age[group] * (TRIG_TURN / 64));
 
     if (work->age[group] < 0)
       continue;
-    if (work->age[group] < 32) {
+    if (work->age[group] < ARC_GROUP_FRAMES) {
       struct EffectSprite *sprite;
       FIXED x, y;
 
@@ -1314,10 +1302,10 @@ void BattleEffect_StartArcEffect(void) {
       HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*work));
 
   work->resource = VramCache_FindFreeEntry();
-  VramCache_Load(work->resource, 0x100, gFieldEffect_SparkTiles);
+  VramCache_Load(work->resource, 256, gFieldEffect_SparkTiles);
   work->group = 0;
-  work->age[0] = 999;
-  work->age[1] = 999;
+  work->age[0] = ARC_GROUP_UNSPAWNED;
+  work->age[1] = ARC_GROUP_UNSPAWNED;
   work->target = 0;
   Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_VBLANK);
 }
@@ -1364,7 +1352,7 @@ again:
       work->sparksRepeat = 1;
       work->arrowMoving = 0;
       work->bowGrowing = 1;
-      work->frame = 999;
+      work->frame = BOW_FRAME_IDLE;
     } else if (work->bowGrowing == 0) {
       work->frame = 0;
       BOW_NEXT_PHASE(work);
@@ -1376,7 +1364,8 @@ again:
       sprite->scaleX = sprite->scaleY = FIXED_ONE;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x2666, scene->angle8 + DEGtoANG(180), pos);
+      Vector_AddPolarOffset(toFIXED(3) / 20, scene->angle8 + DEGtoANG(180),
+                            pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1430,10 +1419,11 @@ again:
       work->timer = -1;
       goto again;
     }
-    for (objectIndex = 0; objectIndex < 80; objectIndex++) {
+    for (objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
       object = event->actors[objectIndex];
       if (object != NULL && object->script != NULL &&
-          (object->collisionFlags & 1) && object != scene->mainActor &&
+          (object->collisionFlags & ACTOR_SOLID) &&
+          object != scene->mainActor &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x.fixed,
                                      object->radius - 2) >= 0)
         goto hit;
@@ -1476,7 +1466,7 @@ again:
         BOW_NEXT_PHASE(work);
       }
     } else {
-      sprite->scaleX += -0x3000;
+      sprite->scaleX += -(FIXED_ONE * 3 / 16);
       sprite->scaleY = sprite->scaleX;
       if (sprite->scaleX < 0) {
         sprite->scaleX = sprite->scaleY = 0;
@@ -1492,7 +1482,7 @@ again:
 
   if (work->bowGrowing != 0) {
     sprite = &work->bow;
-    sprite->scaleX += 0x400;
+    sprite->scaleX += FIXED_ONE / 64;
     sprite->scaleY = sprite->scaleX;
     sprite->angle += DEGtoANG(45);
     if (sprite->scaleX >= FIXED_ONE) {
@@ -1503,7 +1493,7 @@ again:
   }
   if (work->bowShrinking != 0) {
     sprite = &work->bow;
-    sprite->scaleX += -0x400;
+    sprite->scaleX += -(FIXED_ONE / 64);
     sprite->scaleY = sprite->scaleX;
     sprite->angle += DEGtoANG(45);
     if (sprite->scaleX <= 0x6665) {
@@ -1513,34 +1503,34 @@ again:
   }
 
   // The bow's drawing pose, by frame: drawn back, then loosed and recovered.
-  if (work->frame != 999) {
+  if (work->frame != BOW_FRAME_IDLE) {
     work->frame++;
     sprite = &work->bow;
     switch (work->frame) {
     case 10:
-      sprite->oam.index = work->bowTile + 32;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES;
       break;
     case 20:
-      sprite->oam.index = work->bowTile + 64;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 2;
       break;
     case 54:
-      sprite->oam.index = work->bowTile + 32;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES;
       break;
     case 62:
-      sprite->oam.index = work->bowTile + 96;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 3;
       break;
     case 65:
-      sprite->oam.index = work->bowTile + 128;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 4;
       break;
     case 68:
-      sprite->oam.index = work->bowTile + 160;
+      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 5;
       break;
     case 58:
     case 71:
       sprite->oam.index = work->bowTile;
       break;
     case 72:
-      work->frame = 999;
+      work->frame = BOW_FRAME_IDLE;
       break;
     }
   }
@@ -1574,7 +1564,7 @@ again:
         s32 angle;
 
         speed = (Random16() & 255) + 256;
-        angle = (Random16() & 0x1fff) + 0x7000;
+        angle = (Random16() & 0x1fff) + TRIG_TURN * 7 / 16;
         motion->x = toFIXED(60);
         motion->y = toFIXED(28);
         motion->velocityX = Trig_Cos(angle) * speed >> 6;
@@ -1611,6 +1601,9 @@ again:
 /// targeted dispatch has no case for animation 29.
 void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
 
+/// The Arrow: a bow grows in front of the caster and draws, throwing off
+/// glints, and looses a flaming arrow that flies up to 80 pixels; an actor it
+/// strikes becomes the field work's psynergyHitObject.
 void FieldPsynergy_Arrow(void) {
   struct BowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
@@ -1631,26 +1624,24 @@ void FieldPsynergy_Arrow(void) {
   FieldPsynergy_FadeToCastColor();
   // The spark pointer and the sprite pointer are one variable.
   sprite = (struct EffectSprite *)work->sparks;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < BOW_SPARK_COUNT; i++) {
     ((struct BowMotion *)sprite)->delay = -i;
     sprite = (struct EffectSprite *)((struct BowMotion *)sprite + 1);
   }
 
-  work->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x1800);
+  work->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, BOW_TILE_BYTES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BOW_DRAW), work->tiles);
   bowSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(bowSlot, 0x1800, work->tiles);
+  tile = VramCache_Load(bowSlot, BOW_TILE_BYTES, work->tiles);
   work->bowTile = tile;
   sprite = &work->bow;
   EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  // volatile keeps the depth store before the scale stores.
-  *(volatile s16 *)&sprite->depth =
-      BattleEffect_GetObjectDepth(scene->mainActor) + 1;
-  *(volatile s32 *)&sprite->scaleX = FIXED_ONE * 2 / 5;
-  *(volatile s32 *)&sprite->scaleY = FIXED_ONE * 2 / 5;
+  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 1;
+  sprite->scaleX = FIXED_ONE * 2 / 5;
+  sprite->scaleY = FIXED_ONE * 2 / 5;
   sprite->angle = scene->angle8;
   pos[0] = scene->mainActor->x.fixed;
   pos[2] = scene->mainActor->z.fixed;
@@ -1661,16 +1652,15 @@ void FieldPsynergy_Arrow(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FLAMING_ARROW),
                       work->tiles);
   arrowSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(arrowSlot, 0x100, work->tiles);
+  tile = VramCache_Load(arrowSlot, 256, work->tiles);
   sprite = &work->arrow;
   EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
-  *(volatile s16 *)&sprite->depth =
-      BattleEffect_GetObjectDepth(scene->mainActor) + 2;
-  *(volatile s32 *)&sprite->scaleX = 0;
-  *(volatile s32 *)&sprite->scaleY = 0;
+  sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
+  sprite->scaleX = 0;
+  sprite->scaleY = 0;
   sprite->angle = scene->angle8;
   pos[0] = scene->mainActor->x.fixed;
   pos[2] = scene->mainActor->z.fixed;
@@ -1695,7 +1685,7 @@ void FieldPsynergy_Arrow(void) {
   work->target[2] = scene->mainActor->z.fixed;
   Vector_AddPolarOffset(toFIXED(80), scene->angle8, work->target);
 
-  palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
+  palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
   for (i = 0; i < 16; i++) {
     shade = i + 16;
     Io_Write16((shade << 5 | blue) | shade, palette);
@@ -1725,11 +1715,11 @@ void FieldPsynergy_Arrow(void) {
 
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
 /// gFieldPsynergy_NearbyCellOffsets (signed x, z byte pairs), on the owner's
-/// layer. Each cell of kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts
-/// for the effect's id is listed as a tile in the field work's points, which
-/// end with -1, -1; a kind-1 cell also sets CycloneWork.kind, and the last
-/// kind-2 and kind-3 cells are kept in pixels, centred on their tile, as
-/// cycloneCarryX, Z and cycloneLiftX, Z.
+/// layer. Each cell of a CycloneCellKind that Field_MeasurePsynergyHeight
+/// accepts for the effect's id is listed as a tile in the field work's points,
+/// which end with -1, -1; a CYCLONE_CELL_BURST cell also sets CycloneWork.kind,
+/// and the last carry and lift cells are kept in pixels, centred on their tile,
+/// as cycloneCarryX, Z and cycloneLiftX, Z.
 void FieldPsynergy_GatherNearbyCells(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct PointWork *event = Ram_HeapSlots->fieldWork;
@@ -1747,7 +1737,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   event->cycloneCarryZ = -1;
   event->cycloneLiftX = -1;
   event->cycloneLiftZ = -1;
-  for (i = 0; i <= 20; i++) {
+  for (i = 0; i < FIELD_PSYNERGY_NEARBY_CELLS; i++) {
     x = owner->x.fixed +
         FIELD_CELL_ORIGIN(gFieldPsynergy_NearbyCellOffsets[i * 2]);
     z = owner->z.fixed +
@@ -1756,33 +1746,38 @@ void FieldPsynergy_GatherNearbyCells(void) {
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;
     position[2] = z;
-    if (kind == 1 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
-                                                 position) != -1) {
+    if (kind == CYCLONE_CELL_BURST &&
+        Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
+            -1) {
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
       count++;
       work->kind = kind;
     }
-    if (kind == 2 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
-                                                 position) != -1) {
+    if (kind == CYCLONE_CELL_CARRY &&
+        Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
+            -1) {
       event->cycloneCarryX = FIXEDtoINT(x);
       event->cycloneCarryZ = FIXEDtoINT(z);
       event->cycloneCarryX =
-          (event->cycloneCarryX & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
+          (event->cycloneCarryX & ~(MAPGRID_CELL_PIXELS - 1)) +
+          MAPGRID_CELL_PIXELS / 2;
       event->cycloneCarryZ =
-          (event->cycloneCarryZ & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
+          (event->cycloneCarryZ & ~(MAPGRID_CELL_PIXELS - 1)) +
+          MAPGRID_CELL_PIXELS / 2;
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
       count++;
     }
-    if (kind == 3 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
-                                                 position) != -1) {
+    if (kind == CYCLONE_CELL_LIFT &&
+        Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
+            -1) {
       event->cycloneLiftX = FIXEDtoINT(x);
       event->cycloneLiftZ = FIXEDtoINT(z);
-      event->cycloneLiftX =
-          (event->cycloneLiftX & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
-      event->cycloneLiftZ =
-          (event->cycloneLiftZ & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
+      event->cycloneLiftX = (event->cycloneLiftX & ~(MAPGRID_CELL_PIXELS - 1)) +
+                            MAPGRID_CELL_PIXELS / 2;
+      event->cycloneLiftZ = (event->cycloneLiftZ & ~(MAPGRID_CELL_PIXELS - 1)) +
+                            MAPGRID_CELL_PIXELS / 2;
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
       count++;
@@ -1879,7 +1874,7 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                         FIELD_CELL_ORIGIN(cell[i].z), 2)
           ->collisionCode = 0;
       n = gTouchCopies.count;
-      if (n < 64) {
+      if (n < (s32)ARRAY_COUNT(gTouchCopies.copies)) {
         gTouchCopies.copies[n].toX = sourceX + x;
         gTouchCopies.copies[n].toZ = sourceZ + z;
         gTouchCopies.copies[n].fromX = windowX + x;

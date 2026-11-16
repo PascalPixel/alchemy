@@ -15,21 +15,24 @@
 
 #include "sprite_ids.h"
 
+/// The particles of dust and sparkles Scoop throws up.
+#define SCOOP_PARTICLE_COUNT 64
+
 /// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
 /// tiles, the picture that ripples as the ground is dug, 64 particles, the
 /// sprite that digs and the one left where it dug, and the stage of the cast.
 struct ScoopWork {
-  u8 tiles[0x400];
-  u8 picture[0x400];
-  struct EffectSprite sprites[64];
-  struct FieldPsynergyParticle particles[64];
+  u8 tiles[1024];
+  u8 picture[32 * 32];
+  struct EffectSprite sprites[SCOOP_PARTICLE_COUNT];
+  struct FieldPsynergyParticle particles[SCOOP_PARTICLE_COUNT];
   struct EffectSprite pictureSprite;
-  s16 phase; ///< the stage of the cast; 999 once it ends
+  s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer; ///< frames into the stage
   s16 particleTile;
   s16 pictureTile;
-  struct Actor *object; ///< sprite 353, which digs and sinks as it does
-  struct Actor *other;  ///< sprite 354 (355 where lit is set), where it digs
+  struct Actor *object; ///< SPRITE_SCOOP_HAND, which digs and sinks as it does
+  struct Actor *other; ///< SPRITE_BROWN_BOULDER (grey where lit), where it digs
   /// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in
   /// sixteen (an item turns up), else 0, or 3 where lit is set.
   s16 mode;
@@ -63,7 +66,7 @@ void Scoop_Update(void) {
       if (work->timer == 8)
         Actor_SelectAnimationFar(anchor, 3);
       if (work->timer <= 15)
-        anchor->y.fixed += 0x24ccc;
+        anchor->y.fixed += toFIXED(23) / 10;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
@@ -106,7 +109,7 @@ void Scoop_Update(void) {
       if (work->timer == 8)
         Actor_SelectAnimationFar(work->object, 3);
       if (work->timer <= 15)
-        anchor->y.fixed += 0x24ccc;
+        anchor->y.fixed += toFIXED(23) / 10;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
@@ -118,7 +121,8 @@ void Scoop_Update(void) {
       break;
     }
     if (work->phase == 2) {
-      for (i = 0, particle = work->particles; i < 64; i++, particle++) {
+      for (i = 0, particle = work->particles; i < SCOOP_PARTICLE_COUNT;
+           i++, particle++) {
         if (particle->timer >= 0 && particle->timer < 45) {
           sprite = &work->sprites[i];
           EffectSprite_DrawAtWorldPosition(sprite, particle);
@@ -140,7 +144,7 @@ void Scoop_Update(void) {
     case 1:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->object, 4);
-      anchor->y.fixed += 0x24ccc;
+      anchor->y.fixed += toFIXED(23) / 10;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
@@ -158,7 +162,7 @@ void Scoop_Update(void) {
     case 1:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->object, 4);
-      anchor->y.fixed += 0x24ccc;
+      anchor->y.fixed += toFIXED(23) / 10;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
@@ -201,9 +205,9 @@ void FieldPsynergy_Scoop(void) {
   struct FieldPsynergyParticle *particle;
   void *pending;
   void *data;
-  s32 particleEntry = 96;
+  s32 particleEntry = VRAM_CACHE_ENTRY_COUNT;
   s32 particleTile;
-  s32 pictureEntry = 96;
+  s32 pictureEntry = VRAM_CACHE_ENTRY_COUNT;
   s32 pictureTile;
   FIXED pos[3];
   s32 failed;
@@ -225,12 +229,12 @@ void FieldPsynergy_Scoop(void) {
     goto end;
   object->motionFlags = 0;
   if (event->psynergyDrawFlags & 2) {
-    if ((object->spriteStorageKind & 15) == 1) {
+    if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
       ((struct EffectSprite *)object->sprite)->oam.priority = 1;
-      object->priorityFlags &= 254;
+      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     }
   } else {
-    object->priorityFlags = 1;
+    object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   object->facing = caster->facing;
   Actor_SelectAnimationFar(object, 0);
@@ -238,9 +242,9 @@ void FieldPsynergy_Scoop(void) {
   if (*alternate != 0)
     Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GREY);
   if (*alternate == 0)
-    other = Actor_Spawn(354, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(SPRITE_BROWN_BOULDER, scene->x, scene->y, scene->z);
   else
-    other = Actor_Spawn(355, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(SPRITE_GREY_BOULDER, scene->x, scene->y, scene->z);
   work->other = other;
   if (other == NULL)
     goto end;
@@ -313,7 +317,7 @@ void FieldPsynergy_Scoop(void) {
     work->particleTile = particleTile;
     i = 0;
     particle = work->particles;
-    for (; i < 64; i++, particle++) {
+    for (; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
       sprite = &work->sprites[i];
       EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.fullColor = 1;
@@ -340,7 +344,7 @@ void FieldPsynergy_Scoop(void) {
     work->particleTile = particleTile;
     i = 0;
     particle = work->particles;
-    for (; i < 64; i++, particle++) {
+    for (; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
       sprite = &work->sprites[i];
       EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.fullColor = 1;
@@ -363,7 +367,7 @@ void FieldPsynergy_Scoop(void) {
     i = 0;
     particle = work->particles;
     sprite = work->sprites;
-    for (; i < 64; i++) {
+    for (; i < SCOOP_PARTICLE_COUNT; i++) {
       EffectSprite_Init(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -407,7 +411,7 @@ void FieldPsynergy_Scoop(void) {
   work->phase = 0;
   work->timer = 0;
   {
-    s32 order = 0x480;
+    s32 order = TASK_PASS_VBLANK;
 
     Task_Add(Scoop_Update, order);
   }
@@ -436,15 +440,15 @@ void FieldPsynergy_Scoop(void) {
       Field_RunPsynergyEvent(pending, stage, frame);
       frame++;
     }
-    Field_RunPsynergyEvent(pending, 999, frame);
+    Field_RunPsynergyEvent(pending, FIELD_PSYNERGY_FINISHED, frame);
   }
   Task_Remove(Scoop_Update);
   Sound_PlayFar(SE_MENU_ERROR);
   FieldPsynergy_ShrinkToCaster(object, object->x.fixed, object->y.fixed,
                                object->z.fixed);
-  if (particleEntry != 96)
+  if (particleEntry != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(particleEntry);
-  if (pictureEntry != 96)
+  if (pictureEntry != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(pictureEntry);
 end:
   Actor_ReleaseFar(object);
@@ -466,13 +470,13 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
     SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed,
                        anchor->z.fixed);
   }
-  if (*((s8 *)event + 394) == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     object->motionFlags = 2;
     object->groundHeight = 0;
   } else {
     object->motionFlags = 3;
   }
-  object->gravity = 0x170a;
+  object->gravity = toFIXED(9) / 100;
   wait(50);
   event->talk = id | 0x1000;
 }
@@ -480,10 +484,10 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
 struct Unit *Unit_Get(u32 unitId);
 extern const u16 gScoop_DugItems[];
 
-/// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item
-/// id from gScoop_DugItems's sixteen (0x8001 when PartyInventory_FindRoomFar
-/// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
-/// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
+/// SCOOPED_ITEM_ACTOR at the anchor, fetched or spawned (SPRITE_UNSEEN_MARKER),
+/// shows what Scoop dug up: three times in four one of gScoop_DugItems's
+/// sixteen items (a coin when there is no room for it), else coins up to twice
+/// the leader's level; it then drops (BattleEffect_DropObjectAtAnchor).
 void Scoop_DigUpItem(void) {
   struct ScoopWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *anchor;
@@ -491,7 +495,7 @@ void Scoop_DigUpItem(void) {
   struct Unit *unit;
   struct Actor *object;
   s32 item;
-  s32 id = 79;
+  s32 id = SCOOPED_ITEM_ACTOR;
 
   anchor = work->object;
   event = Ram_HeapSlots->fieldWork;
@@ -499,8 +503,8 @@ void Scoop_DigUpItem(void) {
 
   object = Actor_GetById(id);
   if (object == NULL) {
-    object =
-        Actor_CreateFar(489, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
+    object = Actor_CreateFar(SPRITE_UNSEEN_MARKER, anchor->x.fixed,
+                             anchor->y.fixed, anchor->z.fixed);
     if (object == NULL)
       return;
     event->actors[id] = object;
@@ -508,12 +512,13 @@ void Scoop_DigUpItem(void) {
   if (Random16() < 0xc000) {
     item = gScoop_DugItems[(Random16() * 16) >> 16];
     if (PartyInventory_FindRoomFar(item) == -1)
-      item = 0x8001;
+      item = SCOOPED_COINS | 1;
   } else {
-    item = (((Random16() * unit->level) * 2) >> 16) + 1 | 0x8000;
+    item = (((Random16() * unit->level) * 2) >> 16) + 1 | SCOOPED_COINS;
   }
   SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
   event->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }
+#undef NEXT_PHASE

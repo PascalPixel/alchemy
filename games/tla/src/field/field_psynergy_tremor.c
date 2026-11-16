@@ -11,14 +11,14 @@
 // picture held in the work.
 
 #define SHAKE_SPRITE_COUNT 64
-#define PICTURE_SIZE 0x1000
-#define PICTURE_MAX_PIXELS 0x800
+#define PICTURE_SIZE 4096
+#define PICTURE_MAX_PIXELS 2048
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_START 0x20000
+#define SWAY_START toFIXED(2)
 #define SWAY_PEAK toFIXED(12)
-#define SWAY_RAMP 0x1999   // 0.1 pixels a frame
-#define SWAY_SHAKE 0x40000 // sprites shake only past this
+#define SWAY_RAMP (toFIXED(1) / 10) // 0.1 pixels a frame
+#define SWAY_SHAKE toFIXED(4)       // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
 
 enum {
@@ -38,18 +38,8 @@ struct TremorWork {
   struct FieldPsynergyParticle particles[SHAKE_SPRITE_COUNT];
 };
 
-/// An object's sprite; the sway shakes it sideways by its offset.
-struct TremorSprite {
-  u8 unused[0x12]; ///< no code names it
-  u16 offsetX;
-  u8 width;
-  u8 height;
-  u8 unusedAfterHeight[3]; ///< no code names it
-  u8 unk19;
-  u8 unusedB[0xe]; ///< no code names it
-  void *pictures;
-};
-
+/// Sets the step of each of a sprite's layers: 0 stops its animation,
+/// ANIMATION_STEP_NORMAL runs it at normal speed.
 void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 
 /// Sways the view from side to side around the chosen object, as kind 19 does
@@ -64,7 +54,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->child;
-  struct TremorSprite *targetSprite = target->sprite;
+  struct Sprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
   s32 width;
@@ -95,14 +85,15 @@ void FieldPsynergy_TremorOnTarget(void) {
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 14;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
   }
   BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   if (target != NULL && targetSprite != NULL) {
     Sprite_SetAnimationSpeedFar(targetSprite, 0);
-    FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
-                                targetSprite->width * targetSprite->height);
+    FieldPsynergy_DecodePicture(
+        (struct PictureSource *)targetSprite->entries[0], work->picture,
+        targetSprite->width * targetSprite->height);
   }
   ViewMove_Start(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
@@ -120,18 +111,18 @@ void FieldPsynergy_TremorOnTarget(void) {
     if ((frameCount & 15) == 15)
       Sound_PlayFar(SE_JUMP);
 
-    // Shake the gathered objects' sprites with the view.
+    // Rock the gathered objects' sprites with the view.
     if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->view.count; i++) {
-        struct TremorSprite *sprite = work->view.objects[i]->sprite;
-        s32 offset = work->view.spriteOffsets[i];
+        struct Sprite *sprite = work->view.objects[i]->sprite;
+        s32 rotation = work->view.spriteRotations[i];
 
         if (amplitude > SWAY_SHAKE)
-          sprite->offsetX =
-              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
-                                   (amplitude - SWAY_SHAKE) / 128);
+          sprite->rotation =
+              rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                     (amplitude - SWAY_SHAKE) / 128);
         else
-          sprite->offsetX = offset;
+          sprite->rotation = rotation;
       }
     }
 
@@ -180,8 +171,8 @@ void FieldPsynergy_TremorOnTarget(void) {
   } while (state != SWAY_DONE);
 
   if (target != NULL && targetSprite != NULL) {
-    Sprite_SetAnimationSpeedFar(targetSprite, 16);
-    ((struct TremorSprite *)target->sprite)->unk19 = 1;
+    Sprite_SetAnimationSpeedFar(targetSprite, ANIMATION_STEP_NORMAL);
+    ((struct Sprite *)target->sprite)->dirty = 1;
   }
   ViewMove_End();
   ViewMove_RestoreNearbySprites();
@@ -195,13 +186,15 @@ release:
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
 
-// Field Psynergy kind 19 (FieldPsynergy_Run's case 19).
+// FIELD_PSYNERGY_TREMOR as FieldPsynergy_Run casts it: the view sways.
 
-#define VIEW_MOVE_WORK_SIZE 0x2154
+/// The heap block the sway takes, Tremor's work's size though it holds only the
+/// view move.
+#define VIEW_MOVE_WORK_SIZE sizeof(struct TremorWork)
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_PEAK toFIXED(6)
-#define SWAY_RAMP 0x2666 // 0.15 pixels a frame
+#define SWAY_RAMP (toFIXED(3) / 20) // 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
 
@@ -237,17 +230,17 @@ void FieldPsynergy_Tremor(void) {
     if ((frameCount & 15) == 15)
       Sound_PlayFar(SE_JUMP);
 
-    // Shake the gathered objects' sprites with the view.
+    // Rock the gathered objects' sprites with the view.
     if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->count; i++) {
-        struct TremorSprite *sprite = work->objects[i]->sprite;
-        s32 offset = work->spriteOffsets[i];
+        struct Sprite *sprite = work->objects[i]->sprite;
+        s32 rotation = work->spriteRotations[i];
 
         if (amplitude > 0)
-          sprite->offsetX =
-              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11), amplitude / 384);
+          sprite->rotation = rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                                    amplitude / 384);
         else
-          sprite->offsetX = offset;
+          sprite->rotation = rotation;
       }
     }
 

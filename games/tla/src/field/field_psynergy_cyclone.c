@@ -43,7 +43,7 @@ void ParticleBurst_Update(void) {
   work = (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   particle = work->particles;
 
-  for (i = 0; i < 96; i++, particle++) {
+  for (i = 0; i < PARTICLE_BURST_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
     if ((u32)particle->delay < 64) {
       sprite->oam.index = work->tile + (particle->delay >> 3) % 6 * 2;
@@ -79,9 +79,15 @@ void BattleEffect_EndX(void) {
   VramCache_FreeEntry(work->cacheEntry);
 }
 
+/// The frames the whirlwind takes to carry or lift the leader.
+#define CYCLONE_CARRY_FRAMES 128
+
+/// How far the whirlwind turns the leader round each frame of the ride.
+#define CYCLONE_CARRY_TURN_STEP (TRIG_TURN * 5 / 256)
+
 /// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
-/// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
-/// and arcing up and down on the way, its follower with it.
+/// where it stood to the nearby CYCLONE_CELL_CARRY cell (a Cyclone teleporter),
+/// circling and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct CycloneWork *work = Ram_HeapSlots->battleEffect;
@@ -91,15 +97,20 @@ void Cyclone_CarryLeader(void) {
 
   switch (work->state) {
   case 0:
-    work->radius = Trig_Sin(timer << 8) << 5;
-    work->angle += 0x500;
-    position[0] = work->from[0] + (work->to[0] - work->from[0]) * timer / 128;
-    position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128 +
-                  (Trig_Sin(timer << 8) << 6);
-    position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
+    work->radius = Trig_Sin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_FRAMES))
+                   << 5;
+    work->angle += CYCLONE_CARRY_TURN_STEP;
+    position[0] = work->from[0] +
+                  (work->to[0] - work->from[0]) * timer / CYCLONE_CARRY_FRAMES;
+    position[1] =
+        work->from[1] +
+        (work->to[1] - work->from[1]) * timer / CYCLONE_CARRY_FRAMES +
+        (Trig_Sin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_FRAMES)) << 6);
+    position[2] = work->from[2] +
+                  (work->to[2] - work->from[2]) * timer / CYCLONE_CARRY_FRAMES;
     Vector_AddPolarOffset(work->radius, work->angle, position);
     SET_ACTOR_POSITION(owner, position[0], position[1], position[2]);
-    if (timer > 127) {
+    if (timer >= CYCLONE_CARRY_FRAMES) {
       work->state++;
       work->timer = -1;
     }
@@ -114,8 +125,8 @@ void Cyclone_CarryLeader(void) {
   work->follower->z.fixed = owner->z.fixed;
 }
 
-/// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
-/// pixels up, circling, without the arc.
+/// Cyclone_CarryLeader for a CYCLONE_CELL_LIFT cell: the leader is carried
+/// there 32 pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct CycloneWork *work = Ram_HeapSlots->battleEffect;
@@ -125,20 +136,24 @@ void Cyclone_LiftLeader(void) {
 
   switch (work->state) {
   case 0:
-    work->radius = Trig_Sin(timer << 8) << 5;
-    work->angle += 0x500;
-    position[0] = work->from[0] + (work->to[0] - work->from[0]) * timer / 128;
-    position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128;
-    position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
+    work->radius = Trig_Sin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_FRAMES))
+                   << 5;
+    work->angle += CYCLONE_CARRY_TURN_STEP;
+    position[0] = work->from[0] +
+                  (work->to[0] - work->from[0]) * timer / CYCLONE_CARRY_FRAMES;
+    position[1] = work->from[1] +
+                  (work->to[1] - work->from[1]) * timer / CYCLONE_CARRY_FRAMES;
+    position[2] = work->from[2] +
+                  (work->to[2] - work->from[2]) * timer / CYCLONE_CARRY_FRAMES;
     Vector_AddPolarOffset(work->radius, work->angle, position);
     SET_ACTOR_POSITION(owner, position[0], position[1], position[2]);
-    if (timer > 127) {
+    if (timer >= CYCLONE_CARRY_FRAMES) {
       work->state++;
       work->timer = -1;
     }
     break;
   case 1:
-    owner->y.fixed -= 0x6666;
+    owner->y.fixed -= toFIXED(2) / 5;
     if (effect->childOption == 1) {
       if (timer == 40)
         work->state = FIELD_PSYNERGY_FINISHED;
@@ -148,7 +163,7 @@ void Cyclone_LiftLeader(void) {
     }
     break;
   case 2:
-    owner->y.fixed += 0x3cccc;
+    owner->y.fixed += toFIXED(19) / 5;
     if (timer == 40)
       work->state = FIELD_PSYNERGY_FINISHED;
     break;
@@ -171,13 +186,14 @@ void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 /// of blue and white drawn on the canvas sprite, and the weeds on the cells
 /// round it (FieldPsynergy_GatherNearbyCells) are scattered.
 void FieldPsynergy_Cyclone(void) {
-  struct CycloneWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
+  struct CycloneWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct CycloneWork));
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
   FIXED spread = toFIXED(4);
-  s32 step = 0xe000;
+  s32 step = toFIXED(7) / 8;
   struct CanvasSpriteWork *canvas;
   struct Actor *ring;
   u16 *offsets;
@@ -195,7 +211,7 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
-  palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
+  palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
   blue = RGB_LEVEL_MAX << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
@@ -211,7 +227,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority = 1;
-  canvas->depth = 240;
+  canvas->depth = OAM_DEPTH_WINDOW;
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = FIXED_ONE * 3 / 2;
   canvas->scaleY = FIXED_ONE * 3 / 2;
@@ -228,7 +244,7 @@ void FieldPsynergy_Cyclone(void) {
   wait(1);
   Sound_PlayFar(SE_RUSH);
   for (i = 0; i < 20; i++) {
-    ring->scaleY = (i << 16) / 20;
+    ring->scaleY = FIXED_ONE * i / 20;
     wait(1);
   }
   for (i = 0; i < 60; i++) {
@@ -240,7 +256,7 @@ void FieldPsynergy_Cyclone(void) {
       spread = toFIXED(28);
     step = step * 123 / 128;
     canvas->angle += TRIG_TURN / 64;
-    canvas->command = 3;
+    canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
     wait(1);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -256,23 +272,23 @@ void FieldPsynergy_Cyclone(void) {
   work->timer = 0;
   work->state = 0;
   if (event->cycloneLiftX != -1)
-    mode = 3;
+    mode = CYCLONE_CELL_LIFT;
   else if (event->cycloneCarryX != -1)
-    mode = 2;
+    mode = CYCLONE_CELL_CARRY;
   else {
     point = points[0];
     mode = point != -1;
   }
 
-  if (mode == 3) {
+  if (mode == CYCLONE_CELL_LIFT) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += TRIG_TURN / 64;
-      canvas->command = 3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
     }
-    FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+    FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
@@ -296,15 +312,15 @@ void FieldPsynergy_Cyclone(void) {
     ring->scaleX = 0;
     if (work->kind)
       BattleEffect_EndX();
-  } else if (mode == 2) {
+  } else if (mode == CYCLONE_CELL_CARRY) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += TRIG_TURN / 64;
-      canvas->command = 3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
     }
-    FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+    FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
                                        owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
@@ -323,27 +339,27 @@ void FieldPsynergy_Cyclone(void) {
     }
     Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < 16; i++) {
-      owner->scaleX += -0x800;
+      owner->scaleX += -(FIXED_ONE / 32);
       owner->scaleY = owner->scaleX;
       wait(1);
     }
     owner->scaleX = 0;
     for (i = 0; i < 32; i++) {
-      ring->scaleX += -0x800;
-      ring->scaleY += -0x200;
+      ring->scaleX += -(FIXED_ONE / 32);
+      ring->scaleY += -(FIXED_ONE / 128);
       wait(1);
     }
     ring->scaleX = 0;
     if (work->kind)
       BattleEffect_EndX();
-  } else if (mode == 1) {
+  } else if (mode == CYCLONE_CELL_BURST) {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
       canvas->angle += TRIG_TURN / 64;
-      canvas->command = 3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
     }
     owner->update = NULL;
@@ -363,7 +379,7 @@ void FieldPsynergy_Cyclone(void) {
     for (i = 0; i < 16; i++) {
       owner->facing += FACING_STEP;
       canvas->angle += TRIG_TURN / 64;
-      canvas->command = 3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
     }
   }
@@ -388,7 +404,7 @@ void Actor_DepartInRing(s32 actor) {
   FIXED position[3];
   s32 i;
 
-  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
   ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
@@ -451,8 +467,8 @@ void Actor_ArriveInRing(s32 actor) {
   ring->scaleX = FIXED_ONE / 2;
   ring->scaleY = FIXED_ONE * 3 / 4;
   for (i = 0; i < 32; i++) {
-    ring->scaleX += 0x800;
-    ring->scaleY += 0x200;
+    ring->scaleX += FIXED_ONE / 32;
+    ring->scaleY += FIXED_ONE / 128;
     wait(1);
   }
   ring->scaleX = FIXED_ONE * 3 / 2;
@@ -461,7 +477,7 @@ void Actor_ArriveInRing(s32 actor) {
   Actor_SelectAnimationFar(ring, 6);
   object->scaleY = object->scaleX = FIXED_ONE / 2;
   for (i = 0; i < 16; i++) {
-    object->scaleY = object->scaleX = object->scaleX + 0x800;
+    object->scaleY = object->scaleX = object->scaleX + FIXED_ONE / 32;
     wait(1);
   }
   Actor_SetSpriteFlagsFar(Actor_GetById(actor), 1);
@@ -473,15 +489,27 @@ void Actor_ArriveInRing(s32 actor) {
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
 
+/// What Blaze does (BlazeWork.mode).
+enum BlazeMode {
+  BLAZE_FLICKER = 0,     ///< cast at nothing with no torch in reach: a flicker
+  BLAZE_LIGHT_TORCH = 1, ///< cast at nothing: lights the nearest torch in reach
+  BLAZE_SPRAY = 2,       ///< cast at a target: the jet of flame
+  /// The jet, faster and longer (FieldWork.blazeLongSpray).
+  BLAZE_LONG_SPRAY = 3
+};
+
+/// The drops of Blaze's spray, and the smoke puffs they leave.
+#define BLAZE_DROPS 16
+
 /// Blaze's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the flame tiles, 16 flames
 /// and 16 smoke puffs with their motion, where the jet starts and where it
 /// points, and the actor it has reached.
 struct BlazeWork {
   u8 unused[0x1000]; ///< no code names it
-  struct EffectSprite drops[16];
-  struct FieldPsynergyParticle dropMotion[16];
-  struct EffectSprite puffs[16];
-  struct FieldPsynergyParticle puffMotion[16];
+  struct EffectSprite drops[BLAZE_DROPS];
+  struct FieldPsynergyParticle dropMotion[BLAZE_DROPS];
+  struct EffectSprite puffs[BLAZE_DROPS];
+  struct FieldPsynergyParticle puffMotion[BLAZE_DROPS];
   s32 origin[3];
   u16 dropTile;
   u16 puffTile;
@@ -493,7 +521,7 @@ struct BlazeWork {
   s32 speed;
   s32 lifetime;
   s32 gravity;
-  s8 mode;
+  s8 mode; ///< enum BlazeMode
 };
 
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
@@ -506,7 +534,7 @@ struct BlazeWork {
 /// list (whose index is kept and which stops the spray for the frame) or on
 /// something solid; an odd drop that dies leaves one of sixteen puffs of smoke
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
-/// at most 0x400 a frame.
+/// at most 1/64 turn a frame.
 void Blaze_UpdateSpray(void) {
   struct BlazeWork *work = (struct BlazeWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -522,26 +550,26 @@ void Blaze_UpdateSpray(void) {
 
   if (work->emitting != 0 && (gFrameCount & 3) == 0) {
     particle = work->dropMotion;
-    for (i = 0; i <= 15; i++, particle++) {
+    for (i = 0; i < BLAZE_DROPS; i++, particle++) {
       if (particle->timer == -1) {
         sprite = &work->drops[i];
         if (scene->child != NULL)
           sprite->depth = BattleEffect_GetObjectDepth(scene->child);
         else
           sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
-        if (work->mode == 3) {
-          work->speed = 0x26666;
+        if (work->mode == BLAZE_LONG_SPRAY) {
+          work->speed = toFIXED(12) / 5;
           work->lifetime = 33;
           work->gravity = toFIXED(3) / 32;
         } else {
-          work->speed = 0x1cccc;
+          work->speed = toFIXED(9) / 5;
           work->lifetime = 25;
           work->gravity = toFIXED(1) / 8;
         }
         SET_POSITION(particle, work->origin[0], work->origin[1],
                      work->origin[2]);
         particle->velocityX = 0;
-        particle->velocityY = -0x13333;
+        particle->velocityY = -(toFIXED(6) / 5);
         particle->velocityZ = 0;
         Vector_AddPolarOffset(work->speed, work->angle, &particle->velocityX);
         particle->timer = 0;
@@ -552,11 +580,12 @@ void Blaze_UpdateSpray(void) {
 
   work->hit = 0;
   particle = work->dropMotion;
-  for (i = 0; i <= 15; i++, particle++) {
+  for (i = 0; i < BLAZE_DROPS; i++, particle++) {
     if (particle->timer == -1)
       continue;
     sprite = &work->drops[i];
-    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + FIXED_ONE / 2;
+    sprite->scaleY = sprite->scaleX =
+        particle->timer * (FIXED_ONE / 25) + FIXED_ONE / 2;
     sprite->oam.index =
         work->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
     if (work->angle > DEGtoANG(180))
@@ -566,10 +595,10 @@ void Blaze_UpdateSpray(void) {
     EffectSprite_DrawAtWorldPosition(sprite, particle);
     if (++particle->timer == work->lifetime)
       particle->timer = -1;
-    for (j = 0; j < 80; j++) {
+    for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
       struct Actor *other = event->actors[j];
       if (other != NULL && other->script != NULL &&
-          (other->collisionFlags & 1) && other != scene->mainActor &&
+          (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor &&
           other != scene->child &&
           FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x.fixed,
                                      other->radius - 2) >= 0) {
@@ -603,7 +632,7 @@ void Blaze_UpdateSpray(void) {
   }
 
   particle = work->puffMotion;
-  for (i = 0; i <= 15; i++, particle++) {
+  for (i = 0; i < BLAZE_DROPS; i++, particle++) {
     if (particle->timer >= 0) {
       sprite = &work->puffs[i];
       sprite->oam.index = work->puffTile + ((particle->timer >> 2) & 7) * 8;
@@ -614,7 +643,7 @@ void Blaze_UpdateSpray(void) {
       sprite->x = pos[0];
       sprite->y = pos[2];
       EffectSprite_Draw(sprite);
-      particle->y += 0xcccc;
+      particle->y += toFIXED(4) / 5;
       if (++particle->timer == 32)
         particle->timer = -1;
     }

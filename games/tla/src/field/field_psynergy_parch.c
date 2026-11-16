@@ -27,27 +27,39 @@ struct ParchPuff {
   s32 timer;
 };
 
+/// The puffs of steam Parch keeps, a power of two: the next wraps by a mask.
+#define PARCH_PUFF_COUNT 64
+
+/// What Parch finds before the caster.
+enum ParchResult {
+  PARCH_NOTHING = 0, ///< no water: the disc swells and shrinks
+  PARCH_WATER = 1,   ///< water with no Parch event: steam rises from it
+  /// A puddle, or water with a Parch event: it dries up in a white flash.
+  PARCH_DRIES = 2
+};
+
 /// Parch's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
 /// target and the 64 puffs of steam that rise as it dries.
 struct ParchWork {
-  u8 tiles[0x1000];
+  u8 tiles[4096];
   struct EffectSprite disc;
   u8 unusedAfterDisc[0x28]; ///< no code names it
   s32 discX;
   s32 discY;
   s32 discScaleX;
   s32 discScaleY;
-  struct EffectSprite sprites[64];
-  struct ParchPuff particles[64];
+  struct EffectSprite sprites[PARCH_PUFF_COUNT];
+  struct ParchPuff particles[PARCH_PUFF_COUNT];
 };
 
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
 /// Parch ("Evaporate standing water."): a glowing disc spreads 32 pixels before
-/// the caster and white puffs rise from it. On an actor of sprite 290, or on
+/// the caster and white puffs rise from it. On a puddle (SPRITE_PUDDLE), or on
 /// water with a Parch event, the water there dries up and the event runs.
 void FieldPsynergy_Parch(void) {
-  struct ParchWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
+  struct ParchWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ParchWork));
   struct HeapSlots *slots;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -96,9 +108,10 @@ void FieldPsynergy_Parch(void) {
   Vector_AddPolarOffset(toFIXED(32), scene->angle, pos);
 
   i = 0;
-  kind = 290;
+  kind = SPRITE_PUDDLE;
   slots = Ram_HeapSlots;
-  for (offset = 20; i < 80; i++, offset += 4) {
+  for (offset = offsetof(struct FieldWork, actors); i < FIELD_ACTOR_COUNT;
+       i++, offset += sizeof(struct Actor *)) {
     object = *(struct Actor **)((u8 *)slots->fieldWork + offset);
     actorSprite = object->sprite;
     if (object->script != NULL &&
@@ -106,30 +119,30 @@ void FieldPsynergy_Parch(void) {
         actorSprite->lastNo == 1 &&
         FieldPsynergy_CheckOverlap(pos, 4, &object->x.fixed,
                                    object->radius - 2) >= 0) {
-      result = 2;
+      result = PARCH_DRIES;
       found = i;
       Actor_GetById(i)->priorityFlags |= 2;
       goto loaded;
     }
   }
   if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, pos) == -1) {
-    result = 0;
+    result = PARCH_NOTHING;
     // DEAD: pending is already NULL; the ROM keeps the second store.
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
-    result = 2;
+    result = PARCH_DRIES;
     if (pending == NULL)
-      result = 1;
+      result = PARCH_WATER;
   } else {
-    result = 0;
+    result = PARCH_NOTHING;
   }
 loaded:
   {
     void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
-    dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
+    dst = (u8 *)OBJ_VRAM0 + 0x1000 + vramWork->glyphTiles * 32;
     Decompress_TaggedLz(source, work);
   }
   Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
@@ -143,9 +156,9 @@ loaded:
   work->discScaleY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_PUFF), work);
   entry = VramCache_FindFreeEntry();
-  tile = VramCache_Load(entry, 0x800, work);
+  tile = VramCache_Load(entry, 2048, work);
   particle = work->particles;
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < PARCH_PUFF_COUNT; i++) {
     fresh = &work->sprites[i];
     EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
     fresh->depth = 250;
@@ -164,7 +177,7 @@ loaded:
   frame = 0;
   do {
     for (i = spawn; i != 0; i--) {
-      s32 slot = next & 63;
+      s32 slot = next & (PARCH_PUFF_COUNT - 1);
       sprite = &work->sprites[slot];
       sprite->scaleX = FIXED_ONE / 5;
       sprite->scaleY = FIXED_ONE / 5;
@@ -174,23 +187,23 @@ loaded:
                             &particle->x);
       particle->sway = (Random16() << 5) >> 16;
       particle->swayRate = ((Random16() << 9) >> 16) + 256;
-      particle->rise = Random16() + 0x3333;
+      particle->rise = Random16() + toFIXED(1) / 5;
       particle->timer = 0;
-      next = (next + 1) & 63;
+      next = (next + 1) & (PARCH_PUFF_COUNT - 1);
     }
     particle = work->particles;
     cursor = work->sprites;
-    for (i = 63; i >= 0; i--) {
+    for (i = PARCH_PUFF_COUNT - 1; i >= 0; i--) {
       if (particle->timer >= 0) {
         s32 grown;
         /* FAKEMATCH(temporary): sprite holds a copy of cursor. */
         sprite = cursor;
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
-        grown = sprite->scaleX + 0x1999;
+        grown = sprite->scaleX + FIXED_ONE / 10;
         // DEAD: stored again after the clamp; the ROM keeps both stores.
         sprite->scaleX = grown;
-        if (grown > 0x10000)
-          grown = 0x10000;
+        if (grown > FIXED_ONE)
+          grown = FIXED_ONE;
         sprite->scaleX = grown;
         sprite->scaleY = grown;
         screen[0] = particle->x;
@@ -252,12 +265,12 @@ loaded:
     sprite->scaleY = scaleY;
     EffectSprite_Draw(sprite);
 
-    if (result == 0) {
+    if (result == PARCH_NOTHING) {
       switch (phase) {
       case 0:
         if (timer == 10)
           Sound_PlayFar(SE_PARCH);
-        work->discScaleX += 0x300;
+        work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0x3fff) {
           phase = 1;
@@ -272,19 +285,19 @@ loaded:
         break;
       case 2:
         spawn = 0;
-        work->discScaleX += -0x300;
+        work->discScaleX += -(FIXED_ONE * 3 / 256);
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
           phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
-    if (result == 1) {
+    if (result == PARCH_WATER) {
       switch (phase) {
       case 0:
         if (timer == 30)
           Sound_PlayFar(SE_SPIN);
-        work->discScaleX += 0x300;
+        work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {
           phase = 1;
@@ -307,19 +320,19 @@ loaded:
         break;
       case 3:
         spawn = 0;
-        work->discScaleX += -0x400;
+        work->discScaleX += -(FIXED_ONE / 64);
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
           phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
-    if (result == 2) {
+    if (result == PARCH_DRIES) {
       switch (phase) {
       case 0:
         if (timer == 40)
           Sound_PlayFar(SE_SPIN);
-        work->discScaleX += 0x300;
+        work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0xbfff) {
           phase = 1;
@@ -358,7 +371,7 @@ loaded:
   if (pending != NULL)
     Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   VramCache_FreeEntry(entry);
-  if (result == 2)
+  if (result == PARCH_DRIES)
     BattleEffect_FadeToSavedPalettes(100);
   else
     FieldPsynergy_FadeFromCastColor();
@@ -389,7 +402,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
 
   x /= 8;
   y /= 8;
-  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 1024, 0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
       continue;

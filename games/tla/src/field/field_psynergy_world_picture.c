@@ -34,23 +34,25 @@ void WorldPicture_Initialize(void) {
   work->vramBlock = VramCache_FindFreeEntry();
   work->searchX = 0;
   work->searchZ = 0;
-  Dma_Fill32(0, markerTiles, 0x80);
-  markerTiles[0] = 255;
-  markerTiles[1] = 0x1ff;
-  markerTiles[2] = 272;
-  markerTiles[8] = 68;
-  markerTiles[9] = 324;
-  markerTiles[10] = 272;
-  markerTiles[16] = 119;
-  markerTiles[17] = 0x177;
-  markerTiles[18] = 272;
-  markerTiles[24] = 0xff0;
-  markerTiles[25] = 0xffff;
-  markerTiles[26] = 0x1ffff;
-  markerTiles[27] = 0x11ff0;
-  markerTiles[28] = 0x1100;
-  tileAttributes = VramCache_Load(work->vramBlock, 0x80, markerTiles) | 0x400;
-  for (i = 0; i < 128; i++) {
+  Dma_Fill32(0, markerTiles, 128);
+  // Four 8 by 8 tiles, a pixel a nibble: three marker dots and the cursor's.
+  markerTiles[0] = 0x000000ff;
+  markerTiles[1] = 0x000001ff;
+  markerTiles[2] = 0x00000110;
+  markerTiles[8] = 0x00000044;
+  markerTiles[9] = 0x00000144;
+  markerTiles[10] = 0x00000110;
+  markerTiles[16] = 0x00000077;
+  markerTiles[17] = 0x00000177;
+  markerTiles[18] = 0x00000110;
+  markerTiles[24] = 0x00000ff0;
+  markerTiles[25] = 0x0000ffff;
+  markerTiles[26] = 0x0001ffff;
+  markerTiles[27] = 0x00011ff0;
+  markerTiles[28] = 0x00001100;
+  tileAttributes =
+      VramCache_Load(work->vramBlock, 128, markerTiles) | OBJ_PRIORITY(1);
+  for (i = 0; i < WORLD_PICTURE_PLACE_COUNT; i++) {
     *oam++ = 0;
     *oam++ = 0;
     *oam++ = tileAttributes;
@@ -87,7 +89,7 @@ void WorldPicture_Initialize(void) {
   cursorAttributes = OBJ_SIZE_16X16;
   *oam++ = 0;
   *oam++ = cursorAttributes;
-  cursorAttributes = 0x400;
+  cursorAttributes = OBJ_PRIORITY(1);
   cursorAttributes |= tile >> 5;
   *oam = cursorAttributes;
   *Ram_WorldMapCursor = &work->x;
@@ -113,7 +115,7 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 
   if (object != NULL) {
     x >>= 16;
-    x = ((x << 14) + 0x434000) / 853;
+    x = ((x << 14) + 269 * 16384) / 853;
     z >>= 16;
     object->x.fixed = toFIXED(x);
     object->z.fixed = toFIXED(((z << 14) + toFIXED(28)) / 640);
@@ -123,26 +125,26 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 }
 
 /// The leader's point on the world map picture: its world map position scaled
-/// by 853 and 640 in 16384, a far corner of the map folded in (flag 286 set
-/// while the leader is there); off the world map, the picture's fixed point
-/// (264, 16).
+/// by 853 and 640 in 16384, a far corner of the map folded in
+/// (FLAG_LEADER_OFF_MAP_PICTURE set while the leader is there); off the world
+/// map, the picture's fixed point (264, 16).
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  u8 *object;
+  struct Actor *object;
   s32 x;
   s32 z;
 
-  GameFlag_Clear(0x11e);
+  GameFlag_Clear(FLAG_LEADER_OFF_MAP_PICTURE);
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     object = Actor_Lookup(leader);
     if (object == 0)
       return;
-    x = *(s16 *)(object + 10);
-    z = *(s16 *)(object + 18);
+    x = object->x.part[0].integer;
+    z = object->z.part[0].integer;
     if (z < 1832) {
       if (x < 12000) {
-        GameFlag_Set(0x11e);
+        GameFlag_Set(FLAG_LEADER_OFF_MAP_PICTURE);
         // From patch 1 this case is offset from the leader's position; the
         // Japanese release puts it at one fixed point.
 #if TLA_PATCH_1
@@ -157,8 +159,8 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
         z += 6084;
       }
     }
-    *screenX = 853 * x / 16384 - 269;
-    *screenY = z * 640 / 16384 - 112;
+    *screenX = WORLD_PICTURE_X(x);
+    *screenY = WORLD_PICTURE_Y(z);
   } else {
     *screenX = 264;
     *screenY = 16;
@@ -171,5 +173,5 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place) {
   if (gWorldPicture_FirstListOnly != 0)
     return place->value >> 4;
-  return place->value & 15;
+  return place->value & 0xf;
 }

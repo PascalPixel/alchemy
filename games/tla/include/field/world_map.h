@@ -92,6 +92,17 @@ extern struct WorldMapWork gWorldMapWork;
 /// The destination last chosen on the world map (struct WorldMapChoice).
 extern struct WorldMapChoice gWorldPictureChoice;
 const struct FlagEntry *FlagEntries_GetTable(void);
+
+/// The most places FlagEntries_GetTable lists.
+#define WORLD_PICTURE_PLACE_COUNT 128
+
+/// A World Map position, in whole pixels, as a point on the world map
+/// picture.
+#define WORLD_PICTURE_X(x) ((x) * 853 / 16384 - 269)
+#define WORLD_PICTURE_Y(z) ((z) * 640 / 16384 - 112)
+
+/// The depth the world map picture's markers and cursor are drawn at.
+#define WORLD_PICTURE_MARKER_DEPTH 246
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place);
 
 #endif

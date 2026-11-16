@@ -44,9 +44,11 @@ struct FieldParticle {
   s8 render;        ///< nonzero: drawn each frame
   s8 active;        ///< nonzero while the slot is in use
   u8 randomValue;   ///< not read by name in TLA
-  /// bits: 2 z also lifts the sprite
-  u8 flags;
+  u8 flags;         ///< FIELD_PARTICLE_LIFTED_BY_Z
 };
+
+/// FieldParticle.flags: z also lifts the sprite off the ground.
+#define FIELD_PARTICLE_LIFTED_BY_Z 0x04
 
 STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
 STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);

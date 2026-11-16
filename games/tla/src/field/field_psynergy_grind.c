@@ -8,35 +8,38 @@
 #include "sounds.h"
 #include "macros.h"
 
+/// The splashes of spray Grind keeps.
+#define GRIND_SPLASH_COUNT 64
+/// The largest picture Grind grinds down, in bytes, a byte a pixel.
+#define GRIND_PICTURE_SIZE 2048
+
 /// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
 /// splash particles.
 struct GrindWork {
-  u8 unused[0x20]; ///< no code names it
-  u8 picture[0x800];
-  struct FieldPsynergyParticle particles[64];
-  struct EffectSprite sprites[64];
+  u8 unused[32]; ///< no code names it
+  u8 picture[GRIND_PICTURE_SIZE];
+  struct FieldPsynergyParticle particles[GRIND_SPLASH_COUNT];
+  struct EffectSprite sprites[GRIND_SPLASH_COUNT];
 };
 
-struct SplashAnimation {
-  u8 unused[16]; ///< no code names it
-  u8 entry;
-  u8 unusedAfterEntry[3]; ///< no code names it
-  u8 width;
-  u8 height;
-  u8 unusedAfterHeight[18]; ///< no code names it
-  void *tiles;
+/// What Grind does.
+enum GrindMode {
+  GRIND_ON_TARGET = 0, ///< the target's Grind event runs as the shaking peaks
+  GRIND_SEA_ROCK = 1,  ///< a sea rock is ground down row by row
+  GRIND_ON_NOTHING = 2 ///< spray rises before the caster
 };
 
 /// Grind ("Pulverize large objects."): the screen shakes harder and harder
 /// while spray rises round the target, or round the spot 32 pixels before the
-/// caster. A target of sprite 424 is ground down row by row; otherwise the
-/// place's Grind event runs while the shaking is at its height.
+/// caster. A sea rock (SPRITE_SEA_ROCK) is ground down row by row; otherwise
+/// the place's Grind event runs while the shaking is at its height.
 void FieldPsynergy_GrindOnTarget(void) {
-  struct GrindWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
+  struct GrindWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainActor;
   struct Actor *child = scene->child;
-  struct SplashAnimation *animation = child->sprite;
+  struct Sprite *animation = child->sprite;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
   void *source;
@@ -51,7 +54,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 animating;
   s32 spraying;
   s32 next;
-  s32 isWaterObject;
+  s32 isSeaRock;
   s32 mode;
   FIXED radius;
   s32 selector;
@@ -65,13 +68,13 @@ void FieldPsynergy_GrindOnTarget(void) {
   animating = 0;
   spraying = 0;
   next = 0;
-  mode = 0;
+  mode = GRIND_ON_TARGET;
   selector = Scene_SelectPsynergyTarget(scene->fieldPsynergy);
   pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       scene->fieldPsynergy, selector);
   if (child != NULL) {
     if (animation != NULL) {
-      if (animation->width * animation->height <= 0x800) {
+      if (animation->width * animation->height <= GRIND_PICTURE_SIZE) {
       } else
         goto end;
     }
@@ -81,16 +84,16 @@ void FieldPsynergy_GrindOnTarget(void) {
     scene->y = caster->y.fixed;
     Vector_AddPolarOffset(toFIXED(32), scene->angle, &scene->x);
   }
-  isWaterObject = 0;
-  if (Actor_GetSpriteIdFar(child) == 424) {
-    isWaterObject = 1;
-    mode = 1;
+  isSeaRock = 0;
+  if (Actor_GetSpriteIdFar(child) == SPRITE_SEA_ROCK) {
+    isSeaRock = 1;
+    mode = GRIND_SEA_ROCK;
   }
   if (child == NULL)
-    mode = 2;
-  if (mode == 1)
+    mode = GRIND_ON_NOTHING;
+  if (mode == GRIND_SEA_ROCK)
     radius = toFIXED(14);
-  if (mode == 2)
+  if (mode == GRIND_ON_NOTHING)
     radius = toFIXED(21);
 
   FieldPsynergy_FadeToCastColor();
@@ -98,24 +101,24 @@ void FieldPsynergy_GrindOnTarget(void) {
   picture = work->picture;
   Decompress_TaggedLz(source, picture);
   entry = VramCache_FindFreeEntry();
-  tile = VramCache_Load(entry, 0x400, picture);
+  tile = VramCache_Load(entry, 1024, picture);
   particle = work->particles;
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < GRIND_SPLASH_COUNT; i++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
     particle++;
   }
-  if (child != NULL && animation != NULL && isWaterObject == 1) {
+  if (child != NULL && animation != NULL && isSeaRock == 1) {
     Sprite_SetAnimationSpeedFar(animation, 0);
-    FieldPsynergy_DecodePicture(animation->tiles, picture,
-                                animation->width * animation->height);
+    FieldPsynergy_DecodePicture((struct PictureSource *)animation->entries[0],
+                                picture, animation->width * animation->height);
   }
-  ViewMove_Start(2);
+  ViewMove_Start(VIEW_MOVE_Z);
   wait(1);
   Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
@@ -124,22 +127,22 @@ void FieldPsynergy_GrindOnTarget(void) {
   timer = 0;
   do {
     if (spraying) {
-      if (mode == 1) {
+      if (mode == GRIND_SEA_ROCK) {
         if (radius > toFIXED(5))
-          radius += -0xa3d;
+          radius += -(toFIXED(1) / 25);
       } else if (radius > toFIXED(5)) {
-        radius += -0x147a;
+        radius += -(toFIXED(2) / 25);
       }
     }
     for (i = 0; i < spraying; i++) {
       angle = Random16();
-      if (mode == 2)
+      if (mode == GRIND_ON_NOTHING)
         angle = ((Random16() * 10) >> 4) - TRIG_TURN / 16;
       sprite = &work->sprites[next];
       particle = &work->particles[next];
       if (child != NULL) {
         sprite->oam.priority = BattleEffect_GetObjectPriority(child);
-        if (angle <= 0x7fff)
+        if (angle < TRIG_TURN / 2)
           sprite->depth = BattleEffect_GetObjectDepth(child) + 15;
         else
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
@@ -151,10 +154,10 @@ void FieldPsynergy_GrindOnTarget(void) {
       else
         Vector_AddPolarOffset(radius - (Random16() << 2), angle, &particle->x);
       next++;
-      next %= 64;
+      next %= GRIND_SPLASH_COUNT;
     }
     particle = work->particles;
-    for (i = 0; i < 64; i++, particle++) {
+    for (i = 0; i < GRIND_SPLASH_COUNT; i++, particle++) {
       sprite = &work->sprites[i];
       if ((u32)particle->timer <= 23) {
         if (particle->timer == 0)
@@ -171,7 +174,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
     if (child != NULL && animation != NULL && animating) {
       s32 size = animation->width * animation->height;
-      dst = (u8 *)OBJ_VRAM0 + VramCache_Load(animation->entry, size, NULL) * 32;
+      dst = (u8 *)OBJ_VRAM0 + VramCache_Load(animation->slot, size, NULL) * 32;
       if (shifts % 3 == 0)
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);
@@ -179,19 +182,19 @@ void FieldPsynergy_GrindOnTarget(void) {
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
           picture, animation->width, animation->height, dst);
     }
-    ViewMove_Swing(2, counter++, amplitude);
+    ViewMove_Swing(VIEW_MOVE_Z, counter++, amplitude);
     switch (phase) {
     case 0:
-      if (timer == 40 && mode != 0)
+      if (timer == 40 && mode != GRIND_ON_TARGET)
         spraying = 1;
-      amplitude += 0x1999;
-      if (amplitude > 0xbffff) {
+      amplitude += toFIXED(1) / 10;
+      if (amplitude > toFIXED(12) - 1) {
         phase++;
         timer = -1;
       }
       break;
     case 1:
-      if (isWaterObject == 0) {
+      if (isSeaRock == 0) {
         if (timer == 50) {
           phase = 2;
           timer = -1;
@@ -207,11 +210,11 @@ void FieldPsynergy_GrindOnTarget(void) {
       }
       break;
     case 2:
-      if (isWaterObject == 1)
+      if (isSeaRock == 1)
         animating = 0;
-      if (timer == 5 && mode != 0)
+      if (timer == 5 && mode != GRIND_ON_TARGET)
         spraying = 0;
-      amplitude += -0x2666;
+      amplitude += -(toFIXED(3) / 20);
       if (amplitude <= toFIXED(2)) {
         phase++;
         timer = -1;
@@ -234,14 +237,16 @@ end:
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// Field Psynergy kind 27 (FieldPsynergy_Run's case 27): the view sways.
+// FIELD_PSYNERGY_GRIND as FieldPsynergy_Run casts it: the view sways.
 
-#define VIEW_MOVE_WORK_SIZE 0x1920
+/// The heap block the sway takes, Grind's work's size though it holds only the
+/// view move.
+#define VIEW_MOVE_WORK_SIZE sizeof(struct GrindWork)
 
 /// The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_START 0x20000
+#define SWAY_START toFIXED(2)
 #define SWAY_PEAK toFIXED(6)
-#define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
+#define SWAY_RAMP (toFIXED(3) / 20) ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
 /// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,

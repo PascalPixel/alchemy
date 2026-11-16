@@ -9,58 +9,44 @@
 #include "sounds.h"
 #include "field/field_event.h"
 #include "field/field.h"
+#include "field/actor_script.h"
 
-struct SpritePictures {
-  u8 unused[5]; ///< no code names it
-  u8 picture;
-};
-
-struct AnimatedSprite {
-  u8 unused[0x12]; ///< no code names it
-  s16 rotation;
-  u8 unk14[5];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
-};
-
-/// The summon tablet's update while its runes fly: steps the sprite through
-/// a four-picture cycle on the actor's timer, as
-/// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
-/// fourth step.
+/// The summon tablet's update while its runes fly: on the actor's timer, its
+/// sprite flashes white and outlined, then outlined, white again, and plain,
+/// redrawn each frame; the fourth step leaves the outline as it was.
 void SummonTablet_CyclePictures(struct Actor *object) {
-  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpritePictures *pictures = sprite->pictures;
+  struct Sprite *sprite = object->sprite;
+  struct SpriteAnimation *layer = sprite->entries[0];
 
   switch (object->timer & 3) {
   case 0:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 2;
+    layer->colorMode = SPRITE_COLOR_WHITE;
+    sprite->dirty = 1;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     break;
   case 1:
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
+    sprite->dirty = 1;
+    sprite->flags = 0;
     break;
   case 2:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
+    layer->colorMode = SPRITE_COLOR_WHITE;
+    sprite->dirty = 1;
+    sprite->flags = 0;
     break;
   case 3:
-    pictures->picture = 0;
-    sprite->picture = 1;
+    layer->colorMode = SPRITE_COLOR_NORMAL;
+    sprite->dirty = 1;
     break;
   }
   object->timer++;
 }
 
-/// A point chasing its target on the ground, 16.16 pixels.
+/// A point on the screen chasing its target, 16.16 pixels, as
+/// Camera_WorldToScreen gives one: z down the screen.
 struct Chase {
   FIXED x;
   FIXED z;
-  s32 unk08;
+  FIXED unusedAfterZ; ///< no code names it
   FIXED targetX;
   FIXED targetZ;
 };
@@ -84,27 +70,45 @@ void Motion_StepTowardTarget(struct Chase *chase, FIXED speed) {
   }
 }
 
-/// One mote: a position chasing its target (Motion_StepTowardTarget's struct
-/// Chase) and a frame count, negative before it starts.
+/// One mote or spark and a frame count, negative before it starts.
 struct ChasingMote {
-  s32 x;
-  s32 z;
-  s32 unk08;
-  s32 targetX;
-  s32 targetZ;
-  s32 unk14;
+  union {
+    /// A mote: a point on the screen chasing its target
+    /// (Motion_StepTowardTarget's struct Chase).
+    struct {
+      FIXED x;
+      FIXED z;
+      FIXED unusedAfterZ; ///< no code names it
+      FIXED targetX;
+      FIXED targetZ;
+      FIXED unusedAfterTargetZ; ///< no code names it
+    };
+    /// A spark: a position in the world and its velocity
+    /// (BattleEffect_IntegrateVector3's vector).
+    struct {
+      FIXED position[3];
+      FIXED velocity[3];
+    } spark;
+  };
   s32 timer;
 };
+
+/// The sparks that fly off the tablet, a power of two: the next wraps by a
+/// mask.
+#define TABLET_SPARK_COUNT 32
+/// The tablet's runes, flown as motes in three rows of 16.
+#define TABLET_MOTE_COUNT 48
+#define TABLET_MOTE_ROW 16
 
 /// The summon tablet's work (heap slot battleEffect): the decoded mote
 /// pictures, the sparks and motes that fly between the tablet and the leader,
 /// and the circle they gather on.
 struct MoteWork {
   u8 unused[0x800]; ///< no code names it
-  struct ChasingMote sparks[32];
-  struct EffectSprite sparkSprites[32];
-  struct ChasingMote motes[48];
-  struct EffectSprite moteSprites[48];
+  struct ChasingMote sparks[TABLET_SPARK_COUNT];
+  struct EffectSprite sparkSprites[TABLET_SPARK_COUNT];
+  struct ChasingMote motes[TABLET_MOTE_COUNT];
+  struct EffectSprite moteSprites[TABLET_MOTE_COUNT];
   s32 originX;
   s32 originZ;
   s32 angle;
@@ -133,8 +137,8 @@ void SummonTablet_UpdateMotes(void) {
     mote = work->motes;
     mote->targetX = position[0];
     mote->targetZ = position[2];
-    work->angle += 0x600;
-    for (i = 0; i < 48; i++, mote++) {
+    work->angle += TRIG_TURN * 3 / 128;
+    for (i = 0; i < TABLET_MOTE_COUNT; i++, mote++) {
       if (mote->timer >= 0) {
         if (i != 0) {
           mote->targetX = position[0];
@@ -150,7 +154,7 @@ void SummonTablet_UpdateMotes(void) {
 
   mote = work->motes;
   sprite = work->moteSprites;
-  for (i = 47; i >= 0; i--, sprite++, mote++) {
+  for (i = TABLET_MOTE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
     if (work->state == 0) {
       if (mote->timer >= 0) {
         Motion_StepTowardTarget(mote, toFIXED(4));
@@ -177,11 +181,12 @@ void SummonTablet_UpdateMotes(void) {
   mote = work->sparks;
   tile = &work->sparkTile;
   sprite = work->sparkSprites;
-  for (i = 31; i >= 0; i--, sprite++, mote++) {
+  for (i = TABLET_SPARK_COUNT - 1; i >= 0; i--, sprite++, mote++) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, mote);
-      BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
+      EffectSprite_DrawAtWorldPosition(sprite, mote->spark.position);
+      BattleEffect_IntegrateVector3(mote->spark.position, 63,
+                                    -(toFIXED(1) / 2));
       mote->timer++;
     }
   }
@@ -243,17 +248,17 @@ void SummonTablet_PlayRunes(s32 targetId) {
   mote = work->motes;
   i = 0;
   sprite = work->moteSprites;
-  for (; i < 48; i++) {
+  for (; i < TABLET_MOTE_COUNT; i++) {
     EffectSprite_Init(sprite, 4, 4, 0,
                       moteTile + ((Random16() << 4) >> 16) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     mote->x = targetX;
     mote->z = targetZ;
-    mote->targetX = ((i % 16) * 3 << 18) + 30 * FIXED_ONE;
-    mote->targetZ = ((i / 16) * 3 << 19) + 30 * FIXED_ONE;
+    mote->targetX = ((i % TABLET_MOTE_ROW) * 3 << 18) + toFIXED(30);
+    mote->targetZ = ((i / TABLET_MOTE_ROW) * 3 << 19) + toFIXED(30);
     mote->timer = -i;
     sprite++;
     mote++;
@@ -264,12 +269,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
   work->sparkTile = sparkTile;
   mote = work->sparks;
   sprite = work->sparkSprites;
-  for (i = 31; i >= 0; i--) {
+  for (i = TABLET_SPARK_COUNT - 1; i >= 0; i--) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     mote->timer = -1;
     sprite++;
     mote++;
@@ -308,9 +313,9 @@ void SummonTablet_PlayRunes(s32 targetId) {
       }
       break;
     case 1:
-      for (i = 0; i < 48; i++) {
+      for (i = 0; i < TABLET_MOTE_COUNT; i++) {
         struct EffectSprite *rune;
-        wave = i % 16 + i / 16;
+        wave = i % TABLET_MOTE_ROW + i / TABLET_MOTE_ROW;
         wave = timer - wave;
         rune = &work->moteSprites[i];
         if (wave == 0)
@@ -338,7 +343,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Actor_FaceDirectionById(ownerId, FACING_SOUTH, 0);
         break;
       }
-      if (owner->script[owner->scriptCursor] == 17) {
+      if (owner->script[owner->scriptCursor] == SCRIPT_CMD_END) {
         state++;
         timer = -1;
       }
@@ -349,7 +354,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 3:
       if (timer == 0)
-        Actor_SelectAnimationFar(owner, 28);
+        Actor_SelectAnimationFar(owner, ANIM_LEADER_ARMS_RAISED);
       if (timer == 10) {
         state++;
         timer = -1;
@@ -359,7 +364,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       if (timer == 0) {
         mote = work->motes;
         delay = 0;
-        for (i = 47; i >= 0; i--) {
+        for (i = TABLET_MOTE_COUNT - 1; i >= 0; i--) {
           mote->timer = delay;
           delay -= 3;
           mote++;
@@ -415,16 +420,17 @@ void SummonTablet_PlayRunes(s32 targetId) {
       angle = Random16();
       mote = &work->sparks[nextSpark];
       mote->timer = 0;
-      mote->x = target->x.fixed;
-      mote->z = target->y.fixed + 12 * FIXED_ONE;
-      mote->unk08 = target->z.fixed;
-      Vector_AddPolarOffset(Random16() * 4 + 2 * FIXED_ONE, angle, &mote->x);
-      mote->targetX = 0;
-      mote->targetZ = FIXED_ONE * 9 / 2;
-      mote->unk14 = 0;
-      Vector_AddPolarOffset(Random16() * 2 + 2 * FIXED_ONE, angle,
-                            &work->sparks[nextSpark].targetX);
-      nextSpark = (nextSpark + 1) & 31;
+      mote->spark.position[0] = target->x.fixed;
+      mote->spark.position[1] = target->y.fixed + toFIXED(12);
+      mote->spark.position[2] = target->z.fixed;
+      Vector_AddPolarOffset(Random16() * 4 + toFIXED(2), angle,
+                            mote->spark.position);
+      mote->spark.velocity[0] = 0;
+      mote->spark.velocity[1] = toFIXED(9) / 2;
+      mote->spark.velocity[2] = 0;
+      Vector_AddPolarOffset(Random16() * 2 + toFIXED(2), angle,
+                            work->sparks[nextSpark].spark.velocity);
+      nextSpark = (nextSpark + 1) & (TABLET_SPARK_COUNT - 1);
     }
     sparks = 0;
     wait(1);
@@ -450,19 +456,13 @@ struct ActorFlag {
 
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
-/// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
-/// actor 0xffff): each stands still on its cell, which nothing may enter, shown
-/// up (animation 0) or down (1) by its flag; then FlagBlock_ApplyFlags raises
-/// the cells of those up, and a leader below the ground is lifted onto it.
-/// Daila, Kibombo, Madra's catacombs, the Izumo ruins, Air's Rock and the
-/// Lemurian Ship call it as they start.
-// XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
-// would settle it.
-/// Sets up a scene's flag blocks (actor and flag pairs, ended by actor 0xffff):
-/// each stops being solid and blocks its cell; one whose flag is set takes
-/// animation 0 and has the flag cleared, the others animation 1. Then
-/// FlagBlock_ApplyFlags applies them and the leader is lifted onto the ground
-/// if it now lies below it.
+/// Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
+/// (actor and flag pairs, ended by actor 0xffff): each stops being solid and
+/// blocks its cell; one whose flag is set takes animation 0 and has the flag
+/// cleared, the others animation 1. Then FlagBlock_ApplyFlags applies them and
+/// the leader is lifted onto the ground if it now lies below it. Daila,
+/// Kibombo, the Izumo ruins, Air's Rock and the Lemurian Ship call it as they
+/// start.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;

@@ -30,8 +30,8 @@ struct ViewMoveWork {
   s32 savedMaxZ;
   s16 edgeX; ///< -1 beside the low edge, 1 beside the high edge, else 0
   s16 edgeZ;
-  struct Actor *objects[8];
-  u16 spriteOffsets[8];
+  struct Actor *objects[8]; ///< the actors near the caster it rocks
+  u16 spriteRotations[8];   ///< each one's sprite rotation, given back after
   s32 count;
 };
 

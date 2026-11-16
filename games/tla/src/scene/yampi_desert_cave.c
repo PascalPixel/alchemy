@@ -260,31 +260,24 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     slide->x = actor->x.fixed + dx;
     slide->z = actor->z.fixed + dz;
     probe[1] = actor->y.fixed;
-    // The row loop is built from labels: as a loop it grows by 14 bytes.
-  next:
-    offset = kind;
-    probe[2] =
-        slide->z + toFIXED(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
-    offset *= 4;
-    j = 0;
-    if (j >= h)
-      goto advance;
-  row:
-    probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
-    for (i = 0; i < w; i++) {
-      if (FieldActor_CheckMovementCollision(actor, probe) == 2)
-        goto hit;
-      probe[0] += toFIXED(16);
-    }
-    probe[2] += toFIXED(16);
-    j++;
-    if (j < h)
-      goto row;
-  advance:
-    slide->x += dx;
-    count++;
-    slide->z += dz;
-    goto next;
+    do {
+      offset = kind;
+      probe[2] =
+          slide->z + toFIXED(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
+      offset *= 4;
+      for (j = 0; j < h; j++) {
+        probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
+        for (i = 0; i < w; i++) {
+          if (FieldActor_CheckMovementCollision(actor, probe) == 2)
+            goto hit;
+          probe[0] += toFIXED(16);
+        }
+        probe[2] += toFIXED(16);
+      }
+      slide->x += dx;
+      count++;
+      slide->z += dz;
+    } while (1);
   hit:
     *state = 0;
     if (count == 0)

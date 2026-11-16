@@ -204,51 +204,43 @@ void Loho_FireCannon(void) {
   struct Actor *walkingMiner;
   struct LohoSpark *spark;
   struct LohoSpark *table;
-  s32 tiles, entry, i, age, zero;
-  s32 sheet, x, attr1, tile, attr2, attr2High;
+  s32 *timer;
+  s32 tiles, entry, i, zero;
+  s32 sheet;
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
   felix = Actor_GetById(ACTOR_FELIX);
   Event_Start();
   Event_ResolvePendingActions(0);
-  goto start;
-approach:
-  if (north == 0)
-    goto turned;
-  if (west == 0)
-    goto toNorthEast;
-  Actor_WalkToAndWait(ACTOR_FELIX, 471, 346);
-  goto turned;
-toNorthEast:
-  Actor_WalkToAndWait(ACTOR_FELIX, 506, 346);
-turned:
-  if (west == 0)
-    goto toEast;
-  goto toWest;
-toEast:
-  Actor_WalkToAndWait(ACTOR_FELIX, 506, 373);
-  goto inPlace;
-start:
-  west = 0;
-  north = 0;
-  south = 0;
-  if (felix->x.fixed >= toFIXED(489))
-    goto checkZ;
-  west = 1;
-checkZ:
-  z = felix->z.fixed;
-  if (z >= toFIXED(347))
-    goto checkSouth;
-  north = 1;
-  goto placed;
-checkSouth:
-  if (z <= toFIXED(370))
-    goto placed;
-  south = 1;
-placed:
-  if (south == 0)
-    goto approach;
-inPlace:
+  do {
+    west = 0;
+    north = 0;
+    south = 0;
+    if (felix->x.fixed < toFIXED(489)) {
+      west = 1;
+    }
+    z = felix->z.fixed;
+    if (z < toFIXED(347)) {
+      north = 1;
+    } else if (z > toFIXED(370)) {
+      south = 1;
+    }
+    if (south != 0) {
+      break;
+    }
+    if (north != 0) {
+      if (west != 0) {
+        Actor_WalkToAndWait(ACTOR_FELIX, 471, 346);
+      } else {
+        Actor_WalkToAndWait(ACTOR_FELIX, 506, 346);
+      }
+    }
+    if (west != 0) {
+      Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
+    } else {
+      Actor_WalkToAndWait(ACTOR_FELIX, 506, 373);
+    }
+  } while (0);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(FLAG_LOHO_WALL_BREACHED);
   Actor_MoveToAndWait(ACTOR_FELIX, 487, 377);
@@ -291,67 +283,43 @@ inPlace:
     tiles = VramCache_Load(entry, 1024, buffer);
     Heap_Release(buffer);
   }
-  spark = (struct LohoSpark *)&table->age;
-  i = LOHO_SPARK_COUNT - 1;
-seedSparks:
-  *(s32 *)spark = -((u32)(Random16() << 5) >> 16);
-  i = (i - 1);
-  spark = (struct LohoSpark *)((s32)spark + sizeof(struct LohoSpark));
-  if (i >= 0)
-    goto seedSparks;
+  timer = &table->age;
+  for (i = LOHO_SPARK_COUNT - 1; i >= 0; i--) {
+    *timer = -(Random16() << 5 >> 16);
+    timer += 4;
+  }
   Dma_Set((const void *)(s32)Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
-  i = 0;
-  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop.
-   */
-  if (((entry & 255) >> 8) == 0)
-    goto frame;
-  i = 1;
-  goto ageSpark;
-frame:
-  if ((31 & i) != 0)
-    goto checkFlash;
-  Event_PlaySound(SE_CRASH);
-checkFlash:
-  if (i != 30)
-    goto sparks;
-  ScreenFade_ToWhite(90);
-  Event_PlaySound(SE_RUMBLE);
-sparks:
-  spark = table;
-spark:
-  if (spark->age != 0)
-    goto drawSpark;
-  spark->sprite.words[0] = 0x40000000;
-  spark->sprite.words[1] = 0;
-  x = (u16)(((Random_Below(96)) + 72) & 0x1ff);
-  attr1 = spark->sprite.halves[1];
-  spark->sprite.halves[1] = (attr1 & -0x200) | x;
-  spark->sprite.oam.y = (u32)Random16() >> 10;
-  attr2High = spark->sprite.bytes[5];
-  attr2High |= 0xf0;
-  spark->sprite.bytes[5] = attr2High & ~0xc;
-drawSpark:
-  age = *(long *)&spark->age;
-  if (age < 0)
-    goto ageSpark;
-  tile = (u16)(((age >> 2) * 4 + tiles) & 0x3ff);
-  attr2 = spark->sprite.halves[2];
-  spark->sprite.halves[2] = (attr2 & -0x400) | tile;
-  Oam_AddSpriteAtDepthClamped(spark, 100);
-ageSpark:
-  spark->age += 1;
-  if (spark->age <= 31)
-    goto nextSpark;
-  spark->age = -(Random_Below(7));
-nextSpark:
-  spark++;
-  if ((s32)spark <= (s32)&table[LOHO_SPARK_COUNT - 1])
-    goto spark;
-  wait(1);
-  i = (i + 1);
-  if (i <= 119)
-    goto frame;
+  for (i = 0; i <= 119; i++) {
+    if ((i & 31) == 0) {
+      Event_PlaySound(SE_CRASH);
+    }
+    if (i == 30) {
+      ScreenFade_ToWhite(90);
+      Event_PlaySound(SE_RUMBLE);
+    }
+    spark = table;
+    do {
+      if (spark->age == 0) {
+        spark->sprite.words[0] = OBJ_SIZE_16X16;
+        spark->sprite.words[1] = 0;
+        spark->sprite.oam.x = Random_Below(96) + 72;
+        spark->sprite.oam.y = Random16() >> 10;
+        spark->sprite.oam.palette = 15;
+        spark->sprite.oam.priority = 0;
+      }
+      if (spark->age >= 0) {
+        spark->sprite.oam.tile = tiles + (spark->age >> 2) * 4;
+        Oam_AddSpriteAtDepthClamped(spark, 100);
+      }
+      spark->age++;
+      if (spark->age > 31) {
+        spark->age = -(Random_Below(7));
+      }
+      spark++;
+    } while ((s32)spark <= (s32)&table[LOHO_SPARK_COUNT - 1]);
+    wait(1);
+  }
   VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
@@ -522,22 +490,17 @@ nextSpark:
   FieldCamera_WaitForArrival();
   // "That boat's yours, isn't it?"
   Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
-    goto answeredNo;
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-  gFieldWork->message++;
-  goto crewLeaves;
-toWest:
-  Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
-  goto inPlace;
-answeredNo:
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
-  gFieldWork->message++;
-  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-crewLeaves:
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+    Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+    gFieldWork->message++;
+  } else {
+    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
+    gFieldWork->message++;
+    Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+    Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  }
   Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 24);
   Actor_WalkByAndWait(ACTOR_MAN_KEEPING_THE_CANNON, 0, 24);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);

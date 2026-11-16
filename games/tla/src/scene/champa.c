@@ -733,7 +733,7 @@ void Champa_CloseTwoMessages(s32 first, s32 second) {
 /// Walking up to Obaba's cliff sets FLAG_NEAR_THE_CLIFF, so Alex waits there.
 void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
 
-/// FieldMessage_ShowAtActor through an inline, as the ROM's call is made.
+/// Shows the speaker's message by its actor (FieldMessage_ShowAtActor).
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }

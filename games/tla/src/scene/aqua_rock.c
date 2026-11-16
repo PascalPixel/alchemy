@@ -115,12 +115,14 @@ enum AquaRockMistSabreChestActorId {
   ACTOR_PUDDLE_B,
   ACTOR_PUDDLE_C,
   ///@}
-  /// The two fires Douse puts out.
+  /// The two ember stones Move pushes into the current.
   ///@{
-  ACTOR_FIRST_FIRE,
-  ACTOR_SECOND_FIRE,
+  ACTOR_FIRST_EMBER_STONE,
+  ACTOR_SECOND_EMBER_STONE,
   ///@}
-  ACTOR_FIRE_GLOW,
+  /// An unseen marker the bubbles and sparkles rise from once the streams are
+  /// turned back.
+  ACTOR_BUBBLE_MARKER,
   /// Where the stream the dry Moai pours out starts, dropping water.
   ACTOR_STREAM_SOURCE
 };
@@ -128,10 +130,10 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// Whether the game flag is set, read through an inline as the ROM's call is.
+/// Whether the game flag is set.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-/// GameFlag_Clear through an inline, as the ROM's call is made.
+/// Clears the game flag.
 static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
@@ -139,7 +141,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-/// Heap_Alloc through an inline, as the ROM's call is made.
+/// Takes `size` bytes from the heap.
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
 #include "field/field_sequence_event.h"
@@ -852,8 +854,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeThirdPuddle, 44, 44, 46,
     }                                                                          \
   }
 
-/// Move on the first ember stone (ACTOR_FIRST_FIRE) to column 53: it drops into
-/// the current.
+/// Move on the first ember stone to column 53: it drops into the current.
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(AquaRock_DropFirstRock,
                                 FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, 52)
 
@@ -1184,36 +1185,36 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 4)
       AquaRock_ArriveFromPassage();
   } else if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_GLOW), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_22))
       MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
-    Actor_SetAnimationById(ACTOR_FIRST_FIRE, 2);
+    Actor_SetAnimationById(ACTOR_FIRST_EMBER_STONE, 2);
     if (GameFlag_Get(FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED)) {
-      Actor_SetPosition(ACTOR_FIRST_FIRE, 856, 840);
+      Actor_SetPosition(ACTOR_FIRST_EMBER_STONE, 856, 840);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
-    Actor_SetAnimationById(ACTOR_SECOND_FIRE, 2);
+    Actor_SetAnimationById(ACTOR_SECOND_EMBER_STONE, 2);
     if (GameFlag_Get(FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED)) {
-      Actor_SetPosition(ACTOR_SECOND_FIRE, 856, 936);
+      Actor_SetPosition(ACTOR_SECOND_EMBER_STONE, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       AquaRock_StartCellMarkers();
       AquaRock_StartSparkles();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
-        AquaRock_SetCellMarkerAnchor(ACTOR_FIRE_GLOW);
-        AquaRock_SetSparkleAnchor(ACTOR_FIRE_GLOW);
+        AquaRock_SetCellMarkerAnchor(ACTOR_BUBBLE_MARKER);
+        AquaRock_SetSparkleAnchor(ACTOR_BUBBLE_MARKER);
       } else {
         TilesetAnim_Pause(7);
         TilesetAnim_Pause(8);
         TilesetAnim_Resume(5);
         TilesetAnim_Resume(6);
       }
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_GLOW), 0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
     } else {
       AquaRock_StartCellMarkers();
       AquaRock_StartSparkles();
@@ -1930,8 +1931,8 @@ LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_21, EVENT(AquaRock_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_22, EVENT(AquaRock_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_23, EVENT(AquaRock_FreezeThirdPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FIRE, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, EVENT(AquaRock_DropFirstRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_FIRE, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_EMBER_STONE, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, EVENT(AquaRock_DropFirstRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_EMBER_STONE, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
     {TRIGGER_PUSHED, 0, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_MIST_SABRE_WATER_STONE, FLAG_AQUA_ROCK_DRY_MOAI_DOUSED, EVENT(AquaRock_DouseDryMoai)},
     {TRIGGER_TABLE_END},

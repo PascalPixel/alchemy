@@ -157,7 +157,7 @@ void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
 void AnkohlRuins_RideRaftDown(void);
 
-/// Whether the game flag is set, read through an inline as the ROM's call is.
+/// Whether the game flag is set.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 #include "field/field.h"
@@ -242,7 +242,7 @@ const struct ActorPlacement *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// Actor_JumpDownLedge through an inline, as the ROM's call is made.
+/// Jumps actor `id` down a ledge (Actor_JumpDownLedge).
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }

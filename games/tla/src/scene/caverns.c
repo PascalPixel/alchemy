@@ -622,8 +622,8 @@ void Caverns_ParchAttekaWater(void) {
   return;
 }
 
-/// Angara Cavern's map: entered by entrance 5 or 6, two more cells take the
-/// attributes of the floor beside them.
+/// Angara Cavern's map: entered by entrance 5 or 6, the cells at columns 28 and
+/// 36 of row 5 take the attributes of those of row 0.
 void Caverns_PrepareAngara(void) {
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
     MapGrid_CopyCellAttributes(28, 0, 1, 1, 28, 5);

@@ -286,6 +286,8 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   }
   wait(10);
   i = 0;
+  // BUG: the loop runs seven times, reading one byte past the six statues of
+  // gAnemosInnerSanctumEntrance_StatueOrder; BUGFIX stops at the sixth.
   do {
     object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
     object->motionFlags = 0;
@@ -297,7 +299,11 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random_Below(4)) + 3);
+#ifdef BUGFIX
+  } while (++i < 6);
+#else
   } while (++i <= 6);
+#endif
   wait(40);
   Sound_Play(SE_KOLIMA_BRIDGE_POST);
   i = ACTOR_STATUE_A;
@@ -337,7 +343,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnemosInnerSanctumEntrance_Triggers;
 }
 
-/// Whether the game flag is set, read through an inline as the ROM's call is.
+/// Whether the game flag is set.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 /// Opens with the window transition. In the entrance room, gives the six
@@ -566,7 +572,8 @@ s8 gAnemosInnerSanctumEntrance_StatueSpots[] = {11, 27, 11, 28, 12, 27,
 
 /// The order the statues hop up in when the way opens.
 s8 gAnemosInnerSanctumEntrance_StatueOrder[] = {
-    12, 14, 9, 11, 13, 10,
+    ACTOR_STATUE_D, ACTOR_STATUE_F, ACTOR_STATUE_A,
+    ACTOR_STATUE_C, ACTOR_STATUE_E, ACTOR_STATUE_B,
 };
 
 #undef EFFECT_SPAWN

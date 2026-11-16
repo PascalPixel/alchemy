@@ -133,7 +133,7 @@ s32 Actor_EmitMist(struct Actor *object);
 void Leader_RiseFromWater(void);
 void ApojiiIslands_DrawCellMarkers(void);
 void ApojiiIslands_StartCellMarkers(void);
-void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b);
+void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel);
 void GroundParticles_Draw(void);
 void ApojiiIslands_StartSparkles(void);
 void ApojiiIslands_SetSparkleAnchor(s32 id);
@@ -187,14 +187,14 @@ struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gApojiiIslands_SplashScript[];
 extern u32 gWaterDropScript[];
 
-/// Import_ActorCreate through an inline, as the ROM's call is made.
+/// Creates an actor of `kind` at a point (Import_ActorCreate).
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-/// FieldCamera_MoveWithinMapBounds through an inline, as the ROM's call is
-/// made.
+/// Moves the camera to a point within the map's bounds
+/// (FieldCamera_MoveWithinMapBounds).
 static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
                                                    s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
@@ -220,6 +220,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
 #include "system/dma.h"
 #include "system/heap_release.h"
 #include "graphics/resource.h"
+#include "graphics/palette_buffers.h"
 #include "version.h"
 #include "../field/actor_set_sprite_priority.c"
 
@@ -250,8 +251,8 @@ extern struct Trigger gApojiiIslands_HazeTriggers[];
 void ApojiiIslands_SinkIntoSand(void);
 void ApojiiIslands_RiseFromSand(void);
 void ApojiiIslands_ResumeSeaColors(void);
-void ApojiiIslands_ClearShopsBushes(void);
-void ApojiiIslands_ClearShopsSmallBush(void);
+void ApojiiIslands_ClearHazeBushes(void);
+void ApojiiIslands_ClearHazeSmallBush(void);
 void ApojiiIslands_EnterDoor(void);
 void ApojiiIslands_JumpDownLedge(void);
 void ApojiiIslands_JumpForward(void);
@@ -440,7 +441,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
     Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
-    Value2((s32 (*)())PaletteFade_SetTarget, FIXED_ONE, 0);
+    Value2((s32 (*)())PaletteFade_SetTarget, PALETTE_TINT_NONE, 0);
     PaletteFade_StartInterpolation(10);
     i--;
     wait(10);
@@ -547,13 +548,13 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearSecondBush, 68, 38,
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
-/// Cyclone on the houses' bushes clears their cells.
-void ApojiiIslands_ClearShopsBushes(void) {
+/// Cyclone on Haze's islet's bushes clears their cells.
+void ApojiiIslands_ClearHazeBushes(void) {
   FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
-/// Cyclone on the houses' small bush clears its cells.
-DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearShopsSmallBush, 67,
+/// Cyclone on Haze's islet's small bush clears its cells.
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearHazeSmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
 /// Stepping onto a door: the leader walks through it and the scene leaves by
@@ -974,9 +975,9 @@ void ApojiiIslands_StartCellMarkers(void) {
 }
 
 /// Adds a marker over each cell of layer 1 whose collision code is `base` to
-/// `base` + 3, at height `a` and resting at `b`, and gives those cells
-/// MAP_SHAPE_MARKED, its entry set to height `a`.
-void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
+/// `base` + 3, at `level` and resting at `restLevel`, each in steps of 8
+/// pixels, and gives those cells MAP_SHAPE_MARKED, its entry set to `level`.
+void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *second = &map->layers[1];
   struct MapLayer *layer = &map->layers[0];
@@ -993,7 +994,7 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
   s16 x, z;
   u32 value;
 
-  *slot = a << 8;
+  *slot = level << 8;
   cells += origin;
   z = 0;
   if (z < height) {
@@ -1006,8 +1007,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
       if (value != 0 && value >= base && value < base + 4) {
         entry->x = ((u16)x << 20) + left + toFIXED(8);
         entry->z = ((u16)z << 20) + top + toFIXED(8);
-        entry->rest = b << 19;
-        entry->y = a << 19;
+        entry->rest = restLevel << 19;
+        entry->y = level << 19;
         entry->kind = value - base;
         entry->state = 1;
         entry++;
@@ -1377,8 +1378,8 @@ struct Trigger gApojiiIslands_HazeTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 40, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
     {TRIGGER_TALK, ACTOR_HAZE, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPE_POST_A, FLAG_HAZE_ROPE_TIED, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsSmallBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearHazeBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearHazeSmallBush)},
     {TRIGGER_TABLE_END},
 };
 #undef COPY_PICTURE

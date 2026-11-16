@@ -115,7 +115,7 @@ extern u8 gInventorySnapshot[];
 
 /// A vent's entry read from the start of VentWork, as these routines index it:
 /// the work's counter and hook come first, so entries[i] lies 8 bytes into row
-/// i. Read through entries[i], the address is built in another order.
+/// i.
 struct VentRow {
   u8 counterAndHook[8];
   s16 active;
@@ -407,6 +407,14 @@ enum AquaRockInsideTearStoneActorId {
   /// The stone pillars Moved into the puzzle (AquaRockInside_MovePuzzlePillar).
   ACTOR_TEAR_STONE_PILLAR_A,
   ACTOR_TEAR_STONE_PILLAR_B
+};
+
+/// The Parch tablet's room (gAquaRockInside_ParchTabletPlacements).
+enum AquaRockInsideParchTabletActorId {
+  /// The six water pillars.
+  ACTOR_PARCH_TABLET_FIRST_WATER_PILLAR = ACTOR_FIRST_PLACED,
+  /// The tablet Piers reads to learn Parch.
+  ACTOR_PARCH_TABLET = ACTOR_PARCH_TABLET_FIRST_WATER_PILLAR + 6
 };
 
 /// The battle with Steam, the Mercury Djinni of this room.
@@ -1440,7 +1448,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
-  AquaRockInside_PiersLearnsParch(14, ACTOR_PIERS);
+  AquaRockInside_PiersLearnsParch(ACTOR_PARCH_TABLET, ACTOR_PIERS);
   Party_LearnAbility(PIERS, ABILITY_PARCH);
   Event_SetFlag(FLAG_PIERS_LEARNED_PARCH);
   Event_PlaySound(SE_TREMOR);
@@ -2749,17 +2757,20 @@ u32 gAquaRockInside_TabletGlowScript[] = {
 };
 
 /// A spark spiralling in to Piers.
-s32 gAquaRockInside_RisingSparkScript[] = {                                                               
-      46,                                                                      
-      (s32)Orbiter_Spiral,                                                              
-      38,                                                                      
-      17,                                                                      
-  };
+s32 gAquaRockInside_RisingSparkScript[] = {
+    SC_CALL(Orbiter_Spiral),
+    SC_RELEASE,
+    SC_END,
+};
 
 /// A light rising around Piers.
-s32 gAquaRockInside_RiserScript[] = {                                                               
-      46, (s32)Orbit_Update, 46, (s32)Actor_AimAtWatched, 46, (s32)Actor_StepToWatched, 38, 17,                  
-  };
+s32 gAquaRockInside_RiserScript[] = {
+    SC_CALL(Orbit_Update),
+    SC_CALL(Actor_AimAtWatched),
+    SC_CALL(Actor_StepToWatched),
+    SC_RELEASE,
+    SC_END,
+};
 
 /// The Parch tablet rising.
 u32 gAquaRockInside_TabletRiseScript[] = {
@@ -3060,7 +3071,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_ParchTabletPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    {323, CONDITION_ALWAYS, 1, 0x64, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_SLATE, CONDITION_ALWAYS, 1, 0x64, 0, 0, FACING_SOUTH, 2, 2},
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

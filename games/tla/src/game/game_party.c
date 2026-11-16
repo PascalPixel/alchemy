@@ -27,7 +27,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   u16 name[UNIT_NAME_SIZE];
   s32 i;
   u32 index;
-  s32 q;
+  s32 copy;
   s32 count;
 
   index = enemyId - ENEMY_ID_FIRST;
@@ -76,7 +76,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   count = 0;
   for (i = 0; i < 4; i++) {
     if (enemy->items[i] != 0) {
-      for (q = 0; q < enemy->counts[i]; q++) {
+      for (copy = 0; copy < enemy->counts[i]; copy++) {
         if (count < INVENTORY_SLOTS)
           unit->inventory[count++] = enemy->items[i];
       }

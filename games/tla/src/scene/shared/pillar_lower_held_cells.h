@@ -5,7 +5,7 @@
 void Pillar_LowerHeldCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  u8 *grid;
+  struct ShapeCell *grid;
 
   if (held == NULL) {
     s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, 1);
@@ -13,25 +13,23 @@ void Pillar_LowerHeldCells(u16 *list) {
     if (id != -1)
       held = Actor_GetById(id);
   }
-  grid = Ram_MapShapeGrid;
+  grid = (struct ShapeCell *)Ram_MapShapeGrid;
   work->movedBlock = NULL;
   while (*list != ACTOR_LIST_END) {
     if (held == Actor_GetById(*list)) {
       u8 *layer = &held->layer;
       u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
-      u8 *shape =
+      struct ShapeCell *slot =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
       s32 kind = MapGrid_GetTerrainKind(*layer, held->x.fixed, held->z.fixed);
       s32 height = Map_GetTerrainHeight(*layer, held->x.fixed, held->z.fixed);
       s32 index = Actor_GetCellIndex(held);
       s32 result = MapCollision_FindOrAddTag(*layer, kind, (height >> 19) - 4);
 
-      shape += index;
+      slot += index;
       // The index goes on as the cell offset, four bytes a cell.
       index <<= 2;
-      /* FAKEMATCH(signature): the form kept; as *shape = result, 4 of 131
-       * instructions differ in tla-en. */
-      ((struct ShapeCell *)shape)->shape = result;
+      slot->shape = result;
       cell += index;
       ((struct MapCell *)cell)->attributeB &= 63;
       cell += MAPGRID_SIZE * sizeof(struct MapCell);

@@ -276,12 +276,11 @@ STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 268);
 /// A cell animation step's source column that ends the steps.
 #define MAPGRID_ANIMATION_STEPS_END 65535
 
-/// A cell of the map's shape grid as the raising and lowering of cells store
-/// it; only so the shape store has an alias set of its own, the grid holds
-/// bytes.
+/// A cell of the map's shape grid: one byte, the tag of the cell's collision
+/// shape.
 struct ShapeCell {
   u8 shape;
-};
+} __attribute__((packed));
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 

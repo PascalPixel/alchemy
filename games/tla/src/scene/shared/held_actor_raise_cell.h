@@ -3,7 +3,7 @@ void HeldActor_RaiseCell() {
   struct Actor *held = gFieldWork->movedBlock;
   u8 *layer;
   u8 *cells;
-  u8 *shapes;
+  struct ShapeCell *shapes;
   s32 shape;
   s32 level;
   s32 index;
@@ -13,7 +13,7 @@ void HeldActor_RaiseCell() {
     return;
   layer = &held->layer;
   cells = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
-  shapes = Ram_MapShapeGrid +
+  shapes = (struct ShapeCell *)Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = MapGrid_GetTerrainKind(*layer, held->x.fixed, held->z.fixed);
   level = Map_GetTerrainHeight(*layer, held->x.fixed, held->z.fixed);
@@ -23,9 +23,7 @@ void HeldActor_RaiseCell() {
   newShape = MapCollision_FindOrAddTag(*layer, shape, level);
   shapes += index;
   index <<= 2;
-  /* FAKEMATCH(signature): the grid byte stored through a one-field struct
-   * view. */
-  ((struct ShapeCell *)shapes)->shape = newShape;
+  shapes->shape = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;
   cells += MAPGRID_SIZE * sizeof(struct MapCell);

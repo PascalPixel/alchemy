@@ -835,8 +835,8 @@ void Contigo_BabyThinks(void) {
                                     FACING_EAST);
   // "When the Wings of Anemos are complete, let's fix the house!"
   Event_ShowMessageAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 0);
-  Actor_SetAnimationById(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 3);
-  Actor_SetAnimationAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 3);
+  Actor_SetAnimationById(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, ANIM_NOD);
   Actor_FaceDirection(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_NORTH_NORTHEAST,
                       0);
   Actor_FaceDirectionAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
@@ -1630,7 +1630,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // "I know that, now... But it doesn't explain why you're doing this..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "Felix betrayed his hometown, Vale... That's why he hasn't been able..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
@@ -1646,7 +1646,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 146, 342);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "Felix had hoped to play the villain alone, without getting Jenna or..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_Jump(ACTOR_GARET, 2, 10);
@@ -1669,7 +1669,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Parents? But...your parents died three years ago, in that storm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "That night, Saturos and his men had raided Sol Sanctum... The storm..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
@@ -1689,7 +1689,7 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetAnimationById(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "In fact, nobody was killed by the boulder that day!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1713,7 +1713,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "Yes! If Felix survived, Kyle and the others may have as well..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -1737,7 +1737,7 @@ void Contigo_TheReunion(void) {
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   }
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1776,10 +1776,10 @@ void Contigo_TheReunion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 80);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
@@ -1805,7 +1805,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1845,7 +1845,7 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
   Sound_Play(MUS_REUNION);
-  Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -1879,7 +1879,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetAnimationById(ACTOR_HAMA, 3);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1897,7 +1897,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
@@ -1915,13 +1915,13 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
-  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Contigo_StartSparkle(object, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
-  Actor_SetAnimationAndWait(ACTOR_HAMA, 4);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1930,7 +1930,7 @@ void Contigo_TheReunion(void) {
   Event_Wait(80);
   Contigo_StopSparkle(object);
   Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_ISAAC,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1950,7 +1950,7 @@ void Contigo_TheReunion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, angle);
-  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
@@ -1973,7 +1973,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
-  Actor_SetAnimationById(ACTOR_HAMA, 3);
+  Actor_SetAnimationById(ACTOR_HAMA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
@@ -2017,13 +2017,13 @@ void Contigo_TheReunion(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
     gFieldWork->message++;
-    Actor_SetAnimationById(ACTOR_KRADEN, 4);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   }
   Actor_WalkToAndWait(ACTOR_KRADEN, 146, 368);
@@ -2079,7 +2079,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     // "You're my sister... Why didn't you tell me sooner? Why didn't you..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(ACTOR_HAMA, 4);
+    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
     // "You play an important role in all this. If I'd told you, you would..."
     Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 40);
@@ -2101,7 +2101,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     // "What are you saying, sister?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(ACTOR_HAMA, 4);
+    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
     // "No, not sister... Do not think of me as your sister until you have..."
     Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_SetAttachedEffect(ACTOR_IVAN,
@@ -2138,7 +2138,7 @@ void Contigo_ReturnToNewHome(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I couldn't help overhearing you say something about the world..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
     // "Our world requires a delicate balance of elemental forces. That..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2152,7 +2152,7 @@ void Contigo_ReturnToNewHome(void) {
     // "You're talking about Mars Lighthouse, right?"
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
     Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_EAST);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -2180,7 +2180,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(ACTOR_HAMA, 4);
+    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
     // "They lack the power to resist that force, and they will fall before it."
     Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
@@ -2227,7 +2227,7 @@ void Contigo_ReturnToNewHome(void) {
     // "Quit fooling around and tell me!"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     // "The earth is nurturing and warm. Many creatures are reared in this..."
     FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2247,7 +2247,7 @@ void Contigo_ReturnToNewHome(void) {
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     }
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(ACTOR_KRADEN, 4);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     // "Now, think about the ocean. It is a cold place, is it not?"
     FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2266,7 +2266,7 @@ void Contigo_ReturnToNewHome(void) {
       // "I don't know what point he's trying to make, but I have to agree..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
     }
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     // "Both lighthouses were lit, and a balance was reached."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
@@ -2278,7 +2278,7 @@ void Contigo_ReturnToNewHome(void) {
     // "I get it... Wind cools things down, but it can't heat them up..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "When you burn your hand on something hot, you blow on it to cool it..."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
@@ -2288,7 +2288,7 @@ void Contigo_ReturnToNewHome(void) {
     // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Water cannot cool things as swiftly as wind, perhaps."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
@@ -2304,11 +2304,11 @@ void Contigo_ReturnToNewHome(void) {
     // "I got too worked up about seeing my sister... Sorry."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
     // "It's all right. I'm happy that you cared so much..."
     Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "All right, Felix! Let's head to Mars Lighthouse!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);

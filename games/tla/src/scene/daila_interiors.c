@@ -487,7 +487,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, 3);
+  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, ANIM_NOD);
   FieldEvent_Wait(30);
   // "I was just practicing for the show we're putting on tonight."
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);

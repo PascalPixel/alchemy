@@ -766,7 +766,7 @@ void DehkanPlateau_StepOnCrack(void) {
         Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
       }
     }
-    Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
+    Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
     Event_Wait(16);
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
@@ -1301,7 +1301,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   leader->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_POUND_CUBE_CANNON, 3);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   Event_Wait(16);
   for (i = 0; i < 40; i++) {
     if (i == 5)

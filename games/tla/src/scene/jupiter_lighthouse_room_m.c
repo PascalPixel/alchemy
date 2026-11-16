@@ -297,6 +297,8 @@ void JupiterLighthouse_FlashSky(void) {
 
 extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
+/// As Move takes the energy block: the height of the cell under it is set to
+/// -8.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -309,6 +311,9 @@ static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 a,
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
+/// As Move sets the energy block down: in the gap by the post at cell (63, 15)
+/// it drops in, the leader steps back to look about, lightning strikes the
+/// post and the puzzle's jingle plays.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_GetById(id);

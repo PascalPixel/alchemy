@@ -2056,21 +2056,23 @@ void Kibombo_AkafubuCastsOnCrystal(void) {
 
 s32 VramCache_FreeEntry(u32 slot);
 
-union Whirl {
+/// A spark Akafubu's Psynergy sends about the crystal: an actor whose bob
+/// bytes hold its stage and its wobble's timer.
+union SpinningSpark {
   struct Actor actor;
   struct {
-    u8 unused[0x62];
-    u8 stage;
-    u8 timer;
-  } whirl;
+    u8 beforeBob[0x62]; ///< the actor up to its riseCounter
+    u8 stage;           ///< riseCounter
+    u8 timer;           ///< riseEnabled
+  } spark;
 };
 
 /// A spark's update while Akafubu casts on the crystal: it circles its centre
 /// at its radius, wobbling in and out, and rises.
 void Kibombo_SpinSpark(struct Actor *actor) {
   FIXED wobble = 0;
-  union Whirl *object;
-  u8 *timer = &((union Whirl *)actor)->whirl.timer;
+  union SpinningSpark *object;
+  u8 *timer = &((union SpinningSpark *)actor)->spark.timer;
   s16 *action;
   u8 *stage;
   struct Vector3 centre;
@@ -2080,7 +2082,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
 
   if (*timer != 0)
     wobble = Trig_Sin((actor->timer + (s16)actor->userValue) * 9 << 9) * 6;
-  object = (union Whirl *)actor;
+  object = (union SpinningSpark *)actor;
   action = &object->actor.timer;
   centre.x = object->actor.targetX;
   centre.y = object->actor.targetY;
@@ -2093,7 +2095,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   object->actor.x.fixed = centre.x;
   object->actor.y.fixed = centre.y;
   object->actor.z.fixed = centre.z;
-  stage = &object->whirl.stage;
+  stage = &object->spark.stage;
   switch (*stage) {
   case 0:
     *action += 4;

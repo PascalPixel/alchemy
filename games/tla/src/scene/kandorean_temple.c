@@ -789,10 +789,12 @@ void KandoreanTemple_CastLash(void) {
     }                                                                          \
   }
 
+/// The west vent's task: while it blows, a cloud of steam every ninth frame.
 DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowLeftVent,
                              gKandoreanTemple_LeftVentBlowing, 9, toFIXED(296),
                              toFIXED(176), toFIXED(2))
 
+/// The east vent's task: while it blows, a stronger cloud every fifth frame.
 DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowRightVent,
                              gKandoreanTemple_RightVentBlowing, 5, toFIXED(344),
                              toFIXED(160), toFIXED(4))
@@ -2436,11 +2438,13 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     Event_End();                                                               \
   }
 
+/// Arriving on the west lift: the party rises into the room on it as its column
+/// grows beneath, and the west vent's timer is set to 2000, in its sinking.
 DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnWestLift, ACTOR_WEST_LIFT,
                              ACTOR_WEST_LIFT_COLUMN, 440, 200, 204, 27, 12,
                              gKandoreanTemple_LeftTimer)
 
-// As KandoreanTemple_ArriveOnWestLift, for the east lift.
+/// As KandoreanTemple_ArriveOnWestLift, for the east lift.
 DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, ACTOR_EAST_LIFT,
                              ACTOR_EAST_LIFT_COLUMN, 600, 232, 236, 37, 14,
                              gKandoreanTemple_RightTimer)

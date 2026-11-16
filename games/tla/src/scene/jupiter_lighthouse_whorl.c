@@ -382,6 +382,8 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
   }
 }
 
+/// As Move lifts a block: under the third path block, the cell's height is set
+/// to 6 and its attribute bit 0x80 cleared.
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -638,6 +640,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
     Leader_PushObjectAhead();
 }
 
+/// A jump spot's step: the leader jumps forward.
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }

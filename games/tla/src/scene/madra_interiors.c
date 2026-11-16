@@ -85,7 +85,8 @@ enum MadraInteriorsTravelersActorId {
   /// partner wears the same sprite in other colours.
   ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID = ACTOR_BLACK_CRYSTAL + 1,
   ACTOR_TRAVELERS_PARTNER,
-  /// The two warriors on their way to Colosso in Tolbi, there once flag 0x821
+  /// The two warriors on their way to Colosso in Tolbi, there once
+  /// FLAG_TRANSFERRED_WON_COLOSSO
   /// is set: "I'm Morgan, and this here's Dekka."
   ACTOR_MORGAN,
   ACTOR_DEKKA
@@ -149,6 +150,7 @@ extern s32 gMadraInteriors_OldManComesBack[];
 
 extern s32 gMadraInteriors_CharFollows[];
 
+/// The overlay's veneer to Event_CountAnswer.
 void MadraInteriors_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -498,8 +500,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);
     } else {
-      FieldActor_SetSpriteColor(Actor_Get(ACTOR_MORGAN), 3);
-      FieldActor_SetSpriteColor(Actor_Get(ACTOR_DEKKA), 5);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_MORGAN), SPRITE_COLOR_BGR);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_DEKKA), SPRITE_COLOR_BRG);
     }
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
@@ -523,9 +525,11 @@ s32 Scene_Initialize(void) {
   }
   MadraInteriors_PlaceBlackCrystal();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER_ON_RETURN), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER_ON_RETURN),
+                              SPRITE_COLOR_RBG);
   else
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER),
+                              SPRITE_COLOR_RBG);
   return 0;
 }
 
@@ -754,7 +758,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
   Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
   Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 6);
-  Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, 0);
+  Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, SPRITE_COLOR_NORMAL);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
@@ -764,17 +768,15 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   // "This man... He must be an Adept!"
   Event_OpenMessage(ACTOR_JAIL_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
-    goto answeredNo;
-  Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-  gFieldWork->message += 1;
-  goto answered;
-answeredNo:
-  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
-  gFieldWork->message += 1;
-  FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
+    FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
+    gFieldWork->message += 1;
+  } else {
+    Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
+    gFieldWork->message += 1;
+    FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
+  }
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
@@ -783,11 +785,9 @@ answered:
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JAIL_KRADEN, ANIM_WALK);
   felix = Actor_Get(ACTOR_FELIX);
-  if (felix == 0)
-    goto piersLeft;
-  Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
-                       felix->z.part[0].integer);
-piersLeft:
+  if (felix != 0)
+    Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
+                         felix->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);
   Event_SetFlag(FLAG_PIERS_INTERROGATED);
@@ -1083,33 +1083,31 @@ void MadraInteriors_WelcomePiersHome(void) {
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "And your jewel..."
   Event_OpenMessage(ACTOR_MAYOR, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
-    goto answeredNo;
-  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
-  gFieldWork->message += 3;
-  goto answered;
-answeredNo:
-  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  MadraInteriors_CountAnswer();
-  gFieldWork->message += 3;
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
-  Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEvent_Wait(50);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
+    gFieldWork->message += 3;
+  } else {
+    Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    MadraInteriors_CountAnswer();
+    gFieldWork->message += 3;
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
+    Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    FieldEvent_Wait(50);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
+  }
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
@@ -1119,13 +1117,10 @@ answered:
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  if (Event_GetFlag(0x981) == 0)
-    goto firstGoodbye;
-  MadraInteriors_SayGoodbyeAgain();
-  goto saidGoodbye;
-firstGoodbye:
-  MadraInteriors_AskToStayLonger();
-saidGoodbye:
+  if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) != 0)
+    MadraInteriors_SayGoodbyeAgain();
+  else
+    MadraInteriors_AskToStayLonger();
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(20);
@@ -1148,7 +1143,7 @@ saidGoodbye:
   MadraInteriors_WalkIntoLeader(ACTOR_SHEBA);
   MadraInteriors_WalkIntoLeader(ACTOR_PIERS);
   MadraInteriors_WalkIntoLeader(ACTOR_JENNA);
-  Event_SetFlag(0x989);
+  Event_SetFlag(FLAG_MADRA_FAREWELL_SAID);
   Event_End();
   return;
 }
@@ -1275,7 +1270,7 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_Wait(20);
   // "We shall set sail, Felix! To my ship! To the Eastern Sea!"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Event_SetFlag(0x981);
+  Event_SetFlag(FLAG_PIERS_SETTING_SAIL);
   Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
   // "Do you truly mean to leave so soon, Piers?"
@@ -1617,19 +1612,19 @@ struct Trigger gMadraInteriors_JailTriggers[] = {
 struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsInAllThisChaosEveryone)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsInAllThisChaosEveryone)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsSoBriggsAndHisPirates)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsTheresTalkOfMightyTravelers)},
-    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsMadraAndAlhafraOff)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsMadraAndAlhafraOff)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsItWasSureSneaky)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsSinceThingsAreFinallyCalming)},
     {TRIGGER_TALK, ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsOhhOhhh)},
     {TRIGGER_TALK, ACTOR_HER_SISTER, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsImSoHappy)},
     {TRIGGER_TALK, ACTOR_HER_SISTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIveToldMySisterNot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsWaitSecondIllBetBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsWaitSecondIllBetBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsNowThatBriggsHasBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsWhatIfWeJustTraveled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsAlhafraHasLongBeenTrade)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsAlhafraHasLongBeenTrade)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsItSoundsLikeOsenia)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsBusinessPlanOurPeopleHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsEyesShiningInDarknessNo)},
@@ -1725,7 +1720,7 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 30, 0x989, EVENT(MadraInteriors_WelcomePiersHome)},
+    {TRIGGER_STEP, 30, FLAG_MADRA_FAREWELL_SAID, EVENT(MadraInteriors_WelcomePiersHome)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsOurSalesmanSaidKibombosCeremony)},
     {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIWonderIfKibomboHave)},
     {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomLover)},
@@ -1769,8 +1764,8 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsItMustBeVeryStrange)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIfIHadBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsHmIWonderIfTidal)},
-    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
-    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraInteriors_GiveHealingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraInteriors_GiveLaughingFungus)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsThereAreSomePotatoesBoiling))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsTheyreMakingNanItLooks))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsAllSpicesAreNeatlyArranged))},

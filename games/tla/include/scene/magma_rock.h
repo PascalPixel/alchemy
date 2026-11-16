@@ -8,6 +8,15 @@
 
 struct Actor;
 
+/// The collision codes a statue's fire stops at as it flies
+/// (MagmaRock_FireFromStatue, MagmaRockInside_FireFromStatue): the edge of its
+/// way, and a lava fall, which it floods the room from
+/// (MagmaRockInside_RaiseLava).
+enum MagmaRockFireStopCell {
+  MAGMA_ROCK_CELL_FIRE_EDGE = 212,
+  MAGMA_ROCK_CELL_LAVA_FALL = 222
+};
+
 /// A crumbling pillar of Magma Rock (MagmaRock_CrumblePillar): its actor and
 /// its flag.
 struct MagmaRockCrumblingPillar {
@@ -58,7 +67,7 @@ void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
 void MagmaRock_SpawnRubble(s32 spread);
-void MagmaRock_SetLeaderCellShape(s32 a, s32 b);
+void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
 extern u32 gMagmaRock_RubbleScript[];
 
 extern u32 gMagmaRock_DustScript[];

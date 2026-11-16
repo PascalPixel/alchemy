@@ -4,8 +4,8 @@
 ///
 /// The first time the party steps onto the bridge (MadraDrawbridge_BlockBridge)
 /// the guards close ranks across it and send the party back for the elder's
-/// permission. Once flag 0x913 is set they greet the party instead
-/// (MadraDrawbridge_GreetPermittedParty) and step aside.
+/// permission. Once FLAG_OSENIA_PASSAGE_GRANTED is set they greet the party
+/// instead (MadraDrawbridge_GreetPermittedParty) and step aside.
 
 #include "battle/battle.h"
 #include "field/field.h"
@@ -34,9 +34,9 @@
 void FieldCamera_WaitForArrival(void);
 
 /// Set once the guards have closed ranks on this visit.
-#define FLAG_GUARDS_BLOCKED_BRIDGE 0x200
+#define FLAG_GUARDS_BLOCKED_BRIDGE FLAG_SCENE_TEMP_00
 /// Set once the guards have told the party to fetch the elder's permission.
-#define FLAG_GUARDS_ASKED_FOR_PERMISSION 0x301
+#define FLAG_GUARDS_ASKED_FOR_PERMISSION FLAG_AREA_TEMP_01
 
 /// The two guards, numbering the rows of gActorPlacements.
 enum MadraDrawbridgeActorId {
@@ -170,23 +170,24 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x913, EVENT(MadraDrawbridge_BlockBridge)},
+    {TRIGGER_STEP, 10, FLAG_OSENIA_PASSAGE_GRANTED,
+     EVENT(MadraDrawbridge_BlockBridge)},
     {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_GREETED,
      EVENT(MadraDrawbridge_GreetPermittedParty)},
-    {TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913,
+    {TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_OSENIA_PASSAGE_GRANTED,
      EVENT(MadraDrawbridge_AskGoingToOsenia)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgMadraMikasallaVillage)},
-    {TRIGGER_TALK, ACTOR_WEST_GUARD, 0x913,
+    {TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_OSENIA_PASSAGE_GRANTED,
      MSGNO(MsgMadraCanCrossWithPermission)},
     {TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgMadraAvoidYampiDesert)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, 0x913,
-     MSGNO(MsgMadraForTheirSafety)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD,
+     FLAG_OSENIA_PASSAGE_GRANTED, MSGNO(MsgMadraForTheirSafety)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgMadraWouldNeedBoat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, 0x913,
-     MSGNO(MsgMadraElderReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD,
+     FLAG_OSENIA_PASSAGE_GRANTED, MSGNO(MsgMadraElderReturn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgMadraRatherStayHome)},
     {TRIGGER_TABLE_END},

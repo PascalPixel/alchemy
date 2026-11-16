@@ -274,6 +274,17 @@
 /// Set as Felix comes upon the four Kibombo warriors in their hideout in the
 /// Gondowan Cliffs; back in Madra, Felix is asked "It was them, wasn't it?"
 #define FLAG_KIBOMBO_WARRIORS_FOUND 0x98f
+/// Set as the crew sights Menardi's ship from the Lemurian ship's deck
+/// (LemurianShipDeck_SightMenardisShip), or as Karst leaves Madra after
+/// coming to find the party there; the deck's sighting then runs no more.
+#define FLAG_MENARDIS_SHIP_SEEN 0x980
+/// Set as Piers tells Felix in Madra that they will sail for the Eastern Sea
+/// in his ship, or as the party reaches his ship from the Lemurian ship's
+/// deck; Kraden's farewell in Madra is shorter after it.
+#define FLAG_PIERS_SETTING_SAIL 0x981
+/// Set once the party has said its farewells in Madra and gathered to leave;
+/// Karst then comes into the town, and the deck's departure runs no more.
+#define FLAG_MADRA_FAREWELL_SAID 0x989
 /// Set once Burst has broken the last block on the Alhafran boat's mast, so
 /// the mast is ready for repairs; the town then wonders whether Briggs was a
 /// pirate at all.

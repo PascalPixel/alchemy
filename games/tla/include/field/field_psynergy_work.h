@@ -13,6 +13,10 @@
 struct Sprite;
 union FieldObject;
 
+/// The frame a scene's Psynergy event is given once the cast has ended
+/// (Field_RunPsynergyEvent, as Burst passes it): its last call.
+#define PSYNERGY_EVENT_LAST_FRAME 999
+
 /// A particle of a field Psynergy's effect: its place and velocity, in 16.16
 /// pixels on the field or on the screen, and the frames since it began
 /// (negative before it starts, or while it is free).

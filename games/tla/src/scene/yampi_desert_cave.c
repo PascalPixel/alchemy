@@ -64,11 +64,6 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 /// Set once Valukar, the guardian of fire, has been beaten; he is gone.
 #define FLAG_VALUKAR_BEATEN 0x9cd
 
-/// The entry that ends the marks' lists of palette slots and colours.
-#define PALETTE_LIST_END 0xffff
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// The Water of Life chest's room's actors
 /// (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of
 /// gYampiDesertCave_Placements.

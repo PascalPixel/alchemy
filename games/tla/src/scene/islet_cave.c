@@ -105,9 +105,6 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
 
-/// Ends the lists of palette slots and colours the water's cycle reads.
-#define PALETTE_LIST_END 0xffff
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies the BG and OBJ palettes into the palette
 /// fade's source and starts the blend.

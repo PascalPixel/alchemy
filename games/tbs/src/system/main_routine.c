@@ -20,7 +20,6 @@
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
 #define EXIT_HAS_FLAG 0x10000000
-#define EXIT_TABLE_END 511
 #define EXIT_ID_ANY 255
 
 /// Chooses the scene and entrance to go to when the party leaves the current
@@ -52,7 +51,7 @@ void Scene_TakeExit(s32 exitId) {
     if (sceneId & ~EXIT_SCENE_MASK)
       continue;
     sceneId &= EXIT_SCENE_MASK;
-    if (sceneId == EXIT_TABLE_END)
+    if (sceneId == SCENE_EXITS_END)
       break;
     if (sceneId != currentMap)
       continue;
@@ -66,7 +65,7 @@ void Scene_TakeExit(s32 exitId) {
       flag = word & EXIT_HAS_FLAG;
       if (flag)
         flag = *exitTable++;
-      if (sceneId == EXIT_TABLE_END || kind == 0) {
+      if (sceneId == SCENE_EXITS_END || kind == 0) {
         destinationScene =
             *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
         break;
@@ -352,7 +351,6 @@ void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 #undef ENTRANCE
 #undef EXIT_ID
 #undef EXIT_HAS_FLAG
-#undef EXIT_TABLE_END
 #undef EXIT_ID_ANY
 #undef MAP_HEADER
 #undef MAIN_ROUTINE_DEFINE_RUN_MINIGAME

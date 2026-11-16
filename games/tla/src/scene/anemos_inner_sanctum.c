@@ -147,9 +147,6 @@ extern s32 gAnemosInnerSanctum_StatueScript[];
 extern s16 gAnemosInnerSanctum_OtherDoorFrames[];
 extern s32 gAnemosInnerSanctum_OrbScript[];
 
-/// Ends a u16 list of palette slots or colours, written -1 in its table.
-#define PALETTE_LIST_END ((u16)-1)
-
 /// Writes one background palette entry from its red, green and blue.
 #define BG_PLTT_SET_RGB(index, r, g, b)                                        \
   do {                                                                         \

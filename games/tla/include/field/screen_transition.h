@@ -55,6 +55,9 @@ struct TransitionSpan {
 
 /// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
 #define TRANSITION_SHOW_ALL 0x7f7f
+/// WININ or WINOUT showing every layer in its low byte (window 0, or outside
+/// both windows; bit 6 set too) and nothing in its high byte.
+#define TRANSITION_SHOW_LOW_BYTE 0x007f
 
 /// A shape of WINDOW_TRANSITION_SHAPE: WINOUT and WININ while opening (swapped
 /// while closing), then up to three runs of lines down the screen, each a
@@ -68,6 +71,9 @@ struct TransitionShape {
 
 /// SpeakerDefinition.value of a sprite that makes no sound as it speaks.
 #define SPEAKER_VOICE_NONE 255
+/// SpeakerDefinition.haltedLines of a sprite Halt never stops: the monsters
+/// that talk, and things such as chests, rocks, trees and signposts.
+#define SPEAKER_HALTED_LINES_NONE 255
 
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 

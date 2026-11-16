@@ -22,14 +22,12 @@
 #include "field/field_sequence_event.h"
 #include "field/scene_call.h"
 #include "field/flag_call.h"
+#include "field/screen_transition.h"
 #include "gamepak/far_call/window.h"
 #include "text/msg_ids.h"
 #include "window/window.h"
 #include "item_ids.h"
 #include "ability_ids.h"
-
-/// What Speaker_GetHaltedLines returns for a sprite with no halted lines.
-#define SPEAKER_HALTED_LINES_NONE 255
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 

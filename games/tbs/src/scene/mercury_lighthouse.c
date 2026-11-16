@@ -93,6 +93,7 @@
 #include "battle/battle.h"
 #include "debug/debug.h"
 #include "field/event_commands.h"
+#include "field/facing.h"
 #include "field/field.h"
 #include "field/field_effect.h"
 #include "field/field_psynergy_work.h"
@@ -155,10 +156,6 @@ extern s32 gMercuryLighthouse_SparkScript[];
 extern s32 gMercuryLighthouse_RampScript[];
 extern s32 gMercuryLighthouse_ScaleCounterScript[];
 extern s32 gMercuryLighthouse_PillarScript[];
-/// A key heading table's entry when no direction is held, or only an
-/// opposite pair.
-enum { KEY_HEADING_NONE = -1 };
-
 extern u16 gMercuryLighthouse_MoveAngles[];
 extern s32 gPaletteCycleRed;
 extern s32 gPaletteCycleGreen;

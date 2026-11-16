@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// Places each pillar of a list of three-halfword entries (actor, kind,
 /// flag) ended by ACTOR_LIST_END, its collision bit cleared, raised or sunk by
 /// its flag (Actor_SetCellOpen).

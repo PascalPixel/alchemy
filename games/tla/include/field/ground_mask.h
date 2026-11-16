@@ -45,6 +45,10 @@ struct GroundParticle {
   u8 unusedAfterTimer[2]; ///< no code names it
 };
 
+/// GroundParticle.timer after the decrement that counts a live particle down,
+/// when it was already free (0): the u16 wraps.
+#define GROUND_PARTICLE_FREED 0xffff
+
 /// The heap slot weather while the ground particles run: their tiles' VRAM
 /// cache entry and first tile, and 64 particles.
 struct WeatherWork {

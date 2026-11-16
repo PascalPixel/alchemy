@@ -273,6 +273,10 @@ enum CommandIcon {
 /// The tilemap entry flip bits.
 #define TILE_HFLIP 0x400
 #define TILE_VFLIP 0x800
+/// A screen entry of tile n turned half a turn, flipped both ways.
+#define FLIP_XY(n) ((n) | TILE_HFLIP | TILE_VFLIP)
+/// A screen entry of tile n flipped top to bottom.
+#define FLIP_Y(n) ((n) | TILE_VFLIP)
 
 /// The window border's tiles.
 enum {

@@ -112,6 +112,7 @@
 #include "debug/debug.h"
 #include "field/event.h"
 #include "field/event_inline.h"
+#include "field/facing.h"
 #include "field/field.h"
 #include "field/field_effect.h"
 #include "field/field_psynergy_work.h"
@@ -133,10 +134,6 @@
 #include "system/main_routine_work.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
-
-/// A key heading table's entry when no direction is held, or only an
-/// opposite pair.
-enum { KEY_HEADING_NONE = -1 };
 
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];

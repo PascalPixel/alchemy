@@ -7,11 +7,6 @@
 #include "field/facing.h"
 #include "field/actor_script.h"
 
-/// A facing table entry: the picture to draw, counted from the sprite
-/// animation's base picture (bits 0-2), mirrored when bit 7 is set.
-#define FACING_MIRRORED_BIT 0x80
-#define MIRRORED(picture) (FACING_MIRRORED_BIT | (picture))
-
 // clang-format off
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
 /// each sector of the facing angle.

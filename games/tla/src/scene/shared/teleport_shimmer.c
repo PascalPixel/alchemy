@@ -3,9 +3,6 @@
 /// copy of: the palette cycle over the circle's colours as the spell is cast,
 /// and the party's whirling arrival.
 
-/// The entry that ends the shimmer's lists of slots and colours.
-#define PALETTE_LIST_END 0xffff
-
 /// Records the shimmer's four lists and sets each listed BG colour from its
 /// red, green and blue; then copies the BG and OBJ palettes into the palette
 /// fade's buffer and fades to them untinted; in teleport state 2 the party

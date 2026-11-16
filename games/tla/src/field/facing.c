@@ -10,11 +10,10 @@
 #include "fixed_math.h"
 #include "resource_ids.h"
 
+// clang-format off
 /// Facing tables: for each animation facing kind, the picture to draw for
 /// each sector of the facing angle, MIRRORED where the picture is drawn
 /// mirrored, as The Broken Seal's.
-#define MIRRORED(picture) (0x80 | (picture))
-// clang-format off
 const u8 gAnimationFacing_OnePicture[16] = {
     0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
     MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),

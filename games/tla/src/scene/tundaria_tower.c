@@ -63,9 +63,6 @@ void Actor_PlaceMovedBlock(void);
 void Actor_DisableById(u32 id);
 void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 #include "../field/actor_set_sprite_priority.c"
 
 /// Actor_StartScript, through the far-call veneer this overlay's import table

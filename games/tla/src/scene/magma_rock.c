@@ -53,9 +53,6 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-/// The -1 that ends a list of actor ids or table rows, read as a u16.
-#define ID_LIST_END 0xffff
-
 // Each pushed pillar's flag keeps it where it was pushed: two on the slide,
 // one on each of the Salamander Tail room's lower, middle and upper levels and
 // two on its top.
@@ -229,11 +226,11 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 #include "shared/block_clear_cells.h"
 
-/// For each id of a list ended by ID_LIST_END: settles the object on its
+/// For each id of a list ended by ACTOR_LIST_END: settles the object on its
 /// ground, copies the cell under it, and blocks the cells ahead of and behind
 /// it on a cell with attribute bit 6.
 void MagmaRock_SettleBlocks(u16 *ids) {
-  while (*ids != ID_LIST_END) {
+  while (*ids != ACTOR_LIST_END) {
     struct Actor *actor = Actor_Get(*ids);
     u8 *terrainId = &actor->layer;
     s32 height =
@@ -637,7 +634,7 @@ void MagmaRock_WarnStatue(struct Actor *actor) {
 }
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by ID_LIST_END: on a match, makes the row's actor the target and
+/// ended by ACTOR_LIST_END: on a match, makes the row's actor the target and
 /// returns its value.
 s32 MagmaRock_FindStatue(u16 *table) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
@@ -646,7 +643,7 @@ s32 MagmaRock_FindStatue(u16 *table) {
       MapCell_GetAttributes(0, FIELD_CELL(work->x), FIELD_CELL(work->z)) >> 8;
   s32 id;
 
-  for (; *table != ID_LIST_END; result = *table++) {
+  for (; *table != ACTOR_LIST_END; result = *table++) {
     id = *table++;
     if (code == *table++) {
       work->child = Actor_Get(id);
@@ -658,12 +655,12 @@ s32 MagmaRock_FindStatue(u16 *table) {
 }
 
 /// Looks up the cell at (x, z) in an (actor, cell, value) table ended by
-/// ID_LIST_END and returns the value of its row.
+/// ACTOR_LIST_END and returns the value of its row.
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
   s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
 
-  while (*table != ID_LIST_END) {
+  while (*table != ACTOR_LIST_END) {
     table++;
     if (code == *table) {
       result = table[1];
@@ -1877,7 +1874,7 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  while (*table != ID_LIST_END) {
+  while (*table != ACTOR_LIST_END) {
     id = table[0];
     actor = Actor_Get(id);
     flag = table[1];
@@ -1934,7 +1931,7 @@ void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == NULL)
     return;
-  while (list[0] != ID_LIST_END) {
+  while (list[0] != ACTOR_LIST_END) {
     s32 id = list[0];
 
     if (Actor_GetById(id) != target) {
@@ -1994,7 +1991,7 @@ void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
   s32 nextFlag;
 
   target = Actor_Get(id);
-  while (entry->id != ID_LIST_END) {
+  while (entry->id != ACTOR_LIST_END) {
     if (entry->id != id) {
       entry++;
       continue;
@@ -2063,7 +2060,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == 0)
     return;
-  while (*list != ID_LIST_END) {
+  while (*list != ACTOR_LIST_END) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != target) {

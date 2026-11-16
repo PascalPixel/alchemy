@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// Raises the pillars of a list out of the ground, making their cells solid.
 void Pillar_Raise(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;

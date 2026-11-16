@@ -17,6 +17,9 @@
 /// colours.
 #define PALETTE_FADE_CHANNELS (448 * 3)
 
+/// The entry that ends a u16 list of palette slots or of colours.
+#define PALETTE_LIST_END 0xffff
+
 /// A colour buffer for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 struct TitlePaletteFade {

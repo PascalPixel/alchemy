@@ -5,11 +5,6 @@
 #include "types.h"
 #include "window/window.h"
 
-/// A screen entry of tile n turned half a turn, flipped both ways.
-#define FLIP_XY(n) ((n) | TILE_HFLIP | TILE_VFLIP)
-/// A screen entry of tile n flipped top to bottom.
-#define FLIP_Y(n) ((n) | TILE_VFLIP)
-
 // clang-format off
 
 /// The screen entries of Parch's 16x16-tile picture (BgMap_DrawClipped16x16),

@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// Raises the cells of a list's actors.
 void MagmaRockInside_RaiseActorCells(u16 *list) {
   for (; *list != ACTOR_LIST_END; list += 3) {

@@ -155,6 +155,11 @@ extern const FIXED gCamera_FixedViewMatrix[12];
 extern const s32 gActor_FootprintScript[];
 extern const s32 gWorldMap_KeyYaws[16];
 
+/// A facing table entry: the picture to draw, counted from the sprite
+/// animation's base picture (bits 0-2), mirrored when bit 7 is set.
+#define FACING_MIRRORED_BIT 0x80
+#define MIRRORED(picture) (FACING_MIRRORED_BIT | (picture))
+
 /// gWorldMap_KeyHeadings' entry when no direction is held, or only an
 /// opposite pair: no heading, since every real one is a multiple of an eighth
 /// turn.

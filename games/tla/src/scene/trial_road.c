@@ -194,12 +194,6 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// pillar: 16 standing, -16 lowered.
 #define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
 
-/// A map cell's collision code for a wall: nothing steps onto it.
-#define CELL_WALL 255
-
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// A fountain rises and falls once each FOUNTAIN_PERIOD frames, rising at
 /// FOUNTAIN_RISE_AT and falling at FOUNTAIN_FALL_AT.
 #define FOUNTAIN_PERIOD 240
@@ -1150,19 +1144,19 @@ void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   low = map->layers[0].cells + index;
   high = map->layers[2].cells + index;
   if (mode == 0) {
-    low[-MAPGRID_SIZE].collisionCode = CELL_WALL;
-    low->collisionCode = CELL_WALL;
-    low[MAPGRID_SIZE].collisionCode = CELL_WALL;
-    high[-MAPGRID_SIZE].collisionCode = CELL_WALL;
-    high->collisionCode = CELL_WALL;
-    high[MAPGRID_SIZE].collisionCode = CELL_WALL;
+    low[-MAPGRID_SIZE].collisionCode = CELL_BEHAVIOR_WALL;
+    low->collisionCode = CELL_BEHAVIOR_WALL;
+    low[MAPGRID_SIZE].collisionCode = CELL_BEHAVIOR_WALL;
+    high[-MAPGRID_SIZE].collisionCode = CELL_BEHAVIOR_WALL;
+    high->collisionCode = CELL_BEHAVIOR_WALL;
+    high[MAPGRID_SIZE].collisionCode = CELL_BEHAVIOR_WALL;
   } else {
-    low[-1].collisionCode = CELL_WALL;
-    low->collisionCode = CELL_WALL;
-    low[1].collisionCode = CELL_WALL;
-    high[-1].collisionCode = CELL_WALL;
-    high->collisionCode = CELL_WALL;
-    high[1].collisionCode = CELL_WALL;
+    low[-1].collisionCode = CELL_BEHAVIOR_WALL;
+    low->collisionCode = CELL_BEHAVIOR_WALL;
+    low[1].collisionCode = CELL_BEHAVIOR_WALL;
+    high[-1].collisionCode = CELL_BEHAVIOR_WALL;
+    high->collisionCode = CELL_BEHAVIOR_WALL;
+    high[1].collisionCode = CELL_BEHAVIOR_WALL;
   }
 }
 

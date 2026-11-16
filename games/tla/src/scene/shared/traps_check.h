@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// Checks the trap under the leader: the first step sets it off, the second
 /// drops it.
 void MagmaRockInside_CheckCrumblingStep(const u16 *table) {

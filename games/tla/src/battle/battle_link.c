@@ -9,9 +9,6 @@
 #define LINK_PARTY_UNIT_BYTES 340
 #define LINK_PARTY_OFFER_BYTES 340
 
-/// BattleWork.opponentSlots of a party unit with no slot as a link opponent.
-#define OPPONENT_SLOT_NONE 0xff
-
 /// Unused: receives the opponent's party into the enemy units, "Enemy" before
 /// each name, then its Djinn recovery list. Returns how many party members
 /// came.

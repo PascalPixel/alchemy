@@ -110,7 +110,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 #define SCENE_EXIT_UNLESS(exit, map, entrance, flag)                           \
   (SCENE_EXIT(exit, map, entrance) + 0x10000000), (u32)(flag)
 /// The last header word: it ends the last scene's exits and the table.
-#define SCENE_EXITS_END 0x1ff
+#define SCENE_EXITS_END 511
 
 /// Sequence ids above the scene table's rows: the sequences other than the
 /// field sequence, which MainRoutine_Run runs in its place.

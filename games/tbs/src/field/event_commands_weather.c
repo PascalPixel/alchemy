@@ -4,10 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// A free ground particle's timer (0) after the decrement that counts a
-/// live one down: the u16 wraps.
-#define GROUND_PARTICLE_FREED 0xffff
-
 /// Task: animates the ground particles.
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

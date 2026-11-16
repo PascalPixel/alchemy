@@ -35,9 +35,6 @@
 /// hall greets it on its way back by the game's entrance.
 #define FLAG_LEFT_FOR_A_GAME 0x9e5
 
-/// Ends a u16 list of palette slots or colours, written -1 in its table.
-#define PALETTE_LIST_END ((u16)-1)
-
 /// The dice hall's ways back from its games.
 enum ContigoDiceHallEntrance {
   ENTRANCE_FROM_SUPER_LUCKY_DICE = 18,

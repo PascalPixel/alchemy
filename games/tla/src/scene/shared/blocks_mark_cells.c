@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// For each id of a list ended by ACTOR_LIST_END: clears the actor's mark and,
 /// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
 /// sets the mark.

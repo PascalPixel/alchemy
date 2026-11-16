@@ -71,6 +71,9 @@ struct BattleMessageWork {
 STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
 
+/// BattleWork.opponentSlots of a party unit with no slot as a link opponent.
+#define OPPONENT_SLOT_NONE 0xff
+
 /// The battle's own work: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.
 struct BattleWork {
@@ -99,7 +102,7 @@ struct BattleWork {
   u8 fleeFailures;
   u8 ceaseFire; ///< set by Lull with MsgAllResting, "Everybody is resting!"
   /// For each party unit, its slot as a link opponent's enemy, minus 128;
-  /// a mark for none.
+  /// OPPONENT_SLOT_NONE for none.
   u8 opponentSlots[8];
   u8 linkSide;         ///< this console's multiplayer id
   u8 linkMisses;       ///< frames the link has been down

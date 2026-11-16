@@ -70,9 +70,6 @@
 #include "system/frame.h"
 #include "text/msg_ids.h"
 
-/// The -1 that ends a list of actor ids or table rows, read as a u16.
-#define ID_LIST_END 0xffff
-
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the dead end cracked the ice sheet a floor below.
 #define FLAG_ICE_GROUND 0xa3e
@@ -347,7 +344,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   s16 flag;
   s16 animation;
 
-  if (table[0] == ID_LIST_END)
+  if (table[0] == ACTOR_LIST_END)
     return;
   row = table;
   do {
@@ -362,7 +359,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
     object->timer = flag;
     MarsLighthouseEntrance_SetIceConeCells(object);
     row += 3;
-  } while (row[0] != ID_LIST_END);
+  } while (row[0] != ACTOR_LIST_END);
 }
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
@@ -1907,7 +1904,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  while (*list != ID_LIST_END) {
+  while (*list != ACTOR_LIST_END) {
     s32 entry = *list;
     s32 id = work->secondActorId;
 

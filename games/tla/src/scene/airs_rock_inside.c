@@ -63,9 +63,6 @@
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
 
-/// Ends a u16 list of actor ids, written -1 in its table.
-#define ACTOR_LIST_END ((u16)-1)
-
 /// The hall's entrance from the Reveal tablet's room, and where the party
 /// lands after dropping from the Vial chest room (AirsRockInside_LandInHall);
 /// the Vial chest room's entrance on the lift from the hall

@@ -1,6 +1,3 @@
-/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
-#define ACTOR_LIST_END 0xffff
-
 /// Lowers the cells under the held actor, or the one the leader carries, for
 /// each listed actor it is: the shape grid takes the shape for its new height
 /// and the cell flags under it are cleared; the field work keeps the actor as

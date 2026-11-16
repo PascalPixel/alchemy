@@ -55,9 +55,6 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-/// The -1 that ends a list of actor ids or table rows, read as a u16.
-#define ID_LIST_END 0xffff
-
 extern struct MapCell gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *actor, s32 priority);
@@ -449,8 +446,8 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by ID_LIST_END: clears the object's mark and, on
-/// a cell with attribute bit 6, blocks the cells ahead of and behind it and
+/// For each id of a list ended by ACTOR_LIST_END: clears the object's mark and,
+/// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
 /// sets the mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
@@ -460,7 +457,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct MapCell *cell;
   s32 x, z;
 
-  while (*ids != ID_LIST_END) {
+  while (*ids != ACTOR_LIST_END) {
     actor = Actor_Get(*ids);
     blocked = &actor->riseEnabled;
     *blocked = 0;
@@ -756,12 +753,12 @@ void MagmaRockInside_FlashStatue(struct Actor *actor) {
 }
 
 // The cell watch's table lookup over (id, cell, value) rows ended by
-// ID_LIST_END: for the row of the cell under the watch, sets the watch's object
-// to the row's object and returns its value; otherwise returns the value of the
-// last row passed (0 for none).
+// ACTOR_LIST_END: for the row of the cell under the watch, sets the watch's
+// object to the row's object and returns its value; otherwise returns the value
+// of the last row passed (0 for none).
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by ID_LIST_END: on a match, makes the row's actor the target and
+/// ended by ACTOR_LIST_END: on a match, makes the row's actor the target and
 /// returns its value.
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
@@ -769,7 +766,7 @@ s32 MagmaRockInside_FindStatue(u16 *table) {
   s32 cell = MapCell_Get(0, FIELD_CELL(watch->x), FIELD_CELL(watch->z)) >> 8;
   u32 id;
 
-  for (; *table != ID_LIST_END; result = *table++) {
+  for (; *table != ACTOR_LIST_END; result = *table++) {
     id = *table++;
     if (cell == *table++) {
       watch->child = Actor_Get(id);
@@ -2723,7 +2720,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 flag;
 
-  while (entry->actor != ID_LIST_END) {
+  while (entry->actor != ACTOR_LIST_END) {
     if (entry->actor != id) {
       entry++;
       continue;
@@ -2790,7 +2787,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
   trap = Actor_FindAtCell(position, 0);
   if (trap == 0)
     return;
-  while (*table != ID_LIST_END) {
+  while (*table != ACTOR_LIST_END) {
     id = table[0];
     if (Actor_GetById(id) != trap) {
       table += 2;

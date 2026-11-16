@@ -31,9 +31,6 @@
 /// Indra Cavern: set once Lash has tied the rope between its posts.
 #define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
 
-/// Ends a u16 list of actor ids, written -1 in its table.
-#define ACTOR_LIST_END ((u16)-1)
-
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];

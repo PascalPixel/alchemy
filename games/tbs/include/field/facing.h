@@ -23,6 +23,15 @@ extern const s16 gActorScript_EndScriptTail[8];
 
 extern const s32 gWorldMap_KeyYaws[16];
 
+/// A facing table entry: the picture to draw, counted from the sprite
+/// animation's base picture (bits 0-2), mirrored when bit 7 is set.
+#define FACING_MIRRORED_BIT 0x80
+#define MIRRORED(picture) (FACING_MIRRORED_BIT | (picture))
+
+/// A scene's key-heading table entry when no direction is held, or only an
+/// opposite pair, where the others are facings.
+#define KEY_HEADING_NONE (-1)
+
 /// gWorldMap_KeyHeadings' entry when no direction is held, or only an
 /// opposite pair: no heading, since every real one is a multiple of an eighth
 /// turn.

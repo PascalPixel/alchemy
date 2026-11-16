@@ -53,10 +53,6 @@
 #include "field/map_grid.h"
 #include "field/field_sequence.h"
 
-/// Ends a list of actor ids, or of actors and their flags (Actor_PlaceBlocks,
-/// FlagBlock_PlaceAll).
-#define ACTOR_LIST_END ((u16)-1)
-
 /// The key of a free entry in the map collision's tags
 /// (MapCollision_FindOrAddTag).
 #define COLLISION_TAG_FREE 255

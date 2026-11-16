@@ -22,6 +22,9 @@ enum ScreenTransitionStyle {
 /// Actor.targetX, targetY and targetZ when it has no movement target.
 #define TARGET_UNSET ((s32)0x80000000)
 
+/// The actor id that ends a list of actors, or of rows that start with one.
+#define ACTOR_LIST_END 0xffff
+
 /// A field object's sprite animation, which Actor.sprite points to
 /// when animationKind is 1.
 /// Sets an actor's position in one statement, as SET_POSITION does for a

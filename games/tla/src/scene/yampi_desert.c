@@ -326,7 +326,7 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value);
 
 extern struct SceneEntrance gYampiDesert_Entrances[];
 extern struct SceneEntrance gYampiDesertOasisCaveEntrances[];
-extern u32 gYampiDesertScorpionPitExitRegions[];
+extern s16 gYampiDesertScorpionPitExitRegions[];
 extern s16 gYampiDesertOasisCaveExitRegions[];
 
 /// Talking to Blitz, the Jupiter Djinni, starts its battle.
@@ -2887,10 +2887,12 @@ LATE_DATA struct SceneEntrance gYampiDesertOasisCaveEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The regions that leave the scorpion's pit and the cave under the oasis.
-LATE_DATA u32 gYampiDesertScorpionPitExitRegions[] = {
-    0x2c00d8, 0xf800b8, 0xd8004c, 0x1ffff, 0xffff, 0,
-    0, 0,
+/// The regions that leave the scorpion's pit and the cave under the oasis, a
+/// row each: the box's least x, y and z and its greatest, in pixels, its
+/// condition (-1 always) and its exit; -1 ends the list.
+LATE_DATA s16 gYampiDesertScorpionPitExitRegions[] ALIGNED(4) = {
+    216, 44, 184, 248, 76, 216, -1, 1,
+    -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
 LATE_DATA s16 gYampiDesertOasisCaveExitRegions[] = {

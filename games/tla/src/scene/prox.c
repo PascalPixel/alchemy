@@ -264,8 +264,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -346,7 +346,7 @@ extern u32 gProx_FirstChildRuns[];
 extern u32 gProx_SecondChildRuns[];
 extern u32 gProx_ThirdChildRuns[];
 /// The leader comes down the stairs into a basement.
-void Prox_ComeDownStairs(s32 value);
+void Prox_ComeDownStairs(s32 westOrSouth);
 extern s32 gProx_KradenStepsForward[];
 extern s32 gProx_SecondParentWalksSouth[];
 extern s32 gProx_ThirdParentWalksSouth[];
@@ -412,7 +412,8 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
   s32 *targetPos;
   s32 *objectPos;
 
-  if (BYTE_AT(object, 99) != 0) {
+  // A child being talked to holds still.
+  if (object->riseEnabled != 0) {
     object->paused = 1;
     return 1;
   }
@@ -422,8 +423,8 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
       force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
                                *targetPos - *objectPos);
-    u32 left = (angle - 0x1000) & 0xf000;
-    u32 right = (angle + 0x1000) & 0xf000;
+    u32 left = (angle - TRIG_TURN / 16) & 0xf000;
+    u32 right = (angle + TRIG_TURN / 16) & 0xf000;
     u32 ahead = angle & 0xf000;
     u32 facing = object->facing & 0xf000;
 
@@ -555,8 +556,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
        ->v)
 
 /// Scoop on the black dot under the boulder digs up its treasure.
-void Prox_ScoopUpDarkMatter(s32 a0) {
-  Event_DigUpTreasure(a0, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
+void Prox_ScoopUpDarkMatter(s32 mode) {
+  Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
 }
 
 extern struct Trigger gProx_HousesTriggers[];
@@ -579,8 +580,10 @@ const u8 *Scene_GetTriggers(void) {
   return gProx_Triggers;
 }
 
+/// The overlay's call to Event_End.
 s32 Prox_EndEvent();
 
+/// "Felix! You like igloos, right?"
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -592,15 +595,17 @@ void Prox_AskAboutIgloos(void) {
 #include "shared/leader_is_facing_north.h"
 
 /// Prox's shops, as Shop_Run numbers them.
-enum { SHOP_PROX = 0 };
+enum { SHOP_PROX = 31 };
 
 /// Prox's inn, as Inn_CheckIn numbers the inns.
-enum { PROX_INN = 0 };
+enum { PROX_INN = 14 };
 
+/// The innkeeper: across the counter, the inn; from anywhere else, news of
+/// Felix's parents, who went away worried about him.
 void Prox_TalkAboutParents(void) {
 
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(0xe, 0x16);
+    Inn_CheckIn(PROX_INN, ACTOR_VILLAGER_ON_FELIXS_PARENTS);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -616,10 +621,12 @@ void Prox_TalkAboutParents(void) {
 
 s32 Shop_Run();
 
+/// The shopkeeper: across the counter, the shop; from anywhere else, praise for
+/// how Felix has grown, or for his foster grandmother once the beacon is lit.
 void Prox_PraiseReturnedWarrior(void) {
 
   if (Leader_IsFacingNorth()) {
-    Shop_Run(0x1f, 0xa);
+    Shop_Run(SHOP_PROX, ACTOR_VILLAGER_PRAISING_FELIX);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -635,10 +642,12 @@ void Prox_PraiseReturnedWarrior(void) {
 
 s32 Sanctum_Run();
 
+/// The old man of the caves keeps the sanctum: across the counter he heals;
+/// from anywhere else he speaks of Agatio and Karst, or of the lit lighthouse.
 void Prox_FearForWeyard(void) {
 
   if (Leader_IsFacingNorth()) {
-    Sanctum_Run(8);
+    Sanctum_Run(ACTOR_OLD_MAN_FEARING_FOR_WEYARD);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -652,25 +661,17 @@ void Prox_FearForWeyard(void) {
   }
 }
 
-/// The bytes of an actor these handlers use: its facing, and the last of the
-/// four scene-owned bytes The Broken Seal's actors keep at this place, which
-/// holds the children still while one is talked to.
-struct TalkActor {
-  u8 beforeAngle[6];
-  u16 angle; ///< 1/65536 turns
-  u8 beforeTalking[0x5b];
-  u8 talking; ///< Prox_ChaseTarget stops the chase while it is set
-};
-
+/// The child playing tag, held still while spoken to: faces the leader to say
+/// what fun it is to play outside, or under Mind Read is glad to be out of the
+/// igloo; then turns back and plays on.
 void Prox_TalkToPlayingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_PLAYING_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_PLAYING_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -680,20 +681,21 @@ void Prox_TalkToPlayingChild(void) {
   // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// The restless child, held still while spoken to: misses running around
+/// outside, or under Mind Read thinks how unreal the blizzard was.
 void Prox_TalkToRestlessChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_RESTLESS_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_RESTLESS_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
@@ -703,20 +705,21 @@ void Prox_TalkToRestlessChild(void) {
   // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// The training child, held still while spoken to: must train hard to be a
+/// warrior like Felix, or under Mind Read thinks snow makes better exercise.
 void Prox_TalkToTrainingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_TRAINING_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_TRAINING_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -726,17 +729,17 @@ void Prox_TalkToTrainingChild(void) {
   // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// While the lighthouse is unlit: a warrior comes out of the upper house and is
+/// sent off to find word of Felix's parents, a scene the party overhears.
 void Prox_SearchForParents(void) {
-  s32 t0;
+  s32 lit = Event_GetFlag(FLAG_MARS_BEACON_LIT);
 
-  t0 = Event_GetFlag(FLAG_MARS_BEACON_LIT);
-  if (t0 != 0) {
-  } else {
+  if (lit == 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_DOOR_OPEN);
@@ -744,11 +747,14 @@ void Prox_SearchForParents(void) {
     Event_SetFlag(FLAG_DOOR_LEFT_OPEN);
     FieldEvent_Wait(10);
     {
-      s32 y = 0xc0;
+      /* FAKEMATCH(temporary): the facing built from a smaller number in a
+       * block local; passed as FACING_SOUTH_SOUTHEAST, 4 of 178 instructions
+       * differ in tla-en. */
+      s32 facing = FACING_SOUTH_SOUTHEAST >> 6;
       Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
-                                 toFIXED(360), y << 6);
+                                 toFIXED(360), facing << 6);
     }
-    FieldCamera_GetActor()->motionFlags = t0;
+    FieldCamera_GetActor()->motionFlags = lit;
     FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(552, CAMERA_KEEP, 388, 1);
     FieldEvent_Wait(10);
@@ -803,6 +809,8 @@ void Prox_SearchForParents(void) {
 
 void FieldCamera_WaitForArrival(void);
 
+/// Puelle decides the clan cannot wait for Agatio any longer and must go to the
+/// Mars Lighthouse; the clansmen start at her words.
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -920,6 +928,8 @@ void Prox_DecideToGoToLighthouse(void) {
 s32 Actor_MoveToObject();
 extern s32 gProx_IsaacStepsUpToPuelle[];
 
+/// The party climbs to Puelle's house: the elder knows Felix, and Puelle tells
+/// of his parents and the lighthouse.
 void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
@@ -983,7 +993,7 @@ void Prox_MeetPuelle(void) {
   Actor_WalkToAndWait(ACTOR_ISAAC, 160, 140);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_ISAAC)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetAnimationAndWait(ACTOR_ISAAC, 0x15);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, 21);
   Actor_FaceDirection(ACTOR_CLANSMAN_GUARDING_THE_ROAD, FACING_NORTH_NORTHWEST,
                       0);
   Actor_FaceDirection(ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS,
@@ -1032,15 +1042,10 @@ void Prox_MeetPuelle(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
   // Waits up to 80 frames, or until a key is held.
-  i = 0;
-  goto test_wait;
-next_wait:
-  i++;
-test_wait:
-  if (i < 80) {
+  for (i = 0; i < 80; i++) {
     System_Wait(1);
-    if (gInput.held == 0)
-      goto next_wait;
+    if (gInput.held != 0)
+      break;
   }
   Actor_RunRepeatedMotion(ACTOR_CLANSMAN_GUARDING_THE_ROAD, 1);
   Event_ShowMessage(ACTOR_CLANSMAN_GUARDING_THE_ROAD, 0);
@@ -1229,9 +1234,12 @@ void Prox_ScoopUpMold(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
     {
-      s32 y = 0x80;
+      /* FAKEMATCH(temporary): the facing built from a smaller number in a
+       * block local; passed as FACING_SOUTH, 2 of 46 instructions differ in
+       * tla-en. */
+      s32 facing = FACING_SOUTH >> 7;
       Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
-                                 y << 7);
+                                 facing << 7);
     }
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
@@ -1241,58 +1249,43 @@ void Prox_ScoopUpMold(void) {
   }
 }
 
+/// Scoop on the black dot under the boulder: the ground there is dug out of the
+/// map's collision while it is cast.
 void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
+/// After the Scoop, the dug ground's collision is filled back in.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
-/// A roof's puff as Prox_RisePuff reads the actor: its place, its scale, how
-/// far it drifts (the actor's timer) and the frames it has left (where an actor
-/// keeps its watched actor).
-struct RisingObject {
-  u8 beforeX[8];
-  s32 x;
-  s32 y;
-  u8 beforeScale[8];
-  s32 scaleX;
-  s32 scaleY;
-  u8 beforeDrift[0x44];
-  s16 drift;
-  u8 afterDrift[2];
-  s32 life;
-};
-
-void Actor_Release(struct RisingObject *object);
-
-void Prox_RisePuff(struct RisingObject *object) {
-  object->x += object->drift << 8;
-  object->y += toFIXED(1) / 2;
+/// Drifts a roof's puff sideways ever faster, raises and widens it, and
+/// releases it when its frames run out.
+void Prox_RisePuff(struct Actor *object) {
+  object->x.fixed += object->timer << 8;
+  object->y.fixed += toFIXED(1) / 2;
   object->scaleX += FIXED_ONE / 50;
   object->scaleY += FIXED_ONE / 50;
-  object->drift += 2;
-  if (--object->life == 0)
+  object->timer += 2;
+  if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
 }
 
 /// Adds one puff rising from a roof.
-void Prox_AddPuff(s32 a0, s32 a1, s32 a2) {
-  s32 t0;
+void Prox_AddPuff(s32 x, s32 y, s32 z) {
+  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
-  t0 = FieldActor_Create(SPRITE_DUST_CLOUD, a0, a1, a2);
-  if (t0 != 0) {
-    FIELD_AT((t0 + 0x5c), u8, 0) = 2;
-    FIELD_AT((t0 + 0x55), u8, 0) = 0;
-    FIELD_AT(((t0 + 0x55) + 0xf), u16, 0) = 0;
-    FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-    FieldActor_SetSpriteColor(t0, 7);
-    FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-        ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-    Actor_SetSpriteFlags(t0, 0);
-    FIELD_AT(t0, s32, 24) = 0x8000;
-    FIELD_AT(t0, s32, 28) = 0x8000;
-    FIELD_AT(t0, s32, 104) = 0x3c;
-    FIELD_AT(t0, s32, 108) = (s32)Prox_RisePuff;
-    Actor_SelectAnimation(t0, 5);
-    Actor_SetBlendMode(t0, 1);
+  if (object != NULL) {
+    object->retainSpriteCache = 2;
+    object->motionFlags = 0;
+    object->timer = 0;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
+    ((struct FieldSprite *)object->sprite)->priority = 1;
+    Actor_SetSpriteFlags(object, 0);
+    object->scaleX = FIXED_ONE / 2;
+    object->scaleY = FIXED_ONE / 2;
+    *(s32 *)&object->watchedActor = 60;
+    object->update = (void (*)(void))Prox_RisePuff;
+    Actor_SelectAnimation(object, 5);
+    Actor_SetBlendMode(object, 1);
   }
 }
 
@@ -1316,6 +1309,9 @@ void Prox_PuffFromRoofs(void) {
   }
 }
 
+/// Goes in at a door: opens it (a double door thumps) unless it was left open,
+/// steps the leader to the middle of a single door, walks in and takes the
+/// exit.
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1336,8 +1332,7 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   if (width == 1) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     cell = FIXEDtoINT(object->x.fixed);
-    FieldActor_SetMoveTargetFX(object,
-                               ((8 - cell % 16) << 16) + object->x.fixed,
+    FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
                                object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -1350,69 +1345,82 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
+/// The first of the village's house doors. Each door here is opened by
+/// Prox_EnterDoor from its picture in the map.
 void Prox_OpenHouseDoorA(void) { Prox_EnterDoor(48, 39, 57, 26, 1, 2); }
 
+/// The second of the village's house doors.
 void Prox_OpenHouseDoorB(void) { Prox_EnterDoor(49, 39, 65, 24, 1, 2); }
 
+/// The third of the village's house doors.
 void Prox_OpenHouseDoorC(void) { Prox_EnterDoor(50, 39, 56, 19, 1, 2); }
 
+/// The fourth of the village's house doors.
 void Prox_OpenHouseDoorD(void) { Prox_EnterDoor(51, 39, 61, 13, 1, 2); }
 
+/// The fifth of the village's house doors.
 void Prox_OpenHouseDoorE(void) { Prox_EnterDoor(51, 39, 80, 16, 1, 2); }
 
+/// The caves' double door.
 void Prox_OpenCavesDoor(void) { Prox_EnterDoor(52, 39, 50, 9, 2, 2); }
 
+/// The door into the cave homes.
 void Prox_OpenCaveHomesDoor(void) { Prox_EnterDoor(87, 2, 80, 7, 1, 2); }
 
+/// The upper house's door, which the warrior leaves open.
 void Prox_OpenUpperHouseDoor(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 
 void Prox_ClimbStairs(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 entrance = work->stepTrigger;
+  s32 stairsExit = work->stepTrigger;
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell;
   s32 id;
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   cell = FIXEDtoINT(object->x.fixed);
-  FieldActor_SetMoveTargetFX(object, ((8 - cell % 16) << 16) + object->x.fixed,
+  FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
                              object->y.fixed, object->z.fixed - toFIXED(4));
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   id = gMainRoutineWork.leaderActorId;
-  if (entrance == 6)
-    Actor_SetAnimation(id, 25);
+  if (stairsExit == PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH)
+    Actor_SetAnimation(id, ANIM_LEADER_LEAVE_ALTERNATE);
   else
-    Actor_SetAnimation(id, 26);
+    Actor_SetAnimation(id, ANIM_LEADER_LEAVE);
   System_Wait(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(entrance);
+  FieldEvent_SetExitRequest(stairsExit);
 }
 
-void Prox_ComeDownStairs(s32 a0) {
+/// Arrives down the stairs into the cave homes: the leader appears beside the
+/// stairs (westOrSouth for the west and south ones), steps down and walks on.
+void Prox_ComeDownStairs(s32 westOrSouth) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (a0 != 0) {
+  if (westOrSouth != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 0);
-    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + -65536),
-                                         object->y.fixed,
-                                         (object->z.fixed + -393216));
+    FieldActor_SetPositionAndResetMotion(
+        object, (object->x.fixed + -toFIXED(1)), object->y.fixed,
+        (object->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x17);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+                              ANIM_LEADER_ARRIVE_ALTERNATE);
   } else {
     FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + toFIXED(1)),
                                          object->y.fixed,
-                                         (object->z.fixed + -393216));
+                                         (object->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x18);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+                              ANIM_LEADER_ARRIVE);
   }
   Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -1434,12 +1442,13 @@ void Prox_ComeDownStairs(s32 a0) {
 void FieldCamera_WaitForArrival(void);
 s32 Prox_EndEvent();
 
+/// After the ending, in the houses: the clan thanks the party for the beacon,
+/// Isaac and Kraden catch up, and Jenna is told the party is leaving.
 void Prox_GiveThanksForBeacon(void) {
-  s32 t144;
-  s32 t202;
-  s32 t207;
-  s32 angleC000;
-  s32 angleB000;
+  s32 answer;
+  struct Actor *leader;
+  s32 north;
+  s32 northNorthwest;
   s32 facing;
 
   Event_Start();
@@ -1451,17 +1460,16 @@ void Prox_GiveThanksForBeacon(void) {
   /* FAKEMATCH(temporary): the three facings held in locals set before their
    * first placement, where as constants each placement rebuilds them and the
    * later turns cannot share them. */
-  angleC000 = FACING_NORTH;
-  angleB000 = FACING_NORTH_NORTHWEST;
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484),
-                             angleC000);
+  north = FACING_NORTH;
+  northNorthwest = FACING_NORTH_NORTHWEST;
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484), north);
   Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, toFIXED(200), toFIXED(484),
-                             angleB000);
+                             northNorthwest);
   facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, toFIXED(138),
                              toFIXED(412), facing);
   Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, toFIXED(220),
-                             toFIXED(600), angleB000);
+                             toFIXED(600), northNorthwest);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
   EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1652,9 +1660,9 @@ void Prox_GiveThanksForBeacon(void) {
   // "Should I let her know we're leaving now?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
-  t144 =
+  answer =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  if (t144 == 0) {
+  if (answer == 0) {
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
@@ -1717,18 +1725,18 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_SetSpeed(ACTOR_HOUSES_KRADEN, 1.6);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_WALK);
-  t202 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  if (t202 != 0) {
-    Actor_SetDestination(ACTOR_ISAAC, FIELD_AT(t202, s16, 10),
-                         FIELD_AT(t202, s16, 18));
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_ISAAC, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_ISAAC);
   Actor_SetPosition(ACTOR_ISAAC, 0, 0);
   Actor_SetAnimation(ACTOR_HOUSES_KRADEN, 2);
-  t207 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  if (t207 != 0) {
-    Actor_SetDestination(ACTOR_HOUSES_KRADEN, FIELD_AT(t207, s16, 10),
-                         FIELD_AT(t207, s16, 18));
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_HOUSES_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_HOUSES_KRADEN);
   Actor_SetPosition(ACTOR_HOUSES_KRADEN, 0, 0);
@@ -1736,7 +1744,7 @@ void Prox_GiveThanksForBeacon(void) {
     struct FieldWork *work = EVENT_WORK;
 
     work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    work->transitionFrames = 0x10;
+    work->transitionFrames = 16;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(FLAG_THANKED_FOR_BEACON);
@@ -1767,7 +1775,7 @@ s32 Scene_Initialize(void) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
-    s32 value = 0x209;
+    s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
     skip = 0;
     *effect = value;
@@ -1846,6 +1854,8 @@ void Prox_InitializeTown(void) {
   FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_TOWN_CRATE)), 0xf);
 }
 
+/// Sets up the north of the village: the warrior and the upper house's door by
+/// the overheard talk, Puelle's facing, and Mold's snow dug out or not.
 void Prox_InitializeMold(void) {
   struct Actor *object;
 
@@ -1881,26 +1891,29 @@ void Prox_InitializeMold(void) {
   }
 }
 
+/// Each frame, draws the hiding child at the leader's sprite priority.
 void Prox_MatchHousesPriority(void) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   FieldActor_SetSpritePriority(
-      16,
-      ((u32)(FIELD_AT(FIELD_AT((u8 *)object, s32, 80), u8, 9) << 28) >> 30));
+      ACTOR_CHILD_HIDING_FROM_THE_WIND,
+      ((struct FieldSprite *)object->sprite)->priority);
 }
 
 void Prox_InitializeHouses(void) {
 
   FieldEffect_StartBlankOverlay(0);
   Task_AddFrame((s32)Prox_MatchHousesPriority, TASK_PASS_VBLANK);
-  if (gMainRoutineWork.entrance == 0x14) {
+  if (gMainRoutineWork.entrance == PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
     if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
     }
   }
 }
 
+/// Each frame, draws two of the cave homes' villagers at the leader's sprite
+/// priority.
 void Prox_MatchCaveHomesPriority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_Get(gMainRoutineWork.leaderActorId)->sprite)
@@ -1916,15 +1929,18 @@ void Prox_InitializeCaveHomes(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
-    if (gMainRoutineWork.entrance == 6)
+    if (gMainRoutineWork.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
       Prox_ComeDownStairs(0);
-    else if ((u32)((entrance - 7) << 16) <= 0x10000)
+    else if ((u32)((entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) << 16) <=
+             (PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
+              PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST)
+                 << 16)
       Prox_ComeDownStairs(1);
   }
   FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   Task_AddFrame(Prox_MatchCaveHomesPriority, priority);
 }
 
@@ -1935,6 +1951,8 @@ extern s32 gProx_GaretWalksSouth[];
 extern s32 gProx_IsaacWalksSouth[];
 extern s32 gProx_GaretRunsAhead[];
 
+/// After the thanks, at the south gate: the families say their farewells and
+/// the party leaves Prox for the credits.
 void Prox_SayFarewell(void) {
   u32 i;
 
@@ -2337,8 +2355,8 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 9);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 0x21);
-    Actor_SetAnimation(ACTOR_ISAAC, 0x28);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 33);
+    Actor_SetAnimation(ACTOR_ISAAC, 40);
     TilesetAnim_Pause(2);
     TilesetAnim_Pause(3);
     TilesetAnim_Pause(4);
@@ -2350,21 +2368,16 @@ void Prox_SayFarewell(void) {
     PaletteFade_Interpolate(120);
     System_Wait(120);
     // Waits up to 120 frames, or until a key is held.
-    i = 0;
-    goto test_wait;
-  next_wait:
-    i++;
-  test_wait:
-    if (i < 120) {
+    for (i = 0; i < 120; i++) {
       System_Wait(1);
-      if (gInput.held == 0)
-        goto next_wait;
+      if (gInput.held != 0)
+        break;
     }
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_Interpolate(16);
     System_Wait(16);
     Event_SetFlag(FLAG_SAID_FAREWELL);
-    FieldEvent_SetExitRequest(3);
+    FieldEvent_SetExitRequest(PROX_SOUTH_GATE_TO_STAFF_CREDIT);
   }
 }
 
@@ -2400,13 +2413,14 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
+void Leader_SetSlideStopped(s32 stopped) { gSlideOnIce_Stopped = stopped; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
-void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
+                              s32 gravity);
 
 #include "shared/particles_update_falling.h"
 
@@ -2426,9 +2440,13 @@ struct RockWork {
 #include "shared/rocks_spawn.h"
 #undef FIELD_AT
 
+/// The overlay's call to EffectSprite_Init: one rock's sprite, its size,
+/// pivot and attributes.
 void Prox_InitRockSprite(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                          u32 attributes, s32 tile);
 
+/// Unused: loads the falling rocks' tiles and 64 sprites and starts their
+/// task, as Magma Rock does.
 UNUSED void Prox_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -2446,7 +2464,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Prox_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
+    Prox_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -2461,6 +2479,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
+/// Unused: stops the falling rocks and frees their tiles and work.
 UNUSED void Prox_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
@@ -2646,33 +2665,33 @@ struct ActorPlacement gProx_SouthGateFarewellPlacements[] = {
 };
 
 struct ActorPlacement gProx_TownPlacements[] = {
-    ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 336, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 112, 0, 248, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 452, 0, 300, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(171, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 276, 0, 148, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 580, 0, 348, FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 244, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(179, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 374, 0, 420, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(179, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 336, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 112, 0, 248, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 452, 0, 300, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_YELLOW_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 276, 0, 148, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 580, 0, 348, FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 244, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_GIRL_WITH_PINK_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 374, 0, 420, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_GIRL_WITH_PINK_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 412, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 568, 0, 176, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gProx_MoldPlacements[] = {
-    ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 540, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 540, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 180, 0, 132, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 140, 0, 132, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 178, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, 7, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2681,16 +2700,16 @@ struct ActorPlacement gProx_MoldPlacements[] = {
 };
 
 struct ActorPlacement gProx_MoldPlacementsOnceLit[] = {
-    ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(155, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 176, 0, 162, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 216, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 146, 0, 120, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(153, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_WITH_GREEN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 176, 0, 162, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 216, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 146, 0, 120, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2699,43 +2718,43 @@ struct ActorPlacement gProx_MoldPlacementsOnceLit[] = {
 };
 
 struct ActorPlacement gProx_HousesPlacements[] = {
-    ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 192, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 364, 0, 123, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 468, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(171, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 728, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 111, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 548, 0, 816, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(179, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 466, 0, 810, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 530, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 164, 0, 524, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(171, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 222, 0, 490, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 394, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 192, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 364, 0, 123, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 468, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_YELLOW_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 728, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 111, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 548, 0, 816, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_GIRL_WITH_PINK_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 466, 0, 810, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 530, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 164, 0, 524, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_YELLOW_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 222, 0, 490, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 394, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_WATER19), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gProx_HousesPlacementsOnceLit[] = {
-    ACTOR_PLACEMENT(175, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 196, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 364, 0, 123, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 468, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(171, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 728, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 666, 0, 134, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(179, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(178, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 530, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(172, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 440, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(171, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 224, 0, 554, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 196, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 364, 0, 123, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 468, 0, 160, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_YELLOW_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 728, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 666, 0, 134, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_GIRL_WITH_PINK_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 530, 0, 800, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 234, 0, 440, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_YELLOW_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 224, 0, 554, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 268, 0, 794, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 816, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_WATER19), MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 428, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 428, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2746,17 +2765,17 @@ struct ActorPlacement gProx_HousesPlacementsOnceLit[] = {
 };
 
 struct ActorPlacement gProx_CaveHomesPlacements[] = {
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 628, 0, 200, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 628, 0, 200, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gProx_CaveHomesPlacementsOnceLit[] = {
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 666, 0, 124, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(174, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(176, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(173, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 666, 0, 124, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2784,41 +2803,41 @@ struct Trigger gProx_TownTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorC)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorD)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorE)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_VILLAGER_WELCOMING_FELIX, CONDITION_ALWAYS, EVENT(Prox_OpenCavesDoor)},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_ON_AGATIO_AND_KARST, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_VILLAGER_ON_THE_ICE, CONDITION_ALWAYS, EVENT(Prox_OpenCaveHomesDoor)},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_ON_THE_COLD, CONDITION_ALWAYS, 11},
-    {TRIGGER_TALK, ACTOR_VILLAGER_WELCOMING_FELIX, 0xa3d, MSGNO(MsgProxFelixWelcomeBackToProx)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Prox_OpenCavesDoor)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Prox_OpenCaveHomesDoor)},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WELCOMING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixWelcomeBackToProx)},
     {TRIGGER_TALK, ACTOR_VILLAGER_WELCOMING_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxThankYouForLightingFires)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOMING_FELIX, 0xa3d, MSGNO(MsgProxAgatioAndKarstToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOMING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAgatioAndKarstToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOMING_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxFelixHasProvenHimself)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_AGATIO_AND_KARST, 0xa3d, MSGNO(MsgProxAgatioAndKarstLeft)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_AGATIO_AND_KARST, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAgatioAndKarstLeft)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_AGATIO_AND_KARST, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadAboutAgatio)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_AGATIO_AND_KARST, 0xa3d, MSGNO(MsgProxAgatioAndKarstAreStrongest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_AGATIO_AND_KARST, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAgatioAndKarstAreStrongest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_AGATIO_AND_KARST, CONDITION_ALWAYS, MSGNO(MsgProxIHeardKarstAndAgatio)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_ICE, 0xa3d, MSGNO(MsgProxImGladYouMade)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_ICE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxImGladYouMade)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_ICE, CONDITION_ALWAYS, MSGNO(MsgProxIDontRememberLastTime)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_ICE, 0xa3d, MSGNO(MsgProxEverSinceAgatioReturned)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_ICE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxEverSinceAgatioReturned)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_ICE, CONDITION_ALWAYS, MSGNO(MsgProxBlizzardsFinallyOver)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_COLD, 0xa3d, MSGNO(MsgProxWereUsedToColdUp)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_COLD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWereUsedToColdUp)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_COLD, CONDITION_ALWAYS, MSGNO(MsgProxWinterInProxCan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_COLD, 0xa3d, MSGNO(MsgProxItGetsColdAroundHere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_COLD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxItGetsColdAroundHere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_COLD, CONDITION_ALWAYS, MSGNO(MsgProxNowThatOurWeather)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_WATCHING_THE_SKIES, 0xa3d, MSGNO(MsgProxIveBeenKeepingCloseEye)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WATCHING_THE_SKIES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIveBeenKeepingCloseEye)},
     {TRIGGER_TALK, ACTOR_VILLAGER_WATCHING_THE_SKIES, CONDITION_ALWAYS, MSGNO(MsgProxIWasSoMovedWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATCHING_THE_SKIES, 0xa3d, MSGNO(MsgProxEverythingIsSupposedToReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATCHING_THE_SKIES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxEverythingIsSupposedToReturn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATCHING_THE_SKIES, CONDITION_ALWAYS, MSGNO(MsgProxIWasFirstPerson)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_FOR_SATUROS, 0xa3d, MSGNO(MsgProxHaveYouSeenSaturos)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_FOR_SATUROS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxHaveYouSeenSaturos)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_FOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesHaveAllBeenLit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_FOR_SATUROS, 0xa3d, MSGNO(MsgProxICantBelieveAnyoneCould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_FOR_SATUROS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxICantBelieveAnyoneCould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_FOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgProxTheyHadNoChoiceThey)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_SENSING_FELIXS_POWER, 0xa3d, MSGNO(MsgProxFelixYoureBack)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_SENSING_FELIXS_POWER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixYoureBack)},
     {TRIGGER_TALK, ACTOR_VILLAGER_SENSING_FELIXS_POWER, CONDITION_ALWAYS, MSGNO(MsgProxYouDidAmazingJob)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SENSING_FELIXS_POWER, 0xa3d, MSGNO(MsgProxIfFelixCouldBecomeAdept)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SENSING_FELIXS_POWER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfFelixCouldBecomeAdept)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SENSING_FELIXS_POWER, CONDITION_ALWAYS, MSGNO(MsgProxWhenFelixLeftTownHe)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WINDS, 0xa3d, MSGNO(MsgProxOnceFinalLighthouseIsLit)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WINDS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxOnceFinalLighthouseIsLit)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WINDS, CONDITION_ALWAYS, MSGNO(MsgProxWillYouBeGoingBack)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WINDS, 0xa3d, MSGNO(MsgProxIfThisWeatherContinuesMuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WINDS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfThisWeatherContinuesMuch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WINDS, CONDITION_ALWAYS, MSGNO(MsgProxIBetFelixAndHis)},
     {TRIGGER_TALK, ACTOR_PLAYING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PLAYING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
@@ -2836,42 +2855,42 @@ struct Trigger gProx_MoldTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Prox_OpenUpperHouseDoor)},
-    {TRIGGER_STEP, ACTOR_WARRIOR_SEARCHING_FOR_PARENTS, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
-    {TRIGGER_STEP, ACTOR_PUELLE, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
+    {TRIGGER_STEP, 9, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_BeginScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
-    {TRIGGER_RAISED, RAISED_MOLD_JOINS, 0xa3d, EVENT(Prox_MoldJoins)},
-    {TRIGGER_STEP, ACTOR_ELDER, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
-    {TRIGGER_STEP, ACTOR_CLANSMAN_GUARDING_THE_ROAD, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
-    {TRIGGER_STEP, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
+    {TRIGGER_RAISED, RAISED_MOLD_JOINS, FLAG_MARS_BEACON_LIT, EVENT(Prox_MoldJoins)},
+    {TRIGGER_STEP, 11, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
+    {TRIGGER_STEP, 12, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
+    {TRIGGER_STEP, 13, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
     {TRIGGER_TALK, ACTOR_WARRIOR_SENT_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxPuelleOrderedMeToSet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_SENT_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxPuelleWantedToSetFelixs)},
     {TRIGGER_TALK, ACTOR_WARRIOR_SEARCHING_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxFelixTookTroubleOfComing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_SEARCHING_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxICantThinkOfAnywhere)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_GUARDING_THE_ROAD, 0xa3d, MSGNO(MsgProxIsThatYouFelixWhen)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_GUARDING_THE_ROAD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIsThatYouFelixWhen)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_GUARDING_THE_ROAD, CONDITION_ALWAYS, MSGNO(MsgProxSorryFelixButThisRoad)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_GUARDING_THE_ROAD, 0xa3d, MSGNO(MsgProxIfLighthouseIsntLitSoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_GUARDING_THE_ROAD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfLighthouseIsntLitSoon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_GUARDING_THE_ROAD, CONDITION_ALWAYS, MSGNO(MsgProxRoadToLighthouse)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, 0xa3d, MSGNO(MsgProxIfWeWereBetterAdepts)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfWeWereBetterAdepts)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, CONDITION_ALWAYS, MSGNO(MsgProxIfYoureWorriedAboutLighthouse)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, 0xa3d, MSGNO(MsgProxNeitherOurElderNorPuelle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNeitherOurElderNorPuelle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, CONDITION_ALWAYS, MSGNO(MsgProxEldersWereSayingThatLighthouse)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_FEELING_HELPLESS, 0xa3d, MSGNO(MsgProxIFeelSoHelplessAgatio)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_FEELING_HELPLESS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIFeelSoHelplessAgatio)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_FEELING_HELPLESS, CONDITION_ALWAYS, MSGNO(MsgProxIJustDontThink)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_FEELING_HELPLESS, 0xa3d, MSGNO(MsgProxPuelleIsStrongerThanAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_FEELING_HELPLESS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxPuelleIsStrongerThanAny)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_FEELING_HELPLESS, CONDITION_ALWAYS, MSGNO(MsgProxOnOtherHandNow)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_WAITING_FOR_AGATIO, 0xa3d, MSGNO(MsgProxAllWeCanDoNow)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_WAITING_FOR_AGATIO, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAllWeCanDoNow)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_WAITING_FOR_AGATIO, CONDITION_ALWAYS, MSGNO(MsgProxFelixTaughtMeLotAbout)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WAITING_FOR_AGATIO, 0xa3d, MSGNO(MsgProxIfTheyDidntLightBeacon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WAITING_FOR_AGATIO, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfTheyDidntLightBeacon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WAITING_FOR_AGATIO, CONDITION_ALWAYS, MSGNO(MsgProxMaybeIfITrainHard)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, 0xa3d, MSGNO(MsgProxOurPsynergyFeelsWeak)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxOurPsynergyFeelsWeak)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, CONDITION_ALWAYS, MSGNO(MsgProxEvenJustStandingOutsideLighthouse)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, 0xa3d, MSGNO(MsgProxIfOnlyMyFirePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfOnlyMyFirePsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_WITH_WEAK_PSYNERGY, CONDITION_ALWAYS, MSGNO(MsgProxIfLightOfBeaconKeeps)},
-    {TRIGGER_TALK, ACTOR_CLANSMAN_ON_THE_HOSTAGES, 0xa3d, MSGNO(MsgProxPuellePromisedThatHeWould)},
+    {TRIGGER_TALK, ACTOR_CLANSMAN_ON_THE_HOSTAGES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxPuellePromisedThatHeWould)},
     {TRIGGER_TALK, ACTOR_CLANSMAN_ON_THE_HOSTAGES, CONDITION_ALWAYS, MSGNO(MsgProxWellYouLookLikeYoure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_ON_THE_HOSTAGES, 0xa3d, MSGNO(MsgProxPuelleNeverIntendedToTake)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_ON_THE_HOSTAGES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxPuelleNeverIntendedToTake)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLANSMAN_ON_THE_HOSTAGES, CONDITION_ALWAYS, MSGNO(MsgProxWhenFelixLeftProx)},
     {TRIGGER_TALK, ACTOR_PUELLE, CONDITION_ALWAYS, MSGNO(MsgProxYouMustFindKarstGet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PUELLE, CONDITION_ALWAYS, MSGNO(MsgProxIfThisDoesntWork)},
@@ -2888,36 +2907,36 @@ struct Trigger gProx_HousesTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_TOLD_OF_THE_RIFT, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_WHO_SAW_THE_RIFT, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, 0xa3d, MSGNO(MsgProxRiftAtMarsLighthouseGets)},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxRiftAtMarsLighthouseGets)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxIThinkRiftToNorth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, 0xa3d, MSGNO(MsgProxIThoughtProxWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIThoughtProxWould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxIWasAfraidFalls)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_TOLD_OF_THE_RIFT, 0xa3d, MSGNO(MsgProxOurChieftainToldMe)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_TOLD_OF_THE_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxOurChieftainToldMe)},
     {TRIGGER_TALK, ACTOR_VILLAGER_TOLD_OF_THE_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxIWonderIfThatHole)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLD_OF_THE_RIFT, 0xa3d, MSGNO(MsgProxNobodyBelievedThatRiftWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLD_OF_THE_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNobodyBelievedThatRiftWould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLD_OF_THE_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxWhatDoWeDo)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_WHO_SAW_THE_RIFT, 0xa3d, MSGNO(MsgProxNotTooLongAgo)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WHO_SAW_THE_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNotTooLongAgo)},
     {TRIGGER_TALK, ACTOR_VILLAGER_WHO_SAW_THE_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxLighthouseWasSoBeautifulWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WHO_SAW_THE_RIFT, 0xa3d, MSGNO(MsgProxNorthernRiftHasGotten)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WHO_SAW_THE_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNorthernRiftHasGotten)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WHO_SAW_THE_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxAllLightsJoinedUpTogether)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_SEALING, 0xa3d, MSGNO(MsgProxNoOneThoughtAboutOur)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_SEALING, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNoOneThoughtAboutOur)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_SEALING, CONDITION_ALWAYS, MSGNO(MsgProxIGuessFourLighthouses)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_SEALING, 0xa3d, MSGNO(MsgProxToThinkThatWeAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_SEALING, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxToThinkThatWeAll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_SEALING, CONDITION_ALWAYS, MSGNO(MsgProxNowThatAlchemyIsFree)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_FEARING_FOR_PROX, 0xa3d, MSGNO(MsgProxIfMarsLighthousesFires)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_FEARING_FOR_PROX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIfMarsLighthousesFires)},
     {TRIGGER_TALK, ACTOR_VILLAGER_FEARING_FOR_PROX, CONDITION_ALWAYS, MSGNO(MsgProxPeopleOfProxWontForget)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEARING_FOR_PROX, 0xa3d, MSGNO(MsgProxIThinkItsTooLate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEARING_FOR_PROX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIThinkItsTooLate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEARING_FOR_PROX, CONDITION_ALWAYS, MSGNO(MsgProxFelixAndHisAlliesSaved)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_EMISSARIES, 0xa3d, MSGNO(MsgProxWeSentEmissariesToVale)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_EMISSARIES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWeSentEmissariesToVale)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_EMISSARIES, CONDITION_ALWAYS, MSGNO(MsgProxFelixTakeSomeAdvice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_EMISSARIES, 0xa3d, MSGNO(MsgProxAtLeastJourneyWasnt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_EMISSARIES, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAtLeastJourneyWasnt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_EMISSARIES, CONDITION_ALWAYS, MSGNO(MsgProxIfTheyFoundOutFelix)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_VALES_ELDERS, 0xa3d, MSGNO(MsgProxValesEldersWereStubbornThey)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_VALES_ELDERS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxValesEldersWereStubbornThey)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_VALES_ELDERS, CONDITION_ALWAYS, MSGNO(MsgProxIsaacAndHisFriendsLeft)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_VALES_ELDERS, 0xa3d, MSGNO(MsgProxThreeYearsAgoWeSent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_VALES_ELDERS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxThreeYearsAgoWeSent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_VALES_ELDERS, CONDITION_ALWAYS, MSGNO(MsgProxMayorAndEldersInVale)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_IGLOOS, CONDITION_ALWAYS, EVENT(Prox_AskAboutIgloos)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_IGLOOS, CONDITION_ALWAYS, MSGNO(MsgProxIHateIgloos)},
@@ -2925,17 +2944,17 @@ struct Trigger gProx_HousesTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_HIDING_FROM_THE_WIND, CONDITION_ALWAYS, MSGNO(MsgProxMamaAndPapaHaveBeen)},
     {TRIGGER_TALK, ACTOR_CHILD_SENT_OUTSIDE, CONDITION_ALWAYS, MSGNO(MsgProxMyParentsToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_SENT_OUTSIDE, CONDITION_ALWAYS, MSGNO(MsgProxIAlwaysCatchColdWhen)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_PITYING_THE_CHILDREN, 0xa3d, MSGNO(MsgProxThosePoorChildrenTheyDont)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_PITYING_THE_CHILDREN, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxThosePoorChildrenTheyDont)},
     {TRIGGER_TALK, ACTOR_VILLAGER_PITYING_THE_CHILDREN, CONDITION_ALWAYS, MSGNO(MsgProxICanHearSound)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PITYING_THE_CHILDREN, 0xa3d, MSGNO(MsgProxICantBringMyself)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PITYING_THE_CHILDREN, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxICantBringMyself)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PITYING_THE_CHILDREN, CONDITION_ALWAYS, MSGNO(MsgProxItsBeenSoLongSince)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_PUELLES_WORRY, 0xa3d, MSGNO(MsgProxPuelleOurChieftainGrewWorried)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_PUELLES_WORRY, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxPuelleOurChieftainGrewWorried)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PUELLES_WORRY, CONDITION_ALWAYS, MSGNO(MsgProxTheresNoTellingWhatCould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PUELLES_WORRY, 0xa3d, MSGNO(MsgProxNowThatSaturosAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PUELLES_WORRY, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxNowThatSaturosAndHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PUELLES_WORRY, CONDITION_ALWAYS, MSGNO(MsgProxWeveLostSoManySoldiers)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_RESCUED, 0xa3d, MSGNO(MsgProxPeopleSaturosRescuedFromStorm)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_RESCUED, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxPeopleSaturosRescuedFromStorm)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_RESCUED, CONDITION_ALWAYS, MSGNO(MsgProxFelixIAlwaysThought)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_RESCUED, 0xa3d, MSGNO(MsgProxMarsIsLastLighthouse)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_RESCUED, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxMarsIsLastLighthouse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_RESCUED, CONDITION_ALWAYS, MSGNO(MsgProxWhoKnewThatPoorInjured)},
     {TRIGGER_TALK, ACTOR_VILLAGER_POINTING_TO_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxDontForgetFelixYourMother)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_POINTING_TO_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxSaturosUsedFelixsParents)},
@@ -2944,11 +2963,11 @@ struct Trigger gProx_HousesTriggers[] = {
     {TRIGGER_TALK, ACTOR_HOUSES_ELDER, CONDITION_ALWAYS, MSGNO(MsgProxYourBodyHasAbsorbedGreat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOUSES_ELDER, CONDITION_ALWAYS, MSGNO(MsgProxPowerToReviveDead)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_PARENTS, CONDITION_ALWAYS, EVENT(Prox_TalkAboutParents)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_PARENTS, 0xa3d, MSGNO(MsgProxFelixsParentsWereWorriedAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_PARENTS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixsParentsWereWorriedAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxWellNeverBeAble)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_MOTHER, 0xa3d, MSGNO(MsgProxYourMotherKnowsThatYoure)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_MOTHER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxYourMotherKnowsThatYoure)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgProxAfterThatEarthquakeIFeel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_MOTHER, 0xa3d, MSGNO(MsgProxFelixsParentsWereSoWorried)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_MOTHER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixsParentsWereSoWorried)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgProxWhenEarthquakeHitFelix)},
     {TRIGGER_TALK, ACTOR_MERCURY_DJINNI, CONDITION_ALWAYS, EVENT(Prox_MercuryDjinniJoins)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThoseBoilingVegetablesLookLike))},
@@ -2959,20 +2978,20 @@ struct Trigger gProx_HousesTriggers[] = {
 };
 
 struct Trigger gProx_CaveHomesTriggers[] = {
-    {0xca02, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {0xca02, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {0xca02, ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, 9},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, 0xa3d, MSGNO(MsgProxProxOriginallyFlourishedBecauseConcerned)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 8, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxProxOriginallyFlourishedBecauseConcerned)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, MSGNO(MsgProxIveBeenToldThatLighting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PROXS_PURPOSE, 0xa3d, MSGNO(MsgProxWhenLighthousesWereAllExtinguished)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhenLighthousesWereAllExtinguished)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, MSGNO(MsgProxAlchemyHasBeenFreed)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, 0xa3d, MSGNO(MsgProxWhenYouLeftProx)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhenYouLeftProx)},
     {TRIGGER_TALK, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxThankYouSoMuchFelix)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, 0xa3d, MSGNO(MsgProxWhatHasHeGoneThrough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhatHasHeGoneThrough)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxINeverImaginedThatLittle)},
     {TRIGGER_TALK, ACTOR_VILLAGER_PRAISING_FELIX, CONDITION_ALWAYS, EVENT(Prox_PraiseReturnedWarrior)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_FELIX, 0xa3d, MSGNO(MsgProxFelixLooksSoConfident)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixLooksSoConfident)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadFelixCant)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_COOKING, CONDITION_ALWAYS, MSGNO(MsgProxThinkOfYourOldGrandmas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_COOKING, CONDITION_ALWAYS, MSGNO(MsgProxImSoSadFelixDoesnt)},
@@ -2986,7 +3005,7 @@ struct Trigger gProx_CaveHomesTriggers[] = {
 struct Trigger gProx_CavesTriggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_OLD_MAN_FEARING_FOR_WEYARD, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_FEARING_FOR_WEYARD, 0xa3d, MSGNO(MsgProxTheseCatastrophesAreResult)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_FEARING_FOR_WEYARD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxTheseCatastrophesAreResult)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_FEARING_FOR_WEYARD, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesAreGoingToRestore)},
     {TRIGGER_TABLE_END},
 };

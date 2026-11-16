@@ -109,8 +109,7 @@ void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count) {
 
   if (count == 0)
     return;
-next:
-  {
+  do {
     s32 to_r = RGB_RED(*target);
     s32 to_g = RGB_GREEN(*target);
     s32 to_b = RGB_BLUE(*target);
@@ -131,12 +130,10 @@ next:
     else if (b > to_b)
       b--;
     *colors = RGB(r, g, b);
-  }
-  i++;
-  target++;
-  colors++;
-  if (i != count)
-    goto next;
+    i++;
+    target++;
+    colors++;
+  } while (i != count);
 }
 
 /// Adds delta to each of count colours' red, green and blue, kept within 0 to
@@ -148,26 +145,25 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
   i = 0;
   if (count == 0)
     return;
-loop:
-  r = RGB_RED(*colors) + delta;
-  g = RGB_GREEN(*colors) + delta;
-  b = RGB_BLUE(*colors) + delta;
-  if (r > RGB_LEVEL_MAX)
-    r = RGB_LEVEL_MAX;
-  if (r < 0)
-    r = 0;
-  if (g > RGB_LEVEL_MAX)
-    g = RGB_LEVEL_MAX;
-  if (g < 0)
-    g = 0;
-  if (b > RGB_LEVEL_MAX)
-    b = RGB_LEVEL_MAX;
-  if (b < 0)
-    b = 0;
-  *colors++ = RGB(r, g, b);
-  i++;
-  if (i != count)
-    goto loop;
+  do {
+    r = RGB_RED(*colors) + delta;
+    g = RGB_GREEN(*colors) + delta;
+    b = RGB_BLUE(*colors) + delta;
+    if (r > RGB_LEVEL_MAX)
+      r = RGB_LEVEL_MAX;
+    if (r < 0)
+      r = 0;
+    if (g > RGB_LEVEL_MAX)
+      g = RGB_LEVEL_MAX;
+    if (g < 0)
+      g = 0;
+    if (b > RGB_LEVEL_MAX)
+      b = RGB_LEVEL_MAX;
+    if (b < 0)
+      b = 0;
+    *colors++ = RGB(r, g, b);
+    i++;
+  } while (i != count);
 }
 
 /// A task: background palette 4's colours 1 to 15 pulse brighter and darker
@@ -176,10 +172,9 @@ void MtAlephSummit_PulseColors(void) {
   u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
   u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
   s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
-  s32 i = 0;
+  s32 i;
 
-next:
-  {
+  for (i = 0; i != PALETTE_COLORS - 1; i++, src++, dst++) {
     s32 r = RGB_RED(*src) + delta;
     s32 g = RGB_GREEN(*src) + delta;
     s32 b = RGB_BLUE(*src) + delta;
@@ -198,11 +193,6 @@ next:
       b = 0;
     *dst = RGB(r, g, b);
   }
-  i++;
-  src++;
-  dst++;
-  if (i != PALETTE_COLORS - 1)
-    goto next;
 }
 
 // clang-format off
@@ -278,21 +268,20 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
   options.startScaleY = FIXED_ONE * 4 / 5;
   options.priority = ((struct FieldSprite *)object->sprite)->priority;
   i = 0;
-next:
-  angle = i * (TRIG_TURN / (s32)count);
-  dir.x = Trig_Cos(angle) * radius / 256;
-  dir.y = 0;
-  dir.z = Math_Sin(angle) * radius / 256;
-  dir.x += dir.x >> 1;
-  dir.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
-  dir.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
-  FieldEffect_Spawn(
-      object->x.fixed, object->y.fixed, object->z.fixed, dir.x, dir.y, dir.z,
-      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
-      &options);
-  i++;
-  if (i <= count)
-    goto next;
+  do {
+    angle = i * (TRIG_TURN / (s32)count);
+    dir.x = Trig_Cos(angle) * radius / 256;
+    dir.y = 0;
+    dir.z = Math_Sin(angle) * radius / 256;
+    dir.x += dir.x >> 1;
+    dir.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
+    dir.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
+    FieldEffect_Spawn(
+        object->x.fixed, object->y.fixed, object->z.fixed, dir.x, dir.y, dir.z,
+        EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
+        &options);
+    i++;
+  } while (i <= count);
 }
 
 void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count);
@@ -339,50 +328,41 @@ s32 Scene_Initialize(void) {
     FieldCamera_WaitForArrival();
     FieldCamera_MoveTo(316, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
-    i = 0;
-  L1:
-    if (i == 3) {
-      FieldCamera_SetSpeed(0.1);
-      FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
+    for (i = 0; i != 10; i++) {
+      if (i == 3) {
+        FieldCamera_SetSpeed(0.1);
+        FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
+      }
+      Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(1);
+      System_Wait(30);
     }
-    Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(1);
-    System_Wait(30);
-    i++;
-    if (i != 10)
-      goto L1;
     Actor_SetAnimationSpeedById(ACTOR_ALEX, 0);
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 4), 14);
-    j = 0;
-  L2:
-    out = (u16 *)&BG_PLTT_COLOR(0, 7);
-    color = out;
-    i = 0;
-  L3:
-    c = *color;
-    r = RGB_RED(c);
-    g = RGB_GREEN((u16)c);
-    b = RGB_BLUE((u16)c);
-    r += j;
-    g += j / 16;
-    b -= j;
-    if (r > RGB_LEVEL_MAX)
-      r = RGB_LEVEL_MAX;
-    if (g > RGB_LEVEL_MAX)
-      g = RGB_LEVEL_MAX;
-    if (b < 8)
-      b = 8;
-    if (b > RGB_LEVEL_MAX)
-      b = RGB_LEVEL_MAX;
-    *out = RGB(r, g, b);
-    color++;
-    out++;
-    i++;
-    if (i != 8)
-      goto L3;
-    System_Wait(4);
-    j++;
-    if (j != 10)
-      goto L2;
+    for (j = 0; j != 10; j++) {
+      out = (u16 *)&BG_PLTT_COLOR(0, 7);
+      color = out;
+      for (i = 0; i != 8; i++) {
+        c = *color;
+        r = RGB_RED(c);
+        g = RGB_GREEN((u16)c);
+        b = RGB_BLUE((u16)c);
+        r += j;
+        g += j / 16;
+        b -= j;
+        if (r > RGB_LEVEL_MAX)
+          r = RGB_LEVEL_MAX;
+        if (g > RGB_LEVEL_MAX)
+          g = RGB_LEVEL_MAX;
+        if (b < 8)
+          b = 8;
+        if (b > RGB_LEVEL_MAX)
+          b = RGB_LEVEL_MAX;
+        *out = RGB(r, g, b);
+        color++;
+        out++;
+      }
+      System_Wait(4);
+    }
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
     FieldEvent_SetMessageId(MsgGoldenSunFormation);
@@ -393,19 +373,16 @@ s32 Scene_Initialize(void) {
     // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
     Actor_SetAnimationSpeedById(ACTOR_ALEX, 32);
-    i = 0;
-  L4:
-    if (i == 16) {
-      FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
-      FieldCamera_SetSpeed(2);
+    for (i = 0; i != 20; i++) {
+      if (i == 16) {
+        FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
+        FieldCamera_SetSpeed(2);
+      }
+      if (i == 19)
+        Event_FinishScreenTransition();
+      Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(2);
+      System_Wait(8);
     }
-    if (i == 19)
-      Event_FinishScreenTransition();
-    Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(2);
-    System_Wait(8);
-    i++;
-    if (i != 20)
-      goto L4;
     Event_SetDestination(SCENE_STAFF_CREDIT, 1);
   } else if (mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
     slots = Ram_HeapSlots;
@@ -436,13 +413,10 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     MapGrid_SetShake(4, 4, 1);
-    i = 0;
-  L5:
-    gBgScroll[2].y += 8;
-    FieldEvent_Wait(5);
-    i++;
-    if (i != 30)
-      goto L5;
+    for (i = 0; i != 30; i++) {
+      gBgScroll[2].y += 8;
+      FieldEvent_Wait(5);
+    }
     Actor_SetAnimation(ACTOR_ALEX, 15);
     System_Wait(60);
     Event_PlaySound(SE_POWER_UP);
@@ -451,42 +425,39 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(2, BLEND_WEIGHT_MAX),
                         IO_WRITE_HALFWORD);
-    j = 0;
-  L6:
-    if (j == 16) {
-      Event_PlaySound(SE_SPIN);
-      Actor_SetAnimation(ACTOR_ALEX, 16);
+    for (j = 0; j != 84; j++) {
+      if (j == 16) {
+        Event_PlaySound(SE_SPIN);
+        Actor_SetAnimation(ACTOR_ALEX, 16);
+      }
+      if (j == 51) {
+        Event_PlaySound(SE_TREMOR);
+        Iwram_CopyWordsEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0),
+                             FADED_BG_COLORS * sizeof(u16));
+        Iwram_CopyWordsEntry(&fade->target[4 * PALETTE_CHANNELS],
+                             &fade->target[6 * PALETTE_CHANNELS],
+                             PALETTE_CHANNELS * sizeof(u16));
+      }
+      if (j >= 16 && j <= 28) {
+        value = (j - 16) / 2 + 2;
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                            BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
+                            IO_WRITE_HALFWORD);
+      }
+      if (j >= 34 && j <= 50) {
+        value = (j - 34) / 2 + 8;
+        IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                            BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
+                            IO_WRITE_HALFWORD);
+      }
+      if (j >= 20 && j <= 51)
+        MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
+                                       (u16 *)&BG_PLTT_COLOR(6, 0), 16);
+      if (j > 49)
+        MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), FADED_BG_COLORS,
+                                  1);
+      System_Wait(4);
     }
-    if (j == 51) {
-      Event_PlaySound(SE_TREMOR);
-      Iwram_CopyWordsEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0),
-                           FADED_BG_COLORS * sizeof(u16));
-      Iwram_CopyWordsEntry(&fade->target[4 * PALETTE_CHANNELS],
-                           &fade->target[6 * PALETTE_CHANNELS],
-                           PALETTE_CHANNELS * sizeof(u16));
-    }
-    if (j >= 16 && j <= 28) {
-      value = (j - 16) / 2 + 2;
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                          BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
-                          IO_WRITE_HALFWORD);
-    }
-    if (j >= 34 && j <= 50) {
-      value = (j - 34) / 2 + 8;
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                          BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
-                          IO_WRITE_HALFWORD);
-    }
-    if (j >= 20 && j <= 51)
-      MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
-                                     (u16 *)&BG_PLTT_COLOR(6, 0), 16);
-    if (j > 49)
-      MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), FADED_BG_COLORS,
-                                1);
-    System_Wait(4);
-    j++;
-    if (j != 84)
-      goto L6;
     FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -708,14 +679,11 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     FieldEvent_Wait(120);
     Event_PlaySound(SE_TREMOR);
-    i = 0;
-  L14:
-    MapGrid_SetShakeFX(toFIXED(i) + toFIXED(1), toFIXED(i) + toFIXED(1),
-                       toFIXED(1));
-    FieldEvent_Wait(8);
-    i++;
-    if (i != 2)
-      goto L14;
+    for (i = 0; i != 2; i++) {
+      MapGrid_SetShakeFX(toFIXED(i) + toFIXED(1), toFIXED(i) + toFIXED(1),
+                         toFIXED(1));
+      FieldEvent_Wait(8);
+    }
     Actor_SetAnimation(ACTOR_WISE_ONE, 8);
     FieldEvent_Wait(60);
     Actor_SetAnimation(ACTOR_WISE_ONE, 7);
@@ -746,29 +714,25 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(10);
     slots = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
-    j = 0;
-    scale = -FIXED_ONE * 15 / 8;
-  L16:
-    if (j == 20)
-      Actor_SetAnimation(ACTOR_WISE_ONE, 7);
-    if (j >= 30 && j <= 46) {
-      Actor_Get(ACTOR_WISE_ONE)->scaleX = FIXED_ONE - scale;
-      Actor_Get(ACTOR_WISE_ONE)->scaleY = scale + FIXED_ONE;
-      Actor_Get(ACTOR_WISE_ONE)->z.fixed -= toFIXED(2);
+    for (j = 0, scale = -FIXED_ONE * 15 / 8; j != 128;
+         j++, scale += FIXED_ONE / 16) {
+      if (j == 20)
+        Actor_SetAnimation(ACTOR_WISE_ONE, 7);
+      if (j >= 30 && j <= 46) {
+        Actor_Get(ACTOR_WISE_ONE)->scaleX = FIXED_ONE - scale;
+        Actor_Get(ACTOR_WISE_ONE)->scaleY = scale + FIXED_ONE;
+        Actor_Get(ACTOR_WISE_ONE)->z.fixed -= toFIXED(2);
+      }
+      if (j == 47)
+        Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
+      if (j == 64) {
+        PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+        PaletteFade_Interpolate(64);
+      }
+      ((struct MapWork *)slots)->layers[1].offsetY -= toFIXED(1);
+      Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
+      System_Wait(1);
     }
-    if (j == 47)
-      Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
-    if (j == 64) {
-      PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
-      PaletteFade_Interpolate(64);
-    }
-    ((struct MapWork *)slots)->layers[1].offsetY -= toFIXED(1);
-    Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
-    System_Wait(1);
-    j++;
-    scale += FIXED_ONE / 16;
-    if (j != 128)
-      goto L16;
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(32);
     Event_PlaySound(SE_BANE_ESCAPE);

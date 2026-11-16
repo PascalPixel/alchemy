@@ -24,6 +24,12 @@
 /// The villager has asked about the Kibombo expedition.
 #define FLAG_ASKED_ABOUT_EXPEDITION 0x85d
 
+/// Whirlwind has blown the ivy off the back yard's ladder, for this visit.
+#define FLAG_IVY_BLOWN_AWAY FLAG_SCENE_TEMP_01
+
+/// The rope between the two posts, tied by Lash, for this visit.
+#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_02
+
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
 enum NaribweActorId {
@@ -62,6 +68,8 @@ enum NaribweActorId {
 
 extern u32 gSceneExits[];
 
+/// A door of Naribwe: the cell animation that opens it and the cell it plays
+/// at.
 struct WarpEntry {
   const void *script;
   u16 x;
@@ -202,6 +210,9 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   Event_End();
 }
 
+/// The item shopkeeper once Gabomba's message is carried: across the counter,
+/// the shop; from anywhere else, strangers should visit the fortune-teller's
+/// hut.
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -234,6 +245,8 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   Event_End();
 }
 
+/// The pilgrim once Gabomba's message is carried: across the counter, the
+/// sanctum; from anywhere else, how cold it grows to the south.
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -283,12 +296,12 @@ void Naribwe_EnterDoor(void) {
   Event_End();
 }
 
-/// Whirlwind blows away the ivy in the back yard, uncovering the ladder (flag
-/// 0x201).
+/// Whirlwind blows away the ivy in the back yard, uncovering the ladder
+/// (FLAG_IVY_BLOWN_AWAY).
 void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(FLAG_SCENE_TEMP_01);
+  Event_SetFlag(FLAG_IVY_BLOWN_AWAY);
   Event_End();
 }
 
@@ -305,11 +318,14 @@ UNUSED void Naribwe_SetRopeWork(void) {
 /// Reveal shows the stone that hides the Unicorn Ring.
 void Naribwe_RevealStone(void) {
   Actor_SetPosition(ACTOR_STONE, 0, 0);
-  TreasureSpot_SetPosition(65, toFIXED(104), toFIXED(104));
+  TreasureSpot_SetPosition(FIELD_TREASURE_ACTOR + 1, toFIXED(104),
+                           toFIXED(104));
 }
 
+/// Puts the stone over the Unicorn Ring's treasure spot, which it hides until
+/// Reveal shows it.
 void Naribwe_HideStone(void) {
-  TreasureSpot_SetActorPosition(65, 0, 0);
+  TreasureSpot_SetActorPosition(FIELD_TREASURE_ACTOR + 1, 0, 0);
   Actor_SetPosition(ACTOR_STONE, 104, 104);
 }
 
@@ -322,10 +338,10 @@ s32 Scene_Initialize(void) {
   Actor_GetById(ACTOR_STONE)->scaleX = FIXED_ONE / 2;
   Actor_GetById(ACTOR_STONE)->scaleY = FIXED_ONE / 2;
   Naribwe_HideStone();
-  if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+  if (Event_GetFlag(FLAG_IVY_BLOWN_AWAY))
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   Rope_Initialize();
-  Rope_Place(0, 0x202, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROPE_POST_A), 0);
   Actor_DisableById(ACTOR_ROPE_POST_B);
   return 0;
@@ -349,6 +365,9 @@ void Naribwe_BlowAwayIvy(void);
 void Naribwe_RevealStone(void);
 
 extern s32 gNaribwe_BrazierBurns[];
+// XXX: the flames over the braziers wear sheet 410, which sprite_ids.h names
+// SPRITE_EXCLAMATION_BUBBLE and nothing else uses; the sheet's picture settles
+// which name is wrong.
 extern s32 gNaribwe_FlameRises[];
 
 extern s32 gNaribwe_IvyAnimation[];
@@ -366,30 +385,37 @@ void Naribwe_HideStone(void);
        0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
       {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, toFIXED(372),  \
        0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(316), 0,            \
-       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(372), 0,            \
-       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
+      {SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, gNaribwe_FlameRises,       \
+       toFIXED(316), 0, toFIXED(132), FACING_SOUTH, 0, 0},                     \
+      {SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, gNaribwe_FlameRises,       \
+       toFIXED(372), 0, toFIXED(132), FACING_SOUTH, 0, 0},                     \
       ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
                       MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
-      ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 200,   \
-                      0, 296, FACING_EAST, TALK_FACING_PARTY, 0),              \
-      ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 152, \
-                      FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),            \
-      ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, \
-                      376, FACING_NORTHEAST, 0, 0),                            \
-      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 88,  \
-                      FACING_SOUTHEAST, 1, 0),                                 \
-      ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 224, \
-                      FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),        \
+      ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,          \
+                      MOVEMENT_TYPE_WANDER_NEAR, 200, 0, 296, FACING_EAST,     \
+                      TALK_FACING_PARTY, 0),                                   \
+      ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,            \
+                      MOVEMENT_TYPE_STAND, 248, 0, 152, FACING_SOUTH,          \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
+      ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS,           \
+                      MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 376, FACING_NORTHEAST, \
+                      0, 0),                                                   \
+      ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,           \
+                      MOVEMENT_TYPE_STAND, 248, 0, 88, FACING_SOUTHEAST, 1,    \
+                      0),                                                      \
+      ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS,        \
+                      MOVEMENT_TYPE_STAND, 368, 0, 224, FACING_SOUTHEAST,      \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
       ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,            \
                       MOVEMENT_TYPE_WANDER, 200, 0, 200, FACING_NORTHEAST,     \
                       TALK_FACING_PARTY, 0),                                   \
-      ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 232, \
-                      FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),        \
-      ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 56, 0, 232, \
-                      FACING_EAST, TALK_FACING_PARTY, 0),                      \
+      ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,        \
+                      MOVEMENT_TYPE_STAND, 312, 0, 232, FACING_SOUTHWEST,      \
+                      TALK_FACING_PARTY_AND_BACK, 0),                          \
+      ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,           \
+                      MOVEMENT_TYPE_WANDER, 56, 0, 232, FACING_EAST,           \
+                      TALK_FACING_PARTY, 0),                                   \
       ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
                       MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
@@ -398,8 +424,9 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
                       MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \
                       TALK_FACING_KEEP, 0),                                    \
-      ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
-                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS,                  \
+                      MOVEMENT_TYPE_STAND, 392, 0, 376, FACING_SOUTH,          \
+                      TALK_FACING_KEEP, 0),                                    \
       ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,    \
                       376, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK,   \
                       0),                                                      \
@@ -468,8 +495,8 @@ struct ActorPlacement gNaribwe_Entrance10Placements[] = {
     ACTOR_PLACEMENT(SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -536,9 +563,9 @@ struct Trigger gNaribwe_Triggers[] = {
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, 0x201,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_IVY_BLOWN_AWAY,
      EVENT(Naribwe_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x202, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -606,9 +633,9 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, 0x201,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_IVY_BLOWN_AWAY,
      EVENT(Naribwe_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x202, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

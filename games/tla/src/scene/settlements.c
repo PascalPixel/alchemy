@@ -45,6 +45,8 @@
 #include "scene/scene.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"
+#include "scene/event_layer.h"
+#include "graphics/glyph.h"
 #include "system/input.h"
 #include "text/msg_ids.h"
 
@@ -61,6 +63,28 @@
 #define FLAG_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
+/// Kalt Island: the leader is on the ice, where each step slides
+/// (Leader_SlideOnIce).
+#define FLAG_ON_ICE FLAG_SCENE_TEMP_01
+/// SW Atteka Islet: the pillar has sunk into the river at (11, 12), and river
+/// stone K stands in its place.
+#define FLAG_PILLAR_SUNK FLAG_SCENE_TEMP_04
+/// SW Atteka Islet: the crate has gone down the falls onto the sunk pillar and
+/// rests there.
+#define FLAG_FALLS_CRATE_AT_REST FLAG_SCENE_TEMP_05
+/// SW Atteka Islet: the crate has gone down the falls with no pillar to stop
+/// it, and is lost.
+#define FLAG_FALLS_CRATE_LOST FLAG_SCENE_TEMP_06
+/// SW Atteka Islet: the crate has bobbed in the water at (16, 12).
+#define FLAG_FALLS_CRATE_BOBBED FLAG_SCENE_TEMP_07
+/// SW Atteka Islet: Lift has raised the boulder.
+#define FLAG_BOULDER_LIFTED FLAG_SCENE_TEMP_08
+/// Hesperia Settlement: the party walks along the top of the wall.
+#define FLAG_ON_WALL FLAG_SCENE_TEMP_20
+/// Hesperia Settlement: the crate has dropped off the wall into the water.
+#define FLAG_WALL_CRATE_DROPPED FLAG_SCENE_TEMP_21
+/// Hesperia Settlement: Growth has made the sprout a vine.
+#define FLAG_VINE_GROWN FLAG_SCENE_TEMP_30
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
@@ -171,15 +195,10 @@ void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 a, s32 b);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
 
 extern u32 gSettlements_HesperiaSettlementHousesRegions[];
 extern u32 gSettlements_GondowanSettlementCaveRegions[];
 
-static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
-}
 #include "shared/tables.h"
 #include "shared/event_check_spheres_overlap.h"
 
@@ -245,6 +264,8 @@ struct OrbitSprite {
   u8 state;
 };
 
+/// The apple as Kalt Island floats it: an actor whose fields hold the centre
+/// and angle of its sway, as The Broken Seal's OrbitingMapActor.
 struct OrbitObject {
   u8 beforeX[8];
   s32 x;
@@ -271,6 +292,7 @@ struct OrbitObject {
   u32 callback;
 };
 
+/// Three 16.16 fixed-point components.
 struct SettlementsVector {
   s32 x;
   s32 y;
@@ -296,20 +318,26 @@ void Settlements_SpawnSplashRing(s32 objectId);
 
 void Settlements_MovePillar(void);
 
+/// Gel, the Mercury Djinni on Kalt Island, joins the party.
 void Settlements_MeetGel(void) {
-  Djinn_JoinParty(10, DJINNI_GEL / DJINN_PER_ELEMENT, DJINNI_INDEX(DJINNI_GEL));
+  Djinn_JoinParty(ACTOR_GEL, DJINNI_GEL / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_GEL));
 }
 
+/// Tinder, the Mars Djinni in Hesperia Settlement, joins the party.
 void Settlements_MeetTinder(void) {
-  Djinn_JoinParty(11, DJINNI_TINDER / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_TINDER, DJINNI_TINDER / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_TINDER));
 }
 
+/// The Jupiter Djinni the game's text calls Wind19, on SW Atteka Islet, joins
+/// the party.
 void Settlements_MeetLostJupiterDjinni(void) {
-  Djinn_JoinParty(23, DJINNI_WIND19 / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_JUPITER_DJINNI, DJINNI_WIND19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_WIND19));
 }
 
+/// A script call: draws the actor without its sprite flags.
 s32 Settlements_ClearSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
@@ -365,6 +393,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSettlements_Placements;
 }
 
+/// The apple floating on Kalt Island is taken: it is put away and the party
+/// receives an Apple.
 void Settlements_CatchApple(void) {
   s32 mode;
 
@@ -378,6 +408,8 @@ void Settlements_CatchApple(void) {
   Event_End();
 }
 
+/// Asks whether the party has come about the riddle of the rock, and answers
+/// either way.
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlementsDontTellMeYoureHere;
 
@@ -394,8 +426,13 @@ void Settlements_WarnOfRiddleOfRock(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Settlements_CutLeftBush(void) { Window(5, 70, 9, 7, 5, 43, 1); }
+/// Cyclone clears the bush on the left of Gondowan Settlement.
+void Settlements_CutLeftBush(void) {
+  FieldTileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
+}
 
+/// Cyclone clears the bush on the stairs of Gondowan Settlement: the leader
+/// standing on it hops off, and the stairs open.
 void Settlements_CutStairsBush(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -411,6 +448,8 @@ void Settlements_CutStairsBush(void) {
   Event_SetFlag(FLAG_STAIRS_BUSH_CUT);
 }
 
+/// The leader climbs down the ladder: steps onto its top, turns and climbs down
+/// out of the scene.
 void Settlements_ClimbDownLadder(void) {
   s32 next = gFieldWork->stepTrigger;
 
@@ -431,6 +470,7 @@ void Settlements_ClimbDownLadder(void) {
   Event_End();
 }
 
+/// The leader steps onto the ladder from the west and climbs down.
 void Settlements_StepOntoLadderFromWest(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -439,6 +479,7 @@ void Settlements_StepOntoLadderFromWest(void) {
   Settlements_ClimbDownLadder();
 }
 
+/// The leader steps onto the ladder from the east and climbs down.
 void Settlements_StepOntoLadderFromEast(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -447,6 +488,7 @@ void Settlements_StepOntoLadderFromEast(void) {
   Settlements_ClimbDownLadder();
 }
 
+/// The leader turns north on the ladder and climbs down.
 void Settlements_TurnAndClimbDownLadder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -454,9 +496,10 @@ void Settlements_TurnAndClimbDownLadder(void) {
   Settlements_ClimbDownLadder();
 }
 
+/// Growth makes Hesperia Settlement's sprout a vine the party can climb.
 void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
-  Event_SetFlag(FLAG_SCENE_TEMP_30);
+  Event_SetFlag(FLAG_VINE_GROWN);
 }
 
 extern struct Trigger gSettlements_Triggers[];
@@ -491,6 +534,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSettlements_Triggers;
 }
 
+/// Drifts a chimney's puff sideways ever faster, raises and widens it, and
+/// releases it when its frames run out.
 void Settlements_DriftSmoke(struct Actor *object) {
   s32 step;
 
@@ -498,7 +543,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
 
   object->y.fixed += toFIXED(1) / 2;
 
-  step = 0x51e;
+  step = FIXED_ONE / 50;
   object->scaleX += step;
   object->scaleY += step;
   object->timer += 2;
@@ -506,19 +551,17 @@ void Settlements_DriftSmoke(struct Actor *object) {
     Actor_Release(object);
 }
 
+/// Adds one puff of chimney smoke, as Prox's roofs do.
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (object != NULL) {
-    s8 *animation;
-
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(object, 7);
-    animation = object->sprite;
-    animation[9] = (animation[9] & -13) | 4;
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = FIXED_ONE / 2;
     object->scaleY = FIXED_ONE / 2;
@@ -529,34 +572,26 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   }
 }
 
+/// A task on Kalt Island: a puff from the chimney every 64 frames.
 void Settlements_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0)
-    Settlements_SpawnSmoke(0xf80000, 0x300000, 0x1000000);
+    Settlements_SpawnSmoke(toFIXED(248), toFIXED(48), toFIXED(256));
 }
 
-/// Moves the object around its orbit's centre (words 14 and 15) and steps the
-/// angle by a random amount.
-// As ☀️'s Scene_UpdateFloatingNut does.
-s32 Settlements_CircleCentre(s32 *p) {
-  s16 *q = (s16 *)p[20];
-  s32 a, b;
-  FIXED d = Math_Sin(p[12]) * 2;
+/// The apple's callback, each frame: it sways up to two pixels either side of
+/// its spot and dips up to two pixels below it, at a random pace, as The Broken
+/// Seal's Nut floats.
+s32 Settlements_FloatApple(struct OrbitObject *apple) {
+  struct FieldSprite *sprite = (struct FieldSprite *)apple->sprite;
+  FIXED dip = Math_Sin(apple->orbitAngle) * 2;
 
-  if (d > 0)
-    d = -d;
-  p[2] = p[14] + Trig_Cos(p[12]) * 2;
-  p[3] = p[15] + d;
-  q[9] = Trig_Cos(p[12] + 0x8000) / 8;
-  a = Random16();
-  b = Random16();
-  {
-    u32 x;
-    s32 angle;
-
-    x = (u32)a << 9;
-    angle = p[12];
-    p[12] = angle + ((x >> 16) + (((u32)b << 9) >> 16)) + 0x400;
-  }
+  if (dip > 0)
+    dip = -dip;
+  apple->x = apple->orbitCenterX + Trig_Cos(apple->orbitAngle) * 2;
+  apple->y = apple->orbitCenterY + dip;
+  sprite->rotation = Trig_Cos(apple->orbitAngle + DEGtoANG(180)) / 8;
+  // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
+  apple->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
   return 0;
 }
 
@@ -568,15 +603,17 @@ static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
   Rope_Place(index, flag, post, otherPost);
 }
 
+/// Sets up Kalt Island: the blend, the chimney smoke, the rope between its
+/// posts, and the apple floating, its icon drawn, until it is taken.
 void Settlements_SetUpKaltIsland(void) {
   struct OrbitObject *actor;
   struct OrbitSprite *sprite;
-  u8 *transfer;
+  GlyphTransfer *glyph;
 
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     FieldTask_AddFrame(Settlements_PuffChimneySmoke, priority);
   }
@@ -600,16 +637,15 @@ void Settlements_SetUpKaltIsland(void) {
     actor->y += toFIXED(16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
-  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Item_LoadIcon(ITEM_APPLE);
-  transfer += 0x400;
-  Vram_Load(sprite->vramBlock, 128, transfer);
+  Vram_Load(sprite->vramBlock, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;
   actor->active = 1;
-  actor->callback = (u32)Settlements_CircleCentre;
+  actor->callback = (u32)Settlements_FloatApple;
   actor->state = 0;
 }
 
@@ -624,17 +660,17 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_LOST))
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
     Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_RIVER_STONE_H, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_I, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_K, 2);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST))
       Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
     Settlements_StartWaterfall();
 #if TLA_PATCH_1
-    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    if (Event_GetFlag(FLAG_PILLAR_SUNK)) {
       Actor_SetPosition(ACTOR_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
       Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
@@ -643,13 +679,13 @@ s32 Scene_Initialize(void) {
 #endif
   }
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
+    if (Event_GetFlag(FLAG_VINE_GROWN)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(ACTOR_SPROUT, 4);
     }
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        Event_GetFlag(FLAG_SCENE_TEMP_20)) {
-      Event_ClearFlag(FLAG_SCENE_TEMP_20);
+        Event_GetFlag(FLAG_ON_WALL)) {
+      Event_ClearFlag(FLAG_ON_WALL);
       Settlements_StepOntoWall();
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
@@ -663,16 +699,16 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST))
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    if (Event_GetFlag(FLAG_PILLAR_SUNK)) {
       Actor_SetPosition(ACTOR_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
       Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
@@ -690,28 +726,28 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_SCENE_TEMP_01); }
+/// On Kalt Island's ice: the slide starts.
+void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_ON_ICE); }
 
-void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
+/// Off Kalt Island's ice.
+void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_ON_ICE); }
 
+/// Steps the leader's slide on Kalt Island's ice.
 void Settlements_StepOnIceSlide(void) { Leader_SlideOnIce(); }
 
+/// Goes into a settlement's cave: the placed actors stop, the door opens and
+/// the leader walks in.
 void Settlements_EnterCave(void) {
   u32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = ACTOR_FIRST_PLACED;
-loop:
-  {
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *object = Actor_Get(i);
 
     if (object != 0)
       object->motionFlags = 0;
   }
-  i++;
-  if (i < FIELD_TREASURE_ACTOR)
-    goto loop;
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
@@ -727,6 +763,7 @@ loop:
   Event_End();
 }
 
+/// Lash ties the rope between Kalt Island's two posts.
 void Settlements_LashRope(void) {
   Rope_Lash(1, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Event_SetFlag(FLAG_KALT_ROPE_TIED);
@@ -734,6 +771,8 @@ void Settlements_LashRope(void) {
 
 extern s32 gSettlements_WaterColorFrame;
 
+/// A task on SW Atteka Islet: rotates the four colours of the falls' water in
+/// BG palette 3 every 8 frames.
 void Settlements_CycleWaterColors(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 *frame;
@@ -746,8 +785,10 @@ void Settlements_CycleWaterColors(void) {
     u16 *colors = gSettlements_WaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)&BG_PLTT_COLOR(3, 0), 32);
-    copy(gSettlements_WaterColorsSaved, colors, 32);
+    copy(colors, (void *)&BG_PLTT_COLOR(3, 0),
+         sizeof(gSettlements_WaterColors));
+    copy(gSettlements_WaterColorsSaved, colors,
+         sizeof(gSettlements_WaterColors));
     *frame = 0;
   }
   phase = (*frame / 8) % 4;
@@ -766,23 +807,22 @@ void Settlements_CycleWaterColors(void) {
 
       *entry++ = (u32)gSettlements_WaterColorsSaved;
       q->count = count + 1;
-      *entry++ = 0x5000060;
-      *entry = 0x84000008;
+      *entry++ = (u32)&BG_PLTT_COLOR(3, 0);
+      *entry = DMA_COPY_WORDS(8);
     }
     IRQ_UNLOCK(saved);
   }
   gSettlements_WaterColorFrame++;
 }
 
+/// Starts SW Atteka Islet's falls: the water's colours, its sound and the
+/// hblank split of its scroll.
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
 }
-
-// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
-// value and blending is off; below it, by the other, with BG1 blended.
 
 /// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 /// value and blending is off; below it, by the other, with BG1 blended.
@@ -800,20 +840,23 @@ void Scroll_HBlank(void) {
 /// Follows the third map layer's scroll.
 void Layer_TrackScroll(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
-  s16 y = layer->y >> 16;
+  s16 y = FIXEDtoINT(layer->y);
 
   gSettlements_WaterfallLine = 1448 - y;
-  gSettlements_WaterfallScrollAbove = layer->x >> 16;
+  gSettlements_WaterfallScrollAbove = FIXEDtoINT(layer->x);
   gSettlements_WaterfallScrollBelow =
-      (s16)(layer->x >> 16) - (gFrameCount >> 2);
+      (s16)FIXEDtoINT(layer->x) - (gFrameCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
 
+/// Lifts the block a pushed pillar or crate leaves on SW Atteka Islet.
 void Settlements_UnblockFallsObjects(void) {
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
+/// Pushing a pillar or crate on SW Atteka Islet: the leader is drawn above it
+/// and its block is lifted.
 void Settlements_BlockFallsObject(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
@@ -822,28 +865,42 @@ void Settlements_BlockFallsObject(void) {
 
 void Settlements_SplashCrate(s32 id);
 
+/// A pillar pushed into the river at (11, 12) sinks, and river stone K takes
+/// its place in the stream.
 void Settlements_SinkPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_PILLAR);
   s32 column = FIELD_CELL(object->x.fixed);
   s32 row = FIELD_CELL(object->z.fixed);
   s32 i;
 
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
+  if (!Event_GetFlag(FLAG_PILLAR_SUNK) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y.fixed -= toFIXED(2);
       Event_Wait(1);
     }
-    Settlements_SplashCrate(9);
+    Settlements_SplashCrate(ACTOR_PILLAR);
     Actor_SetPosition(ACTOR_PILLAR, 0, 0);
     Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
     Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
     Actor_GetById(ACTOR_RIVER_STONE_K)->y.fixed -= toFIXED(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
-    Event_SetFlag(FLAG_SCENE_TEMP_04);
+    Event_SetFlag(FLAG_PILLAR_SUNK);
   }
 }
 
+/// Sinks object 2 pixels a frame for the given frames, counting in i.
+#define SINK(frames)                                                           \
+  i = (frames);                                                                \
+  do {                                                                         \
+    FieldEvent_Wait(1);                                                        \
+    object->y.fixed -= toFIXED(2);                                             \
+    i--;                                                                       \
+  } while (i > 0)
+
+/// A crate pushed into the falls at (11, 9) sinks, slides down the falls and is
+/// lost, or once the pillar has sunk comes to rest below; at (16, 12) it bobs a
+/// moment.
 void Settlements_SlideCrateDownFalls(void) {
   struct Actor *object = Actor_GetById(ACTOR_FALLS_CRATE);
   s32 column = FIELD_CELL(object->x.fixed);
@@ -853,14 +910,8 @@ void Settlements_SlideCrateDownFalls(void) {
 
   if (column == 11 && row == 9) {
     object->motionFlags = 0;
-    i = 8;
-  sink:
-    FieldEvent_Wait(1);
-    object->y.fixed -= toFIXED(2);
-    i--;
-    if (i > 0)
-      goto sink;
-    Settlements_SplashCrate(10);
+    SINK(8);
+    Settlements_SplashCrate(ACTOR_FALLS_CRATE);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 224, 1);
     Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
@@ -871,8 +922,8 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetSpeed(ACTOR_FALLS_CRATE, 2.4);
     Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
     FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
-    Settlements_SplashCrate(10);
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    Settlements_SplashCrate(ACTOR_FALLS_CRATE);
+    if (!Event_GetFlag(FLAG_PILLAR_SUNK)) {
       FieldEvent_Wait(10);
       Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
       Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
@@ -881,7 +932,7 @@ void Settlements_SlideCrateDownFalls(void) {
       Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
-      Event_SetFlag(FLAG_SCENE_TEMP_06);
+      Event_SetFlag(FLAG_FALLS_CRATE_LOST);
     } else {
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
@@ -891,30 +942,37 @@ void Settlements_SlideCrateDownFalls(void) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
       Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
       FieldEvent_Wait(30);
-      Event_SetFlag(FLAG_SCENE_TEMP_05);
+      Event_SetFlag(FLAG_FALLS_CRATE_AT_REST);
     }
     Event_End();
-  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_07) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(FLAG_FALLS_CRATE_BOBBED) && column == 16 &&
+             row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_07);
+    Event_SetFlag(FLAG_FALLS_CRATE_BOBBED);
     Event_End();
   }
 }
 
+/// A pillar on SW Atteka Islet has been pushed: placed, and sunk if in the
+/// river.
 void Settlements_MovePillar(void) {
   Actor_PlaceMovedBlock();
   Settlements_SinkPillar();
 }
 
+/// A crate on SW Atteka Islet has been pushed: placed, and down the falls if
+/// there.
 void Settlements_MoveCrate(void) {
   Actor_PlaceMovedBlock();
   Settlements_SlideCrateDownFalls();
 }
 
+/// Something has been pushed on SW Atteka Islet: placed, then sunk or sent down
+/// the falls by where it stands.
 void Settlements_PushIntoFalls(void) {
   Actor_PlaceMovedBlock();
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags += 254;
@@ -922,34 +980,40 @@ void Settlements_PushIntoFalls(void) {
   Settlements_SlideCrateDownFalls();
 }
 
+/// Keeps the collision of the wall's two 10 by 10 stretches before the crate
+/// moves.
 void Settlements_SaveWallCells(void) {
   MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 0);
   MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 10);
 }
 
+/// Gives the wall's two stretches their kept collision back.
 void Settlements_RestoreWallCells(void) {
   MapGrid_CopyCellAttributes(64, 0, 10, 10, 11, 73);
   MapGrid_CopyCellAttributes(64, 10, 10, 10, 42, 73);
 }
 
+/// Onto Hesperia Settlement's wall: its collision is switched for walking along
+/// the top until the party steps off.
 void Settlements_StepOntoWall(void) {
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_21) &&
-      !Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+  if (!Event_GetFlag(FLAG_WALL_CRATE_DROPPED) && !Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
     MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
-    Event_SetFlag(FLAG_SCENE_TEMP_20);
+    Event_SetFlag(FLAG_ON_WALL);
   }
 }
 
+/// Off Hesperia Settlement's wall: its stretches take their own collision back.
 void Settlements_StepOffWall(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+  if (Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
-    Event_ClearFlag(FLAG_SCENE_TEMP_20);
+    Event_ClearFlag(FLAG_ON_WALL);
   }
 }
 
+/// Pushing Hesperia Settlement's crate: its cells open by where it stands.
 void Settlements_UnblockCrate(void) {
   struct Actor *object = Actor_Get(ACTOR_WALL_CRATE);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -973,14 +1037,9 @@ void Settlements_UnblockCrate(void) {
 
 extern s32 gSettlements_CrateDropScript[];
 
-#define SINK(frames)                                                           \
-  i = (frames);                                                                \
-  do {                                                                         \
-    FieldEvent_Wait(1);                                                        \
-    object->y.fixed -= toFIXED(2);                                             \
-    i--;                                                                       \
-  } while (i > 0)
-
+/// Hesperia Settlement's crate pushed off the wall: where it lands it sinks
+/// into the water, and at (19, 15), while Tinder is not yet met, it runs the
+/// crate's drop script.
 void Settlements_DropCrate(void) {
   struct Actor *object;
   s32 column;
@@ -993,26 +1052,28 @@ void Settlements_DropCrate(void) {
   object = Actor_Get(ACTOR_WALL_CRATE);
   column = FIELD_CELL(object->x.fixed);
   row = FIELD_CELL(object->z.fixed);
+  // XXX: the two sinkings with flags of their own, at (16, 15) and (13, 15)
+  // (FLAG_SCENE_TEMP_05 and 04), are named once the map shows what lies there.
   if (column == 12 && row == 15) {
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     object->motionFlags = 0;
     SINK(32);
-    Settlements_SpawnSplashRing(10);
+    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
   } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
     object->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_05);
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(48);
-    Settlements_SpawnSplashRing(10);
+    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(32);
-    Settlements_SpawnSplashRing(10);
-    if (!Event_GetFlag(102)) {
+    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
+    if (!Event_GetFlag(FLAG_DJINNI(DJINNI_TINDER))) {
       Actor_SetPosition(ACTOR_TINDER, 0, 0);
       Actor_SetScript(ACTOR_WALL_CRATE, gSettlements_CrateDropScript);
       FieldEvent_Wait(20);
@@ -1023,7 +1084,7 @@ void Settlements_DropCrate(void) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
     SINK(16);
-    Settlements_SpawnSplashRing(10);
+    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   } else if (column == 14 && row == 15) {
@@ -1033,6 +1094,8 @@ void Settlements_DropCrate(void) {
   Event_End();
 }
 
+/// Hesperia Settlement's crate has been pushed: placed, the wall's collision
+/// restored, and dropped if it went over the edge.
 void Settlements_BlockCrate(void) {
   Actor_PlaceMovedBlock();
   Settlements_RestoreWallCells();
@@ -1041,6 +1104,7 @@ void Settlements_BlockCrate(void) {
 
 extern s32 gSettlements_SmokeScript[];
 
+/// Water sprays up where an actor goes into the water.
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves. */
@@ -1073,6 +1137,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
+/// A ring of nine splashes thrown out around an actor.
 void Settlements_SpawnSplashRing(s32 objectId) {
   struct Actor *object;
   struct Vector3 vec;
@@ -1098,7 +1163,8 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   }
 }
 
-void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
+/// Lift raises SW Atteka Islet's boulder.
+void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_BOULDER_LIFTED); }
 
 extern s16 gSlideOnIce_SteerAngles[];
 
@@ -1122,6 +1188,7 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/slide_on_ice_from_edge.c"
 
+/// Stops or restarts the leader's slide on the ice (Leader_SlideOnIce).
 void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -1277,26 +1344,26 @@ struct ActorPlacement gSettlements_Placements[] = {
 
 struct ActorPlacement gSettlements_GondowanSettlementPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[] = {
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 632, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 632, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_HesperiaSettlementPlacements[] = {
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x66, MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_TINDER), MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_HesperiaSettlementHousesPlacements[] = {
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 696, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 696, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1304,19 +1371,19 @@ struct ActorPlacement gSettlements_AttekaIsletPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, 0x7f, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_WIND19), MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1328,14 +1395,14 @@ struct ActorPlacement gSettlements_AttekaIsletHousesPlacements[] = {
 struct ActorPlacement gSettlements_KaltIslandPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, 0x52, MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_GEL), MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSettlements_KaltIslandHousesPlacements[] = {
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 216, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 216, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1392,8 +1459,9 @@ struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 5, CONDITION_ALWAYS,
      EVENT(Settlements_StepOntoLadderFromEast)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 34, 0x220, EVENT(Settlements_StepOntoWall)},
-    {TRIGGER_STEP, 35, 0x1220, EVENT(Settlements_StepOffWall)},
+    {TRIGGER_STEP, 34, FLAG_ON_WALL, EVENT(Settlements_StepOntoWall)},
+    {TRIGGER_STEP, 35, IF_FLAG_SET(FLAG_ON_WALL),
+     EVENT(Settlements_StepOffWall)},
     {TRIGGER_TALK, ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
      MSGNO(MsgSettlementsYouMustBeVeryBrave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
@@ -1406,7 +1474,7 @@ struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
      EVENT(Settlements_BlockCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, 0x230,
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_VINE_GROWN,
      EVENT(Settlements_GrowVine)},
     {TRIGGER_TABLE_END},
 };
@@ -1430,10 +1498,9 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Settlements_EnterCave)},
-    {TRIGGER_STEP, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
-    {TRIGGER_STEP, ACTOR_APPLE, CONDITION_ALWAYS,
-     EVENT(Settlements_StepOffIce)},
-    {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_StepOffIce)},
+    {TRIGGER_STEP, 20, FLAG_ON_ICE, EVENT(Settlements_StepOnIceSlide)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
@@ -1468,15 +1535,15 @@ struct Trigger gSettlements_AttekaIsletTriggers[] = {
      MSGNO(MsgSettlementsMyBuddyThinksImNuts)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
      0x204, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, 0x204,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_PILLAR_SUNK,
      EVENT(Settlements_MovePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      0x205, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE, 0x205,
-     EVENT(Settlements_MoveCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE,
+     FLAG_FALLS_CRATE_AT_REST, EVENT(Settlements_MoveCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, 0x208,
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_BOULDER_LIFTED,
      EVENT(Settlements_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };

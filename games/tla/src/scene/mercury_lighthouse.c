@@ -40,9 +40,9 @@ void FieldPsynergy_StopMindReadWave(void);
 /// frame.
 s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
   if ((gMercuryLighthouse_MoteFrames >> 1) & 1)
-    FieldActor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
   else
-    FieldActor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
   return 0;
 }
 
@@ -110,7 +110,7 @@ enum {
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// The task MercuryLighthouse_HearVoices starts: every 16 frames it starts a
-/// flickering mote (sprite 0x2a2) at a random spot in front of the
+/// flickering mote (SPRITE_GLINT) at a random spot in front of the
 /// lighthouse, and it counts the frames in gMercuryLighthouse_MoteFrames.
 void MercuryLighthouse_SpawnMotes(void) {
   struct Actor *object;
@@ -129,7 +129,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       sprite = object->sprite;
       x = Random16() * 40 + toFIXED(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored. */
+       * stored; stored straight, 12 of 76 instructions differ in tla-en. */
       z = toFIXED(696);
       object->motionFlags = phase;
       object->x.fixed = x;
@@ -155,7 +155,8 @@ void MercuryLighthouse_HearVoices(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_HIDDEN);
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
@@ -262,8 +263,9 @@ void MercuryLighthouse_HearVoices(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetFlag(0xa3c);
-  Import_EventSetExitRequest(3);
+  Event_SetFlag(FLAG_MARS_BEACON_BURNING);
+  Import_EventSetExitRequest(
+      MERCURY_LIGHTHOUSE_TO_MARS_LIGHTHOUSE_AERIE_EAST_B);
 }
 
 s32 Scene_Initialize(void) {
@@ -328,8 +330,8 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 780, 0, 946, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 10, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

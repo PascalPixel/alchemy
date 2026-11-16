@@ -410,6 +410,9 @@
 /// "only Mars Lighthouse still needs lighting" while it is clear and thank the
 /// party for lighting the beacon once it is set.
 #define FLAG_MARS_BEACON_LIT 0xa3d
+/// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
+/// fire burns at the aerie from then on.
+#define FLAG_MARS_BEACON_BURNING 0xa3c
 /// Set in the dragon hall once the Mars Star is set in the statue's face: the
 /// lighthouse turns to fire and its ice is gone, and battles there take the
 /// dragon hall's backdrop A in place of B.
@@ -1023,6 +1026,9 @@
 /// way to Lemuria follows it, and Naribwe's fortune teller then sees "None in
 /// the eastern world can stand against the power you possess."
 #define FLAG_SEA_OF_TIME_OPENED 0x940
+/// Set in Eastern Alhafra once its workers have told the mayor; Naribwe's
+/// fortune teller then sends the party to the village on the eastern shore.
+#define FLAG_WORKERS_TOLD_MAYOR 0x905
 /// Set as Piers leaves the party to visit his mother's grave
 /// (LemuriaInteriors_LeavePiersToMourn); Lemuria reads it too.
 #define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966

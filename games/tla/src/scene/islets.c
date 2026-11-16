@@ -2236,39 +2236,27 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
 /// entries cleared.
 void Islets_StartPaletteCycle(void) {
-  struct PaletteCycleWork *queue;
-  struct PaletteCycle *entry;
-  s16 i, j;
+  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycle *cycle;
+  u16 cycleIndex;
+  u16 colorIndex;
 
-  queue = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                              sizeof(struct PaletteCycleWork));
-  entry = queue->entries;
-  i = 0;
-outer:
-  entry->source = 0;
-  entry->position = 0;
-  entry->timer = 0;
-  entry->delay = 0;
-  entry->count = 0;
-  j = 0;
-inner:
-  entry->colors[(u16)j] = 0;
-  {
-    s32 next = ((u16)j + 1) << 16;
-
-    j = next >> 16;
-    if (next != toFIXED(16))
-      goto inner;
+  paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                                      sizeof(struct PaletteCycleWork));
+  cycle = paletteCycles->entries;
+  // Four cycles of up to 16 saved colours each.
+  for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
+    cycle->source = 0;
+    cycle->position = 0;
+    cycle->timer = 0;
+    cycle->delay = 0;
+    cycle->count = 0;
+    for (colorIndex = 0; colorIndex != 16; colorIndex++) {
+      cycle->colors[colorIndex] = 0;
+    }
+    cycle++;
   }
-  entry++;
-  {
-    FIXED next = (i << 16) + toFIXED(1);
-
-    i = next >> 16;
-    if (next != toFIXED(4))
-      goto outer;
-  }
-  queue->count = 0;
+  paletteCycles->count = 0;
 }
 
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
@@ -2372,12 +2360,11 @@ s32 PushTarget_FillFootprint(s32 id) {
   s32 width, height, x, z;
 
   if ((u16)kind != gPushKinds[(u16)i]) {
-  again:
-    next = (i + 1) * 65536;
-    index = (u32)next >> 16;
-    i = next >> 16;
-    if (index <= 5 && (u16)kind != gPushKinds[index])
-      goto again;
+    do {
+      next = (i + 1) * 65536;
+      index = (u32)next >> 16;
+      i = next >> 16;
+    } while (index <= 5 && (u16)kind != gPushKinds[index]);
   }
   // fromX and b are reused for the next values they hold.
   fromX = (u16)i;

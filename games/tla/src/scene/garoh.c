@@ -252,25 +252,13 @@ extern u16 gGaroh_HypnosSwordChestNightColors[];
 #define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count)              \
   void name(void) {                                                            \
     struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
-    const u8 *table = (const u8 *)components;                                  \
-    u32 i = 0;                                                                 \
-    u16 *dst = &buffers->palette[first];                                       \
-    s32 blue = 4;                                                              \
-    s32 red = 0;                                                               \
-    volatile u16 *color;                                                       \
-    s32 green;                                                                 \
+    u32 i;                                                                     \
                                                                                \
-  loop:                                                                        \
-    color = BG_PLTT + first + i;                                               \
-    green = blue - 2;                                                          \
-    *color = *(const u16 *)(table + blue) << 10 |                              \
-             *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red); \
-    *dst++ = *color;                                                           \
-    i++;                                                                       \
-    blue += 6;                                                                 \
-    red += 6;                                                                  \
-    if (i < count)                                                             \
-      goto loop;                                                               \
+    for (i = 0; i < count; i++) {                                              \
+      BG_PLTT[first + i] = components[i * 3 + 2] << 10 |                       \
+                           components[i * 3 + 1] << 5 | components[i * 3];     \
+      buffers->palette[first + i] = BG_PLTT[first + i];                        \
+    }                                                                          \
   }
 
 /// By day the path's colours: BG palette 1's colours 8 to 15.

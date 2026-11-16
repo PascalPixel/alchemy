@@ -71,7 +71,7 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   {
     u32 *word = buffer;
 
-    for (k = 63; k >= 0; k--)
+    for (k = 0; k < 64; k++)
       *word++ = 0x11111111;
   }
   table->tile = VramCache_FindFreeEntry();

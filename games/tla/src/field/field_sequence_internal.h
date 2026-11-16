@@ -76,6 +76,9 @@
 #include "field/object.h"
 #include "gamepak/far_call/field.h"
 
+/// The running scene's entry table, at the start of gOverlayArea.
+#define SCENE_ENTRIES ((struct SceneEntries *)gOverlayArea)
+
 // The object's functions its parts call before their definitions.
 
 // Outside routines and data the parts had declared each in its own way, with
@@ -149,13 +152,24 @@ enum ContainerKind {
 /// A row of the scene's container table (SceneItem_GetRows), numbered from
 /// actor 64.
 struct ContainerRow {
-  s16 type;   ///< enum ContainerKind
-  s16 noHint; ///< 0 lets Venus Lighthouse hint at a chest already opened
-  s16 flag;   ///< set once it has been opened; -1 for none
+  s16 type; ///< enum ContainerKind
+  /// The scene point it stands on (SceneItem_FindPosition); in Venus
+  /// Lighthouse the chest on point 0 is "already open" until its flag is set.
+  s16 point;
+  s16 flag; ///< set once it has been opened; -1 for none
   /// The item inside, 0 for none; a Mimic's formation slot; a Psynergy
   /// Stone's number; a tablet's summon.
   s16 contents;
 };
+/// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
+/// their count in the bits under it.
+#define CONTAINER_COINS 0x8000
+/// Actor.riseBaseY of a treasure spot that stands for a map cell rather than an
+/// actor: its cell is in timer and userValue, and it stands at x and z 0.
+#define TREASURE_SPOT_ON_CELL 0x31415927
+/// gSceneItems: bit 14 marks a scene's header (SCENE_ITEMS), its scene number
+/// in the bits under it.
+#define SCENE_ITEMS_HEADER 0x4000
 
 /// A box of the map in whole cells (16.16 when compared) and the value it
 /// selects while its condition holds; a row with minX -1 ends the list.

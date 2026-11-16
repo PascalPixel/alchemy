@@ -6,9 +6,11 @@
 #include "flags.h"
 #include "field/event_commands.h"
 #include "field/object.h"
+#include "field/field_psynergy_work.h"
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
-  (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
+  (MessageArgument_PushFar((user), MESSAGE_ARGUMENT_ACTOR),                    \
+   MessageArgument_PushFar((ability), MESSAGE_ARGUMENT_ABILITY),               \
    FieldMessage_ShowFar((s32)&(message), FIELD_MESSAGE_ZOOM))
 
 /// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9) and its
@@ -28,44 +30,44 @@ s32 Field_UsePsynergy(u32 code) {
   s32 target;
   s32 cost;
   s32 hit;
-  u8 *effect;
+  struct FieldEffectWork *effect;
 
   Leader_StopMoving();
-  event->psynergyHitObject = 255;
+  event->psynergyHitObject = -1;
   event->standing = retreat;
   GameFlag_Clear(FLAG_ITEM_USE);
-  if (userId == 15)
+  if (userId == UNIT_NONE)
     userId = 0;
   if (GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
     FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    if (abilityId == 144 || abilityId == 155) {
+    if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_RING) {
       FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
-    if (abilityId == 153) {
+    if (abilityId == ABILITY_HOVER) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
-        GameFlag_Set(0x147);
-        event->raisedTrigger = 253;
+        GameFlag_Set(FLAG_HOVER_CAST);
+        event->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
         return 0;
       }
       FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
   }
-  if (gMainRoutineWork.ownerOverride != 0 && abilityId == 139) {
-    FIELD_PSYNERGY_MESSAGE(userId, 139, MsgKey0dbb);
+  if (gMainRoutineWork.ownerOverride != 0 && abilityId == ABILITY_SAND) {
+    FIELD_PSYNERGY_MESSAGE(userId, ABILITY_SAND, MsgKey0dbb);
     return 0;
   }
-  if (abilityId == 149) {
+  if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
-      FIELD_PSYNERGY_MESSAGE(userId, 149, MsgKey0dbd);
+      FIELD_PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgKey0dbd);
       return 0;
     }
-    MessageArgument_PushFar(149, MESSAGE_ARGUMENT_ABILITY);
+    MessageArgument_PushFar(ABILITY_RETREAT, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgKey0dbc, FIELD_MESSAGE_ZOOM |
                                                FIELD_MESSAGE_KEEP_OPEN |
                                                FIELD_MESSAGE_LOWER);
@@ -101,15 +103,17 @@ s32 Field_UsePsynergy(u32 code) {
   selector = Scene_SelectPsynergyTarget(group);
   before = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_CAST), group, selector);
-  after = Scene_FindPsynergyTrigger(5, group, selector);
+  after = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_CAST),
+                                    group, selector);
   during = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                      group, selector);
-  if (abilityId == 156 && gMainRoutineWork.next != SCENE_WORLD_MAP &&
-      before == NULL && after == NULL && during == NULL) {
-    FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);
+  if (abilityId == ABILITY_TELEPORT &&
+      gMainRoutineWork.next != SCENE_WORLD_MAP && before == NULL &&
+      after == NULL && during == NULL) {
+    FIELD_PSYNERGY_MESSAGE(userId, ABILITY_TELEPORT, MsgKey0dbd);
     return 0;
   }
-  if (userId <= 7) {
+  if (userId <= ALLY_MAX) {
     struct AbilityDefinition *action = Ability_Get(abilityId);
 
     struct FieldUnit *unit = Unit_Get(userId);
@@ -123,7 +127,7 @@ s32 Field_UsePsynergy(u32 code) {
     }
     Unit_AddPpFar(userId, -ppCost);
   }
-  if (group == 23) {
+  if (group == FIELD_PSYNERGY_SAND) {
     object = Actor_Lookup(Party_GetLeaderActor());
     if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) ==
         0) {
@@ -149,21 +153,21 @@ s32 Field_UsePsynergy(u32 code) {
   {
     u32 zero = 0;
 
-    if (before != NULL && (before->flags & 0x200)) {
+    if (before != NULL && (before->flags & TRIGGER_SUBJECT_QUIET)) {
       effect = Ram_HeapSlots->fieldEffectWork;
-      effect[34] = zero;
-      effect[35] = zero;
+      effect->visible = zero;
+      effect->active = zero;
     }
   }
-  if (after != NULL && (after->flags & 0x200)) {
+  if (after != NULL && (after->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectWork;
-    effect[34] = 0;
-    effect[35] = 0;
+    effect->visible = 0;
+    effect->active = 0;
   }
-  if (during != NULL && (during->flags & 0x200)) {
+  if (during != NULL && (during->flags & TRIGGER_SUBJECT_QUIET)) {
     effect = Ram_HeapSlots->fieldEffectWork;
-    effect[34] = 0;
-    effect[35] = 0;
+    effect->visible = 0;
+    effect->active = 0;
   }
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   FieldPsynergy_StartCast();
@@ -177,7 +181,7 @@ s32 Field_UsePsynergy(u32 code) {
   BattleEffect_StopMainActor();
   hit = event->psynergyHitObject;
   if (hit != -1) {
-    selector = hit | 0x100;
+    selector = hit | PSYNERGY_TARGET_ACTOR;
     pending = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, selector);
     if (pending != NULL)
@@ -199,7 +203,7 @@ s32 Field_UsePsynergy(u32 code) {
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   if (event != NULL) {
     if (event->action != 0) {
-      if (event->action < 0x10000) {
+      if (event->action < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
         Event_SetMessageId(event->action);
         Event_ShowMessageAndWait(target, 0);

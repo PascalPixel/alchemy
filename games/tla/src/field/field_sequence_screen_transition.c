@@ -703,9 +703,7 @@ void ScreenTransition_UpdateFromCentre(void) {
   }
 }
 
-/// The HBlank interrupt of the centre-line transition: switches the display to
-/// DISPCNT_MODE_2 (nothing shown) at the first line and back to DISPCNT_MODE_0
-/// at the second.
+/// Where the centre-line transition's HBlank interrupt is.
 enum ScreenTransitionIrqPhase {
   DISPLAY_TRANSITION_IRQ_WAIT_SCREEN = 0, ///< waits for a line on screen
   /// Waits for whichever edge line comes first.
@@ -717,6 +715,9 @@ enum ScreenTransitionIrqPhase {
   DISPLAY_TRANSITION_IRQ_DONE = 9
 };
 
+/// The HBlank interrupt of the centre-line transition: switches the display to
+/// DISPCNT_MODE_2 (nothing shown) at the first line and back to DISPCNT_MODE_0
+/// at the second.
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
   struct MapViewWork *state;

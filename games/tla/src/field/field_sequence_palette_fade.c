@@ -89,6 +89,13 @@ void PaletteFade_Update(void) {
   }
 }
 
+/// Builds colours for the palette fade from the palette src into dst, which
+/// holds each colour as B, G and R channels shifted up 10 bits. mode below
+/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop colour;
+/// the other PALETTE_TINT_* values tint each colour; any other value is the
+/// address of a ready buffer to copy. half is the palette selection:
+/// PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
+/// PALETTES_OBJECTS for the OBJ's 224.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;

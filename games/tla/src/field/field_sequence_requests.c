@@ -22,15 +22,16 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
 
 /// Queues a Djinni battle. djinn / 20 is the element and djinn % 20 the
 /// Djinni, where 19 means the one recorded for the element in the save (none:
-/// nothing happens). Unless flag 0x800 is set the element's encounter is
-/// prepared first; the pending event is 300 + the Djinni id with that flag,
+/// nothing happens). Unless DJINN_NO_HOP is set the element's encounter
+/// is prepared first; the pending event is DJINNI_BATTLE_EVENT_FIRST plus the
+/// Djinni id with that flag,
 /// the enemy group is chosen, and on the world map the zone and backdrop come
 /// from the leader's position.
 /// The low 8 bits of flags are the Djinni's actor, which hops first unless
 /// DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  u32 noPrepare = flags & 0x800;
+  u32 noPrepare = flags & DJINN_NO_HOP;
   u32 group;
   s32 index;
 
@@ -39,7 +40,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   index = djinn % DJINN_PER_ELEMENT;
 
   if (index == DJINN_PER_ELEMENT - 1) {
-    index = gSceneLocalState[group + 0x1950];
+    index = gSceneLocalState[group + SCENE_STATE_CHOSEN_DJINN];
     if (index == 0)
       return;
     index--;
@@ -47,7 +48,8 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   djinn = group * DJINN_PER_ELEMENT + index;
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
-  gMainRoutineWork.pendingDjinni = (djinn + 300) | noPrepare;
+  gMainRoutineWork.pendingDjinni =
+      (djinn + DJINNI_BATTLE_EVENT_FIRST) | noPrepare;
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(

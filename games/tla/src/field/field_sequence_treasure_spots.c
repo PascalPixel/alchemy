@@ -35,12 +35,13 @@ s16 *SceneItem_GetRows(void) {
     flag = *p++;
     if (header == 0)
       break;
-    if ((header & 0x3fff) == scene && (flag == -1 || !GameFlag_Get(flag))) {
+    if ((header & (SCENE_ITEMS_HEADER - 1)) == scene &&
+        (flag == -1 || !GameFlag_Get(flag))) {
       found = p;
       break;
     }
-    // Skip to the next header (bit 14) or the end.
-    while ((value = p[0]) != 0 && !(value & 0x4000))
+    // Skip to the next header or the end.
+    while ((value = p[0]) != 0 && !(value & SCENE_ITEMS_HEADER))
       p += 2;
   }
   return found;
@@ -56,8 +57,8 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 void Actor_ShowItemIconById(s32 id, s32 item);
 
 /// Places an actor at each of the map's treasure spots (ids 100 to 239) that
-/// the scene has an event for, up to ten: a chest for a chest event, shown open
-/// once its flag is set and gone once its mimic was beaten, and a Psynergy
+/// the scene has an event for, up to sixteen: a chest for a chest event, shown
+/// open once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
@@ -76,32 +77,32 @@ void Field_PlaceTreasureSpots(void) {
     return;
   i = 0;
   type = *rows++;
-  if (type == 0 || (type & 0x4000))
+  if (type == 0 || (type & SCENE_ITEMS_HEADER))
     return;
   do {
     id = rows[0];
     flag = rows[1];
     item = rows[2];
     rows += 3;
-    if ((type == 128 || flag == -1 || !GameFlag_Get(flag)) &&
+    if ((type == CONTAINER_CHEST || flag == -1 || !GameFlag_Get(flag)) &&
         !SceneItem_FindPosition(id, position)) {
       buried = 0;
-      if ((u16)(type - 128) <= 1)
-        kind = 487;
-      else if (type == 130)
-        kind = 265;
-      else if (type == 132)
+      if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
+        kind = SPRITE_CHEST;
+      else if (type == CONTAINER_PSYNERGY_STONE)
+        kind = SPRITE_PSYNERGY_STONE;
+      else if (type == CONTAINER_STONE_TABLET)
         kind = SPRITE_STONE_TABLET;
-      else if (type == 131)
-        kind = 489;
+      else if (type == CONTAINER_BURIED)
+        kind = SPRITE_UNSEEN_MARKER;
       else {
         buried = 1;
-        kind = 489;
+        kind = SPRITE_UNSEEN_MARKER;
       }
       object = Actor_CreateFar(kind, position[0], position[1], position[2]);
       if (object != NULL) {
-        if (work->mode == 3) {
-          object->motionFlags = 2;
+        if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+          object->motionFlags = ACTOR_FALLS;
           object->groundHeight = 0;
           object->y.fixed = 0;
         } else {
@@ -115,7 +116,7 @@ void Field_PlaceTreasureSpots(void) {
             s32 x;
             s32 z;
 
-            *motionFlags = 2;
+            *motionFlags = ACTOR_FALLS;
             object->groundHeight -= toFIXED(16);
             object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
@@ -125,7 +126,8 @@ void Field_PlaceTreasureSpots(void) {
             if (map != NULL)
               cells = map->layers[0].cells;
             cells += x + z * MAPGRID_SIZE;
-            if ((u32)(cells->collisionCode - 242) <= 5)
+            if ((u32)(cells->collisionCode - CELL_BEHAVIOR_JAR) <=
+                CELL_BEHAVIOR_WELL - CELL_BEHAVIOR_JAR)
               cells->collisionCode = 0;
           }
         }
@@ -136,12 +138,12 @@ void Field_PlaceTreasureSpots(void) {
         Actor_StartIdleFar(object);
         object->homeX = object->x.fixed / FIXED_ONE;
         object->homeZ = object->z.fixed / FIXED_ONE;
-        object->priorityFlags = 1;
-        object->collisionFlags = 1;
+        object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+        object->collisionFlags = ACTOR_SOLID;
         work->actors[FIELD_TREASURE_ACTOR + i] = object;
-        if (type == 131)
+        if (type == CONTAINER_BURIED)
           Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
-        if (type == 133)
+        if (type == CONTAINER_POND)
           object->collisionFlags = 0;
       }
     }
@@ -151,11 +153,12 @@ void Field_PlaceTreasureSpots(void) {
     type = *rows++;
     if (type == 0)
       break;
-  } while (!(type & 0x4000));
+  } while (!(type & SCENE_ITEMS_HEADER));
 }
 
-/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY 0x31415927;
-/// any other mode draws its sprite wide (shape 1), 4 pixels lower.
+/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY
+/// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
+/// pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
   struct Sprite *sprite;
@@ -166,7 +169,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   if (mode == 0) {
     object->x.fixed = 0;
     object->z.fixed = 0;
-    object->riseBaseY = 0x31415927;
+    object->riseBaseY = TREASURE_SPOT_ON_CELL;
     return;
   }
   sprite = object->sprite;

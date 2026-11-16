@@ -369,7 +369,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
   volatile u32 saved;
   s32 elapsedFrames;
 
-  if (actor != NULL && actor->spriteStorageKind == 1) {
+  if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     saved = sprite->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
@@ -454,8 +454,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   s32 speed;
   FIXED backStep = -(toFIXED(1) / 10); // 0.1 pixel a frame toward the back
 
-  actor =
-      Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
+  actor = Actor_CreateFar(SPRITE_DUST_CLOUD, source->x.fixed, source->y.fixed,
+                          source->z.fixed);
   if (actor != NULL) {
     child = actor->sprite;
     switch (Random16() & 1) {
@@ -531,7 +531,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   }
 
   // Jump 16 pixels forward, following the ground and falling again.
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->velocityY = toFIXED(3);
   Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(16));
   Actor_WaitForMoveFar(actor);

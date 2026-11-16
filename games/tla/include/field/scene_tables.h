@@ -186,6 +186,9 @@ struct Trigger {
 /// an item trigger's event shows its own message in place of the "uses"
 /// message (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
+/// caster nor announces the ability (FieldEffectWork.visible and .active).
+#define TRIGGER_SUBJECT_QUIET 0x200
 /// An item trigger's subject, as The Broken Seal's: the heading it needs in
 /// bits 15..12, whether it needs one, and its target, an actor or a cell
 /// behavior.
@@ -200,6 +203,11 @@ struct Trigger {
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
 #define FIND_MESSAGE(message) (0x00400000 | (message))
+/// A search result's type, its top twelve bits (FIND_ITEM to FIND_MESSAGE).
+#define FIND_TYPE_MASK 0xfff00000
+/// Bits 27..24 of a search result, set only in a routine's address: the result
+/// is then a function to call.
+#define FIND_FUNCTION_BITS 0x0f000000
 #define EVENT(event) ((u32)(event))
 #define TRIGGER_TABLE_END 0xffffffff
 
@@ -417,6 +425,10 @@ struct SceneEntries {
   const struct Trigger *(*triggers)(void);
   u32 regionsVeneer;
   const struct SceneRegion *(*regions)(void);
+  u32 prepareMapVeneer;
+  /// Run once the scene's actors are placed, on a map other than the World
+  /// Map: the scene's own edits to its map before it is shown.
+  s32 (*prepareMap)(void);
 };
 
 #endif

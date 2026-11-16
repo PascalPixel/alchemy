@@ -2253,13 +2253,15 @@ static void TolbiShipDeck_RowOars(void) {
 static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   u16 value = sOarAngle[slot];
 
-  if (value >= 0x6801 && value <= 0x6fff) {
+  if (value >= TRIG_TURN * 13 / 32 + 1 && value <= TRIG_TURN * 7 / 16 - 1) {
     sStrokePhase[slot] += 112;
     Actor_SetAnimation(actorId, 3);
-  } else if (value >= 0xe801 && value <= 0xefff) {
+  } else if (value >= TRIG_TURN * 29 / 32 + 1 &&
+             value <= TRIG_TURN * 15 / 16 - 1) {
     sStrokePhase[slot] += 224;
     Actor_SetAnimation(actorId, 3);
-  } else if (value >= 0x7001 && value <= 0xefff) {
+  } else if (value >= TRIG_TURN * 7 / 16 + 1 &&
+             value <= TRIG_TURN * 15 / 16 - 1) {
     sStrokePhase[slot] += 448;
     Actor_SetAnimation(actorId, 2);
   } else {

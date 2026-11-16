@@ -85,8 +85,8 @@ extern s32 gEruption_EmberScript[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];
 extern s8 gSolSanctum_RingDirection[][3];
-extern s32 gSolSanctum_RingMaxScales[];
-extern s32 gSolSanctum_RingScaleSteps[];
+extern FIXED gSolSanctum_RingMaxScales[];
+extern FIXED gSolSanctum_RingScaleSteps[];
 
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a
@@ -741,7 +741,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberMask & gFrameCount)
     return;
   for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    angle = Math_RemainderUnsigned(Random_Next(), 0xffff);
+    angle = Math_RemainderUnsigned(Random_Next(), TRIG_TURN - 1);
     ember = Actor_Get(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)

@@ -2061,7 +2061,7 @@ u16 gWorldMapBlend;
 /// Where picture `size` of the ball of light lies in the unpacked buffer: 0 is
 /// the ball at its largest, 6 at its smallest, and 7 the picture shown before
 /// it swells and after it shrinks.
-#define WORLD_MAP_LIGHT_BALL(size) (0x1080 + (size) * 0x600)
+#define WORLD_MAP_LIGHT_BALL(size) (4096 + 128 + (size) * 1536)
 
 /// The ending, on the island Jenna and Kraden are adrift on.
 static void WorldMap_ShowEndingEvent(void) {
@@ -2593,11 +2593,11 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillPicture();
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
+  FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 4096);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + lighthouse * 32),
                       DMA_COPY_HALFWORDS(16));
-  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
+  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 4096, (u32)buffer,
                       DMA_COPY_WORDS(1024));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();

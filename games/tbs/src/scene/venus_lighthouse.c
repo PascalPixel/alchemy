@@ -3012,8 +3012,10 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
 /// Chooses the particle scales and spin used by the tile-wave animations.
 static inline void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
-  options->startScaleX = (Random_Below(2)) * (FIXED_ONE * 3 / 10) + 0x17ffc;
-  options->startScaleY = (Random_Below(2)) * (FIXED_ONE * 3 / 10) + 0x17ffc;
+  options->startScaleX =
+      (Random_Below(2)) * (FIXED_ONE * 3 / 10) + 5 * (FIXED_ONE * 3 / 10);
+  options->startScaleY =
+      (Random_Below(2)) * (FIXED_ONE * 3 / 10) + 5 * (FIXED_ONE * 3 / 10);
   options->spin = FIELD_EFFECT_RANDOM_SPIN();
 }
 

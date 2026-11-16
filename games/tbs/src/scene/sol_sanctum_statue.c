@@ -183,7 +183,7 @@ struct SealOpening {
   s32 unused[3]; ///< never read or written; the bss keeps its 12 bytes
 };
 
-STATIC_ASSERT(offsetof(struct SealOpening, unused) == 0xc4);
+STATIC_ASSERT(offsetof(struct SealOpening, unused) == 196);
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumStatue_ActorPlacements.

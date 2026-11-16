@@ -607,7 +607,7 @@ static void AltmillerCave_SpinLights(void) {
 
   if (phase == WHEEL_SPEEDING_UP) {
     wheel->speed += 16;
-    if (wheel->speed > 0xbff) {
+    if (wheel->speed > TRIG_TURN * 3 / 64 - 1) {
       wheel->phase++;
       wheel->frames = 0;
     }
@@ -617,7 +617,7 @@ static void AltmillerCave_SpinLights(void) {
     }
   } else if (phase == WHEEL_SLOWING) {
     wheel->speed -= 8;
-    if (wheel->speed <= 0x2ff) {
+    if (wheel->speed <= TRIG_TURN * 3 / 256 - 1) {
       wheel->phase++;
     }
   } else if (phase == WHEEL_STOPPING) {

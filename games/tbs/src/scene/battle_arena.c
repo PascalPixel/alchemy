@@ -596,7 +596,7 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
     } while (remaining != 0);
   }
   if (memberIds != 0)
-    *memberIds = 0x00ff;
+    *memberIds = BATTLE_UNIT_LIST_END;
   return memberCount;
 }
 
@@ -913,7 +913,7 @@ static s32 BattleArena_EnterBattle(void) {
     signature[3] = 'C';
     i = 0;
     source = savedWork;
-    destination = (u8 *)gMapGridCellBuffer + 0x8000;
+    destination = (u8 *)gMapGridCellBuffer + 32768;
     do {
       i++;
       *destination++ = *source++;
@@ -1169,7 +1169,7 @@ static s32 BattleArena_PartyContains(s32 memberId) {
     count = memberLimit;
   }
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.party[i] == 0xff) {
+    if (gMainRoutineWork.party[i] == BATTLE_UNIT_LIST_END) {
       return 0;
     }
     if (gMainRoutineWork.party[i] == memberId) {

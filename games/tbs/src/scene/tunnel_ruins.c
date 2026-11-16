@@ -410,7 +410,7 @@ static void TunnelRuins_HopDownStep(void) {
     wait(1);
     if (i & 1) {
       s32 horizontalRoll = (u32)Random_Next() % 10 - 5;
-      s32 velocityX = horizontalRoll * 0x3332;
+      s32 velocityX = horizontalRoll * (2 * (toFIXED(1) / 10));
       FIXED velocityZ;
 
       velocityZ =

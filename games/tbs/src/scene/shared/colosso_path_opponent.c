@@ -16,7 +16,7 @@ struct ColossoRaceWork {
   s16 path[COLOSSO_PATH_HALFWORDS];
 };
 
-STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
+STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 29040);
 
 /// The opponent's task.
 static void Colosso_UpdatePathOpponent(void) {

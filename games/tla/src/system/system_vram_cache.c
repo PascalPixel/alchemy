@@ -9,7 +9,7 @@
 // Divide OBJ character memory (from 0x06010000) into 512 blocks of 64 bytes;
 // gVramCacheBlockOwners records each block's owner (cache index).
 // There are 96 cache entries; byte offset 0xffff marks a free entry.
-// Entries with size <= 16 do not own VRAM.
+// Entries with size <= VRAM_CACHE_SIZE_NO_BLOCKS do not own VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
 /// entry `id`, writing `id` into gVramCacheBlockOwners for each block.
@@ -81,9 +81,9 @@ s32 VramCache_CountFreeBlocks(void) {
   s32 remaining;
 
   freeCount = 0;
-  remaining = 0x200;
+  remaining = VRAM_BLOCK_COUNT;
   do {
-    if (*marker++ == 0xff) {
+    if (*marker++ == VRAM_BLOCK_OWNER_FREE) {
       freeCount++;
     }
     remaining--;
@@ -130,16 +130,16 @@ s32 VramCache_FreeEntry(u32 resourceIndex) {
 /// Gives back entry `no`'s blocks but keeps the entry taken, with size 1, so a
 /// later VramCache_Load can refill it.
 s32 VramCache_ReleaseVram(u32 resourceIndex) {
-  u16 *entry = (u16 *)&gVramCacheEntries[resourceIndex];
+  struct VramCacheEntry *entry = &gVramCacheEntries[resourceIndex];
 
   if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
-  if (*entry > 16) {
+  if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     s32 value;
 
     VramCache_FreeBlocks(resourceIndex);
     value = 1;
-    *entry = value;
+    entry->size = value;
   }
   return 0;
 }
@@ -155,9 +155,9 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   entry = &gVramCacheEntries[no];
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
-  if (size > 8192)
+  if (size > VRAM_CACHE_LOAD_MAX)
     return 0;
-  if (entry->size > 16) {
+  if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     if (entry->size != size) {
       VramCache_FreeEntry(no);
       offset = VramCache_AllocateBlocks(no, size);
@@ -186,11 +186,11 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 /// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
   u32 count;
-  u32 limit = 128;
+  u32 limit;
   u8 *marker = gVramCacheBlockOwners;
 
   count = 0;
-  limit = (limit << 1) + 255;
+  limit = VRAM_BLOCK_COUNT - 1;
   for (; count <= limit; count++)
     *marker++ = VRAM_BLOCK_OWNER_FREE;
   {
@@ -241,28 +241,28 @@ s32 VramCache_Reload(s32 no, s32 src) {
 /// Takes the next of the 32 sprite affine matrices and fills it with a
 /// rotation by angle and the scales; returns its index, or 31 when all are
 /// taken. The body is OamMatrix_AllocFromTransform's.
-s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
+s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale) {
   union AffineMatrix *matrix;
   s16 *coefficient;
   u8 index;
 
   index = gOamMatrixCount;
-  if (index > 31)
-    return 31;
+  if (index >= OBJ_AFFINE_MATRIX_COUNT)
+    return OBJ_AFFINE_MATRIX_COUNT - 1;
 
   matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
   gOamMatrixCount = index + 1;
-  if ((x_scale == y_scale || x_scale == -y_scale) && angle == 0) {
+  if ((xScale == yScale || xScale == -yScale) && angle == 0) {
     s32 reciprocal;
-    s32 x_reciprocal;
+    s32 xReciprocal;
 
-    reciprocal = Iwram_SignedDivide(FIXED_ONE, y_scale);
-    x_reciprocal = reciprocal;
-    if (x_scale == -y_scale)
-      x_reciprocal = -reciprocal;
+    reciprocal = Iwram_SignedDivide(FIXED_ONE, yScale);
+    xReciprocal = reciprocal;
+    if (xScale == -yScale)
+      xReciprocal = -reciprocal;
 
-    matrix->rows[0] = (u16)x_reciprocal;
+    matrix->rows[0] = (u16)xReciprocal;
     matrix->rows[1] = reciprocal << 16;
   } else {
     FIXED sine;
@@ -270,13 +270,13 @@ s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
 
     sine = Trig_Sin(angle);
     cosine = Trig_Cos(angle);
-    *coefficient = cosine / x_scale;
+    *coefficient = cosine / xScale;
     coefficient++;
-    *coefficient = sine / x_scale;
+    *coefficient = sine / xScale;
     coefficient++;
-    *coefficient = (-sine) / y_scale;
+    *coefficient = (-sine) / yScale;
     coefficient++;
-    *coefficient = cosine / y_scale;
+    *coefficient = cosine / yScale;
   }
 
   return index;

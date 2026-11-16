@@ -10,7 +10,11 @@ enum VramBlockLimits {
   VRAM_BLOCK_COUNT = 512,
   VRAM_BLOCK_BYTES = 64,
   VRAM_BLOCK_OWNER_FREE = 0xff,
-  VRAM_CACHE_OFFSET_FREE = 0xffff
+  VRAM_CACHE_OFFSET_FREE = 0xffff,
+  /// The largest size an entry has while it holds no blocks:
+  /// VramCache_ReleaseVram leaves 1, which keeps the entry taken.
+  VRAM_CACHE_SIZE_NO_BLOCKS = 16,
+  VRAM_CACHE_LOAD_MAX = 8192 ///< the most bytes VramCache_Load takes at once
 };
 
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.

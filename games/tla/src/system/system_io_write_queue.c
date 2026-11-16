@@ -4,6 +4,9 @@
 
 #include "system_internal.h"
 
+/// Each queues a write of `value` to the I/O register at `address`, made after
+/// the frame is finished: a store, or bits set or cleared, of a byte, halfword
+/// or word.
 #define DEFINE_QUEUE_IO_WRITE(name, delay)                                     \
   void name(u32 address, u32 value) {                                          \
     IO_WRITE_QUEUE_PUSH(address, value, delay);                                \
@@ -29,15 +32,14 @@ void IoWriteQueue_FlushPending(void) {
   count = queue->count;
   if (count != 0) {
     QueueFlushRoutine routine;
-    u32 control = 0x84;
+    u32 control = (DMA_ENABLE | DMA_32BIT) << 16;
 
-    control <<= 24;
     {
-      u8 routine_bytes[(u32)Resource_ExecuteTransferSize];
+      u8 routineBytes[(u32)Resource_ExecuteTransferSize];
 
-      routine = (QueueFlushRoutine)routine_bytes;
+      routine = (QueueFlushRoutine)routineBytes;
       Dma_Set(Resource_ExecuteTransferCode, (void *)routine,
-              (sizeof(routine_bytes) >> 2) | control, REG_DMA3);
+              (sizeof(routineBytes) >> 2) | control, REG_DMA3);
       routine(queue, count);
       queue->count = 0;
     }

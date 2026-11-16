@@ -63,10 +63,12 @@ void System_WaitForFrameInterrupt(void) {
     gSoundVBlankState.lastVBlank = gVBlankCount;
     gSoundVBlankState.updating = 1;
     sound = gSoundInfoPointer;
-    if (sound[4] <= 1)
-      gSoundVBlankState.transferCountdown = sound[11];
+    if (SOUND_INFO_BYTE(sound, transferCountdown) <= 1)
+      gSoundVBlankState.transferCountdown =
+          SOUND_INFO_BYTE(sound, transferPeriod);
     else
-      gSoundVBlankState.transferCountdown = sound[4] - 1;
+      gSoundVBlankState.transferCountdown =
+          SOUND_INFO_BYTE(sound, transferCountdown) - 1;
     REG_IME = saved;
     Sound_UpdateBgmRampsFar();
     if (SoundDriver_EnterVBlankUpdate() == 0) {
@@ -121,7 +123,7 @@ void wait(s32 frames) {
       Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, OAM_SIZE));
     } else {
       gOamUsage.used = 0;
-      gOamUsage.limit = 256;
+      gOamUsage.limit = OAM_SIZE / 4;
     }
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
@@ -346,8 +348,8 @@ void System_VBlankHandler(void) {
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)
-      Dma_Set(Ram_HeapSlots->frameScratch, OAM, 0x84000000 + gOamUsage.used,
-              REG_DMA3);
+      Dma_Set(Ram_HeapSlots->frameScratch, OAM,
+              ((DMA_ENABLE | DMA_32BIT) << 16) + gOamUsage.used, REG_DMA3);
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();
   }
@@ -387,7 +389,8 @@ void System_VBlankHandler(void) {
     sound = &gSoundVBlankState;
     vblankCount = *count;
     if (sound->lastVBlank != (u8)vblankCount && sound->updating == 0) {
-      sound->transferCountdown = gSoundInfoPointer[4];
+      sound->transferCountdown =
+          SOUND_INFO_BYTE(gSoundInfoPointer, transferCountdown);
       Sound_UpdateBgmRampsFar();
       if (SoundDriver_EnterVBlankUpdate() == 0) {
         void (*render)(s32) = IwramSoundRenderVBlank;
@@ -404,17 +407,19 @@ void System_VBlankHandler(void) {
 
 #define SOUND_PRESET_COUNT 5
 
-/// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
-/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode.
+/// Where The Broken Seal copies the mixer code for reverb preset `preset` into
+/// IWRAM, The Lost Age keeps only the range check and returns 0, so the battle's
+/// call changes nothing.
 s32 Sound_LoadReverbCode(s32 preset) {
   if ((u32)preset > SOUND_PRESET_COUNT - 1)
     preset = 0;
   return 0;
 }
 
-/// Empty routines.
+/// Empty: nothing calls it or its neighbour.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
+/// Empty, as Sound_ReservedNoOpA.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,

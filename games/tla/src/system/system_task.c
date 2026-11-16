@@ -163,7 +163,7 @@ s32 Task_SuspendAll(TaskFunc func) {
       if (task->func != (u32)func)
         continue;
     }
-    Io_Write8(TASK_STATE_HIGH(task) | 1, &TASK_STATE_HIGH(task));
+    Io_Write8(TASK_STATE_HIGH(task) | TASK_SUSPENDED, &TASK_STATE_HIGH(task));
     result = i;
   }
   IRQ_UNLOCK(savedInterruptMaster);
@@ -182,8 +182,8 @@ s32 Task_SuspendOverlayTasks(void) {
   result = -1;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if ((task->func >> 24) == 2 && (task->flags & 1) == 0) {
-      Io_Write8(TASK_STATE_HIGH(task) | 1, &TASK_STATE_HIGH(task));
+    if (TASK_IN_OVERLAY(task) && (task->flags & TASK_FLAG_KEEP_RUNNING) == 0) {
+      Io_Write8(TASK_STATE_HIGH(task) | TASK_SUSPENDED, &TASK_STATE_HIGH(task));
       result = i;
     }
   }
@@ -191,7 +191,6 @@ s32 Task_SuspendOverlayTasks(void) {
   return result;
 }
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 extern struct Task gTasks[TASK_COUNT];
 
 /// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
@@ -229,7 +228,7 @@ s32 Task_ResumeAll(TaskFunc func) {
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (func == 0 || task->func == (u32)func) {
-      TASK_STATE_HIGH(task) &= ~1;
+      TASK_STATE_HIGH(task) &= ~TASK_SUSPENDED;
       result = i;
     }
   }
@@ -249,8 +248,8 @@ s32 Task_ResumeOverlayTasks(void) {
   task = gTasks;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < TASK_COUNT; i++, task++) {
-    if ((task->func >> 24) == 2) {
-      TASK_STATE_HIGH(task) &= ~1;
+    if (TASK_IN_OVERLAY(task)) {
+      TASK_STATE_HIGH(task) &= ~TASK_SUSPENDED;
       result = i;
     }
   }

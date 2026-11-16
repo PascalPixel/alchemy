@@ -353,8 +353,8 @@ void Scene_Arrive(s32 unused, s32 keep) {
       gMainRoutineWork.retreatEntrance = gMainRoutineWork.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
-    // and so do the flags after them to 0xdf.
-    for (flag = FLAG_DJINN_HIDING_FIRST; flag <= 0xdf; flag++)
+    // and so do the flags after them to FLAG_DJINN_HIDING_LAST.
+    for (flag = FLAG_DJINN_HIDING_FIRST; flag <= FLAG_DJINN_HIDING_LAST; flag++)
       GameFlag_Clear(flag);
     GameFlag_Clear(FLAG_LINK_BATTLE);
     GameFlag_Clear(FLAG_RETREAT_BLOCKED);
@@ -362,7 +362,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Clear(FLAG_IN_TOWN);
     GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-    GameFlag_Clear(0x146);
+    GameFlag_Clear(FLAG_SAND_HELD);
     GameFlag_Clear(FLAG_CANNOT_SAVE_HERE);
     GameFlag_Clear(FLAG_NO_PLACE_TO_SAVE);
     GameFlag_Clear(FLAG_IN_BATTLE_ARENA);

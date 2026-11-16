@@ -5,17 +5,17 @@
 #include "system_internal.h"
 #include "fixed_math.h"
 
-/// Starts a new frame of sprites: frees the affine matrices and clears the
-/// masks of the 256 depth slots sprites are linked into.
-void Oam_ResetFrame(void) {
-  gOamMatrixCount = 0;
-  Iwram_ClearWordsEntry(gOamBucketMasks, 32);
-}
-
 enum {
   OBJ_AFFINE_MATRIX_COUNT = 32, ///< the OAM's rotation-scaling matrices
   RENDER_DEPTH_SLOT_COUNT = 256 ///< depth slots a sprite is linked into
 };
+
+/// Starts a new frame of sprites: frees the affine matrices and clears the
+/// masks of the 256 depth slots sprites are linked into.
+void Oam_ResetFrame(void) {
+  gOamMatrixCount = 0;
+  Iwram_ClearWordsEntry(gOamBucketMasks, RENDER_DEPTH_SLOT_COUNT / 8);
+}
 
 /// Takes the next of the 32 sprite affine matrices and fills it with the
 /// rotation and scale of source; returns its index, or 31 when all are taken.

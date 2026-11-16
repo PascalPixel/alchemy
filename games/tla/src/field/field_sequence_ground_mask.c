@@ -39,11 +39,11 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(2);
-    ((u32 *)mark)[2] = 0x400;
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
+    ((u32 *)mark)[2] = OBJ_PRIORITY(1);
     mark->priority = 0;
     mark->tile = tile;
-    mark->objectMode = 1;
+    mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
     screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
@@ -59,11 +59,11 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(2);
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
     ((u32 *)mark)[2] = 0;
     mark->priority = 0;
     mark->tile = tile;
-    mark->objectMode = 1;
+    mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
     screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
@@ -132,7 +132,7 @@ void BlankOverlay_DrawMarks(void) {
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
-    ((u32 *)m)[2] = 0x400;
+    ((u32 *)m)[2] = OBJ_PRIORITY(1);
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
     m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 32;
@@ -144,7 +144,7 @@ void BlankOverlay_DrawMarks(void) {
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
-    ((u32 *)m)[2] = 0x400;
+    ((u32 *)m)[2] = OBJ_PRIORITY(1);
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
     m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 16;
@@ -153,19 +153,20 @@ void BlankOverlay_DrawMarks(void) {
 }
 
 /// Like FieldEffect_StartFadeOverlay with blank tiles and no blending:
-/// loads 0x200 zeroed tiles to VRAM slot 94 and starts BlankOverlay_DrawMarks
-/// on object (the controlled owner's when 0).
+/// loads 512 bytes of blank tiles into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts
+/// BlankOverlay_DrawMarks on object (the controlled owner's when 0).
 void FieldEffect_StartBlankOverlay(s32 object) {
-  u8 *work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, 28);
-  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  struct FadeOverlayWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
 
-  Dma_Fill32(0, buffer, 0x200);
+  Dma_Fill32(0, buffer, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
   Task_Add(BlankOverlay_DrawMarks, TASK_PASS_VBLANK);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (object == 0)
     object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  *(s32 *)(work + 24) = object;
+  work->actor = (struct FadeActor *)object;
 }
 
 /// Suspends the BlankOverlay_DrawMarks overlay task.
@@ -174,15 +175,16 @@ void BlankOverlay_Suspend(void) { Task_SuspendAll(BlankOverlay_DrawMarks); }
 /// Resumes the BlankOverlay_DrawMarks overlay task.
 void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
 
-/// Fills the overlay's 512 bytes of sprite tiles (VRAM cache slot 94) with
-/// colour 1 when solid is set, else clears them.
+/// Fills the overlay's 512 bytes of sprite tiles
+/// (VRAM_CACHE_ENTRY_FADE_OVERLAY) with colour 1 when solid is set, else clears
+/// them.
 void BattleEffect_FillOverlayTiles(s32 solid) {
-  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
 
   if (solid == 0) {
-    Dma_Fill32(0, buffer, 0x200);
+    Dma_Fill32(0, buffer, 512);
   } else {
-    Dma_Fill32(0x01010101, buffer, 0x200);
+    Dma_Fill32(0x01010101, buffer, 512);
   }
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

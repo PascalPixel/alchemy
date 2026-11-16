@@ -12,14 +12,11 @@ void Actor_StopAtPushTarget(struct Actor *actor) {
   FieldVector_AddPolarOffset(16, angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
-    i = 0;
-  next:
-    if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
-        gPushKinds[i])
-      return;
-    i++;
-    if (i <= 5)
-      goto next;
+    for (i = 0; i <= 5; i++) {
+      if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
+          gPushKinds[i])
+        return;
+    }
     FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
                                          actor->z.fixed);
   }

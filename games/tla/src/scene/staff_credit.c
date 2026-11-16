@@ -446,38 +446,33 @@ void StaffCredit_ShowBeacon(s32 stage) {
       blockRow:
         bx = 0;
         fill = (u8 *)offset + (s32)buffer;
-      blank:
-        *fill = GLOW_BLANK_PAIR;
-        bx++;
-        offset++;
-        fill++;
-        if (bx != 8 * TILE_SIZE_4BPP)
-          goto blank;
+        do {
+          *fill = GLOW_BLANK_PAIR;
+          bx++;
+          offset++;
+          fill++;
+        } while (bx != 8 * TILE_SIZE_4BPP);
         bx = 0;
         base = rowBase * 8;
         goto blockTest;
       block:
         row = 0;
         i = 0;
-      pixelRow:
-        x = 0;
-        out = (u8 *)offset + (s32)buffer;
-      pixelPair:
-        {
-          u8 *pair = grid + (x * 2 + (base + i));
+        do {
+          x = 0;
+          out = (u8 *)offset + (s32)buffer;
+          do {
+            u8 *pair = grid + (x * 2 + (base + i));
 
-          x++;
-          *out = pair[1] << 4;
-          *out |= pair[0];
-          offset++;
-          out++;
-        }
-        if (x != 4)
-          goto pixelPair;
-        row++;
-        i += GLOW_GRID_SIZE;
-        if (row != 8)
-          goto pixelRow;
+            x++;
+            *out = pair[1] << 4;
+            *out |= pair[0];
+            offset++;
+            out++;
+          } while (x != 4);
+          row++;
+          i += GLOW_GRID_SIZE;
+        } while (row != 8);
         base += 8;
         bx++;
       blockTest:

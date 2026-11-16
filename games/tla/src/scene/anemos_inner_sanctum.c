@@ -642,24 +642,30 @@ void AnemosInnerSanctum_LightThePillar(void) {
     base = FLAG_DJINNI(DJINNI_FLINT);
     targetX = 520;
     targetZ = 48;
-    if (GameFlag_Get(FLAG_ANEMOS_VENUS_SYMBOL_LIT))
-      goto seen;
+    if (GameFlag_Get(FLAG_ANEMOS_VENUS_SYMBOL_LIT)) {
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      return;
+    }
     break;
   case TRIGGER_MERCURY_SYMBOL:
     palette = 3;
     base = FLAG_DJINNI(DJINNI_FIZZ);
     targetX = 552;
     targetZ = 48;
-    if (GameFlag_Get(FLAG_ANEMOS_MERCURY_SYMBOL_LIT))
-      goto seen;
+    if (GameFlag_Get(FLAG_ANEMOS_MERCURY_SYMBOL_LIT)) {
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      return;
+    }
     break;
   case TRIGGER_MARS_SYMBOL:
     palette = 10;
     base = FLAG_DJINNI(DJINNI_FORGE);
     targetX = 504;
     targetZ = 40;
-    if (GameFlag_Get(FLAG_ANEMOS_MARS_SYMBOL_LIT))
-      goto seen;
+    if (GameFlag_Get(FLAG_ANEMOS_MARS_SYMBOL_LIT)) {
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      return;
+    }
     break;
   case TRIGGER_JUPITER_SYMBOL:
     palette = 2;
@@ -667,7 +673,6 @@ void AnemosInnerSanctum_LightThePillar(void) {
     targetX = 568;
     targetZ = 40;
     if (GameFlag_Get(FLAG_ANEMOS_JUPITER_SYMBOL_LIT)) {
-    seen:
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }

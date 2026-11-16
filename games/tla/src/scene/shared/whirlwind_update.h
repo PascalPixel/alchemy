@@ -27,48 +27,45 @@ void Whirlwind_Update(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > toFIXED(272))
-      goto stop;
-    if (distance < -toFIXED(32))
-      goto stop;
-    {
-      if (self->riseCounter == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < toFIXED(12))
-          near = 1;
-        if (near && !Event_GetFlag(260)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
+    if (distance <= toFIXED(272)) {
+      if (distance >= -toFIXED(32)) {
+        if (self->riseCounter == 0) {
+          distance = leader->y.fixed - self->y.fixed;
+          if (distance < 0)
+            distance = self->y.fixed - leader->y.fixed;
+          near = 0;
+          if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
+              distance < toFIXED(12))
+            near = 1;
+          if (near && !Event_GetFlag(260)) {
+            leader->facing = self->facing;
+            leader->watchedActor = self;
+            leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+            {
+              s32 delay = 200;
+              work->raisedTrigger = delay;
+            }
+            gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+            self->riseCounter = 1;
+            self->riseEnabled = 1;
           }
-          gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-          self->riseCounter = 1;
-          self->riseEnabled = 1;
         }
+        {
+          s32 (*multiply)(s32, s32);
+          FIXED cosine = Trig_Cos(self->facing);
+          s32 speed = self->speedLimit;
+          /* FAKEMATCH(dead): the routine address taken inside a once-only
+           * block. */
+          do {
+            multiply = Iwram_MulFX;
+          } while (0);
+          self->x.fixed += multiply(cosine, speed);
+        }
+        self->z.fixed += Iwram_MulFX(Math_Sin(self->facing), self->speedLimit);
+        return;
       }
-      {
-        s32 (*multiply)(s32, s32);
-        FIXED cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block. */
-        do {
-          multiply = Iwram_MulFX;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulFX(Math_Sin(self->facing), self->speedLimit);
-      return;
     }
   }
-stop:
   self->riseEnabled = 0;
   self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);

@@ -283,51 +283,53 @@ void NaribweRooms_ReadFortune(void) {
   // "Very well. Show me one of your items."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   FieldEvent_Wait(30);
-ask:
+  for (;;) {
 #if !TLA_PATCH_1
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  // Before patch 1 the item variable first holds the choice's result.
-  item = ItemPicker_RunToShow(&unit, &slot);
-  if (item == -1) {
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    // Before patch 1 the item variable first holds the choice's result.
+    item = ItemPicker_RunToShow(&unit, &slot);
+    if (item == -1) {
 #else
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  if (ItemPicker_RunToShow(&unit, &slot) == -1) {
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    if (ItemPicker_RunToShow(&unit, &slot) == -1) {
 #endif
-    refuse = MsgNaribweInteriorsShallIGiveYouAnother;
-    FieldEvent_SetMessageId(refuse);
+      refuse = MsgNaribweInteriorsShallIGiveYouAnother;
+      FieldEvent_SetMessageId(refuse);
+      Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
+      if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
+                                                0) != 1)
+        continue;
+      FieldEvent_SetMessageId(refuse + 1);
+      Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
+      return;
+    }
+    unitData = Unit_Get(unit);
+    Item_GetDirect(unitData->inventory[slot]);
+    Actor_SetItemIcon(Actor_Get(ACTOR_FORTUNE_MARKER),
+                      unitData->inventory[slot]);
+    Actor_SetPosition(ACTOR_FORTUNE_MARKER, 672, 104);
+    FieldEvent_Wait(60);
+    MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
+    Message_ShowCentered(MsgPlacedOnThe, 1);
+    message = MsgNaribweInteriorsAreYouPrepared;
+    FieldEvent_SetMessageId(message);
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-        1)
-      goto ask;
-    FieldEvent_SetMessageId(refuse + 1);
-    Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-    return;
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+        1) {
+      Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
+      MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
+      Message_ShowCentered(message + 1, 1);
+      FieldEvent_SetMessageId(message + 2);
+      Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
+      if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
+                                                0) != 1)
+        continue;
+      FieldEvent_SetMessageId(message + 3);
+      Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
+      return;
+    }
+    break;
   }
-  unitData = Unit_Get(unit);
-  Item_GetDirect(unitData->inventory[slot]);
-  Actor_SetItemIcon(Actor_Get(ACTOR_FORTUNE_MARKER), unitData->inventory[slot]);
-  Actor_SetPosition(ACTOR_FORTUNE_MARKER, 672, 104);
-  FieldEvent_Wait(60);
-  MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
-  Message_ShowCentered(MsgPlacedOnThe, 1);
-  message = MsgNaribweInteriorsAreYouPrepared;
-  FieldEvent_SetMessageId(message);
-  Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      1)
-    goto read;
-  Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
-  MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
-  Message_ShowCentered(message + 1, 1);
-  FieldEvent_SetMessageId(message + 2);
-  Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
-      1)
-    goto ask;
-  FieldEvent_SetMessageId(message + 3);
-  Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-  return;
-read:
   FieldEvent_SetMessageId(message + 4);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);

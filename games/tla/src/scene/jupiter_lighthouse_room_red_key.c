@@ -990,10 +990,7 @@ s16 gJupiterLighthouse_Room5Blocks[] = {
     17, 18, 19, -1,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseRoomRedKey),         SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY),    SCENE_EXIT(2, JupiterLighthouseRoomRedKey, 3), 

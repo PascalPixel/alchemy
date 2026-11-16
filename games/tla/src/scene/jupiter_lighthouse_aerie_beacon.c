@@ -2757,10 +2757,8 @@ LATE_DATA s32 gJupiterLighthouse_BeaconSparkScript[] = {
     SC_RELEASE,
 };
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseAerieBeacon),

@@ -1956,10 +1956,7 @@ s16 gAirsRock_FrozenPuddle[] = {
     ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 struct SceneRegion gAirsRock_StormBrandChestRegions[] = {
     {256, 96, 144, 272, 112, 160, CONDITION_ALWAYS, 2},

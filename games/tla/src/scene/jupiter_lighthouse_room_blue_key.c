@@ -479,14 +479,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 // clang-format on
 
 #include "../field/field_effect_move.c"
@@ -567,10 +560,8 @@ void JupiterLighthouse_StartMovingBlock(void);
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
 #include "shared/field_effect_duration_scripts.c"
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomBlueKey),

@@ -2346,14 +2346,7 @@ void MagmaRock_UnblockMovedPillar(void);
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 
 /// An ember's actor script.
 u32 gMagmaRock_EmberScript[] = {
@@ -2454,10 +2447,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 /// The exit regions of the slide.
 s16 gMagmaRock_Regions[] = {

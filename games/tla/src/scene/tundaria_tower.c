@@ -1682,10 +1682,7 @@ u32 gTundariaTower_RefluxHops[] = {
     23, 3, 0x1000, 13, 0xffff, 0x80010000,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gTundariaTowerLiftPillarsExitRegions[] = {
     0x500330, 0x3400210, 0x2200060, 0x6ffff, 0xffff, 0,

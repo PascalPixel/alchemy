@@ -946,10 +946,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(NaribweInteriors),

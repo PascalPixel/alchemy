@@ -916,10 +916,8 @@ LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
     ACTOR_FIRST_CONE, 1, FLAG_FIRST_CONE_SUNK, ACTOR_SECOND_CONE, 1, FLAG_SECOND_CONE_SUNK, -1, 0,
 };
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseWhorl),         SCENE_EXIT(JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST, JupiterLighthouseRoomPhaetonsBladeChest, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_WHORL),   SCENE_EXIT(2, JupiterLighthouseWhorl, 3),   

@@ -2488,14 +2488,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 // clang-format on
 
 #undef ABS

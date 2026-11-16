@@ -2654,14 +2654,7 @@ s8 gPushFootprints[][4] = {
     {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 
 u32 gIslets_DogWanderScript[] = {
 #if !TLA_PATCH_1

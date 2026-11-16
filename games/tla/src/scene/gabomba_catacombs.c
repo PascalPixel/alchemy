@@ -743,10 +743,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 struct SceneRegion gGabombaCatacombs_TeleportersExitRegions[] = {
     {388, 46, 276, 396, 54, 284, CONDITION_ALWAYS, 1},

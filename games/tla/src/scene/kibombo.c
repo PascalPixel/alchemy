@@ -3798,10 +3798,7 @@ s16 gKibombo_FrozenPuddle[] = {
     8, 513, -1, 0,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 s16 gKibombo_HousesExitRegions[] = {
     400, 40, 368, 416, 56, 384, -1, 14,

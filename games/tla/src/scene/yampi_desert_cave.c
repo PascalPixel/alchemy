@@ -1084,16 +1084,7 @@ s8 gYampiDesertCave_LogFootprints[] = {
     -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
-/// The leader's step against a log for each of the sixteen facings: a cell
-/// along the nearest of the four directions.
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 
 /// The ripple's path, a column and a row in half cells (8 pixels) for each
 /// thirty-two steps: it shows at four places in turn, and between them lies at
@@ -1128,10 +1119,7 @@ u16 gYampiDesertCave_MarkCycle[] = {
       11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
   };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(YampiDesertCaveWaterOfLifeChest),

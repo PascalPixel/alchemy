@@ -2298,10 +2298,7 @@ struct ShrineOfTheSeaGodSpot gShrineOfTheSeaGod_Footprints[] = {
 /// Unused: the halfwords after the last footprint, -1 and 0.
 s32 gShrineOfTheSeaGod_FootprintsEnd = 0xffff;
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 struct SceneRegion gShrineOfTheSeaGodStatueExitRegions[] = {
     {256, 32, 192, 272, 48, 208, CONDITION_ALWAYS,

@@ -61,22 +61,29 @@ struct BattleEffectWork {
   ///@}
   u16 padding; ///< aligns bg2x
   /// BG2's reference point, written to BG2X and BG2Y by
-  /// Display_ApplyBg2Reference and Display_ApplyBg2Affine.
+  /// Display_ApplyBg2Reference and Display_ApplyBg2Affine. Volatile, as the
+  /// scale below: the tasks that copy them out read each in its turn.
   ///@{
-  s32 bg2x;
-  s32 bg2y;
+  volatile s32 bg2x;
+  volatile s32 bg2y;
   ///@}
   /// BG2's scale, written to BG2PA and BG2PD by Display_ApplyBg2Affine.
+  /// Volatile: the task that copies them out runs behind the effect's back,
+  /// and the ROM shows it (each store reads the halfword first, as the old
+  /// compiler stores to a volatile halfword).
   ///@{
-  u16 bg2pa;
-  u16 bg2pd;
+  volatile u16 bg2pa;
+  volatile u16 bg2pd;
   ///@}
   void *sprites[64]; ///< the effect's sprites
   /// Each target's flash timer in frames, for args->targets[n]: set by
   /// BattleEffect_TintBattler, counted down by
   /// BattleEffect_CountDownBattlerTints.
   u8 actorTimers[8];
-  s32 vblanksSinceTransfer; ///< 1 on a canvas copy's VBlank, then counts up
+  /// 1 on a canvas copy's VBlank, then counts up. Volatile and unsigned: the
+  /// VBlank handler counts it while an effect waits on it, each wait reads it
+  /// afresh and compares it unsigned.
+  volatile u32 vblanksSinceTransfer;
   /// 1 once the effect has drawn a frame; the canvas transfer callback copies
   /// the canvas and clears it.
   s32 transferPending;

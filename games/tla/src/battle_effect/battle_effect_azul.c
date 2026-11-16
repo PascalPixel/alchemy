@@ -627,74 +627,72 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
-      if (frame > 185) {
-        goto spray;
-      }
-      model = Render_AllocateModelList(1);
-      scale = u * 3 << 8;
-      shade = 0;
-      if (scale > FIXED_ONE) {
-        scale = FIXED_ONE;
-      }
-      scratchTexture.logWidth = 7;
-      scratchTexture.logHeight = 7;
-      scratchTexture.pixels = mapCells;
-      model->kind = MODEL_SHADED_ADDITIVE;
-      model->texture = &scratchTexture;
-      model->mesh = grid;
-      model->vertices = verts;
-      model->shade = shade;
-      model->scrollU = shade;
-      model->scrollV = shade;
-      Matrix_Initialize();
-      Matrix_Translate(pos.x / 2 - toFIXED(68), pos.y - toFIXED(80), 0);
-      Matrix_Scale(scale, scale * 2, scale);
-      Matrix_Translate(-toFIXED(40), 0, 0);
-      Matrix_RotateX(frame << 10);
-      Matrix_RotateY(frame << 10);
-      Render_TransformVertices(sphere, verts, 256);
-      Render_DrawModelList(model);
-      if (frame > 137) {
-        shade = 1444 - frame * 10;
-        size = (frame << 13) + -toFIXED(17);
-
-        if (shade > 0) {
-          shade = 0;
+      if (frame <= 185) {
+        model = Render_AllocateModelList(1);
+        scale = u * 3 << 8;
+        shade = 0;
+        if (scale > FIXED_ONE) {
+          scale = FIXED_ONE;
         }
-        if (shade > MODEL_SHADE_INVISIBLE) {
+        scratchTexture.logWidth = 7;
+        scratchTexture.logHeight = 7;
+        scratchTexture.pixels = mapCells;
+        model->kind = MODEL_SHADED_ADDITIVE;
+        model->texture = &scratchTexture;
+        model->mesh = grid;
+        model->vertices = verts;
+        model->shade = shade;
+        model->scrollU = shade;
+        model->scrollV = shade;
+        Matrix_Initialize();
+        Matrix_Translate(pos.x / 2 - toFIXED(68), pos.y - toFIXED(80), 0);
+        Matrix_Scale(scale, scale * 2, scale);
+        Matrix_Translate(-toFIXED(40), 0, 0);
+        Matrix_RotateX(frame << 10);
+        Matrix_RotateY(frame << 10);
+        Render_TransformVertices(sphere, verts, 256);
+        Render_DrawModelList(model);
+        if (frame > 137) {
+          shade = 1444 - frame * 10;
+          size = (frame << 13) + -toFIXED(17);
+
+          if (shade > 0) {
+            shade = 0;
+          }
+          if (shade > MODEL_SHADE_INVISIBLE) {
+            scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;
+            scratchTexture.logWidth = 7;
+            model->mesh = gBattleEffect_LargeSquareMesh;
+            scratchTexture.logHeight = 7;
+            model->shade = shade;
+            Matrix_Initialize();
+            Matrix_Translate(toFIXED(44), 0, 0);
+            Matrix_RotateY(13384);
+            Matrix_ScaleUniform(size);
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
+            Render_DrawModelList(model);
+          }
+        }
+        if (frame > 151) {
+          work->shakeFrames = 2;
+          shade = 0;
+          size = (frame << 13) + -toFIXED(19);
+          scratchTexture.logWidth = 6;
+          scratchTexture.logHeight = 6;
           scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;
-          scratchTexture.logWidth = 7;
-          model->mesh = gBattleEffect_LargeSquareMesh;
-          scratchTexture.logHeight = 7;
           model->shade = shade;
+          model->mesh = gBattleEffect_SquareMesh;
           Matrix_Initialize();
-          Matrix_Translate(toFIXED(44), 0, 0);
-          Matrix_RotateY(13384);
-          Matrix_ScaleUniform(size);
+          Matrix_Translate(-toFIXED(16), pos.y - toFIXED(80), 0);
+          Matrix_Scale(size >> 1, size, size >> 1);
+          Matrix_RotateZ(frame << 11);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
+        Heap_Release(model);
       }
-      if (frame > 151) {
-        work->shakeFrames = 2;
-        shade = 0;
-        size = (frame << 13) + -toFIXED(19);
-        scratchTexture.logWidth = 6;
-        scratchTexture.logHeight = 6;
-        scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;
-        model->shade = shade;
-        model->mesh = gBattleEffect_SquareMesh;
-        Matrix_Initialize();
-        Matrix_Translate(-toFIXED(16), pos.y - toFIXED(80), 0);
-        Matrix_Scale(size >> 1, size, size >> 1);
-        Matrix_RotateZ(frame << 11);
-        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-        Render_DrawModelList(model);
-      }
-      Heap_Release(model);
     }
     if (frame > 185) {
-    spray:
       if (frame == 186) {
         struct Particle *drop = (struct Particle *)gMapGridCellBuffer;
 

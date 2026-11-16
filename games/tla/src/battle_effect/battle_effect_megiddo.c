@@ -29,7 +29,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
-  s32 f;
+  s32 doubled;
   s32 k;
   s32 zero;
   u8 *ring;
@@ -287,8 +287,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 16);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
     }
-    /* FAKEMATCH(temporary): f, a copy of frame tested below. */
-    f = frame;
     if (frame > 174) {
       Palette_BrightenBgEntries(2, 2, 2);
     }
@@ -323,7 +321,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }
     }
-    if (f > 1) {
+    /* FAKEMATCH(dead): a product nothing reads, between the two blocks that
+     * test frame > 1: it is there when jump threading first runs and gone
+     * when it runs again, so the tests are joined only then; without it, 131
+     * of 1361 instructions differ in tla-en. */
+    doubled = frame * 2;
+    if (frame > 1) {
       u8 textureBytes[8];
       struct ModelTexture *t;
       s32 tint;
@@ -344,7 +347,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       asm("" : "+m"(*t));
       /* FAKEMATCH(barrier): the third asm on *t. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(dead): a once-only block. */
+      /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
+       * plain store, 733 of 1361 instructions differ in tla-en. */
       do {
         t->pixels =
             work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 1024;
@@ -549,13 +553,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
 
-    {
-      volatile u32 *vblanks = (volatile u32 *)&work->vblanksSinceTransfer;
-
-      do {
-        (void)*vblanks;
-      } while (*vblanks <= 1);
-    }
+    do {
+      (void)work->vblanksSinceTransfer;
+    } while (work->vblanksSinceTransfer <= 1);
     EFFECT_END_FRAME(work);
   }
 

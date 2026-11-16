@@ -697,13 +697,10 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       // The geyser follows the targets' midpoint while it rises.
       if (frame < GEYSER_PEAK_FRAME)
         BattleEffect_GetTargetsMidpoint(&midpoint);
-      if (frame == 0) {
+      if (frame == 0)
         Sound_PlayFar(SE_CLATTER);
-        /* FAKEMATCH(dead): an empty once-only loop after the call. */
-        do {
-        } while (0);
+      if (frame == 0)
         work->shakeFrames = 16;
-      }
       if (frame == GEYSER_PEAK_FRAME) {
         work->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -1479,20 +1476,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         k = 0;
       }
       for (i = 0; i != 256; i++, source++, dst++) {
-        s32 color = *dst;
-        s32 goal = *source;
-        s32 blue = RGB_BLUE((u16)color);
-        s32 green = RGB_GREEN((u16)color);
-        s32 red = RGB_RED(color);
-        s32 goalBlue = RGB_BLUE((u16)goal) + k;
-        s32 goalGreen = RGB_GREEN((u16)goal) + greenLift;
-        s32 goalRedBase = RGB_RED(goal);
-        s32 goalRed;
+        s32 blue = RGB_BLUE(*dst);
+        s32 green = RGB_GREEN(*dst);
+        s32 red = RGB_RED(*dst);
+        s32 goalBlue = RGB_BLUE(*source) + k;
+        s32 goalGreen = RGB_GREEN(*source) + greenLift;
+        s32 goalRed = RGB_RED(*source) + redLift;
 
-        /* FAKEMATCH(barrier): goalRedBase held apart from goal through an
-         * empty asm. */
-        __asm__("" : "=r"(goalRedBase) : "0"(goalRedBase));
-        goalRed = goalRedBase + redLift;
         if (blue < goalBlue - 1) {
           blue += 2;
         } else if (blue > goalBlue + 1) {
@@ -1543,16 +1533,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         s32 blue;
         s32 green;
         s32 red;
-        s32 color;
-        s32 sourceRed;
 
-        color = *source;
-        /* FAKEMATCH(temporary): red through a temporary set twice. */
-        sourceRed = 31;
-        sourceRed &= color;
-        red = sourceRed + lift;
-        green = RGB_GREEN((u16)color) + half;
-        blue = RGB_BLUE((u16)color) + lift / 4;
+        red = RGB_RED(*source) + lift;
+        green = RGB_GREEN(*source) + half;
+        blue = RGB_BLUE(*source) + lift / 4;
 
         if (red > RGB_LEVEL_MAX) {
           red = RGB_LEVEL_MAX;
@@ -2050,7 +2034,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Heap_Release(model);
       Heap_Release(verts);
     }
-    while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
+    while (work->vblanksSinceTransfer <= 1) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }

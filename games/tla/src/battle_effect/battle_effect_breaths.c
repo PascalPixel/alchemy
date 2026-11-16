@@ -474,10 +474,6 @@ void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
   BattleEffect_RunCrescentSlash(args, CRESCENT_SLASH_ECHO_CUT);
 }
 
-/// Does nothing and gives no value: inlined with its value ignored, it leaves
-/// only a clobber of the return register, an insn with no code.
-static inline s32 Nothing(void) {}
-
 #define CRESCENT_SLASH_FRAMES 32
 
 /// The crescent slash's steps, three frames each from frame 8.
@@ -520,8 +516,6 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     if (args->side != EFFECT_SIDE_ENEMIES)
       flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
   }
-  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
-  Nothing();
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 

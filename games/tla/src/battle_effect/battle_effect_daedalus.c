@@ -295,7 +295,6 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u16 *col;
       s32 n;
-      s32 w;
       s32 off;
       u8 *mp;
       s32 k;
@@ -352,16 +351,14 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         mp = (u8 *)(v + (s32)map);
         do {
           v = ((u8 *)work)[gBattleEffect_MotePictures[n] + i + off];
-          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load.
-           */
-          w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;
             if (v <= 0)
               v = 1;
           }
           *mp++ = v;
-        } while (++i != w);
+          // Mote picture n is n + 1 pixels wide and twice as tall.
+        } while (++i != (n + 1) * (n + 1) * 2);
       }
       src = (const u8 *)Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
       Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, PALETTE_BANK_BYTES);

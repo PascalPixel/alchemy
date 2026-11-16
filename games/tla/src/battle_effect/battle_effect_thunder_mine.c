@@ -33,6 +33,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   u8 *sprites;
   s32 radius;
   s32 frames;
+  s32 sparkFloor;
   s32 x;
   s32 y;
   struct ScreenPoint target;
@@ -91,8 +92,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
     frames = 24;
-    /* FAKEMATCH(barrier): an empty asm after Thunder Mine's 24. */
-    asm("");
+    /* FAKEMATCH(temporary): the row Thunder Mine's sparks bounce at, set in
+     * its arm: the local gets no register and leaves no instruction here, but
+     * keeps the two arms from being joined into one conditional store; as 111
+     * at its use, 27 of 747 instructions differ in tla-en. */
+    sparkFloor = 111;
   } else {
     frames = 40;
   }
@@ -235,7 +239,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
                     (FIXEDtoINT(dot->y)) - size, size, size * 2);
             Particle_AdvanceWithGravity2D(dot, 62, 512);
           }
-          if ((FIXEDtoINT(dot->y)) > 111) {
+          if ((FIXEDtoINT(dot->y)) > sparkFloor) {
             dot->velocityY = -dot->velocityY * 48 / DAMPING_SCALE;
           }
           dot->variant--;

@@ -821,10 +821,11 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       center.x -= 16;
       center.y -= 24;
     } else {
+      /* FAKEMATCH(dead): the third arm steps x by nothing, as the two arms
+       * above step x and y; without it, 187 of 734 instructions differ in
+       * tla-en. */
+      center.x += 0;
       center.y -= 48;
-      /* FAKEMATCH(barrier): an empty asm taking the centre's address gives it
-       * two more references. */
-      __asm__("" : : "r"(&center));
     }
 
     if (frame == 0) {
@@ -1084,7 +1085,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
       break;
     }
     // DEAD: nothing uses the counter read here; the ROM keeps its load.
-    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    (void)work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
@@ -1146,7 +1147,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
       break;
     }
     // DEAD: nothing uses the counter read here; the ROM keeps its load.
-    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    (void)work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
@@ -1188,7 +1189,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
       break;
     }
     // DEAD: nothing uses the counter read here; the ROM keeps its load.
-    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    (void)work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
     IRQ_UNLOCK(ime);
@@ -1243,8 +1244,6 @@ void Display_ApplyBg2Affine(void) {
 
   REG_BG2PA = work->bg2pa;
   REG_BG2PD = work->bg2pd;
-  /* FAKEMATCH(barrier): an empty asm. */
-  __asm__ volatile("");
   REG_BG2X = work->bg2x;
   REG_BG2Y = work->bg2y;
 }

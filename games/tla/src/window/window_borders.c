@@ -417,22 +417,22 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
 }
 
 /// Sets the decode flags the next message is decoded with
-/// (Message_Decode): flags bit 0 (haltingSpeech) makes it halting
+/// (Message_Decode): MESSAGE_DECODE_HALTING_SPEECH makes it halting
 /// speech, a short pause before each character, broken off with an ellipsis
-/// after the first word; bit 1 (spacingAfter) puts code 222 after certain
-/// characters in English and Japanese. Flags already set stay set: only
+/// after the first word; MESSAGE_DECODE_SPACING_AFTER puts code 222 after
+/// certain characters in English and Japanese. Flags already set stay set: only
 /// Message_OpenWindow clears both, once it has started a message typing,
 /// so they also apply to every message decoded before that.
 void Message_SetDecodeFlags(u32 flags) {
-  u8 *work;
+  struct WindowWork *work;
 
-  work = Ram_HeapSlots->windowWork;
-  if (work == 0)
+  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  if (work == NULL)
     return;
-  if (flags & 1)
-    work[WINDOW_BUSY_FLAGS_OFFSET] = 1;
-  if (flags & 2)
-    work[WINDOW_BUSY_FLAGS_OFFSET + 1] = 1;
+  if (flags & MESSAGE_DECODE_HALTING_SPEECH)
+    work->haltingSpeech = 1;
+  if (flags & MESSAGE_DECODE_SPACING_AFTER)
+    work->spacingAfter = 1;
 }
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)

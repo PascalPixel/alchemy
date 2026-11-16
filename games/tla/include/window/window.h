@@ -101,6 +101,13 @@ STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x116c);
 STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 #endif
 
+/// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and
+/// spacingAfter for the messages decoded next.
+enum MessageDecodeFlag {
+  MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
+  MESSAGE_DECODE_SPACING_AFTER = 2   ///< ENTRY_ spacing after some characters
+};
+
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 

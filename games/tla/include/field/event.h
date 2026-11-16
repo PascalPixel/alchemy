@@ -15,7 +15,7 @@
 /// again for each call rather than kept in a register, as the ROM shows: in the
 /// scene overlays 482 such calls build their constant again and none shares
 /// one (in The Broken Seal, 301 and 11). event_inline.h's inlines are written
-/// over it. An event reads `Actor_FaceDirection(4, 0xc000, 0);
+/// over it. An event reads `Actor_FaceDirection(4, FACING_NORTH, 0);
 /// FieldEvent_Wait(20);`.
 
 #include "field/emote.h"

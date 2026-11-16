@@ -16,6 +16,16 @@ struct StripQuad;
 #endif
 
 #define DRAGON_SEGMENTS 33
+/// The corners of one dragon's strip, two to a segment.
+#define DRAGON_CORNERS (DRAGON_SEGMENTS * 2)
+/// The sparks each strike scatters.
+#define DRAGON_SPARKS 32
+/// How far round its arc a dragon's head and tail travel.
+#define DRAGON_ARC_END 950
+/// The dragons' buffers in the map cell buffer: the strips' corners, then
+/// their transformed vertices, then the strip mesh.
+#define RISING_DRAGON_VERTICES 0x1000
+#define RISING_DRAGON_STRIP 0x2000
 
 /// A strip's vertex, as Render_TransformVertices reads it.
 struct StripVertex {
@@ -85,7 +95,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                          Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                          SHEET_PALETTE_BYTES);
     REG_BG2PA = Q_8_8(0.5);
-    Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
+    Render_BuildQuadStrip(gMapGridCellBuffer + RISING_DRAGON_STRIP, 4, 32, 32);
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Matrix_Initialize();
@@ -106,11 +116,11 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           continue;
         }
         EffectPosition_ProjectBattler(args->targets[0], &hit);
-        for (j = 0; j != 32; j++) {
+        for (j = 0; j != DRAGON_SPARKS; j++) {
           s32 angle;
           s32 speed = 255;
 
-          spark = &work->particles[i * 32 + j];
+          spark = &work->particles[i * DRAGON_SPARKS + j];
 
           spark->x = INTtoFIXED(hit.x / 2);
           spark->y = INTtoFIXED(hit.y - 16);
@@ -156,29 +166,29 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       if (frame > 15) {
         struct StripVertex *stripA = (struct StripVertex *)gMapGridCellBuffer;
         s32 scale = 20768;
-        const u8 *stripMesh = gMapGridCellBuffer + 0x2000;
+        const u8 *stripMesh = gMapGridCellBuffer + RISING_DRAGON_STRIP;
 
         // The arcs' heads and tails, 44 units a frame.
         arcs[0] = frame * 44 - 704;
-        if (arcs[0] > 950) {
-          arcs[0] = 950;
+        if (arcs[0] > DRAGON_ARC_END) {
+          arcs[0] = DRAGON_ARC_END;
         }
         if (frame > 31) {
           arcs[1] = frame * 44 - 1408;
-          if (arcs[1] > 950) {
-            arcs[1] = 950;
+          if (arcs[1] > DRAGON_ARC_END) {
+            arcs[1] = DRAGON_ARC_END;
           }
         }
         if (frame > 29) {
           arcs[2] = frame * 44 - 1320;
-          if (arcs[2] > 950) {
-            arcs[2] = 950;
+          if (arcs[2] > DRAGON_ARC_END) {
+            arcs[2] = DRAGON_ARC_END;
           }
         }
         if (frame > 45) {
           arcs[3] = frame * 44 - 2024;
-          if (arcs[3] > 950) {
-            arcs[3] = 950;
+          if (arcs[3] > DRAGON_ARC_END) {
+            arcs[3] = DRAGON_ARC_END;
           }
         }
 
@@ -234,7 +244,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *stripB =
-                (struct StripVertex *)Ram_MapCellBuffer + 66;
+                (struct StripVertex *)Ram_MapCellBuffer + DRAGON_CORNERS;
             struct StripVertex *corner = stripB + (j * 2 + i);
 
             corner->x =
@@ -251,7 +261,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         }
 
         model = Render_AllocateModelList(1);
-        vertices = gMapGridCellBuffer + 0x1000;
+        vertices = gMapGridCellBuffer + RISING_DRAGON_VERTICES;
         model->texture = &texture;
         model->shade = 0;
         model->kind = MODEL_SHADED_MAX;
@@ -280,7 +290,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           }
           Matrix_RotateZ(i * 14192 - TRIG_TURN / 16);
           Matrix_ScaleUniform(FIXED_ONE * 4);
-          Render_TransformVertices(stripA + i * 66, vertices, 66);
+          Render_TransformVertices(stripA + i * DRAGON_CORNERS, vertices,
+                                   DRAGON_CORNERS);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
             texture.logWidth = 6;
@@ -314,12 +325,21 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 
 // The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
 // map cells.
-#define FIGURE_BODY 0             ///< 96x83
-#define FIGURE_ARM_LOWERED 0x1f20 ///< 42x35
-#define FIGURE_ARM_RAISED 0x24de  ///< 48x51
-#define FIGURE_SWING 0x2e6e       ///< four pictures, gHeartbreak_SwingPictures
-#define FIGURE_FIST                                                            \
-  0x4e9d // 32x29, then eight pictures, gHeartbreak_FistPictures
+#define FIGURE_BODY 0
+#define FIGURE_BODY_WIDTH 96
+#define FIGURE_BODY_HEIGHT 83
+#define FIGURE_ARM_LOWERED 0x1f20
+#define FIGURE_ARM_LOWERED_WIDTH 42
+#define FIGURE_ARM_LOWERED_HEIGHT 35
+#define FIGURE_ARM_RAISED 0x24de
+#define FIGURE_ARM_RAISED_WIDTH 48
+#define FIGURE_ARM_RAISED_HEIGHT 51
+#define FIGURE_SWING 0x2e6e ///< four pictures, gHeartbreak_SwingPictures
+/// The fist raised, then eight pictures of it falling,
+/// gHeartbreak_FistPictures.
+#define FIGURE_FIST 0x4e9d
+#define FIGURE_FIST_WIDTH 32
+#define FIGURE_FIST_HEIGHT 29
 
 /// A great figure strikes. It sweeps down on the target from above the far
 /// side, swaying on a small circle and fading in through the blend; its arm
@@ -354,7 +374,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  draw[1] = ((DrawRectangle *)heap)[47];
+  draw[1] = (DrawRectangle)heap->ramCodePaired;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EffectPosition_ProjectScaledBattler(args->targets[0], &target);
@@ -401,23 +421,27 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 
     // The body, and the arm raised until frame 48.
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2, 96,
-                       83);
+      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2,
+                       FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
       if ((u32)frame < 48)
         draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 31,
-                         y + 22, 48, 51);
+                         y + 22, FIGURE_ARM_RAISED_WIDTH,
+                         FIGURE_ARM_RAISED_HEIGHT);
       else
         draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 64,
-                         y + 16, 42, 35);
+                         y + 16, FIGURE_ARM_LOWERED_WIDTH,
+                         FIGURE_ARM_LOWERED_HEIGHT);
     } else {
-      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2, 96,
-                       83);
+      draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2,
+                       FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
       if ((u32)frame < 48)
         draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 49,
-                         y + 22, 48, 51);
+                         y + 22, FIGURE_ARM_RAISED_WIDTH,
+                         FIGURE_ARM_RAISED_HEIGHT);
       else
         draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 22,
-                         y + 16, 42, 35);
+                         y + 16, FIGURE_ARM_LOWERED_WIDTH,
+                         FIGURE_ARM_LOWERED_HEIGHT);
     }
 
     // The swing, three frames a cel from frame 28.
@@ -447,10 +471,10 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       if (frame <= 47) {
         if (args->side == EFFECT_SIDE_ENEMIES)
           draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 30, y + 46,
-                           32, 29);
+                           FIGURE_FIST_WIDTH, FIGURE_FIST_HEIGHT);
         else
           draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_FIST, 66, y + 46,
-                           32, 29);
+                           FIGURE_FIST_WIDTH, FIGURE_FIST_HEIGHT);
       } else {
         s32 cel = (frame - 56) / 6;
 
@@ -461,14 +485,14 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
             draw[args->side](canvas,
                              Ram_MapCellBuffer + FIGURE_FIST +
                                  gHeartbreak_FistPictures[cel],
-                             63, y + gHeartbreak_FistY[cel] - 8, 32,
-                             gHeartbreak_FistHeights[cel]);
+                             63, y + gHeartbreak_FistY[cel] - 8,
+                             FIGURE_FIST_WIDTH, gHeartbreak_FistHeights[cel]);
           else
             draw[args->side](canvas,
                              Ram_MapCellBuffer + FIGURE_FIST +
                                  gHeartbreak_FistPictures[cel],
-                             33, y + gHeartbreak_FistY[cel] - 8, 32,
-                             gHeartbreak_FistHeights[cel]);
+                             33, y + gHeartbreak_FistY[cel] - 8,
+                             FIGURE_FIST_WIDTH, gHeartbreak_FistHeights[cel]);
         }
       }
     }
@@ -494,8 +518,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
-                           24);
+                           Ram_HeapSlots->battleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
@@ -510,3 +533,16 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 #undef FIGURE_ARM_RAISED
 #undef FIGURE_SWING
 #undef FIGURE_FIST
+#undef FIGURE_BODY_WIDTH
+#undef FIGURE_BODY_HEIGHT
+#undef FIGURE_ARM_LOWERED_WIDTH
+#undef FIGURE_ARM_LOWERED_HEIGHT
+#undef FIGURE_ARM_RAISED_WIDTH
+#undef FIGURE_ARM_RAISED_HEIGHT
+#undef FIGURE_FIST_WIDTH
+#undef FIGURE_FIST_HEIGHT
+#undef DRAGON_CORNERS
+#undef DRAGON_SPARKS
+#undef DRAGON_ARC_END
+#undef RISING_DRAGON_VERTICES
+#undef RISING_DRAGON_STRIP

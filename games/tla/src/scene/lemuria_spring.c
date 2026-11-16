@@ -86,8 +86,8 @@ void SummonTablet_PlayRunes(s32 targetId);
 
 s32 ItemDisplay_ShowItem();
 
-extern u8 gLemuriaSpring_FrontObstacleAnimations[];
-extern u8 gLemuriaSpring_BackObstacleAnimations[];
+extern u8 gLemuriaSpring_CrabColorModes[];
+extern u8 gLemuriaSpring_TurtleColorModes[];
 extern u8 gLemuriaSpring_ObstacleStartX[];
 extern u8 gLemuriaSpring_ObstacleStartZ[];
 
@@ -149,7 +149,7 @@ void LemuriaSpring_RiseAndFadeIn(void) {
 }
 
 /// Searching the spring lets the party toss a coin into it. The spring rises
-/// into view the first time in the visit (flag 0x200), as Tolbi's does.
+/// into view the first time in the visit (FLAG_SCENE_TEMP_00), as Tolbi's does.
 void LemuriaSpring_TossCoin(void) {
   s32 actor = gMainRoutineWork.leaderActorId;
 
@@ -169,9 +169,10 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void LemuriaSpring_InitializeTossSimulation(void);
 
-/// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
-/// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
-/// 1 and flag 0x200 is set, it sets the blend's weights again.
+/// Starts the scene: sets the colour blend, the grass at the signs' feet
+/// animated and drawn underfoot, and starts the screen transition; arriving by
+/// entrance 1, it sets the toss up and, once FLAG_SCENE_TEMP_00 is set, blends
+/// with weights 0 and 16.
 s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 blend;
@@ -947,27 +948,27 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     case 0:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_CRAB_A, &obstacle->position.x, 0,
-          gLemuriaSpring_FrontObstacleAnimations[obstacle->speedMode],
+          gLemuriaSpring_CrabColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 1:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_CRAB_B, &obstacle->position.x, 0,
-          gLemuriaSpring_FrontObstacleAnimations[obstacle->speedMode],
+          gLemuriaSpring_CrabColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 2:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_A, &obstacle->position.x,
           0x8000 - obstacle->heading,
-          gLemuriaSpring_BackObstacleAnimations[obstacle->speedMode],
+          gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 3:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_B, &obstacle->position.x,
           0xffff - obstacle->heading,
-          gLemuriaSpring_BackObstacleAnimations[obstacle->speedMode],
+          gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     }
@@ -1210,7 +1211,7 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIA_SPRING_VISITOR_FACING_AWAY, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIdLoveToTest)},
     {TRIGGER_TALK, ACTOR_LEMURIA_SPRING_VISITOR_REMEMBERING_OUTSIDER, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIRememberOutsiderWhoCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIA_SPRING_VISITOR_REMEMBERING_OUTSIDER, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringHeHadSuchGoodTime)},
-    {TRIGGER_EXAMINE, ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, 0x200, EVENT(LemuriaSpring_DrinkFromSpring)},
+    {TRIGGER_EXAMINE, ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, FLAG_SCENE_TEMP_00, EVENT(LemuriaSpring_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(LemuriaSpring_TossCoin)},
     {TRIGGER_TABLE_END},
 };
@@ -1227,14 +1228,14 @@ u16 gLemuriaSpring_CoinPrizes[] = {
     20, 10, 2, 1, 0,
 };
 
-/// The animations of the spring's two pairs of moving obstacles by their speed.
-u8 gLemuriaSpring_FrontObstacleAnimations[] = {
-    0, 1, 9,
+/// The crabs' colour modes, by speed.
+u8 gLemuriaSpring_CrabColorModes[] = {
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_BLUE_TINT,
 };
 
-/// The turtles' animations, by speed.
-u8 gLemuriaSpring_BackObstacleAnimations[] = {
-    0, 3, 4,
+/// The turtles' colour modes, by speed.
+u8 gLemuriaSpring_TurtleColorModes[] = {
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_BGR, SPRITE_COLOR_GBR,
 };
 
 /// Where each obstacle starts, across.

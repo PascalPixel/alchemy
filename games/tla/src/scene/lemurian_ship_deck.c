@@ -690,7 +690,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 
 /// Stepping toward the gangway before Piers is back aboard: on the third step
 /// Kraden tires of waiting and goes to find a ship the party can use.
-void LemurianShipDeck_LeaveToFindCrew(void) {
+void LemurianShipDeck_KradenGoesToFindShip(void) {
   struct Actor *object;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_12))
@@ -728,7 +728,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
 
 /// Stepping back off the gangway lets Kraden's next step toward leaving count
 /// again (FLAG_SCENE_TEMP_12).
-void LemurianShipDeck_ResetCrewSearch(void) {
+void LemurianShipDeck_StepBackFromGangway(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_12);
 }
 
@@ -789,7 +789,7 @@ void LemurianShipDeck_ReturnToShip(void) {
 
   if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP) != 0)
     return;
-  if (Event_GetFlag(7) == 0)
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) == 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1152,7 +1152,7 @@ void Actor_EmitSmoke(struct Actor *object) {
 /// With Piers in the party, before Madra has welcomed him home: "Then let's
 /// waste no time! We should set out for Madra at once!"
 void LemurianShipDeck_SetOutForMadra(void) {
-  if (Event_GetFlag(7)) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     struct Actor *object;
 
     Event_Start();
@@ -1302,9 +1302,9 @@ struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {TRIGGER_STEP, 12, FLAG_PIERS_WELCOMED_IN_MADRA, EVENT(LemurianShipDeck_SetOutForMadra)},
     {TRIGGER_STEP, 1, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ReturnToShip)},
     {TRIGGER_EXAMINE, 14, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
-    {TRIGGER_STEP, 15, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_LeaveToFindCrew)},
-    {TRIGGER_STEP, 16, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ResetCrewSearch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(LemurianShipDeck_FreezePuddle)},
+    {TRIGGER_STEP, 15, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},
+    {TRIGGER_STEP, 16, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_StepBackFromGangway)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(LemurianShipDeck_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 

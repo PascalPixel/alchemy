@@ -1507,7 +1507,7 @@ void LemurianShip_SetUpLedgeRoom(void) {
   if (Event_GetFlag(8))
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
   Actor_PlaceBlocks(gLemurianShip_Crate);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, 0x480);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, TASK_PASS_VBLANK);
 }
 
 /// Sets a jelly up on the floor.
@@ -1647,7 +1647,7 @@ void LemurianShip_SetUpHold(void) {
 
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, 0x480);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
     object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
     object->motionFlags = 0;
@@ -1741,11 +1741,13 @@ void LemurianShip_SetUpPillarRoom(void) {
   FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_VBLANK);
   if (!Event_GetFlag(FLAG_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(
-        ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)), 15);
+        ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)),
+        SPRITE_COLOR_HIDDEN);
   if (!Event_GetFlag((FLAG_PUDDLE_FROZEN + 1)))
     FieldActor_SetSpriteColor(
-        ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)), 15);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, 0x480);
+        ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)),
+        SPRITE_COLOR_HIDDEN);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, TASK_PASS_VBLANK);
 }
 
 /// The engine room: until the engine runs, Piers sets the Black Crystal as the
@@ -2043,7 +2045,7 @@ struct ActorPlacement gLemurianShip_HoldPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_PIERS, 0x0, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, FLAG_IN_PARTY(ACTOR_ISAAC), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

@@ -22,6 +22,12 @@ struct Window;
 /// actors a scene places, and from FIELD_TREASURE_ACTOR on the map's treasure
 /// spots.
 #define FIELD_ACTOR_COUNT 80
+
+/// FieldWork.scoopedItem: coins rather than an item, their count in the low
+/// bits.
+#define SCOOPED_COINS 0x8000
+/// The actor that shows what Scoop dug up.
+#define SCOOPED_ITEM_ACTOR 79
 /// The first actor id of a treasure spot (Field_PlaceTreasureSpots).
 #define FIELD_TREASURE_ACTOR 64
 
@@ -184,7 +190,8 @@ struct FieldWork {
   s8 targetX;
   s8 targetY;
   s8 targetZ;
-  /// The item Scoop dug up (or its coins, 0x8000 | count), given when the
+  /// The item Scoop dug up (or its coins, SCOOPED_COINS | count), given when
+  /// the leader examines it (SCOOPED_ITEM_ACTOR).| count), given when the
   /// leader examines it (actor 79).
   s16 scoopedItem;
   s8 sceneAttributeLow;

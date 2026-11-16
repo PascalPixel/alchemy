@@ -597,11 +597,7 @@ s32 Settlements_FloatApple(struct OrbitObject *apple) {
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-/// Rope_Place, from an event.
-static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
-                                   s32 otherPost) {
-  Rope_Place(index, flag, post, otherPost);
-}
+#include "shared/field_rope_place.c"
 
 /// Sets up Kalt Island: the blend, the chimney smoke, the rope between its
 /// posts, and the apple floating, its icon drawn, until it is taken.

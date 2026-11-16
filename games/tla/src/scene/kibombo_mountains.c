@@ -161,11 +161,7 @@ void KibomboMountains_StepBeforeLowerGuard(void);
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-/// Rope_Place, from an event.
-static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
-                                   s32 otherPost) {
-  Rope_Place(index, flag, post, otherPost);
-}
+#include "shared/field_rope_place.c"
 
 void Field_TryJumpForward(void);
 

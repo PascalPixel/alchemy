@@ -151,11 +151,7 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
-/// After Move: once the pillar settles, checks whether it stands on the button.
-void JupiterLighthouse_FinishMovingBlock(void) {
-  System_Wait(10);
-  JupiterLighthouse_CheckBlockOnCell();
-}
+#include "shared/jupiter_lighthouse_finish_moving_block.c"
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 

@@ -1208,23 +1208,7 @@ typedef struct Actor Actor;
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
-/// Clears the flame throwers' work (unless the party keeps its place) and
-/// makes the flame whose sprite the crumbs share, keeping its VRAM entry.
-void Ride_Create(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *object;
-  struct Sprite *animation;
-
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWordsEntry(work, sizeof(*work));
-  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  object->retainSpriteCache = 2;
-  Actor_SelectAnimation(object, 1);
-  animation = object->sprite;
-  work->handle = object;
-  work->flameVramBlock = animation->slot;
-  animation->retainCacheEntry = 1;
-}
+#include "shared/ride_create.c"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -1252,10 +1236,7 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_set_entry.h"
 
-/// Sets whether flame thrower `index` puffs even off screen.
-void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].offScreen = value;
-}
+#include "shared/ride_set_entry_count.c"
 
 /// Flame thrower `index`'s flags: which flame it sends and how far.
 s32 Ride_GetEntryFlags(s32 index) {
@@ -1371,34 +1352,13 @@ s32 MarsLighthouseRoomM_IsSliding(void) { return RIDE_WORK->active; }
 
 #include "shared/embers_spawn.h"
 
-/// An attached actor holds still while the field handles an event.
-void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
-}
+#include "shared/actor_hold_during_event.c"
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 #include "shared/actor_roll_and_crumble.c"
 
-/// Puts actor `id` on actor `sourceId`, to send `value` rolling at `angle`
-/// when its script says.
-void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
-                  const void *script) {
-  struct Actor *source = Actor_Get(sourceId);
-  struct Actor *object = Actor_Get(id);
-
-  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
-                                       source->z.fixed);
-  Actor_StartScript(object, script);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  Actor_SelectAnimation(object, 1);
-  object->watchedActor = source;
-  object->timer = 0;
-  object->userValue = angle;
-  object->launchedActorId = value;
-  object->update = Actor_HoldDuringEvent;
-}
+#include "shared/actor_attach.c"
 
 #include "shared/actor_launch_ahead.h"
 

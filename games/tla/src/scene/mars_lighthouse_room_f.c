@@ -1517,21 +1517,7 @@ extern s32 gScriptedPart_Script[];
 
 #include "shared/actor_reset_scripted_for.h"
 
-void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_ResetScriptedFor(object, 2);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_forward.c"
 
 #include "shared/ride_update_landing.h"
 
@@ -1541,53 +1527,11 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/actor_setup_scripted_part.h"
 
-void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
+#include "shared/ride_spawn_backward.c"
 
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_forward.c"
 
-void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
-
-void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_backward.c"
 
 #include "shared/actor_is_above.h"
 
@@ -1595,42 +1539,13 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(
-      SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
-  s32 spin;
-
-  if (object != NULL) {
-    object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() << 1) + speed;
-    spin = (u16)Random16() + 0xffff8000;
-    object->timer = spin;
-    Actor_SetupScriptedFor(object, 2);
-    object->update = (void (*)(void))Ride_UpdateDrift;
-    Actor_SetBlendMode(object, 1);
-  }
-}
+#include "shared/ride_spawn_spark.c"
 
 typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
-void Ride_Create(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *object;
-  struct Sprite *animation;
-
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWordsEntry(work, sizeof(*work));
-  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  object->retainSpriteCache = 2;
-  Actor_SelectAnimation(object, 1);
-  animation = object->sprite;
-  work->handle = object;
-  work->flameVramBlock = animation->slot;
-  animation->retainCacheEntry = 1;
-}
+#include "shared/ride_create.c"
 
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
@@ -1649,13 +1564,9 @@ UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-UNUSED s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
-}
+#include "shared/ride_get_entry_value.c"
 
-UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
-}
+#include "shared/ride_set_entry_value.c"
 
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
@@ -1663,9 +1574,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_set_entry.h"
 
-void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].offScreen = value;
-}
+#include "shared/ride_set_entry_count.c"
 
 s32 Ride_GetEntryFlags(s32 index) {
   return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
@@ -1877,10 +1786,7 @@ extern u32 gEmbers_Script[];
 
 #include "shared/embers_spawn.h"
 
-/// An attached actor holds still while an event runs.
-void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
-}
+#include "shared/actor_hold_during_event.c"
 #undef position
 #undef WORK
 
@@ -1896,23 +1802,7 @@ extern u8 gInventorySnapshot[];
 
 void Actor_HoldDuringEvent(struct Actor *object);
 
-void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
-                  const void *script) {
-  struct Actor *source = Actor_Get(sourceId);
-  struct Actor *object = Actor_Get(id);
-
-  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
-                                       source->z.fixed);
-  Actor_StartScript(object, script);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  Actor_SelectAnimation(object, 1);
-  object->watchedActor = source;
-  object->timer = 0;
-  object->userValue = angle;
-  object->launchedActorId = value;
-  object->update = Actor_HoldDuringEvent;
-}
+#include "shared/actor_attach.c"
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
@@ -1966,79 +1856,18 @@ void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 #undef MapLayer
 #undef Camera_SetBounds
 void Actor_StartScript(struct Actor *object, const void *script);
-extern s32 gFieldEffect_DurationScripts[];
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-  u32 start;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
-  else
-    effect =
-        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  start = flags & EFFECT_USE_START_SCALE;
-  if (start != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    FIXED targetX;
-    s32 count;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    targetX = options->targetScaleX;
-    count = script[3];
-    if (start != 0) {
-      effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (targetX - FIXED_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+extern const s32 *gFieldEffect_DurationScripts[];
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
@@ -2983,7 +2812,7 @@ LATE_DATA s32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-LATE_DATA s32 gFieldEffect_DurationScripts[] = {
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,

@@ -1381,22 +1381,7 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/actor_reset_scripted_for.h"
 
-/// Spawns a ride object moving forward at `speed`.
-void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_ResetScriptedFor(object, 2);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_forward.c"
 
 #include "shared/ride_update_landing.h"
 
@@ -1408,56 +1393,11 @@ void Ride_UpdateDrift(struct Actor *object);
 /// gScriptedPart_Script. Overlays 6ab, 6ac and 6ad have the same function.
 #include "shared/actor_setup_scripted_part.h"
 
-/// Spawns a ride object moving back at `speed`.
-void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
+#include "shared/ride_spawn_backward.c"
 
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_forward.c"
 
-/// A flame thrower's flame that lands as it goes forward from `position`.
-void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
-
-/// A flame thrower's flame that lands as it goes backward from `position`.
-void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_backward.c"
 
 #include "shared/actor_is_above.h"
 
@@ -1465,45 +1405,13 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-/// Spawns a spark thrown up at `speed`.
-void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(
-      SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
-  s32 spin;
-
-  if (object != NULL) {
-    object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() << 1) + speed;
-    spin = (u16)Random16() + 0xffff8000;
-    object->timer = spin;
-    Actor_SetupScriptedFor(object, 2);
-    object->update = (void (*)(void))Ride_UpdateDrift;
-    Actor_SetBlendMode(object, 1);
-  }
-}
+#include "shared/ride_spawn_spark.c"
 
 typedef struct Actor Actor;
 
 #include "shared/flame_throwers_puff.c"
 
-/// Clears the flame throwers' work (unless the party keeps its place) and
-/// makes the flame whose sprite the crumbs share, keeping its VRAM entry.
-void Ride_Create(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *object;
-  struct Sprite *animation;
-
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWordsEntry(work, sizeof(*work));
-  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  object->retainSpriteCache = 2;
-  Actor_SelectAnimation(object, 1);
-  animation = object->sprite;
-  work->handle = object;
-  work->flameVramBlock = animation->slot;
-  animation->retainCacheEntry = 1;
-}
+#include "shared/ride_create.c"
 
 /// Releases the kept flame.
 UNUSED void Ride_Release(void) {
@@ -1520,15 +1428,9 @@ void FlameThrowers_Puff(void);
 
 #include "shared/beam_start.h"
 
-/// Whether flame thrower `index` is active.
-UNUSED s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
-}
+#include "shared/ride_get_entry_value.c"
 
-/// Turns flame thrower `index` on or off.
-UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
-}
+#include "shared/ride_set_entry_value.c"
 
 /// The flame throwers' counter, which Ride_StepCounter steps.
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1554,10 +1456,7 @@ void Ride_SetEntryState(s32 index, s32 value) {
   entry->flags = value & 0xf0;
 }
 
-/// Sets whether flame thrower `index` puffs even off screen.
-void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].offScreen = value;
-}
+#include "shared/ride_set_entry_count.c"
 
 /// Flame thrower `index`'s flags: which flame it sends and how far.
 UNUSED s32 Ride_GetEntryFlags(s32 index) {
@@ -1683,9 +1582,7 @@ extern u32 gEmbers_Script[];
 /// speed plus 0x14000 with a random spread, at a random angle and size.
 #include "shared/embers_spawn.h"
 
-void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
-}
+#include "shared/actor_hold_during_event.c"
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

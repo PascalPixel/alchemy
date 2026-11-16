@@ -599,19 +599,7 @@ void Kibombo_HideShades(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
-/// Shows (show 1) or hides count actors from first.
-void Actors_SetHidden(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
-    else
-      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
-  }
-}
+#include "shared/actors_set_hidden.c"
 
 /// Frost on the puddle freezes it into a pillar.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }

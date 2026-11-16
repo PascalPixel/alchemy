@@ -1,7 +1,7 @@
 /// @file
 /// Yallam, the village by Taopo Swamp: its children's song game, run in a
 /// circle round the village to the words of the songs of the moon, the stars
-/// and the sun, the Scoop spots that hide its treasure, and the pillar Force
+/// and the sun, the Cyclone spots that hide its treasure, and the log Force
 /// pushes down to reach the Masamune.
 #include "fixed_math.h"
 #include "flags.h"
@@ -31,6 +31,9 @@
 #include "text/msg_ids.h"
 
 #include "shared/tables.h"
+
+/// Set once Force has toppled the log off the Masamune's ledge.
+#define FLAG_YALLAM_LOG_TOPPLED FLAG_AREA_TEMP_00
 
 /// Yallam's actors, numbering the rows of gYallam_Placements.
 enum YallamActorId {
@@ -71,11 +74,11 @@ enum YallamSongGameActorId {
   ACTOR_STORY_CHILD
 };
 
-/// Yallam's buried treasure, the rows of its item table, numbered from 64.
+/// Yallam's hidden treasure, the rows of its item table, numbered from 64.
 enum YallamTreasureActorId {
-  ACTOR_BURIED_NUT = 64,
-  ACTOR_BURIED_COINS,
-  ACTOR_BURIED_ANTIDOTE
+  ACTOR_HIDDEN_NUT = 64,
+  ACTOR_HIDDEN_COINS,
+  ACTOR_HIDDEN_ANTIDOTE
 };
 
 void Yallam_SingMoonSong(void);
@@ -83,13 +86,16 @@ void Yallam_SingMoonSong(void);
 void Yallam_SingSunSong(void);
 void Yallam_StartWatchers(void);
 
-void Yallam_DigFirstHole(void);
+void Yallam_ClearFirstSpot(void);
 
-void Yallam_DigSecondHole(void);
+/// Cyclone at the second spot.
+void Yallam_ClearSecondSpot(void);
 
-void Yallam_DigFourthHole(void);
+/// Cyclone at the fourth spot.
+void Yallam_ClearFourthSpot(void);
 
-void Yallam_DigSixthHole(void);
+/// Cyclone at the sixth spot.
+void Yallam_ClearSixthSpot(void);
 
 void Yallam_OfferYeppSong(void);
 
@@ -101,8 +107,8 @@ void Yallam_DoNothing(void);
 
 extern s32 gYallam_PillarRaised[];
 extern s32 gYallam_PillarSunk[];
-extern u32 gYallam_FirstVillagerPaces[];
-extern u32 gYallam_SecondVillagerPaces[];
+extern u32 gYallam_CirclesChildRuns[];
+extern u32 gYallam_GameChildRuns[];
 extern s16 gYallam_DoorOpening[];
 extern s16 gYallam_SecondDoorOpening[];
 extern s16 gYallam_ThirdDoorOpening[];
@@ -181,9 +187,9 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 
 // Japanese has no stop beside the leader.
 #if TLA_PATCH_1
-/// Stops the object (mode 2) when the leader is within 11 of it; otherwise
-/// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
-/// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
+// A villager watching the song game: walks on while the leader is close by;
+/// otherwise turns to the child it follows and, failing that, to the leader,
+/// always while a talk or a window is open if it is set to.
 s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -296,24 +302,26 @@ void Yallam_EnterDoor(void) {
   Event_End();
 }
 
-/// Scoop at one of the village's six spots digs into the ground; the third and
-/// fifth bring up a buried item the first time, throwing the leader back.
-void Yallam_DigFirstHole(void) {
+// Cyclone at one of the village's six spots blows away what covers the ground;
+/// the third and fifth uncover an item the first time, pushing the leader back
+/// if it stands there.
+void Yallam_ClearFirstSpot(void) {
   TileCopies_CopyTouchedCells(67, 25, 5, 5, 67, 5, 1);
   MapGrid_CopyCellsTo(23, 29, 5, 6, 1, 1);
   MapGrid_CopyCellAttributes(23, 29, 1, 1, 5, 8);
 }
 
-void Yallam_DigSecondHole(void) {
+void Yallam_ClearSecondSpot(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 2, 1, 79, 22, 1);
 }
 
-void Yallam_DigThirdHole(void) {
+/// Cyclone at the third spot uncovers the Antidote the first time.
+void Yallam_ClearThirdSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
-    Actor_SetPosition(ACTOR_BURIED_ANTIDOTE, 424, 232);
+    Actor_SetPosition(ACTOR_HIDDEN_ANTIDOTE, 424, 232);
     if (FIELD_CELL(leader->x.fixed) == 26 &&
         FIELD_CELL(leader->z.fixed) == 14) {
       Event_Start();
@@ -328,16 +336,17 @@ void Yallam_DigThirdHole(void) {
   }
 }
 
-void Yallam_DigFourthHole(void) {
+void Yallam_ClearFourthSpot(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
 }
 
-void Yallam_DigFifthHole(void) {
+/// Cyclone at the fifth spot uncovers the Nut the first time.
+void Yallam_ClearFifthSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(FLAG_YALLAM_NUT) == 0) {
-    Actor_SetPosition(ACTOR_BURIED_NUT, 680, 344);
+    Actor_SetPosition(ACTOR_HIDDEN_NUT, 680, 344);
     if (FIELD_CELL(leader->x.fixed) == 42 &&
         FIELD_CELL(leader->z.fixed) == 21) {
       Event_Start();
@@ -352,7 +361,7 @@ void Yallam_DigFifthHole(void) {
   }
 }
 
-void Yallam_DigSixthHole(void) {
+void Yallam_ClearSixthSpot(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 2, 2, 87, 8, 1);
 }
 
@@ -1724,9 +1733,9 @@ void Yallam_SingSunSong(void) {
   FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
 
-/// Once Force has pushed it (FLAG_AREA_TEMP_00), the log lies where it fell.
+// Once Force has pushed it, the log lies where it fell.
 void Yallam_PlaceFallenPillar(void) {
-  if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
+  if (Event_GetFlag(FLAG_YALLAM_LOG_TOPPLED)) {
     SET_ACTOR_POSITION(Actor_Get(ACTOR_FALLING_LOG), toFIXED(168), 0,
                        toFIXED(192));
   }
@@ -1743,7 +1752,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM && Event_GetFlag(FLAG_AREA_TEMP_00))
+  if (gMainRoutineWork.next == SCENE_YALLAM &&
+      Event_GetFlag(FLAG_YALLAM_LOG_TOPPLED))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;
 }
@@ -1758,7 +1768,7 @@ void Yallam_ForcePillarDown(void) {
   struct Actor *object = Actor_Get(ACTOR_FALLING_LOG);
   struct FieldSprite *sprite = object->sprite;
 
-  Event_SetFlag(FLAG_AREA_TEMP_00);
+  Event_SetFlag(FLAG_YALLAM_LOG_TOPPLED);
   object->acceleration = toFIXED(3) / 2;
   object->speedLimit = toFIXED(8);
   Event_PlaySound(SE_TOPPLE);
@@ -1809,12 +1819,13 @@ void Yallam_StartWatchers(void) {
 #undef EVENT_WORK
 
 void Yallam_EnterDoor(void);
-void Yallam_DigThirdHole(void);
-void Yallam_DigFifthHole(void);
+void Yallam_ClearThirdSpot(void);
+void Yallam_ClearFifthSpot(void);
 void Yallam_TalkAboutSongCircles(void);
 
 extern s32 gYallam_PillarShadowSunk[];
 
+/// The log standing on the ledge, raised above its stump.
 s32 gYallam_PillarRaised[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
@@ -1823,6 +1834,7 @@ s32 gYallam_PillarRaised[] = {
     SC_END,
 };
 
+/// The fallen log, lowered to where it lies.
 s32 gYallam_PillarSunk[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -toFIXED(16)),
@@ -1830,6 +1842,7 @@ s32 gYallam_PillarSunk[] = {
     SC_END,
 };
 
+/// The standing log's shadow, shrunk and lowered under it.
 s32 gYallam_PillarShadowSunk[] = {
     SC_SET(SW_SCALE_X, 0x9999),
     SC_SET(SW_SCALE_Y, 0x9999),
@@ -1840,7 +1853,8 @@ s32 gYallam_PillarShadowSunk[] = {
 };
 
 // clang-format off
-u32 gYallam_FirstVillagerPaces[] = {
+// Two children run in circles by the playground, singing one of Yepp's songs.
+u32 gYallam_CirclesChildRuns[] = {
     SC_ANIMATION(2),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
@@ -1859,7 +1873,7 @@ u32 gYallam_FirstVillagerPaces[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gYallam_SecondVillagerPaces[] = {
+u32 gYallam_GameChildRuns[] = {
     SC_ANIMATION(2),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
@@ -1878,6 +1892,7 @@ u32 gYallam_SecondVillagerPaces[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The children who were running gather by the song leader.
 u32 gYallam_CirclesChildGathers[] = {
     SC_ANIMATION(2),
     SC_MOVE(336, 0, 792),
@@ -1900,6 +1915,7 @@ u32 gYallam_GameChildGathers[] = {
     SC_END,
 };
 
+/// The children take their places in the ring for the game.
 u32 gYallam_SongLeaderForms[] = {
     SC_ANIMATION(2),
     SC_MOVE(316, 0, 888),
@@ -1957,6 +1973,7 @@ u32 gYallam_StoryChildForms[] = {
     SC_END,
 };
 
+/// The children step to where the song's run begins.
 u32 gYallam_SongLeaderStarts[] = {
     SC_ANIMATION(2),
     SC_MOVE(344, 0, 840),
@@ -2014,6 +2031,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The village, in YallamActorId order.
 struct ActorPlacement gYallam_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
                     (s32)gYallam_PillarSunk, 184, 0, 200, FACING_WEST,
@@ -2050,19 +2068,22 @@ struct ActorPlacement gYallam_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The cave places no actors.
 struct ActorPlacement gYallam_CavePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+// The playground at the song game, in YallamSongGameActorId order, and Jenna.
 struct ActorPlacement gYallam_SongGamePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 872, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gYallam_FirstVillagerPaces, 312, 0, 776, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gYallam_SecondVillagerPaces, 376, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gYallam_CirclesChildRuns, 312, 0, 776, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gYallam_GameChildRuns, 376, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 800, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The doors' cell animations as they open, one for each shape of door.
 s16 gYallam_DoorOpening[] = {
     93, 28, 1, 2, 6, 92, 28, 1,
     2, 6, -1,
@@ -2083,6 +2104,7 @@ s16 gYallam_FourthDoorOpening[] = {
     2, 6, -1,
 };
 
+/// Each door's opening and its cell, by its step trigger's number.
 struct MapGridCellAnimation gYallam_Doors[] = {
     {gYallam_DoorOpening, 98, 19},
     {gYallam_SecondDoorOpening, 92, 20},
@@ -2094,6 +2116,7 @@ struct MapGridCellAnimation gYallam_Doors[] = {
     {gYallam_FourthDoorOpening, 90, 6},
 };
 
+/// The village: its exits and doors, its people, the Cyclone spots and the log.
 struct Trigger gYallam_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
@@ -2108,33 +2131,34 @@ struct Trigger gYallam_Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 13, CONDITION_ALWAYS, 13},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Yallam_DigFirstHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(Yallam_DigSecondHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(Yallam_DigThirdHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23, CONDITION_ALWAYS, EVENT(Yallam_DigFourthHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24, CONDITION_ALWAYS, EVENT(Yallam_DigFifthHole)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25, CONDITION_ALWAYS, EVENT(Yallam_DigSixthHole)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgYeppFoundThis)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgThereUsedTo)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgWhenWeLost)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYeppWasTheOne)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgSingingWithYepp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgThosePearlsYepp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgYeppNeverTold)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgYeppWasAmazing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x300, (s32)(Yallam_DoNothing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 8, 0x300, EVENT(Yallam_ForcePillarDown)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Yallam_ClearFirstSpot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(Yallam_ClearSecondSpot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(Yallam_ClearThirdSpot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23, CONDITION_ALWAYS, EVENT(Yallam_ClearFourthSpot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24, CONDITION_ALWAYS, EVENT(Yallam_ClearFifthSpot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25, CONDITION_ALWAYS, EVENT(Yallam_ClearSixthSpot)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppFoundThis)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgThereUsedTo)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgWhenWeLost)},
+    {TRIGGER_TALK, ACTOR_BOATMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
+    {TRIGGER_TALK, ACTOR_BOATMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYeppWasTheOne)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgSingingWithYepp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgThosePearlsYepp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppNeverTold)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgYeppWasAmazing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_TOPPLED, (s32)(Yallam_DoNothing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_TOPPLED, EVENT(Yallam_ForcePillarDown)},
     {TRIGGER_TABLE_END},
 };
 
+/// The cave's exits.
 struct Trigger gYallam_CaveTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, 7},
@@ -2142,28 +2166,31 @@ struct Trigger gYallam_CaveTriggers[] = {
 };
 // clang-format on
 
+/// The song game's exit and its children.
 struct Trigger gYallam_SongGameTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TALK_TRIGGER_FACING(FACING_EAST), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
-    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
-    {TALK_TRIGGER_FACING(FACING_NORTHEAST), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
-    {TALK_TRIGGER_FACING(FACING_SOUTH), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      MSGNO(MsgYeppSSongs)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongCircles)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_CIRCLES_CHILD, CONDITION_ALWAYS,
      EVENT(Yallam_TalkAboutSongCircles)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongGame)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CIRCLES_CHILD,
+     CONDITION_ALWAYS, EVENT(Yallam_TalkAboutSongCircles)},
+    {TRIGGER_TALK, ACTOR_GAME_CHILD, CONDITION_ALWAYS,
      EVENT(Yallam_TalkAboutSongGame)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GAME_CHILD, CONDITION_ALWAYS,
+     EVENT(Yallam_TalkAboutSongGame)},
+    {TRIGGER_TALK, ACTOR_STORY_CHILD, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STORY_CHILD, CONDITION_ALWAYS,
      MSGNO(MsgTheStoryIs)},
     {TRIGGER_TABLE_END},
 };

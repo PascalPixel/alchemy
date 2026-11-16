@@ -22,9 +22,6 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
-static __inline__ void PLACE(s32 x, s32 y) {
-  Matrix_Translate(INTtoFIXED(x), INTtoFIXED(y), 0);
-}
 #define HAURES_FRAMES 92
 /// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
 /// flames (SPRITE_HAURES_FLAME) and two small dots (SPRITE_HAURES_DOT), then

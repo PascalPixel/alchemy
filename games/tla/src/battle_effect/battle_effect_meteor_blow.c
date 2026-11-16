@@ -369,7 +369,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       size += 512;
     }
     if (frame > 127) {
-      speed = (frame << 13) - 0x100000;
+      speed = (frame << 13) - toFIXED(16);
       if (speed > 0x1ffff) {
         speed = toFIXED(2);
       }

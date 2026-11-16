@@ -638,12 +638,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           Matrix_RotateY(DEGtoANG(180));
         Matrix_RotateZ(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
-          s32 length = (frame << 13) - 0x60000;
+          s32 length = (frame << 13) - FIXED_ONE * 6;
 
-          if (length > 0x20000)
-            length = 0x20000;
+          if (length > FIXED_ONE * 2)
+            length = FIXED_ONE * 2;
           if (frame > 95)
-            length = length - (frame << 13) + 0xc0000;
+            length = length - (frame << 13) + FIXED_ONE * 12;
           Matrix_Scale(FIXED_ONE * 4, length, FIXED_ONE);
         } else {
           Matrix_Scale(FIXED_ONE * 2, FIXED_ONE * 2, FIXED_ONE);

@@ -522,7 +522,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           s = FIXED_ONE;
         }
         if (t > 47) {
-          s = s - (t << 12) + 0x30000;
+          s = s - (t << 12) + FIXED_ONE * 3;
         }
         model->shade = shade;
         Matrix_Initialize();

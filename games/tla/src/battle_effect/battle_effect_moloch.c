@@ -696,8 +696,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
         a += a >> 1;
-        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5 / 2, r * Trig_Sin(a) / 2))) +
+             x;
+        py = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
       }
@@ -729,8 +730,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
         a += a >> 1;
-        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5 / 2, r * Trig_Sin(a) / 2))) +
+             x;
+        py = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
       }
@@ -1318,7 +1320,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if ((u32)(frame - 351) <= 14)
           lift = Trig_Sin((frame - 350) << 10) << 6;
         else if (frame > 365)
-          lift = ((366 - frame) * 5 << 17) + 0x400000;
+          lift = ((366 - frame) * 5 << 17) + toFIXED(64);
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
@@ -1853,7 +1855,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, FIXEDtoINT(Iwram_MulFX((frame - 521) * 0x10000, 0x400) + 0x7b0000),
+          0,
+          FIXEDtoINT(Iwram_MulFX((frame - 521) * toFIXED(1), 0x400) +
+                     toFIXED(123)),
           frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
@@ -1872,7 +1876,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, FIXEDtoINT(Iwram_MulFX((frame - 534) * 0x10000, 0x600) + 0x780000),
+          0,
+          FIXEDtoINT(Iwram_MulFX((frame - 534) * toFIXED(1), 0x600) +
+                     toFIXED(120)),
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
@@ -2536,6 +2542,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
             "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "
             "r1 to the allocator")
+/// Copies two words from source to destination with one block load and store.
 static __inline__ void CopyWords2(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;

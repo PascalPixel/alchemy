@@ -8,6 +8,12 @@
 
 struct StripQuad;
 
+/// GreatSwordSheet's sword, 32 x 128, and its four after-images after it, each
+/// drawn in one colour from BG colour 60 on.
+#define HEAVY_DIVIDE_SWORD_WIDTH 32
+#define HEAVY_DIVIDE_SWORD_HEIGHT 128
+#define HEAVY_DIVIDE_AFTER_IMAGE_COLORS 59
+
 /// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 /// a great sword (with four fading after-images, each a dimmer copy of the
 /// sheet) swings down from over the caster, striking at frame
@@ -48,12 +54,14 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
     // Four after-images, each in its own dimmer colour.
     for (k = 1; k != 5; k++) {
-      ((u16 *)BG_PLTT)[59 + k] = (4 - k) * 0x1000 + 0x3c00;
-      for (i = 0; i != 0x1000; i++) {
+      ((u16 *)BG_PLTT)[HEAVY_DIVIDE_AFTER_IMAGE_COLORS + k] =
+          RGB(0, 0, (4 - k) * 4 + 15);
+      for (i = 0; i != PICTURE_BYTES(HEAVY_DIVIDE_SWORD); i++) {
         if (work->sheet[i] == 0) {
-          work->sheet[k * 0x1000 + i] = 0;
+          work->sheet[k * PICTURE_BYTES(HEAVY_DIVIDE_SWORD) + i] = 0;
         } else {
-          work->sheet[k * 0x1000 + i] = k + 59;
+          work->sheet[k * PICTURE_BYTES(HEAVY_DIVIDE_SWORD) + i] =
+              k + HEAVY_DIVIDE_AFTER_IMAGE_COLORS;
         }
       }
     }
@@ -142,7 +150,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           if (frame < i * 2) {
             continue;
           }
-          texture.pixels = work->sheet + i * 0x1000;
+          texture.pixels = work->sheet + i * PICTURE_BYTES(HEAVY_DIVIDE_SWORD);
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(source.x / 2 - 64),
                            INTtoFIXED(source.y - 88), 0);
@@ -152,7 +160,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           } else {
             Matrix_RotateZ(step->variant + DEGtoANG(180));
           }
-          Matrix_Translate(0, 0xfff00000, 0);
+          Matrix_Translate(0, -toFIXED(16), 0);
           Matrix_Scale(size << 15, size * 13192, size << 13);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Matrix_RotateY(DEGtoANG(180));
@@ -303,123 +311,122 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
     frame = 0;
     if (stagger != -54) {
-    top:
-      // Frame 0: 16 sparks leave the ground in random directions.
-      if (frame == 0) {
-        struct Particle *spark;
+      do {
+        // Frame 0: 16 sparks leave the ground in random directions.
+        if (frame == 0) {
+          struct Particle *spark;
 
-        for (i = 0, spark = work->particles; i != 16; i++, spark++) {
-          s32 speed = (Random16() & 0x1ff) + 128;
-          s32 angle = Random16() & TRIG_ANGLE_MASK;
+          for (i = 0, spark = work->particles; i != 16; i++, spark++) {
+            s32 speed = (Random16() & 0x1ff) + 128;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-          spark->x = INTtoFIXED((Random16() & 63) + 32);
-          spark->y = toFIXED(96);
-          spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
-          spark->velocityY = (Trig_Cos(angle) * speed) >> 8;
-          spark->variant = 8;
-        }
-      }
-      if (frame == 32)
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-
-      if (frame >= 0) {
-        u32 mode = BLITTER_MAX;
-
-        if (frame <= 23 && args->variant > 0)
-          mode = BLITTER_ADDITIVE;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                            COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
-        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-        // At its address: through the slots' base it would share the base
-        // above.
-        draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
-
-        for (i = 0; i != args->variant * 3 + 4; i++) {
-          s32 age = frame - gCool_ColumnStarts[i];
-          s32 x = gCool_ColumnX[i];
-          s32 scale;
-          s32 height;
-
-          // Two frames after it starts, a column strikes the next target.
-          if (age == 2) {
-            s32 member = i % args->targetCount;
-
-            EFFECT_STRIKE_TARGET(args, member, 3, KNOCKBACK_NUDGE);
-            Sound_PlayFar(SE_POWER_UP);
-            work->shakeFrames = 3;
-          }
-
-          // The slim columns stand a little over half as high.
-          scale = 60;
-          if (gCool_ColumnLeans[i] > LEAN_RIGHT)
-            scale = 35;
-          scale = gCool_ColumnHeights[i] * scale / 64;
-          if (frame < sinkFrame)
-            height = age * 10;
-          else
-            height = scale - (frame - sinkFrame) * 10;
-          if (height > scale)
-            height = scale;
-
-          switch (gCool_ColumnLeans[i]) {
-          case LEAN_LEFT:
-            x -= height / 2;
-            break;
-          case LEAN_RIGHT:
-            x += height / 2;
-            break;
-          case SLIM_LEAN_LEFT:
-            x -= height / 4;
-            break;
-          case SLIM_LEAN_RIGHT:
-            x += height / 4;
-            break;
-          }
-          if (gCool_ColumnLeans[i] <= LEAN_RIGHT)
-            draw[gCool_ColumnLeans[i] & 1](canvas, work->sheet, x - 18,
-                                           112 - height, 36, height);
-          else
-            draw[gCool_ColumnLeans[i] & 1](canvas,
-                                           work->sheet + SLIM_COLUMN_OFFSET,
-                                           x - 9, 108 - height, 17, height);
-        }
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-      }
-
-      // Spark i rises from frame 8 + 2i through seven pictures, three frames
-      // apiece; past the first 16 they wait until the columns sink.
-      BattleEffect_FetchRectangleBlitters(args->side, draw);
-      {
-        for (i = 0; i != args->variant * 4 + 8; i++) {
-          struct Particle *spark = &work->particles[i];
-
-          if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
-              spark->variant <= 28) {
-            s32 cell = spark->variant / 3;
-            s32 x = FIXED_INTEGER_PART(spark->x);
-            s32 y = FIXED_INTEGER_PART(spark->y);
-            u32 size;
-            u8 *src;
-
-            if (cell > 6)
-              cell = 6;
-            src = work->sheet + gCool_SparkPictures[cell] + SPARK_OFFSET;
-            size = gCool_SparkSizes[cell];
-            draw[0](canvas, src, x - size / 2, y - size / 2, size, size);
-            spark->variant++;
-            BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
+            spark->x = INTtoFIXED((Random16() & 63) + 32);
+            spark->y = toFIXED(96);
+            spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
+            spark->velocityY = (Trig_Cos(angle) * speed) >> 8;
+            spark->variant = 8;
           }
         }
-      }
-      EFFECT_RELEASE_BLITTERS();
+        if (frame == 32)
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-      BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
-      if (++frame != stagger + 54)
-        goto top;
+        if (frame >= 0) {
+          u32 mode = BLITTER_MAX;
+
+          if (frame <= 23 && args->variant > 0)
+            mode = BLITTER_ADDITIVE;
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
+          // At its address: through the slots' base it would share the base
+          // above.
+          draw[1] = *(DrawRectangle *)&Ram_HeapSlots->ramCodePaired;
+
+          for (i = 0; i != args->variant * 3 + 4; i++) {
+            s32 age = frame - gCool_ColumnStarts[i];
+            s32 x = gCool_ColumnX[i];
+            s32 scale;
+            s32 height;
+
+            // Two frames after it starts, a column strikes the next target.
+            if (age == 2) {
+              s32 member = i % args->targetCount;
+
+              EFFECT_STRIKE_TARGET(args, member, 3, KNOCKBACK_NUDGE);
+              Sound_PlayFar(SE_POWER_UP);
+              work->shakeFrames = 3;
+            }
+
+            // The slim columns stand a little over half as high.
+            scale = 60;
+            if (gCool_ColumnLeans[i] > LEAN_RIGHT)
+              scale = 35;
+            scale = gCool_ColumnHeights[i] * scale / 64;
+            if (frame < sinkFrame)
+              height = age * 10;
+            else
+              height = scale - (frame - sinkFrame) * 10;
+            if (height > scale)
+              height = scale;
+
+            switch (gCool_ColumnLeans[i]) {
+            case LEAN_LEFT:
+              x -= height / 2;
+              break;
+            case LEAN_RIGHT:
+              x += height / 2;
+              break;
+            case SLIM_LEAN_LEFT:
+              x -= height / 4;
+              break;
+            case SLIM_LEAN_RIGHT:
+              x += height / 4;
+              break;
+            }
+            if (gCool_ColumnLeans[i] <= LEAN_RIGHT)
+              draw[gCool_ColumnLeans[i] & 1](canvas, work->sheet, x - 18,
+                                             112 - height, 36, height);
+            else
+              draw[gCool_ColumnLeans[i] & 1](canvas,
+                                             work->sheet + SLIM_COLUMN_OFFSET,
+                                             x - 9, 108 - height, 17, height);
+          }
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
+        }
+
+        // Spark i rises from frame 8 + 2i through seven pictures, three frames
+        // apiece; past the first 16 they wait until the columns sink.
+        BattleEffect_FetchRectangleBlitters(args->side, draw);
+        {
+          for (i = 0; i != args->variant * 4 + 8; i++) {
+            struct Particle *spark = &work->particles[i];
+
+            if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
+                spark->variant <= 28) {
+              s32 cell = spark->variant / 3;
+              s32 x = FIXED_INTEGER_PART(spark->x);
+              s32 y = FIXED_INTEGER_PART(spark->y);
+              u32 size;
+              u8 *src;
+
+              if (cell > 6)
+                cell = 6;
+              src = work->sheet + gCool_SparkPictures[cell] + SPARK_OFFSET;
+              size = gCool_SparkSizes[cell];
+              draw[0](canvas, src, x - size / 2, y - size / 2, size, size);
+              spark->variant++;
+              BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
+            }
+          }
+        }
+        EFFECT_RELEASE_BLITTERS();
+
+        BattleCamera_Shake(4, 4);
+        EFFECT_END_FRAME(work);
+      } while (++frame != stagger + 54);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

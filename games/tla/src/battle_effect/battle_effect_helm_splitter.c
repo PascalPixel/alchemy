@@ -7,8 +7,11 @@
 #define HELM_SPLITTER_FRAMES 70
 
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
-/// The pink star effect, after the swirl.
-#define HELM_SPLITTER_STAR_PICTURES 16000
+/// FireSwirlSheet's bytes; the sparks' pictures, PinkStarSheet's stars or
+/// SkullSheet's skulls, follow them.
+#define HELM_SPLITTER_SWIRL_BYTES 16000
+#define HELM_SPLITTER_SPARK_PICTURES HELM_SPLITTER_SWIRL_BYTES
+#define HELM_SPLITTER_SPARKS 64
 #define HELM_SPLITTER_STAR_SIZE 16 ///< PinkStarSheet's six stars
 
 /// The user leaps at the first target and strikes through a fire swirl; the
@@ -35,22 +38,23 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, work->sheet, 1, 1);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
-                               work->sheet + HELM_SPLITTER_STAR_PICTURES, 1, 0);
+                               work->sheet + HELM_SPLITTER_SPARK_PICTURES, 1,
+                               0);
     work->transferValue = CANVAS_FADE_HALF;
   } else {
     // Lift every drawn pixel of the swirl into the upper half of the palette,
     // where the blue flame's colours go.
     u8 *pixels = work->sheet;
 
-    for (i = 0; i != 16000; i++) {
+    for (i = 0; i != HELM_SPLITTER_SWIRL_BYTES; i++) {
       if (pixels[i] != 0) {
         pixels[i] = pixels[i] * 2 + 32;
         if (pixels[i] > 63)
           pixels[i] = 63;
       }
     }
-    Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, work->sheet + 0x3e80, 1,
-                               1);
+    Resource_LoadAndDecompress(
+        RESOURCE_SKULL_SHEET, work->sheet + HELM_SPLITTER_SPARK_PICTURES, 1, 1);
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                          SHEET_PALETTE_BYTES);
@@ -61,7 +65,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
   // No spark is alive yet.
-  for (i = 0, life = &work->particles[0].variant; i != 64; i++) {
+  for (i = 0, life = &work->particles[0].variant; i != HELM_SPLITTER_SPARKS;
+       i++) {
     *life = 0;
     life += 7;
   }
@@ -146,24 +151,29 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     }
 
     // The sparks fall, bounce off the ground at y = 104 and fade out.
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
       spark = &sparks[i];
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 60, 0);
         if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x < toFIXED(127)) &&
+                   spark->y >= 0) {
           s32 sx = FIXEDtoINT(spark->x);
           s32 sy = FIXEDtoINT(spark->y);
 
           if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas,
-                    work->sheet + HELM_SPLITTER_STAR_PICTURES +
-                        (((frame + i) / 4 % 6) << 8),
-                    sx - 8, sy - 8, HELM_SPLITTER_STAR_SIZE, 16);
+                    work->sheet + HELM_SPLITTER_SPARK_PICTURES +
+                        ((frame + i) / 4 % 6) * HELM_SPLITTER_STAR_SIZE *
+                            HELM_SPLITTER_STAR_SIZE,
+                    sx - 8, sy - 8, HELM_SPLITTER_STAR_SIZE,
+                    HELM_SPLITTER_STAR_SIZE);
           else
-            draw[0](canvas, work->sheet + 0x3e80 + i % 3 * PICTURE_BYTES(SKULL),
+            draw[0](canvas,
+                    work->sheet + HELM_SPLITTER_SPARK_PICTURES +
+                        i % 3 * PICTURE_BYTES(SKULL),
                     sx - 12, sy - 12, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }

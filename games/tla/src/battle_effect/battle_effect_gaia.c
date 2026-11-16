@@ -472,7 +472,8 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   }
   found->shadowAttributes = 0x6000;
   entries = gVramCacheEntries;
-  found->shadowTile = (((u16 *)entries)[VRAM_CACHE_ENTRY_ACTOR_SHADOW * 2 + 1] >> 5) | 0x800;
+  found->shadowTile =
+      (((u16 *)entries)[VRAM_CACHE_ENTRY_ACTOR_SHADOW * 2 + 1] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->scale = FIXED_ONE;

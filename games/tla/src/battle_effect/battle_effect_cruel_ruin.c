@@ -780,12 +780,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
   s32 k;
-  FIXED fr;
-  FIXED fg;
-  FIXED fb;
-  FIXED dr;
-  FIXED dg;
-  FIXED db;
+  FIXED fadeRed;
+  FIXED fadeGreen;
+  FIXED fadeBlue;
+  FIXED redStep;
+  FIXED greenStep;
+  FIXED blueStep;
   s32 steps;
   s32 u;
   struct RuinObject *obj;
@@ -862,12 +862,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   Graphics_LoadGreyRamp();
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  fr = 0;
-  fg = 0;
-  fb = 0;
-  dr = 0;
-  dg = 0;
-  db = 0;
+  fadeRed = 0;
+  fadeGreen = 0;
+  fadeBlue = 0;
+  redStep = 0;
+  greenStep = 0;
+  blueStep = 0;
   steps = 0;
   for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
     struct Particle *p = &work->particles[i];
@@ -925,48 +925,48 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Palette_BrightenSavedBattleBg(0, 0, 0);
         }
         if (frame == 32) {
-          fr = 0;
-          fg = 0;
-          fb = 0;
-          dr = -toFIXED(4) / 28;
-          dg = -toFIXED(12) / 28;
-          db = -toFIXED(4) / 28;
+          fadeRed = 0;
+          fadeGreen = 0;
+          fadeBlue = 0;
+          redStep = -toFIXED(4) / 28;
+          greenStep = -toFIXED(12) / 28;
+          blueStep = -toFIXED(4) / 28;
           steps = 28;
         }
         if (frame == 124) {
-          fr = toFIXED(RGB_LEVEL_MAX);
-          fg = toFIXED(8);
-          fb = -toFIXED(4);
-          dr = 0;
-          dg = 0;
-          db = 0;
+          fadeRed = toFIXED(RGB_LEVEL_MAX);
+          fadeGreen = toFIXED(8);
+          fadeBlue = -toFIXED(4);
+          redStep = 0;
+          greenStep = 0;
+          blueStep = 0;
           steps = 1;
         }
         if (frame == 128) {
-          dr = (-toFIXED(1) - fr) / 16;
-          dg = (toFIXED(6) - fg) / 16;
-          db = -fb / 16;
+          redStep = (-toFIXED(1) - fadeRed) / 16;
+          greenStep = (toFIXED(6) - fadeGreen) / 16;
+          blueStep = -fadeBlue / 16;
           steps = 16;
         }
         if (frame == 144) {
-          dr = (-toFIXED(9) - fr) / 8;
-          dg = (toFIXED(13) - fg) / 8;
-          db = (-toFIXED(5) - fb) / 8;
+          redStep = (-toFIXED(9) - fadeRed) / 8;
+          greenStep = (toFIXED(13) - fadeGreen) / 8;
+          blueStep = (-toFIXED(5) - fadeBlue) / 8;
           steps = 8;
         }
         if (frame == 156) {
-          dr = (toFIXED(RGB_LEVEL_MAX) - fr) / 16;
-          dg = (toFIXED(8) - fg) / 16;
-          db = (-toFIXED(4) - fb) / 16;
+          redStep = (toFIXED(RGB_LEVEL_MAX) - fadeRed) / 16;
+          greenStep = (toFIXED(8) - fadeGreen) / 16;
+          blueStep = (-toFIXED(4) - fadeBlue) / 16;
           steps = 16;
         }
         if (steps > 0) {
           steps--;
-          fr += dr;
-          fg += dg;
-          fb += db;
-          Palette_BrightenSavedBattleBg(FIXEDtoINT(fr), FIXEDtoINT(fg),
-                                        FIXEDtoINT(fb));
+          fadeRed += redStep;
+          fadeGreen += greenStep;
+          fadeBlue += blueStep;
+          Palette_BrightenSavedBattleBg(
+              FIXEDtoINT(fadeRed), FIXEDtoINT(fadeGreen), FIXEDtoINT(fadeBlue));
         }
         if (frame == 124) {
           Iwram_FillWords(canvas, CANVAS_BYTES,

@@ -194,15 +194,15 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   spread = 0;
   grow = 0;
   for (i = 0; i != FLORA_PETAL_COUNT; i++) {
-    s32 q = i / 8;
+    s32 row = i / 8;
     s32 left = 256;
-    s32 t;
-    s32 u2;
+    s32 columnX;
+    s32 rowY;
 
-    t = (i - q * 8) << 5;
-    u2 = q * 22;
-    FLORA_PETALS->x[i] = t + left;
-    FLORA_PETALS->y[i] = u2 + 128;
+    columnX = (i - row * 8) << 5;
+    rowY = row * 22;
+    FLORA_PETALS->x[i] = columnX + left;
+    FLORA_PETALS->y[i] = rowY + 128;
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);

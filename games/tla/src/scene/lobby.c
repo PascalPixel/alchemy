@@ -435,27 +435,17 @@ done:
 /// Writes up to three active party owners to out, ending the list with
 /// PARTY_SLOT_EMPTY.
 s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
-  struct MainRoutineWork *party;
   s32 count = Party_CountMembers();
   s32 i;
 
   if (count > 3)
     count = 3;
-  i = 0;
-  if (i >= count)
-    goto done;
-  party = &gMainRoutineWork;
-next:
-  {
-    u8 owner = party->party[i];
+  for (i = 0; i < count; i++) {
+    u8 owner = gMainRoutineWork.party[i];
 
     if (out != NULL)
       *out++ = owner;
   }
-  i++;
-  if (i < count)
-    goto next;
-done:
   if (out != NULL)
     *out = PARTY_SLOT_EMPTY;
   return count;

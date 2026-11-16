@@ -38,7 +38,7 @@ void WindowSprite_ReleaseFree(struct WindowSprite *out) {
 
 /// Links all 64 window sprites of the pool into the free list.
 void WindowSprite_InitializeFreeList(void) {
-  s32 remainingLinks;
+  s32 i;
   struct WindowWork *work;
   struct WindowSprite *out;
   struct WindowSprite *next;
@@ -47,13 +47,11 @@ void WindowSprite_InitializeFreeList(void) {
   out = work->sprites;
   work->freeSprites.head = out;
   // Links sprites 0 to 62 to the next; the last, 63, ends the list.
-  remainingLinks = WINDOW_SPRITE_COUNT - 2;
-  do {
+  for (i = 0; i < WINDOW_SPRITE_COUNT - 1; i++) {
     next = out + 1;
-    remainingLinks--;
     out->next = next;
     out = next;
-  } while (remainingLinks >= 0);
+  }
   next->next = NULL;
   work->freeSprites.tailLink = &next->next;
 }
@@ -324,10 +322,9 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
 
 /// Waits until a zooming window has finished opening or closing.
 void Window_WaitZoom(struct Window *window) {
-  if (!(WINDOW_FLAG_INSTANT & window->flags) && window->duration != 0) {
-    do {
+  if (!(WINDOW_FLAG_INSTANT & window->flags)) {
+    while (window->duration != 0)
       wait(1);
-    } while (window->duration != 0);
   }
 }
 

@@ -52,20 +52,18 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
 /// in the game calls it.
 s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
-  u8 *owner = gVramCacheBlockOwners;
   s32 longestRun = 0;
-  s32 remaining = VRAM_BLOCK_COUNT;
+  s32 i;
 
-  do {
-    if (*owner++ != VRAM_BLOCK_OWNER_FREE) {
+  for (i = 0; i < VRAM_BLOCK_COUNT; i++) {
+    if (gVramCacheBlockOwners[i] != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
     } else {
       run++;
       if (longestRun < run)
         longestRun = run;
     }
-    remaining--;
-  } while (remaining != 0);
+  }
   return longestRun;
 }
 

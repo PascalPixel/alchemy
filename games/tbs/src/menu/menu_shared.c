@@ -860,16 +860,9 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
     src = gMenu_ListOrderEquipmentFirst;
     break;
   }
-  *order = *src;
-  n = 0;
-  if (*order != LIST_ORDER_END) {
-    do {
-      if (++n > 31)
-        break;
-      src++;
-      order++;
-      *order = *src;
-    } while (*order != LIST_ORDER_END);
+  for (n = 0; n < 32; n++) {
+    if ((order[n] = src[n]) == LIST_ORDER_END)
+      break;
   }
 }
 

@@ -57,15 +57,10 @@ void UpdateLinkSessionCountdown(void) {
       BattleCamera_SetCommandViewFar(newOffset);
     }
 
-    entry = state->icons;
-    active = state->iconShown;
-    i = 2;
-    do {
-      if (*active++ != 0)
-        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW);
-      i--;
-      entry++;
-    } while (i >= 0);
+    for (i = 0; i < 3; i++) {
+      if (state->iconShown[i] != 0)
+        Oam_AddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
+    }
     Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
 
     // Local battles still animate the UI, but do not run the link timer.

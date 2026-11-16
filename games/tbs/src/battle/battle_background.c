@@ -544,18 +544,14 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
       BattleHighlight_SetSpriteMode(unitIds[unitIndex], mode & 1);
 
     if (selectedUnits != 0) {
-      u32 unitId = *selectedUnits;
-      unitIndex = 0;
-      selectedUnits++;
-      if (unitId != BATTLE_UNIT_LIST_END) {
-        do {
-          BattleHighlight_SetSpriteMode(unitId, (mode & 1) ^ 1);
-          unitIndex++;
-          // A unit list holds at most 14.
-          if (unitIndex > 13)
-            break;
-          unitId = *selectedUnits++;
-        } while (unitId != BATTLE_UNIT_LIST_END);
+      u32 unitId;
+
+      // A unit list holds at most 14.
+      for (unitIndex = 0; unitIndex <= 13; unitIndex++) {
+        unitId = *selectedUnits++;
+        if (unitId == BATTLE_UNIT_LIST_END)
+          break;
+        BattleHighlight_SetSpriteMode(unitId, (mode & 1) ^ 1);
       }
     }
     wait(1);

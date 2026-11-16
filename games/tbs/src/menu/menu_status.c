@@ -2097,9 +2097,9 @@ void ItemMenu_PositionCategory(void) {
   s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = menu->entryIcons;
   s32 y = MENU_ICON_HIDDEN_Y;
-  s32 remaining = MENU_ENTRY_ICONS - 1;
+  s32 i;
 
-  do {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     struct WindowSprite *object = *entry++;
 
     if (object != 0) {
@@ -2107,8 +2107,7 @@ void ItemMenu_PositionCategory(void) {
       object->y = y;
       Icon_PrepareActor(object);
     }
-    remaining--;
-  } while (remaining >= 0);
+  }
 }
 
 /// Creates the eight category sprites in window, off screen at

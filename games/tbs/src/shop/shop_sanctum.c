@@ -407,15 +407,11 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
 /// member's icon a random colour each frame.
 void Sanctum_UpdateBurst(void) {
   struct ShopWork *shop = gMenuWork;
-  struct FieldParticle *effect = shop->effects;
-  s32 remainingEffects = 23;
+  s32 i;
   s8 burstMember;
 
-  do {
-    remainingEffects--;
-    FieldParticle_UpdateFar(effect);
-    effect++;
-  } while (remainingEffects >= 0);
+  for (i = 0; i < 24; i++)
+    FieldParticle_UpdateFar(&shop->effects[i]);
   burstMember = shop->burstMember;
   if (burstMember != -1)
     Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],

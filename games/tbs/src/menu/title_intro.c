@@ -712,21 +712,19 @@ UNUSED void Title_NoOpColor(void) {}
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,
                                      s32 frames) {
-  s32 remaining;
+  s32 i;
   s32 sourceValue;
   s32 targetValue;
 
   if (frames > 0) {
-    remaining = TITLE_PALETTE_FADE_CHANNELS - 1;
-    do {
+    for (i = 0; i < TITLE_PALETTE_FADE_CHANNELS; i++) {
       sourceValue = *sourceComponents;
       targetValue = *targetComponents;
       *componentSteps = Iwram_SignedDivide(targetValue - sourceValue, frames);
-      remaining--;
       sourceComponents++;
       targetComponents++;
       componentSteps++;
-    } while (remaining >= 0);
+    }
   }
 }
 

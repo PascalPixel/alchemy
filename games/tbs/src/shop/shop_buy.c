@@ -665,25 +665,21 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 /// equip it and to sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
-  s32 remainingQuantity;
+  s32 i;
   s32 lastAddedSlot;
   struct ItemDefinition *item;
 
-  remainingQuantity = quantity;
   item = Item_GetDirectFar(itemId);
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   // Keep each inventory addition, coin debit and shop-credit increment in
   // order.
   Sound_PlayFar(SE_SHOP_PURCHASE);
-  if (lastAddedSlot < remainingQuantity) {
-    do {
-      lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
-      Party_AdjustCoinsFar(0 - item->price);
-      remainingQuantity--;
-      Party_AdjustShopCreditFar(item->price);
-      Shop_DrawMoney();
-    } while (remainingQuantity != 0);
+  for (i = 0; i < quantity; i++) {
+    lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
+    Party_AdjustCoinsFar(0 - item->price);
+    Party_AdjustShopCreditFar(item->price);
+    Shop_DrawMoney();
   }
   Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
   if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {

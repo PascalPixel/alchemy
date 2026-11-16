@@ -452,26 +452,13 @@ void Garoh_LittleWerewolfThanks(void) {
     FieldEvent_SetMessageId((s32)MsgGarohHeyItsYouGuysThanks);
     // "Hey, it's you guys! Thanks for last night!"
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 10);
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_QUESTION;
-      s32 b = 15;
-
-      FieldActor_ShowEmote(ACTOR_FELIX, a, b);
-    }
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
-      s32 b = 10;
-
-      FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, a, b);
-    }
+    FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 15);
+    FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF,
+                         EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 10);
     // "Oh, yeah... That's right... You probably don't recognize me in my..."
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 5);
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_SMILE;
-      s32 b = 15;
-
-      FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, a, b);
-    }
+    FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, EMOTE_IN_FRONT | EMOTE_SMILE,
+                         15);
     // "I was in the cave with Maha! I was that little werewolf!"
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 5);
   }

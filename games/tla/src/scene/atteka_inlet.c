@@ -680,11 +680,7 @@ void AttekaInlet_SetUpTheShore(void) {
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00))
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, priority);
-  }
+  Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_VBLANK);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

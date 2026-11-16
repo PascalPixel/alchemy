@@ -681,12 +681,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST) {
     if (x == 47) {
       Event_SetFlag(FLAG_NORTH_PILLAR_PUSHED);
-      {
-        s32 column = 46;
-        s32 row = 73;
-
-        MapGrid_CopyCellAttributes(column, 74, 1, 1, column, row);
-      }
+      MapGrid_CopyCellAttributes(46, 74, 1, 1, 46, 73);
     }
     if (x == 57)
       Event_SetFlag(FLAG_EAST_PILLAR_PUSHED);

@@ -2122,11 +2122,7 @@ void Islets_InitializePier(void) {
     second->motionFlags = 0;
     first->riseCounter = 1;
     second->riseCounter = 1;
-    {
-      s32 held = 29;
-
-      MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, held);
-    }
+    MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
   } else {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
@@ -2138,12 +2134,8 @@ void Islets_InitializePier(void) {
   }
   Actor_DisableById(ACTOR_PIER_PUDDLE);
   last = Actor_Get(ACTOR_PIER_PUDDLE);
-  {
-    s32 still = 0;
-
-    last->riseCounter = 1;
-    last->motionFlags = still;
-  }
+  last->riseCounter = 1;
+  last->motionFlags = 0;
   Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, 255);
   if (Event_GetFlag(FLAG_SCENE_TEMP_13))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);

@@ -829,11 +829,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   FieldEvent_Wait(30);
   MapGrid_CopyCellsLayered(117, 20, 7, 8, 104, 20);
   MapGrid_CopyCellsLayered(111, 12, 1, 6, 111, 20);
-  {
-    s32 destX = 40;
-    s32 destY = 84;
-    MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
-  }
+  MapGrid_CopyCellAttributes(49, 84, 8, 8, 40, 84);
   FieldEvent_Wait(30);
   OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(700), 0, toFIXED(490), SPRITE_CRATE);
@@ -2063,11 +2059,7 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
       GaiaRockInside_SetPlatformMode(id, mode);
     }
   }
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_AddFrame(GaiaRockInside_SwayPlatforms, priority);
-  }
+  Task_AddFrame(GaiaRockInside_SwayPlatforms, TASK_PASS_VBLANK);
 }
 
 /// Opens the passages on each side of the hall by how many of its two pairs of
@@ -2861,12 +2853,10 @@ s32 Scene_PrepareMap(void) {
           ACTOR_PRIORITY_IGNORES_RISES;
       ((struct MapWork *)map)->enabled[1] = 1;
       {
-        volatile u16 control = REG_BG2CNT & ~3;
-        // Once-only block: keeps the sky cell window's store after its read.
-        do {
-        } while (0);
+        u16 control;
 
-        REG_BG2CNT = control | 1;
+        *&control = REG_BG2CNT & ~3;
+        Io_Write16(control | 1, &REG_BG2CNT);
       }
       GaiaRockInside_DrawMazeRoom();
       stage = &gPath->current;
@@ -2899,9 +2889,6 @@ s32 Scene_PrepareMap(void) {
       layer->scaleX = FIXED_ONE;
       layer->scaleY = FIXED_ONE;
       layer->maskY = 0x3f80;
-      // Once-only block: keeps the scale defaults before the position sums.
-      do {
-      } while (0);
       layer->x = Iwram_MulFX(((struct MapWork *)map)->viewX, layer->scaleX) +
                  layer->offsetX;
       layer->y = Iwram_MulFX(((struct MapWork *)map)->viewZ, layer->scaleY) +

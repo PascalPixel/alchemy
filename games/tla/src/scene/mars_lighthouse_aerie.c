@@ -1239,7 +1239,6 @@ extern u32 gMarsLighthouseAerie_MiaTurnScript[];
 /// and Kraden's old friends, freed.
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 facing;
-  s32 leader, leaderAgain;
   struct Actor *actor, *mother, *father, *kyle;
   s32 leaderId;
 
@@ -1260,9 +1259,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetAnimation(ACTOR_FREED_JENNAS_MOTHER, 7);
   Actor_SetAnimation(ACTOR_FREED_JENNAS_FATHER, 7);
   Actor_SetAnimation(ACTOR_FREED_KYLE, 6);
-  leader = (s32)&gMainRoutineWork;
-  leader += offsetof(struct MainRoutineWork, leaderActorId);
-  leaderId = *(s32 *)leader;
+  leaderId = gMainRoutineWork.leaderActorId;
   facing = FACING_NORTH;
   Actor_SetPositionAndFacing(leaderId, toFIXED(504), toFIXED(320), facing);
   System_Wait(1);
@@ -1290,8 +1287,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   PaletteFade_Interpolate(16);
   System_Wait(16);
   FieldEvent_Wait(80);
-  *(s32 *)&gMarsLighthouseAerie_FlickerFrame = 0;
-  *(s32 *)&gMarsLighthouseAerie_FlickerRate = 4;
+  gMarsLighthouseAerie_FlickerFrame = 0;
+  gMarsLighthouseAerie_FlickerRate = 4;
   Actor_Get(ACTOR_DOOM_DRAGON)->update =
       (void (*)(void))MarsLighthouseAerie_FlickerDragon;
   Actor_Get(ACTOR_DRAGON_HEAD_A)->update =
@@ -1313,9 +1310,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   System_Wait(10);
   Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(40);
-  *(s32 *)&gMarsLighthouseAerie_FlickerRate = 3;
+  gMarsLighthouseAerie_FlickerRate = 3;
   System_Wait(30);
-  *(s32 *)&gMarsLighthouseAerie_FlickerRate = 2;
+  gMarsLighthouseAerie_FlickerRate = 2;
   System_Wait(20);
   Actor_SetPosition(ACTOR_DOOM_DRAGON, 0, 0);
   Actor_SetPosition(ACTOR_DRAGON_HEAD_A, 0, 0);
@@ -1360,7 +1357,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   // "That's what I was trying to warn you about!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS_STAND_IN, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(*(s32 *)leader, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST, 0);
@@ -1452,9 +1449,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_FaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_EAST);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_SHEBA_STAND_IN, 0);
   Actor_FaceDirection(ACTOR_PIERS_STAND_IN, FACING_NORTH, 0);
-  leaderAgain = (s32)&gMainRoutineWork;
-  leaderAgain += offsetof(struct MainRoutineWork, leaderActorId);
-  Actor_FaceDirection(*(s32 *)leaderAgain, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC_STAND_IN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN_STAND_IN, FACING_NORTHWEST, 0);
@@ -1483,7 +1478,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetAttachedEffect(ACTOR_SHEBA_STAND_IN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(ACTOR_SHEBA_STAND_IN, 0);
-  Actor_FaceDirection(*(s32 *)leaderAgain, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET_STAND_IN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN_STAND_IN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA_STAND_IN, FACING_NORTH, 0);
@@ -1506,12 +1501,12 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldActor_Jump(ACTOR_JENNA_STAND_IN, 4, 10);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN, 0);
   Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 2.4);
-  Actor_SetSpeed(*(s32 *)leaderAgain, 2.4);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2.4);
   Actor_SetSpeed(ACTOR_ISAAC_STAND_IN, 2.4);
   Actor_SetSpeed(ACTOR_GARET_STAND_IN, 2.4);
   Actor_SetScript(ACTOR_JENNA_STAND_IN,
                   (s32)gMarsLighthouseAerie_JennaTurnScript);
-  Actor_SetScript(*(s32 *)leaderAgain,
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
                   (s32)gMarsLighthouseAerie_LeaderTurnScript);
   Actor_SetScript(ACTOR_ISAAC_STAND_IN,
                   (s32)gMarsLighthouseAerie_IsaacTurnScript);
@@ -1735,11 +1730,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
-  {
-    s32 flags = 0;
-
-    Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, flags);
-  }
+  Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
@@ -2011,7 +2002,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   struct FieldWork *work, *later;
   struct OverlaySprite *sprite;
   struct Actor *created, *object;
-  s32 zero, firstBeam, tiles, glowTask, message;
+  s32 firstBeam, tiles, glowTask, message;
   struct Actor *anchor, *spawned;
   FIXED y, x, z;
   s32 block;

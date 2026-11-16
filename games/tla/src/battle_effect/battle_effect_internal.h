@@ -1695,7 +1695,10 @@ extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
+/// Inside gEffectScratch: FloraWork from its second tile number on, read at
+/// its fixed place.
 extern u16 gFlora_PetalTiles[];
+/// Inside gEffectScratch: FloraWork.palette, the object palette as it fades.
 extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
@@ -1709,8 +1712,11 @@ extern const struct Scale gCoatlicue_UnitScale;
 extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
+/// In the map cell buffer: the wing's faces, eight bytes a quad.
 extern u8 gHaures_WingStrip[];
+/// The face after the wing's last, which ends the strip.
 extern u8 gHaures_WingStripEnd[];
+/// In the map cell buffer: each wing corner's shade.
 extern u8 gHaures_WingShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
@@ -1718,33 +1724,67 @@ extern const struct Scale gHaures_OpeningScale;
 
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];
+/// In the map cell buffer: the tiles Iris draws its sprites from.
 extern u8 gIris_TileBuffer[];
 extern const struct Scale gIris_UnitScale;
-extern const u32 BattleEffect_PatchTemplateCode[];
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
+/// (patch_template.s); none of it runs where it is.
+extern const u32 gBlitterTemplate[];
+
+// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
+// blitter_fragments.s: Forward reads the picture left to right and Reverse
+// right to left. None of them runs where it is.
+/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at the
+/// brightest canvas level.
 extern const u32 BattleEffect_Mask[];
+/// The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c).
 extern const u16 gBattleEffect_BitOperands[];
+/// Copy, one pixel, right to left.
 extern const u32 BattleEffect_CopyReverse[];
+/// Copy, one pixel, left to right.
 extern const u32 BattleEffect_CopyForward[];
+/// Copy, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Copy8Reverse[];
+/// Copy, a full cell's eight pixels, left to right.
 extern const u32 BattleEffect_Copy8Forward[];
+/// Transparent, one pixel, right to left.
 extern const u32 BattleEffect_TransparentReverse[];
+/// Transparent, one pixel, left to right.
 extern const u32 BattleEffect_TransparentForward[];
+/// Transparent, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Transparent8Reverse[];
+/// Transparent, a full cell's eight pixels, left to right.
 extern const u32 BattleEffect_Transparent8Forward[];
+/// Max, one pixel, right to left.
 extern const u32 BattleEffect_MaxReverse[];
+/// Max, one pixel, left to right.
 extern const u32 BattleEffect_MaxForward[];
+/// Max, four pixels (one canvas word), right to left; a full cell's row takes
+/// it twice.
 extern const u32 BattleEffect_Max4Reverse[];
+/// Max, four pixels (one canvas word), left to right; a full cell's row takes
+/// it twice.
 extern const u32 BattleEffect_Max4Forward[];
+/// Additive, one pixel, right to left.
 extern const u32 BattleEffect_AdditiveReverse[];
+/// Additive, one pixel, left to right.
 extern const u32 BattleEffect_AdditiveForward[];
+/// Additive, four pixels added a word at a time, right to left; a full cell's
+/// row takes it twice.
 extern const u32 BattleEffect_ColorReverse[];
+/// Additive, four pixels added a word at a time, left to right; a full cell's
+/// row takes it twice.
 extern const u32 BattleEffect_ColorForward[];
+
+// The model renderer's ARM routines, which run from IWRAM, each with its size
+// in bytes and, for three of them, in DMA words.
+/// An ARM build of Render_FillMesh (Render_RunFillMeshKernel).
 extern const u8 Render_FillMeshKernel[];
 extern u8 Render_FillMeshKernelCodeSize[];
+/// The vertex transform Render_TransformVertices runs.
 extern const u8 Render_TransformKernel[];
 extern u8 Render_TransformKernelCodeSize[];
-/// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-/// bytes and, for three of them, in DMA words.
+/// The rasterizer kernels, one for each ModelKind.
 extern const u8 Render_SolidKernel[];
 extern const u8 Render_SolidMaxKernel[];
 extern const u8 Render_SolidAdditiveKernel[];

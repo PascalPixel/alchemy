@@ -1,7 +1,7 @@
 	.section .rodata
-@ A copy of The Broken Seal's gBattleEffect_SparkTiles
-	.global gBattleEffect_ArcTiles
-gBattleEffect_ArcTiles:
+@ A copy of The Broken Seal's gFieldEffect_SparkTiles
+	.global gFieldEffect_SparkTiles
+gFieldEffect_SparkTiles:
 	.incbin "games/tla/src/graphics/field_effects/spark.4bpp32x16"
 @ A copy of The Broken Seal's gBattleEffect_ArcSparkTiles
 	.global gFieldEffect_ArcSparkTiles

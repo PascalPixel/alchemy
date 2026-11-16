@@ -36,8 +36,6 @@ STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
-extern struct BattleCamera *gCameraWork;
-
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is
 /// shown.

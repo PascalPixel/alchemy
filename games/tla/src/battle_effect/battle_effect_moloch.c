@@ -2632,7 +2632,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
    * touches. */
   u32 frame[34];
 
-  src = BattleEffect_PatchTemplateCode;
+  src = gBlitterTemplate;
   dst = (u32 *)436;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 

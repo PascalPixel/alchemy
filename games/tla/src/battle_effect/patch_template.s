@@ -5,8 +5,8 @@
 @ (rsb fp, ip, #16; mov lr, fp), not a frame.
 .syntax unified
 	.thumb
-	.global BattleEffect_PatchTemplateCode
-BattleEffect_PatchTemplateCode:
+	.global gBlitterTemplate
+gBlitterTemplate:
 	.global BattleEffect_PatchTemplate
 	.thumb_func
 BattleEffect_PatchTemplate:

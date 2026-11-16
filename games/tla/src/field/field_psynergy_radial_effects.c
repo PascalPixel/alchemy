@@ -1315,7 +1315,7 @@ void BattleEffect_StartArcEffect(void) {
       HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*work));
 
   work->resource = VramCache_FindFreeEntry();
-  VramCache_Load(work->resource, 0x100, gBattleEffect_ArcTiles);
+  VramCache_Load(work->resource, 0x100, gFieldEffect_SparkTiles);
   work->group = 0;
   work->age[0] = 999;
   work->age[1] = 999;

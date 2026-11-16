@@ -41,7 +41,6 @@ struct FieldParticle;
 struct Actor;
 struct SceneAreaNameRule;
 
-extern u16 gBattleEffect_CyclePatternWords[];
 extern const s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
@@ -132,13 +131,16 @@ struct ParticlePosition {
   FIXED y;
   FIXED z;
 };
-extern const u8 gBattleEffect_ArcTiles[];
+/// The 32x16 spark the swelling arcs over a caster are drawn with
+/// (field_effects.s).
+extern const u8 gFieldEffect_SparkTiles[];
 extern const u16 gBattleEffect_EightWayHeadingWords[];
 extern const s32 gBattleEffect_ParticleScript[];
 extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];
 extern const u8 gColorBuffer_DarkenFourLevelsMap[32];
+/// The world map screen's state while it is open.
 extern struct WorldMapWork gWorldMapWork;
 s32 AnimationObject_SelectAnimationFar(struct Sprite *, s32);
 struct ActionDescriptor;

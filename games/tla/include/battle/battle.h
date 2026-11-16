@@ -115,17 +115,11 @@ struct BattleActionRecord;
 struct PaletteFade;
 struct BattleObject;
 struct Actor;
-struct ParticleChild;
 struct PendingEvent;
 struct ScaledSprite;
 struct SceneCueRule;
 struct WorldMapWork;
 
-/// A spawned object as a particle emitter sees it: only its sprite.
-struct ParticleEffectObject {
-  u8 padding[80];              ///< not named through this view
-  struct ParticleChild *child; ///< the sprite, MotionObject's records
-};
 /// A point in the field, in 16.16 pixels.
 struct ParticlePosition {
   FIXED x;

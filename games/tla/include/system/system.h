@@ -80,11 +80,6 @@ void PartyStatus_Close(void);
 struct BattleObject;
 struct Actor;
 
-/// A battle object's sprite as its motion code reads it: the flags at byte 9.
-struct ParticleChild {
-  u8 padding[9];
-  u8 flags;
-};
 /// The party status window's layout (struct PartyStatusWindow), the block of
 /// heap slot HEAP_SLOT_PARTY_STATUS.
 extern u8 gPartyStatusWork[];

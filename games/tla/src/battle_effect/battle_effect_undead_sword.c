@@ -14,7 +14,7 @@ enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
-#define BLAST_SHEET_OFFSET 0x460
+#define BLAST_SHEET_OFFSET 1120
 
 #define BURST_FRAMES 54
 #define BURST_HIT_FRAME 10
@@ -152,12 +152,12 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 }
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define PLUME_EDGE_FLASH_BURST_PICTURES 0x2000
+#define PLUME_EDGE_FLASH_BURST_PICTURES 8192
 
 #define PLUME_EDGE_FRAMES 80
 
 /// Where BillowTexture is decoded in the effect's pictures.
-#define PLUME_EDGE_BILLOW 0x4710
+#define PLUME_EDGE_BILLOW 18192
 
 /// Plume Edge: the user dashes at the target, which a fan of white flashes
 /// throws back; a pillar of light scrolls up through it for half a second and
@@ -374,16 +374,16 @@ struct WaterTriangle {
 #define WATER_ROWS 8
 #define WATER_QUADS ((WATER_ROWS - 1) * (WATER_COLUMNS - 1))
 /// The water's mesh as triangles, two to a quad.
-#define WATER_MESH ((struct WaterTriangle *)(Ram_MapCellBuffer + 0x4000))
+#define WATER_MESH ((struct WaterTriangle *)(Ram_MapCellBuffer + 16384))
 
 /// Where SwirlTexture is decoded in the effect's pictures.
-#define WATER_SHEET_SWIRL 0x2000
+#define WATER_SHEET_SWIRL 8192
 
 /// Where SmokeSheet is decoded in the effect's pictures.
-#define WATER_SHEET_SMOKE_PUFFS 0x3000
+#define WATER_SHEET_SMOKE_PUFFS 12288
 
 /// Where the 32x32 picture at the sheet's start is mirrored into a 64x64 one.
-#define WATER_SHEET_MIRRORED 0x400
+#define WATER_SHEET_MIRRORED 1024
 
 /// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
 /// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
@@ -414,7 +414,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  mesh = Ram_MapCellBuffer + 0x4000;
+  mesh = Ram_MapCellBuffer + 16384;
   if (mode == WATER_SHEET_DREAMTIDE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else {
@@ -435,7 +435,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
 
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                                work->sheet + WATER_SHEET_SMOKE_PUFFS, 1, 0);
-    for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS; i != 0x1b00;
+    for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS; i != 6912;
          i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;
@@ -563,7 +563,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       REG_BLDALPHA = BLEND_ALPHA(80 - frame, BLEND_WEIGHT_MAX);
     }
 
-    vertices = Heap_AllocEwram(0x400);
+    vertices = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     shade = 0;
 
@@ -723,7 +723,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
         Matrix_RotateX(TRIG_TURN / 16);
         Matrix_RotateY(angle);
-        Matrix_ScaleUniform(t * 0x3000);
+        Matrix_ScaleUniform(t * (FIXED_ONE * 3 / 16));
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);
@@ -752,7 +752,7 @@ void BattleEffect_RunAroma(struct BattleEffectParams *args) {
 #define WAFT_SEGMENTS 33
 
 /// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
-#define WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES 0x2000
+#define WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES 8192
 
 /// The body of Waft (mode 0) and Aroma (mode 1): the djinni appears over the
 /// caster, bobs and rises, while a funnel of wind (33 segments of two
@@ -821,7 +821,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(
       RESOURCE_JUPITER_DJINN_SMALL_SHEET,
       work->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
-  Render_BuildQuadStrip(Ram_MapCellBuffer + 0x318, 4, 32, 32);
+  Render_BuildQuadStrip(Ram_MapCellBuffer + 792, 4, 32, 32);
 
   for (frame = 0; frame != frames; frame++) {
     s32 shade;
@@ -944,7 +944,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, camera->focus);
     model = Render_AllocateModelList(1);
-    vertices = Ram_MapCellBuffer + 0x108;
+    vertices = Ram_MapCellBuffer + 264;
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 - 64;
@@ -962,7 +962,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     texture.pixels = work->sheet;
     model->kind = MODEL_SHADED_MAX;
     model->texture = &texture;
-    model->mesh = Ram_MapCellBuffer + 0x318;
+    model->mesh = Ram_MapCellBuffer + 792;
     model->scrollU = 0;
     model->scrollV = 0;
     gProjection.centerY = 104;
@@ -978,23 +978,23 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
         Matrix_RotateY(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
-          scale = scale + (frame << 11) - 0xe000;
+          scale = scale + (frame << 11) - FIXED_ONE * 7 / 8;
         }
         Matrix_Scale(scale * 3 / 2, FIXED_ONE, scale * 3 / 2);
       } else {
         s32 scale;
 
-        Matrix_Translate(INTtoFIXED(screen.x / 2 - 64), (k << 20) + 0x100000,
+        Matrix_Translate(INTtoFIXED(screen.x / 2 - 64), (k << 20) + toFIXED(16),
                          0);
         Matrix_RotateX((k << 12) - TRIG_TURN / 32);
         Matrix_RotateY(k * 21000 + yaw);
         scale = TRIG_TURN - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
-          scale = scale + (frame << 11) - 0xe000;
+          scale = scale + (frame << 11) - FIXED_ONE * 7 / 8;
         }
         Matrix_Scale(scale * 2, FIXED_ONE, scale * 2);
       }
-      Render_TransformVertices(funnel, Ram_MapCellBuffer + 0x108, 66);
+      Render_TransformVertices(funnel, Ram_MapCellBuffer + 264, 66);
       Render_DrawModelList(model);
     }
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -1014,7 +1014,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
 #define DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES 20000
 
 /// Where FireRingTexture is decoded in the effect's pictures.
-#define DIAMOND_BERG_FIRE_RING 0x3080
+#define DIAMOND_BERG_FIRE_RING 12416
 
 /// An iceberg drops onto the target and is driven down in eight blows (every
 /// eighth frame from 31), each throwing eight shards; the last shatters it
@@ -1054,7 +1054,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
                              cells + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, cells, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, cells + 0x1000, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, cells + 4096, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
@@ -1165,7 +1165,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           continue;
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
-        pixels = work->sheet + 0x800 + gPrism_ShardPictures[cell];
+        pixels = work->sheet + 2048 + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];
         x = FIXED_INTEGER_PART(shard->x) - (width >> 1);
         y = FIXED_INTEGER_PART(shard->y);
@@ -1190,7 +1190,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
     if (frame > 5) {
       void *vertices;
 
-      vertices = Heap_AllocEwram(0x400);
+      vertices = Heap_AllocEwram(1024);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;

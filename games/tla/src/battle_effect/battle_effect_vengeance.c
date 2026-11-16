@@ -147,8 +147,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
         backgroundX = toFIXED(86);
         speed = toFIXED(16);
       } else {
-        backgroundX = 0xffaa0000;
-        speed = 0xfff00000;
+        backgroundX = -toFIXED(86);
+        speed = -toFIXED(16);
       }
       for (i = 0; i != VENGEANCE_ARROWS; i++) {
         arrow = &work->particles[i];
@@ -165,7 +165,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
           strikes = 1;
         }
         arrow->z = strikes;
-        arrow->velocityY = (Random16() & TRIG_ANGLE_MASK) - 0x8000;
+        arrow->velocityY = (Random16() & TRIG_ANGLE_MASK) - DEGtoANG(180);
         arrow->velocityZ = 0;
         arrow->variant = 0;
       }
@@ -343,10 +343,10 @@ struct Scythe {
 #define LIFE_SHEAR_FRAMES 90
 /// Life Shear's pictures in the map cell buffer: the reaper's raised pose, and
 /// the textures of the scythe's blade, its handle and its flash.
-#define LIFE_SHEAR_REAPER_RAISED (Ram_MapCellBuffer + 0x12e8)
-#define LIFE_SHEAR_BLADE_TEXTURE (Ram_MapCellBuffer + 0x276b)
-#define LIFE_SHEAR_HANDLE_TEXTURE (Ram_MapCellBuffer + 0x476b)
-#define LIFE_SHEAR_FLASH_TEXTURE (Ram_MapCellBuffer + 0x576b)
+#define LIFE_SHEAR_REAPER_RAISED (Ram_MapCellBuffer + 4840)
+#define LIFE_SHEAR_BLADE_TEXTURE (Ram_MapCellBuffer + 10091)
+#define LIFE_SHEAR_HANDLE_TEXTURE (Ram_MapCellBuffer + 18283)
+#define LIFE_SHEAR_FLASH_TEXTURE (Ram_MapCellBuffer + 22379)
 
 /// The reaper (a tiled background picture) glides in from the far side and
 /// swings its scythe (a two-part model) through the target at frame 50, with
@@ -412,11 +412,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
         work->particles[0].x = toFIXED(32);
         work->particles[0].y = toFIXED(65472);
-        work->particles[0].z = 0xffffe3d0;
+        work->particles[0].z = -7216;
       } else {
         work->particles[0].x = toFIXED(65504);
         work->particles[0].y = toFIXED(65472);
-        work->particles[0].z = 0xffffe3d0;
+        work->particles[0].z = -7216;
       }
       work->particles[0].velocityZ = 0;
       work->particles[0].variant = 0;
@@ -426,7 +426,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         speed = toFIXED(15);
       } else {
         reaperX = INTtoFIXED(position->x - 304);
-        speed = 0xfff10000;
+        speed = -toFIXED(15);
       }
     }
     if (frame > 61) {
@@ -435,7 +435,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       } else {
         reaperX -= toFIXED(2);
       }
-      reaperY -= 0x4aaaa;
+      reaperY -= toFIXED(14) / 3;
     }
     reaperX -= speed;
     speed = speed * 60 / DAMPING_SCALE;
@@ -498,11 +498,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         scythe->velocityY = still;
       }
       if (frame > 63) {
-        s32 fall = (frame << 7) - 0x2000;
+        s32 fall = (frame << 7) - 8192;
 
         scythe->velocityY -= toFIXED(1) / 4;
-        if (fall > 0x400) {
-          fall = 0x400;
+        if (fall > 1024) {
+          fall = 1024;
         }
         scythe->z -= fall;
       }
@@ -537,7 +537,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       work->particles[0].velocityZ++;
     }
     if (timer >= 0) {
-      scale = 0xb1e0;
+      scale = 45536;
       if (frame > 63) {
         scale = scale - (frame << 9) + FIXED_ONE / 2;
       }
@@ -571,17 +571,17 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         texture.pixels = LIFE_SHEAR_BLADE_TEXTURE;
         Matrix_RotateZ(DEGtoANG(45) -
                        (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
-        Matrix_Scale(FIXED_ONE, 0x15f90, FIXED_ONE);
+        Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
         Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
       // The flash: four blades, shrinking over eight frames.
       if ((u32)phase <= 7) {
-        scale = 0x78e20 - (frame << 13);
+        scale = 495136 - (frame << 13);
         Matrix_Initialize();
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          Matrix_Translate(0xfff00000, 0, 0);
+          Matrix_Translate(-toFIXED(16), 0, 0);
         } else {
           Matrix_Translate(toFIXED(16), 0, 0);
         }
@@ -596,7 +596,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         texture.pixels = LIFE_SHEAR_FLASH_TEXTURE;
         for (i = 0; i != 4; i++) {
           Matrix_Push();
-          Matrix_RotateZ(i * (DEGtoANG(90)) + 0x5650);
+          Matrix_RotateZ(i * (DEGtoANG(90)) + 22096);
           Matrix_Scale(FIXED_ONE / 4, ((i & 1) << 15) + FIXED_ONE * 3 / 4,
                        FIXED_ONE / 2);
           Matrix_ScaleUniform(FIXED_ONE);
@@ -710,7 +710,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
         spawned = 0;
         i = 0;
-        life = ((s32 *)(Ram_MapCellBuffer + 0x18));
+        life = ((s32 *)(Ram_MapCellBuffer + 24));
         for (; i != DROP_COUNT; i++) {
           *life = -1;
           life += 7;
@@ -1060,7 +1060,7 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 #define BUBBLE_FRAMES 60
 /// The bubbles past the map cells: each keeps its picture in z and its life in
 /// variant, -1 once it has left the top of the canvas.
-#define BUBBLES ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
+#define BUBBLES ((struct Particle *)(Ram_MapCellBuffer + 20480))
 
 /// A column of bubbles. On the first frame 256 glowing ovals of random size
 /// appear over the bottom left of the canvas; for 60 frames they float up
@@ -1157,7 +1157,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 struct MeshTriangle;
 struct MeshVertex;
 
-#define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
+#define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 20480))
 
 /// Fills the scanline gradient behind the serpent: dark rows above and below,
 /// a ramp shaded by level in between.
@@ -1223,10 +1223,10 @@ struct MeshVertex;
   } while (0)
 
 /// Where ScaleTexture is decoded in the effect's pictures.
-#define COATLICUE_SCALES 0x4000
+#define COATLICUE_SCALES 16384
 /// BubbleAnimationSheet's fifteen pictures, then a copy of them at half
 /// brightness.
-#define COATLICUE_BUBBLES 0x4800
+#define COATLICUE_BUBBLES 18432
 #define BUBBLE_SHEET_BYTES 3000
 #define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
 
@@ -1258,7 +1258,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 ty;
   s32 spin;
   s32 zero;
-  u8 *coilMesh = Ram_MapCellBuffer + 0x4800;
+  u8 *coilMesh = Ram_MapCellBuffer + 18432;
   s16 list[UNIT_MAX];
   FIXED place[4];
   struct Scale req;
@@ -1296,7 +1296,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   skip = 0;
-  Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x4400, coilMesh, 32);
+  Mesh_BuildCylinderBand(Ram_MapCellBuffer + 17408, coilMesh, 32);
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -1640,11 +1640,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Matrix_Initialize();
       Matrix_Translate(0, 0, toFIXED(256));
       if (frame > 539) {
-        Matrix_Scale(frame * 1500 - 0xc4c10, FIXED_ONE, FIXED_ONE);
+        Matrix_Scale(frame * 1500 - 805904, FIXED_ONE, FIXED_ONE);
       } else if (frame > 517) {
         Matrix_Scale(0, 0, FIXED_ONE);
       } else if (frame > 485) {
-        s32 s = 0x103000 - (frame << 11);
+        s32 s = 1060864 - (frame << 11);
 
         Matrix_Scale(s, s, FIXED_ONE);
       }
@@ -1790,9 +1790,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       if ((u32)t <= 107) {
         s32 pitch;
 
-        ty = (frame * 3 << 13) - 0x4ec000;
+        ty = (frame * 3 << 13) - toFIXED(315) / 4;
         pitch = 4000;
-        if (ty > 0x180000) {
+        if (ty > toFIXED(24)) {
           ty = toFIXED(24);
         }
         s = frame * 611 - 111926;
@@ -1800,8 +1800,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           s = 55536;
         }
         if (frame > 273) {
-          ty = (frame << 15) - 0x710000;
-          if (ty > 0x200000) {
+          ty = (frame << 15) - toFIXED(113);
+          if (ty > toFIXED(32)) {
             ty = toFIXED(32);
           }
           pitch = 21536 - (frame << 6);
@@ -1828,7 +1828,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Matrix_ScaleUniform(s);
         if (frame <= 273) {
-          Matrix_RotateZ(spin - 0x12400);
+          Matrix_RotateZ(spin - 74752);
         }
         Matrix_RotateX(pitch);
         Matrix_RotateY(spin);
@@ -1850,7 +1850,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       }
       if ((u32)(frame - 274) <= 27) {
-        s = (frame << 11) - 0x85000;
+        s = (frame << 11) - 544768;
         texture.pixels = cellBuffer;
         model->kind = MODEL_SHADED_ADDITIVE;
         sh = 0;
@@ -1907,7 +1907,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           if (frame > gCoatlicue_FlashFrames[i] &&
               frame < gCoatlicue_FlashFrames[i] + 10) {
             s32 d = frame - gCoatlicue_FlashFrames[i];
-            s = 0x14000 - (d << 13);
+            s = 81920 - (d << 13);
             texture.pixels = cellBuffer;
             model->kind = MODEL_SHADED_ADDITIVE;
             sh = d * 16 - 56;
@@ -1935,7 +1935,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             ty = -toFIXED(44);
             s = (frame - st) * 2978;
             if (s > 65535) {
-              s = 0x10000;
+              s = FIXED_ONE;
             }
             texture.pixels = work->sheet;
             sh = -16;
@@ -1943,7 +1943,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             model->shade = sh;
             Matrix_Initialize();
             if (frame > 539) {
-              ty = ((frame - 539) << 20) + -0x2c0000;
+              ty = ((frame - 539) << 20) - toFIXED(44);
             }
             Matrix_Translate(-toFIXED(4), ty, 0);
             Matrix_Scale(s, s / 2, s);
@@ -1979,7 +1979,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (frame > 273) {
-            s = s + (frame << 13) + -0x224000;
+            s = s + (frame << 13) - 2244608;
           }
           Matrix_ScaleUniform(s);
           if (i == 0) {
@@ -2005,7 +2005,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Matrix_Translate(INTtoFIXED(x), 0, 0);
             Matrix_RotateZ(gCoatlicue_CoilRolls[i] + (frame << 8));
             if (frame > 209) {
-              Matrix_RotateZ((frame << 8) + -0xd200);
+              Matrix_RotateZ((frame << 8) - 53760);
             }
             sh = ((frame - gCoatlicue_CoilStarts[i]) << 2) - 64;
             if (sh > -16) {
@@ -2017,7 +2017,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             if (i == 0) {
               Matrix_RotateZ((274 - frame) << 10);
             } else {
-              Matrix_RotateZ((frame << 9) + -0x22400);
+              Matrix_RotateZ((frame << 9) - 140288);
             }
           }
         } else {
@@ -2025,7 +2025,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           if (sh > -16) {
             sh = -16;
           }
-          s = i * 26384 - (frame << 12) + 0x138710;
+          s = i * 26384 - (frame << 12) + 1279760;
           if (s <= 16383) {
             continue;
           }
@@ -2038,7 +2038,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           model->shade = sh;
           Matrix_RotateX((frame - i * 82) * 22 - 3000);
           Matrix_RotateY(-frame << 10);
-          Render_TransformVertices(Ram_MapCellBuffer + 0x4400, verts, 64);
+          Render_TransformVertices(Ram_MapCellBuffer + 17408, verts, 64);
           Render_DrawModelList(model);
         }
       }
@@ -2137,9 +2137,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     washTexture.pixels = work->sheet;
     i = 0;
     lift = frame * 8 - 128;
-    s = (frame << 13) + -0x20000;
+    s = (frame << 13) - 131072;
     d = frame - 16;
-    for (; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
+    for (; i != 3; lift -= 64, s -= 65536, i++, d -= 8) {
       if (d >= 0) {
         s32 washShade = 0;
 

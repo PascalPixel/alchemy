@@ -21,10 +21,10 @@
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
-/// The last flag Scene_Arrive clears with the Djinn's hiding flags on every
-/// arrival: it clears the 96 flags from FLAG_DJINN_HIDING_FIRST, as The Broken
-/// Seal's does.
-#define FLAG_DJINN_HIDING_LAST 0xdf
+/// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
+/// clears on every arrival: the 80 hiding flags and the 16 after them, the
+/// range The Broken Seal clears.
+#define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
 /// after it is "Post-Reunion Data" (MsgSavePostReunion).
@@ -122,7 +122,7 @@
 /// While set, the keys that end Sand do nothing (Sand_CheckEndKeys): Ankohl
 /// Ruins sets it as the great face's raft passes rows 31 to 35, and clears it
 /// at row 37; Scene_Arrive clears it on every arrival.
-#define FLAG_SAND_HELD 0x146
+#define FLAG_SAND_CANNOT_END 0x146
 /// While set, the save screen refuses to save with "Cannot save here".
 #define FLAG_CANNOT_SAVE_HERE 0x17c
 /// While set, the save screen refuses to save with "This is no place for

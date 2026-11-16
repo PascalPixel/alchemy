@@ -405,14 +405,15 @@ void System_VBlankHandler(void) {
   gVBlankDone = 1;
 }
 
-#define SOUND_PRESET_COUNT 5
+#define SOUND_REVERB_CODE_COUNT 5 ///< the codes of enum SoundReverbCode
 
-/// Where The Broken Seal copies the mixer code for reverb preset `preset` into
-/// IWRAM, The Lost Age keeps only the range check and returns 0, so the
-/// battle's call changes nothing.
-s32 Sound_LoadReverbCode(s32 preset) {
-  if ((u32)preset > SOUND_PRESET_COUNT - 1)
-    preset = 0;
+/// Where The Broken Seal copies the mixer code for reverb code `code` (enum
+/// SoundReverbCode) into IWRAM, The Lost Age keeps only the range check and
+/// returns 0, so its callers (the battle, the lobby, the sound test and the
+/// debug menu) change nothing.
+s32 Sound_LoadReverbCode(s32 code) {
+  if ((u32)code > SOUND_REVERB_CODE_COUNT - 1)
+    code = 0;
   return 0;
 }
 
@@ -435,4 +436,4 @@ void Input_HandleKeyInterrupt(void) {
 #undef RGB_WHITE
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
-#undef SOUND_PRESET_COUNT
+#undef SOUND_REVERB_CODE_COUNT

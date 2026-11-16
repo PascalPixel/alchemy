@@ -19,7 +19,7 @@
 /// UnusedDummyFunc; nothing calls it.
 void SoundTest_UnusedDummyFunc(void) {}
 
-void Sound_LoadReverbCode(s32 preset);
+void Sound_LoadReverbCode(s32 code);
 
 /// The three cues the test starts with.
 static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};

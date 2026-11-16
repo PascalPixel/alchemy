@@ -11,14 +11,14 @@ struct StripQuad;
 #define PUPPET_SEGMENTS 33
 /// The arm's corners, their projections and its strip's mesh, in the map cell
 /// buffer.
-#define PUPPET_STRIP_VERTICES (Ram_MapCellBuffer + 0x1000)
-#define PUPPET_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
+#define PUPPET_STRIP_VERTICES (Ram_MapCellBuffer + 4096)
+#define PUPPET_STRIP_MESH (Ram_MapCellBuffer + 8192)
 /// The last particle keeps the target's position, and its scale in velocityX
 /// and velocityY.
 #define FIRE_PUPPET_SAVED_TARGET 63
 
 /// Where GhostSkullTexture is decoded in the effect's pictures.
-#define FIRE_PUPPET_GHOST_SKULL 0x4000
+#define FIRE_PUPPET_GHOST_SKULL 16384
 
 /// From the caster rises a flaming arm (33 segments of two vertices each, a
 /// scrolling textured strip) that reaches up and over to 1424 units, with a

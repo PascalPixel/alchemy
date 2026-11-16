@@ -482,7 +482,7 @@ enum RedCrescentPicture {
 
 /// The bytes an effect's work block is lent: more than struct
 /// BattleEffectWork holds.
-#define BATTLE_EFFECT_WORK_SIZE 0x7b7c
+#define BATTLE_EFFECT_WORK_SIZE 31612
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770

@@ -6,7 +6,7 @@
 #include "sounds.h"
 
 /// The sparks live in the map cell buffer's second 16 KB.
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 512
 
 /// Each bite's anchor, where its jaw is drawn: the first three particles.

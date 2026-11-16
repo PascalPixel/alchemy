@@ -113,9 +113,9 @@ void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
 
 #define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define SPARKS_PER_MEMBER 64
-#define BEAM_SHEET 0x800    ///< the blue beam as unpacked, two bytes a pixel
-#define BEAM_BYTES 0x2000   ///< the beam packed to a byte a pixel
-#define DJINNI_SHEET 0x1000 ///< the Djinni picture
+#define BEAM_SHEET 2048   ///< the blue beam as unpacked, two bytes a pixel
+#define BEAM_BYTES 8192   ///< the beam packed to a byte a pixel
+#define DJINNI_SHEET 4096 ///< the Djinni picture
 
 // Motes of light gather around each target in turn, eight frames apart,
 // turning as they close in on its middle; a healing chime sounds as they

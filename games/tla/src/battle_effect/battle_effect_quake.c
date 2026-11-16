@@ -48,7 +48,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
                              work->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x8000);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 32768);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {

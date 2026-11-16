@@ -208,7 +208,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 #define BALL_COUNT 8
 
 /// Where FlameballSheet is decoded in the effect's pictures.
-#define JUPITER_FLAMEBALL_PICTURES 0x320
+#define JUPITER_FLAMEBALL_PICTURES 800
 
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define JUPITER_FRAMES 96
@@ -351,7 +351,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
 #define COLUMN_COUNT 10
 
 /// Where BlueFlameSheet is decoded in the effect's pictures.
-#define VENUS_BLUE_FLAME_PICTURES 0x2f8
+#define VENUS_BLUE_FLAME_PICTURES 760
 
 #define VENUS_FRAMES 96
 
@@ -435,7 +435,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             s32 speed;
 
             dot = &DOTS[i * DOTS_PER_COLUMN + j];
-            direction = (Random16() & 0x7fff) + 0x4000;
+            direction = (Random16() & 0x7fff) + DEGtoANG(90);
             speed = (Random16() & 0x1ff) + 256;
             dot->x = INTtoFIXED(column->x);
             dot->y = INTtoFIXED(column->y + 16);
@@ -485,7 +485,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 #define SPARKS_PER_PUFF 16
 
 /// Where GlowOrbSheet is decoded in the effect's pictures.
-#define MARS_GLOW_ORB_PICTURES 0x320
+#define MARS_GLOW_ORB_PICTURES 800
 
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along

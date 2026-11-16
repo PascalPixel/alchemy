@@ -375,7 +375,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         angle = (Random16() & 0x7fff) + DEGtoANG(180);
       else
         angle = Random16() & 0x7fff;
-      speed = (Random16() & 0x3ff) + 0x800;
+      speed = (Random16() & 0x3ff) + 2048;
       mote->y = source->y + (Random16() << 4) + toFIXED(5);
     } else {
       angle = Random16();

@@ -413,7 +413,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
             for (i = 0; i != 63; i++, q++) {
               s32 r = (Random16() & 255) + 256;
-              s32 a = (Random16() & 0x7fff) + 0x4000;
+              s32 a = (Random16() & 0x7fff) + DEGtoANG(90);
 
               q->velocityX = (Trig_Sin(a) * r) >> 7;
               q->velocityY = (Trig_Cos(a) * r) >> 7;

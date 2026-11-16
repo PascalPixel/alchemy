@@ -127,7 +127,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             s32 spread;
 
             speed = (Random16() & 0x1ff) + 128;
-            spread = (Random16() & 0x7fff) - 0x4000;
+            spread = (Random16() & 0x7fff) - DEGtoANG(90);
             spark->x = INTtoFIXED(x);
             spark->y = INTtoFIXED(y + 112);
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;

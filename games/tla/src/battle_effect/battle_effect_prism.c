@@ -162,7 +162,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   s32 blueOffset;
   s32 index;
 
-  phase = frame * 0x400;
+  phase = frame * 1024;
   redOffset = (Trig_Sin(phase + redPhase) * 16) >> 15;
   greenOffset = (Trig_Sin(phase + greenPhase) * 16) >> 15;
   blueOffset = (Trig_Sin(phase + bluePhase) * 16) >> 15;

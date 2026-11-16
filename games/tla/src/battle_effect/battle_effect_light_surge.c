@@ -17,10 +17,10 @@ struct StripQuad;
 #define SURGE_CIRCLES 32
 
 /// Where GlowOrbTexture is decoded in the effect's pictures.
-#define LIGHT_SURGE_GLOW_ORB 0x1000
+#define LIGHT_SURGE_GLOW_ORB 4096
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define LIGHT_SURGE_GLOW_BAND 0x4000
+#define LIGHT_SURGE_GLOW_BAND 16384
 
 /// The camera swings around the target while 14 bolts of light rain onto
 /// it, four frames apart; each lands with a flash and a ring of light (two

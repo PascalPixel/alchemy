@@ -175,7 +175,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
     channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
     (void)channel[DMA_CONTROL_HALF];
-    Dma_Set(gMapGridCellBuffer + 0x82, (void *)&REG_WIN0H,
+    Dma_Set(gMapGridCellBuffer + 130, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

@@ -495,7 +495,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity2D(spark, 60, 0);
             if (spark->y > toFIXED(120)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
+            } else if ((u32)spark->x <= toFIXED(127) - 1 && spark->y >= 0) {
               s32 x = FIXEDtoINT(spark->x);
               s32 y = FIXEDtoINT(spark->y);
               s32 dotSize = spark->variant / 16 + 1;

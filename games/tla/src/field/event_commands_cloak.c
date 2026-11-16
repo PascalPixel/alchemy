@@ -206,7 +206,7 @@ void FieldPsynergy_Douse(void) {
           mote->groundHeight = pos.y - toFIXED(32);
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
-        mote->motionFlags = 2;
+        mote->motionFlags = ACTOR_FALLS;
         mote->priorityFlags = 5;
       }
       Sound_PlayFar(SE_WATER);
@@ -334,7 +334,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
   SET_POSITION(&position, work->x, work->y + toFIXED(16), work->z);
   object = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
-                                      position.z, 0x8000);
+                                      position.z, DEGtoANG(180));
   anchors[0] = object;
   right = FieldEffect_SpawnCarryHand(position.x - toFIXED(32), position.y,
                                      position.z, 0);
@@ -359,7 +359,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->update = Actor_CycleSpriteColors;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_PSYNERGY_START);
-  target->motionFlags = 4;
+  target->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= toFIXED(24)) {

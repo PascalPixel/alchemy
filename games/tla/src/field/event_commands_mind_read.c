@@ -58,7 +58,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   }
 
   line = work->lines[work->page ^ 1];
-  for (i = 0; i < 160; i++)
+  for (i = 0; i < DISPLAY_HEIGHT; i++)
     *line++ = Trig_Sin(((work->phase + i * 8) << 16) / 160) >> 14;
   work->phase += 4;
   work->page ^= 1;
@@ -148,13 +148,13 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
   s32 level = 0;
   s16 angle = hue;
 
-  angle = (angle + 360) % 360;
+  angle = (angle + HUE_DEGREES) % HUE_DEGREES;
   if (angle < 60) {
-    level = angle * 31 / 60;
+    level = angle * RGB_LEVEL_MAX / 60;
   } else if (angle < 180) {
     level = RGB_LEVEL_MAX;
   } else if (angle < 240) {
-    level = (240 - angle) * 31 / 60;
+    level = (240 - angle) * RGB_LEVEL_MAX / 60;
   }
   return level;
 }
@@ -168,14 +168,14 @@ void FieldEffect_AdvanceHueCycle(void) {
   u32 limit;
 
   r = FieldEffect_HueChannelRamp(work->hue);
-  g = FieldEffect_HueChannelRamp(work->hue + 120);
-  b = FieldEffect_HueChannelRamp(work->hue + 240);
+  g = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES / 3);
+  b = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES * 2 / 3);
 
   // Scale 0-31 down to 4-11.
-  work->red = (r / 4 + 4) & 31;
-  work->green = (g / 4 + 4) & 31;
-  work->blue = (b / 4 + 4) & 31;
-  limit = toFIXED(359);
+  work->red = (r / 4 + 4) & RGB_LEVEL_MAX;
+  work->green = (g / 4 + 4) & RGB_LEVEL_MAX;
+  work->blue = (b / 4 + 4) & RGB_LEVEL_MAX;
+  limit = toFIXED(HUE_DEGREES - 1);
   if ((u32)((work->hue += 4) << 16) > limit)
     work->hue = 0;
 }
@@ -220,7 +220,7 @@ u16 BattleEffect_GetEightWayHeadingWord(void) {
   struct InputState *input = &gInput;
   const u16 *words = gBattleEffect_EightWayHeadingWords;
 
-  return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
+  return *(u16 *)((u8 *)words + (DPAD_INDEX(input->held) << 1));
 }
 
 // Effects: motion of the main object in an item-breaking effect.
@@ -264,12 +264,6 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
-struct Vec3 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct PendingEvent;
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
@@ -278,8 +272,8 @@ struct PendingEvent;
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
 /// B, L or R end it.
 void FieldPsynergy_SteerPushedTarget(s32 unused) {
-  struct Vec3 position;
-  struct Vec3 beyond;
+  struct Vector3 position;
+  struct Vector3 beyond;
   struct FieldEffectWork *scene;
   struct Actor *user;
   struct Actor *target;
@@ -332,7 +326,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   FieldEffect_SnapScaleToFull(pusher);
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = FIXED_ONE / 2;
-  pusher->motionFlags = 4;
+  pusher->motionFlags = ACTOR_FLOATS;
   target->update = (void (*)(void))Actor_CycleSpriteColors;
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
@@ -352,9 +346,9 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     callback = (s32 (*)(void))scene->finishCallback;
     if (callback != NULL) {
       direction = callback();
-      if (direction == 0xffff)
+      if (direction == DPAD_ANGLE_NONE)
         break;
-    } else if (direction == 0xffff) {
+    } else if (direction == DPAD_ANGLE_NONE) {
       SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                    target->z.fixed);
       Vector_AddPolarOffset(toFIXED(16), angle, &position);
@@ -572,7 +566,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
       speed = Random16() + FIXED_ONE;
       child->acceleration = toFIXED(1);
       child->speedLimit = speed;
-      child->motionFlags = 2;
+      child->motionFlags = ACTOR_FALLS;
       child->gravity = toFIXED(1) / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
@@ -630,13 +624,13 @@ void UpdateRisingParticleBurst(void *object) {
       s32 speed;
       // One 1.0 for both uses, set before the block's calls; a literal at
       // each use differs.
-      s32 unit = 0x10000;
+      s32 unit = toFIXED(1);
 
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;
-      child->motionFlags = 2;
+      child->motionFlags = ACTOR_FALLS;
       child->gravity = toFIXED(1) / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
@@ -829,7 +823,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
                           p->values[2]);
       if (piece != 0) {
         Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
-        piece->motionFlags = 2;
+        piece->motionFlags = ACTOR_FALLS;
       }
       wait((Random_Below(2)) + 2);
       n--;
@@ -846,7 +840,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 /// caster, and then five falling actors appear 4 to 10 pixels round the
 /// Psynergy's position.
 void FieldPsynergy_Growth(void) {
-  u8 *state = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *state = Ram_HeapSlots->fieldEffectWork;
   struct BurstParticleVector position;
   struct BurstParticleVector *p;
   s32 entryCount;
@@ -859,15 +853,15 @@ void FieldPsynergy_Growth(void) {
     void *object;
     s32 randomValue;
 
-    p->values[0] = *(s32 *)(state + 4);
-    p->values[2] = *(s32 *)(state + 12);
-    randomValue = (Random16() * 6) + 0x40000;
+    p->values[0] = state->x;
+    p->values[2] = state->z;
+    randomValue = (Random16() * 6) + toFIXED(4);
     Vector_AddPolarOffset(randomValue, Random16(), p->values);
-    p->values[1] = *(s32 *)(state + 8);
+    p->values[1] = state->y;
     object = Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
-      ((struct Actor *)object)->motionFlags = 2;
+      ((struct Actor *)object)->motionFlags = ACTOR_FALLS;
     }
     wait((Random_Below(2)) + 2);
     entryCount--;
@@ -1025,8 +1019,8 @@ void FieldPsynergy_Lift(void) {
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
   SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
-  pair[0] =
-      FieldEffect_SpawnLiftHand(pos.x + toFIXED(32), pos.y, pos.z, 0x8000);
+  pair[0] = FieldEffect_SpawnLiftHand(pos.x + toFIXED(32), pos.y, pos.z,
+                                      DEGtoANG(180));
   pair[1] = FieldEffect_SpawnLiftHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
 
   wait(15);
@@ -1073,13 +1067,13 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
     scale = object->scaleX;
     if (scale < FIXED_ONE) {
       do {
-        scale += 0x800;
+        scale += FIXED_ONE / 32;
         object->scaleY = scale;
         object->scaleX = scale;
         object->facing += DEGtoANG(45);
         wait(1);
         scale = object->scaleX;
-      } while (scale <= 0xffff);
+      } while (scale < FIXED_ONE);
     }
     object->facing = angle;
   }
@@ -1239,12 +1233,12 @@ void FieldPsynergy_Force(void) {
   scale = object->scaleX;
   if (scale < FIXED_ONE) {
     do {
-      scale += 0x500;
+      scale += FIXED_ONE * 5 / 256;
       object->scaleY = scale;
       object->scaleX = scale;
       wait(1);
       scale = object->scaleX;
-    } while (scale <= 0xffff);
+    } while (scale < FIXED_ONE);
   }
   wait(3);
 
@@ -1314,6 +1308,8 @@ void FieldPsynergy_Force(void) {
 
 struct OrbitingParticle;
 
+/// Per-frame update of a Frost glint: of every eight frames, two show the
+/// particle in swapped colours (SPRITE_COLOR_RBG).
 s32 FieldEffect_UpdateFrostGlint(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
@@ -1351,7 +1347,8 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
     if (life != 0) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
-      Vector_AddPolarOffset(life << 17, (s16)particle->userValue + (life << 11),
+      Vector_AddPolarOffset(life * toFIXED(2),
+                            (s16)particle->userValue + life * (TRIG_TURN / 32),
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1373,7 +1370,8 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
     if (life != 0) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
-      Vector_AddPolarOffset(life << 17, (s16)particle->userValue - (life << 11),
+      Vector_AddPolarOffset(life * toFIXED(2),
+                            (s16)particle->userValue - life * (TRIG_TURN / 32),
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {

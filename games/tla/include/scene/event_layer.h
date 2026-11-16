@@ -51,6 +51,14 @@ static inline void FieldTileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ,
                               layer);
 }
 
+void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z);
+
+/// A Mad Plant leaps out of a cleared bush at the leader
+/// (MadPlant_LeapAtLeader).
+static inline void FieldMadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
+}
+
 /// Sets up an effect sprite: its pivot, its OAM attributes and its first tile
 /// (EffectSprite_Init).
 static inline void FieldEffectSprite_Init(struct EffectSprite *sprite,

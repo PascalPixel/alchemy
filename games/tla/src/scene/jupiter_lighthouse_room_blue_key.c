@@ -294,7 +294,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   return object;
 }
 

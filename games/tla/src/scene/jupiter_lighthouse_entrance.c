@@ -90,26 +90,33 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Cyclone clears the first patch of the entrance's grass.
 void JupiterLighthouse_CycloneFirstPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 70, 19, 1);
 }
 
+/// Cyclone clears the second patch of grass.
 void JupiterLighthouse_CycloneSecondPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 69, 22, 1);
 }
 
+/// Cyclone clears the third patch of grass.
 void JupiterLighthouse_CycloneThirdPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
 }
 
+/// Cyclone clears the fourth patch of grass.
 void JupiterLighthouse_CycloneFourthPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 85, 26, 1);
 }
 
+/// Cyclone clears the fifth patch of grass.
 void JupiterLighthouse_CycloneFifthPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
+/// Cyclone clears the third patch and, unless its flag is set, uncovers a
+/// treasure spot there, pushing off a leader standing on it.
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -130,10 +137,14 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   }
 }
 
+/// Leaves by exit 4.
 void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Sets up the entrance as the party enters: the fade in, the teleporter's ring
+/// the party arrives in, and Contigo's shops as where a defeat returns to.
+/// Returns 0.
 s32 Scene_Initialize(void) {
   s32 clear;
 
@@ -148,6 +159,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Sets the scene's arrival flags before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   return 0;
@@ -173,6 +185,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 void MapGrid_SetCellHeight();
 
+/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
+/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
   if (mode != 2) {
@@ -203,6 +217,8 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
+/// Raises a whirlwind eight pixels in front of an actor, moving along its
+/// facing (Whirlwind_Update), with a burst of light. Returns it.
 struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
@@ -228,10 +244,12 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   return object;
 }
 
+/// An actor's update: every eighth frame, a mote rising from a random point of
+/// it.
 s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
   struct EffectOptions params;
   s32 phase;
@@ -245,7 +263,7 @@ s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
     params.palette = 14;
     x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
     y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
-    speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
+    speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
@@ -273,6 +291,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"

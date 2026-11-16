@@ -194,15 +194,15 @@ void Izumo_CycloneFirstPatch(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
-/// Cyclone clears the second patch; until its flag is set, an actor is set in
-/// the cleared cell and the leader, if standing there, is pushed out.
+/// Cyclone clears the second patch and, unless its flag is set, uncovers a
+/// treasure spot there, pushing off a leader standing on it.
 void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(3999)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, toFIXED(456),
-          toFIXED(584));
+  if (!GameFlag_Get(0xf9f)) {
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
+          FIELD_TREASURE_ACTOR, toFIXED(456), toFIXED(584));
     if (FIELD_CELL(object->x.fixed) == 28 &&
         FIELD_CELL(object->z.fixed) == 36) {
       Event_Start();
@@ -222,9 +222,9 @@ void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(4000)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, toFIXED(472),
-          toFIXED(552));
+  if (!GameFlag_Get(0xfa0)) {
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
+          FIELD_TREASURE_ACTOR + 1, toFIXED(472), toFIXED(552));
     if (FIELD_CELL(object->x.fixed) == 29 &&
         FIELD_CELL(object->z.fixed) == 34) {
       Event_Start();
@@ -260,9 +260,9 @@ void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
-  if (!GameFlag_Get(4001)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, toFIXED(168),
-          toFIXED(328));
+  if (!GameFlag_Get(0xfa1)) {
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
+          FIELD_TREASURE_ACTOR + 2, toFIXED(168), toFIXED(328));
     if (FIELD_CELL(object->x.fixed) == 10 &&
         FIELD_CELL(object->z.fixed) == 20) {
       Event_Start();

@@ -494,7 +494,7 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
-void Link_DrawPageArrowsFar(s32 addr);
+void Link_DrawPageArrowsFar(s32 offset);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);

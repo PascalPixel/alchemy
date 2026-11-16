@@ -385,7 +385,7 @@ extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
 
-void Text_SetColor(s32 param);
+void Text_SetColor(s32 color);
 
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 

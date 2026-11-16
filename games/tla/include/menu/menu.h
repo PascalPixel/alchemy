@@ -49,7 +49,7 @@ extern u8 gShop_GlyphBytes[];
 extern const u8 gStatusMenu_LevelLetterString[];
 void *IconMenu_Open(void);
 void ItemMenu_PositionCategory(void);
-void IconMenu_AddIcon(s32 no);
+void IconMenu_AddIcon(s32 icon);
 void IconMenu_Close(void);
 void Resource_ResetPendingTransfer(void);
 s32 Sanctum_NeedsService(s32 entry_id, s32 kind);

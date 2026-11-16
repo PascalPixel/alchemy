@@ -50,13 +50,13 @@ void GabombaStatue_RaiseArrowB(void);
 void GabombaStatue_RedrawArrowB(void);
 
 extern s32 gGabombaStatue_TurntableScript[];
-extern s32 gGabombaStatue_LookAroundScript[];
+extern s32 gGabombaStatue_TurnToothScript[];
 extern u32 gGabombaStatue_JennaFocusScript[];
 extern u32 gGabombaStatue_PiersFocusScript[];
 extern u32 gGabombaStatue_KradenFocusScript[];
 extern u32 gGabombaStatue_KradenPointsScript[];
-extern s32 gGabombaStatue_StepBackScript[];
-extern s32 gGabombaStatue_GirlsStepBackScript[];
+extern s32 gGabombaStatue_LookNorthAndEastScript[];
+extern s32 gGabombaStatue_LookNorthAndWestScript[];
 
 extern u32 gGabombaStatue_PinionReleaseScript[];
 

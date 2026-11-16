@@ -98,7 +98,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 /// Loads the green panel the speakers' names are written on, and starts
 /// Epilogue_PlaceNamePanel.
 void Epilogue_LoadNamePanel(void) {
-  void *buffer = BumpAlloc(0x800);
+  void *buffer = BumpAlloc(64 * 64 / 2);
   struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
@@ -106,17 +106,17 @@ void Epilogue_LoadNamePanel(void) {
   s32 priority;
   s32 value;
 
-  Dma_Set(gEpilogueNamePanelPalette, (void *)0x050003c0, DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+  Dma_Set(gEpilogueNamePanelPalette, (void *)&OBJ_PLTT_COLOR(14, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   sprite = &gEpilogueNamePanel;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GREEN_PANEL), buffer);
   slot = &gEpilogueNamePanelEntry;
   value = VramCache_FindFreeEntry();
   *slot = value;
   tileSlot = &gEpilogueNamePanelTile;
-  value = Vram_Load(value, 0x800, buffer);
+  value = Vram_Load(value, 64 * 64 / 2, buffer);
   *tileSlot = value;
-  FieldEffectSprite_Init(sprite, 0, 0, 0xc0000000, value);
+  FieldEffectSprite_Init(sprite, 0, 0, OBJ_SIZE_64X64, value);
   sprite->depth = 240;
   sprite->oam.priority = 0;
   sprite->oam.fullColor = 0;
@@ -124,7 +124,7 @@ void Epilogue_LoadNamePanel(void) {
   Heap_Release(buffer);
   zero = 0;
   gEpilogueNameShown = zero;
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   FieldTask_AddFrame(Epilogue_PlaceNamePanel, priority);
 }
 
@@ -138,19 +138,18 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// EPILOGUE_NO_NAME, a name window at left and line that
 /// Epilogue_PlaceNamePanel follows; in mode 2 it restarts the window's text.
 /// Then it waits for the text, closes both windows and waits the given frames.
-
 void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
                          s32 frames, s32 mode) {
-  s32 wide;
+  s32 nameless;
   struct Window *window;
   struct Window *name;
 
   name = 0;
-  wide = EPILOGUE_NO_NAME & speaker;
+  nameless = EPILOGUE_NO_NAME & speaker;
   speaker &= EPILOGUE_NO_NAME - 1;
   window = Message_OpenWindow(gEpilogueMessage, x, y,
                               (Speaker_GetVoice(speaker) << 16) | 4);
-  if (!wide) {
+  if (!nameless) {
     name = Portrait_OpenWindow(speaker, 0, left, line);
     gEpilogueNameShown = 1;
     gEpilogueNameX = left << 3;
@@ -165,9 +164,9 @@ void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
     System_Wait(1);
   System_Wait(1);
   Window_Close(window, 2);
-  if (!wide) {
+  if (!nameless) {
     Window_Close(name, 2);
-    gEpilogueNameShown = wide;
+    gEpilogueNameShown = nameless;
   }
   if (frames > 0) {
     s32 i = frames;
@@ -179,12 +178,11 @@ void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
   gEpilogueMessage++;
 }
 
+void Text_GetMessageSize();
+
 /// Shows the epilogue's next line, spoken by speaker (its portrait and name),
 /// centred on the screen's top (position 0), its middle (1) or its foot (2),
 /// then holds it frames more.
-
-void Text_GetMessageSize();
-
 void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
   s32 x;
   s32 y;
@@ -194,16 +192,16 @@ void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
   s32 left;
   s32 line = 0;
   s32 half;
-  s32 wide;
+  s32 nameless;
 
   // Default: nothing to the left yet; x and y start from it.
   left = 0;
   x = left;
   y = left;
-  wide = speaker & EPILOGUE_NO_NAME;
+  nameless = speaker & EPILOGUE_NO_NAME;
   Text_GetMessageSize(gEpilogueMessage, &x, &y, &width, &height);
   if (width <= 24) {
-    if (!wide)
+    if (!nameless)
       x = (25 - width) / 2 + 5;
     else
       x = (30 - width) / 2;
@@ -236,36 +234,32 @@ s32 SceneState_SetScrollTarget();
 s32 EndingPicture_WaitForScroll();
 s32 WindowSystem_InitField();
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define TILES_FLAG_OFFSET 0x118c
-#else
-#define TILES_FLAG_OFFSET 0x138c
-#endif
-
+/// Runs the whole epilogue, picture after picture, then sets out for the
+/// clear screen. Returns 0.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   u8 *eventMode;
-  s32 saved;
+  s32 savedSpeed;
   s32 zero, one;
   s32 count;
   void *p;
-  u8 *actor;
-  u8 *tiles;
+  struct Actor *leader;
+  struct WindowWork *windowWork;
   struct BgScroll *scroll;
 
   work = &gMainRoutineWork;
   eventMode = &work->messageSpeed;
-  saved = *eventMode;
-  actor = (u8 *)Actor_Get(work->leaderActorId);
+  savedSpeed = *eventMode;
+  leader = Actor_Get(work->leaderActorId);
   zero = 0;
-  actor[85] = zero;
+  leader->motionFlags = zero;
   one = 1;
   *eventMode = one;
   EndingPicture_Start();
   WindowSystem_InitField();
-  tiles = Ram_HeapSlots->windowWork;
-  tiles[6] = one;
-  tiles[TILES_FLAG_OFFSET] = one;
+  windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  windowWork->holdTilemapUpload = one;
+  windowWork->textMode = one;
   gEpilogueMessage = (s32)MsgFinallyWeVe;
   Epilogue_LoadNamePanel();
   FieldEvent_Wait(30);
@@ -400,7 +394,7 @@ checkForPress:
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   p = &gMainRoutineWork;
-  ((struct MainRoutineWork *)p)->messageSpeed = saved;
+  ((struct MainRoutineWork *)p)->messageSpeed = savedSpeed;
   FieldEvent_Wait(300);
   // The End stays until a button is pressed, or for three minutes.
   count = 0;

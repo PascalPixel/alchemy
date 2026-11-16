@@ -11,6 +11,7 @@
 #include "djinn_ids.h"
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "types.h"
 #include "graphics/palette_buffers.h"
 #include "system/ram_buffer.h"
@@ -18,6 +19,7 @@
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
 #include "system/frame.h"
+#include "system/scene.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "scene/scene.h"
@@ -34,38 +36,31 @@
 #include "field/event_commands.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
-struct GabombaCatacombsVec;
 s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct GabombaCatacombsVec *position);
+                           struct FieldPosition *position);
 void Event_End(void);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
+void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
+                              s32 height, s32 toX, s32 toZ);
 
 extern u32 gGabombaCatacombs_SprayScript[];
 
-static __inline__ void GabombaCatacombs_ClearBushes(s32 a, s32 b, s32 c, s32 d,
-                                                    s32 e, s32 f, s32 g) {
-  Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
+/// Cyclone on bushes: clears the touched cells of the width by height
+/// rectangle at (x, z) of the layer with the cells at (toX, toZ).
+static __inline__ void GabombaCatacombs_ClearBushes(s32 x, s32 z,
+                                                    s32 layerIndex, s32 width,
+                                                    s32 height, s32 toX,
+                                                    s32 toZ) {
+  Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 
-static __inline__ void GabombaCatacombs_MadPlantLeaps(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
+/// A Mad Plant of the given sprite leaps at the leader from (x, z).
+static __inline__ void GabombaCatacombs_MadPlantLeaps(s32 sprite, s32 x,
+                                                      s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
 }
-
-struct GabombaCatacombsVec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct GabombaCatacombsFollower {
-  u8 unk00[0x10];
-  s32 z;
-};
 
 extern u32 gFieldEffect_MediumScript[];
-extern u32 gGabombaCatacombs_TeleportersExitRegions[];
+extern struct SceneRegion gGabombaCatacombs_TeleportersExitRegions[];
 extern struct ActorPlacement gGabombaCatacombs_Placements[];
 extern struct ActorPlacement gGabombaCatacombs_TeleportersActorPlacements[];
 extern struct ActorPlacement gGabombaCatacombs_MudActorPlacements[];
@@ -91,47 +86,69 @@ void Actor_DepartInRing(s32 id);
   } while (0)
 
 /// Mud, the Djinni waiting in this room.
-enum { ACTOR_MUD = 8 };
+enum { ACTOR_MUD = ACTOR_FIRST_PLACED };
 
 /// The hidden wall's seven puddles under the bushes Cyclone clears, the
 /// stream's puddle, and the Tomegathericon's room: the seated idol the Great
 /// Gabomba speaks through, and Kraden.
 enum {
-  ACTOR_PUDDLE_A = 8,
-  ACTOR_PUDDLE_B,
-  ACTOR_PUDDLE_C,
-  ACTOR_PUDDLE_D,
-  ACTOR_PUDDLE_E,
-  ACTOR_PUDDLE_F,
-  ACTOR_PUDDLE_G
+  ACTOR_FIRST_PUDDLE = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_PUDDLE,
+  ACTOR_THIRD_PUDDLE,
+  ACTOR_FOURTH_PUDDLE,
+  ACTOR_FIFTH_PUDDLE,
+  ACTOR_SIXTH_PUDDLE,
+  ACTOR_SEVENTH_PUDDLE
 };
-enum { ACTOR_STREAM_PUDDLE = 8 };
-enum { ACTOR_SEATED_IDOL = 8, ACTOR_KRADEN };
+enum { ACTOR_STREAM_PUDDLE = ACTOR_FIRST_PLACED };
+enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 
+/// Each puddle Frost has frozen into a pillar, by the puddles above.
+#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+#define FLAG_FOURTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
+#define FLAG_FIFTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
+#define FLAG_SIXTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_05
+#define FLAG_SEVENTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_06
+#define FLAG_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+
+/// Set once the Mint hidden under the bushes by the statue is taken.
+#define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
+/// Set once the Tomegathericon is taken from the seated idol.
+#define FLAG_TOMEGATHERICON_TAKEN 0xf93
+
+/// Talking to Mud starts its battle.
 void GabombaCatacombs_FightMud(void) {
   Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
 
+/// Cyclone on the teleporter room's bushes.
 void GabombaCatacombs_ClearTeleportersBushes(void) {
   GabombaCatacombs_ClearBushes(7, 63, 1, 16, 16, 57, 63);
 }
 
+/// Cyclone on the bushes by the statue in the hidden wall's room.
 void GabombaCatacombs_ClearHiddenWallBushes(void) {
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
 }
 
+/// Cyclone on the small bushes of the hidden wall's room.
 void GabombaCatacombs_ClearHiddenWallSmallBushes(void) {
   GabombaCatacombs_ClearBushes(7, 22, 0, 3, 3, 56, 58);
 }
 
+/// Cyclone on the stream room's bushes.
 void GabombaCatacombs_ClearStreamBushes(void) {
   GabombaCatacombs_ClearBushes(44, 25, 0, 4, 3, 66, 57);
 }
 
+/// Cyclone on the stream room's wide bushes.
 void GabombaCatacombs_ClearStreamWideBushes(void) {
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
 }
 
+/// Cyclone on the stream room's small bushes.
 void GabombaCatacombs_ClearStreamSmallBushes(void) {
   GabombaCatacombs_ClearBushes(21, 9, 0, 2, 2, 57, 52);
 }
@@ -142,7 +159,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
-  if (GameFlag_Get(0xf53) == 0) {
+  if (GameFlag_Get(FLAG_HIDDEN_WALL_MINT_TAKEN) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (FIELD_CELL(leader->x.fixed) == 24 &&
         FIELD_CELL(leader->z.fixed) == 21) {
@@ -162,45 +179,57 @@ void GabombaCatacombs_UncoverFirstTeleporter(void) {
   Import_EventSetExitRequest(3);
 }
 
+/// Cyclone on the bushes uncovers the second teleporter stone, which carries
+/// the party a level down.
 void GabombaCatacombs_UncoverSecondTeleporter(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 18, 66);
   Import_EventSetExitRequest(4);
 }
 
+/// Cyclone on the third teleporter stone carries the party a level down.
 void GabombaCatacombs_TakeThirdTeleporter(void) {
   Import_EventSetExitRequest(5);
 }
 
-#define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, \
-                                                     n6, n7, n8, n9)           \
-  void name(void) {                                                            \
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);      \
-                                                                               \
-    GabombaCatacombs_ClearBushes(n1, n2, 0, n3, 3, 56, n4);                    \
-    Actor_SetPosition(n5, n6, n7);                                             \
-    if (FIELD_CELL(leader->x.fixed) == n8 &&                                   \
-        FIELD_CELL(leader->z.fixed) == n9) {                                   \
-      LEADER_HOP();                                                            \
-      Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);   \
-      leader->velocityY = toFIXED(6);                                          \
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);                   \
-      Event_End();                                                             \
-    }                                                                          \
+/// Cyclone on the bushes over the first puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverFirstPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+
+  GabombaCatacombs_ClearBushes(7, 22, 0, 3, 3, 56, 58);
+  Actor_SetPosition(ACTOR_FIRST_PUDDLE, 136, 376);
+  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 23) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
   }
+}
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFirstPuddle, 7, 22, 3, 58, ACTOR_PUDDLE_A, 136, 376,
-    8, 23)
+/// Cyclone on the bushes over the second puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverSecondPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSecondPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_B, 136,
-    248, 8, 15)
+  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  Actor_SetPosition(ACTOR_SECOND_PUDDLE, 136, 248);
+  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 15) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
+  }
+}
 
+/// Cyclone on the bushes over the third puddle uncovers it, hopping the leader
+/// off it westward if he stands there.
 void GabombaCatacombs_UncoverThirdPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(ACTOR_PUDDLE_C, 152, 264);
+  Actor_SetPosition(ACTOR_THIRD_PUDDLE, 152, 264);
   if (FIELD_CELL(leader->x.fixed) == 9 && FIELD_CELL(leader->z.fixed) == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -213,22 +242,72 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
   }
 }
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFourthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_D, 136,
-    280, 8, 17)
+/// Cyclone on the bushes over the fourth puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverFourthPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverFifthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_E, 104, 280,
-    6, 17)
+  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  Actor_SetPosition(ACTOR_FOURTH_PUDDLE, 136, 280);
+  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 17) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
+  }
+}
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSixthPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_F, 88, 264,
-    5, 16)
+/// Cyclone on the bushes over the fifth puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverFifthPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
-    GabombaCatacombs_UncoverSeventhPuddle, 5, 13, 5, 52, ACTOR_PUDDLE_G, 104,
-    248, 6, 15)
+  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  Actor_SetPosition(ACTOR_FIFTH_PUDDLE, 104, 280);
+  if (FIELD_CELL(leader->x.fixed) == 6 && FIELD_CELL(leader->z.fixed) == 17) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
+  }
+}
 
+/// Cyclone on the bushes over the sixth puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverSixthPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+
+  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  Actor_SetPosition(ACTOR_SIXTH_PUDDLE, 88, 264);
+  if (FIELD_CELL(leader->x.fixed) == 5 && FIELD_CELL(leader->z.fixed) == 16) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
+  }
+}
+
+/// Cyclone on the bushes over the seventh puddle uncovers it, hopping the
+/// leader off it if he stands there.
+void GabombaCatacombs_UncoverSeventhPuddle(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+
+  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  Actor_SetPosition(ACTOR_SEVENTH_PUDDLE, 104, 248);
+  if (FIELD_CELL(leader->x.fixed) == 6 && FIELD_CELL(leader->z.fixed) == 15) {
+    LEADER_HOP();
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
+    leader->velocityY = toFIXED(6);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Event_End();
+  }
+}
+
+/// Cyclone on the bushes over the stream's puddle uncovers it, hopping the
+/// leader off it northward if he stands there.
 void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -246,6 +325,7 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
   }
 }
 
+/// Cyclone on the bushes of the Tomegathericon's room.
 void GabombaCatacombs_ClearTomegathericonBushes(void) {
   GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
 }
@@ -261,56 +341,112 @@ void GabombaCatacombs_UncoverMadPlant(void) {
   }
 }
 
+/// Reveal shows the hidden wall's passage.
 void GabombaCatacombs_RevealWall(void) {
   MapGrid_CopyCellPictureCellsRect(0, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 4, 1, 1, 7, 14);
 }
 
+/// As Reveal fades, the hidden wall's passage is hidden again.
 void GabombaCatacombs_HideWall(void) {
   MapGrid_CopyCellPictureCellsRect(1, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 
-#define DEFINE_GABOMBA_CATACOMBS_SET_MOVED(name, n1, n2, n3, n4, n5, n6)       \
-  void name(void) {                                                            \
-    struct Actor *object = Actor_GetById(n1);                                  \
-                                                                               \
-    GameFlag_Set(n2);                                                          \
-    object->motionFlags = 0;                                                   \
-    object->priorityFlags = 0;                                                 \
-    MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
-  }
+/// Frost on the first puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeFirstPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_FIRST_PUDDLE);
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeFirstPuddle, 8, 0x200,
-                                   6, 23, 8, 23)
+  GameFlag_Set(FLAG_FIRST_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
+}
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSecondPuddle, 9,
-                                   0x201, 0, 4, 8, 15)
+/// Frost on the second puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeSecondPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_SECOND_PUDDLE);
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeThirdPuddle, 10,
-                                   0x202, 0, 4, 9, 16)
+  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
+}
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeFourthPuddle, 11,
-                                   0x203, 0, 4, 8, 17)
+/// Frost on the third puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeThirdPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_THIRD_PUDDLE);
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeFifthPuddle, 12,
-                                   0x204, 0, 4, 6, 17)
+  GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
+}
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSixthPuddle, 13,
-                                   0x205, 0, 4, 5, 16)
+/// Frost on the fourth puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeFourthPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_FOURTH_PUDDLE);
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeSeventhPuddle, 14,
-                                   0x206, 0, 4, 6, 15)
+  GameFlag_Set(FLAG_FOURTH_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
+}
 
-DEFINE_GABOMBA_CATACOMBS_SET_MOVED(GabombaCatacombs_FreezeStreamPuddle, 8,
-                                   0x200, 15, 18, 17, 18)
+/// Frost on the fifth puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeFifthPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_FIFTH_PUDDLE);
+
+  GameFlag_Set(FLAG_FIFTH_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
+}
+
+/// Frost on the sixth puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeSixthPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_SIXTH_PUDDLE);
+
+  GameFlag_Set(FLAG_SIXTH_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
+}
+
+/// Frost on the seventh puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeSeventhPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_SEVENTH_PUDDLE);
+
+  GameFlag_Set(FLAG_SEVENTH_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
+}
+
+/// Frost on the stream puddle freezes it into a pillar, which blocks its
+/// cell.
+void GabombaCatacombs_FreezeStreamPuddle(void) {
+  struct Actor *object = Actor_GetById(ACTOR_STREAM_PUDDLE);
+
+  GameFlag_Set(FLAG_STREAM_PUDDLE_FROZEN);
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
+}
 
 /// Moves the leader and camera along z by dz when nothing is in the way.
 void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
-  struct GabombaCatacombsFollower *follower;
-  struct GabombaCatacombsVec position;
+  struct Actor *camera;
+  struct FieldPosition position;
 
-  follower = gFieldWork->camera;
+  camera = gFieldWork->camera;
 
   position.x = object->x.fixed;
   position.y = object->y.fixed;
@@ -320,15 +456,15 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
   position.y = object->y.fixed;
   position.z = object->z.fixed + toFIXED(8);
   if (MapGrid_CheckCollision(object, &position) <= 0) {
-    position.x = object->x.fixed + 0x5b333;
+    position.x = object->x.fixed + toFIXED(57) / 10;
     position.y = object->y.fixed;
-    position.z = object->z.fixed + 0x5b333;
+    position.z = object->z.fixed + toFIXED(57) / 10;
     if (MapGrid_CheckCollision(object, &position) <= 0) {
-      position.x = object->x.fixed - 0x5b333;
+      position.x = object->x.fixed - toFIXED(57) / 10;
       position.y = object->y.fixed;
-      position.z = object->z.fixed + 0x5b333;
+      position.z = object->z.fixed + toFIXED(57) / 10;
       if (MapGrid_CheckCollision(object, &position) <= 0) {
-        follower->z += dz;
+        camera->z.fixed += dz;
         object->z.fixed += dz;
       }
     }
@@ -339,24 +475,25 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
 /// the leader along.
 void GabombaCatacombs_WadeStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *steam;
+  struct Actor *spray;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(
+    spray = ((struct Actor *)Import_ActorCreate(
         14, leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
-    if (steam) {
-      Actor_SetSpriteFlags(steam, 0);
-      Actor_SelectAnimation(steam, 1);
-      Actor_StartScript(steam, gGabombaCatacombs_SprayScript);
+    if (spray) {
+      Actor_SetSpriteFlags(spray, 0);
+      Actor_SelectAnimation(spray, 1);
+      Actor_StartScript(spray, gGabombaCatacombs_SprayScript);
     }
     Sound_Play(SE_WADE);
   }
-  GabombaCatacombs_DriftWithStream(leader, 55705);
+  GabombaCatacombs_DriftWithStream(leader, toFIXED(17) / 20);
 }
 
-s32 GabombaCatacombs_ShrinkSpray(struct Actor *object) {
-  object->scaleX -= 3276;
-  object->scaleY -= 3276;
+/// Each frame, shrinks the glow by a twentieth of its full size.
+s32 GabombaCatacombs_ShrinkGlow(struct Actor *object) {
+  object->scaleX -= FIXED_ONE / 20;
+  object->scaleY -= FIXED_ONE / 20;
   return 0;
 }
 
@@ -364,14 +501,15 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
 
 #define TALK()                                                                 \
-  EventMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
+  EventMessage_ShowCentered((s16)((union EventLine *)&work->message)->line++,  \
+                            0, -3)
 
 /// At the end of the catacombs the Great Gabomba speaks: "By reaching this
 /// place, you have proven your power."
 void GabombaCatacombs_GabombaBestowsPower(void) {
-  struct Actor *follower = Actor_GetById(ACTOR_KRADEN);
-  struct Actor *statue = Actor_GetById(FIELD_TREASURE_ACTOR);
-  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
+  struct Actor *kraden = Actor_GetById(ACTOR_KRADEN);
+  struct Actor *treasure = Actor_GetById(FIELD_TREASURE_ACTOR);
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *glow, *leader;
   s32 speed;
 
@@ -387,21 +525,20 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Sound_Play(SE_STATUE_STIRS);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
-  work += 0x1c4;
   TALK();
   Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
-  statue->motionFlags = 6;
-  statue->groundHeight += toFIXED(16);
+  treasure->motionFlags = 6;
+  treasure->groundHeight += toFIXED(16);
   Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(SPRITE_FIREBALL, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
-  glow->x.fixed = statue->x.fixed;
-  glow->y.fixed = statue->y.fixed + toFIXED(8);
-  glow->z.fixed = statue->z.fixed;
-  glow->groundHeight = statue->groundHeight;
-  glow->update = GabombaCatacombs_ShrinkSpray;
+  glow->x.fixed = treasure->x.fixed;
+  glow->y.fixed = treasure->y.fixed + toFIXED(8);
+  glow->z.fixed = treasure->z.fixed;
+  glow->groundHeight = treasure->groundHeight;
+  glow->update = GabombaCatacombs_ShrinkGlow;
   Event_Wait(15);
   glow->x.fixed = 0;
   glow->y.fixed = 0;
@@ -411,8 +548,8 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetDestinationById(gMainRoutineWork.leaderActorId, 166, 188);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  speed = 0x10000;
-  follower->speedLimit = speed;
+  speed = toFIXED(1);
+  kraden->speedLimit = speed;
   Actor_SetDestinationById(ACTOR_KRADEN, 184, 188);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
@@ -478,18 +615,20 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_End();
 }
 
+/// The seated idol: once the Great Gabomba has shown it, the party takes the
+/// Tomegathericon.
 void GabombaCatacombs_TalkToStatue(void) {
   struct Actor *object = Actor_GetById(FIELD_TREASURE_ACTOR);
 
   if (object != NULL && object->x.fixed != 0)
-    Scene_TalkToActor(4160);
+    Scene_TalkToActor(0x1000 | FIELD_TREASURE_ACTOR);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-    return (const struct SceneRegion *)gGabombaCatacombs_TeleportersExitRegions;
+    return gGabombaCatacombs_TeleportersExitRegions;
   return 0;
 }
 
@@ -499,20 +638,16 @@ extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-    return (const struct ActorPlacement *)
-        gGabombaCatacombs_TeleportersActorPlacements;
+    return gGabombaCatacombs_TeleportersActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
-    return (const struct ActorPlacement *)gGabombaCatacombs_MudActorPlacements;
+    return gGabombaCatacombs_MudActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
-    return (const struct ActorPlacement *)
-        gGabombaCatacombs_HiddenWallActorPlacements;
+    return gGabombaCatacombs_HiddenWallActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
-    return (const struct ActorPlacement *)
-        gGabombaCatacombs_TomegathericonActorPlacements;
+    return gGabombaCatacombs_TomegathericonActorPlacements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM)
-    return (
-        const struct ActorPlacement *)gGabombaCatacombs_StreamActorPlacements;
-  return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
+    return gGabombaCatacombs_StreamActorPlacements;
+  return gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -530,9 +665,11 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 #if !TLA_PATCH_1
-#define CATACOMBS_SCREEN_EFFECT 513
+#define CATACOMBS_SCREEN_EFFECT                                                \
+  SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE)
 #else
-#define CATACOMBS_SCREEN_EFFECT 516
+#define CATACOMBS_SCREEN_EFFECT                                                \
+  SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE)
 #endif
 
 extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamberIdol;
@@ -540,16 +677,16 @@ void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
   s32 entrance;
-  struct Actor *statue;
+  struct Actor *treasure;
 
   gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS &&
       (entrance = gMainRoutineWork.entrance) == 1) {
-    if (GameFlag_Get(0xa27)) {
+    if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_PINION)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = entrance;
-    } else if (GameFlag_Get(0xa28)) {
+    } else if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_IDOL)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
       gMainRoutineWork.retreatEntrance = 3;
     }
@@ -559,31 +696,32 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL) {
-    if (GameFlag_Get(FLAG_SCENE_TEMP_00))
+    if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_01))
+    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_02))
+    if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_03))
+    if (GameFlag_Get(FLAG_FOURTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_04))
+    if (GameFlag_Get(FLAG_FIFTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_05))
+    if (GameFlag_Get(FLAG_SIXTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_06))
+    if (GameFlag_Get(FLAG_SEVENTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM &&
-      GameFlag_Get(FLAG_SCENE_TEMP_00))
+      GameFlag_Get(FLAG_STREAM_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
-      GameFlag_Get(FLAG_GABOMBA_BESTOWED_POWER) && !GameFlag_Get(0xf93) &&
+      GameFlag_Get(FLAG_GABOMBA_BESTOWED_POWER) &&
+      !GameFlag_Get(FLAG_TOMEGATHERICON_TAKEN) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    statue = Actor_GetById(FIELD_TREASURE_ACTOR);
+    treasure = Actor_GetById(FIELD_TREASURE_ACTOR);
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
-    statue->motionFlags = 6;
-    statue->groundHeight += toFIXED(16);
+    treasure->motionFlags = 6;
+    treasure->groundHeight += toFIXED(16);
   }
   return 0;
 }
@@ -598,21 +736,21 @@ u32 gGabombaCatacombs_SprayScript[] = {
     SC_RELEASE,
 };
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+u32 gFieldEffect_MediumScript[] = {
+    SC_WAIT(1), SC_LOOP(44, SC_TOP),
+    SC_WAIT(1), SC_POSITION(0, 0, 0),
+    SC_WAIT(1), SC_RELEASE,
+    SC_END,
+};
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gGabombaCatacombs_TeleportersExitRegions[] = {
-    0x2e0184, 0x18c0114, 0x11c0036, 0x1ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gGabombaCatacombs_TeleportersExitRegions[] = {
+    {388, 46, 276, 396, 54, 284, CONDITION_ALWAYS, 1},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -649,22 +787,22 @@ struct ActorPlacement gGabombaCatacombs_MudActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGabombaCatacombs_HiddenWallActorPlacements[] = {                                             
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                
-      {SCENE_TABLE_END},                                                       
-  };
+struct ActorPlacement gGabombaCatacombs_HiddenWallActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
+};
 
 struct ActorPlacement gGabombaCatacombs_TomegathericonActorPlacements[] = {
-    ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -694,7 +832,7 @@ struct Trigger gGabombaCatacombs_TeleportersTriggers[] = {
 struct Trigger gGabombaCatacombs_MudTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MUD, CONDITION_ALWAYS,
      EVENT(GabombaCatacombs_FightMud)},
     {TRIGGER_TABLE_END},
 };
@@ -726,20 +864,20 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSeventhPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearBushesByTheStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_00,
-     EVENT(GabombaCatacombs_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, FLAG_SCENE_TEMP_01,
-     EVENT(GabombaCatacombs_FreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, FLAG_SCENE_TEMP_02,
-     EVENT(GabombaCatacombs_FreezeThirdPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_SCENE_TEMP_03,
-     EVENT(GabombaCatacombs_FreezeFourthPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_SCENE_TEMP_04,
-     EVENT(GabombaCatacombs_FreezeFifthPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SCENE_TEMP_05,
-     EVENT(GabombaCatacombs_FreezeSixthPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, FLAG_SCENE_TEMP_06,
-     EVENT(GabombaCatacombs_FreezeSeventhPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
+     FLAG_FIRST_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
+     FLAG_SECOND_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
+     FLAG_THIRD_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeThirdPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FOURTH_PUDDLE,
+     FLAG_FOURTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFourthPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
+     FLAG_FIFTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFifthPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIXTH_PUDDLE,
+     FLAG_SIXTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSixthPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SEVENTH_PUDDLE,
+     FLAG_SEVENTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSeventhPuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -747,7 +885,8 @@ struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 40, FLAG_GABOMBA_BESTOWED_POWER,
      EVENT(GabombaCatacombs_GabombaBestowsPower)},
-    {TRIGGER_TALK, 8, 0xf93, EVENT(GabombaCatacombs_TalkToStatue)},
+    {TRIGGER_TALK, ACTOR_SEATED_IDOL, FLAG_TOMEGATHERICON_TAKEN,
+     EVENT(GabombaCatacombs_TalkToStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTomegathericonBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
@@ -767,7 +906,7 @@ struct Trigger gGabombaCatacombs_StreamTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverStreamPuddle)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(GabombaCatacombs_WadeStream)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_00,
-     EVENT(GabombaCatacombs_FreezeStreamPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_STREAM_PUDDLE,
+     FLAG_STREAM_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeStreamPuddle)},
     {TRIGGER_TABLE_END},
 };

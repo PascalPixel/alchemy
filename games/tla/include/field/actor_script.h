@@ -181,6 +181,9 @@ enum ActorScriptValue {
   SW_BOUNCE = 20,
   SW_GRAVITY = 21,
   SW_GROUND = 22,
+  /// Actor.spriteStorageKind: ACTOR_SPRITE_NONE hides its sprite and
+  /// ACTOR_SPRITE_ONE shows it again.
+  SW_SPRITE_KIND = 25,
   SW_MOTION = 26,
   SW_ARRIVAL = 27,
   SW_RESULT = 28,

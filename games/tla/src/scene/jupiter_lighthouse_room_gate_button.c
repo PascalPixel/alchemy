@@ -55,7 +55,7 @@
 
 /// Set while the leader stands on the button by the gates, which holds them
 /// open.
-#define FLAG_GATES_BUTTON_HELD 0x200
+#define FLAG_GATES_BUTTON_HELD FLAG_SCENE_TEMP_00
 
 /// The pillar the party pushes onto the button by the gates, after the two
 /// angel statues in gActorPlacements.

@@ -58,7 +58,7 @@ struct PushTarget {
 };
 
 /// Set once the log has been pushed off the ledge this visit.
-#define FLAG_LOG_OFF_LEDGE 0x200
+#define FLAG_LOG_OFF_LEDGE FLAG_SCENE_TEMP_00
 /// Set as Move drops each pillar into its gap.
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05

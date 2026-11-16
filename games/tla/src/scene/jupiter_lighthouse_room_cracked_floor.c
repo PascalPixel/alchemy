@@ -53,7 +53,7 @@
 #include "field/field_effect.h"
 
 /// Set while the leader stands on the button by the door, which holds it open.
-#define FLAG_DOOR_BUTTON_HELD 0x200
+#define FLAG_DOOR_BUTTON_HELD FLAG_SCENE_TEMP_00
 
 /// The pillar the party pushes onto the button by the door, after the four
 /// angel statues in gActorPlacements.

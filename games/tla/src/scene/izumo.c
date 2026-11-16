@@ -42,9 +42,9 @@
 /// Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
 /// Set while Move has set the stone in its place, for this visit.
-#define FLAG_STONE_IN_PLACE 0x250
+#define FLAG_STONE_IN_PLACE FLAG_SCENE_TEMP_50
 /// Set while Reveal is shown.
-#define FLAG_REVEALING 0x301
+#define FLAG_REVEALING FLAG_AREA_TEMP_01
 
 /// The village's actors the events move: the stone Move sets back in the
 /// circle ("The misaligned stone! It's back in its original position!"), Okuni
@@ -64,7 +64,7 @@ enum {
   ACTOR_SUSA
 };
 /// Set while the one who stopped the party waits by the gate.
-#define FLAG_THANKFUL_ONE_WAITS 0x302
+#define FLAG_THANKFUL_ONE_WAITS FLAG_AREA_TEMP_02
 /// Set as the party is stopped on its way out to be thanked.
 #define FLAG_STOPPED_TO_THANK_THE_PARTY 0x929
 /// Set once the token of gratitude has been offered.

@@ -231,10 +231,10 @@ void FieldPsynergy_Scoop(void) {
   if (event->psynergyDrawFlags & 2) {
     if ((object->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
       ((struct EffectSprite *)object->sprite)->oam.priority = 1;
-      object->priorityFlags &= 254;
+      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     }
   } else {
-    object->priorityFlags = 1;
+    object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   object->facing = caster->facing;
   Actor_SelectAnimationFar(object, 0);

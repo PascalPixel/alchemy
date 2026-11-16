@@ -138,8 +138,9 @@ void FieldPsynergy_UpdateRing(void) {
 
 /// The Ring: a ring of light is drawn round the caster among rising
 /// sparkles, and motes gather to circle it; FieldPsynergy_UpdateRing keeps
-/// it for RING_FRAMES frames, then cue 0x209b ends it (FieldPsynergy_EndRing).
-/// Cast again while it lasts, it only starts its frames again.
+/// it for RING_FRAMES frames, then cue ABILITY_RING | ACT_PACKED ends it
+/// (FieldPsynergy_EndRing). Cast again while it lasts, it only starts its
+/// frames again.
 void FieldPsynergy_Ring(void) {
   struct RingWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));

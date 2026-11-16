@@ -14,11 +14,11 @@
 struct Actor;
 struct SpriteAnimation;
 
-/// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
-/// sprites and particles, the actor it scatters from, and its stage.
 /// The particles of a scatter, a power of two: the next one wraps by a mask.
 #define SCATTER_PARTICLE_COUNT 64
 
+/// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
+/// sprites and particles, the actor it scatters from, and its stage.
 struct ScatterWork {
   u8 tiles[4096];
   struct EffectSprite sprites[SCATTER_PARTICLE_COUNT];
@@ -36,7 +36,7 @@ struct ScatterWork {
 
 enum OrbKind {
   ORB_PLAIN,    // the scene is enabled: the orb only comes and goes
-  ORB_ORBITING, // motes circle the orb while the target shrinks
+  ORB_ORBITING, // leaves circle the orb while the target shrinks
   ORB_WANDER,   // sprouting leaves: leaves wander off, the target is handed on
   ORB_HANDOFF,  // a seedling: the target is handed on
 };
@@ -53,9 +53,6 @@ struct BowMotion {
   s32 delay;
 };
 
-/// The Arrow's work (FieldPsynergy_Arrow, in heap slot
-/// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
-/// motions, the points the arrow flies between, and the phase of its task.
 /// Tiles in one of the bow's drawing poses, which follow each other from
 /// BowWork.bowTile.
 #define BOW_POSE_TILES 32
@@ -69,6 +66,9 @@ struct BowMotion {
 /// BowWork.frame while the bow holds its pose and is not drawing.
 #define BOW_FRAME_IDLE 999
 
+/// The Arrow's work (FieldPsynergy_Arrow, in heap slot
+/// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
+/// motions, the points the arrow flies between, and the phase of its task.
 struct BowWork {
   u8 *tiles;
   struct BowMotion sparks[BOW_SPARK_COUNT];

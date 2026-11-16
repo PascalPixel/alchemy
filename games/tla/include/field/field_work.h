@@ -191,8 +191,7 @@ struct FieldWork {
   s8 targetY;
   s8 targetZ;
   /// The item Scoop dug up (or its coins, SCOOPED_COINS | count), given when
-  /// the leader examines it (SCOOPED_ITEM_ACTOR).| count), given when the
-  /// leader examines it (actor 79).
+  /// the leader examines it (SCOOPED_ITEM_ACTOR).
   s16 scoopedItem;
   s8 sceneAttributeLow;
   s8 sceneAttributeHigh;

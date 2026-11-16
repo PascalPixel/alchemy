@@ -30,10 +30,10 @@
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
+/// Whirlwind: its leaves, their circling and wandering, the target's shrinking
+/// and the orb's flight, in frames.
 enum {
-  WHIRLWIND_RADIAL_DIRECTIONS = 16,
-  WHIRLWIND_RADIAL_ANGLE_SHIFT = 12,
-  WHIRLWIND_ORBIT_PARTICLES = 16,
+  WHIRLWIND_LEAF_COUNT = 16,
   WHIRLWIND_ORBIT_RADIUS = toFIXED(8),
   WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
   WHIRLWIND_ORBIT_FRAMES = 121,
@@ -59,7 +59,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   options.startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
   do {
-    angle = i << WHIRLWIND_RADIAL_ANGLE_SHIFT;
+    angle = i * (TRIG_TURN / 16);
     velocity[0] = Trig_Cos(angle) * 3 / 2;
     velocity[1] = 0;
     sine = Trig_Sin(angle);
@@ -67,7 +67,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
     FieldEffect_SpawnResident(origin->x, origin->y, origin->z, velocity[0],
                               velocity[1], sine, 0x01090001, &options);
     i++;
-  } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
+  } while (i <= 16);
 }
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
@@ -98,7 +98,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
-/// a sixteenth of a turn a frame; after 121 frames it starts to wander
+/// a 32nd of a turn a frame; after 121 frames it starts to wander
 /// (FieldEffect_WanderAroundAnchor) with upward speed and gravity. As The
 /// Broken Seal's FieldEffect_CircleAnchor.
 void FieldEffect_CircleAnchor(struct Actor *effect) {
@@ -151,10 +151,6 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 void BattleEffect_AgeAndCueAtEighty(struct Actor *object);
 
-// The two targets Whirlwind treats apart, by their first animation.
-#define TARGET_ANIMATION_A SPRITE_SPROUTING_LEAVES
-#define TARGET_ANIMATION_B SPRITE_SEEDLING
-
 /// Whirlwind: carries an orb from the caster to the Psynergy's position over
 /// ten frames, growing it from a quarter size, then plays out what it does
 /// there.
@@ -167,7 +163,7 @@ void FieldPsynergy_Whirlwind(void) {
   struct Vector3 from;
   struct Vector3 to;
   struct Actor *orb;
-  struct Actor *mote;
+  struct Actor *leaf;
   s32 kind = ORB_PLAIN;
   s32 step;
   s32 i;
@@ -180,9 +176,9 @@ void FieldPsynergy_Whirlwind(void) {
 
     kind = ORB_ORBITING;
     animation = sprite->entries[0]->animationId;
-    if (animation == TARGET_ANIMATION_A)
+    if (animation == SPRITE_SPROUTING_LEAVES)
       kind = ORB_WANDER;
-    if (animation == TARGET_ANIMATION_B)
+    if (animation == SPRITE_SEEDLING)
       kind = ORB_HANDOFF;
   }
 
@@ -220,12 +216,12 @@ void FieldPsynergy_Whirlwind(void) {
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
   } else if (kind == ORB_ORBITING) {
-    // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
+    // Sixteen leaves, one every six frames, 4 pixels above the orb and 0.8
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
       target->update = (void (*)(void))FieldEffect_ShrinkActorScaleUntilHalf;
-    for (i = 0; i < WHIRLWIND_ORBIT_PARTICLES; i++) {
+    for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
       s32 distance;
 
       SET_POSITION(&position, orb->x.fixed,
@@ -233,13 +229,13 @@ void FieldPsynergy_Whirlwind(void) {
                    orb->z.fixed);
       distance = Random16() * 5 + toFIXED(3);
       Vector_AddPolarOffset(distance, Random16(), &position);
-      mote = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
-      if (mote != 0) {
-        mote->update = (void (*)(void))FieldEffect_CircleAnchor;
-        mote->watchedActor = orb;
-        mote->swirlFrames = 0;
-        mote->turnFrames = 0;
-        mote->facing = Random16();
+      leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
+      if (leaf != 0) {
+        leaf->update = (void (*)(void))FieldEffect_CircleAnchor;
+        leaf->watchedActor = orb;
+        leaf->swirlFrames = 0;
+        leaf->turnFrames = 0;
+        leaf->facing = Random16();
       }
       wait(6);
     }
@@ -254,8 +250,9 @@ void FieldPsynergy_Whirlwind(void) {
     wait(5);
     Actor_SelectAnimationFar(orb, 1);
     if (kind == ORB_WANDER) {
-      // Sixteen motes that wander about the orb, the first pausing longest.
-      for (i = 0; i < WHIRLWIND_ORBIT_PARTICLES; i++) {
+      // Sixteen leaves that wander off the orb, the first handed to the shared
+      // particle script soonest.
+      for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
         s32 distance;
 
         SET_POSITION(&position, orb->x.fixed,
@@ -264,14 +261,14 @@ void FieldPsynergy_Whirlwind(void) {
         distance = Random16() * 5;
         distance += toFIXED(3);
         Vector_AddPolarOffset(distance, Random16(), &position);
-        mote = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
-        if (mote != 0) {
-          mote->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
-          mote->swirlFrames = 20 + i * -2;
-          mote->turnFrames = 0;
-          mote->gravity = toFIXED(1) / 10;
-          mote->velocityY = toFIXED(3);
-          mote->facing = Random16();
+        leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
+        if (leaf != 0) {
+          leaf->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
+          leaf->swirlFrames = 20 + i * -2;
+          leaf->turnFrames = 0;
+          leaf->gravity = toFIXED(1) / 10;
+          leaf->velocityY = toFIXED(3);
+          leaf->facing = Random16();
         }
       }
     }
@@ -285,8 +282,6 @@ void FieldPsynergy_Whirlwind(void) {
   }
   FieldPsynergy_FadeFromCastColor();
 }
-#undef TARGET_ANIMATION_A
-#undef TARGET_ANIMATION_B
 
 /// Per-frame update: counts the actor's frames and, at frame 80, plays
 /// SE_WHOOSH and stops itself.
@@ -831,8 +826,8 @@ void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
 void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
   u32 scale;
 
-  actor->scaleY -= 640;
-  scale = actor->scaleX - 640;
+  actor->scaleY -= FIXED_ONE * 5 / 512;
+  scale = actor->scaleX - FIXED_ONE * 5 / 512;
   actor->facing += DEGtoANG(45);
   actor->y.fixed += toFIXED(1);
   actor->scaleX = scale;

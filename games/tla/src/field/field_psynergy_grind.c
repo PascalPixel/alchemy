@@ -10,7 +10,7 @@
 
 /// The splashes of spray Grind keeps.
 #define GRIND_SPLASH_COUNT 64
-/// The largest picture Grind grinds down, in pixels of a byte.
+/// The largest picture Grind grinds down, in bytes, a byte a pixel.
 #define GRIND_PICTURE_SIZE 2048
 
 /// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64

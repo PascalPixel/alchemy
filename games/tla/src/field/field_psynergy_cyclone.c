@@ -494,8 +494,8 @@ enum BlazeMode {
   BLAZE_FLICKER = 0,     ///< cast at nothing with no torch in reach: a flicker
   BLAZE_LIGHT_TORCH = 1, ///< cast at nothing: lights the nearest torch in reach
   BLAZE_SPRAY = 2,       ///< cast at a target: the jet of flame
-  BLAZE_LONG_SPRAY =
-      3 ///< the jet, faster and longer (FieldWork.blazeLongSpray)
+  /// The jet, faster and longer (FieldWork.blazeLongSpray).
+  BLAZE_LONG_SPRAY = 3
 };
 
 /// The drops of Blaze's spray, and the smoke puffs they leave.

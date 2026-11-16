@@ -343,8 +343,7 @@ void BattleEffect_EndCanvasSprite(void) {
   HeapSlot_Release(HEAP_SLOT_CANVAS_SPRITE);
 }
 
-/// Actor_VanishInSparks' work, in heap slot 92: the sparks' picture, then the
-/// sparks and their sprites.
+/// The sparks that circle an actor as it vanishes.
 #define VANISH_SPARK_COUNT 64
 
 /// Actor_VanishInSparks's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark

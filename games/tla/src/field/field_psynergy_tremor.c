@@ -11,14 +11,14 @@
 // picture held in the work.
 
 #define SHAKE_SPRITE_COUNT 64
-#define PICTURE_SIZE 0x1000
-#define PICTURE_MAX_PIXELS 0x800
+#define PICTURE_SIZE 4096
+#define PICTURE_MAX_PIXELS 2048
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_START 0x20000
+#define SWAY_START toFIXED(2)
 #define SWAY_PEAK toFIXED(12)
-#define SWAY_RAMP 0x1999   // 0.1 pixels a frame
-#define SWAY_SHAKE 0x40000 // sprites shake only past this
+#define SWAY_RAMP (toFIXED(1) / 10) // 0.1 pixels a frame
+#define SWAY_SHAKE toFIXED(4)       // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
 
 enum {
@@ -115,14 +115,14 @@ void FieldPsynergy_TremorOnTarget(void) {
     if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->view.count; i++) {
         struct Sprite *sprite = work->view.objects[i]->sprite;
-        s32 offset = work->view.spriteRotations[i];
+        s32 rotation = work->view.spriteRotations[i];
 
         if (amplitude > SWAY_SHAKE)
           sprite->rotation =
-              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
-                                   (amplitude - SWAY_SHAKE) / 128);
+              rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                     (amplitude - SWAY_SHAKE) / 128);
         else
-          sprite->rotation = offset;
+          sprite->rotation = rotation;
       }
     }
 
@@ -186,13 +186,15 @@ release:
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
 
-// Field Psynergy kind 19 (FieldPsynergy_Run's case 19).
+// FIELD_PSYNERGY_TREMOR as FieldPsynergy_Run casts it: the view sways.
 
-#define VIEW_MOVE_WORK_SIZE 0x2154
+/// The heap block the sway takes, Tremor's work's size though it holds only the
+/// view move.
+#define VIEW_MOVE_WORK_SIZE sizeof(struct TremorWork)
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_PEAK toFIXED(6)
-#define SWAY_RAMP 0x2666 // 0.15 pixels a frame
+#define SWAY_RAMP (toFIXED(3) / 20) // 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
 
@@ -232,13 +234,13 @@ void FieldPsynergy_Tremor(void) {
     if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->count; i++) {
         struct Sprite *sprite = work->objects[i]->sprite;
-        s32 offset = work->spriteRotations[i];
+        s32 rotation = work->spriteRotations[i];
 
         if (amplitude > 0)
-          sprite->rotation =
-              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11), amplitude / 384);
+          sprite->rotation = rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                                    amplitude / 384);
         else
-          sprite->rotation = offset;
+          sprite->rotation = rotation;
       }
     }
 

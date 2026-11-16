@@ -222,10 +222,10 @@ void FieldPsynergy_Pound(void) {
   if (event->psynergyDrawFlags & 2) {
     if ((shine->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
-      shine->priorityFlags &= 254;
+      shine->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     }
   } else {
-    shine->priorityFlags = 1;
+    shine->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
   shine->facing = caster->facing;
   Actor_SelectAnimationFar(shine, 2);

@@ -75,7 +75,9 @@ struct HoverWork {
   s32 scale;
   s16 resource;
   u16 tile;
-  u16 idle; ///< cleared as Hover starts; nothing reads it
+  // XXX: only cleared as Hover starts and read nowhere in this file; a reader
+  // of offset 0x1030 elsewhere would say what it is.
+  u16 unk1030;
   u16 phase;
   s16 fading;
 };
@@ -197,7 +199,7 @@ void FieldPsynergy_Hover(void) {
   Actor_SelectAnimationFar(player, 5);
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  work->idle = 0;
+  work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);

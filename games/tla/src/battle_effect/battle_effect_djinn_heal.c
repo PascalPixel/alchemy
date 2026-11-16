@@ -105,7 +105,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
           quad->y = toFIXED(32);
         else
           quad->y = height;
-        quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
+        quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
         quad->velocityX = Random16() & TRIG_ANGLE_MASK;
         quad->velocityZ = Random16() & TRIG_ANGLE_MASK;
         quad->variant = (Random16() & 0x3fff) + 0x2000;

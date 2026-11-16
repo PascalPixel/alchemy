@@ -10,10 +10,11 @@ struct StripQuad;
 /// A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
-/// Where the small Djinni sheet is decoded in the effect's pictures.
-#define GASP_FIGURE_PICTURE 26048
-/// The user's figure: a 20 x 40 cell drawn over the canvas.
-#define FIGURE(work) ((work)->sheet + GASP_FIGURE_PICTURE)
+/// Where the small Djinni sheet is decoded in the effect's pictures, as
+/// The Broken Seal places it.
+#define GASP_DJINNI_PICTURE 26048
+/// The small Djinni: a 20 x 40 picture drawn over the canvas.
+#define FIGURE(work) ((work)->sheet + GASP_DJINNI_PICTURE)
 /// Sets the transform for one of modes 11 and 14's spinning particles: at its
 /// position, half as wide (the canvas holds every other column), turned by z.
 #define PLACE_PARTICLE(p)                                                      \
@@ -35,6 +36,9 @@ struct StripQuad;
 #define GASP_CENTRE 63
 #define GASP_FALL 62
 #define GASP_FLASH 61
+/// The motes of Djinn Counter's blow and of Reflux's and Counter Rush's swirl:
+/// every particle but the last.
+#define GASP_MOTES 63
 
 /// Where VenusDjinnSheet is decoded in the effect's pictures.
 #define GASP_FAMILY_VENUS_DJINN_PICTURES 0x1000
@@ -348,7 +352,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame > 37) {
         if (frame == 38) {
-          for (i = 0; i != GASP_CENTRE; i++) {
+          for (i = 0; i != GASP_MOTES; i++) {
             struct Particle *p = &work->particles[i];
             s32 s;
 
@@ -366,7 +370,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
-        for (i = 0; i != GASP_CENTRE; i++) {
+        for (i = 0; i != GASP_MOTES; i++) {
           struct Particle *p = &work->particles[i];
 
           if (p->variant >= 0) {
@@ -417,7 +421,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 62)
         Sound_PlayFar(SE_DJINNI_SET);
       if (frame == 0) {
-        for (i = 0; i != GASP_CENTRE; i++) {
+        for (i = 0; i != GASP_MOTES; i++) {
           struct Particle *p = &work->particles[i];
 
           p->z = Random16();
@@ -668,7 +672,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                              INTtoFIXED(ball->y) - toFIXED(64), 0);
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
             Matrix_RotateZ(p->x);
-            Matrix_Scale(Trig_Sin(p->variant * 682) * 3 + TRIG_TURN * 3 / 4,
+            Matrix_Scale(Trig_Sin(p->variant * 682) * 3 + FIXED_ONE * 3 / 4,
                          FIXED_ONE * 2, FIXED_ONE);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);

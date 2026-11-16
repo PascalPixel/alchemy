@@ -686,7 +686,8 @@ enum TumblingQuadsMode {
 /// effect that plays it.
 enum GaspMode {
   GASP_MODE_GASP,
-  GASP_MODE_UNUSED, ///< Unused: a Mercury Djinni's burst of light, no ability's
+  /// Unused: no wrapper passes it; a Mercury Djinni and a burst of light.
+  GASP_MODE_UNUSED,
   GASP_MODE_REFLUX,
   GASP_MODE_DJINN_COUNTER,
   GASP_MODE_MOLD,

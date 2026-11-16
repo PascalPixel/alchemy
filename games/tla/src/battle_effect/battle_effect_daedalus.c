@@ -147,24 +147,26 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
   } while (y != h);
 }
 
-typedef struct DaedalusSprite {
+/// A sprite (struct Sprite) as Daedalus reads it: its attribute 2 fields,
+/// scale, VRAM cache slot, rotation, size and drawing offset.
+struct DaedalusSprite {
   /// The part's link and its attributes 0 and 1, which the effect leaves alone.
   u8 linkAndPosition[8];
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
   u8 unusedAfterPalette[2];
-  s32 scale;
+  FIXED scale;
   u8 slot;
   u8 cacheFlags;
   u16 rotation;
   u8 size[2];
   u8 offsetX;
   u8 offsetY;
-} Sprite;
+};
 
 /// The effect work's sprite slot `i`, read as Daedalus's sprite.
-#define DAEDALUS_SPRITE(i) ((Sprite *)work->sprites[i])
+#define DAEDALUS_SPRITE(i) ((struct DaedalusSprite *)work->sprites[i])
 
 /// A sprite's first ten bytes, its attribute 2 fields after eight others.
 struct SpriteAttributes {
@@ -300,7 +302,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       s32 r, g, b;
       s32 v;
       const u8 *src;
-      Sprite *obj;
+      struct DaedalusSprite *obj;
 
       VramCache_FreeEntry(battle->arrowTiles);
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -434,7 +436,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     if (frame > 27) {
       struct SpritePlacement *posp;
       s32 row;
-      Sprite **slot;
+      struct DaedalusSprite **slot;
 
       scale = gDaedalus_WaveScale;
       pos.groundHeight = 0;
@@ -1148,11 +1150,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       {
         struct SpritePlacement *wave;
         s32 row;
-        Sprite **slot;
+        struct DaedalusSprite **slot;
 
         for (j = 0; j != 2; j++) {
           for (i = 0; i != 9; i++) {
-            Sprite *obj;
+            struct DaedalusSprite *obj;
             s32 v;
 
             wave = &shipPlace;
@@ -1639,8 +1641,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
                            discY - INTtoFIXED(k + 2) + ringOffset, 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(ring->x);
-          Matrix_Scale(Trig_Sin(ring->variant * 682) + TRIG_TURN, FIXED_ONE * 2,
-                       0x10000);
+          Matrix_Scale(Trig_Sin(ring->variant * 682) + FIXED_ONE, FIXED_ONE * 2,
+                       FIXED_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);
           Render_DrawModelList(model);

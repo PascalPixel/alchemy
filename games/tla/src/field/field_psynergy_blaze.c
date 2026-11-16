@@ -250,6 +250,7 @@ end:
 /// The event work's mode in which the cell test is skipped.
 #define EVENT_MODE_NO_CELL_TEST 3
 
+/// Nonzero when the map blocks an actor at (x, z) on a layer at a height.
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 
 /// Says whether object is blocked: 1 when, outside event mode 3,

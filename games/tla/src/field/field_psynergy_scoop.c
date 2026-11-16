@@ -31,8 +31,8 @@ struct ScoopWork {
   s16 timer; ///< frames into the stage
   s16 particleTile;
   s16 pictureTile;
-  struct Actor *object; ///< sprite 353, which digs and sinks as it does
-  struct Actor *other;  ///< sprite 354 (355 where lit is set), where it digs
+  struct Actor *object; ///< SPRITE_SCOOP_HAND, which digs and sinks as it does
+  struct Actor *other; ///< SPRITE_BROWN_BOULDER (grey where lit), where it digs
   /// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in
   /// sixteen (an item turns up), else 0, or 3 where lit is set.
   s16 mode;
@@ -242,9 +242,9 @@ void FieldPsynergy_Scoop(void) {
   if (*alternate != 0)
     Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GREY);
   if (*alternate == 0)
-    other = Actor_Spawn(354, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(SPRITE_BROWN_BOULDER, scene->x, scene->y, scene->z);
   else
-    other = Actor_Spawn(355, scene->x, scene->y, scene->z);
+    other = Actor_Spawn(SPRITE_GREY_BOULDER, scene->x, scene->y, scene->z);
   work->other = other;
   if (other == NULL)
     goto end;

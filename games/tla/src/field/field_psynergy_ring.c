@@ -226,10 +226,14 @@ void FieldPsynergy_Ring(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel(picture, toFIXED(52), radius, 243);
-          Canvas_PlotPolarPixel(picture, toFIXED(53), radius, 247);
-          Canvas_PlotPolarPixel(picture, toFIXED(54), radius, 251);
-          Canvas_PlotPolarPixel(picture, toFIXED(55), radius, 255);
+          Canvas_PlotPolarPixel(picture, toFIXED(52), radius,
+                                RING_PALETTE * 16 + 3);
+          Canvas_PlotPolarPixel(picture, toFIXED(53), radius,
+                                RING_PALETTE * 16 + 7);
+          Canvas_PlotPolarPixel(picture, toFIXED(54), radius,
+                                RING_PALETTE * 16 + 11);
+          Canvas_PlotPolarPixel(picture, toFIXED(55), radius,
+                                RING_PALETTE * 16 + 15);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -443,6 +447,7 @@ struct MapBounds {
   s32 maxZ;
 };
 
+/// Writes a map's view bounds from its header, in 8-pixel units.
 void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 
 /// Opens the whole map to the view: keeps the view centre's position and the

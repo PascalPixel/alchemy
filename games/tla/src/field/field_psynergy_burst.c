@@ -44,6 +44,7 @@ struct BurstWork {
   s8 paletteMode;
 };
 
+/// The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE.
 extern const u16 gBurst_SparkPalette[];
 
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -313,6 +314,7 @@ void FieldPsynergy_UpdateBurst(void) {
 void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 #undef BURST_NEXT_PHASE
 
+/// The tiles of the sparks that fly into Burst's glow, 64 bytes.
 extern const u8 gBurst_GlowTiles[];
 
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);

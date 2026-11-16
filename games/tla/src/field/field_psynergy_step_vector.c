@@ -347,6 +347,8 @@ void BattleEffect_EndCanvasSprite(void) {
 /// sparks and their sprites.
 #define VANISH_SPARK_COUNT 64
 
+/// Actor_VanishInSparks's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
+/// picture, and the sparks that circle the actor and their sprites.
 struct VanishSparksWork {
   u8 picture[1024];
   struct WhirlSpark sparks[VANISH_SPARK_COUNT];

@@ -25,7 +25,7 @@
 /// the sprite the sinking leader is drawn with.
 struct SandWork {
   u8 picture[32 * 32]; ///< the leader's picture, 8 bits a pixel
-  u8 sunk[32 * 32];    ///< the picture with its columns sunk by a wave
+  u8 sunken[32 * 32];  ///< the picture with its columns sunk by a wave
   struct EffectSprite grainSprites[SAND_GRAIN_COUNT];
   struct FieldPsynergyParticle grains[SAND_GRAIN_COUNT];
   struct EffectSprite leader;
@@ -82,7 +82,9 @@ struct PictureSource {
 
 typedef void (*PictureDecoder)(const void *source, void *destination, s32 mode);
 
+/// The ARM picture decoder FieldPsynergy_DecodePicture copies into RAM.
 extern const u8 BattleEffect_DecodePictureCode[];
+/// The end of the part of the decoder that is copied.
 extern const u8 BattleEffect_DecodePictureCopyEnd[];
 /// The decoder with its tables and work area (ld_script.ld). The block is
 /// larger than the copy, which stops before the work area.
@@ -264,7 +266,9 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
 
 struct PendingEvent;
 
+/// Gives an actor's first sprite layer another sprite's animations.
 void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
+/// Sets a sprite's first layer to a SpriteColorMode and redraws it.
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 
 /// Ends Sand: the leader rises out of the ground in a spray of grains and takes
@@ -330,23 +334,23 @@ void FieldPsynergy_EndSand(void) {
     ((struct Sprite *)owner->sprite)->scale = FIXED_ONE * 3 / 4;
   owner->facing = DEGtoANG(90);
   Actor_SelectAnimationFar(owner, 0);
-  Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
-  Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
   {
     void *source = ((struct Sprite *)owner->sprite)->entries[0];
 
     sprite = 0x400;
     FieldPsynergy_DecodePicture(source, work->picture, sprite);
   }
-  Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
   Sand_InitLeaderSprite(&work->leader, sprite);
   wait(1);
 
   frame = 0;
-  rippled = work->sunk;
+  rippled = work->sunken;
   ripple = 0;
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
@@ -360,7 +364,7 @@ void FieldPsynergy_EndSand(void) {
     }
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
-      Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
       Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 1);
       FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_SAND_EMERGE);
@@ -474,9 +478,9 @@ void FieldPsynergy_Sand(void) {
   Sand_InitLeaderSprite(&work->leader, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
-    Picture_SinkColumnsByWave(work->picture, work->sunk, frame * 3 / 2);
+    Picture_SinkColumnsByWave(work->picture, work->sunken, frame * 3 / 2);
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
-        work->sunk, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
+        work->sunken, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
     Sand_DrawLeaderSprite(&work->leader);
     i = 0;
     particle = work->grains;
@@ -487,7 +491,7 @@ void FieldPsynergy_Sand(void) {
       particle++;
     }
     if (frame == 16)
-      Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
     if (frame == 45)
       Sound_PlayFar(SE_WHOOSH);
     if (frame == 60) {
@@ -502,7 +506,7 @@ void FieldPsynergy_Sand(void) {
       *motionFlags = savedFlags;
     }
     if (frame == 61)
-      Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
     wait(1);
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)

@@ -769,27 +769,28 @@ s32 LinkLobby_EnterBattle(void) {
     }
     gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
+    // EXEC fills the payload's first four halfwords, where the link battle's
+    // command entry looks for it in the partner's.
     table = (u16 *)gSerialTransfer.payload;
-    table[0] = 0x45;
-    table[1] = 0x58;
-    table[2] = 0x45;
-    table[3] = 0x43;
+    table[0] = 'E';
+    table[1] = 'X';
+    table[2] = 'E';
+    table[3] = 'C';
     {
-      u32 last = 0x7c7;
+      /* FAKEMATCH(temporary): the bound in a local, and the destination
+       * indexed afresh each byte. */
+      u32 last = 1991;
 
       i = 0;
       src = buf;
-    copy:
-      {
+      do {
         u8 *dst = Ram_MapCellBuffer + 0x8000 + i;
         u8 b = *src;
 
         i++;
         src++;
         *dst = b;
-      }
-      if (i <= last)
-        goto copy;
+      } while (i <= last);
     }
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
@@ -1527,21 +1528,38 @@ s32 LinkLobby_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Edition-specific link handshake values (each word is four ASCII characters).
+/// A word of four characters, the first in its lowest byte, as The Broken
+/// Seal's Battle Arena writes them.
+#define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
+
+/// The words the lobby publishes in its link payload, by enum LobbySlot; the
+/// partner compares them with its own (LinkLobby_PeerSlotMatches).
 // clang-format off
 s32 gLinkLobby_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-    0x32674d43, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
+    PEER_TAG('C', 'M', 'g', '2'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('S', 'G', 'M', 'C')
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-    0x47357343, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43534747,
+    PEER_TAG('C', 's', '5', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'G', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-    0x47733743, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x43535347,
+    PEER_TAG('C', '7', 's', 'G'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'S', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-    0x32475363, 0x32313033, 0x43424131, 0x45444332, 0x47464533, 0x4353474d,
+    PEER_TAG('c', 'S', 'G', '2'), PEER_TAG('3', '0', '1', '2'),
+    PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
+    PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('M', 'G', 'S', 'C')
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-    0x31494773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x53474943,
+    PEER_TAG('s', 'G', 'I', '1'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
 #else
-    0x43314773, 0x33323130, 0x31434241, 0x32454443, 0x33474645, 0x434d4753,
+    PEER_TAG('s', 'G', '1', 'C'), PEER_TAG('0', '1', '2', '3'),
+    PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
+    PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('S', 'G', 'M', 'C')
 #endif
 };
 

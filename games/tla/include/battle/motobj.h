@@ -62,6 +62,12 @@ struct MotionObject {
   void (*update)(union FieldObject *object);
 };
 
+/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
+/// in 16.16, as verticalMotionStrength: BattleMotion_ReturnToSpot sets it
+/// whenever a unit goes back to its spot, and effects that change a unit's
+/// gravity for a leap or a lift give it this one back.
+#define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
+
 void ReleaseBattleObjectRecords(s32 objectId);
 void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);

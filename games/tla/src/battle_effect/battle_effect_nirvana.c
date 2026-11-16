@@ -366,7 +366,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       target->y = toFIXED(32);
     }
     if (frame == 80)
-      target->verticalMotionStrength = 0xab85;
+      target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
     if (frame == 24)
       BattleEffect_TintBattler(args->user, TINT_KEEP, 3, TINT_KEEP, 0);
     if (frame == 40)

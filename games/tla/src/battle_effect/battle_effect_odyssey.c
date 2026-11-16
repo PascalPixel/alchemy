@@ -730,7 +730,7 @@ void Iris_RestoreBattle(void) {
         BattleObject_GetFar(work->args->targets[i])->object;
 
     SET_POSITION(object, 0, toFIXED(120), 0);
-    object->verticalMotionStrength = 0xab85;
+    object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->busy = 0;

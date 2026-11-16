@@ -120,7 +120,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
             object->velocityY = toFIXED(12); // 12 pixels a frame upward
-            object->verticalMotionStrength = 0xab85;
+            object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
           }
           if (object->y < 0)
             BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,

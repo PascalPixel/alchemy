@@ -275,7 +275,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, TINT_KEEP, 0);
               target->velocityY = toFIXED(9) / 2;
-              target->verticalMotionStrength = 0xab85;
+              target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_NORMAL,

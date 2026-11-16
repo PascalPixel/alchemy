@@ -164,7 +164,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           target->acceleration = toFIXED(2);
           target->speedLimit = toFIXED(8);
           target->velocityY = toFIXED(5);
-          target->gravity = 0xab85;
+          target->gravity = BATTLE_UNIT_GRAVITY;
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)

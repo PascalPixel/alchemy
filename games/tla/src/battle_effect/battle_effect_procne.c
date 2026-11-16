@@ -170,7 +170,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           }
 
           if (frame == PROCNE_DROP_FRAME)
-            object->verticalMotionStrength = 0xab85;
+            object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 
           slot = 0;
           do {

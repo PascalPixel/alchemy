@@ -913,7 +913,7 @@ static s32 BattleArena_EnterBattle(void) {
     signature[3] = 'C';
     i = 0;
     source = savedWork;
-    destination = (u8 *)gMapGridCellBuffer + 0x8000;
+    destination = (u8 *)gMapGridCellBuffer + 32768;
     do {
       i++;
       *destination++ = *source++;

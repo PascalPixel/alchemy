@@ -374,11 +374,23 @@ const u8 gNereid_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
 /// Each falling spark's gravity.
 const s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
-/// The motes, then the frames, by variant.
-const u8 gVortices_Counts[] = {6, 140, 12, 160, 30, 200};
+/// Froth, by variant: the FROTH_ columns.
+const u8 gVortices_Counts[][2] = {
+    // bubbles (at most 30, battle_effect_vortices.c), frames
+    [EFFECT_VARIANT_BASIC] = {6, 140},      // Froth
+    [EFFECT_VARIANT_STRONGER] = {12, 160},  // Froth Sphere
+    [EFFECT_VARIANT_STRONGEST] = {30, 200}, // Froth Spiral
+};
 
-/// The funnels, their sway's radius and the shake, by variant.
-const u8 gVortices_Shapes[] = {1, 16, 2, 2, 24, 2, 4, 32, 4};
+/// Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
+/// way; the shake is BattleCamera_Shake's horizontal range, the vertical
+/// twice that.
+const u8 gVortices_Shapes[][3] = {
+    // tornadoes, sway, screen shake
+    [EFFECT_VARIANT_BASIC] = {1, 16, 2},     // Whirlwind, Gale
+    [EFFECT_VARIANT_STRONGER] = {2, 24, 2},  // Tornado, Typhoon
+    [EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, // Tempest, Hurricane
+};
 
 /// The crystals, the frames and the frame the shatter begins, by variant.
 const u8 gPrism_Counts[] = {1, 85, 30, 4, 124, 54, 12, 166, 86};

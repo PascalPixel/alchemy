@@ -7,8 +7,7 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
-#define MOTE_COUNT 30
+#define MOTE_COUNT 30 ///< bubbles set out, the most a variant flies
 #define SEAT_FIRST 32 ///< the particles that hold each target's seat
 
 /// The vortex's three halves, then the bubble picture.
@@ -74,37 +73,36 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   }
 
   work->cameraDelta = 0;
-  work->cameraPhase = 0;
+  work->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 
-  for (frame = 0; frame != gVortices_Counts[args->variant * 2 + 1]; frame++) {
+  for (frame = 0; frame != gVortices_Counts[args->variant][FROTH_FRAMES];
+       frame++) {
     // The camera turns between frames 17 and 63.
     camera = Ram_HeapSlots->cameraWork;
     if (frame >= 17 && frame < 64)
-      work->cameraDelta = 0x180;
+      work->cameraDelta = TRIG_TURN * 3 / 512;
     else
       work->cameraDelta = 0;
-    if (frame == gVortices_Counts[args->variant * 2 + 1] - 16)
+    if (frame == gVortices_Counts[args->variant][FROTH_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, camera->focus);
 
-    for (i = 0; i != gVortices_Counts[args->variant * 2]; i++) {
+    for (i = 0; i != gVortices_Counts[args->variant][FROTH_BUBBLE_COUNT]; i++) {
       point = &work->particles[i];
 
       // A mote leaves the caster two frames after the one before it.
       if (frame > i * 2 && landed[i] == 0) {
         EffectPosition_ProjectPoint((s32 *)point, &pos);
         pos.x >>= 1;
-        if (pos.depth < 160)
-          pos.depth = 160;
-        if (pos.depth > 0x31f)
-          pos.depth = 0x31f;
-        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE, pos.x - 6,
-                pos.y - 12, FROTH_BUBBLE_PICTURE_WIDTH,
-                FROTH_BUBBLE_PICTURE_HEIGHT);
+        CLAMP(pos.depth, 160, 799);
+        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
+                pos.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
+                pos.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
+                FROTH_BUBBLE_PICTURE_WIDTH, FROTH_BUBBLE_PICTURE_HEIGHT);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -140,8 +138,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       // The splash: three cels, two frames each, drawn as mirrored halves.
       if (point->variant >= 0 && point->variant < 16) {
         draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
-                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56, 16,
-                FROTH_VORTEX_HALF_HEIGHT);
+                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56,
+                FROTH_VORTEX_HALF_WIDTH, FROTH_VORTEX_HALF_HEIGHT);
         draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
                 point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
                 FROTH_VORTEX_HALF_HEIGHT);
@@ -150,8 +148,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(args->variant * 2 + 2, args->variant * 2 + 2);
-    if (work->cameraPhase == 0)
-      work->cameraPhase = 1;
+    if (work->cameraPhase == CAMERA_PHASE_IDLE)
+      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     EFFECT_END_FRAME(work);
   }
 
@@ -160,9 +158,13 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define TORNADO_FRAMES 80
-#define GLINT_COUNT 16 ///< four glints for each of up to four funnels
-#define GLINT_CELS 6   ///< three cels of two frames each
+#define WHIRLWIND_FRAMES 80 ///< frames of the tornadoes
+#define GLINT_COUNT 16      ///< four glints for each of up to four funnels
+#define GLINT_CELS 6        ///< three cels of two frames each
+
+/// The tornado pictures, after the six glint pictures in the sheet.
+#define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
+#define WHIRLWIND_SECTION_BYTES PICTURE_BYTES(TORNADO_STRIP)
 
 /// Tornadoes sweep across the targets, sparkling with glints, and the targets
 /// reel again and again.
@@ -207,7 +209,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != TORNADO_FRAMES; frame++) {
+  for (frame = 0; frame != WHIRLWIND_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -221,29 +223,35 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     // Sway toward the targets' side; fade in over 16 frames and out over the
     // last 16.
     if (args->side == EFFECT_SIDE_PARTY)
-      wave += 0x200000;
+      wave += toFIXED(32);
     else
-      wave -= 0x200000;
+      wave -= toFIXED(32);
     if (frame <= 16)
       REG_BLDALPHA = BLEND_ALPHA(frame, BLEND_WEIGHT_MAX);
     if (frame > 63)
-      REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, BLEND_WEIGHT_MAX);
+      REG_BLDALPHA = BLEND_ALPHA(79 - frame, BLEND_WEIGHT_MAX);
 
-    for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
+    for (i = 0; i != gVortices_Shapes[args->variant][WHIRLWIND_TORNADOES];
+         i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = (FIXEDtoINT(gVortices_Shapes[args->variant * 3 + 1] *
+      x = (FIXEDtoINT(gVortices_Shapes[args->variant][WHIRLWIND_SWAY] *
                           Trig_Sin((frame << 11) + i * (DEGtoANG(90))) +
                       wave)) +
           40;
       y = FIXEDtoINT(Trig_Cos((frame << 11) + i * (DEGtoANG(90))) * 2);
       segment = (frame / 2) % 3;
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16,
-              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
-              work->sheet + segment * PICTURE_BYTES(TORNADO_STRIP) + 0x2a56, x,
-              y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80,
-              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+              work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
+                  WHIRLWIND_TORNADO_PICTURES,
+              x, y + 16, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas,
+              work->sheet + segment * WHIRLWIND_SECTION_BYTES +
+                  (WHIRLWIND_TORNADO_PICTURES + 6 * WHIRLWIND_SECTION_BYTES),
+              x, y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas,
+              work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
+                  (WHIRLWIND_TORNADO_PICTURES + WHIRLWIND_SECTION_BYTES),
+              x, y + 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
 
       // Its four glints, the second of each pair mirrored; each restarts at
       // a new place when its cels run out.
@@ -276,8 +284,8 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     }
 
     work->shakeFrames = 1;
-    BattleCamera_Shake(gVortices_Shapes[args->variant * 3 + 2],
-                       gVortices_Shapes[args->variant * 3 + 2] * 2);
+    BattleCamera_Shake(gVortices_Shapes[args->variant][WHIRLWIND_SHAKE],
+                       gVortices_Shapes[args->variant][WHIRLWIND_SHAKE] * 2);
     EFFECT_END_FRAME(work);
   }
 

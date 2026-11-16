@@ -848,6 +848,14 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase);
 
 // djinn_heal.c
+/// work->cameraPhase, which BattleCamera_ApplyPhasedDelta and the effects
+/// that turn the camera through it (Fire, Froth) pass between them.
+enum CameraPhase {
+  CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn
+  CAMERA_PHASE_FRAME_DONE, ///< the effect has finished a frame: turn the
+                           ///< whole delta
+  CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
+};
 void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
@@ -1174,8 +1182,8 @@ extern u8 gTiamat_FlameDrops[];
 extern u16 gTiamat_FlamePictures[];
 extern u8 gNereid_Columns[];
 extern s32 gNereid_Gravity[];
-extern u8 gVortices_Counts[];
-extern u8 gVortices_Shapes[];
+extern u8 gVortices_Counts[][2];
+extern u8 gVortices_Shapes[][3];
 extern u8 gPrism_Counts[];
 extern u16 gPlasma_Sparks[];
 extern u8 gPlasma_Columns[];

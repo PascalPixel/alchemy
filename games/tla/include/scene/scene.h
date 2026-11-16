@@ -303,15 +303,6 @@ struct MarsLighthouseAerieSprite {
   u8 nextFrame;
 };
 
-/// The event work's step counter.
-struct AerieEventWork {
-  u8 unk000[452];
-  union {
-    union StoredHalfword step;
-    u16 stepRead;
-  };
-};
-
 /// One halfword read as a struct's field.
 struct HalfwordField {
   s16 value;

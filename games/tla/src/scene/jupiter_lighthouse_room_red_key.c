@@ -53,7 +53,6 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/cycle_pictures.h"
-#include "scene/orbit.h"
 
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.
@@ -212,14 +211,14 @@ void Orb_Update(struct Actor *self) {
   self->timer += -0x800;
 }
 
-void Actor_StartScript(struct OrbitEffect *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
 void Orbs_SpawnRising(void) {
   struct Actor *center;
-  struct OrbitEffect *effect;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
@@ -230,18 +229,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -249,10 +248,10 @@ void Orbs_SpawnRising(void) {
     FieldActor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
-    effect->angle = angle;
-    effect->unk66 = 0;
-    effect->update = (void (*)(struct OrbitEffect *))Orb_Update;
-    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->timer = angle;
+    effect->userValue = 0;
+    effect->update = (void (*)(void))Orb_Update;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 1;
   }

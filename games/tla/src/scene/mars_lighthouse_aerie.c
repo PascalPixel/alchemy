@@ -54,7 +54,6 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/sparkle.h"
-#include "scene/orbit.h"
 #include "text/msg_ids.h"
 
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
@@ -1833,7 +1832,7 @@ void Orbs_UpdateRising(struct Actor *self) {
 /// starts to rise round the beacon's beam.
 void Orbs_SpawnRising(void) {
   struct Actor *center;
-  struct OrbitEffect *effect;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
@@ -1844,18 +1843,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        SPRITE_PARTICLE, center->x.fixed,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        SPRITE_PARTICLE, center->x.fixed,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -1863,10 +1862,10 @@ void Orbs_SpawnRising(void) {
     FieldActor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
-    effect->angle = angle;
-    effect->unk66 = 0;
-    effect->update = (void (*)(struct OrbitEffect *))Orbs_UpdateRising;
-    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->timer = angle;
+    effect->userValue = 0;
+    effect->update = (void (*)(void))Orbs_UpdateRising;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 2;
   }
@@ -2002,7 +2001,7 @@ void MarsLighthouseAerie_StopLookingAround(s32 id);
 extern s32 gMarsLighthouseAerie_BeamNarrowScript[];
 
 void MarsLighthouseAerie_LightBeacon(void) {
-  struct AerieEventWork *work, *later;
+  struct FieldWork *work, *later;
   struct OverlaySprite *sprite;
   struct Actor *created, *object;
   s32 zero, firstBeam, tiles, glowTask, message;
@@ -2054,10 +2053,10 @@ void MarsLighthouseAerie_LightBeacon(void) {
   object = spawned;
   if (created != 0) {
     sprite = (struct OverlaySprite *)object->sprite;
-    sprite->unk5_5 = 0;
-    sprite->unk1b = zero;
-    sprite->unk9_4 = 0;
-    sprite->unk9_2 = 2;
+    sprite->fullColor = 0;
+    sprite->layerCount = zero;
+    sprite->palette = 0;
+    sprite->priority = 2;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     object->motionFlags = zero;
     object->retainSpriteCache = 1;
@@ -2272,7 +2271,7 @@ L_0200bcea:
   Message_ShowCentered(((s32)MsgMarsLighthouseAerieBeaconIsLit + 7), 1);
   FieldPsynergy_StopMindReadWave();
   work = Ram_HeapSlots->fieldWork;
-  work->step.value = work->stepRead + 2;
+  work->message += 2;
   MarsLighthouseAerie_StartLookingAround(gMainRoutineWork.leaderActorId);
   MarsLighthouseAerie_StartLookingAround(ACTOR_PIERS);
   MarsLighthouseAerie_StartLookingAround(ACTOR_JENNA);
@@ -2296,8 +2295,8 @@ L_0200bcea:
   ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
   // Read as a word, so the store to the actor before it may alias.
   later =
-      (struct AerieEventWork *)((struct HeapWords *)Ram_HeapSlots)->eventWord;
-  later->stepRead = later->stepRead + 1;
+      (struct FieldWork *)((struct HeapWords *)Ram_HeapSlots)->fieldWork;
+  later->message++;
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_PlaySound(SE_ASCEND);

@@ -191,16 +191,16 @@ extern const struct Scale gUlysses_ShipScale;
 
 /// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
 /// the effect's pictures, and the silhouette's size.
-#define ULYSSES_PICTURES 0x1781
+#define ULYSSES_PICTURES 6017
 #define ULYSSES_SILHOUETTE_WIDTH 80
 #define ULYSSES_SILHOUETTE_HEIGHT 112
 /// Where RuneCircleSheet is decoded in the effect's pictures.
-#define ULYSSES_RUNE_CIRCLE_PICTURES 0x2781
+#define ULYSSES_RUNE_CIRCLE_PICTURES 10113
 /// Where YellowOrbSheet is decoded in the effect's pictures.
-#define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
+#define ULYSSES_YELLOW_ORB_PICTURES 7831
 /// Where the sparks each rune burst throws live in the effect's pictures, 16
 /// for each of the six runes.
-#define ULYSSES_SPARKS 0x4b98
+#define ULYSSES_SPARKS 19352
 #define ULYSSES_SPARK_COUNT 96
 
 #define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
@@ -296,7 +296,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
   }
-  BattleEffect_SpawnObjects(8, 0x28f, 3);
+  BattleEffect_SpawnObjects(8, 655, 3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -731,8 +731,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
               sc = FIXED_ONE * 7 / 4 - (t << 11);
               Matrix_ScaleUniform(sc);
             } else {
-              Matrix_RotateX(0x3ff0 - t * 682);
-              Matrix_RotateZ(t * 169 + 0xf028);
+              Matrix_RotateX(16368 - t * 682);
+              Matrix_RotateZ(t * 169 + 61480);
             }
             Matrix_RotateY(t << 9);
           }

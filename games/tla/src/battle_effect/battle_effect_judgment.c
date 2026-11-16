@@ -6,7 +6,7 @@
 #include "sounds.h"
 
 /// Where TornadoSheet is decoded in the effect's pictures.
-#define JUDGMENT_TORNADO_PICTURES 0x600
+#define JUDGMENT_TORNADO_PICTURES 1536
 // OverlayImageA's three flash pictures, a byte a pixel, one after another in
 // the sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
@@ -55,7 +55,7 @@
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 
 /// Where FireRingTexture is decoded in the map cell buffer.
-#define JUDGMENT_FIRE_RING 0x4000
+#define JUDGMENT_FIRE_RING 16384
 
 /// The rings are drawn at JUDGMENT_RING_LEVEL into a square picture at the
 /// sheet's start, cleared each frame.
@@ -251,7 +251,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
          * of 2680 instructions differ in tla-en. */
         QUEUE_PUSH_PARTED(OBJ_TILES((struct Sprite *)work->sprites[i]),
                           (u32)(cells + i * OBJ_32X32_8BPP_BYTES),
-                          DMA_COPY_WORDS(0x100));
+                          DMA_COPY_WORDS(256));
       }
     }
     if (frame == 76) {
@@ -263,7 +263,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES(
                 (struct Sprite *)work->sprites[gJudgment_BurstPictures[i]]),
-            (u32)(cells + i * OBJ_32X32_8BPP_BYTES), DMA_COPY_WORDS(0x100));
+            (u32)(cells + i * OBJ_32X32_8BPP_BYTES), DMA_COPY_WORDS(256));
       }
     }
 
@@ -272,9 +272,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (n > 80) {
         n = 80;
       } else {
-        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, FIXED_ONE);
+        BattleEffect_DrawShadedCircles(work->sheet + 4694, n, FIXED_ONE);
       }
-      Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
+      Canvas_BlitAtFoot(work->sheet + 4694, 60, 80, n);
     }
     if ((u32)(frame - 116) <= 27) {
       s32 size = (frame - 116) / 3 + 16;
@@ -369,7 +369,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       shade = 0;
-      s = (frame << 13) - 0x11e000;
+      s = (frame << 13) - toFIXED(17.875);
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
@@ -682,7 +682,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
-      s = (frame << 13) - 0x8f800;
+      s = (frame << 13) - toFIXED(287) / 32;
       glare.logWidth = 7;
       glare.logHeight = 7;
       glare.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
@@ -861,8 +861,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         p = &work->particles[i];
         if (p->variant != 0) {
           scale[0] = p->z + (p->y >> 7);
-          if (scale[0] <= 0x7ff) {
-            scale[0] = 0x800;
+          if (scale[0] <= toFIXED(1) / 32 - 1) {
+            scale[0] = toFIXED(1) / 32;
           }
           scale[1] = scale[0];
           drift[0] = p->x;
@@ -870,7 +870,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           drift[2] = p->y + toFIXED(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;
-          if (p->y <= 0xfffff) {
+          if (p->y <= toFIXED(16) - 1) {
             if (frame <= 279) {
               p->x = INTtoFIXED((Random16() & 63) + shift + 32);
             } else {

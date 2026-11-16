@@ -13,14 +13,14 @@ struct WingVertex {
   struct ModelVertex lower;
 };
 
-#define SCRATCH (Ram_MapCellBuffer + 0x4000)
+#define SCRATCH (Ram_MapCellBuffer + 16384)
 /// The wing strip's corners, rebuilt each frame from the morphing shapes.
 extern struct WingVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
-#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
-#define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
+#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
+#define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
 
 #define HAURES_FRAMES 92
 /// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
@@ -40,7 +40,7 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 #define HAURES_WING_SHAPES 13
 /// Where SwirlTexture, 64 x 64 and dimmed to half, is decoded in the effect's
 /// pictures.
-#define HAURES_SWIRL_TEXTURE 0x4000
+#define HAURES_SWIRL_TEXTURE 16384
 #define HAURES_SWIRL_WIDTH 64
 #define HAURES_SWIRL_HEIGHT 64
 
@@ -388,7 +388,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
           texture.logWidth = 5;
           texture.logHeight = 5;
-          texture.pixels = work->sheet + 0x1000;
+          texture.pixels = work->sheet + 4096;
           model->kind = MODEL_SHADED;
           model->texture = &texture;
           model->mesh = gBattleEffect_SmallSquareMeshReversed;
@@ -559,9 +559,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->vertices = verts;
         Matrix_Initialize();
         Matrix_Translate(0, -toFIXED(4), 0);
-        s = 0x1d8f0;
+        s = 121072;
         if (frame > 268) {
-          s = (frame << 12) - 0xef710;
+          s = (frame << 12) - 980752;
         }
         Matrix_Scale(s >> 1, s, s >> 1);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -569,7 +569,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         if ((u32)cut <= 5) {
           s32 j;
 
-          Iwram_ClearWords(buffer, 0xd80);
+          Iwram_ClearWords(buffer, 3456);
           for (j = 0; j != 72; j++) {
             s32 m;
 
@@ -584,7 +584,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             model->mesh = gHaures_BurstMesh;
             Matrix_Initialize();
             Matrix_Translate(0, -toFIXED(4), 0);
-            Matrix_Scale(0x1b1e0, 0x29c40, FIXED_ONE * 2);
+            Matrix_Scale(111072, 171072, FIXED_ONE * 2);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -640,7 +640,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           }
           velocity.x = 0;
         }
-        gBgScroll[1].x += 0xfff4;
+        gBgScroll[1].x -= 12;
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
         position.x = (Trig_Sin(frame << 9) << 3) + toFIXED(108);
@@ -668,7 +668,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         cells = work->sheet;
-        mesh = work->sheet + 0x800;
+        mesh = work->sheet + 2048;
         if (frame == 277) {
           s32 none;
           s32 j;
@@ -783,7 +783,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 0);
   {
-    Iwram_ClearWords(buffer, 0x6c00);
+    Iwram_ClearWords(buffer, 27648);
     for (i = 0; i != 6; i++) {
       s32 j;
 
@@ -1045,7 +1045,7 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 
   for (ring = 0; ring != 2; ring++) {
     for (i = 0; i != segments; i++) {
-      // The vertex: a point on the ring, 96 units out (3 * 0x10000 >> 11).
+      // The vertex: a point on the ring, 96 units out (3 * toFIXED(1) >> 11).
       vertices[ring * segments + i].x =
           (u32)(Trig_Sin(i * (TRIG_TURN / segments)) * 3) >> 11;
       vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;

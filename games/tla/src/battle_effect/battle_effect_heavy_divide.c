@@ -129,7 +129,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
       }
       if (size > 0) {
         if (frame > 38) {
-          angle = DEGtoANG(90) - Trig_Sin((frame << 9) - 0x4e00) / 16;
+          angle = DEGtoANG(90) - Trig_Sin((frame << 9) - 19968) / 16;
         } else if (frame > 15) {
           angle = (TRIG_TURN - Trig_Cos((frame << 9) - DEGtoANG(45))) / 2;
         } else {
@@ -257,8 +257,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// The column pictures: 36 pixels wide, and a slim 17-pixel one after them.
-#define SLIM_COLUMN_OFFSET 0x870
-#define SPARK_OFFSET 0x3060
+#define SLIM_COLUMN_OFFSET 2160
+#define SPARK_OFFSET 12384
 
 // How a column leans as it grows.
 enum { LEAN_LEFT, LEAN_RIGHT, SLIM_LEAN_LEFT, SLIM_LEAN_RIGHT };
@@ -444,11 +444,11 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 #define WYRD_DROPS 16
 
 /// Where BurningSkullSheet is decoded in the effect's pictures.
-#define WYRD_CURSE_BURNING_SKULLS 0x4000
+#define WYRD_CURSE_BURNING_SKULLS 16384
 
 /// Where the 32x32 glow is mirrored from its shaded disc in the effect's
 /// pictures.
-#define WYRD_CURSE_GLOW 0x1000
+#define WYRD_CURSE_GLOW 4096
 
 /// Abilities: Wyrd Curse.
 ///
@@ -509,7 +509,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
     size = width / 2;
     half = size / 2;
-    clear(work->sheet + WYRD_CURSE_GLOW, 0x800);
+    clear(work->sheet + WYRD_CURSE_GLOW, 2048);
     BattleEffect_DrawShadedCircles(work->sheet, size, FIXED_ONE);
     y = 0;
     offset = 0;
@@ -704,15 +704,15 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 #define RADIANT_FIRE_FRAMES 66
 
 /// Where FireRingTexture is decoded in the effect's pictures.
-#define RADIANT_FIRE_FIRE_RING 0x1000
+#define RADIANT_FIRE_FIRE_RING 4096
 
 /// Radiant Fire: eight bursts of fire bloom one after another around the
 /// target, each a shaded disc that swells and shrinks under a spinning
 /// square of flame, with a white flash of the canvas as the first lands.
 ///
 /// Setup: canvas layer 0 at half blend; one max blitter; the flame texture
-/// (resource 0x0c2) and the orange palette; 32 shaded discs of 2 to 64
-/// pixels drawn into the map cell buffer, their offsets kept in the work
+/// (RESOURCE_FIRE_RING_TEXTURE) and the orange palette; 32 shaded discs of 2 to
+/// 64 pixels drawn into the map cell buffer, their offsets kept in the work
 /// sheet.
 /// Frame loop (66 frames): at frame 0 the bursts are placed at random
 /// around the target and the user closes in; from frame 8 burst i lands at
@@ -760,7 +760,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   cells = (s32)Ram_MapCellBuffer;
   discs = (s16 *)work->sheet;
   for (i = 0; i != FLAMES; i++) {
-    BattleEffect_DrawShadedCircles((void *)(offset + cells), size, 0x14e20);
+    BattleEffect_DrawShadedCircles((void *)(offset + cells), size, 85536);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -884,7 +884,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 #define STREAKS 64
 
 /// The splash: six 24x48 pictures in the work sheet after the streak.
-#define SPLASH_OFFSET 0x3200
+#define SPLASH_OFFSET 12800
 #define SPLASH_SIZE (24 * 48)
 
 #define HURRICANE_FRAMES 68
@@ -914,7 +914,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  size = 0x3c00;
+  size = 15360;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));

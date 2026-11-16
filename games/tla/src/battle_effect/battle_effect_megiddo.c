@@ -8,18 +8,18 @@
 struct StripQuad;
 
 /// Where DustBlobSheet is decoded in the effect's pictures.
-#define MEGIDDO_DUST_BLOB_PICTURES 0x2400
+#define MEGIDDO_DUST_BLOB_PICTURES 9216
 
 #define MEGIDDO_FRAMES 188
 
 /// Where FireRingTexture is decoded in the map cell buffer.
-#define MEGIDDO_FIRE_RING 0x4000
+#define MEGIDDO_FIRE_RING 16384
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define MEGIDDO_GLOW_BAND 0x800
+#define MEGIDDO_GLOW_BAND 2048
 
 /// Where FireStripesTexture is decoded in the effect's pictures.
-#define MEGIDDO_FIRE_STRIPES 0x1000
+#define MEGIDDO_FIRE_STRIPES 4096
 
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
@@ -70,8 +70,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   savedYaw = 0;
   zero = 0;
   ring = gMapGridCellBuffer;
-  transformed = Ram_MapCellBuffer + 0x1000;
-  strip = Ram_MapCellBuffer + 0x2000;
+  transformed = Ram_MapCellBuffer + 4096;
+  strip = Ram_MapCellBuffer + 8192;
   fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, toFIXED(5));
   BattleEffect_StartCanvasLayer(0);
@@ -80,8 +80,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  meshA = work->sheet + 0x5f40;
-  meshB = work->sheet + 0x6340;
+  meshA = work->sheet + 24384;
+  meshB = work->sheet + 25408;
   caster = BattleObject_GetFar(args->user)->object;
   x = 0;
   z = 0;
@@ -347,7 +347,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       /* FAKEMATCH(dead): a once-only block. */
       do {
         t->pixels =
-            work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 0x400;
+            work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 1024;
       } while (0);
       model->mesh = strip;
       {
@@ -394,7 +394,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           model->scrollU = ~scroll & 127;
           Matrix_Initialize();
           Matrix_Translate(-toFIXED(2), -toFIXED(32), 0);
-          Matrix_Scale(82000, 0x35208, FIXED_ONE);
+          Matrix_Scale(82000, 217608, FIXED_ONE);
           Matrix_ScaleUniform(scale);
           Matrix_RotateZ(DEGtoANG(180));
           scroll += 20;

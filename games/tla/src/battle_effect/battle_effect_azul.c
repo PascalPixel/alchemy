@@ -43,11 +43,11 @@ struct AzulFace {
 /// Azul's pictures and models in the effect's pictures: the faces of its model
 /// after their vertices, the sphere, the grid, BlueBeamSheet and every other
 /// pixel of the beam's first picture, packed to 12x24.
-#define AZUL_FACES 0x1f0
-#define AZUL_SPHERE 0x800
-#define AZUL_GRID 0xc00
-#define AZUL_BLUE_BEAM 0x2bb8
-#define AZUL_BEAM_DROP 0x2df8
+#define AZUL_FACES 496
+#define AZUL_SPHERE 2048
+#define AZUL_GRID 3072
+#define AZUL_BLUE_BEAM 11192
+#define AZUL_BEAM_DROP 11768
 #define AZUL_BEAM_DROP_WIDTH 12
 #define AZUL_BEAM_DROP_HEIGHT 24
 /// The water sphere: 16 rings of 16 vertices from pole to pole.
@@ -55,7 +55,7 @@ struct AzulFace {
 #define AZUL_SPHERE_RING_VERTICES 16
 /// Where Azul decodes, one after another, WispSheet, CornerRuneASheet,
 /// FireRingTexture and SwirlTexture in the map cell buffer.
-#define AZUL_TEXTURES 0x4000
+#define AZUL_TEXTURES 16384
 
 /// Azul: water and bubbles rush over the foes, the winged serpent swims in
 /// from the right and closes them in a great sphere of water, and the sphere
@@ -117,7 +117,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     u8 *cells = gMapGridCellBuffer;
 
     for (i = 0; i < 120; i++) {
-      for (n = 0; n < 0x800; n += 64) {
+      for (n = 0; n < 2048; n += 64) {
         Iwram_CopyWordsEntry(
             cells,
             (void *)(BG_CHAR_BLOCK(2) + ((i / 8 * 256 + (i & 7)) * 8 + n)), 8);
@@ -150,7 +150,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   }
   mapCells = gMapGridCellBuffer;
   planes = Ram_MapCellBuffer + AZUL_TEXTURES;
-  stripEnd = 0x3a08;
+  stripEnd = 14856;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
@@ -243,7 +243,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       p = &work->particles[AZUL_PARTS];
       for (; i != AZUL_BUBBLE_COUNT; i++, p++) {
         if (p->variant >= 0) {
-          FIXED s = Trig_Sin((frame << 10) + i * 0x1a16);
+          FIXED s = Trig_Sin((frame << 10) + i * 6678);
 
           blit(canvas, work->sheet + AZUL_BEAM_DROP,
                (FIXEDtoINT(p->x + (s << 4))) - AZUL_BEAM_DROP_WIDTH / 2,
@@ -495,7 +495,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       if (frame == 186) {
-        args->targets[args->targetCount] = 0xff;
+        args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
         BattleObject_SpawnObjectsForListFar(args->targets, 0, 0);
       }
     }
@@ -620,7 +620,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         height = 64;
         f = frame;
         for (; i != 2; i++, f += 3) {
-          u8 *cells = work->sheet + 0x2f18 + (f % 6 << 10);
+          u8 *cells = work->sheet + 12056 + (f % 6 << 10);
 
           blit(canvas, cells, 30, y, width, height);
           alternateBlit(canvas, cells, 46, y, width, height);
@@ -655,8 +655,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Render_TransformVertices(sphere, verts, 256);
       Render_DrawModelList(model);
       if (frame > 137) {
-        shade = 0x5a4 - frame * 10;
-        size = (frame << 13) + -0x110000;
+        shade = 1444 - frame * 10;
+        size = (frame << 13) + -toFIXED(17);
 
         if (shade > 0) {
           shade = 0;
@@ -669,7 +669,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           model->shade = shade;
           Matrix_Initialize();
           Matrix_Translate(toFIXED(44), 0, 0);
-          Matrix_RotateY(0x3448);
+          Matrix_RotateY(13384);
           Matrix_ScaleUniform(size);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -678,7 +678,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       if (frame > 151) {
         work->shakeFrames = 2;
         shade = 0;
-        size = (frame << 13) + -0x130000;
+        size = (frame << 13) + -toFIXED(19);
         scratchTexture.logWidth = 6;
         scratchTexture.logHeight = 6;
         scratchTexture.pixels = Ram_MapCellBuffer + AZUL_TEXTURES;

@@ -149,9 +149,9 @@ extern u8 IwramMulFXReturnIp[];
 #define Iwram_MulFX(left, right)                                               \
   Iwram_CallReturnIp((left), (right), IwramMulFXReturnIp)
 
-#define Iwram_CopyWordsOffset FIXED_OFFSET(0x1388, IwramCopyWords, IwramIrqMain)
+#define Iwram_CopyWordsOffset FIXED_OFFSET(5000, IwramCopyWords, IwramIrqMain)
 #define Iwram_RatioMulQ14Offset                                                \
-  FIXED_OFFSET(0x13c, IwramRatioMulQ14, IwramIrqMain)
-#define Iwram_SqrtOffset FIXED_OFFSET(0x1d8, IwramSqrt, IwramIrqMain)
+  FIXED_OFFSET(316, IwramRatioMulQ14, IwramIrqMain)
+#define Iwram_SqrtOffset FIXED_OFFSET(472, IwramSqrt, IwramIrqMain)
 
 #endif

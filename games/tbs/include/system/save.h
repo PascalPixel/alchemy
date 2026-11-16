@@ -75,18 +75,18 @@ struct SaveWork {
 };
 
 STATIC_ASSERT(sizeof(struct SaveFileSummary) == 64);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, level) == 0x1c);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, sendFlag) == 0x31);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, checksum) == 0x3c);
-STATIC_ASSERT(offsetof(struct SaveWork, slot) == 0x40);
-STATIC_ASSERT(offsetof(struct SaveWork, summary) == 0x1040);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, level) == 28);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, sendFlag) == 49);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, checksum) == 60);
+STATIC_ASSERT(offsetof(struct SaveWork, slot) == 64);
+STATIC_ASSERT(offsetof(struct SaveWork, summary) == 4160);
 
-STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 0x10);
-STATIC_ASSERT(sizeof(struct SaveWork) == 0x1100);
-STATIC_ASSERT(offsetof(struct SaveWork, partId) == 0x10);
-STATIC_ASSERT(offsetof(struct SaveWork, counter) == 0x20);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, flagCount) == 0x32);
-STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 0x38);
+STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 16);
+STATIC_ASSERT(sizeof(struct SaveWork) == 4352);
+STATIC_ASSERT(offsetof(struct SaveWork, partId) == 16);
+STATIC_ASSERT(offsetof(struct SaveWork, counter) == 32);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, flagCount) == 50);
+STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 
 /// The save work, heap slot HEAP_SLOT_SAVE under its own name; null between
 /// save operations.

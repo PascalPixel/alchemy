@@ -17,8 +17,8 @@ struct SelectionNodeLinkView {
 };
 
 // XXX: likely a SelectionMenuWork (its row's first icon and the entry under
-// the hand), because head and cursorIndex sit at these offsets (0x348 and
-// 0x39e); a caller of NodeChain_GetNodeAtIndex would settle it.
+// the hand), because head and cursorIndex sit at these offsets (840 and
+// 926); a caller of NodeChain_GetNodeAtIndex would settle it.
 /// A chain's first node and how many links to follow from it, which the unused
 /// NodeChain_GetNodeAtIndex reads.
 struct SelectionMenuCursorView {
@@ -29,7 +29,7 @@ struct SelectionMenuCursorView {
 };
 
 STATIC_ASSERT(sizeof(struct SelectionNodeLinkView) == 8);
-STATIC_ASSERT(offsetof(struct SelectionMenuCursorView, node) == 0x348);
-STATIC_ASSERT(offsetof(struct SelectionMenuCursorView, count) == 0x39e);
+STATIC_ASSERT(offsetof(struct SelectionMenuCursorView, node) == 840);
+STATIC_ASSERT(offsetof(struct SelectionMenuCursorView, count) == 926);
 
 #endif

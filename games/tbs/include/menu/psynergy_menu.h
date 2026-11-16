@@ -53,7 +53,7 @@ struct PsynergyMenuWork {
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
                      ///< entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
-  /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
+  /// DjinnMenuWork's backdrop pointer at 388; no view names the rest.
   u8 aroundBackdrop[72];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembers)
@@ -80,24 +80,23 @@ struct PsynergyMenuWork {
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
 };
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 0x010);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 0x020);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 0x044);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryIcons) == 0x048);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 0x10c);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedRow) == 0x111);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, columnCount) == 0x112);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction[0]) == 0x178);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 0x1c8);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyCount) == 0x218);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 0x21a);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
-              0x260);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 16);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 32);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 68);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryIcons) == 72);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 268);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedColumn) == 272);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedRow) == 273);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, columnCount) == 274);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, rowCount) == 275);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction[0]) == 376);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 456);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyCount) == 536);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 538);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) == 608);
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 0x222);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 0x114);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 0x154);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 546);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 276);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 340);
 
 #endif

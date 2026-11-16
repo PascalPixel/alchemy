@@ -95,9 +95,9 @@ struct ActorSystemWork {
 };
 
 STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 0x1c);
-STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 24);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 28);
+STATIC_ASSERT(sizeof(struct ActorSystemWork) == 92);
 
 /// The hardware sprite attributes one part of an animated sprite (its image or
 /// its shadow) is drawn with.
@@ -151,13 +151,13 @@ struct Sprite {
   struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };
 
-STATIC_ASSERT(sizeof(struct SpriteAnimation) == 0x18);
-STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
-STATIC_ASSERT(offsetof(struct Sprite, scale) == 0x18);
-STATIC_ASSERT(offsetof(struct Sprite, rotation) == 0x1e);
-STATIC_ASSERT(offsetof(struct Sprite, width) == 0x20);
-STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
-STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
+STATIC_ASSERT(sizeof(struct SpriteAnimation) == 24);
+STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 12);
+STATIC_ASSERT(offsetof(struct Sprite, scale) == 24);
+STATIC_ASSERT(offsetof(struct Sprite, rotation) == 30);
+STATIC_ASSERT(offsetof(struct Sprite, width) == 32);
+STATIC_ASSERT(sizeof(struct Sprite) == 56);
+STATIC_ASSERT(offsetof(struct Sprite, entries) == 40);
 
 /// Animation numbers of an actor's sprite, for Import_ActorSetAnimation and
 /// Sprite_StartAnimation.

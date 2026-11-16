@@ -70,22 +70,22 @@ struct ShopWork {
   struct FieldParticle effects[24]; ///< the sanctum service's particles
 };
 
-STATIC_ASSERT(sizeof(struct ShopWork) == 0xa70);
-STATIC_ASSERT(offsetof(struct ShopWork, moneyWindow) == 0x00c);
-STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 0x020);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 0x114);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 0x154);
-STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 0x26c);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 0x36e);
-STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 0x380);
-STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x3a6);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberCount) == 0x3a7);
-STATIC_ASSERT(offsetof(struct ShopWork, action) == 0x3aa);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberX) == 0x134);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberY) == 0x144);
-STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 0x3ab);
-STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 0x3ac);
-STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x3b0);
+STATIC_ASSERT(sizeof(struct ShopWork) == 2672);
+STATIC_ASSERT(offsetof(struct ShopWork, moneyWindow) == 12);
+STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 32);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 276);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 340);
+STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 620);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 878);
+STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 896);
+STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 934);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberCount) == 935);
+STATIC_ASSERT(offsetof(struct ShopWork, action) == 938);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberX) == 308);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberY) == 324);
+STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 939);
+STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 940);
+STATIC_ASSERT(offsetof(struct ShopWork, effects) == 944);
 
 extern const u8 gMenuCursor_HandTiles[];
 extern const u8 gShop_GemTiles[];

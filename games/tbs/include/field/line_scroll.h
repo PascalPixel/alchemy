@@ -25,9 +25,9 @@ struct LineScrollWork {
   FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
-STATIC_ASSERT(sizeof(struct LineScrollWork) == 0xf20);
-STATIC_ASSERT(offsetof(struct LineScrollWork, page) == 0xf00);
-STATIC_ASSERT(offsetof(struct LineScrollWork, freqX) == 0xf08);
+STATIC_ASSERT(sizeof(struct LineScrollWork) == 3872);
+STATIC_ASSERT(offsetof(struct LineScrollWork, page) == 3840);
+STATIC_ASSERT(offsetof(struct LineScrollWork, freqX) == 3848);
 
 /// The line scroll's work, HEAP_SLOT_LINE_SCROLL under its own name,
 /// which LineScroll_InitWave takes for a scene's wave.

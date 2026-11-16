@@ -26,10 +26,10 @@ struct FieldBlendWork {
   u8 padding[2]; ///< up to the struct's word-aligned size
 };
 
-STATIC_ASSERT(sizeof(struct FieldBlendWork) == 0x1f88);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, to) == 0xa80);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, delta) == 0x1500);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, timer) == 0x1f80);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, loud) == 0x1f84);
+STATIC_ASSERT(sizeof(struct FieldBlendWork) == 8072);
+STATIC_ASSERT(offsetof(struct FieldBlendWork, to) == 2688);
+STATIC_ASSERT(offsetof(struct FieldBlendWork, delta) == 5376);
+STATIC_ASSERT(offsetof(struct FieldBlendWork, timer) == 8064);
+STATIC_ASSERT(offsetof(struct FieldBlendWork, loud) == 8068);
 
 #endif

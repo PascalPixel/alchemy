@@ -152,35 +152,35 @@ struct Actor {
 #define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ)                          \
   ((p)->x.fixed = (fixedX), (p)->y.fixed = (fixedY), (p)->z.fixed = (fixedZ))
 
-STATIC_ASSERT(sizeof(struct Actor) == 0x70);
-STATIC_ASSERT(offsetof(struct Actor, arrivalAxis) == 0x56);
-STATIC_ASSERT(offsetof(struct Actor, conditionResult) == 0x57);
-STATIC_ASSERT(offsetof(struct Actor, snapToTarget) == 0x58);
-STATIC_ASSERT(offsetof(struct Actor, userValue) == 0x66);
-STATIC_ASSERT(offsetof(struct Actor, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct Actor, x) == 0x08);
-STATIC_ASSERT(offsetof(struct Actor, z) == 0x10);
-STATIC_ASSERT(offsetof(struct Actor, groundHeight) == 0x14);
-STATIC_ASSERT(offsetof(struct Actor, scaleY) == 0x1c);
-STATIC_ASSERT(offsetof(struct Actor, priorityFlags) == 0x23);
-STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct Actor, collisionFlags) == 0x59);
-STATIC_ASSERT(offsetof(struct Actor, steeringFlags) == 0x5a);
-STATIC_ASSERT(offsetof(struct Actor, paused) == 0x5b);
-STATIC_ASSERT(offsetof(struct Actor, retainSpriteCache) == 0x5c);
-STATIC_ASSERT(offsetof(struct Actor, repeatCount) == 0x5d);
-STATIC_ASSERT(offsetof(struct Actor, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct Actor, refused) == 0x60);
-STATIC_ASSERT(offsetof(struct Actor, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct Actor, riseEnabled) == 0x63);
-STATIC_ASSERT(offsetof(struct Actor, bounce) == 0x44);
-STATIC_ASSERT(offsetof(struct Actor, gravity) == 0x48);
-STATIC_ASSERT(offsetof(struct Actor, riseBaseY) == 0x4c);
-STATIC_ASSERT(offsetof(struct Actor, velocityY) == 0x28);
-STATIC_ASSERT(offsetof(struct Actor, speedLimit) == 0x30);
-STATIC_ASSERT(offsetof(struct Actor, targetX) == 0x38);
-STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct Actor, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct Actor) == 112);
+STATIC_ASSERT(offsetof(struct Actor, arrivalAxis) == 86);
+STATIC_ASSERT(offsetof(struct Actor, conditionResult) == 87);
+STATIC_ASSERT(offsetof(struct Actor, snapToTarget) == 88);
+STATIC_ASSERT(offsetof(struct Actor, userValue) == 102);
+STATIC_ASSERT(offsetof(struct Actor, facing) == 6);
+STATIC_ASSERT(offsetof(struct Actor, x) == 8);
+STATIC_ASSERT(offsetof(struct Actor, z) == 16);
+STATIC_ASSERT(offsetof(struct Actor, groundHeight) == 20);
+STATIC_ASSERT(offsetof(struct Actor, scaleY) == 28);
+STATIC_ASSERT(offsetof(struct Actor, priorityFlags) == 35);
+STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 85);
+STATIC_ASSERT(offsetof(struct Actor, collisionFlags) == 89);
+STATIC_ASSERT(offsetof(struct Actor, steeringFlags) == 90);
+STATIC_ASSERT(offsetof(struct Actor, paused) == 91);
+STATIC_ASSERT(offsetof(struct Actor, retainSpriteCache) == 92);
+STATIC_ASSERT(offsetof(struct Actor, repeatCount) == 93);
+STATIC_ASSERT(offsetof(struct Actor, wait) == 94);
+STATIC_ASSERT(offsetof(struct Actor, refused) == 96);
+STATIC_ASSERT(offsetof(struct Actor, frozen) == 97);
+STATIC_ASSERT(offsetof(struct Actor, riseEnabled) == 99);
+STATIC_ASSERT(offsetof(struct Actor, bounce) == 68);
+STATIC_ASSERT(offsetof(struct Actor, gravity) == 72);
+STATIC_ASSERT(offsetof(struct Actor, riseBaseY) == 76);
+STATIC_ASSERT(offsetof(struct Actor, velocityY) == 40);
+STATIC_ASSERT(offsetof(struct Actor, speedLimit) == 48);
+STATIC_ASSERT(offsetof(struct Actor, targetX) == 56);
+STATIC_ASSERT(offsetof(struct Actor, sprite) == 80);
+STATIC_ASSERT(offsetof(struct Actor, update) == 108);
 
 /// The values of Actor.targetX, targetY and targetZ that are not
 /// coordinates.
@@ -255,11 +255,11 @@ struct ActorSnapshot {
                                                 ///< priority
 };
 
-STATIC_ASSERT(offsetof(struct ActorSnapshot, actors) == 0x20);
-STATIC_ASSERT(offsetof(struct ActorSnapshot, animations) == 0xe20);
-STATIC_ASSERT(offsetof(struct ActorSnapshot, spriteFlags) == 0xe40);
-STATIC_ASSERT(offsetof(struct ActorSnapshot, priorities) == 0xe60);
-STATIC_ASSERT(sizeof(struct ActorSnapshot) == 0xe80);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, actors) == 32);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, animations) == 3616);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, spriteFlags) == 3648);
+STATIC_ASSERT(offsetof(struct ActorSnapshot, priorities) == 3680);
+STATIC_ASSERT(sizeof(struct ActorSnapshot) == 3712);
 
 /// The one snapshot, in EWRAM outside the heap so that it outlives the scene
 /// change into and out of a battle.

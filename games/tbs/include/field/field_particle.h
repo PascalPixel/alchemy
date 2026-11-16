@@ -55,9 +55,9 @@ struct FieldParticle {
   u8 flags;
 };
 
-STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
-STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
-STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
+STATIC_ASSERT(sizeof(struct FieldParticle) == 72);
+STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 60);
+STATIC_ASSERT(offsetof(struct FieldParticle, state) == 64);
 
 /// Gives every particle in use in `work->member` the state `newState`:
 /// `cursor`, a byte pointer, walks their state bytes and `count` counts them

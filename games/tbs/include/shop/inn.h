@@ -27,10 +27,10 @@ struct InnWork {
   u8 specialActive;
 };
 
-STATIC_ASSERT(offsetof(struct InnWork, window) == 0x0c);
-STATIC_ASSERT(offsetof(struct InnWork, resourceEntries) == 0x390);
-STATIC_ASSERT(offsetof(struct InnWork, resourceId) == 0x3a4);
-STATIC_ASSERT(offsetof(struct InnWork, active) == 0x3a9);
-STATIC_ASSERT(offsetof(struct InnWork, specialActive) == 0x3ac);
+STATIC_ASSERT(offsetof(struct InnWork, window) == 12);
+STATIC_ASSERT(offsetof(struct InnWork, resourceEntries) == 912);
+STATIC_ASSERT(offsetof(struct InnWork, resourceId) == 932);
+STATIC_ASSERT(offsetof(struct InnWork, active) == 937);
+STATIC_ASSERT(offsetof(struct InnWork, specialActive) == 940);
 
 #endif

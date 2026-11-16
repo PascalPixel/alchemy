@@ -21,9 +21,9 @@ struct Projection {
   s32 centerY; ///< screen pixels
 };
 
-STATIC_ASSERT(sizeof(struct Projection) == 0x14);
-STATIC_ASSERT(offsetof(struct Projection, centerX) == 0x0c);
-STATIC_ASSERT(offsetof(struct Projection, centerY) == 0x10);
+STATIC_ASSERT(sizeof(struct Projection) == 20);
+STATIC_ASSERT(offsetof(struct Projection, centerX) == 12);
+STATIC_ASSERT(offsetof(struct Projection, centerY) == 16);
 
 /// The current 3D projection: Projection_SetFieldOfView and Projection_Set
 /// write its focal length and depth range, and the battle and its battle

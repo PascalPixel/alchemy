@@ -35,16 +35,16 @@ struct AnimationMetadata {
   u8 **animation; ///< the command scripts, one per animation number
 };
 
-STATIC_ASSERT(sizeof(struct AnimationMetadata) == 0x14);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 0x02);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 0x05);
+STATIC_ASSERT(sizeof(struct AnimationMetadata) == 20);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 2);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 5);
 /// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
 extern struct AnimationMetadata gSprite_AnimationMetadata[];
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 0x08);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 0x09);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 0x0a);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 0x0c);
-STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 0x10);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 8);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 9);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 10);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 12);
+STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 16);
 
 struct AnimationMetadata;
 

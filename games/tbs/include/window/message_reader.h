@@ -23,7 +23,7 @@ struct MessageReader {
   u32 bits;
 };
 
-STATIC_ASSERT(sizeof(struct MessageReader) == 0x0c);
+STATIC_ASSERT(sizeof(struct MessageReader) == 12);
 STATIC_ASSERT(offsetof(struct MessageReader, words) == 4);
 STATIC_ASSERT(offsetof(struct MessageReader, bits) == 8);
 

@@ -69,14 +69,14 @@ struct BattleActor {
 /// this one back.
 #define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
-STATIC_ASSERT(sizeof(struct BattleActor) == 0x70);
-STATIC_ASSERT(offsetof(struct BattleActor, scaleX) == 0x18);
-STATIC_ASSERT(offsetof(struct BattleActor, x) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleActor, velocityX) == 0x24);
-STATIC_ASSERT(offsetof(struct BattleActor, targetX) == 0x38);
-STATIC_ASSERT(offsetof(struct BattleActor, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct BattleActor, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct BattleActor, spriteStorageKind) == 0x54);
-STATIC_ASSERT(offsetof(struct BattleActor, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct BattleActor) == 112);
+STATIC_ASSERT(offsetof(struct BattleActor, scaleX) == 24);
+STATIC_ASSERT(offsetof(struct BattleActor, x) == 8);
+STATIC_ASSERT(offsetof(struct BattleActor, velocityX) == 36);
+STATIC_ASSERT(offsetof(struct BattleActor, targetX) == 56);
+STATIC_ASSERT(offsetof(struct BattleActor, motionFlags) == 85);
+STATIC_ASSERT(offsetof(struct BattleActor, sprite) == 80);
+STATIC_ASSERT(offsetof(struct BattleActor, spriteStorageKind) == 84);
+STATIC_ASSERT(offsetof(struct BattleActor, update) == 108);
 
 #endif

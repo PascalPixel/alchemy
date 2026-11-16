@@ -21,8 +21,8 @@ struct WorldMapRenderWork {
   u16 rotation;         ///< WorldMapView's yaw, 1/65536 turns
 };
 
-STATIC_ASSERT(offsetof(struct WorldMapRenderWork, active) == 0xfc);
-STATIC_ASSERT(offsetof(struct WorldMapRenderWork, first) == 0x100);
-STATIC_ASSERT(offsetof(struct WorldMapRenderWork, rotation) == 0x11a);
+STATIC_ASSERT(offsetof(struct WorldMapRenderWork, active) == 252);
+STATIC_ASSERT(offsetof(struct WorldMapRenderWork, first) == 256);
+STATIC_ASSERT(offsetof(struct WorldMapRenderWork, rotation) == 282);
 
 #endif

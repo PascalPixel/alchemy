@@ -21,9 +21,9 @@ struct MenuCursor {
   s8 frames;   ///< frames the move takes; 0 when the cursor is still
 };
 
-STATIC_ASSERT(sizeof(struct MenuCursor) == 0x10);
-STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 0x08);
-STATIC_ASSERT(offsetof(struct MenuCursor, frame) == 0x0c);
+STATIC_ASSERT(sizeof(struct MenuCursor) == 16);
+STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 8);
+STATIC_ASSERT(offsetof(struct MenuCursor, frame) == 12);
 
 /// A menu cursor: its window sprite, or the cursor that approaches its target.
 // Screens that set only the image pointer write it through the union.

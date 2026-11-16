@@ -137,16 +137,16 @@ struct BattleMenuWork {
 /// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
 #define BATTLE_MENU_NO_DJINNI 0x80000000
 
-STATIC_ASSERT(sizeof(struct BattleMenuWork) == 0x104);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, targetViewOffset) == 0x28);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, row) == 0x30);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, commandSelection) == 0x3c);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, timerWindow) == 0x44);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, timer) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, standbyDjinn) == 0x54);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, tutorialStep) == 0xd8);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 0xe0);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
+STATIC_ASSERT(sizeof(struct BattleMenuWork) == 260);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, targetViewOffset) == 40);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, row) == 48);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, commandSelection) == 60);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, timerWindow) == 68);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, timer) == 76);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, standbyDjinn) == 84);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, tutorialStep) == 216);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 224);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 228);
 
 /// Restores the previous selection: page, row and return row.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \

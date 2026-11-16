@@ -38,7 +38,7 @@ union HeapState {
   void *slots[64];
 };
 
-STATIC_ASSERT(sizeof(union HeapState) == 0x100);
+STATIC_ASSERT(sizeof(union HeapState) == 256);
 STATIC_ASSERT(offsetof(union HeapState, heap.nextIwram) == 4);
 STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 

@@ -31,11 +31,11 @@ struct BattleCamera {
   u8 unusedAfterYaw[20];      ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleCamera, focus) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
-STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
+STATIC_ASSERT(sizeof(struct BattleCamera) == 76);
+STATIC_ASSERT(offsetof(struct BattleCamera, focus) == 12);
+STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 28);
+STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 52);
+STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 54);
 
 /// The battle camera's distance from its focus in its default view, and the
 /// unzoomed projection's focal length, in 16.16 pixels (BattleCamera_SetView).
@@ -73,11 +73,11 @@ struct BattleStagingWork {
   u8 savedAnimationParameters[8][4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 0x20);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 0x10);
-STATIC_ASSERT(sizeof(struct BattleStagingWork) == 0x54);
-STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
+STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 32);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 8);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 16);
+STATIC_ASSERT(sizeof(struct BattleStagingWork) == 84);
+STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 36);
 
 /// BattleBackgroundWork.mode and secondMode: how the battle background is
 /// shown.
@@ -118,9 +118,9 @@ struct BattleAffineHdma {
   u16 lines[2][160];
 };
 
-STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
-STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
+STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 672);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 16);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 32);
 
 struct BattleEffectParams;
 

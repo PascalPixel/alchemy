@@ -325,54 +325,49 @@ void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
   }
 }
 
-/// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
-/// keeps each sprite animation's place and timer), unless the sprite plays it
-/// already.
-s32 Sprite_StartAnimation(struct Sprite *state, s32 flags) {
-  s32 highBit;
-  s32 index;
+/// Starts an animation on every sprite animation of a sprite
+/// (SPRITE_ANIMATION_KEEP_PLACE keeps each one's place and timer), unless the
+/// sprite plays it already.
+s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
+  s32 keepPlace;
+  s32 i;
 
-  highBit = flags & 0x80;
-  flags &= 0x7f;
+  keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
+  animation &= SPRITE_ANIMATION_INDEX_MASK;
 
-  if (state->lastNo != flags) {
-    index = 0;
+  if (sprite->lastNo != animation) {
+    i = 0;
     goto test_entry;
   entry_loop:
+    // Only the first sprite animation supplies the sprite's offsets.
     {
-      struct SpriteAnimation *entry = state->entries[index];
+      struct SpriteAnimation *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
-      if (entry == 0)
-        goto next_entry;
-      if (entry->scripts == 0)
-        goto next_entry;
-
-      metadata = Resource_GetMetadataRecordFar(entry->animationId);
-      if (flags >= metadata->animationCount)
-        goto next_entry;
-
-      selectedAnimation = (s32)entry->scripts[flags];
-      entry->kind = metadata->drawKind;
-      entry->script = (u8 *)selectedAnimation;
-      entry->step = 0x10;
-      if (highBit == 0) {
-        entry->scriptOffset = 0;
-        entry->timer = 0;
+      if (layer != 0 && layer->scripts != 0) {
+        metadata = Resource_GetMetadataRecordFar(layer->animationId);
+        if (animation < metadata->animationCount) {
+          selectedAnimation = (s32)layer->scripts[animation];
+          layer->kind = metadata->drawKind;
+          layer->script = (u8 *)selectedAnimation;
+          layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+          if (keepPlace == 0) {
+            layer->scriptOffset = 0;
+            layer->timer = 0;
+          }
+          if (i == 0) {
+            sprite->offsetY = metadata->adjustY;
+            sprite->offsetX = metadata->adjustX;
+          }
+        }
       }
-      if (index == 0) {
-        state->offsetY = metadata->adjustY;
-        state->offsetX = metadata->adjustX;
-      }
-      goto next_entry;
     }
-  next_entry:
-    index++;
+    i++;
   test_entry:
-    if (index < state->count)
+    if (i < sprite->count)
       goto entry_loop;
-    state->lastNo = flags;
+    sprite->lastNo = animation;
   }
   return 0;
 }

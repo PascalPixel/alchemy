@@ -36,6 +36,11 @@ enum SpriteColorMode {
 /// SpriteAnimation.picture and pictureBase when no picture is shown.
 #define SPRITE_PICTURE_NONE 0xff
 
+/// An animation number's bit 7: keep the place and timer of the script already
+/// running, as The Broken Seal's.
+#define SPRITE_ANIMATION_KEEP_PLACE 0x80
+#define SPRITE_ANIMATION_INDEX_MASK 0x7f
+
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct SpriteAnimation {

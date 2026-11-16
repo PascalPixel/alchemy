@@ -372,8 +372,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    // Read as its low byte: (u8)options->priority orders the loads apart.
-    sprite->priority = *(u8 *)&options->priority;
+    sprite->priority = options->priority;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;

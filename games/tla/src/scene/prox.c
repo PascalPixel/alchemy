@@ -264,8 +264,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -412,7 +412,8 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
   s32 *targetPos;
   s32 *objectPos;
 
-  if (BYTE_AT(object, 99) != 0) {
+  // A child being talked to holds still.
+  if (object->riseEnabled != 0) {
     object->paused = 1;
     return 1;
   }
@@ -422,8 +423,8 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
       force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
                                *targetPos - *objectPos);
-    u32 left = (angle - 0x1000) & 0xf000;
-    u32 right = (angle + 0x1000) & 0xf000;
+    u32 left = (angle - TRIG_TURN / 16) & 0xf000;
+    u32 right = (angle + TRIG_TURN / 16) & 0xf000;
     u32 ahead = angle & 0xf000;
     u32 facing = object->facing & 0xf000;
 
@@ -555,8 +556,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
        ->v)
 
 /// Scoop on the black dot under the boulder digs up its treasure.
-void Prox_ScoopUpDarkMatter(s32 a0) {
-  Event_DigUpTreasure(a0, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
+void Prox_ScoopUpDarkMatter(s32 mode) {
+  Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
 }
 
 extern struct Trigger gProx_HousesTriggers[];
@@ -579,8 +580,10 @@ const u8 *Scene_GetTriggers(void) {
   return gProx_Triggers;
 }
 
+/// The overlay's call to Event_End.
 s32 Prox_EndEvent();
 
+/// "Felix! You like igloos, right?"
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -592,15 +595,17 @@ void Prox_AskAboutIgloos(void) {
 #include "shared/leader_is_facing_north.h"
 
 /// Prox's shops, as Shop_Run numbers them.
-enum { SHOP_PROX = 0 };
+enum { SHOP_PROX = 31 };
 
 /// Prox's inn, as Inn_CheckIn numbers the inns.
-enum { PROX_INN = 0 };
+enum { PROX_INN = 14 };
 
+/// The innkeeper: across the counter, the inn; from anywhere else, news of
+/// Felix's parents, who went away worried about him.
 void Prox_TalkAboutParents(void) {
 
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(0xe, 0x16);
+    Inn_CheckIn(PROX_INN, ACTOR_VILLAGER_ON_FELIXS_PARENTS);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -616,10 +621,12 @@ void Prox_TalkAboutParents(void) {
 
 s32 Shop_Run();
 
+/// The shopkeeper: across the counter, the shop; from anywhere else, praise for
+/// how Felix has grown, or for his foster grandmother once the beacon is lit.
 void Prox_PraiseReturnedWarrior(void) {
 
   if (Leader_IsFacingNorth()) {
-    Shop_Run(0x1f, 0xa);
+    Shop_Run(SHOP_PROX, ACTOR_VILLAGER_PRAISING_FELIX);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -635,10 +642,12 @@ void Prox_PraiseReturnedWarrior(void) {
 
 s32 Sanctum_Run();
 
+/// The old man of the caves keeps the sanctum: across the counter he heals;
+/// from anywhere else he speaks of Agatio and Karst, or of the lit lighthouse.
 void Prox_FearForWeyard(void) {
 
   if (Leader_IsFacingNorth()) {
-    Sanctum_Run(8);
+    Sanctum_Run(ACTOR_OLD_MAN_FEARING_FOR_WEYARD);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -652,25 +661,17 @@ void Prox_FearForWeyard(void) {
   }
 }
 
-/// The bytes of an actor these handlers use: its facing, and the last of the
-/// four scene-owned bytes The Broken Seal's actors keep at this place, which
-/// holds the children still while one is talked to.
-struct TalkActor {
-  u8 beforeAngle[6];
-  u16 angle; ///< 1/65536 turns
-  u8 beforeTalking[0x5b];
-  u8 talking; ///< Prox_ChaseTarget stops the chase while it is set
-};
-
+/// The child playing tag, held still while spoken to: faces the leader to say
+/// what fun it is to play outside, or under Mind Read is glad to be out of the
+/// igloo; then turns back and plays on.
 void Prox_TalkToPlayingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_PLAYING_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_PLAYING_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -680,20 +681,21 @@ void Prox_TalkToPlayingChild(void) {
   // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// The restless child, held still while spoken to: misses running around
+/// outside, or under Mind Read thinks how unreal the blizzard was.
 void Prox_TalkToRestlessChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_RESTLESS_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_RESTLESS_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
@@ -703,20 +705,21 @@ void Prox_TalkToRestlessChild(void) {
   // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// The training child, held still while spoken to: must train hard to be a
+/// warrior like Felix, or under Mind Read thinks snow makes better exercise.
 void Prox_TalkToTrainingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object =
-      ((struct TalkActor *)Actor_Get(ACTOR_TRAINING_CHILD));
-  s16 angle = object->angle;
+  struct Actor *object = Actor_Get(ACTOR_TRAINING_CHILD);
+  s16 angle = object->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->talking = 1;
+  object->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -726,11 +729,13 @@ void Prox_TalkToTrainingChild(void) {
   // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->talking = 0;
+    object->facing = angle;
+  object->riseEnabled = 0;
   Prox_EndEvent();
 }
 
+/// While the lighthouse is unlit: a warrior comes out of the upper house and is
+/// sent off to find word of Felix's parents, a scene the party overhears.
 void Prox_SearchForParents(void) {
   s32 lit = Event_GetFlag(FLAG_MARS_BEACON_LIT);
 
@@ -801,6 +806,8 @@ void Prox_SearchForParents(void) {
 
 void FieldCamera_WaitForArrival(void);
 
+/// Puelle decides the clan cannot wait for Agatio any longer and must go to the
+/// Mars Lighthouse; the clansmen start at her words.
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -918,6 +925,8 @@ void Prox_DecideToGoToLighthouse(void) {
 s32 Actor_MoveToObject();
 extern s32 gProx_IsaacStepsUpToPuelle[];
 
+/// The party climbs to Puelle's house: the elder knows Felix, and Puelle tells
+/// of his parents and the lighthouse.
 void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
@@ -1239,8 +1248,11 @@ void Prox_ScoopUpMold(void) {
   }
 }
 
+/// Scoop on the black dot under the boulder: the ground there is dug out of the
+/// map's collision while it is cast.
 void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
+/// After the Scoop, the dug ground's collision is filled back in.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
 /// Drifts a roof's puff sideways ever faster, raises and widens it, and
@@ -1299,6 +1311,9 @@ void Prox_PuffFromRoofs(void) {
   }
 }
 
+/// Goes in at a door: opens it (a double door thumps) unless it was left open,
+/// steps the leader to the middle of a single door, walks in and takes the
+/// exit.
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1319,8 +1334,7 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   if (width == 1) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     cell = FIXEDtoINT(object->x.fixed);
-    FieldActor_SetMoveTargetFX(object,
-                               ((8 - cell % 16) << 16) + object->x.fixed,
+    FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
                                object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -1333,6 +1347,8 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
+/// The village's house doors, the cave door and the doors of the cave homes and
+/// the upper house, each opened by Prox_EnterDoor from its picture in the map.
 void Prox_OpenHouseDoorA(void) { Prox_EnterDoor(48, 39, 57, 26, 1, 2); }
 
 void Prox_OpenHouseDoorB(void) { Prox_EnterDoor(49, 39, 65, 24, 1, 2); }
@@ -1358,7 +1374,7 @@ void Prox_ClimbStairs(void) {
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   cell = FIXEDtoINT(object->x.fixed);
-  FieldActor_SetMoveTargetFX(object, ((8 - cell % 16) << 16) + object->x.fixed,
+  FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
                              object->y.fixed, object->z.fixed - toFIXED(4));
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -1375,27 +1391,31 @@ void Prox_ClimbStairs(void) {
   FieldEvent_SetExitRequest(entrance);
 }
 
-void Prox_ComeDownStairs(s32 a0) {
+/// Arrives down the stairs into the cave homes: the leader appears beside the
+/// stairs (westOrSouth for the west and south ones), steps down and walks on.
+void Prox_ComeDownStairs(s32 westOrSouth) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (a0 != 0) {
+  if (westOrSouth != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 0);
-    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + -65536),
-                                         object->y.fixed,
-                                         (object->z.fixed + -393216));
+    FieldActor_SetPositionAndResetMotion(
+        object, (object->x.fixed + -toFIXED(1)), object->y.fixed,
+        (object->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x17);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+                              ANIM_LEADER_ARRIVE_ALTERNATE);
   } else {
     FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + toFIXED(1)),
                                          object->y.fixed,
-                                         (object->z.fixed + -393216));
+                                         (object->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x18);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+                              ANIM_LEADER_ARRIVE);
   }
   Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -1417,6 +1437,8 @@ void Prox_ComeDownStairs(s32 a0) {
 void FieldCamera_WaitForArrival(void);
 s32 Prox_EndEvent();
 
+/// After the ending, in the houses: the clan thanks the party for the beacon,
+/// Isaac and Kraden catch up, and Jenna is told the party is leaving.
 void Prox_GiveThanksForBeacon(void) {
   s32 answer;
   struct Actor *leader;
@@ -1749,7 +1771,7 @@ s32 Scene_Initialize(void) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
-    s32 value = 0x209;
+    s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 
     skip = 0;
     *effect = value;
@@ -1828,6 +1850,8 @@ void Prox_InitializeTown(void) {
   FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_TOWN_CRATE)), 0xf);
 }
 
+/// Sets up the north of the village: the warrior and the upper house's door by
+/// the overheard talk, Puelle's facing, and Mold's snow dug out or not.
 void Prox_InitializeMold(void) {
   struct Actor *object;
 
@@ -1863,26 +1887,29 @@ void Prox_InitializeMold(void) {
   }
 }
 
+/// Each frame, draws the hiding child at the leader's sprite priority.
 void Prox_MatchHousesPriority(void) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   FieldActor_SetSpritePriority(
-      16,
-      ((u32)(FIELD_AT(FIELD_AT((u8 *)object, s32, 80), u8, 9) << 28) >> 30));
+      ACTOR_CHILD_HIDING_FROM_THE_WIND,
+      ((struct FieldSprite *)object->sprite)->priority);
 }
 
 void Prox_InitializeHouses(void) {
 
   FieldEffect_StartBlankOverlay(0);
   Task_AddFrame((s32)Prox_MatchHousesPriority, TASK_PASS_VBLANK);
-  if (gMainRoutineWork.entrance == 0x14) {
+  if (gMainRoutineWork.entrance == PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
     if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
     }
   }
 }
 
+/// Each frame, draws two of the cave homes' villagers at the leader's sprite
+/// priority.
 void Prox_MatchCaveHomesPriority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_Get(gMainRoutineWork.leaderActorId)->sprite)
@@ -1898,15 +1925,18 @@ void Prox_InitializeCaveHomes(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
-    if (gMainRoutineWork.entrance == 6)
+    if (gMainRoutineWork.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
       Prox_ComeDownStairs(0);
-    else if ((u32)((entrance - 7) << 16) <= 0x10000)
+    else if ((u32)((entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) << 16) <=
+             (PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
+              PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST)
+                 << 16)
       Prox_ComeDownStairs(1);
   }
   FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   Task_AddFrame(Prox_MatchCaveHomesPriority, priority);
 }
 
@@ -1917,6 +1947,8 @@ extern s32 gProx_GaretWalksSouth[];
 extern s32 gProx_IsaacWalksSouth[];
 extern s32 gProx_GaretRunsAhead[];
 
+/// After the thanks, at the south gate: the families say their farewells and
+/// the party leaves Prox for the credits.
 void Prox_SayFarewell(void) {
   u32 i;
 
@@ -2382,7 +2414,7 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
+void Leader_SetSlideStopped(s32 stopped) { gSlideOnIce_Stopped = stopped; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
@@ -2408,9 +2440,13 @@ struct RockWork {
 #include "shared/rocks_spawn.h"
 #undef FIELD_AT
 
+/// The overlay's call to EffectSprite_Init: one rock's sprite, its size,
+/// pivot and attributes.
 void Prox_InitRockSprite(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                          u32 attributes, s32 tile);
 
+/// Unused: loads the falling rocks' tiles and 64 sprites and starts their
+/// task, as Magma Rock does.
 UNUSED void Prox_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -2443,6 +2479,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
+/// Unused: stops the falling rocks and frees their tiles and work.
 UNUSED void Prox_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 

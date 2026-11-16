@@ -17,7 +17,7 @@
 #define CARD_WIDTH 32
 #define CARD_HEIGHT 64
 /// SheepCardSheet's four jumping sheep, each 32x32, after the card's picture.
-#define CARD_SHEEP (Ram_MapCellBuffer + 0x683e)
+#define CARD_SHEEP (Ram_MapCellBuffer + 0x603e + CARD_WIDTH * CARD_HEIGHT)
 #define SHEEP_WIDTH 32
 #define SHEEP_HEIGHT 32
 

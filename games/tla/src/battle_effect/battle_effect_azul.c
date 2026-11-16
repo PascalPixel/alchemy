@@ -558,9 +558,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       k = 0;
       angle = 0;
       offset = 0;
-      for (; k != AZUL_SPHERE_RINGS; angle += TRIG_TURN / 30,
-                                     offset += AZUL_SPHERE_RING_VERTICES * 4,
-                                     k++) {
+      for (; k != AZUL_SPHERE_RINGS;
+           angle += DEGtoANG(12),
+           offset += AZUL_SPHERE_RING_VERTICES * sizeof(struct ModelVertex),
+           k++) {
         s32 y = FIXEDtoINT(-Trig_Cos(angle) * 48);
         s32 radius = FIXEDtoINT(Trig_Sin(angle) * 48);
         struct ModelVertex *v;

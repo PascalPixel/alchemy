@@ -444,7 +444,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           if (FIXED_INTEGER_PART(crystal->y) > BATTLE_VIEW_HEIGHT &&
               crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
-            crystal->y = toFIXED(120);
+            crystal->y = toFIXED(BATTLE_VIEW_HEIGHT);
             work->shakeFrames = 1;
           }
         }

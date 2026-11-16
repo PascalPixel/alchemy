@@ -653,8 +653,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != ECLIPSE_DOME_RINGS;
-               ringAngle += TRIG_TURN / 30,
-              offset += ECLIPSE_DOME_RING_VERTICES * 4, ring++) {
+               ringAngle += DEGtoANG(12),
+              offset += ECLIPSE_DOME_RING_VERTICES * sizeof(struct ModelVertex),
+              ring++) {
             s32 y = FIXEDtoINT(-Trig_Cos(ringAngle) * 96);
             s32 rr = FIXEDtoINT(Trig_Sin(ringAngle) * 48);
             struct ModelVertex *v = (struct ModelVertex *)ECLIPSE_DOME_VERTICES;
@@ -1254,8 +1255,8 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
-/// Darkens the battle background a step each frame while the canvas is open, so
-/// the effect stands out.
+/// While fadeFrames lasts, scales the battle background's colours (BG palette 6
+/// on) one fade step darker than the battle's own palette each frame.
 void Palette_StepFadeTransfer(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;

@@ -353,7 +353,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (sinceSeal >= 0 && sinceSeal < 76) {
       struct Scale pulseScale = gCharon_PulseScale;
 
-      pulseScale.x = pulseScale.y = Trig_Sin(sinceSeal << 7) * 2 + DEGtoANG(90);
+      pulseScale.x = pulseScale.y =
+          Trig_Sin(sinceSeal << 7) * 2 + FIXED_ONE / 4;
       pulsePlace[3] = 0;
       pulsePlace[1] = toFIXED(255);
       pulsePlace[0] = toFIXED(114);
@@ -913,7 +914,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         REG_BLDCNT = 0;
         {
           u16 *entry = (u16 *)&BG_PLTT_COLOR(0, 1);
-          for (i = 0; i != CANVAS_LEVEL_BRIGHTEST; i++, entry++) {
+          for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++, entry++) {
             s32 r = RGB_LEVEL_MAX - i;
             s32 b = r;
 
@@ -1303,6 +1304,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
 
   width = 56;
+  // Each flash fades the background back to 20 levels darker in green, and
+  // half that in red and blue.
   dimming = 20;
   frame = 0;
   do {

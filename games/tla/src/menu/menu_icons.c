@@ -276,9 +276,9 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
       menu->memberSpriteIds[i] = id;
       figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
-        Sprite_StartAnimationFar(figure, 1);
+        Sprite_StartAnimationFar(figure, ANIM_STAND);
         figure->image.priority = 0;
-        ((u8 *)figure)[26] = 0;
+        figure->flags = 0;
       }
       menu->memberSprites[i] = figure;
     }
@@ -290,7 +290,7 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 owners[14];
-  u8 *object;
+  struct Sprite *object;
   s32 i;
 
   for (i = 0; i < 8; i++) {
@@ -306,9 +306,9 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
     menu->memberSpriteIds[i] = owners[first + i];
     object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
-      Sprite_StartAnimationFar(object, 1);
-      ((s8 *)object)[9] &= -13;
-      object[26] = 0;
+      Sprite_StartAnimationFar(object, ANIM_STAND);
+      object->image.priority = 0;
+      object->flags = 0;
     }
     menu->memberSprites[i] = object;
   }
@@ -407,7 +407,7 @@ extern s32 gDjinnFigures_SpriteIds[];
 /// (DjinnFigures_UpdateTopRow).
 void DjinnFigures_InitializeTopRow(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  s8 *object;
+  struct Sprite *object;
   s32 i;
 
   for (i = 0; i < 4; i++) {
@@ -419,8 +419,8 @@ void DjinnFigures_InitializeTopRow(void) {
   for (i = 0; i < 4; i++) {
     object = Sprite_CreateFar(gDjinnFigures_SpriteIds[i]);
     if (object != NULL) {
-      Sprite_StartAnimationFar(object, 2);
-      object[9] &= -13;
+      Sprite_StartAnimationFar(object, ANIM_WALK);
+      object->image.priority = 0;
     }
     menu->figures[i] = object;
     menu->figureX[i] = 16;
@@ -450,7 +450,7 @@ void DjinnFigures_ReleaseTopRow(void) {
 /// (gDjinnFigures_SpriteIds) playing animation.
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  s8 *object;
+  struct Sprite *object;
 
   if (menu->figures[index] != NULL) {
     Sprite_DestroyFar(menu->figures[index]);
@@ -459,7 +459,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
     Sprite_StartAnimationFar(object, animation);
-    object[9] &= -13;
+    object->image.priority = 0;
   }
   menu->figures[index] = object;
 }

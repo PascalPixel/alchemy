@@ -967,7 +967,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   WindowSprite_RedrawSavedRectFar(window);
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (PSYNERGY_MENU_SHORTCUT_HELP & *(u16 *)((u8 *)menu + 0x21c)) {
+  if (PSYNERGY_MENU_SHORTCUT_HELP & menu->flags) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window, HELP_X,
@@ -988,31 +988,29 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
   row = 0;
   if (visibleCount > row) {
-    cursor = firstEntry * 2 + 0x1c4;
+    cursor = firstEntry;
     do {
       owner = Unit_Get(menu->memberIds[0]);
-      ability = Ability_Get(PSYNERGY_ABILITY_MASK &
-                            *(const u16 *)(cursor + (s32)menu));
+      ability = Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
         Text_SetColorFar(TEXT_COLOR_RED);
       } else if (PsynergyMenu_IsActionRestricted(
-                     PSYNERGY_ABILITY_MASK &
-                     *(const u16 *)(cursor + (s32)menu)) != 0) {
+                     PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) != 0) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
       Text_DrawMessageAsTilesFar(
-          (PSYNERGY_ABILITY_MASK & *(const u16 *)(cursor + (s32)menu)) +
+          (PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) +
               (s32)MsgAbilityName,
           window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
 
       row++;
-      cursor += 2;
+      cursor++;
     } while (visibleCount > row);
   }
 

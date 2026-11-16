@@ -1315,12 +1315,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #undef USABLE_RIGHT
 #undef USABLE_BOTTOM
 
-// The psynergy menu work block, as this function reads it.
-#define PSY_LIST_OFFSET 0x1c4
-#define ACT_ID_MASK PSYNERGY_ABILITY_MASK
-#define OWNER_CLASS_MSG_OFFSET 0x129
-#define OWNER_LEVEL_OFFSET 15
-
 // The Japanese page lists six abilities rather than five, a row higher, and
 // lays its heading, names, costs, page icons and "no Psynergy" message out on
 // its own columns.
@@ -1351,25 +1345,25 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                               const struct PagedList *res) {
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
-  u8 *owner;
-  u32 first;
+  struct Unit *member;
+  u32 firstEntry;
   u32 rows;
   u8 row;
-  s32 offset;
+  s32 entryIndex;
 
   (void)unused;
 
-  owner = Unit_Get(menu->memberIds[0]);
+  member = Unit_Get(menu->memberIds[0]);
 
   WindowSprite_RedrawSavedRectFar(window);
 
-  first = res->page * PAGE_ROWS;
-  rows = (u8)(res->entryCount - first);
+  firstEntry = res->page * PAGE_ROWS;
+  rows = (u8)(res->entryCount - firstEntry);
   if (rows > PAGE_ROWS) {
     rows = PAGE_ROWS;
   }
 
-  Menu_SetPageIcons(PAGE_ROWS, first, window, PAGE_ICONS_X, PAGE_ICONS_Y);
+  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
   PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
@@ -1377,21 +1371,24 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   row = 0;
   if (rows > row) {
-    offset = (s32)(first * 2) + PSY_LIST_OFFSET;
+    entryIndex = firstEntry;
     do {
-      struct AbilityDefinition *act;
-      s32 msg;
+      struct AbilityDefinition *action;
+      s32 messageId;
       s32 y;
       s32 range;
-      act = Ability_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
-      msg = (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityName;
+      action =
+          Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
+      messageId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) +
+                  (s32)MsgAbilityName;
       y = row * 16 + FIRST_ROW_Y;
 
-      Text_DrawMessageAsTilesFar(msg, window, NAME_X, y);
-      Text_DrawNumberAtOffsetFar(act->ppCost, 2, window, COST_X, y);
+      Text_DrawMessageAsTilesFar(messageId, window, NAME_X, y);
+      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, COST_X, y);
 
-      range = act->range;
-      if (range == 0xff) {
+      // ABILITY_RANGE_ALL takes the last range icon, 11; range n takes n - 1.
+      range = action->range;
+      if (range == ABILITY_RANGE_ALL) {
         range = 11;
       } else {
         range--;
@@ -1399,7 +1396,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       PsynergyMenu_DrawRange(window, 25, row * 2 + FIRST_RANGE_ROW, range, 0);
 
       row++;
-      offset += 2;
+      entryIndex++;
     } while (rows > row);
   }
 
@@ -1408,16 +1405,16 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                                EMPTY_MESSAGE_Y);
   }
 
-  Text_DrawStringAtOffsetFar(owner, window, 40, 0);
-  Text_DrawMessageAsTilesFar(owner[OWNER_CLASS_MSG_OFFSET] + (s32)MsgClassName,
-                             window, 0, 32);
+  Text_DrawStringAtOffsetFar(member->name, window, 40, 0);
+  Text_DrawMessageAsTilesFar(member->classId + (s32)MsgClassName, window, 0,
+                             32);
   // Spanish and French draw the level label at an offset, as the owner's name.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
   Text_DrawStringAtOffsetFar(gMenu_LvString, window, 0, 48);
 #else
   Text_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
 #endif
-  Text_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFFSET], 2, window, 24, 48);
+  Text_DrawNumberInWindowFar(member->level, 2, window, 24, 48);
 
   return 1;
 }

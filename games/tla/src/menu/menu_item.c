@@ -1263,9 +1263,9 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (owner != -1) {
         if (Item_CanUnitEquip(owner,
                               menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
-          Sprite_StartAnimationFar(menu->memberSprites[i], 3);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_NOD);
         else
-          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
       }
     }
   }

@@ -132,7 +132,7 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
     }
     frames = 0;
     if (gInput.held & KEY_B)
-      goto done;
+      break;
     if (!(gInput.held & KEY_A)) {
       do {
         wait(1);

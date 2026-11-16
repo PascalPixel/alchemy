@@ -563,36 +563,20 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// one place on.
 void Champa_RotatePaletteColors(void) {
   if ((gFrameCount & 1) == 0) {
-    volatile u16 *palette;
     s16 saved;
     s32 index;
 
     saved = BG_PLTT_COLOR(3, 14);
-    index = 14;
-  first:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(3, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto first;
+    for (index = 14; index != 1; index--)
+      BG_PLTT_COLOR(3, index) = BG_PLTT_COLOR(3, index - 1);
     BG_PLTT_COLOR(3, 1) = saved;
     saved = BG_PLTT_COLOR(4, 14);
-    index = 14;
-  second:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(4, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto second;
+    for (index = 14; index != 1; index--)
+      BG_PLTT_COLOR(4, index) = BG_PLTT_COLOR(4, index - 1);
     BG_PLTT_COLOR(4, 1) = saved;
     saved = BG_PLTT_COLOR(5, 14);
-    index = 14;
-  third:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(5, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto third;
+    for (index = 14; index != 1; index--)
+      BG_PLTT_COLOR(5, index) = BG_PLTT_COLOR(5, index - 1);
     BG_PLTT_COLOR(5, 1) = saved;
   }
 }

@@ -1723,8 +1723,12 @@ void ShamanVillage_CheckTrialEntry(void) {
   s16 *owner;
 
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
-  if (PartyInventory_FindMember(ITEM_SHAMANS_ROD) == -1)
-    goto refuse;
+  if (PartyInventory_FindMember(ITEM_SHAMANS_ROD) == -1) {
+    FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
+    ShamanVillage_StepBackFromTrial();
+    return;
+  }
   count = FieldParty_ListMembers(owners);
   owner = owners;
   remaining = 8;
@@ -1746,7 +1750,6 @@ void ShamanVillage_CheckTrialEntry(void) {
   }
   EVENT_WORK->message++;
   if (remaining != 0) {
-  refuse:
     FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     ShamanVillage_StepBackFromTrial();

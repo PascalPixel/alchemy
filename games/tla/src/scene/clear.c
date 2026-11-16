@@ -278,7 +278,7 @@ s32 Scene_Initialize(void) {
   s32 result, i, limit, status, message, recovery;
 
   Clear_LoadBackground();
-  Task_Add(Clear_CheckButtonCodes, TASK_PASS_VBLANK);
+  Task_Add(Clear_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -318,7 +318,7 @@ top:
   }
   if (result == 0 && !started) {
     wait(30);
-    Task_Add(Clear_FadeInBlend, TASK_PASS_VBLANK);
+    Task_Add(Clear_FadeInBlend, TASK_PASS_FRAME);
     wait(1);
     started = 1;
   }

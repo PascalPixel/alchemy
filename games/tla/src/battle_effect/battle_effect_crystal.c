@@ -78,7 +78,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     struct Actor *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer,
+             TASK_PASS_VBLANK);
     camera = Ram_HeapSlots->cameraWork;
     target = BattleObject_GetFar(args->targets[0])->object;
 

@@ -106,8 +106,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   battle = Ram_HeapSlots->battleWork;
   verts = (struct ModelVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + AZUL_FACES);

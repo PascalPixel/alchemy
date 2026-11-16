@@ -295,7 +295,7 @@ void AlhafranCave_SetUpCave(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   map->wading = MAP_WADING_UPPER_LEVEL;
-  Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_VBLANK);
+  Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_FRAME);
   if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
     AlhafranCave_OpenWayToJail();
   actor = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
@@ -375,7 +375,7 @@ void AlhafranCave_SetUpJail(void) {
   BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay, (s32)crate, 8, 15,
         OBJ_SIZE_16X16);
-  FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
       gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE) {
     work = Ram_HeapSlots->fieldWork;
@@ -702,7 +702,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "WAHHH!"
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
   gAlhafranCave_ClearedWord = 0;
-  Task_AddFrame(AlhafranCave_IdleTask, TASK_PASS_VBLANK);
+  Task_AddFrame(AlhafranCave_IdleTask, TASK_PASS_FRAME);
   Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "I don't know why he's crying! You're his mother! Can't you do..."
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);

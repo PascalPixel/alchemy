@@ -337,7 +337,7 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
     }
   }
   menu->memberSpritesShown = ICON_SHOWN;
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
 }
 
 /// Destroys the menu's party figures and stops placing them.
@@ -434,7 +434,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->figureFacings[i] = FACING_SOUTH;
   }
   menu->figuresShown = 1;
-  Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_VBLANK);
+  Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_FRAME);
 }
 
 /// Destroys the four Djinn figures and stops placing them.
@@ -545,7 +545,7 @@ void MenuIcon_LoadSlots(void) {
     offset += 2;
   }
   menu->menuIconsShown = ICON_SHOWN;
-  Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
+  Task_Add(MenuIcon_PushSlots, TASK_PASS_FRAME + 10);
 }
 
 /// Stops MenuIcon_PushSlots and frees the five command icons' entries

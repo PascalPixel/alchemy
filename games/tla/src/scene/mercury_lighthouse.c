@@ -159,7 +159,7 @@ void MercuryLighthouse_HearVoices(void) {
                             SPRITE_COLOR_HIDDEN);
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
-  Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
+  Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_FRAME);
   Actor_SetSpritePriority(ACTOR_BOY, 2);
   Actor_SetSpritePriority(ACTOR_GIRL, 2);
   gFieldWork->transitionFrames = 40;

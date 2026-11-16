@@ -275,7 +275,7 @@ void PsynergyTest2_StartRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(PsynergyTest2_UpdateRocks, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(PsynergyTest2_UpdateRocks, TASK_PASS_FRAME);
 }
 
 /// Stops the rocks and frees their tiles and work.

@@ -435,7 +435,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   total =
       gLobbedShells_Styles[mode * 4 + RECORD_FRAMES] + args->targetCount * 8;
   Sound_PlayFar(SE_CURSE);

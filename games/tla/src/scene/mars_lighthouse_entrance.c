@@ -822,7 +822,7 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
   gMarsLighthouseEntrance_HoleMaskVram = VramCache_FindFreeEntry();
   Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 256, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(MarsLighthouseEntrance_DrawHoleMask, TASK_PASS_VBLANK);
+  Task_AddFrame(MarsLighthouseEntrance_DrawHoleMask, TASK_PASS_FRAME);
 }
 
 #define SET_SPRITE_WINDOW_LAYERS()                                             \
@@ -1256,11 +1256,11 @@ s32 Scene_Initialize(void) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
         Ride_SetEntryState(0, FLAME_FORWARD | 3);
-        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_VBLANK);
+        Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_FRAME);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
       Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding,
-                    TASK_PASS_VBLANK);
+                    TASK_PASS_FRAME);
       Actor_Get(ACTOR_DRAGON_FACE)->update =
           (void (*)(void))MarsLighthouseEntrance_FlickerDragonFace;
       Ride_SetMode(1);

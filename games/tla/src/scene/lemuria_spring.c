@@ -1082,7 +1082,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
 
   Task_AddFrame((TaskFunc)LemuriaSpring_UpdateTossSimulation,
-                TASK_PASS_VBLANK + 3);
+                TASK_PASS_FRAME + 3);
 }
 
 /// Runs the spring ride from one side until it ends, and returns its result.

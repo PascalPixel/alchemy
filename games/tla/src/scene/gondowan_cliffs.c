@@ -379,7 +379,7 @@ void GondowanCliffs_SetUpPass(void) {
          ACTOR_PASS_TIGHTROPE_POST_B);
   Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors,
                   (s32)&BG_PLTT_COLOR(0, 12), 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
+  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_FRAME);
 }
 
 void Actor_MoveToObject(s32 actor, s32 target);
@@ -500,7 +500,7 @@ s32 Scene_Initialize(void) {
     }
     Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
                          (void *)&BG_PLTT_COLOR(0, 12), 8);
-    Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
+    Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_FRAME);
     ((struct MapGroundEffects *)Ram_HeapSlots->mapGrid)->wading = 1;
   }
   return 0;
@@ -691,8 +691,8 @@ void Geyser_Start(s32 unused, s32 firstTerrain) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(80 * 3 * sizeof(u32));
   work->firstTerrain = firstTerrain;
-  FieldTask_AddFrame((s32)Geyser_Update, TASK_PASS_VBLANK + 13);
-  FieldTask_AddFrame((s32)Geyser_Draw, TASK_PASS_VBLANK);
+  FieldTask_AddFrame((s32)Geyser_Update, TASK_PASS_FRAME + 13);
+  FieldTask_AddFrame((s32)Geyser_Draw, TASK_PASS_FRAME);
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }

@@ -74,7 +74,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 

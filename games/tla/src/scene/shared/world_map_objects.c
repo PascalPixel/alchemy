@@ -189,7 +189,7 @@ void WorldMap_QueueBlend(void) {
 
 void WorldMap_StartPlacedActors(void) {
   Iwram_ClearWords(gWorldMap_PlacedActors, 128 * sizeof(struct Actor *));
-  Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_FRAME);
 }
 
 /// The cell index of a point in 16.16 pixels.

@@ -147,7 +147,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   event->blazeLongSpray = 0;
   event->psynergyHitObject = 255;
   BattleEffect_StartArcEffect();
-  Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
 /// Records the caster and the target of a field Psynergy.
@@ -324,7 +324,7 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
       RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
   PaletteFade_StartInterpolation(8);
   FieldPsynergy_GreyMindReadPalette();
-  Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_VBLANK);
+  Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_FRAME);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -368,7 +368,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
+  Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK - 20);
 }
 
 /// Stops line scrolling and restores background palette 15.

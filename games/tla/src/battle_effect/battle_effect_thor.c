@@ -104,8 +104,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

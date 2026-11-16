@@ -707,8 +707,8 @@ void EasternAlhafra_FillWaveLines(void) {
 /// Starts BG1's HBlank wave: the line table filled in the VBlank pass, its
 /// DMA started each frame.
 void EasternAlhafra_StartWave(void) {
-  Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_VBLANK);
-  Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_FRAME);
+  Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_FRAME);
+  Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_VBLANK);
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
@@ -2412,7 +2412,7 @@ void EasternAlhafra_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
 /// Stops the falling rocks and frees their tiles and work.

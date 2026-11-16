@@ -1673,7 +1673,7 @@ void MagmaRockInside_StartStepCells(void) {
   s32 priority;
 
   gMagmaRockInside_LastStepCell = none;
-  priority = TASK_PASS_VBLANK;
+  priority = TASK_PASS_FRAME;
   FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
 }
 
@@ -2946,7 +2946,7 @@ void MagmaRockInside_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
 /// Ends the falling rocks: removes their task and frees their picture and work.

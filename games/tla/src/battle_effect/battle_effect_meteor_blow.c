@@ -84,7 +84,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   blank = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SET_SHEET, work->sheet, 1, 1);
@@ -107,7 +107,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 16384);
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -145,7 +145,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   // the two stores.
   EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_FRAME + 126);
+  Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_VBLANK + 126);
   gBgScroll[1].x = 0;
   transition[4] = 1;
   starKind = &stars->kind;
@@ -195,7 +195,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     if (frame == 116) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
-      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+      Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
                           BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |

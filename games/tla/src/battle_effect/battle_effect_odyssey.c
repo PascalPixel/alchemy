@@ -478,7 +478,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   for (i = 0; i != CANVAS_BYTES; i++)
     work->sheet[i] += 96;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -498,7 +498,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, mode);
   }
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   transition->busy = enabled;
   /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
    */

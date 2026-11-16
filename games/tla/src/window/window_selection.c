@@ -222,9 +222,9 @@ s32 SelectionMenu_FindFreeIcon(s32 kind) {
 }
 
 /// Starts drawing the selection screen each frame, in the vertical blank pass
-/// (TASK_PASS_VBLANK).
+/// (TASK_PASS_FRAME).
 void SelectionMenu_StartDrawing(void) {
-  Task_Add(SelectionMenu_Draw, TASK_PASS_VBLANK);
+  Task_Add(SelectionMenu_Draw, TASK_PASS_FRAME);
 }
 
 /// Stops drawing the selection screen.

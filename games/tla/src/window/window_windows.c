@@ -75,7 +75,7 @@ void WindowSystem_InitField(void) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
-  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
+  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartFieldUpdate();
 }
 
@@ -106,7 +106,7 @@ void WindowSystem_InitBattle(s32 kind) {
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
-  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
+  Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartBattleUpdate(kind);
   // Tiles 128 to 130 take the lower rows of the bottom border tiles.
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);

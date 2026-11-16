@@ -35,7 +35,7 @@ void Teleport_StartShimmer(void) {
   gPaletteCycleDelay = 15;
   gPaletteCycleTimer = 16;
   gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 /// Stops the shimmer.
@@ -51,7 +51,7 @@ void Teleport_StartFastShimmer(void) {
   gPaletteCycleDelay = 2;
   gPaletteCycleTimer = 2;
   gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 #include "list_count_entries.h"

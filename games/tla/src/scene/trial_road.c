@@ -1560,7 +1560,7 @@ void TrialRoad_SetUpPillarStage(void) {
   TrialRoad_BlockCellUnder(ACTOR_PILLAR_C);
   TrialRoad_BlockCellUnder(ACTOR_PILLAR_D);
   TrialRoad_BlockCellUnder(ACTOR_PILLAR_E);
-  Task_Add(TrialRoad_TrackLeaderOnPillars, TASK_PASS_VBLANK);
+  Task_Add(TrialRoad_TrackLeaderOnPillars, TASK_PASS_FRAME);
 }
 
 /// Readies the torch stage: each pillar gets its top.
@@ -1828,7 +1828,7 @@ void TrialRoad_SetUpPoolRoom(void) {
       *flags = 3;
       actor->y.fixed = 0;
     }
-    Task_Add(TrialRoad_GaspFlees, TASK_PASS_VBLANK);
+    Task_Add(TrialRoad_GaspFlees, TASK_PASS_FRAME);
   }
 }
 
@@ -1885,7 +1885,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     s32 zero = 0;
 
     gTrialRoad_PaletteCycleFrame = zero;
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
+    Task_Add(PaletteCycle_StepAt, TASK_PASS_FRAME);
   }
 }
 
@@ -2270,7 +2270,7 @@ s32 Scene_PrepareMap(void) {
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
           TrialRoad_ShowProgress(gMainRoutineWork.leaderActorId, 8);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
-          Task_Add(TrialRoad_UpdateRival, TASK_PASS_VBLANK);
+          Task_Add(TrialRoad_UpdateRival, TASK_PASS_FRAME);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
           GameFlag_Set(FLAG_STAGE_DOOR_OPEN);
@@ -3048,8 +3048,8 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   Heap_Release(buffer);
   work->sprites = Heap_AllocEwram(960);
   work->shape = shape;
-  Task_Add(TrialRoad_UpdateFountains, TASK_PASS_VBLANK + 13);
-  Task_Add(TrialRoad_DrawFountains, TASK_PASS_VBLANK);
+  Task_Add(TrialRoad_UpdateFountains, TASK_PASS_FRAME + 13);
+  Task_Add(TrialRoad_DrawFountains, TASK_PASS_FRAME);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 
@@ -3756,7 +3756,7 @@ void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
-  Task_Add(TrialRoad_DrawProgress, TASK_PASS_VBLANK - 10);
+  Task_Add(TrialRoad_DrawProgress, TASK_PASS_FRAME - 10);
   Heap_Release(buffer);
 }
 
@@ -3770,7 +3770,7 @@ void TrialRoad_StartRival(s32 mirrored) {
     state->id = work->rivalId;
     state->still = 0;
   }
-  Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);
+  Task_Add(TrialRoad_MoveRival, TASK_PASS_FRAME + 5);
 }
 
 /// Plays Moapa's recording from the given resource.

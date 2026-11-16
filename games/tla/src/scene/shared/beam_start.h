@@ -54,5 +54,5 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
     control = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     REG_BLDCNT = control;
   }
-  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_VBLANK);
+  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_FRAME);
 }

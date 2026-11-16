@@ -115,7 +115,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   frame = 0;
   if (duration != 0) {
@@ -338,7 +338,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Each frame: vine i starts at frame i * 2 + 4, grows 4 pixels a frame up
   // to 32, and from frame i * 2 + 32 sinks 4 pixels a frame.
@@ -444,7 +444,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   total = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
 
   for (i = 0; i != PUFF_COUNT; i++) {

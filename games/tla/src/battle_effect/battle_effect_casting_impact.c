@@ -589,7 +589,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EffectPosition_ProjectScaledBattler(action->targets[0], &target);
   EffectPosition_ProjectScaledBattler(action->user, &base);
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -939,7 +939,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         kind == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
         kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
         kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
-      Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+      Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
     if (kind == CASTING_IMPACT_IMPACT_FLINT ||
         kind == CASTING_IMPACT_IMPACT_SCORCH ||

@@ -1067,7 +1067,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Actor_SetSpritePriority(ACTOR_PIERS, 1);
   Event_PlaySound(SE_SHIMMER);
-  Task_Add(LemurianShip_DrawLightToOrb, TASK_PASS_VBLANK);
+  Task_Add(LemurianShip_DrawLightToOrb, TASK_PASS_FRAME);
   Event_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(20);
@@ -1444,7 +1444,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_F);
   }
   FlagBlock_PlaceAll(gLemurianShip_SixJellyRoomPuddles);
-  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, TASK_PASS_VBLANK);
+  Task_Add(LemurianShip_KeepSixJellyRoomPuddles, TASK_PASS_FRAME);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 2))) {
     LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_A,
                                      ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE);
@@ -1491,7 +1491,7 @@ void LemurianShip_SetUpLedgeRoom(void) {
   if (Event_GetFlag(8))
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
   Actor_PlaceBlocks(gLemurianShip_Crate);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, TASK_PASS_VBLANK);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, TASK_PASS_FRAME);
 }
 
 /// Sets a jelly up on the floor.
@@ -1588,7 +1588,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_G);
   }
   FlagBlock_PlaceAll(gLemurianShip_SevenJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, TASK_PASS_FRAME);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 8))) {
     LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_A,
                                      ACTOR_SEVEN_JELLY_ROOM_PUDDLE_A);
@@ -1631,7 +1631,7 @@ void LemurianShip_SetUpHold(void) {
 
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, TASK_PASS_VBLANK);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, TASK_PASS_FRAME);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
     actor = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
     actor->motionFlags = 0;
@@ -1722,7 +1722,7 @@ void LemurianShip_SetUpPillarRoom(void) {
   }
   wait(1);
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
-  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_FRAME);
   if (!Event_GetFlag(FLAG_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)),
@@ -1731,7 +1731,7 @@ void LemurianShip_SetUpPillarRoom(void) {
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)),
         SPRITE_COLOR_HIDDEN);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, TASK_PASS_VBLANK);
+  LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, TASK_PASS_FRAME);
 }
 
 /// The engine room: until the engine runs, Piers sets the Black Crystal as the

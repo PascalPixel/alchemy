@@ -64,7 +64,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   REG_BG2X = (64 - target.x) << 8;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
@@ -283,7 +283,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->ramCode;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   camera = 0;
   waveScroll = 0;
   shipY = -toFIXED(29);
@@ -337,7 +337,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       work->scrollInterval = 5;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
-      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       view->busy = 1;
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);

@@ -293,7 +293,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
-  Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
+  Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
 
 void WindowSystem_Update(void);
@@ -314,9 +314,9 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
   if (initialize != 0)
-    Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
+    Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
   else
-    Task_Add(WindowSystem_UpdateBattle, TASK_PASS_VBLANK);
+    Task_Add(WindowSystem_UpdateBattle, TASK_PASS_FRAME);
 }
 
 /// The message window's state in heap slot unk84[4].

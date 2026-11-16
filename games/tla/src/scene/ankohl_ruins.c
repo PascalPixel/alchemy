@@ -884,7 +884,7 @@ void AnkohlRuins_InitSand(s32 unused) {
   work->baseOffsetY = layer->offsetY;
   Io_Write16(0x1b1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
-  Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_VBLANK);
+  Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
     sprite->x = toFIXED(40);
     sprite->kind = 1;
@@ -1007,7 +1007,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (work->level < toFIXED(32)) {
     gAnkohlRuins_SandTimer = 0;
-    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
+    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_FRAME);
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
@@ -1092,7 +1092,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (work->level < toFIXED(32)) {
     gAnkohlRuins_SandTimer = 0;
-    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
+    Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_FRAME);
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
@@ -1267,7 +1267,7 @@ void AnkohlRuins_BoardRaft(void) {
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
-      Task_AddFrame(AnkohlRuins_RideRaftDown, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_RideRaftDown, TASK_PASS_FRAME);
       FieldEvent_Wait(40);
       EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
       FieldCamera_WaitForArrival();
@@ -1289,7 +1289,7 @@ void AnkohlRuins_BoardRaftAgain(void) {
 
     if (Task_Find(func) == -1) {
       MapGrid_SetShake(2, 2, 1);
-      Task_AddFrame(func, TASK_PASS_VBLANK);
+      Task_AddFrame(func, TASK_PASS_FRAME);
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
@@ -1596,7 +1596,7 @@ s32 Scene_Initialize(s32 a0) {
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
@@ -1606,7 +1606,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
     s16 *entrance = &work->entrance;
@@ -1860,7 +1860,7 @@ s32 Scene_Initialize(s32 a0) {
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
@@ -1870,7 +1870,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
     s16 *entrance = &work->entrance;

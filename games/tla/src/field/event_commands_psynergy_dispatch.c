@@ -384,7 +384,7 @@ void FieldPsynergy_StartSceneSprite(void) {
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
-    Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_VBLANK);
+    Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_FRAME);
   }
 }
 #undef CELL_MASK

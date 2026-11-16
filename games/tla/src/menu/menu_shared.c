@@ -1229,7 +1229,7 @@ void Menu_WatchStart(void) {
 /// Menu_WatchStart.
 void Menu_StartWatchingStart(void) {
   GameFlag_Clear(FLAG_MENU_START_PRESSED);
-  Task_Add((s32)Menu_WatchStart, TASK_PASS_VBLANK);
+  Task_Add((s32)Menu_WatchStart, TASK_PASS_FRAME);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.

@@ -125,7 +125,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   if (mode == CARD_BAFFLE)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   REG_BG2PA = Q_8_8(1);
 
   for (frame = 0; frame != totalFrames; frame++) {

@@ -7,7 +7,7 @@ void LightSprites_InitC(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpritesLarge = 1;
   gLightSpritePriority = -1;

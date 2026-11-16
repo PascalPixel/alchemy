@@ -102,7 +102,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   work->transferMode = CANVAS_COPY;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

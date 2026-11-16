@@ -643,9 +643,9 @@ void Lemuria_CalculateRipple(void) {
 void Lemuria_StartRipple(void) {
   s32 priority;
 
-  priority = TASK_PASS_VBLANK;
-  Task_AddFrame(Lemuria_CalculateRipple, priority);
   priority = TASK_PASS_FRAME;
+  Task_AddFrame(Lemuria_CalculateRipple, priority);
+  priority = TASK_PASS_VBLANK;
   Task_AddFrame(Lemuria_StartRippleDma, priority);
 }
 
@@ -657,7 +657,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_VBLANK);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SIGNPOST), 0);
   FieldActor_SetSpritePriority(ACTOR_ROPE_POST_B, 3);

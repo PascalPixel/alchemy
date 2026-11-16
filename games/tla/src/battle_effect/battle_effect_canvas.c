@@ -93,7 +93,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // The battle flashes away; at frame 27 the sky and the dragon's sprites load.
   scroll = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
@@ -111,7 +111,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       work->scrollInterval = 1;
       work->scrollStepX = -1;
       work->scrollStepY = 0;
-      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
       transition[4] = 1;
       cells = Resource_GetTableEntry(RESOURCE_GOLDEN_DRAGON_TILES);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
@@ -1345,7 +1345,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
@@ -1420,7 +1420,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 128);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
+  Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,

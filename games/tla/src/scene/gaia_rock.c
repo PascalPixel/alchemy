@@ -509,7 +509,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
-    Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_VBLANK);
+    Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_FRAME);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 1, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 2, 1);
@@ -712,7 +712,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
 
 /// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRock_StartWallTriggers(void) {
-  Task_AddFrame(GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
+  Task_AddFrame(GaiaRock_TriggerWallCell, TASK_PASS_FRAME);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

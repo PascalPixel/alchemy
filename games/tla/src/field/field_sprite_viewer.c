@@ -117,7 +117,7 @@ restart:
     }
   }
   SpriteViewer_BuildProbeRing(x, y, ring);
-  Task_Add(SpriteViewer_PlaceRing, TASK_PASS_VBLANK);
+  Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
   wait(1);

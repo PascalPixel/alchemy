@@ -613,7 +613,7 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(work, mode, value)                               \
   (EFFECT_SET_TRANSFER(work, mode, value),                                     \
-   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME))
+   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))

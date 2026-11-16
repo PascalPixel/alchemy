@@ -245,7 +245,7 @@ static void Title_RevealScreen(s32 unused) {
   Event_Wait(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
-  Task_Add(Title_UpdateSpriteReveal, TASK_PASS_VBLANK);
+  Task_Add(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP,

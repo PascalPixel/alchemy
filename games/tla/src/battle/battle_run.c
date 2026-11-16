@@ -224,7 +224,7 @@ s32 Battle_Run(s32 enemyGroup) {
     BattleParty_AssignOpponentSlots();
     battle->layout = FORMATION_LAYOUT_SHUFFLED;
   }
-  Task_Add(BattleCamera_Update, TASK_PASS_VBLANK - 1);
+  Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
 
   cue = gMainRoutineWork.battleMusic;
   if (cue != 0) {
@@ -275,7 +275,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_VBLANK);
+  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
   for (round = 1;; round++) {
     if (BattleUnit_ListLivingIds(BATTLE_SIDE_MASK_PARTY, 0) == 0)

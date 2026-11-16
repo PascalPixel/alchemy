@@ -904,7 +904,7 @@ void TaopoSwamp_TremorPillar(void) {
     }
   } while (--i >= 0);
   FieldMapGrid_WaitForShakeToSettle();
-  Task_AddFrame(TaopoSwamp_OpenPassage, TASK_PASS_VBLANK);
+  Task_AddFrame(TaopoSwamp_OpenPassage, TASK_PASS_FRAME);
   System_Wait(40);
   FieldCamera_SetSpeed(0.9);
   FieldCamera_MoveTo(336, CAMERA_KEEP, 280, 1);
@@ -915,9 +915,9 @@ void TaopoSwamp_TremorPillar(void) {
     System_Wait(8);
     row -= 5;
   } while (--i > 0);
-  Task_AddFrame(TaopoSwamp_PuffSteam, TASK_PASS_VBLANK);
+  Task_AddFrame(TaopoSwamp_PuffSteam, TASK_PASS_FRAME);
   System_Wait(60);
-  Task_AddFrame(TaopoSwamp_FlickerPool, TASK_PASS_VBLANK);
+  Task_AddFrame(TaopoSwamp_FlickerPool, TASK_PASS_FRAME);
   System_Wait(24);
   FieldEvent_Wait(120);
   Event_End();
@@ -1344,7 +1344,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = FIXED_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
-    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
+    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_FRAME);
     ((struct MapWorkGroundEffects *)map)->wading = MAP_WADING_MUD;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
@@ -1368,7 +1368,7 @@ s32 Scene_Initialize(void) {
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     FieldEffect_StartBlankOverlay(0);
-    Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_VBLANK);
+    Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_FRAME);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwampPillarGapVents, 0,
                             TaopoSwamp_CycleSpotVent);
@@ -1403,8 +1403,8 @@ s32 Scene_Initialize(void) {
              (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
-      FieldTask_AddFrame(TaopoSwamp_DripInDripRoom, TASK_PASS_VBLANK);
-      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(TaopoSwamp_DripInDripRoom, TASK_PASS_FRAME);
+      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_FRAME);
       actor = Actor_GetById(ACTOR_DRIP_PUDDLE);
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
@@ -1540,7 +1540,7 @@ s32 Scene_Initialize(void) {
       dummy->scaleY = FIXED_ONE * 3 / 4;
       dummy->motionFlags = 0;
     }
-    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
+    Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_FRAME);
     ((struct MapWorkGroundEffects *)map)->wading = MAP_WADING_MUD;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
@@ -1570,7 +1570,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
-    Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_VBLANK);
+    Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_FRAME);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
       TaopoSwamp_StartVents(gTaopoSwampPillarGapVents, 0,
                             TaopoSwamp_CycleSpotVent);
@@ -1606,8 +1606,8 @@ s32 Scene_Initialize(void) {
              (s32)TaopoSwamp_CycleDripVent);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
-      FieldTask_AddFrame(TaopoSwamp_DripInDripRoom, TASK_PASS_VBLANK);
-      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(TaopoSwamp_DripInDripRoom, TASK_PASS_FRAME);
+      FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, TASK_PASS_FRAME);
       actor = Actor_GetById(ACTOR_DRIP_PUDDLE);
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
@@ -1800,7 +1800,7 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
   TaopoSwamp_FocusMapOn(100, 50);
   Io_Write16(BLEND_ALPHA(7, 12), &REG_BLDALPHA->value);
   if (gMainRoutineWork.entrance == 6)
-    FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(TaopoSwamp_TwinkleStarDust, TASK_PASS_FRAME);
 }
 
 /// Points the map's followed point at cell (100, 100).
@@ -2012,7 +2012,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vent_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(Vent_Update, TASK_PASS_FRAME);
 }
 
 /// The accessors step the work pointer by whole entries and then take entry 0:

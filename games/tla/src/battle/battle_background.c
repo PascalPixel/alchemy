@@ -58,7 +58,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   transition->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
@@ -160,7 +160,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
       (void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64),
       64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
+    Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -621,7 +621,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     }
     wait(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_FRAME);
+    Task_Add(BattleBackground_StepHighlightBlend, TASK_PASS_VBLANK);
   }
 }
 
@@ -895,8 +895,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
-  Task_Add(ElementGlow_UpdateStarField, TASK_PASS_VBLANK);
-  return Task_Add(ElementGlow_UploadStarField, TASK_PASS_VBLANK);
+  Task_Add(ElementGlow_UpdateStarField, TASK_PASS_FRAME);
+  return Task_Add(ElementGlow_UploadStarField, TASK_PASS_FRAME);
 }
 
 /// Ends a star field: clears the tiles in character block 1, releases its

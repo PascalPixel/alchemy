@@ -87,7 +87,7 @@ s32 Scene_Initialize(void) {
   map->wading = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_VBLANK);
+  Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_FRAME);
   {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 

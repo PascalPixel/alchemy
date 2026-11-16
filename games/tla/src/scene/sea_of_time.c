@@ -685,7 +685,7 @@ void SeaOfTime_StartWaves(void) {
   } while (changed);
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
-  Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
+  Task_Add(SeaOfTime_TrackWaves, TASK_PASS_FRAME);
   Event_End();
 }
 
@@ -1207,7 +1207,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);
-  Task_Add(SeaOfTime_AnimateSea, TASK_PASS_FRAME);
+  Task_Add(SeaOfTime_AnimateSea, TASK_PASS_VBLANK);
   Event_WaitTransitionFrames();
   Event_Wait(60);
   SeaOfTime_RaiseRock(21, 23, ACTOR_ROCK_A);
@@ -1343,7 +1343,7 @@ s32 Scene_Initialize(void) {
         i++;
         offset += 2;
       } while (i != 14);
-      Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
+      Task_Add(SeaOfTime_TrackWaves, TASK_PASS_FRAME);
     }
   } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
@@ -1379,7 +1379,7 @@ s32 Scene_Initialize(void) {
     }
   }
   {
-    s32 priority = TASK_PASS_FRAME;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(SeaOfTime_AnimateSea, priority);
   }

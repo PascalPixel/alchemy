@@ -413,7 +413,7 @@ void FieldPsynergy_Scoop(void) {
         work->phase = 0;
         work->timer = 0;
         {
-          s32 order = TASK_PASS_VBLANK;
+          s32 order = TASK_PASS_FRAME;
 
           Task_Add(Scoop_Update, order);
         }

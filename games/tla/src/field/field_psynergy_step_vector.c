@@ -328,8 +328,8 @@ void BattleEffect_StartCanvasSprite(void) {
     }
   }
 
-  Task_Add(BattleEffect_DrawCanvasSprite, TASK_PASS_VBLANK);
-  Task_Add(BattleEffect_UploadCanvas, TASK_PASS_FRAME - 20);
+  Task_Add(BattleEffect_DrawCanvasSprite, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_UploadCanvas, TASK_PASS_VBLANK - 20);
 }
 
 /// Ends the canvas sprite: stops its draw and upload callbacks, waits a

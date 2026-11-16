@@ -140,7 +140,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   {
-    s32 order = TASK_PASS_FRAME;
+    s32 order = TASK_PASS_VBLANK;
 
     Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, order);
   }

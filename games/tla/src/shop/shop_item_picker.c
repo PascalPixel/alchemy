@@ -441,7 +441,7 @@ void ItemIconGrid_Initialize(void) {
     s32 hidden = 0;
     shop->iconsVisible = hidden;
   }
-  Task_Add(ItemIconGrid_Draw, TASK_PASS_VBLANK + 10);
+  Task_Add(ItemIconGrid_Draw, TASK_PASS_FRAME + 10);
 }
 
 /// Stops the drawing task and frees the icons' VRAM cache entries.

@@ -457,7 +457,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         wait(1);
       }
     }
-    Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
+    Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
@@ -542,7 +542,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
           animation->entries[entryIndex]->colorMode;
   }
 
-  Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
+  Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.kind != 0) {
     FIXED fade;
     struct HeapSlots *heap;
@@ -738,7 +738,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   } else {
     // The word after the plan in BattleWork is skipPlayback.
     if (((s32 *)plan)[25] == 0)
-      Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
+      Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.kind) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);

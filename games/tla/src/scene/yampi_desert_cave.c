@@ -520,7 +520,7 @@ void YampiDesertCave_StartMarkGlow(void) {
   gYampiDesertCave_MarkPeriod = 15;
   gYampiDesertCave_MarkTimer = 16;
   gYampiDesertCave_MarkBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 void YampiDesertCave_StopMarkGlow(void) {
@@ -535,7 +535,7 @@ void YampiDesertCave_StartMarkFlash(void) {
   gYampiDesertCave_MarkPeriod = 2;
   gYampiDesertCave_MarkTimer = 2;
   gYampiDesertCave_MarkBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 #include "shared/list_count_entries.h"
@@ -1030,7 +1030,7 @@ s32 Scene_Initialize(void) {
       } else {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP, 0);
-        Task_Add(YampiDesertCave_MoveSandRipple, TASK_PASS_VBLANK);
+        Task_Add(YampiDesertCave_MoveSandRipple, TASK_PASS_FRAME);
         Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING);
         Actor_SetSpritePriority(ACTOR_SAND_RIPPLE, 3);
         Actor_GetById(ACTOR_SAND_RIPPLE)->collisionFlags = 0;

@@ -31,9 +31,10 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// task is suspended, so no pass matches it.
 ///
 /// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// wait() runs TASK_PASS_FRAME's once a frame.
-#define TASK_PASS_VBLANK 0x480
-#define TASK_PASS_FRAME 0xc80
+/// wait() runs TASK_PASS_FRAME's once a frame. The two numbers are the other
+/// way round in The Broken Seal, where the frame's pass is the higher.
+#define TASK_PASS_FRAME 0x480
+#define TASK_PASS_VBLANK 0xc80
 /// An empty slot's priority, sorted last.
 #define TASK_PRIORITY_EMPTY 0xffff
 /// A removed task's priority: its odd high byte matches no pass, and it sorts
@@ -76,6 +77,6 @@ s32 Menu_SuspendFieldTasks(void);
 
 void Task_RunPass(s32 pass);
 s32 Task_CountInPass(s32 pass);
-void Task_RunPassBeforeVBlankTasks(s32 pass);
+void Task_RunPassBeforeFrameTasks(s32 pass);
 
 #endif

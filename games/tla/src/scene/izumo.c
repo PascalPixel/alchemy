@@ -542,7 +542,7 @@ void Izumo_OfferATokenOfGratitude(void) {
 s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
+  Task_Add(Izumo_RotateWaterColors, TASK_PASS_VBLANK);
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_GetById(ACTOR_OKUNI)->steeringFlags = 2;

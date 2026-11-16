@@ -638,7 +638,7 @@ void AquaRockInside_SpringDries(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
-  priority = TASK_PASS_VBLANK;
+  priority = TASK_PASS_FRAME;
   FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 648, 1);
@@ -686,7 +686,7 @@ void AquaRockInside_UseAquariusStone(void) {
   FieldEvent_Wait(20);
   MapGrid_SetShake(1, 3, 1);
   FieldEvent_Wait(40);
-  priority = TASK_PASS_VBLANK;
+  priority = TASK_PASS_FRAME;
   FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 504, 1);
@@ -2677,7 +2677,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vent_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(Vent_Update, TASK_PASS_FRAME);
 }
 
 /// Whether vent `index` blows.

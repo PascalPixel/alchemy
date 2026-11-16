@@ -65,7 +65,7 @@ void FieldPsynergy_StartCloak(void) {
     wait(2);
   }
 
-  order = TASK_PASS_VBLANK;
+  order = TASK_PASS_FRAME;
   sprite->flags = SPRITE_FLAG_OUTLINED;
   entry->colorMode = SPRITE_COLOR_NORMAL;
   sprite->dirty = 1;
@@ -358,7 +358,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   right->x.fixed = position.x - toFIXED(16);
   right->velocityX = 0;
   target->update = Actor_CycleSpriteColors;
-  Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
+  Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_FRAME);
   Sound_PlayFar(SE_PSYNERGY_START);
   target->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlagsFar(target, 0);

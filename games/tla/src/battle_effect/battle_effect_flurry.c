@@ -218,7 +218,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   if (gFlurry_Styles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
   // The motes wait 25 pixels above the target, aimed away from the
   // caster; none is out yet.

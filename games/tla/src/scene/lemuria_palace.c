@@ -151,7 +151,7 @@ void LemuriaPalace_CycleGlowColors(void) {
 /// LemuriaPalace_CycleGlowColors.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_FRAME);
+  Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_VBLANK);
   FieldActor_SetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
   if (gMainRoutineWork.entrance == 6)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -286,7 +286,7 @@ void LemuriaPalace_LoadMaps(void) {
   gLemuriaPalace_SecondMapShown = 0;
   gLemuriaPalace_MapTime = 0;
   gLemuriaPalace_MapMode = 0;
-  Task_AddFrame(LemuriaPalace_DrawMaps, TASK_PASS_VBLANK);
+  Task_AddFrame(LemuriaPalace_DrawMaps, TASK_PASS_FRAME);
   Heap_Release(buffer);
 }
 

@@ -770,7 +770,7 @@ void FileList_UpdatePulse(void) {
 
 /// Starts the palette glow (FileList_UpdatePulse) as a task.
 void FileList_StartPulse(void) {
-  Task_Add((s32)FileList_UpdatePulse, TASK_PASS_VBLANK);
+  Task_Add((s32)FileList_UpdatePulse, TASK_PASS_FRAME);
 }
 
 /// Stops the palette glow.
@@ -850,7 +850,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
     menu->partyMemberScale[i] = FIXED_ONE;
   }
 
-  Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
+  Task_Add(FileList_PlacePartySprites, TASK_PASS_FRAME);
 }
 
 /// Stops placing the party sprites of the file list and releases them.

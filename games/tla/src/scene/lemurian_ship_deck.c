@@ -152,7 +152,7 @@ void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
   TilesetAnim_Resume(13);
@@ -263,9 +263,9 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_SetScript(ACTOR_KRADEN, gLemurianShipDeck_ThirdCrewLooksAround);
   Event_StartScreenTransition();
   gLemurianShipDeck_WaveScroll = 0;
-  Task_AddFrame(LemurianShipDeck_ScrollWaves, TASK_PASS_VBLANK);
+  Task_AddFrame(LemurianShipDeck_ScrollWaves, TASK_PASS_FRAME);
   gLemurianShipDeck_BobPhase = 0;
-  Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_VBLANK);
+  Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_FRAME);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(542, 44, 396, 1);
   FieldCamera_WaitForArrival();
@@ -396,7 +396,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
    * first constant the function puts in its pool: the message id's pool label
    * is then numbered one later, and reload's hard-register CSE. */
   if (0)
-    Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_VBLANK);
+    Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_FRAME);
 #endif
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -416,9 +416,9 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gLemurianShipDeck_WaveScroll = 0;
-  Task_AddFrame(LemurianShipDeck_ScrollWaves, TASK_PASS_VBLANK);
+  Task_AddFrame(LemurianShipDeck_ScrollWaves, TASK_PASS_FRAME);
   gLemurianShipDeck_BobPhase = 0;
-  Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_VBLANK);
+  Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_FRAME);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -524,8 +524,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == 10)
     LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
@@ -544,11 +544,11 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
-    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
     if (gMainRoutineWork.entrance == 99)
       LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_VBLANK);
+      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
   }
   return 0;
 }
@@ -818,7 +818,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   FieldEvent_Wait(20);
   Event_PlaySound(SE_SHIMMER);
   func = LemurianShipDeck_EmitSparkle;
-  Task_Add(func, TASK_PASS_VBLANK);
+  Task_Add(func, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);

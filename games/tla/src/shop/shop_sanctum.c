@@ -506,7 +506,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
-  Task_Add(Sanctum_UpdateBurst, TASK_PASS_VBLANK);
+  Task_Add(Sanctum_UpdateBurst, TASK_PASS_FRAME);
 
   position.x = toFIXED(shop->partyMemberX[member]);
   position.z = toFIXED(shop->partyMemberY[member]) - toFIXED(12);

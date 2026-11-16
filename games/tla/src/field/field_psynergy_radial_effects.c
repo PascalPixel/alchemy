@@ -790,7 +790,7 @@ void FieldPsynergy_Lash(void) {
       work->next = 0;
       work->spawnCount = 1;
       work->hit = 0;
-      Task_Add(FieldPsynergy_UpdateLash, TASK_PASS_VBLANK);
+      Task_Add(FieldPsynergy_UpdateLash, TASK_PASS_FRAME);
       while (work->phase != FIELD_PSYNERGY_FINISHED) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_LASH);
@@ -1308,7 +1308,7 @@ void BattleEffect_StartArcEffect(void) {
   work->age[0] = ARC_GROUP_UNSPAWNED;
   work->age[1] = ARC_GROUP_UNSPAWNED;
   work->target = 0;
-  Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_VBLANK);
+  Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_FRAME);
 }
 
 /// Ends the swelling arcs: frees their tiles and their work, and stops their
@@ -1699,7 +1699,7 @@ void FieldPsynergy_Arrow(void) {
   work->result = -1;
   work->phase = 0;
   work->timer = 0;
-  Task_Add(FieldPsynergy_UpdateArrow, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateArrow, TASK_PASS_FRAME);
   while (work->phase != FIELD_PSYNERGY_FINISHED)
     wait(1);
   Task_Remove(FieldPsynergy_UpdateArrow);

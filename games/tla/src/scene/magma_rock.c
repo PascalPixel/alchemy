@@ -2284,7 +2284,7 @@ void MagmaRock_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
+  Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
 /// Ends the falling rocks: removes their task and frees their picture and work.

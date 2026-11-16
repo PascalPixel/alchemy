@@ -1150,7 +1150,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Window_SetBounds(window, 13, 5, 17, 12);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   Unit_Get(menu->memberIds[menu->sideIndex[0]]);
-  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, TASK_PASS_VBLANK);
+  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, TASK_PASS_FRAME);
   redraw = 2;
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
@@ -1669,7 +1669,7 @@ s32 ItemMenu_ChooseCommand(void) {
                                   0, menu->sideMember[0]);
         if (commandIndex == ITEM_COMMAND_GIVE)
           Task_Add(EquipmentMenu_UpdateCompatibilityIndicators,
-                   TASK_PASS_VBLANK);
+                   TASK_PASS_FRAME);
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
@@ -2035,7 +2035,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Window_DrawDividerLineFar(menu->mainWindow, 0, 3, 12, 3);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }

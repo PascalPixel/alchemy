@@ -658,7 +658,7 @@ void JupiterLighthouse_PlaceForTheFight(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetScript(ACTOR_GARET, gJupiterLighthouse_GaretHangsScript);
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     FieldTask_AddFrame((void (*)(void))JupiterLighthouse_SwayGaret, priority);
   }

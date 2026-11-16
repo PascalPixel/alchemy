@@ -757,7 +757,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
@@ -822,8 +822,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_FRAME + 127);
-  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The ground dissolves: each column starts at its own random row, and the
   // rows go faster and faster.
@@ -866,7 +866,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
-    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
+    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     transition->busy = 1;
     work->frame = 0;

@@ -77,7 +77,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);

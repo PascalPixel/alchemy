@@ -235,7 +235,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     // Each transfer lowers the canvas's pixels by 4: an afterimage.
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 72;

@@ -744,7 +744,7 @@ void FieldPsynergy_Reveal(void) {
     frame++;
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
-    Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_VBLANK);
+    Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_FRAME);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back from
@@ -1731,5 +1731,5 @@ void FieldPsynergy_EndCloak(void) {
 /// it as a scene loads, since gMainRoutineWork.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
   if (gMainRoutineWork.cloaked != 0)
-    Task_Add(FieldEffect_CheckCloakTile, TASK_PASS_VBLANK);
+    Task_Add(FieldEffect_CheckCloakTile, TASK_PASS_FRAME);
 }

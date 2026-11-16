@@ -16,7 +16,7 @@
 
 /// Adds `func` as a task of priority `priority` (TASK_PASS_FRAME
 /// runs it once a frame), or gives the task already running it that
-/// priority. Returns the slot it wrote, or -1 when all 20 task slots are
+/// priority. Returns the slot it wrote, or -1 when all 24 task slots are
 /// taken. Task_Add under the name overlays import it by.
 static inline s32 Task_AddFrame(TaskFunc func, s32 priority) {
   return Task_Add(func, priority);

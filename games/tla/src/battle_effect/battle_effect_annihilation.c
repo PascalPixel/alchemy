@@ -70,7 +70,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   } while (i != SHARD_COUNT);
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &origin);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {

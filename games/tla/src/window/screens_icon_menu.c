@@ -180,7 +180,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_VBLANK);
+  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_FRAME);
 
   for (;;) {
     commandsOut = commands;
@@ -980,7 +980,7 @@ void *IconMenu_Open(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct IconMenuWork));
-  Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_VBLANK - 10);
+  Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
   return work;
 }
 
@@ -1568,7 +1568,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   }
   IconMenu_Center(17, ENTRY_WIDTH, 0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
-    Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
+    Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
     work->previousMode = -1;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
@@ -1593,7 +1593,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
 #endif
   } else {
-    Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
+    Task_Add(Menu_DrawModeIndicator, TASK_PASS_FRAME - 10);
     work->previousMode = -1;
     window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
@@ -1743,7 +1743,7 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 void DebugSceneSelect_Schedule(void) {
-  Task_Add(DebugSceneSelect_Run, TASK_PASS_VBLANK);
+  Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
 }
 #undef Decompress_ByteLz
 #undef LABEL_RIGHT

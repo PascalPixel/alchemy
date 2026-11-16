@@ -278,7 +278,7 @@ s32 MapGrid_LoadMap(s32 index) {
   REG_BLDCNT = displayFlags;
   displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   Io_Write16(displayFlags, &REG_DISPCNT);
-  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_VBLANK + 5);
+  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_FRAME + 5);
   return 2;
 }
 

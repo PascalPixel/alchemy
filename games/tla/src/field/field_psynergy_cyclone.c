@@ -299,7 +299,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = toFIXED(event->cycloneLiftX);
     work->to[1] = owner->y.fixed + toFIXED(32);
     work->to[2] = toFIXED(event->cycloneLiftZ);
-    Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
+    Task_Add(Cyclone_LiftLeader, TASK_PASS_FRAME);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
@@ -329,7 +329,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = toFIXED(event->cycloneCarryX);
     work->to[1] = owner->y.fixed;
     work->to[2] = toFIXED(event->cycloneCarryZ);
-    Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
+    Task_Add(Cyclone_CarryLeader, TASK_PASS_FRAME);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)

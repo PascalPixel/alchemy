@@ -119,13 +119,13 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     }
   }
 
-  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGER)
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
     if (frame == FRAME_COUNT(args->variant) - 16)
@@ -333,7 +333,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   }
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
-  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (args->variant == EFFECT_VARIANT_STRONGER) {
@@ -341,7 +341,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
     if (frame == FRAME_COUNT(args->variant) - 64)

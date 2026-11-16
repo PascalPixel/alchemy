@@ -532,7 +532,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     REG_BLDALPHA = EFFECT_BLEND_ADD;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The caster closes in on the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, toFIXED(4));

@@ -1174,7 +1174,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
     if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
       MarsLighthouseRoomF_MeltIcebergs();
-    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, TASK_PASS_VBLANK);
+    Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, TASK_PASS_FRAME);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
@@ -1315,7 +1315,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
+    Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -2152,7 +2152,7 @@ void LightSprites_InitA(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 3072, buffer);
   Heap_Release(buffer);
-  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_Add(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpritesLarge = 0;
   gLightSpritePriority = -1;
@@ -2166,7 +2166,7 @@ void LightSprites_InitB(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpritesLarge = 0;
   gLightSpritePriority = -1;
@@ -2180,7 +2180,7 @@ void LightSprites_InitC(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpritesLarge = 1;
   gLightSpritePriority = -1;

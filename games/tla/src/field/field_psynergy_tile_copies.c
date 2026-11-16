@@ -195,5 +195,5 @@ void ParticleBurst_Start(void) {
     particle->delay = -i / 2;
   }
   Sound_PlayFar(SE_SHIMMER);
-  Task_Add(ParticleBurst_Update, TASK_PASS_VBLANK);
+  Task_Add(ParticleBurst_Update, TASK_PASS_FRAME);
 }

@@ -218,7 +218,7 @@ void FieldPsynergy_Ring(void) {
     event->ringTimerRunning = 1;
     event->ringFrames = 999;
     off = 0;
-    Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
+    Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -330,7 +330,7 @@ void FieldPsynergy_Ring(void) {
   event->ringActive = 1;
   event->ringTimerRunning = 1;
   event->ringFrames = RING_FRAMES;
-  Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
 }
 
 /// One mote: a position and a velocity (Field_AdvanceWithGravity3D's vector)

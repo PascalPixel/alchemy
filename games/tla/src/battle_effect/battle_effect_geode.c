@@ -82,8 +82,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME + 15);
-  Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK + 15);
+  Task_Add(Display_ApplyBg2Affine, TASK_PASS_VBLANK + 127);
   projected = work->sheet;
   vertices = (struct ModelVertex *)(work->sheet + GEODE_VERTICES);
   mesh = work->sheet + GEODE_MESH;
@@ -164,7 +164,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 34) {
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      Task_Add(BattleEffect_ProcessPendingBlock2Transfer, TASK_PASS_FRAME + 15);
+      Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
+               TASK_PASS_VBLANK + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                           DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                               DISPCNT_BG1_ON | DISPCNT_OBJ_ON |
@@ -181,7 +182,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Task_Remove(Display_ApplyBg2Affine);
       Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-               TASK_PASS_FRAME + 15);
+               TASK_PASS_VBLANK + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -(BATTLE_VIEW_TOP << 8),
                           IO_WRITE_WORD);

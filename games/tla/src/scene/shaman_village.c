@@ -522,7 +522,7 @@ void ShamanVillage_BlowAwaySand(void) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
-  Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_FRAME);
+  Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_VBLANK);
   Event_PlaySound(SE_RUSH);
   REG_BLDALPHA = BLEND_ALPHA(0, 15);
   REG_BLDCNT = 0x3f41;
@@ -542,7 +542,7 @@ void ShamanVillage_BlowAwaySand(void) {
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
   MapGrid_CopyCellsTo(64, 64, 2, 83, 16, 16);
   REG_BG1CNT &= ~3;
-  Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_VBLANK);
+  Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_FRAME);
   i = 0;
   do {
     REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
@@ -1982,7 +1982,7 @@ void ShamanVillage_StartLettering(s32 modeArg, s32 paramArg) {
   gShamanVillage_LetteringMode = modeArg;
   gShamanVillage_LetteringTileOffset = paramArg << 4;
 
-  Task_Add(ShamanVillage_RunLettering, TASK_PASS_VBLANK);
+  Task_Add(ShamanVillage_RunLettering, TASK_PASS_FRAME);
 
   handler = (s32)gShamanVillage_LetteringSlideScript;
   if (modeArg == 2) {
@@ -2780,8 +2780,8 @@ void ShamanVillage_SetUpVillage(void) {
     ShamanVillage_GrowVine();
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, TASK_PASS_VBLANK);
-  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, TASK_PASS_FRAME);
 }
 
 void ShamanVillage_SetUpInn(void) {
@@ -2846,7 +2846,7 @@ void ShamanVillage_SetUpSanctum(void) {
 
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
-    Task_Add(ShamanVillage_LayerSanctumActors, TASK_PASS_VBLANK);
+    Task_Add(ShamanVillage_LayerSanctumActors, TASK_PASS_FRAME);
   } else {
     Actor_SetPosition(ACTOR_SANCTUM_SHAMAN_A, 0, 0);
     Actor_SetPosition(ACTOR_SANCTUM_SHAMAN_B, 0, 0);

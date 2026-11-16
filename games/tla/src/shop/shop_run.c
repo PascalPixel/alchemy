@@ -85,7 +85,7 @@ void Shop_InitializeWork(void) {
   resourceSlot = VramCache_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
   VramBlock_LoadResource(resourceSlot, 128, RESOURCE_MENU_ARROW_TILES);
-  Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
+  Task_Add(MenuCursor_Step, TASK_PASS_FRAME);
   ItemIconGrid_Initialize();
 }
 

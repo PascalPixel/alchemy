@@ -614,7 +614,7 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                       IO_WRITE_HALFWORD);
-  Task_AddFrame(MarsLighthouseRoomM_FadeDoorway, TASK_PASS_VBLANK);
+  Task_AddFrame(MarsLighthouseRoomM_FadeDoorway, TASK_PASS_FRAME);
 }
 
 /// Teleport on the broken floor: the party leaves for the aerie.
@@ -796,7 +796,7 @@ s32 Scene_PrepareMap(void) {
     actor = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);
     actor->motionFlags = 0;
     actor->z.fixed = toFIXED(104);
-    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_FRAME);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
@@ -807,7 +807,7 @@ s32 Scene_PrepareMap(void) {
       }
       MarsLighthouseRoomM_StartDoorways(entrance);
       {
-        s32 priority = TASK_PASS_VBLANK;
+        s32 priority = TASK_PASS_FRAME;
 
         FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallFlames, priority);
       }

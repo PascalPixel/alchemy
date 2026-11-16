@@ -808,7 +808,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
-  Task_Add(transfer, TASK_PASS_FRAME);
+  Task_Add(transfer, TASK_PASS_VBLANK);
   yaw = 0; // Default: set again at frame 0 before it is read.
   frames = 36;
   if (mode == WIND_FUNNEL_AROMA && args->targetCount > 4) {

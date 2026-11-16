@@ -298,7 +298,7 @@ s32 Credits_Run(s32 mode) {
   gCredits_PendingSlides = 0;
   gIdleSleepEnabled = 0;
   Task_ResetAll();
-  Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
+  Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
@@ -504,8 +504,8 @@ void Credits_InitCrawlSprites(void) {
   gDisplayScroll_Position = 0;
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Task_Add(Credits_UpdateCrawlSprites, TASK_PASS_FRAME);
-  Task_Add(Credits_DrawEnteringCrawlLine, TASK_PASS_VBLANK);
+  Task_Add(Credits_UpdateCrawlSprites, TASK_PASS_VBLANK);
+  Task_Add(Credits_DrawEnteringCrawlLine, TASK_PASS_FRAME);
   for (i = 0; i < CREDITS_RING_ROWS; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
 }
@@ -711,8 +711,8 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   }
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
-  Task_Add(Credits_UpdateTextSprites, TASK_PASS_FRAME);
-  Task_Add(Credits_DrawEnteringLine, TASK_PASS_VBLANK);
+  Task_Add(Credits_UpdateTextSprites, TASK_PASS_VBLANK);
+  Task_Add(Credits_DrawEnteringLine, TASK_PASS_FRAME);
   for (i = 0; i < CREDITS_RING_ROWS; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
 }
@@ -996,7 +996,7 @@ void EndingPicture_Start(void) {
       (s32)(gEndingPicture_Map = NULL);
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
-  Task_Add(EndingPicture_Scroll, TASK_PASS_VBLANK);
+  Task_Add(EndingPicture_Scroll, TASK_PASS_FRAME);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
@@ -1149,7 +1149,7 @@ void EndingPicture_InitStrips(void) {
     *words++ = (i << 21) | OBJ_SIZE_32X8 | 152;
     *words++ = tile | OBJ_PRIORITY(2);
   }
-  Task_Add(EndingPicture_DrawStrips, TASK_PASS_VBLANK);
+  Task_Add(EndingPicture_DrawStrips, TASK_PASS_FRAME);
 }
 
 /// Moves the top strip's eight sprites to y 120 when enable is set, and to

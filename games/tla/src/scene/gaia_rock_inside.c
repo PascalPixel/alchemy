@@ -2059,7 +2059,7 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
       GaiaRockInside_SetPlatformMode(id, mode);
     }
   }
-  Task_AddFrame(GaiaRockInside_SwayPlatforms, TASK_PASS_VBLANK);
+  Task_AddFrame(GaiaRockInside_SwayPlatforms, TASK_PASS_FRAME);
 }
 
 /// Opens the passages on each side of the hall by how many of its two pairs of
@@ -3367,7 +3367,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
 
 /// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRockInside_StartWallTriggers(void) {
-  Task_AddFrame((s32)GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)GaiaRock_TriggerWallCell, TASK_PASS_FRAME);
 }
 
 #include "text/msg_ids.h"

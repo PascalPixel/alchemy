@@ -83,7 +83,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Dma_Fill32Cell(fill, 0x11111111, tiles, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  Task_Add(FadeOverlay_DrawMarks, TASK_PASS_VBLANK);
+  Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -162,7 +162,7 @@ void FieldEffect_StartBlankOverlay(s32 object) {
 
   Dma_Fill32(0, buffer, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
-  Task_Add(BlankOverlay_DrawMarks, TASK_PASS_VBLANK);
+  Task_Add(BlankOverlay_DrawMarks, TASK_PASS_FRAME);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (object == 0)
     object = Actor_Lookup(gMainRoutineWork.leaderActorId);

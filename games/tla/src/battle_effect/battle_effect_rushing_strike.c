@@ -87,7 +87,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // keeps 50 or 75 percent (see transferMode)
   work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != STAR_MINE_FRAMES; frame++) {
     camera = Ram_HeapSlots->cameraWork;

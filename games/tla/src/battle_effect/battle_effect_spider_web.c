@@ -344,8 +344,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
       if (!loaded) {
         Task_Add(BattleEffect_ProcessPendingBlock2Transfer,
-                 TASK_PASS_FRAME + 15);
-        Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
+                 TASK_PASS_VBLANK + 15);
+        Task_Add(Display_ApplyBg2Affine, TASK_PASS_VBLANK + 127);
         Resource_LoadAndDecompress(RESOURCE_RUNE_CIRCLE_SHEET,
                                    work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES,
                                    1, 0);
@@ -464,7 +464,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
         Task_Remove(Display_ApplyBg2Affine);
         Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-                 TASK_PASS_FRAME + 15);
+                 TASK_PASS_VBLANK + 15);
         Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET,
                                    work->sheet + ULYSSES_YELLOW_ORB_PICTURES, 1,
                                    0);
@@ -780,7 +780,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
     if (frame == 288) {
-      Task_Add(Ulysses_MoveLastParticle, TASK_PASS_VBLANK);
+      Task_Add(Ulysses_MoveLastParticle, TASK_PASS_FRAME);
       ULYSSES_LAST_PARTICLE.x = toFIXED(188);
       ULYSSES_LAST_PARTICLE.y = toFIXED(96);
       ULYSSES_LAST_PARTICLE.velocityX = 0;

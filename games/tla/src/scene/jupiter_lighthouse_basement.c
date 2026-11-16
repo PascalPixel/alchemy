@@ -442,7 +442,7 @@ void LightSprites_InitA(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 3072, buffer);
   Heap_Release(buffer);
-  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_Add(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpriteLargeOam = 0;
   gJupiterLighthouse_LightLevel = -1;
@@ -458,7 +458,7 @@ void LightSprites_InitB(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpriteLargeOam = 0;
   gJupiterLighthouse_LightLevel = -1;
@@ -474,7 +474,7 @@ void LightSprites_InitC(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpriteLargeOam = 1;
   gJupiterLighthouse_LightLevel = -1;

@@ -798,7 +798,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.limit = 224;
   if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
-  Task_Add(TitleIntro_UpdateLogo, TASK_PASS_VBLANK);
+  Task_Add(TitleIntro_UpdateLogo, TASK_PASS_FRAME);
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;
@@ -1517,7 +1517,7 @@ void TitlePaletteFade_Initialize(void) {
           REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
-  operation = TASK_PASS_VBLANK;
+  operation = TASK_PASS_FRAME;
   Task_Add((s32)(TitlePaletteFade_Update), operation);
 }
 

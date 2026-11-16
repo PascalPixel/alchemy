@@ -519,7 +519,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EFFECT_FREE_PARTICLES(i, work->particles, 64);
   {
     s32 showerFrames;

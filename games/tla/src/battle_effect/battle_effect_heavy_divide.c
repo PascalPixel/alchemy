@@ -46,7 +46,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
                       BLITTER_TRANSPARENT);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   caster = BattleObject_GetFar(args->user)->object;
   if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
     frames = 80;

@@ -187,7 +187,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     target[2] = toFIXED(576);
   }
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
@@ -251,7 +251,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     target[2] = toFIXED(576);
   }
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }

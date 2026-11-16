@@ -333,7 +333,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     work->transferValue = CANVAS_FADE_HALF;
   else
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Aim at the middle of the first target.
   EffectPosition_ProjectScaledBattler(args->targets[0], &targetPosition);
@@ -797,7 +797,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Centre BG2 on the first target.
   EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
@@ -961,7 +961,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer leaves 3/4 of the old picture,
   work->transferValue = CANVAS_FADE_THREE_QUARTERS; // a trail
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   args->variant++;

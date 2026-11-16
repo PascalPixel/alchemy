@@ -79,6 +79,6 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->tile = VramCache_FindFreeEntry();
   Vram_Load(table->tile, 256, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(CrackedTile_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(CrackedTile_Update, TASK_PASS_FRAME);
   return table->count;
 }

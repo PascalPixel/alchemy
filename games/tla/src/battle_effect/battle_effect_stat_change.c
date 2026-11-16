@@ -280,7 +280,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (args->side == EFFECT_SIDE_PARTY)
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
   else

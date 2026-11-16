@@ -124,7 +124,7 @@ void wait(s32 frames) {
 
   for (i = 0; i < (u32)frames; i++) {
     gTasksRunning = 1;
-    Task_RunPass(TASK_PASS_VBLANK);
+    Task_RunPass(TASK_PASS_FRAME);
     gTasksRunning = 0;
     if (gOamCopyEnabled) {
       Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, OAM_SIZE));
@@ -365,7 +365,7 @@ void System_VBlankHandler(void) {
     gVBlankCallback = 0;
     hook();
   }
-  Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
+  Task_RunPassBeforeFrameTasks(TASK_PASS_VBLANK);
 
   keys = REG_KEYINPUT ^ KEYS_MASK;
   {

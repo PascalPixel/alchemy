@@ -920,11 +920,11 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_MoveTo(264, CAMERA_KEEP, 340, 1);
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.2);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 374);
-  Kibombo_TaskAdd(Kibombo_CarryBlackCrystal, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_CarryBlackCrystal, TASK_PASS_FRAME);
   Event_Wait(20);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Kibombo_AkafubuCastsOnCrystal();
-  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_KIBOMBO);
@@ -2287,7 +2287,7 @@ void Kibombo_DigMarkingUnderLeader(void) {
 /// Felix casts Scoop on the marking he stands on.
 void Kibombo_CastScoop(void) {
   FieldPsynergy_LoadResources(ABILITY_SCOOP, 1);
-  Kibombo_TaskAdd(Kibombo_DigMarkingUnderLeader, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_DigMarkingUnderLeader, TASK_PASS_FRAME);
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
@@ -2444,7 +2444,7 @@ void Kibombo_GazeAtStatue(void) {
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_FRAME);
   Event_Wait(20);
   for (i = 0; i <= 159; i++) {
     Event_Wait(1);
@@ -2468,7 +2468,7 @@ void Kibombo_StatueFlashes(void) {
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Kibombo_TaskAdd(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_FlickerStatueFires, TASK_PASS_FRAME);
   wait(60);
   Task_Remove(Kibombo_FlickerStatueFires);
   wait(1);
@@ -2483,7 +2483,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  Kibombo_TaskAdd(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_FlickerStatueFires, TASK_PASS_FRAME);
   wait(60);
   Task_Remove(Kibombo_FlickerStatueFires);
   wait(1);
@@ -2498,7 +2498,7 @@ void Kibombo_StatueFlashes(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_FRAME);
   wait(180);
   Task_Remove(Kibombo_FlickerStatueFires);
   wait(1);
@@ -2610,7 +2610,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Kibombo_TaskAdd(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   Event_Wait(40);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_SetSpeed(0.8);
@@ -2631,11 +2631,11 @@ void Kibombo_PresentOrbToGabomba(void) {
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.2);
   Actor_WalkToAndWaitById(ACTOR_AKAFUBU, 264, 374);
   wait(1);
-  Kibombo_TaskAdd(Kibombo_CarryBlackCrystal, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_CarryBlackCrystal, TASK_PASS_FRAME);
   Event_Wait(20);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Kibombo_AkafubuCastsOnCrystal();
-  Kibombo_TaskAdd(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Kibombo_TaskAdd(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   // "O Great Gabomba! Please accept this, our humble gift!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_KIBOMBO);
@@ -2680,7 +2680,7 @@ void Kibombo_GabombaNotPleased(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   Event_Wait(40);
   Sound_Play(SE_RATTLE);
   Kibombo_SetStatueMouth(0, 1);
@@ -2726,7 +2726,7 @@ void Kibombo_WitchDoctorFeelsPower(void) {
                        SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Kibombo_CrowdBows();
-  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   work = Ram_HeapSlots->fieldWork;
   work->transition = effect = 513;
   Event_StartScreenTransition();
@@ -2762,7 +2762,7 @@ void Kibombo_OpenCeremonyScene(void) {
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
                        SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   Kibombo_SetStatueMouth(1, 1);
   if (gKibombo_BlackCrystal != 0) {
     gKibombo_BlackCrystal->y.fixed += toFIXED(32);
@@ -2923,7 +2923,7 @@ void Kibombo_GabombaResponds(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_WAVE);
-  Task_Add(Kibombo_RaiseEmbers, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_RaiseEmbers, TASK_PASS_FRAME);
   Event_Wait(120);
   Kibombo_CrowdCheers();
   GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
@@ -3178,7 +3178,7 @@ void Kibombo_InitializeVillageByDay(void) {
   GameFlag_Clear(FLAG_KIBOMBO_AT_CEREMONY);
   Actor_DisableById(ACTOR_SIGNAL_FIRE);
   Actor_SetAnimationById(ACTOR_SIGNAL_FIRE, 2);
-  Task_Add(Kibombo_PuffSmoke, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_PuffSmoke, TASK_PASS_FRAME);
   Kibombo_LightFlameRow();
 }
 
@@ -3246,7 +3246,7 @@ void Kibombo_InitializeCeremony(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(Kibombo_FlickerVillageFires, priority);
   }
@@ -3388,7 +3388,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
+  Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   for (i = 0; i <= 7; i++) {
     u8 *field = &Actor_GetById(i + 18)->retainSpriteCache;
     s32 value = 2;
@@ -3446,7 +3446,7 @@ void Kibombo_InitializeStatueFace(void) {
   } else {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
+    Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_FRAME);
     Event_End();
   }
 }

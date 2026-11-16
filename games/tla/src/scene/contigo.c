@@ -379,7 +379,7 @@ void Contigo_StartSlowPaletteCycle(void) {
   gPaletteCycleDelay = 15;
   gPaletteCycleTimer = 16;
   gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 /// Stops the cycle of colours and leaves the scene's next transition a backdrop
@@ -399,7 +399,7 @@ void Contigo_StartFastPaletteCycle(void) {
   gPaletteCycleDelay = 2;
   gPaletteCycleTimer = 2;
   gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 /// Counts a list of palette slots ended by PALETTE_LIST_END, less one.
@@ -757,7 +757,7 @@ void Contigo_BabyThinks(void) {
       i++;
     } while (i < 28);
   }
-  Task_Add(Contigo_RaiseLeaves, TASK_PASS_VBLANK);
+  Task_Add(Contigo_RaiseLeaves, TASK_PASS_FRAME);
   Event_Wait(120);
   Task_Remove(Contigo_RaiseLeaves);
   if (effect != 0) {
@@ -2375,7 +2375,7 @@ void Contigo_KeepPriorityWithLeader(void) {
 void Contigo_InitializeVillage(void) {
   struct Actor *actor = Actor_GetById(ACTOR_WANDERER);
 
-  Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
+  Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_FRAME);
   actor->riseCounter = 1;
   actor->riseEnabled = 0;
   actor->update = Contigo_PauseWhenFaced;

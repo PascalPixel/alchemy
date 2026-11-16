@@ -1426,7 +1426,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->height = 0;
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
-  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
+  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_FRAME);
   while (work->stage != BLAST_FINISHED)
     System_Wait(1);
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
@@ -1509,7 +1509,7 @@ void VenusLighthouseEntrance_StartDust(void) {
     s32 zero = 0;
     work->next = zero;
   }
-  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_VBLANK);
+  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_FRAME);
 }
 
 void VenusLighthouseEntrance_StopDust(void) {

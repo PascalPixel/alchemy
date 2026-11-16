@@ -546,8 +546,8 @@ void AquaRock_SetUpStreams(void) {
     opened->waveRow[0] = 9999;
     opened->shown = 1;
   }
-  Task_AddFrame(AquaRock_TimeStreams, TASK_PASS_VBLANK);
-  Task_Add(AquaRock_UpdateStreams, TASK_PASS_VBLANK);
+  Task_AddFrame(AquaRock_TimeStreams, TASK_PASS_FRAME);
+  Task_Add(AquaRock_UpdateStreams, TASK_PASS_FRAME);
 }
 
 #include "shared/actor_flicker_child.h"
@@ -1150,7 +1150,7 @@ s32 Scene_Initialize(void) {
           ACTOR_FIRST_PILLAR, (x << 20) + toFIXED(8), (z << 20) + toFIXED(8));
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
+    Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_FIRST_DRIFTER + 1, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_FIRST_PILLAR, 1);
     AquaRock_StartCellMarkers();
@@ -1599,7 +1599,7 @@ void AquaRock_StartCellMarkers(void) {
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, buffer);
   Heap_Release(buffer);
-  ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawCellMarkers, TASK_PASS_VBLANK);
+  ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawCellMarkers, TASK_PASS_FRAME);
 }
 
 /// Sets the actor the cell markers come from, or with 0 none: drops fall from
@@ -1621,7 +1621,7 @@ void AquaRock_SetCellMarkerAnchor(s32 id) {
 #include "shared/ground_particles_draw.h"
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_VBLANK to
+/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_FRAME to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void AquaRock_StartSparkles(void) {
   struct GroundParticleWork *work =
@@ -1659,7 +1659,7 @@ void AquaRock_StartSparkles(void) {
     i++;
     p++;
   } while (i < 64);
-  Task_Add(GroundParticles_Draw, TASK_PASS_VBLANK);
+  Task_Add(GroundParticles_Draw, TASK_PASS_FRAME);
 }
 
 /// Ties the sparkles to the actor `id`, or to none.

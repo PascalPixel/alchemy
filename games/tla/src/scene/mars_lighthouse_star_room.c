@@ -819,7 +819,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
-  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
+  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_FRAME);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
@@ -1010,7 +1010,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
   PaletteFade_Interpolate(80);
   FieldEvent_Wait(80);
-  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_VBLANK);
+  Task_AddFrame(MarsLighthouseStarRoom_SpawnThawSparks, TASK_PASS_FRAME);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(680, CAMERA_KEEP, 480, 1);
   FieldCamera_WaitForArrival();
@@ -1397,7 +1397,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
       REG_BLDCNT = control;
     }
   }
-  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_VBLANK);
+  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_FRAME);
 }
 
 s32 Ride_GetEntryValue(s32 index) {

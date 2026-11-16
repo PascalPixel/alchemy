@@ -144,8 +144,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   gBgScroll[3].y = 0;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
-  Task_Add(WorldMap_UpdateView, TASK_PASS_VBLANK + 5);
-  Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_FRAME);
+  Task_Add(WorldMap_UpdateView, TASK_PASS_FRAME + 5);
+  Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_VBLANK);
   for (tileIndex = 0; tileIndex <= 1024 - 1; tileIndex++)
     perspective->tileIds[tileIndex] = tileIndex;
 }

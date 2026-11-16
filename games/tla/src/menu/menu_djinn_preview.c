@@ -442,7 +442,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
@@ -613,7 +613,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     wait(1);
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);

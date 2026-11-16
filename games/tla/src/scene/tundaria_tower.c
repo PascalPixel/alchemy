@@ -1038,7 +1038,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
       MapGrid_CopyCellAttributes(13, 26, 3, 3, 13, 16);
     } else {
-      Task_Add(TundariaTower_UpdateLedgeCell, TASK_PASS_VBLANK);
+      Task_Add(TundariaTower_UpdateLedgeCell, TASK_PASS_FRAME);
     }
     Actor_PlaceBlocks(gTundariaTowerBurstBroochPillar);
   }
@@ -1588,7 +1588,7 @@ void TundariaTower_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(TundariaTower_UpdateFallingRocks, TASK_PASS_VBLANK);
+  Task_AddFrame(TundariaTower_UpdateFallingRocks, TASK_PASS_FRAME);
 }
 
 /// Stops the falling rocks and frees their pictures and work.

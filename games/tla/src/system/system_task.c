@@ -258,7 +258,7 @@ s32 Task_ResumeOverlayTasks(void) {
 }
 
 /// Runs one pass of the tasks: every task whose priority's high byte matches
-/// `pass`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
+/// `pass`'s (TASK_PASS_VBLANK or TASK_PASS_FRAME), in table order.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
   s32 i;
@@ -288,8 +288,8 @@ void Task_RunPass(s32 pass) {
   }
 }
 
-/// Returns how many tasks run in pass `pass` (TASK_PASS_FRAME or
-/// TASK_PASS_VBLANK).
+/// Returns how many tasks run in pass `pass` (TASK_PASS_VBLANK or
+/// TASK_PASS_FRAME).
 s32 Task_CountInPass(s32 pass) {
   u32 cursor;
   struct Task *task;
@@ -317,9 +317,9 @@ s32 Task_CountInPass(s32 pass) {
   return pass;
 }
 
-/// Runs pass `pass`'s tasks in table order, up to the first task of the VBlank
-/// pass.
-void Task_RunPassBeforeVBlankTasks(s32 pass) {
+/// Runs pass `pass`'s tasks in table order, up to the first task of the frame
+/// pass: the VBlank handler's pass, whose tasks sort before the frame's.
+void Task_RunPassBeforeFrameTasks(s32 pass) {
   struct Task *task = gTasks;
   s32 remaining;
 
@@ -331,7 +331,7 @@ void Task_RunPassBeforeVBlankTasks(s32 pass) {
       if (--remaining == 0)
         return;
       task++;
-      if (TASK_STATE_HIGH(task) == TASK_PASS_VBLANK >> 8)
+      if (TASK_STATE_HIGH(task) == TASK_PASS_FRAME >> 8)
         return;
       if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;

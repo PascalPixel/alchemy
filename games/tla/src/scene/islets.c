@@ -1302,8 +1302,8 @@ void Islets_FillWaveLines(void) {
 
 /// The water ripples by an HBlank wave on BG1.
 void Islets_StartWave(void) {
-  Task_AddFrame(Islets_FillWaveLines, TASK_PASS_VBLANK);
-  Task_AddFrame(Islets_StartWaveDma, TASK_PASS_FRAME);
+  Task_AddFrame(Islets_FillWaveLines, TASK_PASS_FRAME);
+  Task_AddFrame(Islets_StartWaveDma, TASK_PASS_VBLANK);
 }
 
 /// Once the log carrying Pengulina reaches Pengus, the two and the leader react
@@ -1384,7 +1384,7 @@ void Islets_BirdReturnsToNest(void) {
   System_Wait(1);
   actor->y.fixed = toFIXED(160);
   System_Wait(1);
-  FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_FRAME);
   FieldActor_SetMoveTarget(actor, 132, 128, 320);
   FieldActor_WaitForMove(actor);
   FieldTask_Remove(Islets_PlayFootsteps);
@@ -1914,7 +1914,7 @@ void Islets_InitializeDog(void) {
   } else {
     Actor_SetAnimation(ACTOR_DOG, 5);
   }
-  Task_AddFrame(Islets_SetDockBlocksByHeight, TASK_PASS_VBLANK);
+  Task_AddFrame(Islets_SetDockBlocksByHeight, TASK_PASS_FRAME);
 }
 
 /// Readies an iceberg to drift: a platform that moves at 0.3 pixels a frame.
@@ -2031,7 +2031,7 @@ void Islets_InitializePrettyStone(void) {
     *state = 0;
     *next = 0;
   }
-  FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_FRAME);
   if (Event_GetFlag(FLAG_LOG_PUSHED_INTO_WATER)) {
     actor = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 176, 168);
@@ -2171,7 +2171,7 @@ void Islets_InitializeTurtle(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LEDGE_BLOCK_A), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LEDGE_BLOCK_B), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_FRAME);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2247,7 +2247,7 @@ void Islets_StartPaletteCycle(void) {
 
 /// Starts the water's shimmer each frame (Islets_ShimmerWater).
 void Islets_StartWaterShimmer(void) {
-  Task_AddFrame(&Islets_ShimmerWater, TASK_PASS_VBLANK);
+  Task_AddFrame(&Islets_ShimmerWater, TASK_PASS_FRAME);
   return;
 }
 

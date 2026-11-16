@@ -136,7 +136,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
-  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_FRAME);
+  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {

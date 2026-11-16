@@ -102,7 +102,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, work->sheet, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -710,11 +710,11 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   // every frame.
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  Task_Add(BattleEffect_DimBackgroundStep, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_DimBackgroundStep, TASK_PASS_FRAME);
   work->halvePending = 0;
-  Task_Add(BattleEffect_TransferHalvedCanvas, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_TransferHalvedCanvas, TASK_PASS_VBLANK);
   work->frame = 0;
-  Task_Add(BattleEffect_DrawStreaks, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_DrawStreaks, TASK_PASS_FRAME);
 }
 
 /// Ends the light-streak backdrop: removes its three callbacks, clears the
@@ -799,7 +799,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   draw[0] = Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   savedScroll = gBgScroll[1].x;
   scrollX = 0;
   phase = 0;

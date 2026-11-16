@@ -92,7 +92,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
@@ -150,7 +150,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         for (line = 0; line != WINDOW_EDGE_INSET_LINES; line++)
           inset[line] = Random16() & 63;
         *edge = 0;
-        Task_Add(BattleEffect_BuildWindowEdgeTable, TASK_PASS_FRAME);
+        Task_Add(BattleEffect_BuildWindowEdgeTable, TASK_PASS_VBLANK);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;

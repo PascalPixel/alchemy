@@ -1695,7 +1695,7 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   struct Actor *actor;
   struct Actor **followed;
 
-  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_FRAME);
   followed = &gYampiDesert_SandRipple;
   actor = Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1716,7 +1716,7 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
     scorpion->update = YampiDesert_ScorpionRoamsPsynergyStone;
   }
   YampiDesert_ClearRaisedEvent();
-  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
+  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_FRAME);
 }
 
 /// Sends the actor toward a point and moves to the next state.
@@ -1797,7 +1797,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   struct Actor *actor;
   struct Actor **followed;
 
-  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_FRAME);
   followed = &gYampiDesert_SandRipple;
   actor = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1820,7 +1820,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
     scorpion->update = YampiDesert_ScorpionRoamsKingScorpion;
   }
   YampiDesert_ClearRaisedEvent();
-  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
+  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_FRAME);
 }
 
 // Sends the object toward a point and moves to the next state.
@@ -1935,7 +1935,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                      toFIXED(232), toFIXED(168), FACING_SOUTH);
   } else {
-    Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
+    Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_FRAME);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                        toFIXED(200), toFIXED(264), 0);
@@ -1944,7 +1944,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     }
   }
   YampiDesert_ClearRaisedEvent();
-  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
+  Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_FRAME);
 }
 
 /// While the King Scorpion's Scoop runs, opens the hole it digs.
@@ -1956,7 +1956,7 @@ void YampiDesert_OpenScoopHole(void) {
 /// The trapped King Scorpion digs its way out with Scoop.
 void YampiDesert_ScorpionUsesScoop(void) {
   FieldPsynergy_LoadResources(ABILITY_SCOOP, 1);
-  Scene_TaskAdd(YampiDesert_OpenScoopHole, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_OpenScoopHole, TASK_PASS_FRAME);
   FieldPsynergy_SetupActorPair(21, -1);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
@@ -2197,7 +2197,7 @@ void YampiDesert_SetUpOasis(void) {
   }
   if (GameFlag_Get(FLAG_YAMPI_DESERT_LADDER_DUG_UP))
     YampiDesert_OpenLadderPit();
-  Task_Add(YampiDesert_TrackUpperLevel, TASK_PASS_VBLANK);
+  Task_Add(YampiDesert_TrackUpperLevel, TASK_PASS_FRAME);
 }
 
 /// Keeps two of Blitz's room's stakes drawn as the leader is.
@@ -2218,8 +2218,8 @@ void YampiDesert_SetUpBlitz(void) {
     YampiDesert_StepOntoStakeTops();
     wait(10);
   }
-  Scene_TaskAdd(YampiDesert_TrackUpperLevel, TASK_PASS_VBLANK);
-  Scene_TaskAdd(YampiDesert_MatchStakePriority, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_TrackUpperLevel, TASK_PASS_FRAME);
+  Scene_TaskAdd(YampiDesert_MatchStakePriority, TASK_PASS_FRAME);
 }
 
 /// Sets up a stake: behind the leader, disabled, in its standing animation.
@@ -2250,7 +2250,7 @@ void YampiDesert_SetUpPsynergyStone(void) {
   YampiDesert_ReadyStake(14);
   YampiDesert_ReadyStake(15);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
-    Task_Add(YampiDesert_TrackUpperLevelFromBelow, TASK_PASS_VBLANK);
+    Task_Add(YampiDesert_TrackUpperLevelFromBelow, TASK_PASS_FRAME);
 }
 
 /// The setup of the King Scorpion's room: from entrances other than 1 and 2 it
@@ -2324,7 +2324,7 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
   actor->scaleY = FIXED_ONE * 7 / 10;
   actor->radius = 8;
   YampiDesert_SetUpTrainersWhipChestSlideActors();
-  Task_Add(YampiDesert_UpdateSandSlide, TASK_PASS_VBLANK);
+  Task_Add(YampiDesert_UpdateSandSlide, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == 2) {
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST);
     GameFlag_Set(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST);
@@ -2392,7 +2392,7 @@ void YampiDesert_SetUpBlowMaceChest(void) {
   Scene_QueueMusic(SE_KIRIN);
   YampiDesert_PlaceStakes(gYampiDesertBlowMaceChestStakes);
   YampiDesert_SetUpBlowMaceChestSlideActors();
-  Scene_TaskAdd(YampiDesert_UpdateSandSlide, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_UpdateSandSlide, TASK_PASS_FRAME);
 }
 
 /// Places each stake of a room's list, sunk if Pound has sunk it.
@@ -2620,8 +2620,8 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(960);
   work->firstTerrainId = value;
-  Task_Add((s32)YampiDesert_UpdateRisingSand, TASK_PASS_VBLANK + 13);
-  Task_Add((s32)YampiDesert_DrawRisingSand, TASK_PASS_VBLANK);
+  Task_Add((s32)YampiDesert_UpdateRisingSand, TASK_PASS_FRAME + 13);
+  Task_Add((s32)YampiDesert_DrawRisingSand, TASK_PASS_FRAME);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
 }
 

@@ -122,7 +122,7 @@ void Gauge_Init(void) {
   Vram_Load(gGauge_Vram, GAUGE_SIZE, 0);
   gGauge_Shown = -1;
   gGauge_Countdown = 10;
-  Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);
+  Task_AddFrame(Gauge_Update, TASK_PASS_FRAME - 10);
 }
 
 /// Takes the gauge down.

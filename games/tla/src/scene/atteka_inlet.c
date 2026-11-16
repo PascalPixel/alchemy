@@ -633,8 +633,8 @@ void AttekaInlet_SetUpTheHarbour(void) {
   party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(AttekaInlet_RotateWaterColors, TASK_PASS_VBLANK);
-  FieldTask_AddFrame(AttekaInlet_ShareLeadersPriority, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(AttekaInlet_RotateWaterColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(AttekaInlet_ShareLeadersPriority, TASK_PASS_FRAME);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_GetById(ACTOR_CANNON)->motionFlags = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
@@ -680,7 +680,7 @@ void AttekaInlet_SetUpTheShore(void) {
   }
   if (GameFlag_Get(FLAG_AREA_TEMP_00))
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
-  Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_VBLANK);
+  Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_FRAME);
 }
 
 struct SceneEntrance gSceneEntrances[] = {

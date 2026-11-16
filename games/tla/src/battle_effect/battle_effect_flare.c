@@ -62,7 +62,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   do {

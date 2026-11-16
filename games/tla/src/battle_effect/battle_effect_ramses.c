@@ -42,7 +42,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
   // The statue, its fist and wrist, then six rocks.

@@ -279,7 +279,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
   work->transferMode = none;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The screen slides over to the field.
   for (scroll = -80, frame = 0; frame != 28; frame++) {

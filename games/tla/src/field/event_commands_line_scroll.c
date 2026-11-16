@@ -200,8 +200,8 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
   work->ampY = ampY;
   work->stepX = stepX;
   work->stepY = stepY;
-  Task_Add(LineScroll_BuildPage, TASK_PASS_VBLANK);
-  Task_Add(LineScroll_ArmDma, TASK_PASS_FRAME);
+  Task_Add(LineScroll_BuildPage, TASK_PASS_FRAME);
+  Task_Add(LineScroll_ArmDma, TASK_PASS_VBLANK);
 }
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.

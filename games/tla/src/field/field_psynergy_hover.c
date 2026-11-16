@@ -202,7 +202,7 @@ void FieldPsynergy_Hover(void) {
   work->unk1030 = 0;
   work->phase = 0;
   work->fading = 0;
-  Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
+  Task_Add(HoverGlow_Update, TASK_PASS_FRAME);
 
   blocked = 0;
   if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==

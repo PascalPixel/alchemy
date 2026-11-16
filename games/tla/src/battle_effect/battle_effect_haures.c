@@ -90,7 +90,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = Q_8_8(4);
@@ -99,7 +99,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add(BattleEffect_ProcessPendingStampTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingStampTransfer, TASK_PASS_VBLANK);
   morph = 0;
   morphStep = 0;
   dived = 0;

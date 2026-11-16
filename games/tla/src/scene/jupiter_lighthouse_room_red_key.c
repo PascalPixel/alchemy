@@ -333,7 +333,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
-  Task_AddFrame(JupiterLighthouse_PulseAscend, TASK_PASS_VBLANK);
+  Task_AddFrame(JupiterLighthouse_PulseAscend, TASK_PASS_FRAME);
   for (i = 0; i < 20; i++) {
     gJupiterLighthouse_PulseStep = 0;
     System_Wait((20 - i) / 2);
@@ -350,7 +350,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldEvent_Wait(40);
   JupiterLighthouse_BringInBeam(ACTOR_LOWER_BEAM);
   JupiterLighthouse_BringInBeam(ACTOR_UPPER_BEAM);
-  Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
+  Task_AddFrame(Orb_SpawnRising, TASK_PASS_FRAME);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -632,7 +632,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-    Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
+    Task_AddFrame(Orb_SpawnRising, TASK_PASS_FRAME);
   }
   return 0;
 }
@@ -881,7 +881,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
 
     work->next = zero;
   }
-  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_VBLANK);
+  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_FRAME);
 }
 
 /// Stops the spark ring and frees its pictures and work.

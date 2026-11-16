@@ -74,7 +74,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas on each transfer
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   heights = gRockWall_Heights;
   work->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);

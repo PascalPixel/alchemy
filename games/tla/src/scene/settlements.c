@@ -609,7 +609,7 @@ void Settlements_SetUpKaltIsland(void) {
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     FieldTask_AddFrame(Settlements_PuffChimneySmoke, priority);
   }
@@ -815,7 +815,7 @@ void Settlements_CycleWaterColors(void) {
 /// hblank split of its scroll.
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-  FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_FRAME);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
 }

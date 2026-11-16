@@ -121,7 +121,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
 
@@ -163,7 +163,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
   presentation->busy = 1;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);

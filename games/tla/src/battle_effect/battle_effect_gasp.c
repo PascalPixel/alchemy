@@ -256,8 +256,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (mode == GASP_MODE_GASP || mode == GASP_MODE_LULL)
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH ||
       mode == GASP_MODE_MOLD) {
     if (args->side == EFFECT_SIDE_ENEMIES)

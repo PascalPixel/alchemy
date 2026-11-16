@@ -411,7 +411,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     gBgScroll[1].y = 80;
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
-    Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
+    Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);

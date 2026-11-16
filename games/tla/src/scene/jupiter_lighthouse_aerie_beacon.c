@@ -632,7 +632,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       beamB->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetScript(ACTOR_BEAM_A, gJupiterLighthouse_StarFallsScript);
       Actor_SetScript(ACTOR_BEAM_B, gJupiterLighthouse_StarFallsScript);
-      Task_AddFrame(JupiterLighthouse_SpawnBeaconParticle, TASK_PASS_VBLANK);
+      Task_AddFrame(JupiterLighthouse_SpawnBeaconParticle, TASK_PASS_FRAME);
       Actor_SetPosition(ACTOR_LEFT_ANGEL, 0, 0);
       Actor_SetPosition(ACTOR_RIGHT_ANGEL, 0, 0);
       Actor_SetPosition(ACTOR_LID_A, 0, 0);
@@ -2221,7 +2221,7 @@ s32 Scene_Initialize(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
-  Task_AddFrame(JupiterLighthouse_PulseBeacon, TASK_PASS_VBLANK);
+  Task_AddFrame(JupiterLighthouse_PulseBeacon, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == 9) {
     JupiterLighthouse_BeaconIsLit();
 

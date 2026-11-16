@@ -420,7 +420,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   }
   // A map with no tileset animations never adds the update, nor adds it twice.
   if (channelsStarted != 0 && Task_Find(TilesetAnim_Update) == -1)
-    Task_Add(TilesetAnim_Update, TASK_PASS_VBLANK);
+    Task_Add(TilesetAnim_Update, TASK_PASS_FRAME);
 }
 
 /// Suspends the tileset animations, unless the world map's still picture is
@@ -519,7 +519,7 @@ void BlendScript_Start(u16 *script) {
     started = 1;
   }
   if (started)
-    Task_Add((s32)(BlendScript_Run), TASK_PASS_VBLANK);
+    Task_Add((s32)(BlendScript_Run), TASK_PASS_FRAME);
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
@@ -564,7 +564,7 @@ void PaletteQueue_Stop(void) {
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
 }
 
-void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK); }
+void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_FRAME); }
 
 void PaletteCycle_Step(void) {
   struct PaletteCycleWork *paletteQueue = Ram_HeapSlots->paletteCycles;

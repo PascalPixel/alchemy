@@ -118,7 +118,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   // offsets move it.
   draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
   work->transferPending = 1;
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
     // Fade in, and the sway grows with the frame.

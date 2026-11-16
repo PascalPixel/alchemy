@@ -51,7 +51,7 @@ void GroundParticles_Start(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Task_Add(GroundParticles_Update, TASK_PASS_VBLANK);
+  Task_Add(GroundParticles_Update, TASK_PASS_FRAME);
 }
 
 /// Task of RisingParticles_Start: updates the 64 rising particles; each starts
@@ -145,7 +145,7 @@ void RisingParticles_Start(void) {
     particle->drift = 0;
     particle->timer = i * 2;
   }
-  priority = TASK_PASS_VBLANK;
+  priority = TASK_PASS_FRAME;
   Task_Add(RisingParticles_Update, priority);
 }
 

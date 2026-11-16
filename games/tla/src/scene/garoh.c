@@ -646,7 +646,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: night colours, or by day the cells of the opened crevice.
 void Garoh_InitializeVillage(void) {
-  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   gFieldWork->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
@@ -687,7 +687,7 @@ void Garoh_InitializeVillage(void) {
 /// The werewolf's path: the tightrope strung, and by night its colours and
 /// the rippling layer, by day the opened cells.
 void Garoh_InitializeHypnosSwordChest(void) {
-  Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
+  Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_PATH_TIGHTROPE_POST_A, ACTOR_PATH_TIGHTROPE_POST_B);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
@@ -701,7 +701,7 @@ void Garoh_InitializeHypnosSwordChest(void) {
     PaletteFade_PackTarget();
     Garoh_LoadHypnosSwordChestNightColors();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
-    Task_AddFrame((s32)Garoh_WaveHypnosSwordChestLayer, TASK_PASS_FRAME);
+    Task_AddFrame((s32)Garoh_WaveHypnosSwordChestLayer, TASK_PASS_VBLANK);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
@@ -717,7 +717,7 @@ extern s16 gGaroh_Pillars[];
 /// The cave west of the village: the blocks Move, Lash and push place, darker
 /// the deeper the party goes.
 void Garoh_InitializeBlocks(void) {
-  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);

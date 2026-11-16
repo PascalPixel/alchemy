@@ -293,8 +293,8 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
     BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
     *timer = zero;
-    Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
-    Task_Add(BattleTransition_DrawRows, TASK_PASS_FRAME);
+    Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
+    Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
     Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
     gBgScroll[0].y = y;
     wait(1);

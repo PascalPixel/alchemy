@@ -201,7 +201,7 @@ void FieldPsynergy_Blaze(void) {
     }
     wait(1);
     work->emitting = 1;
-    Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
+    Task_Add(Blaze_UpdateSpray, TASK_PASS_FRAME);
     for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
       wait(1);
       if (work->hit != 0) {

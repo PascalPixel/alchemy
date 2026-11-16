@@ -472,7 +472,7 @@ void AnemosInnerSanctumEntrance_StartLightSprites(void) {
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 6144, buffer);
   Heap_Release(buffer);
-  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  Task_Add(LightSprites_Draw, TASK_PASS_FRAME);
   gLightSpriteCount = 0;
   gLightSpritesLarge = 0;
   gLightSpritePriority = -1;

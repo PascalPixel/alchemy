@@ -324,7 +324,7 @@ s32 AncientLemuria_CycleWaterColors(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Task_Add(AncientLemuria_CycleWaterColors, TASK_PASS_FRAME);
+  Task_Add(AncientLemuria_CycleWaterColors, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance != 1)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   else

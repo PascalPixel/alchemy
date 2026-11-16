@@ -1614,8 +1614,8 @@ s32 Scene_Initialize(void) {
   s32 entrance;
 
   Idejima_ResetWaves();
-  Task_AddFrame(Idejima_ScrollWaves, TASK_PASS_FRAME);
-  Task_AddFrame(Idejima_CalculateWaves, TASK_PASS_VBLANK);
+  Task_AddFrame(Idejima_ScrollWaves, TASK_PASS_VBLANK);
+  Task_AddFrame(Idejima_CalculateWaves, TASK_PASS_FRAME);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

@@ -3039,7 +3039,7 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance <= 11 ||
         gMainRoutineWork.entrance == ENTRANCE_HALL_FROM_REVEAL_TABLET) {
-      Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
+      Task_Add(AirsRockInside_SetLedgeCellsByLevel, TASK_PASS_FRAME);
       REG_BLDALPHA = BLEND_ALPHA(8, 16);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       AirsRockInside_SpawnMotes();
@@ -3112,7 +3112,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_AMBIENT_STREAM);
     REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
       Actor_SetPositionFX(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
                           toFIXED(264), toFIXED(632));
@@ -3250,7 +3250,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_AMBIENT_STREAM);
     REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-    Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
+    Task_Add(AirsRockInside_PuffVents, TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED))
       Actor_SetPositionFX(ACTOR_FACE_WARP_FIRST_PILLAR, toFIXED(280),
                           toFIXED(472));

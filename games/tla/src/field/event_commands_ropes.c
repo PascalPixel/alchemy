@@ -40,8 +40,8 @@ void Rope_Initialize(void) {
   work->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
   VramCache_Load(work->vramEntry, 256, buffer);
-  Task_Add(Rope_Draw, TASK_PASS_VBLANK);
-  Task_Add(Rope_Update, TASK_PASS_VBLANK + 15);
+  Task_Add(Rope_Draw, TASK_PASS_FRAME);
+  Task_Add(Rope_Update, TASK_PASS_FRAME + 15);
   Heap_Release(buffer);
 }
 
@@ -761,8 +761,8 @@ void Tightrope_Initialize(void) {
   work->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
   VramCache_Load(work->vramEntry, 64, buffer);
-  Task_Add(Tightrope_Draw, TASK_PASS_VBLANK);
-  Task_Add(Tightrope_Update, TASK_PASS_VBLANK + 15);
+  Task_Add(Tightrope_Draw, TASK_PASS_FRAME);
+  Task_Add(Tightrope_Update, TASK_PASS_FRAME + 15);
   Heap_Release(buffer);
 }
 
@@ -1347,11 +1347,11 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
     VramCache_Load(work->vramEntry, size, pictures);
   }
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(HangingVine_Draw, priority);
   }
-  Task_Add(HangingVine_Update, TASK_PASS_VBLANK + 15);
+  Task_Add(HangingVine_Update, TASK_PASS_FRAME + 15);
   Heap_Release(pictures);
   return work;
 }

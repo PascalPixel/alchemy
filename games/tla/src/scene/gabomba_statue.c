@@ -1425,7 +1425,7 @@ void GabombaStatue_DrawCogCells(void) {
       Actor_SetSpriteFlags(actor, 0);
     }
   }
-  Task_AddFrame(GabombaStatue_PauseCogsInMenus, TASK_PASS_VBLANK);
+  Task_AddFrame(GabombaStatue_PauseCogsInMenus, TASK_PASS_FRAME);
 }
 
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
@@ -2175,7 +2175,7 @@ void GabombaStatue_InitializeArrows(void) {
   s32 seed;
 
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_RED_ORB_STATUE), 3);
-  Task_AddFrame((s32)GabombaStatue_FadeByDepth, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)GabombaStatue_FadeByDepth, TASK_PASS_FRAME);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_A), 11);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_B), 11);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_CHARGE_C), 10);
@@ -2209,7 +2209,7 @@ void GabombaStatue_InitializeArrows(void) {
   if (Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS) &&
       !Event_GetFlag(FLAG_AKAFUBU_OFFERED_HELP)) {
     GabombaStatue_StartClock(0);
-    Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, TASK_PASS_VBLANK);
+    Task_AddFrame((s32)GabombaStatue_CheckOfferingClock, TASK_PASS_FRAME);
   }
   seed = GabombaStatue_GetPuzzleSeed();
   GabombaStatue_SetUpChannelPuzzle(19, 11, gGabombaStatue_PathLengths[seed],
@@ -2900,7 +2900,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
     GabombaStatue_LoadTileGraphics();
     GabombaStatue_ClearGrid();
     count = state->count;
-    Task_AddFrame(GabombaStatue_DrawFloatingTiles, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_DrawFloatingTiles, TASK_PASS_FRAME);
   } else {
     Iwram_ClearWordsEntry(state, sizeof(struct SceneState));
     state->originX = x;
@@ -2908,7 +2908,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
     GabombaStatue_LoadTileGraphics();
     count = GabombaStatue_LayChannel(value);
     GabombaStatue_ShowTiles(id, 0);
-    Task_AddFrame(GabombaStatue_DrawFloatingTiles, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_DrawFloatingTiles, TASK_PASS_FRAME);
   }
   Actor_Get(id)->retainSpriteCache = 2;
   return count;
@@ -3377,9 +3377,9 @@ void GabombaStatue_StartClock(s32 mode) {
   Vram_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
   if (mode)
-    Task_AddFrame(GabombaStatue_CountDownShowingClock, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_CountDownShowingClock, TASK_PASS_FRAME);
   else
-    Task_AddFrame(GabombaStatue_CountDown, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_CountDown, TASK_PASS_FRAME);
 }
 
 /// Stops the clock's countdown.
@@ -3397,9 +3397,9 @@ void GabombaStatue_RestartClock(void) {
   struct ClockWork *clock = CLOCK_WORK;
 
   if (clock->mode)
-    Task_AddFrame(GabombaStatue_CountDownShowingClock, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_CountDownShowingClock, TASK_PASS_FRAME);
   else
-    Task_AddFrame(GabombaStatue_CountDown, TASK_PASS_VBLANK);
+    Task_AddFrame(GabombaStatue_CountDown, TASK_PASS_FRAME);
   clock->timer = 3600;
 }
 

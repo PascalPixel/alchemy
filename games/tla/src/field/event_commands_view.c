@@ -69,7 +69,7 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
   map->zoomTo = result;
   map->zoomFrames = frames;
   map->zoomStep = 0;
-  Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
+  Task_Add(WorldMap_StepZoom, TASK_PASS_FRAME + 20);
 }
 
 /// Waits for a zoom transition to end (on the World Map only, at most 300

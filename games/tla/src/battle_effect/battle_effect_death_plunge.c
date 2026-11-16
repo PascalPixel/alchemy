@@ -57,7 +57,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   }
   work->transferMode = CANVAS_COPY_AND_FADE;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The user runs nine tenths of the way to the target.
   first = BattleObject_GetFar(args->user);

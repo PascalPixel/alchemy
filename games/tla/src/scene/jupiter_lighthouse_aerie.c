@@ -433,7 +433,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
+    Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
             DMA_COPY_WORDS(2), REG_DMA3);
@@ -856,7 +856,7 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   work->frame = 0;
   work->loop = 1;
   work->still = 0;
-  Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_VBLANK);
+  Task_AddFrame(JupiterLighthouse_UpdateBeam, TASK_PASS_FRAME);
   while (work->step != 999)
     System_Wait(1);
   FieldTask_Remove(JupiterLighthouse_UpdateBeam);

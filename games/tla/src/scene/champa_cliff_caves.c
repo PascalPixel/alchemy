@@ -1864,7 +1864,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   ChampaCliffCaves_LoadColumn();
   work->frame = 0;
   time = 0;
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
   MapGrid_SetShake(4, 4, 1);
   state = 0;
   do {
@@ -1960,7 +1960,7 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   work->columnScale.value = 0;
   work->columnTrailingScale.value = 0;
   work->frame = 0;
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
   Sound_Play(SE_DJINNI_SET);
   state = 0;
   do {
@@ -1982,7 +1982,7 @@ void ChampaCliffCaves_RaiseColumn(void) {
   s32 state;
 
   ChampaCliffCaves_LoadColumn();
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
   Sound_Play(SE_CLATTER);
   state = 0;
   do {

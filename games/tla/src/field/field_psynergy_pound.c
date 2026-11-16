@@ -305,7 +305,7 @@ void FieldPsynergy_Pound(void) {
     work->timer = 0;
     work->sparkles = 0;
     if (!inReach) {
-      Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_VBLANK);
+      Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_FRAME);
       while (work->state != FIELD_PSYNERGY_FINISHED)
         wait(1);
       Task_Remove(BattleEffect_SinkAndShrinkObject);
@@ -318,7 +318,7 @@ void FieldPsynergy_Pound(void) {
       pending = Scene_FindPsynergyTrigger(
           PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
           Scene_SelectPsynergyTarget(scene->fieldPsynergy));
-      Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
+      Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_FRAME);
       frame = 0;
       while (work->state != FIELD_PSYNERGY_FINISHED) {
         wait(1);

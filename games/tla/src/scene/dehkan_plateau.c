@@ -1124,7 +1124,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
 /// Cannon casts Pound on the third room's Pound pillar.
 void DehkanPlateau_CannonCastsPound(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  FieldTask_AddFrame(DehkanPlateau_SinkPoundedPillar, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(DehkanPlateau_SinkPoundedPillar, TASK_PASS_FRAME);
   FieldPsynergy_SetupActorPair(ACTOR_TIGHTROPES_CANNON,
                                ACTOR_TIGHTROPES_POUND_PILLAR);
   FieldPsynergy_StartCast();
@@ -1340,7 +1340,7 @@ void DehkanPlateau_ForgetFall(void);
 /// Cannon casts Pound on the leader in the fifth room.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, TASK_PASS_FRAME);
   FieldPsynergy_SetupActorPair(ACTOR_POUND_CUBE_CANNON,
                                gMainRoutineWork.leaderActorId);
   FieldPsynergy_StartCast();
@@ -1554,7 +1554,7 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
   DehkanPlateau_RestoreFullMetalVestChestCracks();
   DehkanPlateau_HideFullMetalVestChestActors();
   {
-    s32 priority = TASK_PASS_VBLANK;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(DehkanPlateau_KeepPriorityWithLeader, priority);
   }
@@ -1711,7 +1711,7 @@ void DehkanPlateau_InitializeTightropes(void) {
   }
   gDehkanPlateau_CrackX = zero;
   gDehkanPlateau_CrackZ = zero;
-  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_VBLANK);
+  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_FRAME);
 }
 
 extern u16 gDehkanPlateau_FallLandingCells[];
@@ -1895,7 +1895,7 @@ void DehkanPlateau_InitializePoundCube(void) {
   }
   gDehkanPlateau_CrackX = 0;
   gDehkanPlateau_CrackZ = 0;
-  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_VBLANK);
+  Task_Add(DehkanPlateau_ForgetCrackOnLeaving, TASK_PASS_FRAME);
 }
 
 /// Creates the Pound Cube Cannon drops, drawn with the item's own icon.

@@ -289,7 +289,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   lift = 0;
   {
     s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;

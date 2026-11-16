@@ -517,7 +517,7 @@ void FieldPsynergy_Sand(void) {
     event->sandTrailPriority = 3;
     gMainRoutineWork.pendingThird = 1;
     if (event->standing == 0)
-      Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
+      Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_FRAME);
     Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);
     VramCache_FreeEntry(pictureEntry);
     VramCache_FreeEntry(particleEntry);

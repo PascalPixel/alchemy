@@ -730,7 +730,7 @@ s32 LinkLobby_EnterBattle(void) {
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
-        Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
+        Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_FRAME);
         Task_SetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
         Event_ClearFlag(FLAG_SCENE_TEMP_02);
@@ -1484,7 +1484,7 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   func = LinkLobby_PollPeerReady;
-  Task_Add(func, TASK_PASS_VBLANK);
+  Task_Add(func, TASK_PASS_FRAME);
   Task_SetFlags(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);

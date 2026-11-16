@@ -350,7 +350,7 @@ void FieldEffect_InitializeSlots(void) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
   Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
-  Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
+  Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 
 /// Stops the field effect sprites: removes their task, frees every slot still

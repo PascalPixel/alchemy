@@ -405,8 +405,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->value = 0;
   state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
   state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
-  Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+  Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
+  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
 }
 
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
@@ -459,8 +459,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = WININ_WIN0_ALL;
     state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
-    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_HALFWORD);
@@ -477,7 +477,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->value = TRANSITION_OPEN;
     ScreenTransition_FillTilemapAndSolidTile(15);
     wait(1);
-    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_HALFWORD);
     state->start = 0;
@@ -495,14 +495,14 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     display->windowBottom = DISPLAY_HEIGHT / 2;
     wait(1);
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
+      Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = DISPLAY_HEIGHT / 2;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_VBLANK);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = DISPLAY_HEIGHT / 2;
       state->end = 0;
@@ -540,8 +540,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = TRANSITION_OPEN;
     state->mask = WININ_WIN0_ALL;
     state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
-    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_VBLANK);
-    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_FRAME - 10);
+    Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
+    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
     state->start = TRANSITION_OPEN;
     state->end = TRANSITION_CLOSED;
@@ -556,7 +556,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->value = TRANSITION_OPEN;
     ScreenTransition_FillTilemapAndSolidTile(0);
     wait(1);
-    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     state->start = TRANSITION_OPEN;
     state->end = TRANSITION_CLOSED;
     state->duration = frames;
@@ -571,14 +571,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 
     state->centreLine = 1;
     if (variant == 0) {
-      Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
+      Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_VBLANK);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
@@ -841,7 +841,7 @@ void ScreenTransition_InitializeState(s32 value) {
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
+  Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   wait(120);
 }
 

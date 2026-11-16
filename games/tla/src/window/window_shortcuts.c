@@ -32,7 +32,7 @@ void AreaNameWindow_Show(void) {
   work->noticeWindow = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
   work->noticeFrames = AREA_NAME_WINDOW_FRAMES;
-  Task_Add(AreaNameWindow_Update, TASK_PASS_VBLANK);
+  Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
 }
 
 /// Counts the area name down, and closes it at 0.

@@ -272,7 +272,7 @@ void PaletteCycle_Start(void) {
   gPaletteCycleDelay = 15;
   gPaletteCycleTimer = 16;
   gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 /// Stops the palette cycle, leaving the next transition a backdrop fade.
@@ -288,7 +288,7 @@ void AnemosInnerSanctum_StartFastPaletteCycle(void) {
   gPaletteCycleDelay = 2;
   gPaletteCycleTimer = 2;
   gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 #include "shared/list_count_entries.h"

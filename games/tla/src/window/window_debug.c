@@ -27,7 +27,7 @@ void DebugSoundTest_Initialize(void) {
                                    sizeof(struct OptionMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  Task_Add(DebugSoundTest_StepCursor, TASK_PASS_VBLANK);
+  Task_Add(DebugSoundTest_StepCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the sound test's cursor task and frees its work block.
@@ -152,7 +152,7 @@ void DebugMenu_Initialize(void) {
                                    sizeof(struct OptionMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  Task_Add(DebugMenu_StepCursor, TASK_PASS_VBLANK);
+  Task_Add(DebugMenu_StepCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the debug menu's cursor task and frees its work block.
@@ -340,7 +340,7 @@ void DebugWarp_Initialize(void) {
                                    sizeof(struct OptionMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  Task_Add(DebugWarp_StepCursor, TASK_PASS_VBLANK);
+  Task_Add(DebugWarp_StepCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the debug warp menu's cursor task and frees its work block.
@@ -451,7 +451,7 @@ void DebugShortcut_Initialize(void) {
                                    sizeof(struct OptionMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  Task_Add(DebugShortcut_StepCursor, TASK_PASS_VBLANK);
+  Task_Add(DebugShortcut_StepCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the ability grid's cursor task and frees its work block.

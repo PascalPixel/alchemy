@@ -448,7 +448,7 @@ s32 Scene_Initialize(void) {
                         IO_WRITE_HALFWORD);
     Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
-    Task_AddFrame(MtAlephSummit_PulseColors, TASK_PASS_VBLANK);
+    Task_AddFrame(MtAlephSummit_PulseColors, TASK_PASS_FRAME);
     j = 0;
     do {
       MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer,

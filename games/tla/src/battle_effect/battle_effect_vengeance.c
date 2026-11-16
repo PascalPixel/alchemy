@@ -681,7 +681,8 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   {
     s32 spawned;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer,
+             TASK_PASS_VBLANK);
     spawned = 0;
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
     if (mode == GEYSER_PURGATORY) {
@@ -896,7 +897,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   else
     frames = 72;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frames; frame++) {
     camera = Ram_HeapSlots->cameraWork;
@@ -1079,7 +1080,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   struct Particle *bubble;
 
   // Each frame the transfer task copies the canvas and clears it.
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -1277,7 +1278,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   y = -80;
   for (frame = 0; frame != 27; frame++) {
     y += 4;
@@ -1296,7 +1297,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     *table++ = color;
   }
   FILL_GRADIENT(table, i, level, color);
-  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
+  Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
   skip = 0;
   Mesh_BuildCylinderBand(Ram_MapCellBuffer + 17408, coilMesh, 32);
   list[0] = BATTLE_UNIT_LIST_END;

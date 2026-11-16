@@ -100,7 +100,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   RagingHeat_FillGradientCanvas();
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   scroll = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
@@ -114,7 +114,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       work->scrollInterval = 1;
       work->scrollStepX = -3;
       work->scrollStepY = 0;
-      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       backdrop->busy = 1;
       e = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
       Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
@@ -890,7 +890,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BLDCNT = 0;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Centre the canvas's x 64 on the target.
   BattleObject_GetFar(args->targets[0]);
@@ -1043,7 +1043,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
   battle = Ram_HeapSlots->battleWork;

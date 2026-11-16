@@ -139,7 +139,7 @@ void IsletCave_StartSlowPaletteCycle(void) {
   gPaletteCycleDelay = 15;
   gPaletteCycleTimer = 16;
   gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 /// Stops the water's colours cycling, and sets the next screen transition to a
@@ -156,7 +156,7 @@ void IsletCave_StartFastPaletteCycle(void) {
   gPaletteCycleDelay = 2;
   gPaletteCycleTimer = 2;
   gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
 #include "shared/list_count_entries.h"

@@ -76,7 +76,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET, work->sheet, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
   if (args->side == EFFECT_SIDE_ENEMIES)

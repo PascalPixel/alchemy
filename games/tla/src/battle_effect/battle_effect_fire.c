@@ -64,11 +64,11 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                       CANVAS_FADE_THREE_QUARTERS); // each transfer fades the
                                                    // canvas to 3/4: a trail
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != (gFire_Counts[args->variant] >> 1) + 132; frame++) {
     if (frame > 16 && frame < 80)

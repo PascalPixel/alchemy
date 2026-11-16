@@ -187,15 +187,15 @@ void ActorSystem_Initialize(s32 mode) {
   Dma_Fill32Cell(zero, 0, pool, ACTOR_COUNT * sizeof(*pool));
   Dma_Fill32Cell(zero, 0, system, sizeof(*system));
   if (mode == ACTOR_SYSTEM_BATTLE) {
-    Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
+    Task_Add(Actor_UpdateAllMotion, TASK_PASS_FRAME + 10);
   } else {
-    Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
-    Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
+    Task_Add(Actor_UpdateAllThumb, TASK_PASS_FRAME + 11);
+    Task_Add(Actor_MoveWithCarriers, TASK_PASS_FRAME + 10);
   }
   if (mode == ACTOR_SYSTEM_WORLD_MAP || mode == ACTOR_SYSTEM_BATTLE)
-    Task_Add(ActorSystem_ProjectSprites, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
   else
-    Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
+    Task_Add(ActorSystem_PlaceSprites, TASK_PASS_FRAME);
   system->edge = 15;
   system->fill = 0;
 }

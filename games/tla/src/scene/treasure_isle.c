@@ -579,7 +579,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_PUSHED_PILLAR_C, 440, 344);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
-    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
+    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
     Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_STONE_PILLAR, 264, 184);
@@ -595,7 +595,7 @@ s32 Scene_Initialize(void) {
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
-    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
+    Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
     Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_STONE_PILLAR, 664, 248);

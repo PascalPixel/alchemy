@@ -357,7 +357,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   work->transferMode =
       CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;

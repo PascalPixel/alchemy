@@ -376,7 +376,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)heap->ramCodePaired;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {

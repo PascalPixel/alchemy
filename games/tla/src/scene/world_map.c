@@ -1736,7 +1736,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   PaletteFade_ApplySource(RGB_WHITE, 0);
   PaletteFade_ApplyTarget(FIXED_ONE, 0);
   PaletteFade_Interpolate(60);
-  Task_AddFrame(WorldMap_SpawnCollapseDust, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_SpawnCollapseDust, TASK_PASS_FRAME);
   MapGrid_SetShake(5, 5, 1);
   FieldEvent_Wait(30);
   MapGrid_SetShake(7, 6, 1);
@@ -1859,7 +1859,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
   Actor_SetSpeed(ACTOR_DRIFTING_IDEJIMA, 0.4);
   actor->timer = 0;
   Actor_SetScript(ACTOR_DRIFTING_IDEJIMA, gWorldMap_IdejimaDriftScript);
-  Task_AddFrame(WorldMap_SpawnIdejimaWake, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_SpawnIdejimaWake, TASK_PASS_FRAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   gFieldWork->transitionFrames = 32;
@@ -2434,7 +2434,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
                       DMA_COPY_HALFWORDS(PALETTE_COLORS));
   IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)buffer,
                       DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
-  Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);

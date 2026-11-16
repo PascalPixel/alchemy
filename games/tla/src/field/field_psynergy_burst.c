@@ -416,7 +416,7 @@ void FieldPsynergy_Burst(void) {
   work->paletteMode = 1;
   work->nextBurst = 0;
   work->newBursts = 0;
-  Task_Add(FieldPsynergy_UpdateBurst, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateBurst, TASK_PASS_FRAME);
   kind = scene->fieldPsynergy;
   pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       kind, Scene_SelectPsynergyTarget(kind));

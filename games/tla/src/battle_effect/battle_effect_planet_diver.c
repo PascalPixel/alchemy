@@ -52,7 +52,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
                        Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET),
                        SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Scatter every skull up to 64 pixels from its centre.
@@ -165,7 +165,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // On the far side the background and the spirals move 112 pixels left.
@@ -343,7 +343,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     }
   }
 
-  Task_Add(BattleEffect_ArmBg1HBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmBg1HBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ENEMY_CRY);
 

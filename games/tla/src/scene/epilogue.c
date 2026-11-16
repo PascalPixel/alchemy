@@ -121,7 +121,7 @@ void Epilogue_LoadNamePanel(void) {
   sprite->oam.palette = 14;
   Heap_Release(buffer);
   gEpilogueNameShown = 0;
-  FieldTask_AddFrame(Epilogue_PlaceNamePanel, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Epilogue_PlaceNamePanel, TASK_PASS_FRAME);
 }
 
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);

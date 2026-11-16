@@ -1954,7 +1954,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   Scene_QueueMusic(SE_AMBIENT_STREAM);
-  Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
+  Task_Add(KandoreanTemple_BlowStream, TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_WEST_LIFT, 0, 0);
   Actor_SetPosition(ACTOR_EAST_LIFT, 0, 0);
   Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
@@ -1974,10 +1974,10 @@ void KandoreanTemple_StartLiftRoom(void) {
       KandoreanTemple_ArriveOnEastLift();
   }
   if (GameFlag_Get(FLAG_PILLAR_ON_EAST_PLATFORM))
-    Task_Add(KandoreanTemple_RunWestLift, TASK_PASS_VBLANK);
+    Task_Add(KandoreanTemple_RunWestLift, TASK_PASS_FRAME);
   else if (GameFlag_Get(FLAG_PILLAR_ON_WEST_PLATFORM))
-    Task_Add(KandoreanTemple_RunEastLift, TASK_PASS_VBLANK);
-  Task_Add(KandoreanTemple_WatchLifts, TASK_PASS_VBLANK);
+    Task_Add(KandoreanTemple_RunEastLift, TASK_PASS_FRAME);
+  Task_Add(KandoreanTemple_WatchLifts, TASK_PASS_FRAME);
   FieldEffect_StartBlankOverlay(0);
 }
 
@@ -2076,9 +2076,9 @@ void KandoreanTemple_StartVentRoom(void) {
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   gKandoreanTemple_LeftVentBlowing = 0;
   gKandoreanTemple_RightVentBlowing = 0;
-  Task_AddFrame(KandoreanTemple_BlowLeftVent, TASK_PASS_VBLANK);
-  Task_AddFrame(KandoreanTemple_BlowRightVent, TASK_PASS_VBLANK);
-  Task_Add(KandoreanTemple_DropOffLowCells, TASK_PASS_VBLANK);
+  Task_AddFrame(KandoreanTemple_BlowLeftVent, TASK_PASS_FRAME);
+  Task_AddFrame(KandoreanTemple_BlowRightVent, TASK_PASS_FRAME);
+  Task_Add(KandoreanTemple_DropOffLowCells, TASK_PASS_FRAME);
   KandoreanTemple_PrepareLift(ACTOR_WEST_PLATFORM);
   KandoreanTemple_PrepareLift(ACTOR_EAST_PLATFORM);
   KandoreanTemple_PrepareLiftBase(ACTOR_WEST_COLUMN_TOP);
@@ -2102,11 +2102,11 @@ void KandoreanTemple_StartVentRoom(void) {
   gKandoreanTemple_RightTimer = 4000;
   gKandoreanTemple_LeftBobPhase = 0;
   gKandoreanTemple_RightBobPhase = 0;
-  Task_AddFrame(KandoreanTemple_RunLeftVent, TASK_PASS_VBLANK);
-  Task_Add(KandoreanTemple_RunRightVent, TASK_PASS_VBLANK);
+  Task_AddFrame(KandoreanTemple_RunLeftVent, TASK_PASS_FRAME);
+  Task_Add(KandoreanTemple_RunRightVent, TASK_PASS_FRAME);
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 5)
     KandoreanTemple_LandFromAbove();
-  Task_AddFrame(KandoreanTemple_WatchVentPlatforms, TASK_PASS_VBLANK);
+  Task_AddFrame(KandoreanTemple_WatchVentPlatforms, TASK_PASS_FRAME);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   FieldEffect_StartBlankOverlay(0);
 }
@@ -2640,7 +2640,7 @@ void KandoreanTemple_StartPoisHall(void) {
     Actor_SetAnimationById(ACTOR_THIRD_TESTED_STUDENT, 5);
   }
   Actor_SetAnimationById(ACTOR_SECOND_TESTED_STUDENT, 5);
-  Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_VBLANK);
+  Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_FRAME);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_LASH_RECEIVED)) {
@@ -2898,7 +2898,7 @@ void KandoreanTemple_TestTheStudents(void) {
   Actor_SetPosition(ACTOR_POI, 0, 0);
   FieldCamera_MoveTo(400, 0, 752, 1);
   FieldCamera_WaitForArrival();
-  Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_VBLANK);
+  Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_FRAME);
   Event_End();
   GameFlag_Set(FLAG_STUDENTS_TESTED);
 }

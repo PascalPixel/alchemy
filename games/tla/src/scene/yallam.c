@@ -1409,7 +1409,7 @@ void Yallam_ResumeSongGame(void) {
   actor->userValue = gYallam_SavedSongGame[4].userValue;
   actor->riseCounter = gYallam_SavedSongGame[4].riseCounter;
   actor->riseEnabled = gYallam_SavedSongGame[4].riseEnabled;
-  Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
+  Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_FRAME);
 }
 
 /// Readies an actor to run the song game's path from its start.
@@ -1506,7 +1506,7 @@ void Yallam_ShowSongGame(void) {
   Yallam_StartRunner(ACTOR_CIRCLES_CHILD);
   Yallam_StartRunner(ACTOR_STORY_CHILD);
   Yallam_StartRunner(gMainRoutineWork.leaderActorId);
-  Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
+  Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_FRAME);
   // "Go north past the twins, passing two swirls, run deasil twice 'round..."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   actor->userValue = 1;

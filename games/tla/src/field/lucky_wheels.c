@@ -1428,9 +1428,9 @@ void LuckyWheels_Run(void) {
       Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Task_Add(LuckyWheels_Update, TASK_PASS_VBLANK);
-    Task_Add(LuckyWheels_FinishFrame, TASK_PASS_FRAME);
-    Task_Add(LuckyWheels_TransferCanvas, TASK_PASS_FRAME);
+    Task_Add(LuckyWheels_Update, TASK_PASS_FRAME);
+    Task_Add(LuckyWheels_FinishFrame, TASK_PASS_VBLANK);
+    Task_Add(LuckyWheels_TransferCanvas, TASK_PASS_VBLANK);
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= LUCKY_WHEELS_FADE_FRAMES) {

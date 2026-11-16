@@ -37,7 +37,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   ev->timer = frames;
   ev->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
   work->plan.targetCount = 0;
-  return Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
+  return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
 #define OBJ_VRAM 0x06010000

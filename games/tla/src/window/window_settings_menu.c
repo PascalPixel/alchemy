@@ -147,7 +147,7 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.idleSleepEnabled;
   work->optionCount[4] = 2;
-  Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_VBLANK);
+  Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
 
 void SettingsMenu_AnimateCursors(void);
@@ -552,7 +552,7 @@ void PauseMenu_Initialize(void) {
                                    sizeof(struct OptionMenuWork));
 
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  Task_Add(PauseMenu_AnimateCursor, TASK_PASS_VBLANK);
+  Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
 
 /// Stops the Pause menu's per-frame task and frees its work block.

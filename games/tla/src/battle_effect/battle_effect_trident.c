@@ -81,7 +81,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   circles = (s16 *)(work->sheet + 19542);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
@@ -526,7 +526,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
     work->transferValue = CANVAS_FADE_HALF;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   for (i = 0; i != 256; i++)
     SPARKS[i].variant = 0;
 

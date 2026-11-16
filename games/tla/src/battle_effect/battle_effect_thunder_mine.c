@@ -89,7 +89,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
     frames = 24;
     /* FAKEMATCH(temporary): the row Thunder Mine's sparks bounce at, set in
@@ -771,7 +771,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SPIN);
   size = 4;

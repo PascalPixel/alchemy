@@ -686,7 +686,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Where each shot starts and how fast it flies.
   user = BattleObject_GetFar(args->user)->object;

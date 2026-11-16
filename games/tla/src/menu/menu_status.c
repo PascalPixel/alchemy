@@ -203,7 +203,7 @@ s32 StatusScreen_RunPages(void) {
     switch (step) {
     case STATUS_STEP_MEMBER:
       state->selectedSlots[0] = finished;
-      Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
+      Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
       MenuIcon_SetActive(1);
       step = StatusScreen_SelectMember(0);
       Task_Remove(Menu_UpdateEntryObjectTransforms);

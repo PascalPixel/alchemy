@@ -162,7 +162,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   else
     total = args->targetCount * 8 + 32;
   if (TARGET_MOTES_RIPPLE(mode))
-    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
 
@@ -494,7 +494,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Each flame starts at a random point in its turn.
   for (i = 0; i != args->targetCount; i++) {

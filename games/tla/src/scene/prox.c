@@ -1706,7 +1706,7 @@ s32 Scene_Initialize(void) {
     } else {
       REG_BLDALPHA = BLEND_ALPHA(8, 12);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      Task_Add(Prox_PuffFromRoofs, TASK_PASS_VBLANK);
+      Task_Add(Prox_PuffFromRoofs, TASK_PASS_FRAME);
       TilesetAnim_Pause(0);
       TilesetAnim_Pause(1);
       TilesetAnim_Resume(2);
@@ -1823,7 +1823,7 @@ void Prox_MatchHousesPriority(void) {
 void Prox_InitializeHouses(void) {
 
   FieldEffect_StartBlankOverlay(0);
-  Task_AddFrame((s32)Prox_MatchHousesPriority, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)Prox_MatchHousesPriority, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
     if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
@@ -1858,7 +1858,7 @@ void Prox_InitializeCaveHomes(void) {
   FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
-  Task_AddFrame(Prox_MatchCaveHomesPriority, TASK_PASS_VBLANK);
+  Task_AddFrame(Prox_MatchCaveHomesPriority, TASK_PASS_FRAME);
 }
 
 s32 Actor_MoveToObject();
@@ -2393,7 +2393,7 @@ UNUSED void Prox_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
 /// Unused: stops the falling rocks and frees their tiles and work.

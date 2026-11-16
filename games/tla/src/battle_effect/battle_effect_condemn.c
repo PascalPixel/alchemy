@@ -50,7 +50,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
 
   // The reaper starts off to the side, above the field.

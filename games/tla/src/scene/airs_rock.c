@@ -703,7 +703,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
   FieldCamera_WaitForArrival();
-  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_VBLANK);
   Event_PlaySound(SE_WAVE_HIGH);
   REG_BLDALPHA = BLEND_ALPHA(0, 15);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1470,7 +1470,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(8);
-  Task_AddFrame(AirsRock_LiftFog, TASK_PASS_FRAME);
+  Task_AddFrame(AirsRock_LiftFog, TASK_PASS_VBLANK);
   Event_PlaySound(SE_WAVE_HIGH);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(3, 3, 1);
@@ -1483,7 +1483,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     System_Wait(1);
   }
   FieldTask_Remove(AirsRock_LiftFog);
-  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_FRAME);
+  Task_AddFrame(AirsRock_ScrollWave, TASK_PASS_VBLANK);
   REG_BLDALPHA = BLEND_ALPHA(8, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   for (i = 0; i != 257; i++) {
@@ -1713,7 +1713,7 @@ s32 Scene_Initialize(void) {
     case 1:
     case 2:
     case 3:
-      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, TASK_PASS_VBLANK);
+      Task_AddFrame(AirsRock_SetLedgeCellsByLevel, TASK_PASS_FRAME);
       Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->motionFlags = 0;
       Actor_GetById(ACTOR_FIRST_BREATHING_STATUE)->y.fixed = -toFIXED(8);
       Actor_SetSpritePriority(ACTOR_FIRST_BREATHING_STATUE, 2);
@@ -1793,7 +1793,7 @@ s32 Scene_Initialize(void) {
         dma = (volatile struct DmaRegisters *)REG_DMA0;
         while ((s32)dma->control < 0)
           ;
-        Task_AddFrame(AirsRock_DriftFog, TASK_PASS_FRAME);
+        Task_AddFrame(AirsRock_DriftFog, TASK_PASS_VBLANK);
         beam = (s32 *)Ram_HeapSlots->mapGrid;
         beam = (s32 *)&((struct MapWork *)beam)->layers[2];
         beam[6] = toFIXED(0.25);

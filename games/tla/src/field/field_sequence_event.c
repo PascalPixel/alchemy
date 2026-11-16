@@ -73,7 +73,7 @@ void Event_Start(void) {
   state->unusedAfterMessage = -1;
   state->unusedBeforeCamera[0] = -1;
   state->unusedBeforeCamera[1] = -1;
-  Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
+  Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

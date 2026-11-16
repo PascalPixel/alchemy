@@ -3,6 +3,6 @@ void Scroll_StartHBlank(void) {
   s32 priority;
 
   Irq_SetHandler(1, 0, Scroll_HBlank);
-  priority = TASK_PASS_FRAME;
+  priority = TASK_PASS_VBLANK;
   FieldTask_AddFrame(Layer_TrackScroll, priority);
 }

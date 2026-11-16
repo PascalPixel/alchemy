@@ -288,7 +288,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Event_Wait(80);
   Actor_StartScriptFar(target, gSummonTablet_SquashScript);
   work->moving = 0;
-  Task_Add(SummonTablet_UpdateMotes, TASK_PASS_VBLANK);
+  Task_Add(SummonTablet_UpdateMotes, TASK_PASS_FRAME);
   state = 0;
   timer = 0;
   do {

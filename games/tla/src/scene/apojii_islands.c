@@ -452,7 +452,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
                       IO_WRITE_HALFWORD);
   wait(1);
   Task_Remove(ApojiiIslands_CycleSeaColors);
-  Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_VBLANK);
+  Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_FRAME);
   ApojiiIslands_StartCellMarkers();
   ApojiiIslands_AddCellMarkers(33, 0, 0);
   i = 1;
@@ -731,7 +731,7 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
     ApojiiIslands_InitializeHaze();
   } else if (scene == SCENE_APOJII_ISLANDS) {
-    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
+    FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_FRAME);
     if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
@@ -747,7 +747,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Haze's islet on entry: the falls' colours cycle, the tightrope is strung,
 /// the water sounds, and the leader rises from the water when he came by it.
 void ApojiiIslands_InitializeHaze(void) {
-  Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_VBLANK);
+  Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_FRAME);
   Rope_Initialize();
   Rope_Place(0, FLAG_HAZE_ROPE_TIED, ACTOR_TIGHTROPE_POST_A,
              ACTOR_TIGHTROPE_POST_B);
@@ -970,7 +970,7 @@ void ApojiiIslands_StartCellMarkers(void) {
                         sizeof(struct CellMarkers));
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
   Vram_Load(gApojiiIslands_CellMarkers.block, 512, 0);
-  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_FRAME);
 }
 
 /// Adds a marker over each cell of layer 1 whose collision code is `base` to
@@ -1034,7 +1034,7 @@ extern s16 gGroundParticleFrames[];
 #include "shared/ground_particles_draw.h"
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_VBLANK to
+/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_FRAME to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
   struct GroundParticleWork *work =
@@ -1072,7 +1072,7 @@ void ApojiiIslands_StartSparkles(void) {
     i++;
     p++;
   } while (i < 64);
-  Task_AddFrame(GroundParticles_Draw, TASK_PASS_VBLANK);
+  Task_AddFrame(GroundParticles_Draw, TASK_PASS_FRAME);
 }
 
 /// Ties the sparkles to the actor `id`, or to none.

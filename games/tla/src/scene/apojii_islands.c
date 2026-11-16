@@ -435,7 +435,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
   do {
-    Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
+    PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
     Value2((s32 (*)())PaletteFade_SetTarget, PALETTE_TINT_NONE, 0);

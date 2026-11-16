@@ -251,10 +251,14 @@ void Contigo_StartSlowPaletteCycle(void);
 void Contigo_StopPaletteCycle(void);
 
 extern u32 gContigo_WheelsPrizes[];
-/// The Lucky Wheels' prize tiers, and the items of each
-/// (gContigo_WheelsPrizes); a won tier of WHEELS_PRIZE_TIERS is any tier at
-/// random.
-enum { WHEELS_PRIZE_TIERS = 5, WHEELS_PRIZES_PER_TIER = 3 };
+/// The Lucky Wheels' icons that win prizes, shirts, boots, rings, then the
+/// stars' and hearts' items, three prizes to each (gContigo_WheelsPrizes); the
+/// Moon after them is wild, any of the five at random.
+enum {
+  WHEELS_PRIZE_ICONS = 5,
+  WHEELS_ICON_MOON = WHEELS_PRIZE_ICONS,
+  WHEELS_PRIZES_PER_ICON = 3
+};
 extern s32 gContigo_EnterGameDoorScript[];
 extern u32 gContigo_HostScript[];
 void Contigo_InitializeVillage(void);
@@ -734,7 +738,7 @@ void Contigo_AskAboutWindLegend(void) {
 
 /// The update of a mote over the thinking baby: it circles on a random radius,
 /// now and then pausing to spin faster, and is released after 101 frames.
-void Contigo_CircleGlow(struct Actor *effect) {
+void Contigo_CircleMote(struct Actor *effect) {
   FIXED radius;
   s32 angle;
   FIXED dx;
@@ -765,7 +769,7 @@ void Contigo_RaiseMotes(void) {
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
-      object->update = Contigo_CircleGlow;
+      object->update = Contigo_CircleMote;
       object->motionFlags = 0;
       object->timer = -(s32)(Random_Below(16)) * 2 + 20;
       object->userValue = 0;
@@ -1242,13 +1246,13 @@ void Contigo_ClearFifthHedgeRow(void) {
 /// Lets the camera follow the leader across the whole village, held by a scene
 /// flag.
 void Contigo_WidenCameraBounds(void) {
-  Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
+  Field_SetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 /// Holds the camera to the village's western part again.
 void Contigo_NarrowCameraBounds(void) {
-  Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
+  Field_SetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
@@ -1461,26 +1465,26 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
                                   ENTRANCE_FROM_LUCKY_WHEELS);
 }
 
-/// The item of a won Lucky Wheels prize tier: one of the tier's three, never
-/// the one it gave last; tier WHEELS_PRIZE_TIERS is a tier at random, and a
-/// negative tier gives nothing.
-s32 Contigo_PickPrize(s32 tier) {
+/// The prize for an icon matched on the Lucky Wheels: one of the icon's three,
+/// never the one it gave last; the Moon picks an icon at random, and a negative
+/// icon gives nothing.
+s32 Contigo_PickPrize(s32 icon) {
   struct MainRoutineWork *state;
   s32 cursor;
   s32 variant;
   s32 index;
 
-  if (tier < 0)
+  if (icon < 0)
     return 0;
-  if (tier == WHEELS_PRIZE_TIERS)
-    tier = (s32)(Random_Below(WHEELS_PRIZE_TIERS));
+  if (icon == WHEELS_ICON_MOON)
+    icon = (s32)(Random_Below(WHEELS_PRIZE_ICONS));
   state = &gMainRoutineWork;
-  cursor = state->wheelsPrizeCursors[tier];
-  variant = (cursor + (s32)(Random_Below(2)) + 4) % WHEELS_PRIZES_PER_TIER;
-  state->wheelsPrizeCursors[tier] = variant;
-  index = tier * 2;
+  cursor = state->wheelsPrizeCursors[icon];
+  variant = (cursor + (s32)(Random_Below(2)) + 4) % WHEELS_PRIZES_PER_ICON;
+  state->wheelsPrizeCursors[icon] = variant;
+  index = icon * 2;
 
-  return gContigo_WheelsPrizes[index + tier + variant];
+  return gContigo_WheelsPrizes[index + icon + variant];
 }
 
 extern u8 gSceneState[];
@@ -2453,12 +2457,12 @@ void Contigo_InitializeVillage(void) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       break;
     default:
-      Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
+      Field_SetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
       break;
     }
   }
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
-    Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
+    Field_SetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
@@ -2839,8 +2843,8 @@ u32 gContigo_LongScript[] = {
     SC_END,
 };
 
-/// The Lucky Wheels' prizes, three to a tier, five tiers; the attendant hands
-/// out each tier's three in turn (Contigo_PickPrize).
+/// The Lucky Wheels' prizes, three to each icon that wins them
+/// (Contigo_PickPrize).
 u32 gContigo_WheelsPrizes[] = {
     ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT,  ITEM_RUNNING_SHIRT,
     ITEM_HYPER_BOOTS,   ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,

@@ -212,9 +212,9 @@ void Clear_CheckButtonCodes(void) {
   }
 }
 
-/// Nonzero (-1) while Retreat is blocked where the save was made, off the world
-/// map and outside the scenes of type 2: the clear screen then cannot send the
-/// party back to the Sanctum for a sound or recovered save.
+/// Nonzero (-1) when the save was made where Retreat is blocked, unless in a
+/// town or on the world map: such a save cannot restart at the Sanctum, by L
+/// and Start held as it loads or as a corrupted save is recovered.
 s32 Clear_IsRetreatBlocked(void) {
   struct MainRoutineWork *party;
   s32 mode;
@@ -223,7 +223,7 @@ s32 Clear_IsRetreatBlocked(void) {
     return 0;
   party = &gMainRoutineWork;
 
-  if (party->sceneType == 2)
+  if (party->sceneType == SCENE_TYPE_TOWN)
     return 0;
   mode = party->next ^ SCENE_WORLD_MAP;
   return -NONZERO(mode);

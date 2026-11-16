@@ -58,10 +58,11 @@ struct MainRoutineWork {
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
-  /// The prize tiers the Lucky Wheels won, ended by -1, for Contigo's
-  /// attendant to hand out (-1 first: no prize, -2: handed out already).
+  /// The icons matched on the Lucky Wheels, a prize each, ended by -1, for
+  /// Contigo's attendant to hand out (-1 first: no prize, -2: handed out
+  /// already).
   s8 wheelsPrizes[8];
-  /// For each prize tier, which of its three items it gave last
+  /// For each icon, which of its three prizes it gave last
   /// (Contigo_PickPrize).
   s8 wheelsPrizeCursors[6];
   u8 unusedAfterWheelsPrizes[134]; ///< no code names it

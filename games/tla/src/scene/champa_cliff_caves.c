@@ -115,7 +115,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void);
 void ChampaCliffCaves_HandPieceToObaba(s32 value);
 void ChampaCliffCaves_ObabaStepsForward(s32 mode);
 
-void ChampaCliffCaves_UpdateSparks(void);
+void ChampaCliffCaves_FlareAndDieDown(void);
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
@@ -319,9 +319,9 @@ void ChampaCliffCaves_CrewmanSurrenders(s32 actor) {
   Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
-/// "Aw, come on! I'm not doing anything! Leave me alone!": the speaker turns
-/// away and squashes down.
-void ChampaCliffCaves_TalkToBriggs(s32 actor) {
+/// One of Briggs's crew at Obaba's forge tells the party to leave him alone,
+/// turns away and squashes and stretches for ever.
+void ChampaCliffCaves_CrewmanTurnsAway(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   // "Aw, come on! I'm not doing anything! Leave me alone!"
   Event_ShowMessageAndWait(actor, 0);
@@ -704,7 +704,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Call2((void (*)())Field_StartColorTransition, 16, RGB(16, 4, 4));
   MapGrid_SetShake(2, 2, 1);
-  ChampaCliffCaves_StartEmbers(glow);
+  ChampaCliffCaves_LightDisc(glow);
   Actor_SetAnimationById(ACTOR_OBABA, ANIM_STAND);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Sound_Play(SE_TABLET_RISE);
@@ -720,7 +720,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   // "What's going on?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   MapGrid_SetShake(4, 4, 1);
-  ChampaCliffCaves_StartSparks(glow);
+  ChampaCliffCaves_RaiseColumn(glow);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(10);
   Actor_Jump(ACTOR_OBABA, 6, 15);
@@ -740,7 +740,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   thrown->scaleY = 0;
   Actor_Jump(ACTOR_HELD_ITEM, 5, 0);
   Field_StartPaletteTransition(8);
-  ChampaCliffCaves_UpdateSparks();
+  ChampaCliffCaves_FlareAndDieDown();
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   while (thrown->y.fixed > 0)
     wait(1);
@@ -1926,9 +1926,9 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   } while (state != 999);
 }
 
-/// Puts out the forge's fire: the column and then the disc shrink away and the
-/// glow's work is released.
-void ChampaCliffCaves_UpdateForgeFire(void) {
+/// Unused: puts out the forge's fire: the column and then the disc shrink
+/// away and the glow's work is released.
+UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   FIXED position[3];
   s32 state;
@@ -1977,7 +1977,7 @@ struct Vec3 {
 };
 
 /// The forge's first glow at a spot: the disc alone grows to full size.
-void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
+void ChampaCliffCaves_LightDisc(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
@@ -2009,7 +2009,7 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
 }
 
 /// The column of fire rises through the disc already burning.
-void ChampaCliffCaves_StartSparks(void) {
+void ChampaCliffCaves_RaiseColumn(void) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
@@ -2045,7 +2045,7 @@ void ChampaCliffCaves_StartSparks(void) {
 
 /// The forge's last flare: the column flares to twice its size, then it and the
 /// disc die away and the glow's work is released.
-void ChampaCliffCaves_UpdateSparks(void) {
+void ChampaCliffCaves_FlareAndDieDown(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 state = 0;
   s32 time = 0;
@@ -2610,7 +2610,7 @@ LATE_DATA struct Trigger gChampaCliffCaves_AvimanderTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
      IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgMustBeIncredibly)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(ChampaCliffCaves_TalkToBriggs)},
+     EVENT(ChampaCliffCaves_CrewmanTurnsAway)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
      IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgBriggsIsPretty)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThatPitIs)},

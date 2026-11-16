@@ -114,10 +114,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-/// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
-/// its scale falls below 0x3000.
+/// Spins an object 1/8 turn and shrinks it by 1/64 a frame, destroying it once
+/// its scale falls below 3/16.
 void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
-  s32 step = 0xFFFFFC00;
+  s32 step = -(FIXED_ONE / 64);
   s32 scaleY;
   s32 scale;
   s32 angle;
@@ -129,7 +129,7 @@ void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
   scale += step;
   ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
   ((struct MotionObject *)obj)->scaleX = scale;
-  if (scale < 0x3000)
+  if (scale < FIXED_ONE * 3 / 16)
     Actor_ReleaseFar(obj);
 }
 
@@ -158,7 +158,8 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   position.x = leader->x.fixed;
   position.z = leader->z.fixed;
   Vector_AddPolarOffset(frames * (toFIXED(2) / 5),
-                        (frames << 11) + mote->orbitAngle, &position);
+                        frames * (TRIG_TURN / 32) + mote->orbitAngle,
+                        &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
   y = mote->y.fixed - toFIXED(1);

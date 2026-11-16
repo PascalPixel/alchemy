@@ -280,10 +280,10 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       continue;
     dy = entry->y.fixed - self->y.fixed;
     if (dy >= 0) {
-      if (dy > 0x2fffff)
+      if (dy >= toFIXED(48))
         continue;
     } else {
-      if (self->y.fixed - entry->y.fixed > 0x2fffff)
+      if (self->y.fixed - entry->y.fixed >= toFIXED(48))
         continue;
     }
     dx = (entry->x.fixed - self->x.fixed) / FIXED_ONE;
@@ -417,9 +417,9 @@ again:
         FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) == 0) {
       FIXED d = position[1] - entry->y.fixed;
       if (d >= 0) {
-        if (d <= 0x7ffff)
+        if (d < toFIXED(8))
           goto blocked;
-      } else if (entry->y.fixed - position[1] <= 0x7ffff) {
+      } else if (entry->y.fixed - position[1] < toFIXED(8)) {
       blocked:
         canJump = 0;
         break;
@@ -462,7 +462,7 @@ again:
       else
         cells = map->layers[leader->layer & 3].cells;
       cells += cellX + cellZ * MAPGRID_SIZE;
-      if (cells->attributeB & 16)
+      if (cells->attributeB & MAP_CELL_WATER)
         Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }
 
@@ -493,7 +493,7 @@ again:
       work->walkingDistance +=
           Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0], position[2]) ==
-        254) {
+        CELL_BEHAVIOR_JUMP_FORWARD) {
       Actor_SelectAnimationFar(leader, ANIM_STAND);
       wait(6);
       goto again;
@@ -536,13 +536,15 @@ s32 Field_ClimbDown(void) {
     s32 radius;
     s32 i;
 
-    ground = &map->layers[leader->layer].cells[cellX + cellZ * 128];
+    ground = &map->layers[leader->layer].cells[cellX + cellZ * MAPGRID_SIZE];
     cell = ground;
-    south = cell + 128;
-    if (!(cell->attributeB & 0x40) || !(south->attributeB & 0x40))
+    south = cell + MAPGRID_SIZE;
+    if (!(cell->attributeB & MAP_CELL_CLIMBABLE) ||
+        !(south->attributeB & MAP_CELL_CLIMBABLE))
       goto failure;
-    cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
-    south = cell + 128;
+    cell = &map->layers[MAPGRID_LAYER_OVERHEAD]
+                .cells[cellX + (cellZ - cellY) * MAPGRID_SIZE];
+    south = cell + MAPGRID_SIZE;
     if (south->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
@@ -630,13 +632,15 @@ s32 Field_ClimbUp(void) {
     s32 cellY = gridY >> 4;
     s32 cellZ = gridZ >> 4;
 
-    ground = &map->layers[leader->layer].cells[cellX + cellZ * 128];
+    ground = &map->layers[leader->layer].cells[cellX + cellZ * MAPGRID_SIZE];
     cell = ground;
-    north = cell - 128;
-    if (!(cell->attributeB & 0x40) || !(north->attributeB & 0x40))
+    north = cell - MAPGRID_SIZE;
+    if (!(cell->attributeB & MAP_CELL_CLIMBABLE) ||
+        !(north->attributeB & MAP_CELL_CLIMBABLE))
       goto failure;
-    cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
-    north = cell - 128;
+    cell = &map->layers[MAPGRID_LAYER_OVERHEAD]
+                .cells[cellX + (cellZ - cellY) * MAPGRID_SIZE];
+    north = cell - MAPGRID_SIZE;
     if (north->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
@@ -786,7 +790,7 @@ s32 Leader_StepOffRope(void) {
 
   gFieldWork->blockedSteps = 0;
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
-  if (angle == 0xffff)
+  if (angle == DPAD_ANGLE_NONE)
     return 0;
   leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
@@ -891,7 +895,7 @@ s32 Leader_StepOffTightrope(void) {
 
   gFieldWork->blockedSteps = 0;
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
-  if (angle == 0xffff)
+  if (angle == DPAD_ANGLE_NONE)
     return 0;
   leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);

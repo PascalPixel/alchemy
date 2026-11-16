@@ -9,18 +9,14 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "field/scene_call.h"
+#include "field/speaker.h"
 #include "macros.h"
-
-#define SPEAKER_PORTRAIT_LEFT 0x1000
-#define SPEAKER_PORTRAIT_RIGHT 0x2000
-#define SPEAKER_WINDOW_ABOVE 0x4000
-#define SPEAKER_WINDOW_BELOW 0x8000
 
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
 s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
-  u8 *win;
+  struct WindowWork *win;
   struct FieldWork *work;
   s32 sprite;
   s32 extra;
@@ -41,7 +37,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 found;
   s32 column;
 
-  win = Ram_HeapSlots->windowWork;
+  win = (struct WindowWork *)Ram_HeapSlots->windowWork;
   work = gFieldWork;
   handle = 0;
   portrait = 0;
@@ -49,9 +45,9 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   extra = 0;
   portraitTop = 0;
   margin = 4;
-  flags = localId & 0xf000;
+  flags = localId & SPEAKER_FLAGS;
   message = work->message;
-  localId &= 0xfff;
+  localId &= SPEAKER_ACTOR_MASK;
   x = 0;
   object = Actor_Lookup(localId);
   work->speaker = localId;
@@ -60,7 +56,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   if (work->fastForward == 0) {
     if (object != 0) {
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint((u8 *)object + 8, pos);
+        Render_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -77,7 +73,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       sprite = localId;
       object = Actor_Lookup(Party_GetLeaderActor());
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint((u8 *)object + 8, pos);
+        Render_ProjectPoint(&object->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -92,8 +88,8 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     }
 
     if (!found) {
-      left = 15;
-      top = 10;
+      left = DISPLAY_TILE_WIDTH / 2;
+      top = DISPLAY_TILE_HEIGHT / 2;
     } else {
       left = 0;
       top = 0;
@@ -107,7 +103,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         top = y + 4;
     }
 
-    if (win[4] != 0)
+    if (win->mindRead != 0)
       margin = 5;
     column = x;
     if (flags & SPEAKER_PORTRAIT_LEFT) {
@@ -116,15 +112,15 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         column = 0;
     } else if (flags & SPEAKER_PORTRAIT_RIGHT) {
       column += 2;
-      if (column + margin > 29)
-        column = 29 - margin;
+      if (column + margin > DISPLAY_TILE_WIDTH - 1)
+        column = DISPLAY_TILE_WIDTH - 1 - margin;
     } else if (column <= 15) {
       column = column - margin - 2;
       if (column < 0)
         column = x + 2;
     } else {
       column += 2;
-      if (column + margin > 29)
+      if (column + margin > DISPLAY_TILE_WIDTH - 1)
         column = x - margin - 2;
     }
 
@@ -156,10 +152,10 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     }
     if (column < 0)
       column = 0;
-    else if (column + margin > 29)
-      column = 29 - margin;
+    else if (column + margin > DISPLAY_TILE_WIDTH - 1)
+      column = DISPLAY_TILE_WIDTH - 1 - margin;
 
-    if (win[4] != 0) {
+    if (win->mindRead != 0) {
       wait(8);
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1, 18);
@@ -170,11 +166,12 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
 
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
-                                       (voice << 16) | 17);
+                                       MESSAGE_WINDOW_VOICE(voice) | 17);
       else
-        handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
+        handle = Message_OpenWindowFar(message, left, top,
+                                       MESSAGE_WINDOW_VOICE(voice) | 1);
     }
-    if (win[4] != 0)
+    if (win->mindRead != 0)
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
@@ -200,7 +197,7 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
   wait(1);
   id = Actor_GetSpriteById(object);
   if (object <= 7) {
-    masked = object & 0x0fff;
+    masked = object & SPEAKER_ACTOR_MASK;
     if (Scene_FindActorPlacement(masked) == 0)
       id = masked;
   }
@@ -210,8 +207,9 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
     while (Window_IsClosedFar((s32)window) == 0) {
       wait(1);
       frames++;
-      if (frames > 600 || ((gInput.held & 4) && (gInput.held & 0x100) &&
-                           (gInput.held & 0x200) && (gInput.held & 1)))
+      if (frames > 600 ||
+          ((gInput.held & KEY_SELECT) && (gInput.held & KEY_R) &&
+           (gInput.held & KEY_L) && (gInput.held & KEY_A)))
         Message_CloseFinishedWindowsFar();
     }
   }
@@ -264,7 +262,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   } pos;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  speaker &= 0xfff;
+  speaker &= SPEAKER_ACTOR_MASK;
   Actor_Lookup(speaker);
   work->speaker = speaker;
   if (work->fastForward == 0) {
@@ -353,16 +351,18 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   s32 firstWindow;
   s32 secondWindow;
 
-  firstWindow = Message_OpenWindowFar((s16)event->message++, firstX, firstY,
-                                      Speaker_GetVoice(firstSprite) << 16);
+  firstWindow = Message_OpenWindowFar(
+      (s16)event->message++, firstX, firstY,
+      MESSAGE_WINDOW_VOICE(Speaker_GetVoice(firstSprite)));
   Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTypedFar())
       wait(delay);
   }
 
-  secondWindow = Message_OpenWindowFar((s16)event->message++, secondX, secondY,
-                                       Speaker_GetVoice(secondSprite) << 16);
+  secondWindow = Message_OpenWindowFar(
+      (s16)event->message++, secondX, secondY,
+      MESSAGE_WINDOW_VOICE(Speaker_GetVoice(secondSprite)));
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (Message_AllTypedFar() == 0)
@@ -437,7 +437,8 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
 /// The event command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
 void Camera_SetSpeedParameters(FIXED first, FIXED second) {
-  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
+  struct FieldWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
   work->camera->speedLimit = first;
   work->camera->acceleration = second;

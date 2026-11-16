@@ -29,17 +29,17 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   positionY = requestedY;
   shouldUseSetter = useSetter;
   positionZ = requestedZ;
-  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
+  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   object = runtimeBlock->camera;
   map = Ram_HeapSlots->mapGrid;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
   // down the map by its height.
-  minimumX = map->minX + 0x780000;
+  minimumX = map->minX + toFIXED(120);
   objectZOffset = object->y.fixed;
   minimumZ = map->minZ + objectZOffset + toFIXED(96);
-  maximumX = map->maxX + 0xFF880000;
-  maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
+  maximumX = map->maxX - toFIXED(120);
+  maximumZ = map->maxZ + objectZOffset - toFIXED(64);
   map->origin = &object->x.fixed;
   Actor_StartIdleFar(object);
   if (positionX == -1) {

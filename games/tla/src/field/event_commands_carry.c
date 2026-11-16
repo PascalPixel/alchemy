@@ -34,8 +34,8 @@ void FieldPsynergy_Carry(void) {
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
   SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
-  pair[0] =
-      FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z, 0x8000);
+  pair[0] = FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z,
+                                       DEGtoANG(180));
   pair[1] = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
 
   wait(15);

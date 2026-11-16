@@ -172,7 +172,7 @@ void FieldEffect_UpdateSparkles(void) {
       sy = (sparkle->posZ - sparkle->posY - cameraZ) / FIXED_ONE +
            *(const s16 *)frame;
       frame++;
-      if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {
+      if (x >= -15 && x <= DISPLAY_WIDTH && sy >= -32 && sy < DISPLAY_HEIGHT) {
         sparkle->tile = work->tileBase + *frame;
         sparkle->x = sx;
         sparkle->shape = 0;

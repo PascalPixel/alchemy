@@ -30,18 +30,18 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
   map = Ram_HeapSlots->mapGrid;
-  cameraX = map->viewX & 0xffff0000;
-  cameraZ = map->viewZ & 0xffff0000;
+  cameraX = map->viewX & FIELD_PIXEL_MASK;
+  cameraZ = map->viewZ & FIELD_PIXEL_MASK;
 #else
   camera = &Ram_HeapSlots->mapGrid->viewX;
-  cameraX = camera[0] & 0xffff0000;
-  cameraZ = camera[1] & 0xffff0000;
+  cameraX = camera[0] & FIELD_PIXEL_MASK;
+  cameraZ = camera[1] & FIELD_PIXEL_MASK;
 #endif
   x = object->x.fixed - cameraX;
   z = object->z.fixed - cameraZ - object->y.fixed;
   *position++ = x / FIXED_ONE;
   *position = z / FIXED_ONE;
-  if ((object->spriteStorageKind & 15) == 1)
+  if ((object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     *position -= (s8)Resource_GetMetadataRecordFarFar(
                      ((struct Sprite *)object->sprite)->entries[0]->animationId)
                      ->boxX;
@@ -62,8 +62,8 @@ void Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(SE_STOP_EXIT_SE);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    ScreenTransition_Finish(0x401, 16);
+    Io_Write16(RGB_WHITE, (u16 *)&BG_PLTT_COLOR(15, 3));
+    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1), 16);
     work->transitionActive = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
@@ -72,8 +72,10 @@ void Field_StartEncounterTransition(s32 unused) {
       wait(1);
     }
   } else {
-    Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
-    ScreenTransition_Finish(0x207, 16);
+    Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
+    ScreenTransition_Finish(
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
+        16);
     work->transitionActive = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
@@ -88,8 +90,8 @@ void *Sprite_AddAnimationFar(void *, s32);
 
 /// The Broken Seal's Exit_PrepareAnimation for any actor: centres actor id on
 /// its cell at the cell's south edge, stops it, hides its shadow and plays
-/// animation 25 (side 1) or 26 over 18 frames, its sprite gaining the doorway
-/// part (metadata 267).
+/// ANIM_LEADER_LEAVE_ALTERNATE (side 1) or ANIM_LEADER_LEAVE over 18 frames,
+/// its sprite gaining the doorway part (metadata 267).
 void Exit_PrepareActorAnimation(s32 id, s32 side) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -99,7 +101,7 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   actor = Actor_Lookup(id);
   sprite = actor->sprite;
   animation = (side != 1);
-  animation = 26 - animation;
+  animation = ANIM_LEADER_LEAVE - animation;
   doorway =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
   {
@@ -230,7 +232,7 @@ s32 Entrance_PlayArrival(void) {
         }
         Sound_PlayFar(SE_DOOR_CLOSE);
         object->y.fixed = object->groundHeight;
-        Actor_SelectAnimationFar(object, 22);
+        Actor_SelectAnimationFar(object, ANIM_LEADER_LEAN_BACK);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);
         result = 3;

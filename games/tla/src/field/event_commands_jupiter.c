@@ -82,17 +82,13 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
 /// Per-frame update: makes an actor pulse, switching its scale between the two
 /// values of gBattleEffect_PulseScales every 4 frames.
-void FieldEffect_PulseActorScale(u8 *object) {
-  u32 *vblankCount = &gVBlankCount;
-  const u32 *table;
-  u32 index;
-  u32 value;
+void FieldEffect_PulseActorScale(struct Actor *actor) {
+  const u32 *table = gBattleEffect_PulseScales;
+  u32 index = ((u32)gVBlankCount >> 2) & 1;
+  u32 scale = table[index];
 
-  table = gBattleEffect_PulseScales;
-  index = (*vblankCount >> 2) & 1;
-  value = index[table];
-  ((struct MotionObject *)object)->scaleX = value;
-  ((struct MotionObject *)object)->scaleY = value;
+  actor->scaleX = scale;
+  actor->scaleY = scale;
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
@@ -107,10 +103,10 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   }
 }
 
-/// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
-/// its scale falls below 0x3000.
+/// Spins an object 1/8 turn and shrinks it by 7/1024 a frame, destroying it
+/// once its scale falls below 3/16.
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
-  s32 step = 0xFFFFFE40;
+  s32 step = -(FIXED_ONE * 7 / 1024);
   s32 scaleY;
   s32 scale;
   s32 angle;
@@ -122,7 +118,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   scale += step;
   ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
   ((struct MotionObject *)obj)->scaleX = scale;
-  if (scale < 0x3000)
+  if (scale < FIXED_ONE * 3 / 16)
     Actor_ReleaseFar(obj);
 }
 

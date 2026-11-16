@@ -301,9 +301,9 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
 }
 
 /// The OBJ priority a Psynergy's canvas takes: the caster's own when it
-/// casts facing away (0xc000), else 0, in front of everything.
-s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 kind) {
-  if (kind == 0xc000)
+/// casts facing away (FACING_NORTH), else 0, in front of everything.
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing) {
+  if (facing == FACING_NORTH)
     return ((struct PlacedSprite *)object->sprite)->priority;
   return 0;
 }

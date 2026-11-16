@@ -22,7 +22,7 @@ void GroundParticles_Start(void) {
   // The fill's value; as a literal 0 the fill differs.
   u32 zero = 0;
 
-  work = HeapSlot_AllocEwram(116, sizeof(struct WeatherWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = Ram_HeapSlots->mapGrid->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
@@ -84,7 +84,7 @@ void RisingParticles_Update(void) {
     x = screen[0].part[0].integer;
     y = screen[2].part[0].integer - particle->timer - 8;
     particle->drift += Random16() + FIXED_ONE / 2;
-    if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
+    if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       if (particle->timer < 60)
         particle->sprite.attributes.tile = work->tile + 16;
       else if (particle->timer < 90)
@@ -106,10 +106,10 @@ void RisingParticles_Update(void) {
 }
 
 /// Starts the rising particles: allocates and clears heap slot
-/// 0x74, decodes the particle tiles into VRAM, sets each of the 64 particles'
-/// sprite words and places it on the ground at a random point of the strip
-/// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
-/// schedules the update.
+/// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
+/// particles' sprite words and places it on the ground at a random point of the
+/// strip (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2
+/// frames, and schedules the update.
 void RisingParticles_Start(void) {
   struct RisingParticleWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 0x814);
@@ -137,7 +137,7 @@ void RisingParticles_Start(void) {
     *sprite++ = 0;
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
     *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
-    x = Random16() * 200 + 0x1200000;
+    x = Random16() * 200 + toFIXED(288);
     z = toFIXED(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
@@ -145,7 +145,7 @@ void RisingParticles_Start(void) {
     particle->drift = 0;
     particle->timer = i * 2;
   }
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   Task_Add(RisingParticles_Update, priority);
 }
 
@@ -179,7 +179,7 @@ void FieldMotes_Update(void) {
       x = FIXEDtoINT(mote->posX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
       y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (u16)age;
-      if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+      if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;
           mote->delay += 3;

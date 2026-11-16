@@ -59,10 +59,12 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     position->z = INTtoFIXED(result[1]);
     position->y = 0;
   } else {
-    u8 *state = (u8 *)slots->mapGrid;
-    s32 x = *(s32 *)(state + 228) & 0xffff0000;
-    s32 z = *(s32 *)(state + 232) & 0xffff0000;
+    struct MapWork *map = slots->mapGrid;
+    s32 x = map->viewX & FIELD_PIXEL_MASK;
+    s32 z = map->viewZ & FIELD_PIXEL_MASK;
 
+    // Relative to the view's whole-pixel corner; height lifts a point up
+    // the screen.
     position->x -= x;
     position->z -= position->y;
     position->z -= z;
@@ -77,7 +79,7 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  remainingSlots = 0x17;
+  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
   slot = scene->particles;
   do {
     remainingSlots -= 1;
@@ -107,7 +109,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   running = event->psynergyActing;
   if (running != 0)
     return;
-  work->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
+  work->freeBlocks = VRAM_BLOCK_COUNT - ResourceTable_CountFreeBlocks();
   work->mode = mode;
   work->visible = 1;
   work->enabled = 1;
@@ -135,9 +137,9 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   if (gMainRoutineWork.mapId == SCENE_LOHO)
     work->lit = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
-  if (work->fieldPsynergy != 8)
+  if (work->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     event->effectTimerRunning = 0;
-  if (work->fieldPsynergy != 28)
+  if (work->fieldPsynergy != FIELD_PSYNERGY_RING)
     event->ringTimerRunning = 0;
   event->targetX = 0;
   event->targetY = 0;
@@ -243,7 +245,7 @@ void BattleEffect_StopMainActor(void) {
 void FieldPsynergy_End(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s8 *block = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *owner = work->mainActor;
   s32 i;
@@ -254,22 +256,23 @@ void FieldPsynergy_End(void) {
     if (slot->active)
       FieldEffect_ClearOwnedSlot(slot);
   }
-  first = 17;
+  first = FIELD_PSYNERGY_LASH;
   if (work->fieldPsynergy >= first &&
-      (work->fieldPsynergy <= 27 || work->fieldPsynergy == 30))
+      (work->fieldPsynergy <= FIELD_PSYNERGY_GRIND ||
+       work->fieldPsynergy == FIELD_PSYNERGY_TELEPORT))
     FieldPsynergy_MarkWorldMapTilesUsed();
   if (event->psynergyActing != 0)
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP && block != NULL) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP && fade != NULL) {
     i = 0;
-    if (block[0x2a01] != 0) {
+    if (fade->duration != 0) {
       do {
         wait(1);
         if (++i > 89)
           break;
-      } while (block[0x2a01] != 0);
+      } while (fade->duration != 0);
     }
   }
   event->castStarted = 0;
@@ -283,9 +286,9 @@ void FieldPsynergy_End(void) {
     ((struct Sprite *)owner->sprite)->image.priority =
         work->savedSpritePriority;
   }
-  if (work->fieldPsynergy != 8)
+  if (work->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     event->effectTimerRunning = 1;
-  if (work->fieldPsynergy != 28)
+  if (work->fieldPsynergy != FIELD_PSYNERGY_RING)
     event->ringTimerRunning = 1;
   Event_NoOp();
   HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
@@ -342,7 +345,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
-  Ram_HeapSlots->windowWork[4] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
   p += 2;
@@ -370,14 +373,14 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {
-  u8 *work = Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 1) = RGB_WHITE;
   BG_PLTT_COLOR(15, 3) = RGB(0, 0, 0);
-  BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
-  BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
+  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
   WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],
                        gMainRoutineWork.unusedAfterParty[6]);
-  work[4] = 0;
+  work->mindRead = 0;
 }

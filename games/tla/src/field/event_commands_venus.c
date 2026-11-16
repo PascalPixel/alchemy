@@ -97,7 +97,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
-      djinni->orbitAngle = (remaining << 16) / 24;
+      djinni->orbitAngle = remaining * TRIG_TURN / 24;
       djinni->update = (void (*)(void))FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);

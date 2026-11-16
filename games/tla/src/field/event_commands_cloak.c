@@ -150,7 +150,7 @@ void FieldPsynergy_Douse(void) {
   to->z = work->z;
   if ((s8)work->childOption != 0)
     to->y = y + toFIXED(80);
-  if (Actor_GetSpriteIdFar(anchor) == 380) {
+  if (Actor_GetSpriteIdFar(anchor) == SPRITE_MOAI) {
     to->y += toFIXED(32);
     raised = 1;
   }
@@ -206,8 +206,9 @@ void FieldPsynergy_Douse(void) {
           mote->groundHeight = pos.y - toFIXED(32);
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
-        mote->motionFlags = 2;
-        mote->priorityFlags = 5;
+        mote->motionFlags = ACTOR_FALLS;
+        mote->priorityFlags =
+            ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_OVERHEAD;
       }
       Sound_PlayFar(SE_WATER);
       wait(6);
@@ -334,7 +335,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
   SET_POSITION(&position, work->x, work->y + toFIXED(16), work->z);
   object = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
-                                      position.z, 0x8000);
+                                      position.z, DEGtoANG(180));
   anchors[0] = object;
   right = FieldEffect_SpawnCarryHand(position.x - toFIXED(32), position.y,
                                      position.z, 0);
@@ -359,7 +360,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->update = Actor_CycleSpriteColors;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_PSYNERGY_START);
-  target->motionFlags = 4;
+  target->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= toFIXED(24)) {
@@ -382,7 +383,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
     angle = (u16)Input_GetDpadAngle(gInput.held);
-    if (angle == 0xffff) {
+    if (angle == DPAD_ANGLE_NONE) {
       SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                    target->z.fixed);
       Actor_SetMoveTargetFar(anchors[0], position.x + toFIXED(16), position.y,
@@ -406,7 +407,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
                  target->z.fixed);
     Vector_AddPolarOffset(toFIXED(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
-    // Both tests jump into the blocked path, which keeps it ahead of the drop
+    // Both tests jump into the one blocked arm; as one || test the routine
+    // differs in 382 of its 551 instructions.
     if (i != 0)
       goto blocked;
     if (Actor_ProbeRaised(target, &position) > 0) {

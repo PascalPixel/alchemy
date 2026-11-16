@@ -79,7 +79,7 @@ void BattleCamera_Create(void) {
   SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
-  camera->distance = 256 << 16;
+  camera->distance = toFIXED(256);
 }
 
 /// Replaces the first enemy with the Doom Dragon's next form:

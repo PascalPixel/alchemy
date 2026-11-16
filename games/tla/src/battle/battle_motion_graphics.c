@@ -377,8 +377,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   if (work.kind == 10)
     Actor_SelectAnimationFar(object, POSE_LEAP);
   else
-    BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
-                                BattleSprite_GetAttackHop(unit->enemyId) << 16);
+    BattleMotion_ApproachTarget(
+        work.actor, work.actors[0], frames,
+        INTtoFIXED(BattleSprite_GetAttackHop(unit->enemyId)));
   if ((mode & 32) && plan->unitId != plan->partnerId &&
       plan->partnerId != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->partnerId);
@@ -386,9 +387,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
     frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
-    BattleMotion_ApproachTarget(
-        plan->partnerId, work.actors[0], frames,
-        BattleSprite_GetAttackHop(Unit_Get(plan->partnerId)->enemyId) << 16);
+    BattleMotion_ApproachTarget(plan->partnerId, work.actors[0], frames,
+                                INTtoFIXED(BattleSprite_GetAttackHop(
+                                    Unit_Get(plan->partnerId)->enemyId)));
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObject *)object)->object,
         ANIMATION_STEP_NORMAL);

@@ -2424,15 +2424,31 @@ u16 gMarsLighthouseRoomF_VenusStatueFlameStops[] = {
     ACTOR_TRAP_STATUE_D, 0, ACTOR_TRAP_STATUE_E, 0, 0,
 };
 
-s32 gMarsLighthouseRoomF_FireballToWall[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0xf80000, 0x200000, 0x2a00000, 1,  4,          0xf80000, 0x160000,         0x2a00000, 1,   
-      4,  0xf80000,         0x160000, 0x2b00000, 1,  22, 37, (s32)MarsLighthouseRoomF_CrackCenterWall, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseRoomF_FireballToWall[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(248, 32, 672),
+    SC_SYNC,
+    SC_MOVE(248, 22, 672),
+    SC_SYNC,
+    SC_MOVE(248, 22, 688),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseRoomF_CrackCenterWall),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
-s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0xb80000, 0x400000, 0x2300000, 1,  4,          0xb80000, 0x360000,         0x2300000, 1,   
-      4,  0xb80000,         0x360000, 0x2400000, 1,  22, 37, (s32)MarsLighthouseRoomF_MeltIcebergs, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(184, 64, 560),
+    SC_SYNC,
+    SC_MOVE(184, 54, 560),
+    SC_SYNC,
+    SC_MOVE(184, 54, 576),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseRoomF_MeltIcebergs),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 s32 gMarsLighthouseRoomF_FireballDrop[] = {                                                               
       SC_CALL(Actor_PopUp), SC_MOVE(872, 32, 128),             

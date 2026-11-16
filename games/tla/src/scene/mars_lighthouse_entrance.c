@@ -1113,7 +1113,7 @@ extern s16 gMarsLighthouseEntrance_ValkyrieIceCones[];
 extern s16 gMarsLighthouseEntrance_FadeSlots[];
 extern s16 gMarsLighthouseEntrance_FadeColorsFrom[];
 extern s16 gMarsLighthouseEntrance_FadeColorsTo[];
-extern u32 gMarsLighthouseEntrance_FadeOrder[];
+extern u16 gMarsLighthouseEntrance_FadeOrder[];
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -2178,10 +2178,18 @@ s32 gMarsLighthouseEntrance_ValkyrieUpperFireballPath[] = {
       SC_END,                                                                  
   };
 
-s32 gMarsLighthouseEntrance_ValkyrieLowerFireballPath[] = {                                                               
-      46, (s32)Actor_PopUpSlow, 4,  0x500000, 0x200000, 0xa80000, 1,  4,          0x500000, 0x160000,         0xa80000, 1,   
-      4,  0x600000,         0x160000, 0xa80000, 1,  22, 37, (s32)MarsLighthouseEntrance_ClearFireballRow, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseEntrance_ValkyrieLowerFireballPath[] = {
+    SC_CALL(Actor_PopUpSlow),
+    SC_MOVE(80, 32, 168),
+    SC_SYNC,
+    SC_MOVE(80, 22, 168),
+    SC_SYNC,
+    SC_MOVE(96, 22, 168),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseEntrance_ClearFireballRow),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 s32 gMarsLighthouseEntrance_BalmFireballPath[] = {                                                               
       SC_CALL(Actor_PopUpSlow), SC_MOVE(872, 32, 576),             
@@ -2191,46 +2199,46 @@ s32 gMarsLighthouseEntrance_BalmFireballPath[] = {
       SC_END,                                                                  
   };
 
-s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0x600000, 0x200000, 0x2a80000, 1,  4,          0x600000, 0x160000,         0x2a80000, 1,   
-      4,  0x700000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackHiddenCircleIceSheet, 46, (s32)Actor_Park, 17,      
-  };
-
-s32 gMarsLighthouseEntrance_FireballThroughIce[] = {
-    46,
-    (s32)Actor_PopUp,
-    4,
-    0x3580000,
-    0x200000,
-    0x880000,
-    1,
-    4,
-    0x3680000,
-    0x200000,
-    0x880000,
-    1,
-    4,
-    0x3680000,
-    0x160000,
-    0x880000,
-    1,
-    4,
-    0x3680000,
-    0x160000,
-    0x980000,
-    1,
-    22,
-    37,
-    (s32)MarsLighthouseEntrance_MeltIceInPath,
-    46,
-    (s32)Actor_Park,
-    17,
+s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(96, 32, 680),
+    SC_SYNC,
+    SC_MOVE(96, 22, 680),
+    SC_SYNC,
+    SC_MOVE(112, 22, 680),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseEntrance_CrackHiddenCircleIceSheet),
+    SC_CALL(Actor_Park),
+    SC_END,
 };
 
-s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0x700000, 0x200000, 0x2a80000, 1,  4,          0x700000, 0x160000,         0x2a80000, 1,   
-      4,  0x800000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackLapisIceSheet, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseEntrance_FireballThroughIce[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(856, 32, 136),
+    SC_SYNC,
+    SC_MOVE(872, 32, 136),
+    SC_SYNC,
+    SC_MOVE(872, 22, 136),
+    SC_SYNC,
+    SC_MOVE(872, 22, 152),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseEntrance_MeltIceInPath),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
+
+s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(112, 32, 680),
+    SC_SYNC,
+    SC_MOVE(112, 22, 680),
+    SC_SYNC,
+    SC_MOVE(128, 22, 680),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseEntrance_CrackLapisIceSheet),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 #include "shared/mars_lighthouse_part_scripts.c"
 
@@ -2254,10 +2262,10 @@ s16 gMarsLighthouseEntrance_FadeColorsTo[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u32 gMarsLighthouseEntrance_FadeOrder[] = {
-    0x89008e, 0x8b008a, 0x8d008c, 0x8e008d, 0x8a0089, 0x8c008b,
-    0x8d008c, 0x89008e, 0x8b008a, 0x8c008b, 0x8e008d, 0x8a0089,
-    0x8b008a, 0x8d008c, 0x89008e, 0x8a0089, 0x8c008b, 0x8e008d,
+u16 gMarsLighthouseEntrance_FadeOrder[] ALIGNED(4) = {
+    142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,
+    140, 141, 142, 137, 138, 139, 139, 140, 141, 142, 137, 138,
+    138, 139, 140, 141, 142, 137, 137, 138, 139, 140, 141, 142,
 };
 
 s32 gMarsLighthouseEntrance_StatueScript[] = {

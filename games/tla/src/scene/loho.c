@@ -984,7 +984,7 @@ s32 gLoho_ForemanComes[] = {
     SC_END,
     SC_WAIT(5),
     SC_ANIMATION(5),
-    SC_SET(SW_SCALE_X, -0x10000),
+    SC_SET(SW_SCALE_X, -FIXED_ONE),
     SC_END,
 };
 

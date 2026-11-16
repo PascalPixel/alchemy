@@ -1759,7 +1759,7 @@ void LemurianShip_SetUpEngineRoom(void) {
 /// The leader shrinking away into the passage.
 s32 gLemurianShip_IntoPassage[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_Z, -toFIXED(1) / 2),                                                   
       SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
       SC_WAIT(1),                                                              
@@ -1776,8 +1776,8 @@ s32 gLemurianShip_JellyMelts[] = {
 
 /// The puddle spreading where the jelly melted.
 s32 gLemurianShip_PuddleSpreads[] = {
-    SC_ADD(SW_SCALE_X, 0x400),
-    SC_ADD(SW_SCALE_Y, 0x400),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_END,
@@ -1785,11 +1785,11 @@ s32 gLemurianShip_PuddleSpreads[] = {
 
 /// The Aqua Hydra swelling up out of the gathered jellies.
 s32 gLemurianShip_HydraSwells[] = {
-    SC_ADD(SW_SCALE_X, 0x3000),
-    SC_ADD(SW_SCALE_Y, 0x3000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 16),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -0x1800),
-    SC_ADD(SW_SCALE_Y, -0x1800),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE * 3 / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE * 3 / 32),
     SC_WAIT(4),
     SC_LOOP(8, SC_TOP),
     SC_END,

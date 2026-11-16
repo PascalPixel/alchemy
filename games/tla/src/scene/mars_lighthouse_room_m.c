@@ -648,7 +648,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 extern s16 gMarsLighthouseRoomM_FadeSlots[];
 extern s16 gMarsLighthouseRoomM_FadeColorsFrom[];
 extern s16 gMarsLighthouseRoomM_FadeColorsTo[];
-extern u32 gMarsLighthouseRoomM_FadeOrder[];
+extern u16 gMarsLighthouseRoomM_FadeOrder[];
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -1393,10 +1393,10 @@ s16 gMarsLighthouseRoomM_FadeColorsTo[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u32 gMarsLighthouseRoomM_FadeOrder[] = {
-    0xc900ce, 0xcb00ca, 0xcd00cc, 0xce00cd, 0xca00c9, 0xcc00cb,
-    0xcd00cc, 0xc900ce, 0xcb00ca, 0xcc00cb, 0xce00cd, 0xca00c9,
-    0xcb00ca, 0xcd00cc, 0xc900ce, 0xca00c9, 0xcc00cb, 0xce00cd,
+u16 gMarsLighthouseRoomM_FadeOrder[] ALIGNED(4) = {
+    206, 201, 202, 203, 204, 205, 205, 206, 201, 202, 203, 204,
+    204, 205, 206, 201, 202, 203, 203, 204, 205, 206, 201, 202,
+    202, 203, 204, 205, 206, 201, 201, 202, 203, 204, 205, 206,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1522,15 +1522,15 @@ struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
 };
 
 s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
-    SC_ADD(SW_SCALE_X, 0x3000),
-    SC_ADD(SW_SCALE_Y, 0x3000),
-    SC_ADD(SW_Y, -0x1800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 16),
+    SC_ADD(SW_Y, -toFIXED(3) / 32),
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE * 3 / 16),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE * 3 / 16),
-    SC_ADD(SW_Y, 0x1800),
+    SC_ADD(SW_Y, toFIXED(3) / 32),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(1)),
     SC_POSITION_ORIGIN,

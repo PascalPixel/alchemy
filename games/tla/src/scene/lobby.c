@@ -647,7 +647,6 @@ s32 LinkLobby_EnterBattle(void) {
   s32 cnt;
   s32 stop;
   u8 *buf;
-  u8 *src;
   u16 *table;
   u32 i;
 
@@ -699,7 +698,7 @@ s32 LinkLobby_EnterBattle(void) {
     wait(5);
   }
   if (!failed) {
-    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 1992);
+    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove(LinkLobby_PollPeerReady);
     TilesetAnim_Resume(5);
     wait(8);
@@ -761,22 +760,10 @@ s32 LinkLobby_EnterBattle(void) {
     table[1] = 'X';
     table[2] = 'E';
     table[3] = 'C';
-    {
-      /* FAKEMATCH(temporary): the bound in a local, and the destination
-       * indexed afresh each byte. */
-      u32 last = 1991;
-
-      i = 0;
-      src = buf;
-      do {
-        u8 *dst = Ram_MapCellBuffer + 0x8000 + i;
-        u8 b = *src;
-
-        i++;
-        src++;
-        *dst = b;
-      } while (i <= last);
-    }
+    // The six units go to the map cell buffer's upper half, where the battle
+    // takes them from.
+    for (i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
+      (Ram_MapCellBuffer + 0x8000)[i] = buf[i];
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();

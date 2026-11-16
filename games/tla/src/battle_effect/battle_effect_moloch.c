@@ -2641,30 +2641,30 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
   COPY(4);
-  if (mode == 0) {
+  if (mode == BLITTER_ADDITIVE) {
     COPY_FROM(BattleEffect_Mask, 3);
   }
 
-  if ((flags & 12) == 4) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
     COPY_FROM(src, 3);
   }
   src += 3;
-  if ((flags & 12) == 8) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
     COPY_FROM(src, 4);
   }
   src += 4;
-  if ((flags & 12) == 12) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
     COPY_FROM(src, 3);
   }
   src += 3;
-  if ((flags & 12) == 0) {
+  if ((flags & COMPOSITE_FLIP) == 0) {
     PUT(src[0]);
   }
   src += 1;
 
-  if ((flags & 2) != 0) {
+  if ((flags & COMPOSITE_CLIP_Y) != 0) {
     COPY(2);
-    if ((flags & 8) != 0) {
+    if ((flags & COMPOSITE_FLIP_Y) != 0) {
       PUT(src[0]);
     } else {
       PUT(src[1]);
@@ -2681,16 +2681,16 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   noRows = dst;
   PUT(*src++);
 
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     s32 width = 1 << widthShift;
 
     PUT(src[0] + width - 1);
   }
   src += 1;
-  if ((flags & 1) != 0) {
+  if ((flags & COMPOSITE_CLIP_X) != 0) {
     PUT(src[0]);
     PUT(src[1]);
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(src[2]);
       PUT(src[3]);
     } else {
@@ -2700,7 +2700,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     PUT(src[6]);
     PUT(src[7]);
     PUT(src[8] + gBattleEffect_BitOperands[widthShift]);
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(src[9]);
     } else {
       PUT(src[10]);
@@ -2717,7 +2717,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   COPY_LONG(6);
 
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
   }
   src += 1;
@@ -2731,14 +2731,14 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(src[3]);
   src += 4;
 
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
   }
   src += 1;
 
   skip = dst + 1;
   COPY(2);
-  if ((flags & 4) != 0) {
+  if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
   } else {
     PUT(src[1]);
@@ -2751,7 +2751,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   default: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_CopyReverse;
     } else {
       part = BattleEffect_CopyForward;
@@ -2759,10 +2759,10 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 2);
     break;
   }
-  case 2: {
+  case BLITTER_TRANSPARENT: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_TransparentReverse;
     } else {
       part = BattleEffect_TransparentForward;
@@ -2770,10 +2770,10 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 4);
     break;
   }
-  case 1: {
+  case BLITTER_MAX: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_MaxReverse;
     } else {
       part = BattleEffect_MaxForward;
@@ -2781,8 +2781,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 4);
     break;
   }
-  case 0:
-    if ((flags & 4) != 0) {
+  case BLITTER_ADDITIVE:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_AdditiveReverse, 6);
     } else {
       COPY_DMA(BattleEffect_AdditiveForward, 6);
@@ -2794,7 +2794,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT_BRANCH(run);
   runSize = (u8 *)dst - (u8 *)runCopy;
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
     PUT(src[1]);
   }
@@ -2807,28 +2807,28 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   run = dst;
   switch (mode) {
   default:
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_Copy8Reverse, 16);
     } else {
       COPY_DMA(BattleEffect_Copy8Forward, 16);
     }
     break;
-  case 2:
-    if ((flags & 4) != 0) {
+  case BLITTER_TRANSPARENT:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_Transparent8Reverse, 25);
     } else {
       COPY_DMA(BattleEffect_Transparent8Forward, 25);
     }
     break;
-  case 1:
-    if ((flags & 4) != 0) {
+  case BLITTER_MAX:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_TWICE(BattleEffect_Max4Reverse, 16);
     } else {
       COPY_TWICE(BattleEffect_Max4Forward, 16);
     }
     break;
-  case 0:
-    if ((flags & 4) != 0) {
+  case BLITTER_ADDITIVE:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_TWICE(BattleEffect_ColorReverse, 14);
     } else {
       COPY_TWICE(BattleEffect_ColorForward, 14);
@@ -2837,7 +2837,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
 
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
     PUT(src[1]);
   }
@@ -2850,7 +2850,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
   skip = dst;
   PUT(*src++);
-  if ((flags & 4) != 0) {
+  if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
   } else {
     PUT(src[1]);

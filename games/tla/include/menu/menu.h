@@ -12,7 +12,7 @@
 // type, ending with LIST_ORDER_END.
 #define LIST_ORDER_TYPE_MASK 0x7f
 #define LIST_ORDER_EQUIPPED 0x80
-#define LIST_ORDER_END 0xff
+#define LIST_ORDER_END 255
 
 /// The item menu's four sort orders (ItemMenu_Sort), which
 /// L + A cycles through in this order.

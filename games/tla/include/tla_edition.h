@@ -3,8 +3,8 @@
 
 #include "edition.h"
 
-#define RENDER_CHANNEL_OFFSET 0x6B8
-#define RENDER_DIRECT_OFFSET 0x508
+#define RENDER_CHANNEL_OFFSET 1720
+#define RENDER_DIRECT_OFFSET 1288
 #define WINDOW_COUNT 12
 
 // The window text ring: 256 codes in Japanese, 512 in the others, as The Broken

@@ -24,13 +24,13 @@ struct PaletteCycleWork {
   u16 count;
 };
 
-STATIC_ASSERT(sizeof(struct PaletteCycle) == 0x2c);
+STATIC_ASSERT(sizeof(struct PaletteCycle) == 44);
 STATIC_ASSERT(offsetof(struct PaletteCycle, position) == 4);
 STATIC_ASSERT(offsetof(struct PaletteCycle, timer) == 6);
 STATIC_ASSERT(offsetof(struct PaletteCycle, delay) == 8);
-STATIC_ASSERT(offsetof(struct PaletteCycle, colors) == 0xc);
-STATIC_ASSERT(sizeof(struct PaletteCycleWork) == 0xb4);
-STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 0xb0);
+STATIC_ASSERT(offsetof(struct PaletteCycle, colors) == 12);
+STATIC_ASSERT(sizeof(struct PaletteCycleWork) == 180);
+STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 176);
 
 void PaletteCycle_Initialize(void);
 s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);

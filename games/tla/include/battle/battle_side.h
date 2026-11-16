@@ -13,8 +13,8 @@ enum BattleSide {
 
 /// Marks in a list of unit ids, such as BattleWork.partyUnits and enemyIds.
 enum BattleUnitListMark {
-  BATTLE_UNIT_REMOVED = 0xfe, ///< a place whose unit has left the battle
-  BATTLE_UNIT_LIST_END = 0xff ///< ends the list
+  BATTLE_UNIT_REMOVED = 254, ///< a place whose unit has left the battle
+  BATTLE_UNIT_LIST_END = 255 ///< ends the list
 };
 
 /// Which sides a unit list takes.

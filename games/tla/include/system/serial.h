@@ -114,11 +114,11 @@ struct SerialWork {
   u8 storage[SERIAL_PACKET_BYTES * 8];
 };
 
-STATIC_ASSERT(sizeof(struct SerialWork) == 0x160);
+STATIC_ASSERT(sizeof(struct SerialWork) == 352);
 STATIC_ASSERT(offsetof(struct SerialWork, mode) == 0);
 STATIC_ASSERT(offsetof(struct SerialWork, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 0x14);
-STATIC_ASSERT(offsetof(struct SerialWork, storage) == 0x60);
+STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 20);
+STATIC_ASSERT(offsetof(struct SerialWork, storage) == 96);
 
 /// SerialWork.channelFlags: what the transfer interrupts saw of a console's
 /// packets since the last frame.

@@ -29,10 +29,10 @@ struct Window {
   u16 previousHeight; ///< tiles
 };
 
-STATIC_ASSERT(sizeof(struct Window) == 0x24);
+STATIC_ASSERT(sizeof(struct Window) == 36);
 STATIC_ASSERT(offsetof(struct Window, width) == 8);
-STATIC_ASSERT(offsetof(struct Window, zoomStage) == 0x18);
-STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
+STATIC_ASSERT(offsetof(struct Window, zoomStage) == 24);
+STATIC_ASSERT(offsetof(struct Window, previousHeight) == 34);
 
 /// A text channel, one of three, which types decoded text into a window a few
 /// characters a frame and runs its control codes.
@@ -57,11 +57,11 @@ struct UiChannelSlot {
   u16 compressLines;
 };
 
-STATIC_ASSERT(sizeof(struct UiChannelSlot) == 0x28);
-STATIC_ASSERT(offsetof(struct UiChannelSlot, entry) == 0x12);
-STATIC_ASSERT(offsetof(struct UiChannelSlot, countdown) == 0x14);
-STATIC_ASSERT(offsetof(struct UiChannelSlot, transition) == 0x1c);
-STATIC_ASSERT(offsetof(struct UiChannelSlot, flags) == 0x24);
+STATIC_ASSERT(sizeof(struct UiChannelSlot) == 40);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, entry) == 18);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, countdown) == 20);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, transition) == 28);
+STATIC_ASSERT(offsetof(struct UiChannelSlot, flags) == 36);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
 // A statement macro (S2: a layer, 10 sites): the dirty-row store stays where

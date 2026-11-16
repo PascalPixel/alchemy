@@ -13,7 +13,7 @@
 
 /// The canvas: 64x64 pixels of 8 bits, in 8x8 tiles.
 #define CANVAS_WIDTH 64
-#define CANVAS_SIZE 0x1000
+#define CANVAS_SIZE 4096
 
 // How the sprite is drawn.
 #define CANVAS_SPRITE_16_COLORS 1  ///< rebuilt each frame, in OBJ palette 14
@@ -53,9 +53,9 @@ struct CanvasSpriteWork {
   u8 unusedAfterCommand[2]; ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 0xc4);
-STATIC_ASSERT(offsetof(struct CanvasSpriteWork, frame) == 0xa4);
-STATIC_ASSERT(offsetof(struct CanvasSpriteWork, tile) == 0xbc);
+STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 196);
+STATIC_ASSERT(offsetof(struct CanvasSpriteWork, frame) == 164);
+STATIC_ASSERT(offsetof(struct CanvasSpriteWork, tile) == 188);
 
 void BattleEffect_UploadCanvas(void);
 void BattleEffect_DrawCanvasSprite(void);

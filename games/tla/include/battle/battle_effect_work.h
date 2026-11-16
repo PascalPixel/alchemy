@@ -84,19 +84,19 @@ struct BattleEffectWork {
   struct BattleEffectParams *args; ///< the command being run
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x7080);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, backdropLines) == 0x7640);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2pa) == 0x77d8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 0x77dc);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x78dc);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x78e8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 0x78f0);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 1792);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 28800);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, backdropLines) == 30272);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 30592);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 30632);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 30648);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 30652);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 30672);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2pa) == 30680);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 30684);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 30940);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 30952);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 30960);
 
 /// The heap slot of the battle canvas, as canvas_sprite.h has it.
 /// The battle canvas the effects draw into: 128 by 128 pixels, a byte each.

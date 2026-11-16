@@ -293,10 +293,10 @@ struct Actor {
   struct Actor *carrier;
 };
 
-typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
+typedef char Actor_size[sizeof(struct Actor) == 128 ? 1 : -1];
 
 typedef char Actor_collision_flags_offset
-    [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
+    [(u32)&((struct Actor *)0)->collisionFlags == 89 ? 1 : -1];
 
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);

@@ -116,11 +116,11 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 
 /// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.
-#define Iwram_CopyWordsOffset FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)
+#define Iwram_CopyWordsOffset FIXED_OFFSET(1584, IwramCopyWords, IwramIrqMain)
 
 /// Iwram_MulFX's offset from IwramIrqMain, for the callers that reach it
 /// from the linked IWRAM code rather than at its fixed address.
-#define Iwram_MulFXOffset FIXED_OFFSET(0x11c, IwramMulFX, IwramIrqMain)
+#define Iwram_MulFXOffset FIXED_OFFSET(284, IwramMulFX, IwramIrqMain)
 
 FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 

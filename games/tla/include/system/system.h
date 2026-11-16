@@ -143,11 +143,11 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 /// MainRoutine_Run runs in place of a scene.
 enum {
   /// The Super Lucky Dice sequence (SuperLuckyDice_Run); Contigo's dealer
-  /// leaves for it. The Broken Seal's 0x1fb, SEQUENCE_NONE, runs nothing.
-  SEQUENCE_SUPER_DICE = 0x1fb,
-  SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (LuckyWheels_Run)
-  SEQUENCE_DICE = 0x1fd,  ///< the dice sequence (LuckyDice_Run)
-  SEQUENCE_BATTLE = 0x1fe ///< a battle; the entrance is the formation
+  /// leaves for it. The Broken Seal's 507, SEQUENCE_NONE, runs nothing.
+  SEQUENCE_SUPER_DICE = 507,
+  SEQUENCE_SLOTS = 508, ///< the slots sequence (LuckyWheels_Run)
+  SEQUENCE_DICE = 509,  ///< the dice sequence (LuckyDice_Run)
+  SEQUENCE_BATTLE = 510 ///< a battle; the entrance is the formation
 };
 
 /// MainRoutine_Run's mode: where the game starts. Only GAME_START_TITLE is

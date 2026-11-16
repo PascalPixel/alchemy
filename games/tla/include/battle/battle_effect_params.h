@@ -25,9 +25,9 @@ struct BattleEffectParams {
   s16 targets[8];  ///< the targets' unit ids, targetCount of them
 };
 
-STATIC_ASSERT(sizeof(struct BattleEffectParams) == 0x34);
-STATIC_ASSERT(offsetof(struct BattleEffectParams, targetCount) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleEffectParams, targets) == 0x24);
+STATIC_ASSERT(sizeof(struct BattleEffectParams) == 52);
+STATIC_ASSERT(offsetof(struct BattleEffectParams, targetCount) == 20);
+STATIC_ASSERT(offsetof(struct BattleEffectParams, targets) == 36);
 
 /// Loops `i` over the effect's targets, effect->targets[0] to
 /// effect->targets[effect->targetCount - 1]: the loops that flash, shake,

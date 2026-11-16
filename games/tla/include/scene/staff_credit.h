@@ -28,8 +28,8 @@ static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
 #define PICTURE_FRAME_SIZE (BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2)
 /// The lighthouse pictures' frames in their buffer: tiles first, then a frame
 /// every PICTURES_FRAME_STRIDE bytes from PICTURES_FIRST_FRAME.
-#define PICTURES_FIRST_FRAME 0x1080
-#define PICTURES_FRAME_STRIDE 0x600
+#define PICTURES_FIRST_FRAME 4224
+#define PICTURES_FRAME_STRIDE 1536
 
 /// The PP gauge shown over the leader on the world map: a 32x16 sprite of
 /// eight tiles.

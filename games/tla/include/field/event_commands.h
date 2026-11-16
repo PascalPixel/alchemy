@@ -419,7 +419,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source);
 /// What BattleEffect_GetEightWayHeadingWord returns when no direction is held,
 /// or right and left or up and down together: the blank entries of
 /// gBattleEffect_EightWayHeadingWords.
-#define DPAD_ANGLE_NONE 0xffff
+#define DPAD_ANGLE_NONE 65535
 
 extern const u8 gAnim_ChildPaletteCycle[];
 

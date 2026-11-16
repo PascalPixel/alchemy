@@ -67,18 +67,18 @@ struct ScreenTransitionState {
   s8 centreLine;
 };
 
-STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 0x52a);
-STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 0x53a);
-STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 0x540);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 1322);
+STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, start) == 1338);
+STATIC_ASSERT(sizeof(struct ScreenTransitionDissolveState) == 1344);
 STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 0x508);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 0x539);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 0x528);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 0x52c);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 0x534);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 0x53e);
-STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 0x53c);
-STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 0x540);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 1288);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 1337);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 1320);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 1324);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 1332);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 1342);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 1340);
+STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 1344);
 
 void ScreenTransition_InitializeBattleEffectState(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);

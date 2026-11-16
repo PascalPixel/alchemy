@@ -80,19 +80,19 @@ struct WorldMapView {
   s8 fixedEye;   ///< set: the frame update leaves the eye where it is
 };
 
-STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 0xe4);
-STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 0x100);
-STATIC_ASSERT(offsetof(struct WorldMapView, windowTop) == 0x104);
-STATIC_ASSERT(offsetof(struct WorldMapView, tiles) == 0x114);
-STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 0x11c);
-STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 0x120);
-STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 0x148);
-STATIC_ASSERT(offsetof(struct WorldMapView, reloadSteps) == 0x958);
-STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 0x95c);
-STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 0x968);
-STATIC_ASSERT(offsetof(struct WorldMapView, tileBufferUsed) == 0x970);
-STATIC_ASSERT(offsetof(struct WorldMapView, tintRegion) == 0x973);
-STATIC_ASSERT(offsetof(struct WorldMapView, fixedEye) == 0x976);
-STATIC_ASSERT(sizeof(struct WorldMapView) == 0x978);
+STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 228);
+STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 256);
+STATIC_ASSERT(offsetof(struct WorldMapView, windowTop) == 260);
+STATIC_ASSERT(offsetof(struct WorldMapView, tiles) == 276);
+STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 284);
+STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 288);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 328);
+STATIC_ASSERT(offsetof(struct WorldMapView, reloadSteps) == 2392);
+STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 2396);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 2408);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileBufferUsed) == 2416);
+STATIC_ASSERT(offsetof(struct WorldMapView, tintRegion) == 2419);
+STATIC_ASSERT(offsetof(struct WorldMapView, fixedEye) == 2422);
+STATIC_ASSERT(sizeof(struct WorldMapView) == 2424);
 
 #endif

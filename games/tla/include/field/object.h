@@ -158,7 +158,7 @@ extern const s32 gWorldMap_KeyYaws[16];
 /// gWorldMap_KeyHeadings' entry when no direction is held, or only an
 /// opposite pair: no heading, since every real one is a multiple of an eighth
 /// turn.
-#define WORLD_MAP_KEY_HEADING_NONE 0xffff
+#define WORLD_MAP_KEY_HEADING_NONE 65535
 
 extern const s32 gActor_RippleScript[];
 extern const s32 gSand_GrainScript[];

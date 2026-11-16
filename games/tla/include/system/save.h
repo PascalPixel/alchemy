@@ -10,7 +10,7 @@ enum {
   /// Flash sectors used; as a sector number, "none" in the save functions.
   SAVE_SECTOR_COUNT = 15,
   SAVE_SECTORS_PER_PART = 3, ///< a part fills three sectors in a row
-  SAVE_SECTOR_SIZE = 0x1000,
+  SAVE_SECTOR_SIZE = 4096,
   SAVE_PART_NONE = 16, ///< the part id of a free or invalidated sector
   SAVE_FILE_COUNT = 3, ///< the save files, parts 0 to 2
   /// The part after the files, whose summary is the save work's extra one.
@@ -20,7 +20,7 @@ enum {
   SAVE_COUNTER_LIMIT = 65000,
   /// Payload bytes summed into the checksum: a part's three sectors less its
   /// header.
-  SAVE_CHECKSUM_BYTES = 0x2ff0
+  SAVE_CHECKSUM_BYTES = SAVE_SECTORS_PER_PART * SAVE_SECTOR_SIZE - 16
 };
 
 /// A save file's summary for the file screen: the leader's name, level and
@@ -79,16 +79,16 @@ struct SaveSectorHeader {
 /// Where a save image, EWRAM from gSaveBuffer as a part holds it, keeps the
 /// game flags, gMainRoutineWork and gCharacterUnits. The Clear Data and the
 /// data transferred from The Broken Seal come in this layout.
-#define SAVE_IMAGE_GAME_FLAGS 0x40
-#define SAVE_IMAGE_MAIN_ROUTINE_WORK 0x240
-#define SAVE_IMAGE_UNITS 0x520
+#define SAVE_IMAGE_GAME_FLAGS 64
+#define SAVE_IMAGE_MAIN_ROUTINE_WORK 576
+#define SAVE_IMAGE_UNITS 1312
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
-STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 0x1e);
-STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 0x303c);
-STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 0x30fc);
-STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x3144);
-STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 0x10);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 30);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, summary) == 12348);
+STATIC_ASSERT(offsetof(struct SaveWorkspace, extra) == 12540);
+STATIC_ASSERT(sizeof(struct SaveWorkspace) == 12612);
+STATIC_ASSERT(sizeof(struct SaveSectorHeader) == 16);
 
 u32 Save_FindLatestSector(s32 partId);
 

@@ -50,9 +50,9 @@ struct FieldParticle {
 /// FieldParticle.flags: z also lifts the sprite off the ground.
 #define FIELD_PARTICLE_LIFTED_BY_Z 0x04
 
-STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
-STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
-STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
+STATIC_ASSERT(sizeof(struct FieldParticle) == 72);
+STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 60);
+STATIC_ASSERT(offsetof(struct FieldParticle, state) == 64);
 
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *);
 void FieldParticle_SetPosition(struct FieldParticle *, s32, s32);

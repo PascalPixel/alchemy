@@ -22,8 +22,8 @@ struct MenuCursor {
   s8 frames;   ///< frames the move takes; 0 when the cursor is still
 };
 
-STATIC_ASSERT(sizeof(struct MenuCursor) == 0x10);
-STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 0x08);
-STATIC_ASSERT(offsetof(struct MenuCursor, frame) == 0x0c);
+STATIC_ASSERT(sizeof(struct MenuCursor) == 16);
+STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 8);
+STATIC_ASSERT(offsetof(struct MenuCursor, frame) == 12);
 
 #endif

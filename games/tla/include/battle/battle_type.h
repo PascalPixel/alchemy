@@ -4,7 +4,7 @@
 #include "static_assert.h"
 #include "battle/battle_unit.h"
 
-enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 0x64 };
+enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 100 };
 
 /// One action, laid out for BattleAbility_ApplyToTarget to apply target by
 /// target.
@@ -35,11 +35,11 @@ struct BattlePlan {
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlan) == BATTLE_PLAN_SIZE);
-STATIC_ASSERT(offsetof(struct BattlePlan, partnerId) == 0x02);
-STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 0x03);
-STATIC_ASSERT(offsetof(struct BattlePlan, targetMultiplier) == 0x1f);
-STATIC_ASSERT(offsetof(struct BattlePlan, command) == 0x4a);
-STATIC_ASSERT(offsetof(struct BattlePlan, abilityId) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattlePlan, hauntDamage) == 0x60);
+STATIC_ASSERT(offsetof(struct BattlePlan, partnerId) == 2);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 3);
+STATIC_ASSERT(offsetof(struct BattlePlan, targetMultiplier) == 31);
+STATIC_ASSERT(offsetof(struct BattlePlan, command) == 74);
+STATIC_ASSERT(offsetof(struct BattlePlan, abilityId) == 76);
+STATIC_ASSERT(offsetof(struct BattlePlan, hauntDamage) == 96);
 
 #endif

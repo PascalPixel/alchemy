@@ -81,6 +81,6 @@ enum {
 extern u8 gInventorySnapshot[];
 
 /// The flame-hit work, in the inventory snapshot's spare space.
-#define RIDE_WORK ((struct FlameHitWork *)(gInventorySnapshot + 0x188))
+#define RIDE_WORK ((struct FlameHitWork *)(gInventorySnapshot + 392))
 
 #endif

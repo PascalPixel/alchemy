@@ -57,11 +57,11 @@ struct SpriteScale {
   };
 };
 
-STATIC_ASSERT(sizeof(struct SpritePlacement) == 0x10);
-STATIC_ASSERT(offsetof(struct SpritePlacement, height) == 0x04);
-STATIC_ASSERT(offsetof(struct SpritePlacement, y) == 0x08);
-STATIC_ASSERT(offsetof(struct SpritePlacement, groundHeight) == 0x0c);
-STATIC_ASSERT(sizeof(struct SpriteScale) == 0x08);
-STATIC_ASSERT(offsetof(struct SpriteScale, y) == 0x04);
+STATIC_ASSERT(sizeof(struct SpritePlacement) == 16);
+STATIC_ASSERT(offsetof(struct SpritePlacement, height) == 4);
+STATIC_ASSERT(offsetof(struct SpritePlacement, y) == 8);
+STATIC_ASSERT(offsetof(struct SpritePlacement, groundHeight) == 12);
+STATIC_ASSERT(sizeof(struct SpriteScale) == 8);
+STATIC_ASSERT(offsetof(struct SpriteScale, y) == 4);
 
 #endif

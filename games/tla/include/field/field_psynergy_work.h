@@ -98,19 +98,19 @@ struct FieldEffectWork {
   s16 spriteActive;           ///< nonzero while sprite is drawn
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x7f4);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, childOption) == 0x34);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, lit) == 0x41);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x44);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 0x50);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x712);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedPriorityFlags) == 0x718);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, stage) == 0x7c4);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, sprite) == 0x7c8);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, spriteActive) == 0x7f2);
+STATIC_ASSERT(sizeof(struct FieldEffectWork) == 2036);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 16);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 28);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, childOption) == 52);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 56);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, lit) == 65);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 68);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 80);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 1810);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedPriorityFlags) == 1816);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, stage) == 1988);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, sprite) == 1992);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, spriteActive) == 2034);
 
 /// Returns the value step tenths of the way from `from` to `to`; the field
 /// Psynergy that uses it steps from 0 to 10, one a frame.

@@ -67,7 +67,7 @@ struct TransitionShape {
 };
 
 /// SpeakerDefinition.value of a sprite that makes no sound as it speaks.
-#define SPEAKER_VOICE_NONE 0xff
+#define SPEAKER_VOICE_NONE 255
 
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 

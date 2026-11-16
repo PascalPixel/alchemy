@@ -260,21 +260,21 @@ void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width,
                                             u32 height, s32 value);
 
 STATIC_ASSERT(sizeof(struct MapLayer) == 56);
-STATIC_ASSERT(offsetof(struct MapWork, layers) == 0x108);
+STATIC_ASSERT(offsetof(struct MapWork, layers) == 264);
 
 STATIC_ASSERT(sizeof(struct MapAnimation) == 12);
-STATIC_ASSERT(offsetof(struct MapWork, anim) == 0x18);
-STATIC_ASSERT(offsetof(struct MapWork, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapWork, blendControl) == 0x107);
-STATIC_ASSERT(offsetof(struct MapWork, minX) == 0xec);
-STATIC_ASSERT(offsetof(struct MapWork, farPlane) == 0x95c);
-STATIC_ASSERT(offsetof(struct MapWork, zoomStep) == 0x96e);
-STATIC_ASSERT(offsetof(struct MapViewWork, dispcnt) == 0x14);
-STATIC_ASSERT(offsetof(struct MapViewWork, windowTop) == 0x104);
-STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 0x10c);
+STATIC_ASSERT(offsetof(struct MapWork, anim) == 24);
+STATIC_ASSERT(offsetof(struct MapWork, blend) == 216);
+STATIC_ASSERT(offsetof(struct MapWork, blendControl) == 263);
+STATIC_ASSERT(offsetof(struct MapWork, minX) == 236);
+STATIC_ASSERT(offsetof(struct MapWork, farPlane) == 2396);
+STATIC_ASSERT(offsetof(struct MapWork, zoomStep) == 2414);
+STATIC_ASSERT(offsetof(struct MapViewWork, dispcnt) == 20);
+STATIC_ASSERT(offsetof(struct MapViewWork, windowTop) == 260);
+STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 268);
 
 /// A cell animation step's source column that ends the steps.
-#define MAPGRID_ANIMATION_STEPS_END 0xffff
+#define MAPGRID_ANIMATION_STEPS_END 65535
 
 /// A cell of the map's shape grid as the raising and lowering of cells store
 /// it; only so the shape store has an alias set of its own, the grid holds

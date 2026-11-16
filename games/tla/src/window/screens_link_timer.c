@@ -120,16 +120,6 @@ done:
   return;
 }
 
-// The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
-// halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define BATTLE_MENU_MESSAGE_CAPACITY 52
-#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
-#else
-#define BATTLE_MENU_MESSAGE_CAPACITY 32
-#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
-#endif
-
 /// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles an event starts, and link battles; see
 /// BATTLE_TYPE_NO_ESCAPE in battle/battle_turn.c) and a party once

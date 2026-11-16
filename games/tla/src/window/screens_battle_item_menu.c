@@ -62,25 +62,11 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
           DMA_COPY_WORDS(8), REG_DMA3);
 }
 
-// How much of the line under the cursor is copied: more outside Japanese.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define CURSOR_TEXT_LENGTH 32
-#else
-#define CURSOR_TEXT_LENGTH 52
-#endif
-
 // How much of a refusal is copied: more in German, Spanish, French and Italian.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
 #define REFUSAL_TEXT_LENGTH 32
 #else
 #define REFUSAL_TEXT_LENGTH 52
-#endif
-
-// Japanese decodes both texts raw where the other languages copy them expanded.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define MENU_TEXT_COPY Message_CopyExpanded
-#else
-#define MENU_TEXT_COPY Message_DecodeRaw
 #endif
 
 #define ITEM_BROKEN 0x400
@@ -168,15 +154,16 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          MENU_TEXT_COPY((s32)MsgBattleItemUnavailable, messageText,
-                         CURSOR_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, messageText,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         else
-          MENU_TEXT_COPY(
+          BATTLE_MENU_MESSAGE_COPY(
               (entries[firstEntry + selectedRow] & INVENTORY_ITEM_ID_MASK) +
                   (s32)MsgItemPlainName,
-              messageText, CURSOR_TEXT_LENGTH);
+              messageText, BATTLE_MENU_MESSAGE_CAPACITY);
       } else {
-        MENU_TEXT_COPY((s32)MsgBattleNoItems, messageText, CURSOR_TEXT_LENGTH);
+        BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, messageText,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -266,14 +253,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(SE_MENU_ERROR);
         if (unusableReason == 2)
-          MENU_TEXT_COPY((s32)MsgBattleItemUnavailable, messageText,
-                         REFUSAL_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, messageText,
+                                   REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
-          MENU_TEXT_COPY((s32)MsgBattleItemBroken, messageText,
-                         REFUSAL_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemBroken, messageText,
+                                   REFUSAL_TEXT_LENGTH);
         else
-          MENU_TEXT_COPY((s32)MsgBattleItemNoEffect, messageText,
-                         REFUSAL_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemNoEffect, messageText,
+                                   REFUSAL_TEXT_LENGTH);
         Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
@@ -352,7 +339,5 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 }
 
 #undef BATTLE_OK
-#undef CURSOR_TEXT_LENGTH
 #undef REFUSAL_TEXT_LENGTH
-#undef MENU_TEXT_COPY
 #undef ITEM_BROKEN

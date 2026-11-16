@@ -8,21 +8,15 @@
 #include "window/screens.h"
 
 // Where the Japanese layout differs: the summon list's window and its Djinn
-// costs, in tiles. The Japanese edition decodes a summon's description
-// (Message_DecodeRaw) into at most 32 halfwords; the others copy its text
-// (Message_CopyExpanded) into at most 52.
+// costs, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17
 #define SUMMON_COST_X 11
-#define BATTLE_MENU_MESSAGE_CAPACITY 52
-#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
 #else
 #define SUMMON_MENU_WINDOW_X 14
 #define SUMMON_MENU_WINDOW_WIDTH 16
 #define SUMMON_COST_X 10
-#define BATTLE_MENU_MESSAGE_CAPACITY 32
-#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
 /// The battle summon list: the summons the party holds enough Djinn for
@@ -380,5 +374,3 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 #undef SUMMON_MENU_WINDOW_X
 #undef SUMMON_MENU_WINDOW_WIDTH
 #undef SUMMON_COST_X
-#undef BATTLE_MENU_MESSAGE_CAPACITY
-#undef BATTLE_MENU_MESSAGE_COPY

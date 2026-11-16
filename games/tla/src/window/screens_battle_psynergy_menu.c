@@ -7,22 +7,6 @@
 #include "window/window_tile.h"
 #include "window/screens.h"
 
-// How much of the description under the cursor is copied: more outside
-// Japanese.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define CURSOR_TEXT_LENGTH 32
-#else
-#define CURSOR_TEXT_LENGTH 52
-#endif
-
-// Japanese decodes the text under the cursor raw where the other languages
-// copy it expanded.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define CURSOR_TEXT_COPY Message_CopyExpanded
-#else
-#define CURSOR_TEXT_COPY Message_DecodeRaw
-#endif
-
 // The list is a tile wider in Spanish and French, and its columns move with it.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define LIST_WINDOW_X 8
@@ -123,12 +107,13 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                            1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0)
-        CURSOR_TEXT_COPY((actions[firstEntry + selectedRow] & ACTION_ID_MASK) +
-                             (s32)MsgAbilityDescription,
-                         messageText, CURSOR_TEXT_LENGTH);
+        BATTLE_MENU_MESSAGE_COPY(
+            (actions[firstEntry + selectedRow] & ACTION_ID_MASK) +
+                (s32)MsgAbilityDescription,
+            messageText, BATTLE_MENU_MESSAGE_CAPACITY);
       else
-        CURSOR_TEXT_COPY((s32)MsgBattleNoPsynergy, messageText,
-                         CURSOR_TEXT_LENGTH);
+        BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoPsynergy, messageText,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
@@ -306,8 +291,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   return result;
 }
 
-#undef CURSOR_TEXT_LENGTH
-#undef CURSOR_TEXT_COPY
 #undef LIST_WINDOW_X
 #undef LIST_WINDOW_WIDTH
 #undef COST_COLUMN

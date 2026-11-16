@@ -578,8 +578,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         parameter = mode;
         commandKind = 5;
         BATTLE_MENU_WORK->chosenDjinn[commandIndex] = mode;
-        element = (parameter >> 8) & 15;
-        index = parameter & 255;
+        element = DJINN_COMMAND_ELEMENT(parameter);
+        index = DJINN_COMMAND_INDEX(parameter);
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
@@ -741,6 +741,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             actors[commandIndex] == actors[commandIndex - 1])
           command->priority = (s16)priority / 2;
       }
+      // A priority past 32767 reads negative as s16 and becomes 2000.
       if (command->priority < 0)
         command->priority = 2000;
       command->command = commandKind;
@@ -775,11 +776,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     void Link_DrawWaitingForOpponent(void) {
       u16 text[64];
 
-#if LANGUAGE != LANGUAGE_JAPANESE
-      Message_CopyExpanded((s32)MsgWaitingForOpponent, text, 52);
-#else
-      Message_DecodeRaw((s32)MsgWaitingForOpponent, text, 32);
-#endif
+      BATTLE_MENU_MESSAGE_COPY((s32)MsgWaitingForOpponent, text,
+                               BATTLE_MENU_MESSAGE_CAPACITY);
       Text_DrawWideStringAtOffset(text, state->timerWindow, 0, 4);
     }
 
@@ -829,14 +827,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   return commandCount;
 }
 
-// The command icon menu's frame task:
-// pulses the selected icon with one affine matrix, draws the others plain,
-// and while the screen transition runs widens window 1 over the icon row.
-
-// The transition's byte after its fields, which the centre-line close sets
-// (ScreenTransition_Finish); while it is set the window lines are left alone.
-#define TRANSITION_BUSY(state) (((s8 *)(state))[0x53f])
-
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
 /// matrix, and updates the horizontal window spans to reveal the active icon
 /// row. A task of the command icon menus
@@ -850,117 +840,120 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
   struct IconMenuWork *work;
-  struct IconMenuEntry *sprite;
-  struct AffineTransform effect;
-  s32 scale;
-  s32 matrix;
-  s32 edge;
-  s32 y;
-  u32 end;
-  u32 i;
-  u16 *line;
-  struct ScreenTransitionState *buffers;
-  struct WindowBuffer *window;
+  struct IconMenuEntry *entry;
+  struct AffineTransform transform;
+  s32 pulseScale;
+  s32 affineIndex;
   s32 span;
+  s32 spriteY;
+  u32 lastLine;
+  u32 index;
+  u16 *edge;
+  struct ScreenTransitionState *state;
+  struct WindowBuffer *page;
+  s32 halfWidth;
 
   work = Ram_HeapSlots->iconMenu;
-  sprite = work->entries;
-  scale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
-  buffers = Ram_HeapSlots->screenTransition;
-  scale = (scale - 256) / 4 + 304;
-  effect.scaleX = scale;
-  effect.scaleY = scale;
-  effect.angle = 0;
-  matrix = OamMatrix_AllocFromTransform(&effect);
-  for (i = 0; i < work->count; i++, sprite++) {
-    u32 *attr;
-    s32 slot;
-    s32 px;
+  entry = work->entries;
+  pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
+  state = Ram_HeapSlots->screenTransition;
+  pulseScale = (pulseScale - 256) / 4 + 304;
+  transform.scaleX = pulseScale;
+  transform.scaleY = pulseScale;
+  transform.angle = 0;
+  affineIndex = OamMatrix_AllocFromTransform(&transform);
+  // Pulse only the selection; the other icons keep their normal OAM shape.
+  for (index = 0; index < work->count; index++, entry++) {
+    u32 *word;
+    s32 drawLayer;
+    s32 x;
 
-    px = sprite->x;
-    if (px == 0)
+    x = entry->x;
+    if (x == 0)
       continue;
-    if (i == work->selection) {
-      s32 left = px + scale * 7 / 512 - 20;
+    if (index == work->selection) {
+      s32 left = x + pulseScale * 7 / 512 - 20;
 
-      if (sprite->y != 0)
-        y = sprite->y + scale * 3 / 256 - 20;
+      // On the top row the double-size box starts above the screen: its y
+      // wraps within OAM's 8 bits.
+      if (entry->y != 0)
+        spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
-        y = (scale * 15 / 256 - 30) & 255;
-      attr = &sprite->link;
-      *attr++ = 0;
-      *attr++ = (matrix << 25) | y | OBJ_X(left) | OBJ_SIZE_32X32 |
+        spriteY = (pulseScale * 15 / 256 - 30) & 255;
+      word = &entry->link;
+      *word++ = 0;
+      *word++ = (affineIndex << 25) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32 |
                 OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
-      *attr = gVramCacheEntries[sprite->slot].offset >> 5;
-      slot = 246;
+      *word = gVramCacheEntries[entry->slot].offset >> 5;
+      drawLayer = 246;
     } else {
-      u32 base;
-      u32 value;
+      u32 tileOffset;
+      u32 attributes;
 
-      attr = &sprite->link;
-      y = sprite->y;
-      *attr++ = 0;
-      value = y | OBJ_X(px) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      base = gVramCacheEntries[sprite->slot].offset;
-      *attr++ = value;
-      *attr = base >> 5;
-      slot = 245;
+      word = &entry->link;
+      spriteY = entry->y;
+      *word++ = 0;
+      attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      tileOffset = gVramCacheEntries[entry->slot].offset;
+      *word++ = attributes;
+      *word = tileOffset >> 5;
+      drawLayer = 245;
     }
-    Oam_AddSpriteAtDepth(sprite, slot);
+    Oam_AddSpriteAtDepth(entry, drawLayer);
   }
-  if (buffers == 0 || TRANSITION_BUSY(buffers) != 0 || work->count == 0)
+  if (state == 0 || state->centreLine != 0 || work->count == 0)
     return;
-  window = (struct WindowBuffer *)buffers->pages[buffers->page];
+  page = (struct WindowBuffer *)state->pages[state->page];
   if (work->row == 0) {
-    edge = work->entries[work->selection].x;
-    span = (scale * 12 - 2817) / 256;
-    edge = ((edge - span) << 8) + (edge + span) + 23;
-    end = work->entries[work->selection].y + 24;
-    end += (scale * 32 - 7937) / 512 + 1;
-    line = &window->lines[24].span;
-    i = 24;
-    if (i < end) {
+    span = work->entries[work->selection].x;
+    halfWidth = (pulseScale * 12 - 2817) / 256;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+    lastLine = work->entries[work->selection].y + 24;
+    lastLine += (pulseScale * 32 - 7937) / 512 + 1;
+    edge = &page->lines[24].span;
+    index = 24;
+    if (index < lastLine) {
       do {
-        *line = (*line & 0xff) | edge;
-        i++;
-        line += 2;
-      } while (i < end);
+        *edge = (*edge & 0xff) | span;
+        index++;
+        edge += 2;
+      } while (index < lastLine);
     }
-    edge = work->entries[0].x;
+    span = work->entries[0].x;
     if (work->selection == 0)
-      edge -= (scale * 12 - 2817) / 256;
-    edge <<= 8;
-    line = &window->lines[0].span;
-    for (i = 0; i <= 23; i++) {
-      *line = (*line & 0xff) | edge;
-      line += 2;
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[0].span;
+    for (index = 0; index <= 23; index++) {
+      *edge = (*edge & 0xff) | span;
+      edge += 2;
     }
   } else {
-    s32 start;
+    s32 firstLine;
 
-    edge = work->entries[work->selection].x;
-    span = (scale * 12 - 2817) / 256;
-    edge = ((edge - span) << 8) + (edge + span) + 23;
-    start = work->entries[work->selection].y;
-    start -= (scale * 32 - 7937) / 512 + 1;
-    line = &window->lines[start].span;
-    i = start;
-    if (i <= 135) {
+    span = work->entries[work->selection].x;
+    halfWidth = (pulseScale * 12 - 2817) / 256;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+    firstLine = work->entries[work->selection].y;
+    firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
+    edge = &page->lines[firstLine].span;
+    index = firstLine;
+    if (index <= 135) {
       do {
-        *line = (*line & 0xff) | edge;
-        i++;
-        line += 2;
-      } while (i <= 135);
+        *edge = (*edge & 0xff) | span;
+        index++;
+        edge += 2;
+      } while (index <= 135);
     }
-    edge = work->entries[0].x;
+    span = work->entries[0].x;
     if (work->selection == 0)
-      edge -= (scale * 12 - 2817) / 256;
-    edge <<= 8;
-    line = &window->lines[136].span;
-    for (i = 136; i <= 159; i++) {
-      start = 0xff;
-      *line = (*line & start) | edge;
-      line += 2;
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[136].span;
+    for (index = 136; index <= 159; index++) {
+      firstLine = 0xff;
+      *edge = (*edge & firstLine) | span;
+      edge += 2;
     }
   }
 }
@@ -975,7 +968,6 @@ void IconMenu_DrawIcons(void) {
 #undef ATTACK_NAME_X
 #undef PSYNERGY_MENU_ICON_X
 #undef COMMAND_ICON_X
-#undef TRANSITION_BUSY
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
 /// The work (struct IconMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU

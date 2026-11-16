@@ -9,10 +9,10 @@
 /// The SST chip's waits by timing: milliseconds, the timer's reload value and
 /// its control.
 const u16 Flash_MaxTimeSst[] = {
-    10, 0xffbd, 0xc2,
-    10, 0xffbd, 0xc2,
-    40, 0xffbd, 0xc2,
-    200, 0xffbd, 0xc2,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    200, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
 };
 // clang-format on
 

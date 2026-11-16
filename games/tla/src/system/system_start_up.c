@@ -40,7 +40,7 @@ void System_Initialize(void) {
   Task_ResetAll();
   gCartridgeResetMarker = 0;
   gOamCopyEnabled = 1;
-  gOamUsage.limit = 0x100;
+  gOamUsage.limit = OAM_SIZE / 4;
   gOamUsage.used = 0;
   gSleepDisabled = 0;
   wait(10);

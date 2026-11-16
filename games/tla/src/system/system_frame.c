@@ -63,10 +63,12 @@ void System_WaitForFrameInterrupt(void) {
     gSoundVBlankState.lastVBlank = gVBlankCount;
     gSoundVBlankState.updating = 1;
     sound = gSoundInfoPointer;
-    if (sound[4] <= 1)
-      gSoundVBlankState.transferCountdown = sound[11];
+    if (SOUND_INFO_BYTE(sound, transferCountdown) <= 1)
+      gSoundVBlankState.transferCountdown =
+          SOUND_INFO_BYTE(sound, transferPeriod);
     else
-      gSoundVBlankState.transferCountdown = sound[4] - 1;
+      gSoundVBlankState.transferCountdown =
+          SOUND_INFO_BYTE(sound, transferCountdown) - 1;
     REG_IME = saved;
     Sound_UpdateBgmRampsFar();
     if (SoundDriver_EnterVBlankUpdate() == 0) {
@@ -121,7 +123,7 @@ void wait(s32 frames) {
       Render_BuildOamList(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, OAM_SIZE));
     } else {
       gOamUsage.used = 0;
-      gOamUsage.limit = 256;
+      gOamUsage.limit = OAM_SIZE / 4;
     }
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
@@ -308,14 +310,14 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   Io_Write16(held, &gInput.previousHeld);
 }
 
-CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
-            "three, so a 16-byte struct copy compiles to 12 and 4")
 /// Copies 16 bytes from `source` to `destination` with one four-register load
 /// and store.
 static __inline__ void Copy16Bytes(const void *source,
                                    volatile void *destination) {
   register const void *src __asm__("r0") = source;
   register volatile void *dst __asm__("r1") = destination;
+  CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
+              "three, so a 16-byte struct copy compiles to 12 and 4")
   __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
                    : "+r"(src), "+r"(dst)
                    :
@@ -346,8 +348,8 @@ void System_VBlankHandler(void) {
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)
-      Dma_Set(Ram_HeapSlots->frameScratch, OAM, 0x84000000 + gOamUsage.used,
-              REG_DMA3);
+      Dma_Set(Ram_HeapSlots->frameScratch, OAM,
+              ((DMA_ENABLE | DMA_32BIT) << 16) + gOamUsage.used, REG_DMA3);
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();
   }
@@ -387,7 +389,8 @@ void System_VBlankHandler(void) {
     sound = &gSoundVBlankState;
     vblankCount = *count;
     if (sound->lastVBlank != (u8)vblankCount && sound->updating == 0) {
-      sound->transferCountdown = gSoundInfoPointer[4];
+      sound->transferCountdown =
+          SOUND_INFO_BYTE(gSoundInfoPointer, transferCountdown);
       Sound_UpdateBgmRampsFar();
       if (SoundDriver_EnterVBlankUpdate() == 0) {
         void (*render)(s32) = IwramSoundRenderVBlank;
@@ -402,19 +405,22 @@ void System_VBlankHandler(void) {
   gVBlankDone = 1;
 }
 
-#define SOUND_PRESET_COUNT 5
+#define SOUND_REVERB_CODE_COUNT 5 ///< the codes of enum SoundReverbCode
 
-/// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
-/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode.
-s32 Sound_LoadReverbCode(s32 preset) {
-  if ((u32)preset > SOUND_PRESET_COUNT - 1)
-    preset = 0;
+/// Where The Broken Seal copies the mixer code for reverb code `code` (enum
+/// SoundReverbCode) into IWRAM, The Lost Age keeps only the range check and
+/// returns 0, so its callers (the battle, the lobby, the sound test and the
+/// debug menu) change nothing.
+s32 Sound_LoadReverbCode(s32 code) {
+  if ((u32)code > SOUND_REVERB_CODE_COUNT - 1)
+    code = 0;
   return 0;
 }
 
-/// Empty routines.
+/// Empty: nothing calls it or its neighbour.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
+/// Empty, as Sound_ReservedNoOpA.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
@@ -430,4 +436,4 @@ void Input_HandleKeyInterrupt(void) {
 #undef RGB_WHITE
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
-#undef SOUND_PRESET_COUNT
+#undef SOUND_REVERB_CODE_COUNT

@@ -21,6 +21,10 @@
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
+/// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
+/// clears on every arrival: the 80 hiding flags and the 16 after them, the
+/// range The Broken Seal clears.
+#define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 
 /// The Broken Seal's FLAG_ISAAC_WEARS_TUNIC, which The Lost Age tests only
 /// where its twin does: World Map actor placements keep their full size while
@@ -135,10 +139,14 @@
 #define FLAG_FAST_WALK 0x17f
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 #define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
-/// Set when Hover is cast on the World Map from the winged ship: the ship
-/// takes off and the World Map announces "Hover" (WorldMap_SetUpFlyingShip);
-/// taking off with the dash keys clears it.
-#define FLAG_HOVER_CAST 0x147
+/// Set while the flying ship hovers on the World Map: Hover cast aboard it sets
+/// it, the ship takes off and the World Map announces "Hover"
+/// (WorldMap_SetUpFlyingShip); taking off with the dash keys clears it.
+#define FLAG_SHIP_HOVERING 0x147
+/// While set, the keys that end Sand do nothing (Sand_CheckEndKeys): Ankohl
+/// Ruins sets it as the great face's raft passes rows 31 to 35, and clears it
+/// at row 37; Scene_Arrive clears it on every arrival.
+#define FLAG_SAND_CANNOT_END 0x146
 /// While set, the save screen refuses to save with "Cannot save here".
 #define FLAG_CANNOT_SAVE_HERE 0x17c
 /// While set, the save screen refuses to save with "This is no place for
@@ -304,8 +312,9 @@
 /// Gondowan Cliffs; back in Madra, Felix is asked "It was them, wasn't it?"
 #define FLAG_KIBOMBO_WARRIORS_FOUND 0x98f
 /// Set as the crew sights Menardi's ship from the Lemurian ship's deck
-/// (LemurianShipDeck_SightMenardisShip), or as Karst leaves Madra after
-/// coming to find the party there; the deck's sighting then runs no more.
+/// (LemurianShipDeck_SightMenardisShip), at once there if the message of the
+/// Gabomba was carried first, or as Karst leaves Madra after coming to find
+/// the party there; the deck's sighting then runs no more.
 #define FLAG_MENARDIS_SHIP_SEEN 0x980
 /// Set as Piers tells Felix in Madra that they will sail for the Eastern Sea
 /// in his ship, or as the party reaches his ship from the Lemurian ship's
@@ -409,9 +418,6 @@
 /// Set once the winged ship has first taken off from the World Map
 /// (WorldMap_TakeOff).
 #define FLAG_SHIP_HAS_FLOWN 0xa78
-/// Set while the flying ship hovers on the World Map, as Hover is cast aboard
-/// it; taking off again clears it.
-#define FLAG_SHIP_HOVERING 0x147
 
 /// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
 /// the button by its door: the door stays open, a shortcut.
@@ -1017,15 +1023,13 @@
 #define FLAG_MAD_PLANT_FIRST 0x9b5
 #define FLAG_MAD_PLANT(n) (FLAG_MAD_PLANT_FIRST + (n))
 
-/// Set once Loho's miners have fired their cannon (Loho_FireCannon); the next
-/// arrival on the World Map at Loho delivers it to the ship.
-#define FLAG_LOHO_CANNON_FIRED 0xa5f
 /// Set as the World Map delivers Loho's cannon to the ship
 /// (WorldMap_DeliverLohoCannon), and by the Northern Reaches' entrance 90;
 /// Loho, Atteka Inlet and the Lemurian dock then place the cannon aboard.
 #define FLAG_SHIP_CARRIES_CANNON 0x90a
 /// Set as Loho's cannon, loaded with the Magma Ball, breaches the ancient wall
-/// (Loho_FireCannon); the miners then give the party the cannon.
+/// (Loho_FireCannon); the miners then give the party the cannon, and the next
+/// arrival on the World Map at Loho delivers it to the ship.
 #define FLAG_LOHO_WALL_BREACHED 0xa5f
 /// Set as the first Lucky Medal to land in the middle of Lemuria's spring wins
 /// the summon Eclipse (LemuriaSpring_GivePrize).
@@ -1036,20 +1040,12 @@
 /// entrance by its fifth exit, or coming into Ancient Lemuria by its entrances
 /// 1, 4 or 5; Lemuria's dock then leads there.
 #define FLAG_LEMURIA_OTHER_WAY_IN 0x960
-/// Set as the crew, on the Lemurian ship's deck, sights Menardi's ship, or at
-/// once if the message of the Gabomba was carried first.
-#define FLAG_MENARDIS_SHIP_SIGHTED 0x980
-/// Set as Piers, back aboard his ship with the party, says he will take them to
-/// Lemuria.
-#define FLAG_PIERS_WILL_SAIL_TO_LEMURIA 0x981
 /// Set as Piers, now in the party, comes back aboard: "At last, I'm back on my
 /// ship."; the cabin door then opens.
 #define FLAG_PIERS_BACK_ON_HIS_SHIP 0x985
 /// Set as Kraden, tired of waiting on the deck, goes to find a ship the party
 /// can use.
 #define FLAG_KRADEN_WENT_TO_FIND_A_SHIP 0x988
-/// Set as Madra welcomes Piers home (MadraInteriors_WelcomePiersHome).
-#define FLAG_PIERS_WELCOMED_IN_MADRA 0x989
 /// Set as the parties, reunited at Atteka Inlet (or Contigo), set out on the
 /// winged ship.
 #define FLAG_SET_OUT_WITH_WINGS 0x9b2

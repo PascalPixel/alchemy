@@ -185,4 +185,8 @@ enum HeapSlot {
 #define Ram_HeapSlots                                                          \
   FIXED_ADDRESS((struct HeapSlots *), 0x03000000, gHeapSlots)
 
+/// Heap slot `kind` of the heap's words `work`, by its byte offset (enum
+/// HeapSlot): the block, or null while none is allocated.
+#define HEAP_SLOT(work, kind) (*(void **)((u8 *)(work) + (kind)))
+
 #endif

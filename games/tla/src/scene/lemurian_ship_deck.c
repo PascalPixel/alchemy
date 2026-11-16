@@ -563,13 +563,13 @@ s32 Scene_PrepareMap(void) {
 
 /// Before the message of the Gabomba is carried, the crew sights Menardi's ship
 /// from the deck and the leader is asked about it; either way it is sighted
-/// once only (FLAG_MENARDIS_SHIP_SIGHTED).
+/// once only (FLAG_MENARDIS_SHIP_SEEN).
 void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
 
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0) {
-    Event_SetFlag(FLAG_MENARDIS_SHIP_SIGHTED);
+    Event_SetFlag(FLAG_MENARDIS_SHIP_SEEN);
     return;
   }
   Event_Start();
@@ -673,7 +673,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
-  Event_SetFlag(FLAG_MENARDIS_SHIP_SIGHTED);
+  Event_SetFlag(FLAG_MENARDIS_SHIP_SEEN);
 }
 
 /// Frost freezes the deck's puddle (FLAG_SCENE_TEMP_00).
@@ -856,11 +856,11 @@ void LemurianShipDeck_ReturnToShip(void) {
 /// Once the message of the Gabomba is carried, until Madra welcomes Piers home:
 /// Piers reaches his ship, the crew asks him to take them to Lemuria, the
 /// leader answers two prompts, and Piers agrees
-/// (FLAG_PIERS_WILL_SAIL_TO_LEMURIA).
+/// (FLAG_PIERS_SETTING_SAIL).
 void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return;
-  if (Event_GetFlag(FLAG_PIERS_WELCOMED_IN_MADRA) != 0)
+  if (Event_GetFlag(FLAG_MADRA_FAREWELL_SAID) != 0)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1125,7 +1125,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_ReachPiersShipScript);
   Actor_RunScriptAndWait(ACTOR_PIERS, gLemurianShipDeck_ReachPiersShipScript);
   FieldEvent_Wait(20);
-  Event_SetFlag(FLAG_PIERS_WILL_SAIL_TO_LEMURIA);
+  Event_SetFlag(FLAG_PIERS_SETTING_SAIL);
   Event_End();
 }
 
@@ -1292,9 +1292,9 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
 struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, FLAG_MENARDIS_SHIP_SIGHTED, EVENT(LemurianShipDeck_SightMenardisShip)},
-    {TRIGGER_STEP, 11, FLAG_PIERS_WILL_SAIL_TO_LEMURIA, EVENT(LemurianShipDeck_ReachPiersShip)},
-    {TRIGGER_STEP, 12, FLAG_PIERS_WELCOMED_IN_MADRA, EVENT(LemurianShipDeck_SetOutForMadra)},
+    {TRIGGER_STEP, 10, FLAG_MENARDIS_SHIP_SEEN, EVENT(LemurianShipDeck_SightMenardisShip)},
+    {TRIGGER_STEP, 11, FLAG_PIERS_SETTING_SAIL, EVENT(LemurianShipDeck_ReachPiersShip)},
+    {TRIGGER_STEP, 12, FLAG_MADRA_FAREWELL_SAID, EVENT(LemurianShipDeck_SetOutForMadra)},
     {TRIGGER_STEP, 1, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ReturnToShip)},
     {TRIGGER_EXAMINE, 14, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
     {TRIGGER_STEP, 15, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},

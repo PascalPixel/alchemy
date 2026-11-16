@@ -246,6 +246,10 @@ extern u8 Decompress_HalfwordsCodeSize[];
 /// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
 /// gSoundInfo, whose bytes the frame wait reads.
 extern u8 *gSoundInfoPointer;
+/// The byte `member` of the sound driver's work `info` (struct SoundInfo),
+/// read through gSoundInfoPointer's bytes without the struct's volatile.
+#define SOUND_INFO_BYTE(info, member)                                          \
+  ((info)[offsetof(struct SoundInfo, member)])
 
 s32 SoundDriver_EnterVBlankUpdate(void);
 

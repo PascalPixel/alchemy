@@ -256,49 +256,53 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 
 /// Builds the outgoing packet in sendBuffer[0], in the same format as above.
 void Serial_PrepareSendPacket(void *payload) {
-  volatile struct SerialWork *sr;
+  volatile struct SerialWork *work;
   u32 i;
   u32 sum;
 
-  sr = SERIAL_RUNTIME;
+  work = SERIAL_RUNTIME;
   {
-    // volatile: the serial interrupt sends from this buffer.
-    volatile u8 *pkt;
-    u8 cur;
-    u8 recv;
+    // volatile: the serial interrupt sends from this buffer. The bytes of
+    // struct SerialPacket, written through a byte pointer: as the struct's
+    // volatile members, each store would read its word first.
+    volatile u8 *packet;
+    u8 currentMask;
+    u8 receivedMask;
 
-    pkt = (volatile u8 *)sr->sendBuffer[0];
-    pkt[0] = sr->packetNumber;
-    cur = sr->currentMask;
-    recv = sr->receivedMask;
+    packet = (volatile u8 *)work->sendBuffer[0];
+    packet[offsetof(struct SerialPacket, packetNumber)] = work->packetNumber;
+    currentMask = work->currentMask;
+    receivedMask = work->receivedMask;
     sum = 0;
-    *(volatile u16 *)(pkt + 2) = sum;
-    pkt[1] = recv ^ cur;
-    Dma_Set(payload, (void *)(pkt + 4), DMA_COPY_WORDS(6), REG_DMA3);
+    *(volatile u16 *)(packet + offsetof(struct SerialPacket, checksum)) = sum;
+    packet[offsetof(struct SerialPacket, missingMask)] =
+        receivedMask ^ currentMask;
+    Dma_Set(payload, (void *)(packet + offsetof(struct SerialPacket, payload)),
+            DMA_COPY_WORDS(6), REG_DMA3);
   }
   {
-    u16 *pkt;
-    u32 v;
+    u16 *halfword;
+    u32 value;
 
-    pkt = sr->sendBuffer[0];
+    halfword = work->sendBuffer[0];
     for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
-      v = *pkt;
-      pkt++;
-      sum += v;
+      value = *halfword;
+      halfword++;
+      sum += value;
     }
   }
   {
-    u32 inv;
-    struct SerialPacket *pkt;
+    u32 checksum;
+    struct SerialPacket *packet;
 
-    inv = ~sum;
-    pkt = (struct SerialPacket *)sr->sendBuffer[0];
-    pkt->checksum = inv;
+    checksum = ~sum;
+    packet = (struct SerialPacket *)work->sendBuffer[0];
+    packet->checksum = checksum;
   }
-  if (sr->mode != 0)
+  if (work->mode != 0)
     REG_TM3CNT_H = 0;
-  sr->sendIndex = -1;
-  if (sr->mode != 0 && sr->transferEnabled != 0)
+  work->sendIndex = -1;
+  if (work->mode != 0 && work->transferEnabled != 0)
     REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
 }
 
@@ -537,7 +541,7 @@ s32 Serial_GetActiveTransfers(void) {
 }
 
 /// Clears the serial transfer for a link battle with interrupts off: nothing to
-/// send or receive, no flags, and status 0x80.
+/// send or receive, no flags, and status SERIAL_STATUS_RUNNING.
 void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
@@ -546,7 +550,7 @@ void LinkBattle_ResetTransferState(void) {
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
   zero = 0;
-  state->status = 0x80;
+  state->status = SERIAL_STATUS_RUNNING;
   *(u8 *)&state->peerFlags = zero;
   gSerialSendSource = zero;
   *(u8 *)&state->flags = zero;
@@ -685,21 +689,22 @@ void SerialTest_Delay(void) {}
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
-  s32 n;
+  s32 remaining;
   s32 delay;
   volatile u32 *held;
 
   Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
-  n = 19;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)0xf093;
+  // Window-palette tiles 0x93 down to 0x80 on row 16, columns 19 down to 0.
+  remaining = 19;
+  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + 19;
+  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) | 0x93);
   do {
-    n--;
+    remaining--;
     *tile = value;
     tile--;
     value--;
-  } while (n >= 0);
+  } while (remaining >= 0);
   Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
   Serial_WaitForStatusMask(3);
 restart:

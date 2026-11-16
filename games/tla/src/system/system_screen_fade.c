@@ -16,8 +16,8 @@ enum {
 // ScreenFade_Update advances the fade each VBlank.
 // BLDY 0 leaves brightness unchanged; 16 produces solid white or black.
 //   gScreenFadeToWhite: 0 fades to black; 1 fades to white.
-//   gScreenFadeLayers: BLDCNT target layers (the four helpers below use 0x3e:
-//   BG1-3, OBJ, and backdrop). gScreenFadeVBlanksLeft: VBlanks left.
+//   gScreenFadeLayers: BLDCNT target layers (the four helpers below use
+//   FADE_GAME_LAYERS). gScreenFadeVBlanksLeft: VBlanks left.
 
 /// Steps the screen fade once a VBlank, called from the VBlank handler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
@@ -54,9 +54,9 @@ void ScreenFade_Update(void) {
 /// vblanks: fade duration in VBlanks.
 void ScreenFade_ToBlack(s32 vblanks) {
   gScreenFadeToWhite = 0;
-  gScreenFadeLayers = 0x3e;
+  gScreenFadeLayers = FADE_GAME_LAYERS;
   gScreenFadeStartLevel = gScreenFadeTargetLevel;
-  gScreenFadeTargetLevel = 16;
+  gScreenFadeTargetLevel = FADE_LEVEL_MAX;
   gScreenFadeVBlanks = vblanks;
   gScreenFadeVBlanksLeft = gScreenFadeVBlanks;
 }
@@ -64,7 +64,7 @@ void ScreenFade_ToBlack(s32 vblanks) {
 /// Fades in from black.
 void ScreenFade_FromBlack(s32 vblanks) {
   gScreenFadeToWhite = 0;
-  gScreenFadeLayers = 0x3e;
+  gScreenFadeLayers = FADE_GAME_LAYERS;
   gScreenFadeStartLevel = gScreenFadeTargetLevel;
   gScreenFadeTargetLevel = 0;
   gScreenFadeVBlanks = vblanks;
@@ -74,9 +74,9 @@ void ScreenFade_FromBlack(s32 vblanks) {
 /// Fades out to white.
 void ScreenFade_ToWhite(s32 vblanks) {
   gScreenFadeToWhite = 1;
-  gScreenFadeLayers = 0x3e;
+  gScreenFadeLayers = FADE_GAME_LAYERS;
   gScreenFadeStartLevel = gScreenFadeTargetLevel;
-  gScreenFadeTargetLevel = 16;
+  gScreenFadeTargetLevel = FADE_LEVEL_MAX;
   gScreenFadeVBlanks = vblanks;
   gScreenFadeVBlanksLeft = gScreenFadeVBlanks;
 }
@@ -84,7 +84,7 @@ void ScreenFade_ToWhite(s32 vblanks) {
 /// Fades in from white.
 void ScreenFade_FromWhite(s32 vblanks) {
   gScreenFadeToWhite = 1;
-  gScreenFadeLayers = 0x3e;
+  gScreenFadeLayers = FADE_GAME_LAYERS;
   gScreenFadeStartLevel = gScreenFadeTargetLevel;
   gScreenFadeTargetLevel = 0;
   gScreenFadeVBlanks = vblanks;

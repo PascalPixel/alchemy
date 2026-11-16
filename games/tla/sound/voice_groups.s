@@ -214,12 +214,12 @@ Sound_SeVoices:
 	voice 0x00, 60, 0, 0, Sound_WaveSwitch, 255, 0, 255, 0
 	voice 0x00, 60, 0, 0, Sound_WaveRumble, 255, 0, 255, 204
 	voice 0x00, 60, 0, 0, Sound_WaveCrash, 255, 0, 255, 216
-	voice 0x00, 60, 0, 0, Sound_Wave39, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_WavePsynergySparkle, 255, 0, 255, 216
 	voice 0x00, 60, 0, 0, Sound_WaveRoar, 255, 0, 255, 216
-	voice 0x00, 60, 0, 0, Sound_Wave41, 255, 0, 255, 188
-	voice 0x00, 60, 0, 0, Sound_Wave42, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave43, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave44, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveThunder, 255, 0, 255, 188
+	voice 0x00, 60, 0, 0, Sound_WaveSparks, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveCurse, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveBoom, 255, 0, 255, 204
 	voice 0x00, 60, 0, 0, Sound_WaveBell, 255, 188, 154, 226
 	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 232
 	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 195
@@ -254,7 +254,7 @@ Sound_SeVoices:
 	voice 0x00, 60, 0, 0, Sound_WaveEyesGlow, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_Wave50, 255, 0, 255, 226
-	voice 0x00, 60, 0, 0, Sound_Wave51, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveSpiral, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_Wave52, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_Wave53, 255, 0, 255, 226
@@ -269,9 +269,9 @@ Sound_SeVoices:
 	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 0
 	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 204
 	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 226
-	voice 0x00, 60, 0, 0, Sound_Wave60, 255, 0, 255, 0
-	voice 0x00, 60, 0, 0, Sound_Wave60, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave60, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveIceCrack, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveStatueStirs, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveCurrent, 255, 0, 255, 226

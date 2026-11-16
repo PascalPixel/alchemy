@@ -19,7 +19,7 @@
 /// UnusedDummyFunc; nothing calls it.
 void SoundTest_UnusedDummyFunc(void) {}
 
-void Sound_LoadReverbCode(s32 preset);
+void Sound_LoadReverbCode(s32 code);
 
 /// The three cues the test starts with.
 static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
@@ -98,6 +98,9 @@ void Sound_UpdateCommandMask(u32 command) {
 /// a fade, else the last music.
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
+/// The sound ids gSoundFlags has a bit for.
+enum { SOUND_FLAG_COUNT = 1024 };
+
 /// Returns sound `sound`'s bit in gSoundFlags, one bit for each of 1024 sound
 /// ids.
 s32 SoundFlag_Test(s32 sound) {
@@ -106,7 +109,7 @@ s32 SoundFlag_Test(s32 sound) {
   s32 value;
 
   mask = 1 << (7 & sound);
-  sound = (sound & 0x3ff) >> 3;
+  sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes = gSoundFlags;
   value = bytes[sound] & mask;
   return NONZERO(value);
@@ -115,34 +118,36 @@ s32 SoundFlag_Test(s32 sound) {
 /// Sets sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Set(s32 sound) {
   s32 mask;
-  s32 bits;
   u8 *bytes;
 
   mask = 1 << (7 & sound);
-  bits = 0x300;
   bytes = gSoundFlags;
-  sound = (sound & (bits + 0xff)) >> 3;
+  sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes[sound] = (u8)(bytes[sound] | mask);
 }
 
 /// Clears sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Clear(s32 sound) {
   s32 mask;
-  s32 bits;
   u8 *bytes;
 
   mask = 1 << (7 & sound);
-  bits = 0x300;
   bytes = gSoundFlags;
-  sound = (sound & (bits + 0xff)) >> 3;
+  sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes[sound] = (u8)(bytes[sound] & ~mask);
 }
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
+enum {
+  SOUND_FIXED_RATE = 31536, ///< samples a second: SOUND_MODE_FREQ_GAME's rate
+  /// SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded.
+  SOUND_FIXED_SAMPLES_PER_VBLANK = 528
+};
+
 /// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
 /// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
-/// and 2 at them, then restarts timer 0 at line 159.
+/// and 2 at them, then restarts timer 0 as line 159 begins.
 void Sound_SetFixedSampleFreq(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 samples;
@@ -150,26 +155,27 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   u32 control;
   volatile u8 *vcount;
 
-  mode = (mode >> 16) & 15;
-  work->transferPeriod = 3;
-  work->outputRate = 31536;
+  mode = (mode >> SOUND_MODE_FREQ_SHIFT) & 15;
+  work->transferPeriod = SOUND_PCM_BUFFER_SIZE / SOUND_FIXED_SAMPLES_PER_VBLANK;
+  work->outputRate = SOUND_FIXED_RATE;
   work->rate = mode;
-  samples = 528;
+  samples = SOUND_FIXED_SAMPLES_PER_VBLANK;
   work->pcmSamplesPerVBlank = samples;
-  work->rateStep = 266;
+  work->rateStep = (1 << 23) / SOUND_FIXED_RATE;
   control = 0;
   Io_Write16(control, &REG_TM0CNT_H);
   Io_Write16(__divsi3(-140448, samples), &REG_TM0CNT_L);
   buffer = gMixerPcmBuffer;
-  Iwram_ClearWords(buffer, 0x18c0);
+  // Each channel's buffer here is twice the driver's own.
+  Iwram_ClearWords(buffer, 4 * SOUND_PCM_BUFFER_SIZE);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
-  buffer += 0xc60;
+  buffer += 2 * SOUND_PCM_BUFFER_SIZE;
   Io_Write32((u32)buffer, &REG_DMA2SAD);
   vcount = (volatile u8 *)&REG_VCOUNT;
-  while (*vcount == 159)
+  while (*vcount == DISPLAY_HEIGHT - 1)
     ;
-  while (*vcount != 159)
+  while (*vcount != DISPLAY_HEIGHT - 1)
     ;
   control = TIMER_ENABLE;
   REG_TM0CNT_H = control;

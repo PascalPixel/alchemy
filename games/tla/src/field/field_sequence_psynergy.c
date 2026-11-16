@@ -50,7 +50,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (abilityId == ABILITY_HOVER) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
-        GameFlag_Set(FLAG_HOVER_CAST);
+        GameFlag_Set(FLAG_SHIP_HOVERING);
         event->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
         return 0;
       }

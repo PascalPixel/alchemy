@@ -903,7 +903,7 @@ s32 Scene_Initialize(void) {
     break;
   case WORLD_MAP_AT_LOHO:
     if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) &&
-        GameFlag_Get(FLAG_LOHO_CANNON_FIRED) != 0) {
+        GameFlag_Get(FLAG_LOHO_WALL_BREACHED) != 0) {
       GameFlag_Set(FLAG_SHIP_CARRIES_CANNON);
       WorldMap_DeliverLohoCannon();
     }

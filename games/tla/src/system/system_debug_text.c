@@ -31,7 +31,7 @@ void String_FormatHex(u32 value) {
 void String_FormatDecimal(s32 value) {
   s32 negative;
   s32 i;
-  s32 q;
+  s32 quotient;
 
   negative = 0;
   if (value < 0) {
@@ -41,10 +41,10 @@ void String_FormatDecimal(s32 value) {
   gNumberTextBuffer[11] = 0;
   for (i = 10; value != 0; i--) {
     // The high word of value times 2^32 / 10, rounded up, is value / 10.
-    q = Math_UnsignedMulHigh(value, 0xffffffffU / 10 + 1);
-    value -= q * 10;
+    quotient = Math_UnsignedMulHigh(value, 0xffffffffU / 10 + 1);
+    value -= quotient * 10;
     gNumberTextBuffer[i] = value + '0';
-    value = q;
+    value = quotient;
   }
   if (i == 10) {
     gNumberTextBuffer[i] = '0';

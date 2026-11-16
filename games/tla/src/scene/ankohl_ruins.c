@@ -276,19 +276,19 @@ void AnkohlRuins_LandFromFall(void) {
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
   i = 0;
-loop:
-  angle = i << 12;
-  velocity[0] = Trig_Cos(angle);
-  velocity[1] = 0;
-  velocity[2] = Math_Sin(angle);
-  velocity[0] += velocity[0] >> 1;
-  velocity[0] += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
-  velocity[2] += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
-  FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                    velocity[0], velocity[1], velocity[2], 0x1090001, &options);
-  i++;
-  if (i <= 16)
-    goto loop;
+  do {
+    angle = i << 12;
+    velocity[0] = Trig_Cos(angle);
+    velocity[1] = 0;
+    velocity[2] = Math_Sin(angle);
+    velocity[0] += velocity[0] >> 1;
+    velocity[0] += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
+    velocity[2] += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      &options);
+    i++;
+  } while (i <= 16);
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -521,23 +521,22 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
   row = 0;
   if (row < rows) {
     z = startZ;
-  next_row:
-    for (left = 0; left < count; left++) {
-      {
-        s32 r = Random16();
-        dx = 15;
-        dx &= r;
+    do {
+      for (left = 0; left < count; left++) {
+        {
+          s32 r = Random16();
+          dx = 15;
+          dx &= r;
+        }
+        dy = Random16() & 31;
+        FieldEffect_Spawn(INTtoFIXED(x + left * 16) + INTtoFIXED(dx - 8),
+                          (y + dy) << 16, INTtoFIXED(z), 0, 0, 0x100, 0x80001,
+                          &params);
       }
-      dy = Random16() & 31;
-      FieldEffect_Spawn(INTtoFIXED(x + left * 16) + INTtoFIXED(dx - 8),
-                        (y + dy) << 16, INTtoFIXED(z), 0, 0, 0x100, 0x80001,
-                        &params);
-    }
-    FieldEvent_Wait(frames);
-    z += 2;
-    row++;
-    if (row < rows)
-      goto next_row;
+      FieldEvent_Wait(frames);
+      z += 2;
+      row++;
+    } while (row < rows);
   }
 }
 
@@ -837,11 +836,10 @@ void AnkohlRuins_InitSand(s32 unused) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Iwram_ClearWordsEntry(work, 240);
   i = 31;
-fill:
-  *pixel++ = 0x11111111;
-  i--;
-  if (i >= 0)
-    goto fill;
+  do {
+    *pixel++ = 0x11111111;
+    i--;
+  } while (i >= 0);
   // Spelled through a pointer: a member store shares its zero mask.
   *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);

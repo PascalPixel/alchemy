@@ -997,18 +997,17 @@ void AquaRock_MoaiStepAside(void) {
   Event_WaitTransitionFrames();
   Sound_Play(SE_POP_UP);
   i = 17;
-scatter:
-  {
-    struct Actor *object = Actor_GetById(i);
+  do {
+    {
+      struct Actor *object = Actor_GetById(i);
 
-    object->speedLimit = toFIXED(1) / 4;
-    object->acceleration = toFIXED(1) / 64;
-    object->update = (void (*)(void))AquaRock_SwayMoai;
-    object->timer = Random16();
-    object->userValue = 0;
-  }
-  if (++i <= 21)
-    goto scatter;
+      object->speedLimit = toFIXED(1) / 4;
+      object->acceleration = toFIXED(1) / 64;
+      object->update = (void (*)(void))AquaRock_SwayMoai;
+      object->timer = Random16();
+      object->userValue = 0;
+    }
+  } while (++i <= 21);
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
   Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI, 392, 824);
@@ -1019,10 +1018,9 @@ scatter:
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
   i = 17;
-settle:
-  Actor_GetById(i)->update = (void (*)(void))AquaRock_SwayMoaiBack;
-  if (++i <= 21)
-    goto settle;
+  do {
+    Actor_GetById(i)->update = (void (*)(void))AquaRock_SwayMoaiBack;
+  } while (++i <= 21);
   Sound_Play(SE_STOP_EXIT_SE);
   Event_Wait(60);
   {
@@ -1565,21 +1563,20 @@ void AquaRock_StartSparkles(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->leader = (s32 *)size;
   i = 0;
-loop:
-  size = (u32)p;
-  *(u32 *)size = 0;
-  size += 4;
-  *(u32 *)size = 0x40000400;
-  size += 4;
-  *(u32 *)size = 0xb400;
-  p->posX = 0;
-  p->posZ = 0;
-  p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-  p->timer = (i & 15) + 1;
-  i++;
-  p++;
-  if (i < 64)
-    goto loop;
+  do {
+    size = (u32)p;
+    *(u32 *)size = 0;
+    size += 4;
+    *(u32 *)size = 0x40000400;
+    size += 4;
+    *(u32 *)size = 0xb400;
+    p->posX = 0;
+    p->posZ = 0;
+    p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
+    p->timer = (i & 15) + 1;
+    i++;
+    p++;
+  } while (i < 64);
   Task_Add(GroundParticles_Draw, TASK_PASS_VBLANK);
 }
 

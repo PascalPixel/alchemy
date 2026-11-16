@@ -196,7 +196,7 @@ UNUSED s32 DebugMenu_Run(s32 index) {
   wait(1);
   moved = -1;
   window = DebugMenu_Open();
-  do {
+  while (1) {
     if (moved != 0) {
       s32 x;
       s32 y;
@@ -215,11 +215,11 @@ UNUSED s32 DebugMenu_Run(s32 index) {
     if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
-      goto done;
+      break;
     }
     if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      goto done;
+      break;
     }
     if (gInput.repeat & KEY_UP) {
       index--;
@@ -231,8 +231,7 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       moved = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-  } while (1);
-done:
+  }
   Window_Close(window, 2);
   DebugMenu_Release();
   wait(1);
@@ -395,7 +394,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
   // -1 places the cursor at once; 1 slides it to a new row.
   moved = -1;
   window = DebugWarp_Open();
-  do {
+  while (1) {
     if (moved != 0) {
       s32 x;
       s32 y;
@@ -413,11 +412,11 @@ UNUSED s32 DebugWarp_Run(s32 index) {
     if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       index = -1;
-      goto done;
+      break;
     }
     if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      goto done;
+      break;
     }
     if (gInput.repeat & KEY_UP) {
       index--;
@@ -430,8 +429,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
       moved = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-  } while (1);
-done:
+  }
   Window_Close(window, 2);
   DebugWarp_Release();
   wait(1);
@@ -511,7 +509,6 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
   struct OptionMenuWork *work;
-  s16 left;
   struct MainRoutineWork *party;
   struct Window *window;
   s32 result;
@@ -519,8 +516,6 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 ability;
   s32 owner;
   struct FieldWork *events;
-  s32 x;
-  s32 y;
   s32 pp;
   s32 columns = 4;
 
@@ -530,14 +525,16 @@ UNUSED s32 DebugShortcut_Run(void) {
   result = -1;
   column = 0;
   window = DebugShortcut_Open();
-  do {
+  while (1) {
     if (result != 0) {
+      s32 x;
+      s32 y;
+
       column = (column + columns) % columns;
       row = (row + 9) % 9;
-      /* FAKEMATCH(temporary): the window's x read through a halfword temporary.
-       */
-      left = window->x;
-      x = (column * 7 + left) * 8 - 4;
+      // y holds the window's left edge first.
+      y = (s16)window->x;
+      x = (column * 7 + y) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;
       if (result == -1)
         MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
@@ -549,22 +546,22 @@ UNUSED s32 DebugShortcut_Run(void) {
     if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
-      goto done;
+      break;
     }
     if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 0;
-      goto done;
+      break;
     }
     if (gInput.pressed & KEY_L) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
-      goto done;
+      break;
     }
     if (gInput.pressed & KEY_R) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 2;
-      goto done;
+      break;
     }
     if (gInput.repeat & KEY_LEFT) {
       column--;
@@ -586,8 +583,7 @@ UNUSED s32 DebugShortcut_Run(void) {
       result = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-  } while (1);
-done:
+  }
   Window_Close((struct Window *)window, 2);
   DebugShortcut_Release();
   wait(1);

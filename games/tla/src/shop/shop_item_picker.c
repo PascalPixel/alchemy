@@ -63,8 +63,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   u32 inventoryEntry = unit->inventory[slot];
   s32 itemId;
   s32 condition;
-  /* FAKEMATCH(pin): result held in r8. */
-  register s32 result asm("r8");
+  s32 result;
 
   itemId = INVENTORY_ITEM_ID_MASK;
   itemId &= inventoryEntry;
@@ -73,26 +72,26 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
 
   if (Forge_GetItemCondition(itemId) == 0) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgNoThatSNoGood);
-  } else {
-    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    return result;
+  }
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  Shop_ShowKeeperMessageHidingCursor(condition == FORGE_CONDITION_PROCESSED + 1
+                                         ? (s32)MsgItSOkIfIWork
+                                         : (s32)MsgYouWantItToShine);
+  if (Shop_AskYesNo(0) != 0) {
     Shop_ShowKeeperMessageHidingCursor(
-        condition == FORGE_CONDITION_PROCESSED + 1 ? (s32)MsgItSOkIfIWork
-                                                   : (s32)MsgYouWantItToShine);
-    if (Shop_AskYesNo(0) != 0) {
-      Shop_ShowKeeperMessageHidingCursor(
-          condition == FORGE_CONDITION_PROCESSED + 1 ? (s32)MsgHmThatSNotRight
-                                                     : (s32)MsgWellHmIWonder);
-    } else {
-      Shop_ShowKeeperMessageHidingCursor(condition ==
-                                                 FORGE_CONDITION_PROCESSED + 1
-                                             ? (s32)MsgWellAllRightIM
-                                             : (s32)MsgALittleElbowGrease);
-      Inventory_RemoveFar(unitId, slot);
-      Shop_DrawMemberItems(shop->itemWindow, unitId);
-      itemId = Forge_RollResult(itemId);
-      Forge_SetItem(itemId);
-      result = 0;
-    }
+        condition == FORGE_CONDITION_PROCESSED + 1 ? (s32)MsgHmThatSNotRight
+                                                   : (s32)MsgWellHmIWonder);
+  } else {
+    Shop_ShowKeeperMessageHidingCursor(condition ==
+                                               FORGE_CONDITION_PROCESSED + 1
+                                           ? (s32)MsgWellAllRightIM
+                                           : (s32)MsgALittleElbowGrease);
+    Inventory_RemoveFar(unitId, slot);
+    Shop_DrawMemberItems(shop->itemWindow, unitId);
+    itemId = Forge_RollResult(itemId);
+    Forge_SetItem(itemId);
+    result = 0;
   }
   return result;
 }

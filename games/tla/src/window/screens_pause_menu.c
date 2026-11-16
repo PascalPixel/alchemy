@@ -195,15 +195,14 @@ s32 DebugBrowser_Portraits(void) {
   s32 tile;
   s32 slot;
   s32 cancelKey;
-  u32 slotOffset;
-  s32 palette;
+  s32 palette = PORTRAIT_PALETTE + 1;
+  u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
 
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
-  palette = PORTRAIT_PALETTE + 1;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
   characterCount = i;
@@ -212,9 +211,6 @@ s32 DebugBrowser_Portraits(void) {
   entryCount = characterCount + i;
   /* FAKEMATCH(dead): a zero from the count. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
-  /* FAKEMATCH(temporary): the second portrait slot read through its offset,
-   * held in a local. */
-  slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
   while (1) {
     if (gInput.repeat & KEY_LEFT) {
       redraw = 1;

@@ -13,10 +13,6 @@
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-/// The status panel's down arrow from the class now, on the line above it, to
-/// the class the equipment would give, on the line below.
-#define STATUS_PANEL_CLASS_ARROW WINDOW_TILE(298)
-
 s32 GameFlag_Set(s32 flag);
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
@@ -250,7 +246,10 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Inventory_EquipFar(owner, slot);
     }
     Unit_CalculateFar(owner);
-    Window_SetTilemapEntryFar((s32)window, STATUS_PANEL_CLASS_ARROW, 3, 5, 0);
+    // XXX: tile 298, between the class line and the class the equipment would
+    // give, is in the text canvas (TEXT_CANVAS_FIRST_TILE + 2); what it holds
+    // while the panel is open would name it.
+    Window_SetTilemapEntryFar((s32)window, WINDOW_TILE(298), 3, 5, 0);
     value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct Unit));

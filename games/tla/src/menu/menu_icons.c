@@ -477,7 +477,7 @@ void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
 }
 
 /// Turns Djinn figure index to face facing (enum Facing), if it exists.
-void DjinnFigures_SetSlotDepth(s32 index, s32 facing) {
+void DjinnFigures_SetSlotFacing(s32 index, s32 facing) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL)

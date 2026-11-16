@@ -23,5 +23,5 @@ FarCall_MenuTable:
 	export DjinnFigures_SetShownFar, DjinnFigures_SetShown
 	export DjinnFigures_ReplaceSlotFar, DjinnFigures_ReplaceSlot
 	export DjinnFigures_SetSlotPositionFar, DjinnFigures_SetSlotPosition
-	export DjinnFigures_SetSlotDepthFar, DjinnFigures_SetSlotDepth
+	export DjinnFigures_SetSlotFacingFar, DjinnFigures_SetSlotFacing
 	export DjinnFigures_SetSlotPhaseFar, DjinnFigures_SetSlotPhase

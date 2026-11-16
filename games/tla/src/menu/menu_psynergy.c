@@ -14,7 +14,7 @@
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
-s32 PsynergyMenu_IsActionRestricted(s32 no);
+s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 

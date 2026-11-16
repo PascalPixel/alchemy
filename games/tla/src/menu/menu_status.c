@@ -1127,8 +1127,9 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 #undef PAGE_ROWS
 
-/// Pairs of 4-bit rows in colour 5, each a pixel longer than the last, that
-/// Menu_BuildPatternTiles XORs into its tile pairs (menu_strings.s).
+/// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
+/// the last, that Menu_BuildPatternTiles XORs into its tile pairs
+/// (menu_strings.s).
 extern u32 gMenu_PatternRowMasks[][2];
 
 /// Builds two sets of six tile pairs (24 8x8 tiles) in background tile block

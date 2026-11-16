@@ -948,7 +948,7 @@ extern u8 gDjinnMenu_TextLevel[];
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
-void DjinnFigures_SetSlotDepth(s32 index, s32 facing);
+void DjinnFigures_SetSlotFacing(s32 index, s32 facing);
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
 void DjinnRecovery_CountDownFar(void);
@@ -1120,7 +1120,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         }
         DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
                                      mode == DJINN_SELECT_DJINNI ? 62 : 54);
-        DjinnFigures_SetSlotDepth(mode, facing);
+        DjinnFigures_SetSlotFacing(mode, facing);
         if (redraw & 2)
           DjinnFigures_SetSlotPhase(mode, 0);
         DjinnFigures_ReplaceSlot(mode, element, animation);
@@ -1599,7 +1599,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
-  DjinnFigures_SetSlotDepth(mode, FACING_SOUTH);
+  DjinnFigures_SetSlotFacing(mode, FACING_SOUTH);
   return result;
 }
 

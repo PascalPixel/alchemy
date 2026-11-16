@@ -2440,7 +2440,7 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 extern const u8 gMenu_QuantityTiles[];
 
 /// Colours the first count segments of the quantity bar in tiles, each two
-/// pixels wide, in colour color.
+/// pixels wide: the left pixel in colour 1, the right in colour color.
 void QuantityBar_FillFar(s32 count, s32 color, void *tiles);
 
 /// Asks how many of the selected item stack to give or drop: Left and Right

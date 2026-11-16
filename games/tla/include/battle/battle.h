@@ -117,7 +117,6 @@ struct BattleObject;
 struct Actor;
 struct ParticleChild;
 struct PendingEvent;
-struct ScaledSprite;
 struct SceneCueRule;
 struct WorldMapWork;
 
@@ -195,8 +194,8 @@ s32 Enemy_GetAttackElement(void *state);
 void Unit_CalculateFar(s32);
 #endif
 s32 Party_CountMembersFar(void);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
+void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
+                                       s32 *scale, s32 mode);
 void BattleEffect_RunStatReduction(struct BattleEffectParams *effect, s32 mode);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);

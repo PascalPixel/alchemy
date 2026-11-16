@@ -22,19 +22,18 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct TouchLayer *layer =
-      ((struct TouchMap *)Ram_HeapSlots->mapGrid)->layers;
+  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 lift;
-  s32 scrollX = FIELD_CELL(layer->x);
-  s32 scrollZ = FIELD_CELL(layer->z);
+  s32 scrollX = FIELD_CELL(layer->offsetX);
+  s32 scrollZ = FIELD_CELL(layer->offsetY);
   s32 layerX, layerZ;
   s32 left, top, i;
 
   if (layerIndex <= 2)
     layer += layerIndex;
-  layerX = FIELD_CELL(layer->x);
-  layerZ = FIELD_CELL(layer->z);
+  layerX = FIELD_CELL(layer->offsetX);
+  layerZ = FIELD_CELL(layer->offsetY);
   left = x - layerX;
   top = z - layerZ;
   lift = -(FIELD_CELL(owner->groundHeight));

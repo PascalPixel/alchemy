@@ -506,7 +506,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 /// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
 /// exclusive.
 void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
-  struct ScaledSprite *sprite;
+  struct Sprite *sprite;
   s32 offset;
   FIXED scale[2];
   s32 position[4];

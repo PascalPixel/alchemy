@@ -81,9 +81,9 @@ void FieldPsynergy_StartCloak(void) {
 
 /// Per-frame update of a falling mote: once it reaches its floor it starts the
 /// shared particle script and stops updating.
-void BattleEffect_LandFallingObject(struct FallingObject *object) {
-  if (object->y <= object->floor) {
-    object->dispatchState = 2;
+void BattleEffect_LandFallingObject(struct Actor *object) {
+  if (object->y.fixed <= object->groundHeight) {
+    object->wait = 2;
     Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
     object->update = 0;
   }
@@ -299,7 +299,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *object);
 
 /// The collision at position for the actor standing 16 pixels higher.
 static __inline__ s32 Actor_ProbeRaised(struct Actor *object,
-                                        struct FxPosition *position) {
+                                        struct Vector3 *position) {
   s32 hit;
 
   object->groundHeight += toFIXED(16);
@@ -316,7 +316,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct Actor *source;
   struct Actor *target;
   struct Actor *shards[20];
-  struct FxPosition position;
+  struct Vector3 position;
   struct Actor *anchors[2];
   struct Actor *object;
   struct Actor *right;

@@ -16,11 +16,6 @@ struct Actor;
 struct SpriteAnimation;
 struct Vector3;
 
-struct ItemHead {
-  u8 unused[3]; ///< no code names it
-  u8 flags;
-};
-
 /// A hue's degrees, a full turn of the colour wheel.
 #define HUE_DEGREES 360
 
@@ -41,27 +36,9 @@ struct MindReadWork {
   u8 counter;
 };
 
-struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct TouchCell {
   s16 x;
   s16 z;
-};
-
-struct TouchLayer {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 z;
-  u8 unusedAfterZ[40]; ///< no code names it
-};
-
-struct TouchMap {
-  u8 unused[264]; ///< no code names it
-  struct TouchLayer layers[1];
 };
 
 struct TouchCopy {
@@ -114,11 +91,6 @@ struct ParticleBurstWork {
 struct BurstCell {
   s16 x;
   s16 z;
-};
-
-struct ScaledSprite {
-  u8 unused[12]; ///< no code names it
-  s32 scale;
 };
 
 struct SparklePicture {
@@ -311,23 +283,6 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-struct FallingObject {
-  u8 unused[12]; ///< no code names it
-  s32 y;
-  u8 unusedAfterY[4]; ///< no code names it
-  s32 floor;
-  u8 unusedAfterFloor[70]; ///< no code names it
-  s16 dispatchState;
-  u8 unusedAfterDispatchState[12]; ///< no code names it
-  void *update;
-};
-
-struct FxPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's
 // y; no such data exists.
 struct WorldMapAliasedHalfword {
@@ -364,11 +319,6 @@ void FieldEffect_ArmBg0HBlankDma(void);
 struct Actor;
 struct Vec3;
 
-struct ResourceEntry {
-  u8 unused[16]; ///< no code names it
-  u8 vramBlock;
-};
-
 struct BurstParticleVector {
   s32 values[3];
 };
@@ -401,6 +351,9 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
+/// The lifted actor as Lift on a target reads it: struct Actor's y, motionFlags
+/// (flag) and update (callback); read through struct Actor, the flag store
+/// moves after the anchor's load.
 struct EffectChild {
   u8 unused[12]; ///< no code names them
   s32 y;

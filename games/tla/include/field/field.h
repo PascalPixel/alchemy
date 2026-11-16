@@ -461,12 +461,6 @@ struct EffectOwner {
   struct Sprite *sprite;
 };
 
-struct OrbitPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct LineScrollWork {
   struct BgScroll rows[2][160][3];
   u8 page;

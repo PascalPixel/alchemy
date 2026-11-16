@@ -7,7 +7,6 @@
 #include "types.h"
 
 struct Actor;
-struct ResourceEntry;
 
 struct MagmaRockCrumblingPillar {
   u16 id;

@@ -59,11 +59,6 @@ struct TransitionShape {
   struct TransitionSpan spans[3];
 };
 
-struct MapLayerFlags {
-  u8 unused[20]; ///< no code names it
-  u16 flags;
-};
-
 /// SpeakerDefinition.value of a sprite that makes no sound as it speaks.
 #define SPEAKER_VOICE_NONE 0xff
 

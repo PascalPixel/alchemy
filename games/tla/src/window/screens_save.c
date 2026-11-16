@@ -857,7 +857,7 @@ void FileList_PlacePartySprites(void) {
       request[1] = toFIXED(500);
       request[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
       request[3] = 0;
-      Render_ApplyProjectedPlacementFar((struct ScaledSprite *)handle, request,
+      Render_ApplyProjectedPlacementFar((struct Sprite *)handle, request,
                                         source, FACING_SOUTH);
     }
     index += 1;

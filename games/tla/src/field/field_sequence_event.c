@@ -237,7 +237,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
-        if (((struct ItemHead *)Item_GetDirectFar(item))->flags & 8) {
+        if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
           MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
           FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
           goto retry;

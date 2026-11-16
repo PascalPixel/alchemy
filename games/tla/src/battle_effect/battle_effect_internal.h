@@ -818,7 +818,6 @@ struct Particle;
 struct MeshTriangle;
 struct PoolEntry;
 struct SpriteScale;
-struct ScaledSprite;
 struct SpriteScale;
 struct StripQuad;
 
@@ -942,8 +941,8 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_ArmPaletteHBlankDma(void);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
+void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
+                                       s32 *scale, s32 mode);
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta);
 

@@ -1864,16 +1864,16 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
-  struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapGrid;
-  struct TouchLayer *layer = &map->layers[layerIndex];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = &map->layers[layerIndex];
   s32 i;
 
   for (i = 0; cell[i].x != -1; i++) {
     s32 x = cell[i].x - windowX;
     s32 z = cell[i].z - windowZ - ownerHeight;
 
-    x += FIELD_CELL(layer->x);
-    z += FIELD_CELL(layer->z);
+    x += FIELD_CELL(layer->offsetX);
+    z += FIELD_CELL(layer->offsetY);
 
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;

@@ -10,20 +10,6 @@
 struct Actor;
 struct SpriteAnimation;
 
-struct MetadataSlotState {
-  u8 unused[12]; ///< no code names it
-  s32 scale;
-  u8 unusedAfterScale[4]; ///< no code names it
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 unusedAfterOffsetY[3]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[12]; ///< no code names it
-  s32 slots[4];
-};
-
 struct ResourceObjectWork {
   u8 unused[16];           ///< no code names it
   u8 resource;             ///< VRAM cache index.

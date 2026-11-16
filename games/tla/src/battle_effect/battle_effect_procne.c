@@ -322,7 +322,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           place[1] = toFIXED(255) + index * toFIXED(64);
           place[2] = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
           Render_ApplyProjectedPlacementFar(
-              (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
+              (struct Sprite *)work->sprites[index], place, &scale.x, 0);
           index++;
         } while (index != PROCNE_SPRITES);
 

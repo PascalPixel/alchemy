@@ -364,7 +364,7 @@ struct SavedColors {
 /// The field effect work as the Golden Rings read it: the VRAM cache entry
 /// their sprites share, in bytes struct FieldEffectWork leaves unnamed.
 struct LinkedEffectWork {
-  u8 beforeVramBlock[0x7c0];
+  u8 beforeVramBlock[1984];
   u16 vramBlock;
 };
 
@@ -440,7 +440,7 @@ struct BobbingMarker {
 /// XXX: what the two halfwords are on the World Map; the World Map's own
 /// reading of layer 0's scale would settle it.
 struct RescueMap {
-  u8 unk000[0x11c];
+  u8 unk000[284];
   u16 unk11c;
   u16 unk11e;
 };

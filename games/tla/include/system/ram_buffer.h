@@ -74,11 +74,11 @@ extern s8 gSceneLocalState[];
 /// picked at random from The Broken Seal's Djinn the party lacks: its place in
 /// its element plus one, or 0 when the party has them all. An element's last
 /// Djinni stands for it in actor placements and Djinni battles.
-#define SCENE_STATE_CHOSEN_DJINN 0x1950
+#define SCENE_STATE_CHOSEN_DJINN 6480
 
 /// Where gSceneLocalState keeps, by element, the reunion's pick of a Djinni
 /// of The Broken Seal the party lacks, plus one (0 when it lacks none): the
 /// Djinni an element's last Djinn slot stands for (Party_AddIsaacsParty).
-#define SCENE_STATE_REUNION_DJINN 0x1950
+#define SCENE_STATE_REUNION_DJINN 6480
 
 #endif

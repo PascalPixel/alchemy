@@ -44,8 +44,8 @@ struct BattlePlaybackWork {
   s32 flags;            ///< cleared when playback starts
 };
 
-STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 0x168);
+STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 368);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 360);
 
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
@@ -161,28 +161,28 @@ struct BattleWork {
   struct BattleAIState aiStates[4];
 };
 
-STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
-STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 0x043);
-STATIC_ASSERT(offsetof(struct BattleWork, isLink) == 0x044);
-STATIC_ASSERT(offsetof(struct BattleWork, firstStrike) == 0x045);
-STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 0x058);
-STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 0x066);
-STATIC_ASSERT(offsetof(struct BattleWork, placement) == 0x074);
-STATIC_ASSERT(offsetof(struct BattleWork, slots) == 0x084);
-STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x550);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils.queuedSummons) == 0x564);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils.queueCount) == 0x56b);
-STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);
-STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
-STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);
-STATIC_ASSERT(offsetof(struct BattleWork, plan) == 0x67c);
-STATIC_ASSERT(offsetof(struct BattleWork, debugValue) == 0x854);
-STATIC_ASSERT(offsetof(struct BattleWork, daedalusFromEnemies) == 0x860);
-STATIC_ASSERT(offsetof(struct BattleWork, keepBackdropPalette) == 0x867);
-STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 0x868);
-STATIC_ASSERT(offsetof(struct BattleWork, aiStates) == 0x86c);
-STATIC_ASSERT(sizeof(struct BattleWork) == 0x87c);
+STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 65);
+STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 67);
+STATIC_ASSERT(offsetof(struct BattleWork, isLink) == 68);
+STATIC_ASSERT(offsetof(struct BattleWork, firstStrike) == 69);
+STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 88);
+STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 102);
+STATIC_ASSERT(offsetof(struct BattleWork, placement) == 116);
+STATIC_ASSERT(offsetof(struct BattleWork, slots) == 132);
+STATIC_ASSERT(offsetof(struct BattleWork, actions) == 748);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 1360);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils.queuedSummons) == 1380);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils.queueCount) == 1387);
+STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 1654);
+STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 1656);
+STATIC_ASSERT(offsetof(struct BattleWork, events) == 1764);
+STATIC_ASSERT(offsetof(struct BattleWork, plan) == 1660);
+STATIC_ASSERT(offsetof(struct BattleWork, debugValue) == 2132);
+STATIC_ASSERT(offsetof(struct BattleWork, daedalusFromEnemies) == 2144);
+STATIC_ASSERT(offsetof(struct BattleWork, keepBackdropPalette) == 2151);
+STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 2152);
+STATIC_ASSERT(offsetof(struct BattleWork, aiStates) == 2156);
+STATIC_ASSERT(sizeof(struct BattleWork) == 2172);
 
 struct LinkRuntimeState;
 

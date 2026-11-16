@@ -122,7 +122,7 @@ struct HeapSlots {
   s32 *djinniHints;
 };
 
-STATIC_ASSERT(sizeof(struct HeapSlots) == 0x100);
+STATIC_ASSERT(sizeof(struct HeapSlots) == 256);
 STATIC_ASSERT(offsetof(struct HeapSlots, fieldWork) == 27 * 4);
 STATIC_ASSERT(offsetof(struct HeapSlots, menuWork) == 55 * 4);
 

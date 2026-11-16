@@ -8,8 +8,8 @@
 
 #include "field/actor.h"
 
-/// struct Actor as the two scene routines that keep a flag number at 0x64 read
-/// it: as Actor.timer, the s16, their store of that number compiles
+/// struct Actor as the two scene routines that keep a flag number at byte 100
+/// read it: as Actor.timer, the s16, their store of that number compiles
 /// differently (Tundaria Tower's and the Mars Lighthouse entrance's
 /// placement tables).
 struct FieldActor {

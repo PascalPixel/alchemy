@@ -42,7 +42,7 @@ struct ParticleSprite {
 /// particles and their sprites, the next particle to start and the first
 /// sprite tile their tiles were loaded to.
 struct ParticleWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Particle particles[64];
   struct ParticleSprite sprites[64];
   s16 next;

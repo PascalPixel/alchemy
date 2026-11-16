@@ -75,12 +75,12 @@ struct FieldEffect {
   void (*update)(union FieldObject *object);
 };
 
-STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
-STATIC_ASSERT(offsetof(struct FieldEffect, velocity) == 0x44);
-STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
-STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
-STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
+STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 48);
+STATIC_ASSERT(offsetof(struct FieldEffect, velocity) == 68);
+STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 80);
+STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 100);
+STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 104);
+STATIC_ASSERT(offsetof(struct FieldEffect, update) == 108);
 
 /// An object on the field, read as an actor or as an effect.
 union FieldObject {
@@ -128,8 +128,8 @@ struct EffectOptions {
   void (*update)(union FieldObject *object); ///< replaces the update hook
 };
 
-STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);
-STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
+STATIC_ASSERT(offsetof(struct EffectOptions, type) == 24);
+STATIC_ASSERT(offsetof(struct EffectOptions, update) == 36);
 
 void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
 struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);

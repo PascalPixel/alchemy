@@ -107,15 +107,15 @@ struct SelectionScreen {
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
-STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);
-STATIC_ASSERT(offsetof(struct SelectionNode, message) == 0x20);
-STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 0x28);
-STATIC_ASSERT(offsetof(struct SelectionScreen, head) == 0x348);
-STATIC_ASSERT(offsetof(struct SelectionScreen, kinds) == 0x354);
-STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 0x39e);
-STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 0x3b8);
-STATIC_ASSERT(sizeof(struct SelectionScreen) == 0x3e4);
+STATIC_ASSERT(sizeof(struct SelectionSprite) == 12);
+STATIC_ASSERT(sizeof(struct SelectionNode) == 52);
+STATIC_ASSERT(offsetof(struct SelectionNode, message) == 32);
+STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 40);
+STATIC_ASSERT(offsetof(struct SelectionScreen, head) == 840);
+STATIC_ASSERT(offsetof(struct SelectionScreen, kinds) == 852);
+STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 926);
+STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 952);
+STATIC_ASSERT(sizeof(struct SelectionScreen) == 996);
 
 /// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
 /// which SelectionMenu_Clear puts the next list's top and cursor back to its

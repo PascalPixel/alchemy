@@ -91,12 +91,12 @@ struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
                                             struct Window *window, s32 x,
                                             s32 y);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 12);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 0x0f);
-STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 0x10);
-STATIC_ASSERT(offsetof(struct WindowSprite, sprite.oam) == 0x14);
-STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
+STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 15);
+STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 16);
+STATIC_ASSERT(offsetof(struct WindowSprite, sprite.oam) == 20);
+STATIC_ASSERT(sizeof(struct WindowSprite) == 28);
 
 /// The sprite attributes, as The Broken Seal's render_input.h lays them out.
 struct OamData {

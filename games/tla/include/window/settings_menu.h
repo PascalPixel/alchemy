@@ -50,10 +50,10 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6]; ///< the Pause menu's entries' icons
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuWork) == 0x628);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, page) == 0x574);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, cursor) == 0x5a4);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, icon) == 0x610);
+STATIC_ASSERT(sizeof(struct OptionMenuWork) == 1576);
+STATIC_ASSERT(offsetof(struct OptionMenuWork, page) == 1396);
+STATIC_ASSERT(offsetof(struct OptionMenuWork, cursor) == 1444);
+STATIC_ASSERT(offsetof(struct OptionMenuWork, icon) == 1552);
 
 /// The sound test's four values: music, jingle, sound effect and sound preset.
 struct SoundTestValues {

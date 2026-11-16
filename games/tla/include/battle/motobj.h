@@ -72,15 +72,15 @@ void ReleaseBattleObjectRecords(s32 objectId);
 void ResetMotionRecordGroup(void *record_group);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 
-STATIC_ASSERT(sizeof(struct MotionObject) == 0x70);
-STATIC_ASSERT(offsetof(struct MotionObject, scaleX) == 0x18);
-STATIC_ASSERT(offsetof(struct MotionObject, x) == 0x08);
-STATIC_ASSERT(offsetof(struct MotionObject, velocityX) == 0x24);
-STATIC_ASSERT(offsetof(struct MotionObject, targetX) == 0x38);
-STATIC_ASSERT(offsetof(struct MotionObject, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct MotionObject, records) == 0x50);
-STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 0x54);
-STATIC_ASSERT(offsetof(struct MotionObject, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct MotionObject) == 112);
+STATIC_ASSERT(offsetof(struct MotionObject, scaleX) == 24);
+STATIC_ASSERT(offsetof(struct MotionObject, x) == 8);
+STATIC_ASSERT(offsetof(struct MotionObject, velocityX) == 36);
+STATIC_ASSERT(offsetof(struct MotionObject, targetX) == 56);
+STATIC_ASSERT(offsetof(struct MotionObject, motionFlags) == 85);
+STATIC_ASSERT(offsetof(struct MotionObject, records) == 80);
+STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 84);
+STATIC_ASSERT(offsetof(struct MotionObject, update) == 108);
 
 s32 BattleObject_MarkForRelease(s32 objectId);
 struct BattleObject *BattleObject_Get(s32 objectId);

@@ -94,18 +94,18 @@ struct BattleSpoils {
   ///@}
 };
 
-STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
-STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 0x1f);
-STATIC_ASSERT(offsetof(struct BattleObject, active) == 0x28);
+STATIC_ASSERT(sizeof(struct BattleObject) == 44);
+STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 12);
+STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 28);
+STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 31);
+STATIC_ASSERT(offsetof(struct BattleObject, active) == 40);
 
-STATIC_ASSERT(sizeof(struct BattleActionRecord) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);
-STATIC_ASSERT(offsetof(struct BattleActionRecord, command) == 0x06);
-STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
-STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x1c);
+STATIC_ASSERT(sizeof(struct BattleActionRecord) == 16);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 4);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, command) == 6);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 8);
+STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 10);
+STATIC_ASSERT(sizeof(struct BattleSpoils) == 28);
 
 /// A unit's chosen action as the party's command menus write it: the
 /// BattleActionRecord, read with its fields unsigned.

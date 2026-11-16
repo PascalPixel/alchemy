@@ -140,15 +140,15 @@ struct DjinnMenuWork {
   s16 messageOffset; ///< ItemMenuWork's; not named here
 };
 
-STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tiles) == 0xa8);
-STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 0x2128);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, window) == 0x28);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, helpWindow) == 0xf0);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 0x128);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, backdrop) == 0x180);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, members) == 0x204);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, shownMember) == 0x216);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairMember) == 0x25c);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tiles) == 168);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 8488);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, window) == 40);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, helpWindow) == 240);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 296);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, backdrop) == 384);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, members) == 516);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, shownMember) == 534);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairMember) == 604);
 
 /// The four elements' Djinn, Venus to Jupiter.
 #define DJINN_ELEMENTS 4

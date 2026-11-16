@@ -158,9 +158,9 @@ struct EquipEffect {
   u8 padding[2]; ///< 0 in every row
 };
 
-STATIC_ASSERT(sizeof(struct EquipEffect) == 0x04);
-STATIC_ASSERT(offsetof(struct EquipEffect, kind) == 0x00);
-STATIC_ASSERT(offsetof(struct EquipEffect, amount) == 0x01);
+STATIC_ASSERT(sizeof(struct EquipEffect) == 4);
+STATIC_ASSERT(offsetof(struct EquipEffect, kind) == 0);
+STATIC_ASSERT(offsetof(struct EquipEffect, amount) == 1);
 
 /// An item's definition: its price, type, who can equip it, its bonuses and
 /// unleash, its effects and the action it is used for.
@@ -182,20 +182,20 @@ struct ItemDefinition {
   u16 abilityId;                   ///< the ability used, or taught as Psynergy
 };
 
-STATIC_ASSERT(sizeof(struct ItemDefinition) == 0x2c);
-STATIC_ASSERT(offsetof(struct ItemDefinition, price) == 0x00);
-STATIC_ASSERT(offsetof(struct ItemDefinition, type) == 0x02);
-STATIC_ASSERT(offsetof(struct ItemDefinition, flags) == 0x03);
-STATIC_ASSERT(offsetof(struct ItemDefinition, equipMask) == 0x04);
-STATIC_ASSERT(offsetof(struct ItemDefinition, icon) == 0x06);
-STATIC_ASSERT(offsetof(struct ItemDefinition, primaryBonus) == 0x08);
-STATIC_ASSERT(offsetof(struct ItemDefinition, secondaryBonus) == 0x0a);
-STATIC_ASSERT(offsetof(struct ItemDefinition, unleashChance) == 0x0b);
-STATIC_ASSERT(offsetof(struct ItemDefinition, useType) == 0x0c);
-STATIC_ASSERT(offsetof(struct ItemDefinition, unleashAbility) == 0x0e);
-STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
-STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
-STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 0x28);
+STATIC_ASSERT(sizeof(struct ItemDefinition) == 44);
+STATIC_ASSERT(offsetof(struct ItemDefinition, price) == 0);
+STATIC_ASSERT(offsetof(struct ItemDefinition, type) == 2);
+STATIC_ASSERT(offsetof(struct ItemDefinition, flags) == 3);
+STATIC_ASSERT(offsetof(struct ItemDefinition, equipMask) == 4);
+STATIC_ASSERT(offsetof(struct ItemDefinition, icon) == 6);
+STATIC_ASSERT(offsetof(struct ItemDefinition, primaryBonus) == 8);
+STATIC_ASSERT(offsetof(struct ItemDefinition, secondaryBonus) == 10);
+STATIC_ASSERT(offsetof(struct ItemDefinition, unleashChance) == 11);
+STATIC_ASSERT(offsetof(struct ItemDefinition, useType) == 12);
+STATIC_ASSERT(offsetof(struct ItemDefinition, unleashAbility) == 14);
+STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 20);
+STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 24);
+STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 40);
 
 /// Returns an item's definition.
 struct ItemDefinition *Item_GetDirectFar(s32 item);

@@ -37,12 +37,12 @@ struct TitlePaletteFade {
   u8 padding;  ///< never named
 };
 
-STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 0x3004);
-STATIC_ASSERT(offsetof(struct TitlePaletteFade, current) == 0x400);
-STATIC_ASSERT(offsetof(struct TitlePaletteFade, target) == 0x1000);
-STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 0x1c00);
-STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 0x2800);
-STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
+STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 12292);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, current) == 1024);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, target) == 4096);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 7168);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 10240);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 12288);
 
 /// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
@@ -66,12 +66,12 @@ struct PaletteFade {
   u8 padding;  ///< never named
 };
 
-STATIC_ASSERT(sizeof(struct PaletteFade) == 0x2a04);
-STATIC_ASSERT(offsetof(struct PaletteFade, current) == 0x380);
-STATIC_ASSERT(offsetof(struct PaletteFade, target) == 0xe00);
-STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1880);
-STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2300);
-STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x2a00);
+STATIC_ASSERT(sizeof(struct PaletteFade) == 10756);
+STATIC_ASSERT(offsetof(struct PaletteFade, current) == 896);
+STATIC_ASSERT(offsetof(struct PaletteFade, target) == 3584);
+STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 6272);
+STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 8960);
+STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 
 enum PaletteTransform {
   PALETTE_TRANSFORM_FROM_SOURCE = 0x8000,

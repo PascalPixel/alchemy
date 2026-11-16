@@ -13,7 +13,7 @@ struct TextReader {
   u32 bits;
 };
 
-STATIC_ASSERT(sizeof(struct TextReader) == 0x0c);
+STATIC_ASSERT(sizeof(struct TextReader) == 12);
 STATIC_ASSERT(offsetof(struct TextReader, words) == 4);
 STATIC_ASSERT(offsetof(struct TextReader, bits) == 8);
 

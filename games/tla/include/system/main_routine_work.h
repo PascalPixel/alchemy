@@ -228,13 +228,13 @@ struct MainRoutineWork {
   u8 unusedAfterStartStamp[4];
 };
 
-STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, next) == 0x1e0);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 0x214);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, battleType) == 0x24b);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 0x276);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2c4);
-STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2e0);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 16);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, next) == 480);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 532);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, battleType) == 587);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 630);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 708);
+STATIC_ASSERT(sizeof(struct MainRoutineWork) == 736);
 
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;

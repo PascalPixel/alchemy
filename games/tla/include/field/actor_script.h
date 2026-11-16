@@ -73,8 +73,8 @@ enum ActorScriptCommand {
 /// A jump's operand: the label SC_LABEL(n), which ActorScript_FindLabel
 /// matches without bit 30.
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
-#define SC_TOP 0          ///< Script start
-#define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
+#define SC_TOP 0         ///< Script start
+#define SC_FOREVER 65535 ///< An SC_LOOP count that never runs out
 
 #define SC_WAIT(n) SCRIPT_CMD_WAIT, (n) ///< Wait n frames.
 #define SC_SYNC SCRIPT_CMD_SYNC         ///< Wait for arrival.

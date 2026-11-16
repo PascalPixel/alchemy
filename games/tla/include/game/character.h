@@ -39,10 +39,10 @@ struct CharacterDefinition {
   u8 paddingAfterItems[2]; ///< padding
 };
 
-STATIC_ASSERT(sizeof(struct CharacterDefinition) == 0xb4);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, hp) == 0x50);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, elementBonus) == 0x92);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, items) == 0x98);
+STATIC_ASSERT(sizeof(struct CharacterDefinition) == 180);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, hp) == 80);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, elementBonus) == 146);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, items) == 152);
 
 /// A Djinni: its ability and the stat bonuses it gives while set.
 struct DjinnDefinition {
@@ -123,10 +123,10 @@ struct EnemyDefinition {
 };
 
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 76);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, items) == 0x1e);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 0x2e);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x42);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x48);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, items) == 30);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 46);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 66);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 72);
 
 /// An enemy's element preset in gEnemy_ElementPresetTable: the element it
 /// attacks with, its level in each element, and its base power and resistance

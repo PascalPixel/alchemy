@@ -102,7 +102,7 @@ struct SceneEntrance {
 /// exit whatever the flags hold, so a chain of exits always ends somewhere.
 #define EXIT_FLAG_NONE 0xffffffff
 /// The last header word: it ends the last scene's exits and the table.
-#define SCENE_EXITS_END 0x1ff
+#define SCENE_EXITS_END 511
 
 /// Actor placements.
 /// An actor a scene places: its sprite, the condition for placing it,

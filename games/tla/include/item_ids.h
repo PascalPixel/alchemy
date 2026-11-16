@@ -392,7 +392,7 @@ enum ItemId {
 
 /// Item filters an item trigger can take in place of one item
 /// (Item_MatchesFilter): any weapon, armor, shield or helm, or any item.
-#define ITEM_FILTER_EQUIPMENT 0x1fe
-#define ITEM_FILTER_ANY 0x1ff
+#define ITEM_FILTER_EQUIPMENT 510
+#define ITEM_FILTER_ANY 511
 
 #endif

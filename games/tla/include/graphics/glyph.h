@@ -18,8 +18,8 @@ struct GlyphPalette {
   s32 count;
 };
 
-STATIC_ASSERT(sizeof(struct GlyphPalette) == 0x104);
-STATIC_ASSERT(offsetof(struct GlyphPalette, count) == 0x100);
+STATIC_ASSERT(sizeof(struct GlyphPalette) == 260);
+STATIC_ASSERT(offsetof(struct GlyphPalette, count) == 256);
 
 /// A character of the text font: its width and its rows of pixels.
 struct FontGlyph {
@@ -47,10 +47,10 @@ typedef struct {
   u8 *encoded;   ///< the compressed icon
 } GlyphTransfer;
 
-STATIC_ASSERT(sizeof(GlyphTransfer) == 0x608);
-STATIC_ASSERT(offsetof(GlyphTransfer, tiles) == 0x400);
-STATIC_ASSERT(offsetof(GlyphTransfer, width) == 0x600);
-STATIC_ASSERT(offsetof(GlyphTransfer, encoded) == 0x604);
+STATIC_ASSERT(sizeof(GlyphTransfer) == 1544);
+STATIC_ASSERT(offsetof(GlyphTransfer, tiles) == 1024);
+STATIC_ASSERT(offsetof(GlyphTransfer, width) == 1536);
+STATIC_ASSERT(offsetof(GlyphTransfer, encoded) == 1540);
 
 /// A 16-pixel square icon's tiles at 4 bits a pixel, what VRAM takes of
 /// GlyphTransfer.tiles for an item, Psynergy or status icon.

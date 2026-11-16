@@ -80,9 +80,9 @@ struct ClassDefinition {
 
 extern const struct ClassDefinition gClass_DefinitionTable[];
 
-STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
+STATIC_ASSERT(sizeof(struct ClassDefinition) == 84);
 STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list) == 8);
-STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list.count) == 0x128);
+STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list.count) == 296);
 
 struct Unit *Unit_Get(u32 unitId);
 void Unit_UpdateClass(s32 owner);

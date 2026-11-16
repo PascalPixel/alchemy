@@ -39,7 +39,7 @@ enum SpriteColorMode {
 #define SPRITE_COLOR_BLINK 0x100
 
 /// SpriteAnimation.picture and pictureBase when no picture is shown.
-#define SPRITE_PICTURE_NONE 0xff
+#define SPRITE_PICTURE_NONE 255
 
 /// An animation number's bit 7: keep the place and timer of the script already
 /// running, as The Broken Seal's.
@@ -90,9 +90,9 @@ struct ActorSystemWork {
 };
 
 STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 0x1c);
-STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 24);
+STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 28);
+STATIC_ASSERT(sizeof(struct ActorSystemWork) == 92);
 
 /// The hardware sprite attributes one part of an animated sprite (its image or
 /// its shadow) is drawn with: the link to the next part queued at its depth,
@@ -157,14 +157,14 @@ struct Sprite {
   struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };
 
-STATIC_ASSERT(sizeof(struct SpriteAnimation) == 0x18);
-STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
-STATIC_ASSERT(offsetof(struct Sprite, scale) == 0x0c);
-STATIC_ASSERT(offsetof(struct Sprite, rotation) == 0x12);
-STATIC_ASSERT(offsetof(struct Sprite, width) == 0x14);
-STATIC_ASSERT(offsetof(struct Sprite, shadow) == 0x1c);
-STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
-STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
+STATIC_ASSERT(sizeof(struct SpriteAnimation) == 24);
+STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 12);
+STATIC_ASSERT(offsetof(struct Sprite, scale) == 12);
+STATIC_ASSERT(offsetof(struct Sprite, rotation) == 18);
+STATIC_ASSERT(offsetof(struct Sprite, width) == 20);
+STATIC_ASSERT(offsetof(struct Sprite, shadow) == 28);
+STATIC_ASSERT(sizeof(struct Sprite) == 56);
+STATIC_ASSERT(offsetof(struct Sprite, entries) == 40);
 
 /// An actor's sprite (struct Sprite) as the code that sets its image and shadow
 /// priorities reads it (the actors' freeze and placement, an actor taking the

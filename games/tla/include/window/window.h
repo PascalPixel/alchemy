@@ -75,31 +75,31 @@ struct WindowWork {
 };
 
 STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
-STATIC_ASSERT(offsetof(struct WindowWork, windows) == 0x508);
-STATIC_ASSERT(offsetof(struct WindowWork, channels) == 0x6b8);
-STATIC_ASSERT(offsetof(struct WindowWork, sprites) == 0x730);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) == 0xe30);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) == 0xe34);
+STATIC_ASSERT(offsetof(struct WindowWork, windows) == 1288);
+STATIC_ASSERT(offsetof(struct WindowWork, channels) == 1720);
+STATIC_ASSERT(offsetof(struct WindowWork, sprites) == 1840);
+STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) == 3632);
+STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) == 3636);
 
-STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 0xf38);
-STATIC_ASSERT(offsetof(struct WindowWork, colour) == 0xf3e);
-STATIC_ASSERT(offsetof(struct WindowWork, textBuffer) == 0xf40);
+STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 3896);
+STATIC_ASSERT(offsetof(struct WindowWork, colour) == 3902);
+STATIC_ASSERT(offsetof(struct WindowWork, textBuffer) == 3904);
 STATIC_ASSERT(offsetof(struct WindowWork, battleMode) == 5);
 STATIC_ASSERT(offsetof(struct WindowWork, textPalette) == 7);
-STATIC_ASSERT(offsetof(struct WindowWork, textTileState) == 0xe38);
+STATIC_ASSERT(offsetof(struct WindowWork, textTileState) == 3640);
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 0x1342);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1346);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 0x134c);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x136c);
-STATIC_ASSERT(sizeof(struct WindowWork) == 0x1390);
+STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 4930);
+STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 4934);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 4940);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 4972);
+STATIC_ASSERT(sizeof(struct WindowWork) == 5008);
 #else
-STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 0x1142);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1146);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 0x114c);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x116c);
-STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
+STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 4418);
+STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 4422);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 4428);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 4460);
+STATIC_ASSERT(sizeof(struct WindowWork) == 4496);
 #endif
 
 /// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and

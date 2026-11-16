@@ -26,10 +26,10 @@ struct EffectSprite {
   s16 pivotY;
 };
 
-STATIC_ASSERT(sizeof(struct EffectSprite) == 0x28);
-STATIC_ASSERT(offsetof(struct EffectSprite, x) == 0x0c);
-STATIC_ASSERT(offsetof(struct EffectSprite, angle) == 0x1c);
-STATIC_ASSERT(offsetof(struct EffectSprite, pivotX) == 0x24);
+STATIC_ASSERT(sizeof(struct EffectSprite) == 40);
+STATIC_ASSERT(offsetof(struct EffectSprite, x) == 12);
+STATIC_ASSERT(offsetof(struct EffectSprite, angle) == 28);
+STATIC_ASSERT(offsetof(struct EffectSprite, pivotX) == 36);
 
 #define EFFECT_SPRITE_HIDDEN (-1)
 

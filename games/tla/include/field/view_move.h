@@ -35,9 +35,9 @@ struct ViewMoveWork {
   s32 count;
 };
 
-STATIC_ASSERT(offsetof(struct ViewMoveWork, edgeX) == 0x1c);
-STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 0x20);
-STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 0x50);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, edgeX) == 28);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 32);
+STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 80);
 
 void ViewMove_Start(s32 direction);
 void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude);

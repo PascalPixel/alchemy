@@ -37,7 +37,7 @@ extern u8 gBgTileBuffer[];
 /// The world map area's four tile sets, decoded one after another into
 /// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
 /// The Broken Seal's.
-#define WORLD_MAP_TILE_SET_BYTES 0x2000
+#define WORLD_MAP_TILE_SET_BYTES 8192
 #define WORLD_MAP_TILE_SET(n)                                                  \
   (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
 /// The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's

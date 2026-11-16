@@ -34,7 +34,7 @@ struct InputState {
   volatile s32 repeatTimer;
 };
 
-STATIC_ASSERT(sizeof(struct InputState) == 0x24);
+STATIC_ASSERT(sizeof(struct InputState) == 36);
 STATIC_ASSERT(offsetof(struct InputState, held) == 0);
 STATIC_ASSERT(offsetof(struct InputState, pressed) == 4);
 STATIC_ASSERT(offsetof(struct InputState, repeat) == 12);

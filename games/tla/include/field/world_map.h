@@ -35,10 +35,10 @@ struct WorldMapWork {
   FIXED searchZ;
 };
 
-STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 0x1c);
-STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 0x62c);
-STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
-STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
+STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 28);
+STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 1580);
+STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 1602);
+STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 1608);
 
 /// The game flag that marks a World Map place visited, from its FlagEntry.flag.
 /// The first of those flags, a place's FlagEntry.flag being added to it.
@@ -77,8 +77,8 @@ struct FlagEntry {
   s16 entrance; ///< that scene's entrance
 };
 
-STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 0x0c);
-STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 0x10);
+STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 12);
+STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 16);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
 /// gMainRoutineWork.worldPictureFlag under a label of its own,

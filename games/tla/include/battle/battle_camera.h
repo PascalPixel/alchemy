@@ -30,11 +30,11 @@ struct BattleCamera {
   u8 unusedAfterYaw[20];      ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleCamera, focus) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
-STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
+STATIC_ASSERT(sizeof(struct BattleCamera) == 76);
+STATIC_ASSERT(offsetof(struct BattleCamera, focus) == 12);
+STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 28);
+STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 52);
+STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 54);
 
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
 /// toward and the frames left to ease it, and how the battle background is
@@ -68,12 +68,12 @@ struct BattlePresentationWork {
   u8 params[8][4];  ///< each target's animation entries' param, kept
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 0x20);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 0x10);
-STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
+STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 32);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 8);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 16);
+STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 88);
+STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 36);
+STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 54);
 
 /// BattleBackgroundWork.mode and secondMode: how the battle background is
 /// shown.
@@ -108,9 +108,9 @@ struct BattleAffineHdma {
   u16 lines[2][160];
 };
 
-STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
-STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
+STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 672);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 16);
+STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 32);
 
 struct BattlePlan;
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused);

@@ -15,8 +15,7 @@ void Pillar_LowerHeldCells(u16 *list) {
   }
   grid = Ram_MapShapeGrid;
   work->movedBlock = NULL;
-  if (*list != ACTOR_LIST_END) {
-  loop:
+  while (*list != ACTOR_LIST_END) {
     if (held == Actor_GetById(*list)) {
       u8 *layer = &held->layer;
       u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
@@ -40,7 +39,5 @@ void Pillar_LowerHeldCells(u16 *list) {
       work->movedBlock = held;
     }
     list++;
-    if (*list != ACTOR_LIST_END)
-      goto loop;
   }
 }

@@ -22,42 +22,42 @@ void Whirlwind_Update(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > toFIXED(272))
-      goto stop;
-    if (distance < -toFIXED(32))
-      goto stop;
-    {
-      if (self->riseCounter == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < toFIXED(12))
-          near = 1;
-        if (near && !Event_GetFlag(260)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-          work->raisedTrigger = 200;
-          gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-          self->riseCounter = 1;
-          self->riseEnabled = 1;
+    // While it is on screen, by its place across it.
+    if (distance <= toFIXED(272)) {
+      if (distance >= -toFIXED(32)) {
+        if (self->riseCounter == 0) {
+          distance = leader->y.fixed - self->y.fixed;
+          if (distance < 0)
+            distance = self->y.fixed - leader->y.fixed;
+          near = 0;
+          if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
+              distance < toFIXED(12))
+            near = 1;
+          if (near && !Event_GetFlag(260)) {
+            leader->facing = self->facing;
+            leader->watchedActor = self;
+            leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+            work->raisedTrigger = 200;
+            gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+            self->riseCounter = 1;
+            self->riseEnabled = 1;
+          }
         }
+        /* IwramMulFX reached from IwramIrqMain rather than at its fixed
+         * address: */
+        /* the address is a linked word read after the cosine, as the native
+         */
+        /* reads it after the speed (at Iwram_MulFX it is built before). */
+        self->x.fixed +=
+            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
+                Trig_Cos(self->facing), self->speedLimit);
+        self->z.fixed +=
+            ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
+                Math_Sin(self->facing), self->speedLimit);
+        return;
       }
-      /* IwramMulFX reached from IwramIrqMain rather than at its fixed
-       * address: */
-      /* the address is a linked word read after the cosine, as the native
-       */
-      /* reads it after the speed (at Iwram_MulFX it is built before). */
-      self->x.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
-          Trig_Cos(self->facing), self->speedLimit);
-      self->z.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
-          Math_Sin(self->facing), self->speedLimit);
-      return;
     }
   }
-stop:
   self->riseEnabled = 0;
   self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);

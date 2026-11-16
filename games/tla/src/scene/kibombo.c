@@ -826,15 +826,15 @@ void Kibombo_PiersThanksParty(void) {
   Event_SetMessageId((s32)MsgYouVeCome);
   // "You've come to help me get my orb back? Thank you, all of you!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
-  Actor_FaceDirectionAndWait(7, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetSpeed(7, 1.6);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, *(s16 *)((u8 *)leader + 10),
-                             *(s16 *)((u8 *)leader + 18));
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   GameFlag_Clear(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
@@ -1486,7 +1486,7 @@ ask:
   } else {
     // "Don't worry. Just use Scoop... You'll see why in just a few seconds..."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-    *(s16 *)(EVENT_WORK + 0x1c4) -= 2;
+    ((struct FieldWork *)EVENT_WORK)->message -= 2;
     // "I see..."
     FieldMessage_ShowAtActor(26, 0);
     goto ask;
@@ -1742,8 +1742,8 @@ void Kibombo_FlickerStatueFires(void) {
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
   s32 zero = 0;
-  struct Actor *object =
-      Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265), toFIXED(36), toFIXED(344));
+  struct Actor *object = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
+                                            toFIXED(36), toFIXED(344));
 
   *slot = object;
   if (object != 0) {
@@ -2374,17 +2374,11 @@ void Kibombo_GazeAtStatue(void) {
   Event_WaitTransitionFrames();
   Task_Add(Kibombo_FlickerStatueFires, TASK_PASS_VBLANK);
   Event_Wait(20);
-  i = 0;
-  goto test;
-next:
-  i++;
-test:
-  if (i > 159)
-    goto done;
-  Event_Wait(1);
-  if ((gInput.held & (KEY_A | KEY_B | KEY_START)) == 0)
-    goto next;
-done:
+  for (i = 0; i <= 159; i++) {
+    Event_Wait(1);
+    if (gInput.held & (KEY_A | KEY_B | KEY_START))
+      break;
+  }
   Task_Remove(Kibombo_FlickerStatueFires);
   gFieldWork->transitionFrames = 32;
   Event_FinishScreenTransition();

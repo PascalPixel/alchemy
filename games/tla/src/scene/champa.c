@@ -1382,7 +1382,7 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Champa_ShowTwoMessages(5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
+  Champa_ShowTwoMessages(5, 8, 5, 18, 8, 6, 8, 14, 8, 9, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHWEST);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Champa_CloseTwoMessages(5, 6);

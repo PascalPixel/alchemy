@@ -35,6 +35,9 @@
 /// hall greets it on its way back by the game's entrance.
 #define FLAG_LEFT_FOR_A_GAME 0x9e5
 
+/// Ends a u16 list of palette slots or colours, written -1 in its table.
+#define PALETTE_LIST_END ((u16)-1)
+
 /// The dice hall's ways back from its games.
 enum ContigoDiceHallEntrance {
   ENTRANCE_FROM_SUPER_LUCKY_DICE = 18,
@@ -357,7 +360,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   gPaletteColors = colours;
   gPaletteCycleColors = a;
   gPaletteCycleSlots = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
+  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
   next:
     {
       int red = *colours++;
@@ -366,7 +369,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
-    if (*slots != 0xffff && *colours != 0xffff)
+    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
       goto next;
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
@@ -407,11 +410,11 @@ void Contigo_StartFastPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
-/// Counts a list of palette slots ended by 0xffff, less one.
+/// Counts a list of palette slots ended by PALETTE_LIST_END, less one.
 s32 List_CountEntries(u16 *list) {
   s32 count = 0;
 
-  while (list[count] != 0xffff)
+  while (list[count] != PALETTE_LIST_END)
     count++;
   count--;
   return count;
@@ -2784,7 +2787,7 @@ u32 gContigo_WheelsPrizes[] = {
 
 s32 gContigo_EnterGameDoorScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_Z, -(toFIXED(1) / 2)),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
     SC_END,
@@ -2916,8 +2919,8 @@ u32 gContigo_IsaacLeavesScript[] = {
 };
 
 s32 gContigo_ShopsWatcherScript[] = {
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_ADD(SW_SCALE_X, -FIXED_ONE * 5 / 32),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_WAIT(2),

@@ -124,16 +124,16 @@ void Clear_LoadBackground(void) {
   ScreenFade_ToBlack(0);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   gBgScroll[2].y = 0;
-  blank = 0x1ff;
+  blank = 511;
   res = Resource_GetTableEntry(id);
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  res += 0x1c0;
+  res += 448;
   FieldDecompress_TaggedLz(res, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
-          DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
+          DMA_COPY_WORDS(240 * 160 / 4), REG_DMA3);
 
   map = (u16 *)BG_SCREEN_BLOCK(6);
-  tile = 0x1a0;
+  tile = 416;
   for (y = 0; y < 20; y++) {
     for (x = 0; x < 30; x++)
       *map++ = tile++;
@@ -241,7 +241,7 @@ u32 BuildStamp_GetTime(void);
 void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
 
-#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
+#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 12288)
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define YEAH_WIDTH 6
@@ -252,7 +252,7 @@ void StatusScreen_Run(void);
 #endif
 
 /// Swaps the map cell buffer out around a password or link screen.
-#define COPY_CELLS(to, from) Iwram_CopyWords((s32)(to), (s32)(from), 0x3000)
+#define COPY_CELLS(to, from) Iwram_CopyWords((s32)(to), (s32)(from), 12288)
 #define SAVE_CELLS()                                                           \
   u8 *cells = gSaveBuffer;                                                     \
                                                                                \
@@ -609,9 +609,9 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
   else if (cell <= 43)
     text[0] = cell + 209;
   else if (cell == 45)
-    text[0] = 0x86;
+    text[0] = 134;
   else if (cell == 44)
-    text[0] = 0xfd;
+    text[0] = 253;
   else if (cell <= 55)
     text[0] = (cell + 104) | 0x4000;
   else if (cell == 56)
@@ -663,8 +663,8 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 }
 #endif
 
-#define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
-#define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
+#define RECEIVED_FLAGS (Ram_MapCellBuffer + 12352)
+#define RECEIVED_UNITS (Ram_MapCellBuffer + 12864)
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
@@ -799,13 +799,13 @@ done:
   System_Wait(10);
   Window_Close(window, 2);
   flags = gGameFlagBytes;
-  Iwram_CopyWords(flags, RECEIVED_FLAGS, 0x214);
-  Iwram_CopyWords(flags + 0x220, RECEIVED_UNITS, 0xd20);
+  Iwram_CopyWords(flags, RECEIVED_FLAGS, 532);
+  Iwram_CopyWords(flags + 544, RECEIVED_UNITS, 3360);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
+  Iwram_CopyWords(RECEIVED_FLAGS, flags, 3904);
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
   return 1;
@@ -1228,10 +1228,10 @@ s32 Clear_EnterPassword(void) {
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
-            // XXX: what copy of the flags this restores; it lies 0xac into an
-            // EWRAM block nothing else names, and the routine that writes it
+            // XXX: what copy of the flags this restores; it lies 172 bytes into
+            // an EWRAM block nothing else names, and the routine that writes it
             // there would settle it.
-            Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
+            Iwram_CopyWords(Data_02012f94 + 172, gGameFlagBytes, 3904);
             return 0;
           }
           Sound_Play(SE_MENU_CANCEL);

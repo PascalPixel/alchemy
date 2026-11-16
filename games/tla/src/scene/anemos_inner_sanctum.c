@@ -1912,8 +1912,8 @@ u32 gAnemosInnerSanctum_MoteScript[] = {
 };
 
 s32 gAnemosInnerSanctum_SparkScript[] = {
-    SC_SET(SW_SCALE_X, toFIXED(2)),
-    SC_SET(SW_SCALE_Y, toFIXED(2)),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 2),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 2),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -6553),
     SC_ADD(SW_SCALE_Y, -6553),

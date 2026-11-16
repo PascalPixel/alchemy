@@ -657,7 +657,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
     Actor_SetPosition(ACTOR_HAMA, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
-      s32 facing = 0xc0;
+      s32 facing = 192;
 
       Actor_SetPositionAndFacing(ACTOR_HAMA, toFIXED(504), toFIXED(360),
                                  facing << 6);
@@ -758,8 +758,9 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 184, 0, 224, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CANNON, 0x190a, MOVEMENT_TYPE_STAND, 464, 0, 264,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CANNON, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+                    MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
@@ -839,8 +840,9 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceFlown[] = {
                     TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, 3, 204, 0,
                     204, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_CANNON, 0x190a, MOVEMENT_TYPE_STAND, 464, 0, 264,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CANNON, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+                    MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},

@@ -1766,8 +1766,8 @@ s32 Scene_Initialize(void) {
       beam = (s32 *)&((struct MapWork *)beam)->layers[2];
       beam[2] = toFIXED(1408);
       beam[3] = toFIXED(576);
-      beam[4] = toFIXED(0.25);
-      beam[5] = toFIXED(0.25);
+      beam[4] = FIXED_ONE / 4;
+      beam[5] = FIXED_ONE / 4;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
@@ -1843,8 +1843,8 @@ s32 Scene_Initialize(void) {
       beam = (s32 *)&((struct MapWork *)beam)->layers[2];
       beam[2] = toFIXED(1152);
       beam[3] = toFIXED(800);
-      beam[4] = toFIXED(0.8125);
-      beam[5] = toFIXED(0.8125);
+      beam[4] = FIXED_ONE * 13 / 16;
+      beam[5] = FIXED_ONE * 13 / 16;
       if (!GameFlag_Get(FLAG_AIRS_ROCK_TOP_OPENED)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
         MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
@@ -1920,7 +1920,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gAirsRock_WindStoneScript[] = {
-    SC_SET(SW_SCALE_Y, toFIXED(1.5)),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 2),
     SC_ANIMATION(2),
     SC_CALL((s32)AirsRock_ClearScriptedActorSpriteFlags),
     SC_END,

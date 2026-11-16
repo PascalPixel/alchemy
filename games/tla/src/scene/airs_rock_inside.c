@@ -3459,7 +3459,7 @@ u32 gAirsRockInside_PooledWhirlwindFadesScript[] = {
 };
 
 u32 gAirsRockInside_StatueScript[] = {
-    SC_SET(SW_SCALE_Y, toFIXED(1.5)),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 2),
     SC_SET(SW_STEERING, 0),
     SC_ANIMATION(2),
     SC_END,

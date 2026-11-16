@@ -31,6 +31,9 @@
 /// Indra Cavern: set once Lash has tied the rope between its posts.
 #define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
 
+/// Ends a u16 list of actor ids, written -1 in its table.
+#define ACTOR_LIST_END ((u16)-1)
+
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];
@@ -140,7 +143,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
   s32 height;
   s32 cell;
 
-  while (*ids != 0xffff) {
+  while (*ids != ACTOR_LIST_END) {
     actor = Actor_GetById(*ids);
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
@@ -231,12 +234,12 @@ void Caverns_StartMovingAngaraBlock(void) {
       Caverns_ShiftAngaraCellHeights(1);
   } else {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-    angle = (leader->facing + 0x2000) & 0xc000;
+    angle = (leader->facing + DEGtoANG(45)) & 0xc000;
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), angle, position);
-    while (*ids != 0xffff) {
+    while (*ids != ACTOR_LIST_END) {
       actor = Actor_GetById(*ids);
       if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
           position[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&

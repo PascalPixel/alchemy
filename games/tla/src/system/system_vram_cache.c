@@ -12,44 +12,45 @@
 // Entries with size <= VRAM_CACHE_SIZE_NO_BLOCKS do not own VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
-/// entry `id`, writing `id` into gVramCacheBlockOwners for each block.
-s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
+/// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Returns
+/// the run's byte offset, or -1 when no run fits.
+s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
-  s32 ret;
-  s32 pos;
+  s32 first;
+  s32 block;
   u32 i;
 
   blocks = size / VRAM_BLOCK_BYTES;
-  if (slot >= VRAM_CACHE_ENTRY_COUNT) {
+  if (id >= VRAM_CACHE_ENTRY_COUNT) {
     return -1;
   }
-  pos = 0;
+  block = 0;
   for (;;) {
-    if (pos >= VRAM_BLOCK_COUNT) {
+    if (block >= VRAM_BLOCK_COUNT) {
       return -1;
     }
-    if (gVramCacheBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE) {
-      if (pos + blocks > VRAM_BLOCK_COUNT) {
+    if (gVramCacheBlockOwners[block] == VRAM_BLOCK_OWNER_FREE) {
+      if (block + blocks > VRAM_BLOCK_COUNT) {
         return -1;
       }
-      ret = pos;
-      while (pos < ret + blocks) {
-        if (gVramCacheBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
+      first = block;
+      while (block < first + blocks) {
+        if (gVramCacheBlockOwners[block] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }
-        pos++;
+        block++;
       }
       for (i = 0; i < blocks; i++) {
-        gVramCacheBlockOwners[ret + i] = slot;
+        gVramCacheBlockOwners[first + i] = id;
       }
       break;
     }
   occupied:
-    pos += (u32)gVramCacheEntries[gVramCacheBlockOwners[pos]].size /
-           VRAM_BLOCK_BYTES;
+    block += (u32)gVramCacheEntries[gVramCacheBlockOwners[block]].size /
+             VRAM_BLOCK_BYTES;
   }
-  ret *= VRAM_BLOCK_BYTES;
-  return ret;
+  first *= VRAM_BLOCK_BYTES;
+  return first;
 }
 
 /// Returns the length, in blocks, of the longest run of free blocks. Nothing
@@ -73,8 +74,8 @@ s32 VramCache_GetLongestFreeRun(void) {
   return longestRun;
 }
 
-/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512
-/// blocks, as The Broken Seal's.
+/// Counts the free blocks (owner VRAM_BLOCK_OWNER_FREE) of the sprite VRAM
+/// cache's 512 blocks, as The Broken Seal's.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount;
@@ -112,15 +113,15 @@ s32 VramCache_FreeBlocks(s32 id) {
   return 0;
 }
 
-/// Frees a cache entry and the VRAM it holds; returns -1 for an index out of
+/// Frees cache entry `no` and the VRAM it holds; returns -1 for an entry out of
 /// range.
-s32 VramCache_FreeEntry(u32 resourceIndex) {
-  struct VramCacheEntry *entry = &gVramCacheEntries[resourceIndex];
+s32 VramCache_FreeEntry(u32 no) {
+  struct VramCacheEntry *entry = &gVramCacheEntries[no];
 
-  if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
+  if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
-    VramCache_FreeBlocks(resourceIndex);
+    VramCache_FreeBlocks(no);
     entry->offset |= VRAM_CACHE_OFFSET_FREE;
     entry->size = 0;
   }
@@ -129,15 +130,15 @@ s32 VramCache_FreeEntry(u32 resourceIndex) {
 
 /// Gives back entry `no`'s blocks but keeps the entry taken, with size 1, so a
 /// later VramCache_Load can refill it.
-s32 VramCache_ReleaseVram(u32 resourceIndex) {
-  struct VramCacheEntry *entry = &gVramCacheEntries[resourceIndex];
+s32 VramCache_ReleaseVram(u32 no) {
+  struct VramCacheEntry *entry = &gVramCacheEntries[no];
 
-  if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
+  if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     s32 value;
 
-    VramCache_FreeBlocks(resourceIndex);
+    VramCache_FreeBlocks(no);
     value = 1;
     entry->size = value;
   }

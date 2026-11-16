@@ -24,12 +24,12 @@ void *Resource_GetTableEntry(s32 resourceId);
 
 s32 VramCache_FindFreeEntry(void);
 s32 VramCache_AllocEntry(s32 size);
-s32 VramCache_Reload(s32 slot, s32 source);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 VramCache_FreeEntry(u32 slot);
-s32 VramCache_ReleaseVram(u32 slot);
-s32 VramCache_FreeBlocks(s32 slot);
-s32 VramCache_AllocateBlocks(u32 slot, u32 size);
+s32 VramCache_Reload(s32 no, s32 src);
+s32 VramCache_Load(u32 no, u32 size, const void *src);
+s32 VramCache_FreeEntry(u32 no);
+s32 VramCache_ReleaseVram(u32 no);
+s32 VramCache_FreeBlocks(s32 id);
+s32 VramCache_AllocateBlocks(u32 id, u32 size);
 
 s32 Decompress_TaggedLz(const void *source, void *destination);
 

@@ -2902,9 +2902,10 @@ void MarsLighthouseAerie_HaltJennasFather(void) {
 }
 #endif
 
-/// Records the four palette lists, writes each listed palette entry from its
-/// red, green and blue, then copies two palettes from block32 and starts the
-/// blend.
+/// Records the shimmer's four lists and sets each listed BG colour from its
+/// red, green and blue; then copies the BG and OBJ palettes into the palette
+/// fade's buffer and fades to them untinted; in teleport state 2 the party
+/// then arrives whirling.
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->paletteFade;
 

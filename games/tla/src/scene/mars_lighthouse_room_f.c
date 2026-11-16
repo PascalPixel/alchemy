@@ -1835,7 +1835,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Actor_Blink;
-    actor->facing = DEGtoANG(90);
+    actor->facing = FACING_SOUTH;
     Actor_SelectAnimation(actor, 49);
     for (;;) {
       if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->layer, actor->x.fixed,
@@ -1877,7 +1877,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         if (result > 0)
           break;
         if (result < 0) {
-          actor->facing = DEGtoANG(90);
+          actor->facing = FACING_SOUTH;
           Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
           break;
         }
@@ -1886,7 +1886,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
-          if (other->script != 0 && (*flags & 1) && other != actor &&
+          if (other->script != 0 && (*flags & ACTOR_SOLID) && other != actor &&
               Event_CheckSpheresOverlap(&other->x.fixed, radius,
                                         (s32 *)&position,
                                         other->radius - 2) >= 0) {
@@ -1933,8 +1933,8 @@ void MarsLighthouseRoomF_KnockBackIfHit(void) {
 
 void ScreenTransition_Start(s32 mode, s32 frames);
 
-/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
-/// Seal): the leader slides until the ice stops.
+/// Hit by a rolling fireball (STEP_TRIGGER_FIREBALL_HIT): the leader is hurt,
+/// blinks, and is carried along with it until it stops.
 s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
@@ -2482,11 +2482,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   s32 toZ;
 
   if ((u16)shape != gPushKinds[(u16)i]) {
-  next:
-    j = (u16)((i << 16) + 0x10000 >> 16);
-    i = j;
-    if (j <= 5 && (u16)shape != gPushKinds[j])
-      goto next;
+    do {
+      j = (u16)((i << 16) + 0x10000 >> 16);
+      i = j;
+    } while (j <= 5 && (u16)shape != gPushKinds[j]);
   }
   j = (u16)i;
   if (j == 6)

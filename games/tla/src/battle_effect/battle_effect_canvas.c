@@ -1039,25 +1039,25 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                       FIXED_ONE / 4);
+                                       CANVAS_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(1),
                          CANVAS_BYTES);
       break;
-    case 4:
+    case CANVAS_COPY_AND_BRIGHTEN:
       ColorBuffer_Brighten(source, work->transferValue,
                            (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
@@ -1102,24 +1102,24 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2),
                           BATTLE_BACKGROUND_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
                                        BATTLE_BACKGROUND_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
                          BATTLE_BACKGROUND_BYTES);
       break;
@@ -1145,25 +1145,25 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
-      Iwram_FillWords(source, 0x3c00, work->transferValue);
+      Iwram_FillWords(source, CANVAS_VIEW_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x3c00);
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), CANVAS_VIEW_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                       0x3c00);
+                                       CANVAS_VIEW_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
-                         0x3c00);
+                         CANVAS_VIEW_BYTES);
       break;
     }
     // DEAD: nothing uses the counter read here; the ROM keeps its load.
@@ -1236,6 +1236,8 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
+/// Darkens the battle background a step each frame while the canvas is open, so
+/// the effect stands out.
 void Palette_StepFadeTransfer(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
@@ -1265,22 +1267,21 @@ void BattleEffect_ClearActorTimers(void) {
 /// Counts down each target's flash timer; when one runs out, the target gets
 /// its own palette back.
 void BattleEffect_CountDownBattlerTints(void) {
-  u8 *base;
-  s32 i;
-  s32 index;
+  struct BattleEffectWork *work;
+  s32 actorIndex;
 
-  base = Ram_HeapSlots->battleEffect;
-  i = 0;
+  work = Ram_HeapSlots->battleEffect;
+  actorIndex = 0;
   do {
-    if (base[0x78dc + i] != 0) {
-      if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
-        index = i * 2 + 36;
-        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index),
+    if (work->actorTimers[actorIndex] != 0) {
+      if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
+          0) {
+        BattleEffect_TintBattler(work->args->targets[actorIndex],
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
-    i += 1;
-  } while (i != 8);
+    actorIndex += 1;
+  } while (actorIndex != 8);
 }
 
 /// Shows the canvas on BG2 at half width across the whole screen, blended over

@@ -91,7 +91,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   DrawRectangleFn *blit;
   FIXED posX;
   FIXED posZ;
-  s32 t56;
+  s32 sinceSeal;
   s32 red;
   s32 green;
   s32 blue;
@@ -109,7 +109,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 cell;
   s32 phase;
   s32 halfCell;
-  s32 twenty;
+  s32 dimming;
   s32 width;
 
   canvas = Ram_HeapSlots->battleCanvas;
@@ -333,15 +333,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
     }
-    t56 = frame - 56;
-    if (t56 >= 0 && t56 < 76) {
+    sinceSeal = frame - 56;
+    if (sinceSeal >= 0 && sinceSeal < 76) {
       struct Scale pulseScale = gCharon_PulseScale;
 
-      pulseScale.x = pulseScale.y = Trig_Sin(t56 << 7) * 2 + DEGtoANG(90);
+      pulseScale.x = pulseScale.y = Trig_Sin(sinceSeal << 7) * 2 + DEGtoANG(90);
       pulsePlace[3] = 0;
       pulsePlace[1] = toFIXED(255);
       pulsePlace[0] = toFIXED(114);
-      pulsePlace[2] = INTtoFIXED(t56 >= 0 ? 78 : 100);
+      pulsePlace[2] = INTtoFIXED(sinceSeal >= 0 ? 78 : 100);
       Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
                                         0);
     }
@@ -980,7 +980,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
     }
-    if (t56 >= 0 && t56 < 24) {
+    if (sinceSeal >= 0 && sinceSeal < 24) {
       s32 radius = frame * 2 - 104;
       s32 row = (radius - 10) / 6;
       s32 x;
@@ -1032,7 +1032,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         *color = RGB(r, g, b);
       }
     }
-    if (t56 >= 0 && t56 < 36) {
+    if (sinceSeal >= 0 && sinceSeal < 36) {
       if (frame == 56) {
         s32 x;
         s32 y;
@@ -1066,7 +1066,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u16 *entry = (u16 *)&BG_PLTT_COLOR(14, 0);
 
         for (i = 0; i != 16; i++, color++, entry++) {
-          s32 add = (FIXEDtoINT(Trig_Cos(t56 << 9) * 12)) + 16;
+          s32 add = (FIXEDtoINT(Trig_Cos(sinceSeal << 9) * 12)) + 16;
           s32 r = RGB_RED(*color) + add;
           s32 g = RGB_GREEN(*color) + add;
           s32 b = RGB_BLUE(*color) + add;
@@ -1283,7 +1283,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
 
   width = 56;
-  twenty = 20;
+  dimming = 20;
   frame = 0;
   do {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame < 120) {
@@ -1420,9 +1420,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (j = 0; j != BATTLE_BACKGROUND_COLORS; j++) {
-            s32 tr = RGB_RED(target[j]) - twenty / 2;
+            s32 tr = RGB_RED(target[j]) - dimming / 2;
             s32 tg = RGB_GREEN(target[j]) - 20;
-            s32 tb = RGB_BLUE(target[j]) - twenty / 2;
+            s32 tb = RGB_BLUE(target[j]) - dimming / 2;
             s32 r = RGB_RED(color[j]);
             s32 g = RGB_GREEN(color[j]);
             s32 b = RGB_BLUE(color[j]);

@@ -1870,7 +1870,7 @@ void Orb_SpawnRising(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = (void (*)(void))Orb_UpdateRising;
-    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 2;
   }
@@ -2777,7 +2777,7 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
     s32 zero = 0;
 
     work[0x138a] = zero;
-    ones.value = 0xffff;
+    ones.value = -1;
     party->haltedActor = raw.value | ones.value;
     Actor_Get(held)->update = (void *)zero;
     FieldActor_SetSpriteColor(Actor_Get(held), SPRITE_COLOR_NORMAL);

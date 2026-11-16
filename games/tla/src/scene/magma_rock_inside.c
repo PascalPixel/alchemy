@@ -449,9 +449,9 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by 0xffff: clears the object's mark and, on a
-/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-/// the mark.
+/// For each id of a list ended by ID_LIST_END: clears the object's mark and, on
+/// a cell with attribute bit 6, blocks the cells ahead of and behind it and
+/// sets the mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -755,14 +755,14 @@ void MagmaRockInside_FlashStatue(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
-// The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
-// for the row of the cell under the watch, sets the watch's object to the row's
-// object and returns its value; otherwise returns the value of the last row
-// passed (0 for none).
+// The cell watch's table lookup over (id, cell, value) rows ended by
+// ID_LIST_END: for the row of the cell under the watch, sets the watch's object
+// to the row's object and returns its value; otherwise returns the value of the
+// last row passed (0 for none).
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by 0xffff: on a match, makes the row's actor the target and returns
-/// its value.
+/// ended by ID_LIST_END: on a match, makes the row's actor the target and
+/// returns its value.
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;

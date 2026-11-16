@@ -1189,7 +1189,8 @@ void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
   s32 spin;
 
   if (actor != 0) {
-    actor->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
+    actor->bounce =
+        Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
     spin = (u16)Random16() - DEGtoANG(180);

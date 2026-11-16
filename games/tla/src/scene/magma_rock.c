@@ -229,9 +229,9 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 #include "shared/block_clear_cells.h"
 
-/// For each id of a list ended by 0xffff: settles the object on its ground,
-/// copies the cell under it, and blocks the cells ahead of and behind it on a
-/// cell with attribute bit 6.
+/// For each id of a list ended by ID_LIST_END: settles the object on its
+/// ground, copies the cell under it, and blocks the cells ahead of and behind
+/// it on a cell with attribute bit 6.
 void MagmaRock_SettleBlocks(u16 *ids) {
   while (*ids != ID_LIST_END) {
     struct Actor *actor = Actor_Get(*ids);
@@ -637,8 +637,8 @@ void MagmaRock_WarnStatue(struct Actor *actor) {
 }
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by 0xffff: on a match, makes the row's actor the target and returns
-/// its value.
+/// ended by ID_LIST_END: on a match, makes the row's actor the target and
+/// returns its value.
 s32 MagmaRock_FindStatue(u16 *table) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
@@ -657,8 +657,8 @@ s32 MagmaRock_FindStatue(u16 *table) {
   return result;
 }
 
-/// Looks up the cell at (x, z) in an (actor, cell, value) table ended by 0xffff
-/// and returns the value of its row.
+/// Looks up the cell at (x, z) in an (actor, cell, value) table ended by
+/// ID_LIST_END and returns the value of its row.
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
   s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
@@ -2346,7 +2346,7 @@ s16 gMagmaRock_SalamanderTailLowerStatues[] = {
     13, 30, -1, -1,
 };
 
-/// The lower level's crumbling pillars: (actor, flag) rows ended by 0xffff, the flag set once cracked and the next once fallen.
+/// The lower level's crumbling pillars: (actor, flag) rows ended by -1, the flag set once cracked and the next once fallen.
 s16 gMagmaRock_CrumblingPillars[] = {
     9, 512, 10, 514, -1,
 };

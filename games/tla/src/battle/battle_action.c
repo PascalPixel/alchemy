@@ -286,8 +286,10 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_DJINN_COUNTER:
     abilityId = ABILITY_DJINN_COUNTER;
-    if ((u16)(actor->enemyId - 101) <= 2)
-      abilityId = 1;
+    // Poseidon answers with a plain attack.
+    if ((u16)(actor->enemyId - ENEMY_POSEIDON) <=
+        ENEMY_UNUSED_POSEIDON - ENEMY_POSEIDON)
+      abilityId = ABILITY_ATTACK;
     if (selectedTargetId == BATTLE_UNIT_LIST_END)
       return ACTION_NOTHING_TO_SHOW;
     plan->targetCount = 1;
@@ -489,7 +491,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
                                  POSE_CAST);
         Actor_SetAnimationSpeedFar(
-            (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
+            (struct Actor *)BattleObject_Get(request->unitId)->object,
+            ANIMATION_STEP_NORMAL * 2);
         ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
                          GLOW_BURST, 0);
         BattlePlayback_WaitForReady();

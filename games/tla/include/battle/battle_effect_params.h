@@ -7,6 +7,10 @@
 /// BattleEffectParams.side: the side the targets are on.
 enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
 
+/// What a critical hit adds to an attack's effect kind: BattleStaging_RunAttack
+/// plays the critical version of the blow, as The Broken Seal's does.
+#define EFFECT_ID_CRITICAL_OFFSET 200
+
 /// The command shared by an effect's caller, dispatcher and handlers.
 struct BattleEffectParams {
   s32 kind;        ///< the effect's index in the handler table

@@ -35,7 +35,9 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   s32 count;
   s32 i;
 
-  if ((u32)(plan->staging - 15) > 2 || plan->failure != 0)
+  if ((u32)(plan->staging - STAGING_BEAST_ATTACK) >
+          STAGING_BEAST_PSYNERGY - STAGING_BEAST_ATTACK ||
+      plan->failure != 0)
     return NULL;
   {
     u8 sides = (plan->unitId ^ plan->targetIds[0]) & 0x80;
@@ -160,17 +162,17 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   }
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->unitId)->object;
-  Actor_SelectAnimationFar(actor, 3);
-  Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
+  Actor_SelectAnimationFar(actor, POSE_CAST);
+  Actor_SetAnimationSpeedFar((struct Actor *)actor, ANIMATION_STEP_NORMAL);
   IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
-    BattleHighlight_SetSpriteMode(saved->unitId, 1);
+    BattleHighlight_SetSpriteMode(saved->unitId, SPRITE_SEMI_TRANSPARENT);
   } else {
     count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++)
-      BattleHighlight_SetSpriteMode(ids[i], 1);
+      BattleHighlight_SetSpriteMode(ids[i], SPRITE_SEMI_TRANSPARENT);
   }
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
     REG_BLDALPHA = (i << 8) | (BLEND_WEIGHT_MAX - i);
@@ -214,16 +216,17 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
   object->y = toFIXED(40);
   object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : DEGtoANG(180);
-  BattleHighlight_SetSpriteMode(saved->unitId, 1);
+  BattleHighlight_SetSpriteMode(saved->unitId, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i <= 29; i++) {
-    object->y = (29 - i) * 3 << 16;
+    object->y = toFIXED((29 - i) * 3);
     object->velocityY = 0;
-    object->angle += 0x2222;
+    // Four turns over the 30 frames.
+    object->angle += TRIG_TURN * 4 / 30;
     if (i < BLEND_WEIGHT_MAX)
       REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
   }
-  BattleHighlight_SetSpriteMode(saved->unitId, 0);
+  BattleHighlight_SetSpriteMode(saved->unitId, SPRITE_OPAQUE);
   return saved;
 }
 
@@ -257,11 +260,11 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
   IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
-  BattleHighlight_SetSpriteMode(unitId, 1);
+  BattleHighlight_SetSpriteMode(unitId, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i != 16; i++) {
     s32 fade;
 
-    object->y = i << 18;
+    object->y = toFIXED(i * 4);
     object->angle += DEGtoANG(45);
     fade = i * 2 - 16;
     if (fade < 0)
@@ -282,7 +285,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
     ids[0] = unitId;
     ids[1] = BATTLE_UNIT_LIST_END;
     BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
-    BattleHighlight_SetSpriteMode(unitId, 1);
+    BattleHighlight_SetSpriteMode(unitId, SPRITE_SEMI_TRANSPARENT);
   } else {
     count = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
@@ -293,7 +296,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
     }
     BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
     for (i = 0; i < count; i++)
-      BattleHighlight_SetSpriteMode(ids[i], 1);
+      BattleHighlight_SetSpriteMode(ids[i], SPRITE_SEMI_TRANSPARENT);
   }
   BattleMotion_ReturnToSpot(unitId);
   SET_POSITION(object, object->targetX, object->targetY, object->targetZ);
@@ -303,12 +306,12 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
     wait(1);
   }
   if (saved->single) {
-    BattleHighlight_SetSpriteMode(unitId, 0);
+    BattleHighlight_SetSpriteMode(unitId, SPRITE_OPAQUE);
   } else {
     s32 total = BattleUnit_ListIds((saved->unitId != 0) + 1, ids);
 
     for (i = 0; i < total; i++)
-      BattleHighlight_SetSpriteMode(ids[i], 0);
+      BattleHighlight_SetSpriteMode(ids[i], SPRITE_OPAQUE);
   }
 }
 
@@ -374,10 +377,11 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   if (work.kind == 10)
-    Actor_SelectAnimationFar(object, 2);
+    Actor_SelectAnimationFar(object, POSE_LEAP);
   else
-    BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
-                                BattleSprite_GetAttackHop(unit->enemyId) << 16);
+    BattleMotion_ApproachTarget(
+        work.actor, work.actors[0], frames,
+        INTtoFIXED(BattleSprite_GetAttackHop(unit->enemyId)));
   if ((mode & 32) && plan->unitId != plan->partnerId &&
       plan->partnerId != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->partnerId);
@@ -385,14 +389,16 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
     frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
-    BattleMotion_ApproachTarget(
-        plan->partnerId, work.actors[0], frames,
-        BattleSprite_GetAttackHop(Unit_Get(plan->partnerId)->enemyId) << 16);
+    BattleMotion_ApproachTarget(plan->partnerId, work.actors[0], frames,
+                                INTtoFIXED(BattleSprite_GetAttackHop(
+                                    Unit_Get(plan->partnerId)->enemyId)));
     Actor_SetAnimationSpeedFar(
-        (struct Actor *)((struct BattleObject *)object)->object, 16);
+        (struct Actor *)((struct BattleObject *)object)->object,
+        ANIMATION_STEP_NORMAL);
   }
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
+      (struct Actor *)BattleObject_Get(work.actor)->object,
+      ANIMATION_STEP_NORMAL);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
@@ -425,8 +431,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (plan->battleEffect != 0)
       work.flags = 1;
     if (critical != 0)
-      work.kind += 200;
-    if (work.kind != 210 && critical != 0) {
+      work.kind += EFFECT_ID_CRITICAL_OFFSET;
+    if (work.kind != EFFECT_ID_CRITICAL_OFFSET + 10 && critical != 0) {
       zoomOnCritical = 1;
       view->flag = 1;
       criticalPair[0] = work.actor;
@@ -477,6 +483,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
+/// Marks the item in `slot` broken; returns -1 for an empty slot.
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises
@@ -518,7 +525,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SelectAnimationFar(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
   else
@@ -699,7 +706,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
   Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.actor, plan->element, GLOW_STREAKS, 0);

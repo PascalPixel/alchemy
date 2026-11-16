@@ -246,13 +246,20 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       continue;
     if (object->recordStorageKind != ACTOR_SPRITE_NONE)
       continue;
-    if ((battleObject->resource & 0xfff) == 561 ||
-        (battleObject->resource & 0xfff) == 631 ||
-        (battleObject->resource & 0xfff) == 638 ||
-        (battleObject->resource & 0xfff) == 585 ||
-        (battleObject->resource & 0xfff) == 579 ||
-        (battleObject->resource & 0xfff) == 581 ||
-        (battleObject->resource & SPRITE_ID_MASK) == 583) {
+    if ((battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_SERPENT ||
+        (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_KRAKEN ||
+        (battleObject->resource & SPRITE_ID_MASK) ==
+            SPRITE_BATTLE_FUSION_DRAGON ||
+        (battleObject->resource & SPRITE_ID_MASK) == SPRITE_BATTLE_POSEIDON ||
+        (battleObject->resource & SPRITE_ID_MASK) ==
+            SPRITE_BATTLE_DOOM_DRAGON_A ||
+        (battleObject->resource & SPRITE_ID_MASK) ==
+            SPRITE_BATTLE_DOOM_DRAGON_E ||
+        (battleObject->resource & SPRITE_ID_MASK) ==
+            SPRITE_BATTLE_DOOM_DRAGON_H) {
+      // A two-part enemy: its two sprites in the actor system's next group
+      // table. BUG: a failed create leaves record null, and its flags are still
+      // written.
       records = (struct Sprite **)Ram_HeapSlots->actorSystem->spriteGroups +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
@@ -353,9 +360,9 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
   s32 placementIndex;
 
   if (unitId > ALLY_MAX)
-    unitId -= 120;
+    unitId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   placementIndex = unitId;
-  if (battle->placement[placementIndex] == 0xff)
+  if (battle->placement[placementIndex] == BATTLE_OBJECT_NONE)
     return 0;
   return &objects[battle->placement[placementIndex]];
 }
@@ -512,15 +519,14 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// Returns a unit's battle object, through its place in BattleWork.placement,
 /// or null for a unit with no place.
 static __inline__ struct BattleObject *BattleObject_FindSlot(s32 id) {
-  u8 *work = (u8 *)Ram_HeapSlots->battleWork;
-  struct BattleObject *slots = ((struct BattleWork *)work)->slots;
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleObject *slots = work->slots;
 
   if (id > ALLY_MAX)
-    id -= 0x78;
-  id += 0x74;
-  if (work[id] == 0xff)
+    id -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+  if (work->placement[id] == BATTLE_OBJECT_NONE)
     return NULL;
-  return &slots[work[id]];
+  return &slots[work->placement[id]];
 }
 
 /// Frees the enemy sprite slots a unit holds and marks its actor for release at
@@ -542,7 +548,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 
   i = 0;
   do {
-    no = i + 0x78;
+    no = i + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
     if (i <= ALLY_MAX) {
       no = i;
     }
@@ -652,7 +658,7 @@ struct BattleObject *BattleObject_Get(s32 objectId) {
   s32 index;
 
   if (objectId > ALLY_MAX) {
-    objectId -= 0x78;
+    objectId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   }
   index = objectId;
   if (work->placement[index] == BATTLE_OBJECT_NONE) {

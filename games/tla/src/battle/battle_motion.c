@@ -329,7 +329,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
 
   BattleCamera_ApplyTransform();
   scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
-  if (BattleSprite_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
+  if (BattleSprite_IsSmall(Unit_Get(slot)->enemyId) != 0)
     screen[1] -= Iwram_MulFX(scale, 24);
   else
     screen[1] -= Iwram_MulFX(scale, 48);

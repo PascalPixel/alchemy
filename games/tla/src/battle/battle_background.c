@@ -232,10 +232,11 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   scanlines->page ^= 1;
 }
 
+/// Unused: sets the camera's eye at its stored distance without taking a zoom.
 #ifdef UBFIX
-void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
+UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
-void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
+UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   FIXED span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
@@ -470,30 +471,12 @@ s32 Battle_AdjustDebugValue(s32 value) {
 
 // Battle presentation: toggle translucency on unit graphics.
 
-/// A part of a unit's sprite (its image, or its shadow at 0x1c) as the
-/// highlight reads its OBJ mode.
-struct ActorSpritePart {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u8 unk06[0x16];
-};
-
-/// A unit's sprite as the highlight reads it: its image and its shadow.
-struct ActorSpriteRecord {
-  struct ActorSpritePart part[2];
-};
-
-/// Sets the OBJ mode of both sprite parts of each of the actor's records.
+/// Sets the sprite mode of a unit's picture and its shadow.
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
   struct MotionObject *object;
-  struct ActorSpriteRecord *record;
-  struct ActorSpriteRecord **records;
+  struct Sprite *record;
+  struct Sprite **records;
   s32 i;
 
   if (slot == 0)
@@ -504,8 +487,8 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   switch (object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
   case ACTOR_SPRITE_ONE: {
     record = object->records;
-    record->part[0].objectMode = mode;
-    record->part[1].objectMode = mode;
+    record->image.objectMode = mode;
+    record->shadow.objectMode = mode;
     break;
   }
   case ACTOR_SPRITE_GROUP: {
@@ -515,8 +498,8 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
       record = *records++;
       if (record == 0)
         break;
-      record->part[0].objectMode = mode;
-      record->part[1].objectMode = mode;
+      record->image.objectMode = mode;
+      record->shadow.objectMode = mode;
       i++;
     } while (i <= 3);
     break;
@@ -806,21 +789,17 @@ s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 /// of its brightness once the field marks it ready.
 s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleCanvas;
-  u8 *context = Ram_HeapSlots->battleEffect;
+  struct SparkWork *work = Ram_HeapSlots->battleEffect;
 
   if (source != 0) {
-    u32 *active = (u32 *)(context + 0x13c0);
-
-    if (*active != 0) {
-      *active = 0;
+    if (work->ready != 0) {
+      work->ready = 0;
       return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
                                             FIXED_ONE / 4);
     }
   }
   return (s32)source;
 }
-
-s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 
 /// Returns the x of the point at angle and radius from the origin.
 static __inline__ s32 PolarX(s32 angle, FIXED radius) {
@@ -938,11 +917,6 @@ s32 ElementGlow_End(s32 unused) {
 
 /// Does nothing; nothing calls it.
 void ElementGlow_ReservedNoOp(void) {}
-
-s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
-void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
-void BattleEffect_StartElementStreaksFar(s32 mode);
-void BattleEffect_EndElementStreaksFar(void);
 
 /// Plays a unit's element glow in one of four ways, and returns when it is
 /// over: 0, the star field around the unit while the backdrop darkens over 25

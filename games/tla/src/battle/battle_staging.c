@@ -25,12 +25,12 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   case FELIX:
   case JENNA:
   case PIERS:
-    characterId = 0x4001;
+    characterId = EFFECT_BY_ID_RANGE | 1;
     break;
   case IVAN:
   case MIA:
   case SHEBA:
-    characterId = 0x4004;
+    characterId = EFFECT_BY_ID_RANGE | 4;
     break;
   }
   return characterId;
@@ -59,7 +59,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
     own = 1;
   own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
   plan->element = ELEMENT_MARS;
-  plan->staging = 14;
+  plan->staging = STAGING_DAEDALUS;
   {
     s32 half = source[3];
     s16 *value;
@@ -225,13 +225,11 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case STAGING_FULL_SCREEN:
       BattleStaging_HideField(&battle->plan, 0);
       break;
-    // XXX: no ability's staging is 14 or 17 (gAbilityStaging), and no code sets
-    // them; a debug battle or a table row another edition has would settle it.
-    case 14:
+    case STAGING_DAEDALUS:
       BattleStaging_HideField(&battle->plan, 3);
       break;
     case STAGING_CAST:
-    case 17:
+    case STAGING_BEAST_PSYNERGY:
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_PSYNERGY);
       break;
     case STAGING_DJINNI:
@@ -343,8 +341,8 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   livingTargets = 0;
   effect->flags = 0;
   flags = plan->battleEffect;
-  effect->kind = flags & 0xfff;
-  effect->variant = (flags & 0x3000) >> EFFECT_VARIANT_SHIFT;
+  effect->kind = flags & EFFECT_ID_MASK;
+  effect->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   effect->actor = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
@@ -352,7 +350,8 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
-          (Unit_Get(*inputTarget)->hp != 0 || (plan->battleEffect & 0x10000))) {
+          (Unit_Get(*inputTarget)->hp != 0 ||
+           (plan->battleEffect & EFFECT_ON_DOWNED))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }
@@ -491,7 +490,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   if (mode & STAGING_HIDE_ACTOR)
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
-    REG_BLDALPHA = (BLEND_WEIGHT_MAX - i) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     wait(1);
   }
 
@@ -567,7 +566,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       BattleHighlight_SetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
   }
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
-    REG_BLDALPHA = i | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (i = 0; i != count; i++)

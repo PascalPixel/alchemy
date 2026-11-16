@@ -141,6 +141,7 @@ void ScriptedBattle_RestoreUnits(void) {
   }
 }
 
+/// Works out a character's class, Psynergy and base elements again.
 void Unit_UpdateClassFar(s32 owner);
 
 /// Debug: replaces the party with parameter set number preset, each member at
@@ -231,6 +232,12 @@ void Battle_DebugStartNoOp(void) {}
 
 extern u8 gDebugTextEnabled;
 
+/// The encounter the debug battle starts with (Moapa and two Knights), and The
+/// Broken Seal's Djinn tutorial encounter, here an unused Mars Djinni's
+/// battle: rows of formations.c.
+#define DEBUG_FIRST_ENCOUNTER 69
+#define DJINN_TUTORIAL_ENCOUNTER 28
+
 /// Debug: the battle test menu, which never returns. It fights encounter 69
 /// again and again with auto battle on, unless Down is held at the start to
 /// open the chooser of encounter and parameter set.
@@ -251,7 +258,7 @@ restart:
   Task_ResetAll();
   Heap_Initialize();
   VramCache_Reset();
-  encounter = 69;
+  encounter = DEBUG_FIRST_ENCOUNTER;
   GameFlag_Set(FLAG_AUTO_BATTLE);
   if (down) {
     preset = 0;
@@ -297,7 +304,7 @@ restart:
       Unit_CalculateFar(0);
       *backdropId = RESOURCE_COLOSSO_BACKDROP;
       m = &gMainRoutineWork;
-      if (encounter == 28)
+      if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_Set(FLAG_DJINN_LESSON);
       GameFlag_Set(FLAG_DEBUG_BATTLE);
       if (startModeSet)
@@ -312,6 +319,6 @@ restart:
     }
   }
   GameFlag_Set(FLAG_DEBUG_BATTLE);
-  Battle_Run(69);
+  Battle_Run(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }

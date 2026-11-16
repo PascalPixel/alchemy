@@ -279,7 +279,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   s32 unitId;
   s32 value;
   s32 nextValue;
-  s32 temp;
+  s32 swap;
   s32 ownSide;
   s32 kindIndex;
   s32 applies;
@@ -370,12 +370,12 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
           nextValue = nextUnit->hpMax;
         }
         if (value < nextValue) {
-          temp = unitIds[innerIndex];
+          swap = unitIds[innerIndex];
           unitIds[innerIndex] = unitIds[innerIndex + 1];
-          unitIds[innerIndex + 1] = temp;
-          temp = targetPositions[innerIndex];
+          unitIds[innerIndex + 1] = swap;
+          swap = targetPositions[innerIndex];
           targetPositions[innerIndex] = targetPositions[innerIndex + 1];
-          targetPositions[innerIndex + 1] = temp;
+          targetPositions[innerIndex + 1] = swap;
         }
       }
     }
@@ -503,8 +503,7 @@ void BattleMessage_WaitForAdvance(void) {
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
-                (offset->y >> 8) + 6;
+    prompt->y = CURSOR_BOB_Y() + (s16)window->y * 8 + (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
@@ -741,7 +740,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
     } else {
       if (value == BATTLE_UNIT_LIST_END)
         break;
-      if (value == 128) {
+      if (value == FIRST_ENEMY_UNIT) {
         side ^= 1;
         divider = i;
       }
@@ -801,6 +800,9 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 #define DEFENSE_HALVED 1  ///< Torch: half
 #define DEFENSE_IGNORED 2 ///< Raiden's Wrath and Trident: none
 
+/// The element power an item, or an ability with no element, acts with.
+#define ITEM_ELEMENT_POWER 100
+
 /// Applies the action's ability to one of its targets, slot, in the seven steps
 /// of README.md's "How an ability resolves", queueing what playback will show.
 /// The Lost Age adds the shields that turn an ability away, the abilities that
@@ -831,7 +833,6 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   s32 drained;
   s32 defense;
   s32 pass;
-  s16 *command;
   u8 targetId;
   s8 *rm;
   struct Unit *target;
@@ -935,16 +936,11 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   }
 
   // The user's power in the ability's element; items always use 100.
-  if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) {
-    command = &plan->command;
-    if (*command != COMMAND_ITEM) {
-      elementPower = actor->element[plan->element].power;
-      goto power_end;
-    }
-  } else
-    command = &plan->command;
-  elementPower = 100;
-power_end:
+  if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
+      plan->command != COMMAND_ITEM)
+    elementPower = actor->element[plan->element].power;
+  else
+    elementPower = ITEM_ELEMENT_POWER;
 
   // 2. The Djinn bonus, and whether the effect lands.
   if (plan->command == COMMAND_DJINN &&
@@ -1278,7 +1274,8 @@ power_end:
 
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealHp[distance] / 100;
       amount *= multiplier;
       amount += Battle_RandomFar() & 3;
@@ -1497,7 +1494,8 @@ power_end:
       pp = target->pp;
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealPp[distance] / 100;
       amount *= multiplier;
       pp += amount;

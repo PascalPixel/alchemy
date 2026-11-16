@@ -112,7 +112,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   transition = Ram_HeapSlots->battleBackground;
   // Here any unit id above 4 counts as an enemy.
   if (action->unitId > 4)
-    yaw = -0x2000;
+    yaw = YAW_ENEMY_ACTION;
   else
     yaw = YAW_PARTY_ACTION;
   transition->targetYaw = yaw;
@@ -259,7 +259,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
-    REG_BLDALPHA = (BLEND_WEIGHT_MAX - index) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
@@ -298,7 +298,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
-    REG_BLDALPHA = index | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (index = 0; index != sideCount; index++)
@@ -336,7 +336,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
+      (struct Actor *)BattleObject_Get(work.actor)->object,
+      ANIMATION_STEP_NORMAL);
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;
@@ -394,7 +395,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
                       ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
     work.side = EFFECT_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);

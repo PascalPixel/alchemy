@@ -40,16 +40,25 @@ enum BattleStaging {
   STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
   STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
   STAGING_IRIS = 13,           ///< the summon, then the Aurora Field
+  /// Daedalus's strike queued for the turn's end, from no ability's row: only
+  /// BattleStaging_PlanDaedalus sets it.
+  STAGING_DAEDALUS = 14,
   /// The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox
   /// and Call Zombie (BattleMotion_CallBeast).
   STAGING_BEAST_ATTACK = 15,
   /// The summoned beasts that cast, Emu to Call Dullahan.
-  STAGING_BEAST_CAST = 16
+  STAGING_BEAST_CAST = 16,
+  /// Unused: a beast called up (BattleMotion_CallBeast takes 15 to 17) whose
+  /// call then plays as the party's Psynergy cast (CAST_PSYNERGY). No
+  /// ability's row in gAbilityStaging gives it.
+  STAGING_BEAST_PSYNERGY = 17
 };
 
 // BattlePlan.battleEffect: the effect kind
 // in the low twelve bits and its strength (a double or triple blow) above them;
 // then how the effect is staged.
+#define EFFECT_ID_MASK 0xfff
+#define EFFECT_VARIANT_MASK 0x3000
 #define EFFECT_VARIANT_SHIFT 12
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view

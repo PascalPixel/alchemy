@@ -79,7 +79,7 @@ void BattleCamera_Create(void) {
   SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
-  camera->distance = 256 << 16;
+  camera->distance = toFIXED(256);
 }
 
 /// Replaces the first enemy with the Doom Dragon's next form:
@@ -97,6 +97,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleObject_MarkForRelease(FIRST_ENEMY_UNIT);
   BattleMotion_DestroyAllSlotObjects();
   BattleEnemy_ClaimNameLetter(unit, 1);
+  // A suffix past every edition's letters: the name has none.
   BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, 255);
   work->enemyIds[0] = FIRST_ENEMY_UNIT;
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
@@ -174,6 +175,9 @@ s32 Battle_Run(s32 enemyGroup) {
   transition->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
+  // XXX (no evidence): what flag 0x169 marks; it is set as every battle
+  // starts, as The Broken Seal's, and nothing in C reads it. A reader of the
+  // flag would settle it.
   GameFlag_Set(0x169);
   Matrix_Initialize();
 
@@ -251,6 +255,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
+  // The camera on the centre at 190 percent until the opening zooms.
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
@@ -410,6 +415,8 @@ won_scripted:
       if (battle->spoils.defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= DEFEAT_SEVERAL) {
+          // The first defeated enemy's name for the message, with no letter
+          // (26 is past every edition's).
           BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                             battle->enemyKinds[battle->firstDefeated], 26);
           MessageArgument_ClearAllFar();

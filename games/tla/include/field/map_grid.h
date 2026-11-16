@@ -45,6 +45,9 @@ enum MapGridLayerIndex {
 /// A cell's collision code that blocks whatever the heights, as The Broken
 /// Seal's CELL_BEHAVIOR_WALL.
 #define CELL_BEHAVIOR_WALL 255
+/// Open ground, where nothing happens, as The Broken Seal's
+/// CELL_BEHAVIOR_NORMAL.
+#define CELL_BEHAVIOR_NORMAL 0
 
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.

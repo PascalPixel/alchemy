@@ -84,6 +84,10 @@
 /// one (a random battle clears it, so the scene's own music plays).
 /// FieldSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// Sunshine the blacksmith forges for the party: Yallam sets it while the party
+/// carries a rusty weapon or a forging material, and keeps it while he works
+/// or his wife holds what he made.
+#define FLAG_FORGE_OPEN 0x10f
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a

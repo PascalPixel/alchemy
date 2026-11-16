@@ -122,7 +122,7 @@ enum AirsRockInsideTightropesActorId {
   ACTOR_TIGHTROPES_POST_J
 };
 
-/// The Reveal tablet (sprite 323) that rises from the floor.
+/// The Reveal tablet (SPRITE_SLATE) that rises from the floor.
 #define ACTOR_REVEAL_TABLET ACTOR_FIRST_PLACED
 
 enum AirsRockInsideElixirChestActorId {
@@ -144,7 +144,7 @@ enum AirsRockInsidePairedStatuesActorId {
   ACTOR_PAIRED_STATUES_PILLAR_A,
   ACTOR_PAIRED_STATUES_PILLAR_B,
   ACTOR_PAIRED_STATUES_PILLAR_C,
-  /// The four grey cones (sprite 406).
+  /// The four grey cones (SPRITE_STAKE).
   ACTOR_PAIRED_STATUES_CONE_A,
   ACTOR_PAIRED_STATUES_CONE_B,
   ACTOR_PAIRED_STATUES_CONE_C,
@@ -374,7 +374,7 @@ extern struct ActorPlacement gAirsRockInside_TightropesPlacements[];
 extern struct ActorPlacement gAirsRockInside_ElixirChestPlacements[];
 extern struct ActorPlacement gAirsRockInside_PairedStatuesPlacements[];
 extern struct ActorPlacement gAirsRockInside_FaceWarpPlacements[];
-extern s32 gAirsRockInside_CoinsChestPlacements[];
+extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -1516,10 +1516,10 @@ shrink:
   Event_End();
 }
 
-extern struct ActorPlacement gAirsRockInside_Entrances[];
-extern s16 gAirsRockInside_HallEntrances[];
+extern struct SceneEntrance gAirsRockInside_Entrances[];
+extern struct SceneEntrance gAirsRockInside_HallEntrances[];
 
-const u8 *Scene_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_HALL)
     return gAirsRockInside_HallEntrances;
   return gAirsRockInside_Entrances;
@@ -3437,16 +3437,19 @@ u32 gAirsRockInside_RisingSparkScript[] = {
     SC_END,
 };
 
-s32 gAirsRockInside_OrbitingSparkScript[] = {                                                               
-      46,                                                                      
-      (s32)AirsRockInside_OrbitAnchor,                                                              
-      38,                                                                      
-      17,                                                                      
-  };
+s32 gAirsRockInside_OrbitingSparkScript[] = {
+    SC_CALL(AirsRockInside_OrbitAnchor),
+    SC_RELEASE,
+    SC_END,
+};
 
-s32 gAirsRockInside_SeekingSparkScript[] = {                                                               
-      46, (s32)Orbit_Update, 46, (s32)Actor_AimAtWatched, 46, (s32)Actor_StepToWatched, 38, 17,                  
-  };
+s32 gAirsRockInside_SeekingSparkScript[] = {
+    SC_CALL(Orbit_Update),
+    SC_CALL(Actor_AimAtWatched),
+    SC_CALL(Actor_StepToWatched),
+    SC_RELEASE,
+    SC_END,
+};
 
 u32 gAirsRockInside_TabletRiseScript[] = {
     SC_MOVE_BY(0, 24, 0),
@@ -3515,42 +3518,36 @@ u32 gAirsRockInside_StatueScript[] = {
 };
 
 u16 gAirsRockInside_PairedStatuesCones[] = {
-    12, 1, 512, 13, 1, 513, 14, 1,
-    514, 15, 1, 515, -1, 0,
+    ACTOR_PAIRED_STATUES_CONE_A, 1, FLAG_SCENE_TEMP_00,
+    ACTOR_PAIRED_STATUES_CONE_B, 1, FLAG_SCENE_TEMP_01,
+    ACTOR_PAIRED_STATUES_CONE_C, 1, FLAG_SCENE_TEMP_02,
+    ACTOR_PAIRED_STATUES_CONE_D, 1, FLAG_SCENE_TEMP_03,
+    -1, 0,
 };
 
-struct ActorPlacement gAirsRockInside_Entrances[] = {
-    {0, CONDITION_ALWAYS, 320, 0x40000140, toFIXED(-1), -0x1, 0xffff, 0, 0},
+struct SceneEntrance gAirsRockInside_Entrances[] = {
+    {0, CONDITION_ALWAYS, 320, 0, 320, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-s16 gAirsRockInside_HallEntrances[] = {
-    1, -1, 232, 0, 120, 0x4000, 0, 64,
-    16, 560, 1008, 0, 2, -1, 152, 0,
-    136, 0x4000, 0, 64, 16, 560, 1008, 0,
-    3, -1, 152, 0, 232, 0x4000, 0, 64,
-    16, 560, 1008, 0, 4, -1, 152, 320,
-    648, 0x4000, 0, 64, 16, 560, 1008, 0,
-    5, -1, 152, 128, 648, 0x4000, 0, 64,
-    16, 560, 1008, 0, 6, -1, 232, 0,
-    632, 0x4000, 0, 64, 16, 560, 1008, 0,
-    7, -1, 312, 0, 616, 0x4000, 0, 64,
-    16, 560, 1008, 0, 8, -1, 472, 0,
-    136, 0x4000, 0, 64, 16, 560, 1008, 0,
-    9, -1, 472, 0, 232, 0x4000, 0, 64,
-    16, 560, 1008, 0, 10, -1, 408, 0,
-    952, 0xc000, 0, 64, 16, 560, 1008, 0,
-    11, -1, 312, 0, 840, 0x4000, 0, 64,
-    16, 560, 1008, 0, 12, -1, 808, 0,
-    136, 0xc000, 0, 608, 16, 864, 224, 0,
-    13, -1, 680, 0, 168, 0x4000, 0, 608,
-    16, 864, 224, 0, 14, -1, 872, 0,
-    344, 0x4000, 0, 592, 256, 976, 1008, 0,
-    15, -1, 904, 0, 904, 0x4000, 0, 592,
-    256, 976, 1008, 0, 16, -1, 312, 0,
-    808, 0x4000, 0, 64, 16, 560, 1008, 0,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct SceneEntrance gAirsRockInside_HallEntrances[] = {
+    {1, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {2, CONDITION_ALWAYS, 152, 0, 136, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {3, CONDITION_ALWAYS, 152, 0, 232, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {4, CONDITION_ALWAYS, 152, 320, 648, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {5, CONDITION_ALWAYS, 152, 128, 648, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {6, CONDITION_ALWAYS, 232, 0, 632, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {7, CONDITION_ALWAYS, 312, 0, 616, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {8, CONDITION_ALWAYS, 472, 0, 136, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {9, CONDITION_ALWAYS, 472, 0, 232, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {10, CONDITION_ALWAYS, 408, 0, 952, FACING_NORTH, 0, 64, 16, 560, 1008, 0},
+    {11, CONDITION_ALWAYS, 312, 0, 840, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {12, CONDITION_ALWAYS, 808, 0, 136, FACING_NORTH, 0, 608, 16, 864, 224, 0},
+    {13, CONDITION_ALWAYS, 680, 0, 168, FACING_SOUTH, 0, 608, 16, 864, 224, 0},
+    {14, CONDITION_ALWAYS, 872, 0, 344, FACING_SOUTH, 0, 592, 256, 976, 1008, 0},
+    {15, CONDITION_ALWAYS, 904, 0, 904, FACING_SOUTH, 0, 592, 256, 976, 1008, 0},
+    {16, CONDITION_ALWAYS, 312, 0, 808, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -3698,10 +3695,12 @@ struct ActorPlacement gAirsRockInside_FaceWarpPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gAirsRockInside_CoinsChestPlacements[] = {                                                               
-      (s32)0xffff0145, (s32)gAirsRockInside_StatueScript, 1, 0, 0, 0x2024000, (s32)0xffff0110, 1, 2, 0, 0, 0x2024000,    
-      (s32)0xffff0179, 1,         3, 0, 0, 0x2020000, 0xffff,          0,  0,  0, 0, 0,     
-  };
+struct ActorPlacement gAirsRockInside_CoinsChestPlacements[] = {
+    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRockInside_StatueScript, 0x1, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 0x3, 0, 0, FACING_EAST, 2, 2},
+    {SCENE_TABLE_END},
+};
 
 s32 gAirsRockInside_StampedCell = -1;
 

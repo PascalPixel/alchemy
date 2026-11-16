@@ -9,8 +9,8 @@
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
-extern s16 gAirsRock_StormBrandChestRegions[];
-extern s16 gAirsRock_EntranceRegions[];
+extern struct SceneRegion gAirsRock_StormBrandChestRegions[];
+extern struct SceneRegion gAirsRock_EntranceRegions[];
 extern struct ActorPlacement gAirsRock_StormBrandChestPlacements[];
 extern struct ActorPlacement gAirsRock_EntrancePlacements[];
 extern struct ActorPlacement gAirsRock_FujinShieldChestPlacements[];

@@ -228,9 +228,9 @@ void Blocks_UnmarkCells(struct Actor *block) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern s16 gAirsRock_FujinShieldChestRegions[];
+extern struct SceneRegion gAirsRock_FujinShieldChestRegions[];
 
-s16 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
@@ -2014,36 +2014,36 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gAirsRock_StormBrandChestRegions[] = {
-    256, 96, 144, 272, 112, 160, -1, 2,
-    608, 96, 144, 624, 112, 160, -1, 3,
-    864, 96, 144, 880, 112, 160, -1, 4,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gAirsRock_StormBrandChestRegions[] = {
+    {256, 96, 144, 272, 112, 160, CONDITION_ALWAYS, 2},
+    {608, 96, 144, 624, 112, 160, CONDITION_ALWAYS, 3},
+    {864, 96, 144, 880, 112, 160, CONDITION_ALWAYS, 4},
+    {SCENE_TABLE_END},
 };
 
-s16 gAirsRock_EntranceRegions[] = {
-    256, -192, 816, 272, -176, 832, -1, 1,
-    608, -192, 816, 624, -176, 832, -1, 2,
-    864, -192, 816, 880, -176, 832, -1, 3,
-    624, 176, 704, 640, 192, 720, -1, 5,
-    784, 160, 688, 800, 176, 704, -1, 6,
-    624, -200, 320, 640, -184, 336, -1, 7,
-    784, -216, 304, 800, -200, 320, -1, 8,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gAirsRock_EntranceRegions[] = {
+    {256, -192, 816, 272, -176, 832, CONDITION_ALWAYS, 1},
+    {608, -192, 816, 624, -176, 832, CONDITION_ALWAYS, 2},
+    {864, -192, 816, 880, -176, 832, CONDITION_ALWAYS, 3},
+    {624, 176, 704, 640, 192, 720, CONDITION_ALWAYS, 5},
+    {784, 160, 688, 800, 176, 704, CONDITION_ALWAYS, 6},
+    {624, -200, 320, 640, -184, 336, CONDITION_ALWAYS, 7},
+    {784, -216, 304, 800, -200, 320, CONDITION_ALWAYS, 8},
+    {SCENE_TABLE_END},
 };
 
-s16 gAirsRock_FujinShieldChestRegions[] = {
-    144, -96, 304, 160, -80, 320, -1, 6,
-    208, -96, 304, 224, -80, 320, -1, 7,
-    144, -80, 304, 160, -64, 320, -1, 8,
-    208, -80, 304, 224, -64, 320, -1, 9,
-    144, 160, 192, 160, 176, 208, -1, 10,
-    208, 160, 192, 224, 176, 208, -1, 11,
-    144, 160, 192, 160, 176, 208, -1, 10,
-    208, 160, 192, 224, 176, 208, -1, 11,
-    528, -96, 304, 544, -80, 320, -1, 12,
-    592, -96, 304, 608, -80, 320, -1, 13,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gAirsRock_FujinShieldChestRegions[] = {
+    {144, -96, 304, 160, -80, 320, CONDITION_ALWAYS, 6},
+    {208, -96, 304, 224, -80, 320, CONDITION_ALWAYS, 7},
+    {144, -80, 304, 160, -64, 320, CONDITION_ALWAYS, 8},
+    {208, -80, 304, 224, -64, 320, CONDITION_ALWAYS, 9},
+    {144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
+    {208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
+    {144, 160, 192, 160, 176, 208, CONDITION_ALWAYS, 10},
+    {208, 160, 192, 224, 176, 208, CONDITION_ALWAYS, 11},
+    {528, -96, 304, 544, -80, 320, CONDITION_ALWAYS, 12},
+    {592, -96, 304, 608, -80, 320, CONDITION_ALWAYS, 13},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

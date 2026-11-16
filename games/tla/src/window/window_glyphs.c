@@ -239,7 +239,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   if (text == NULL) {
     text = work->textBuffer;
     work->textBuffer[work->textBufferEnd] = c;
-    work->textBufferEnd = (work->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
   for (;;) {
     c = *text++;
@@ -345,7 +345,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
     buffer = canvas->textBuffer;
     canvas->textBuffer[canvas->textBufferEnd] = 0;
     canvas->textBufferEnd =
-        (canvas->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+        (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
@@ -375,7 +375,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   if (text == NULL) {
     text = work->textBuffer;
     work->textBuffer[work->textBufferEnd] = 0;
-    work->textBufferEnd = (work->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
   c = *text++;
   if (c != 0)

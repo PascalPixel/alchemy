@@ -542,7 +542,7 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   *counter = zero;
   Message_Decode(message, 1);
   canvas->textBuffer[*counter] = zero;
-  *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+  *counter = (*counter + 1) & TEXT_BUFFER_MASK;
   Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)window, x,
                               y);
 }
@@ -569,7 +569,7 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
   Message_Decode(character, 1);
 
   canvas->textBuffer[*counter] = zero;
-  *counter = (u16)((*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1));
+  *counter = (u16)((*counter + 1) & TEXT_BUFFER_MASK);
 
   cell = (((s16)position->y + (offsetY >> 3) + 1) << 5) +
          ((s16)position->x + (offsetX >> 3)) + 1;

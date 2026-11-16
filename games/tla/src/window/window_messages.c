@@ -158,7 +158,7 @@ void Window_CloseAll(void) {
       break;
     wait(1);
   }
-  while (index != UI_WINDOW_COUNT) {
+  while (index != WINDOW_COUNT) {
     if (direct->flags != 0)
       Window_Close(direct, 0);
     direct++;
@@ -401,8 +401,8 @@ void Message_DecodeAppend(s32 message) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 count = work->textBufferEnd;
 
-  count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  work->textBufferEnd = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
+  count = (u16)(count - 1) & TEXT_BUFFER_MASK;
+  work->textBufferEnd = (u16)(count - 1) & TEXT_BUFFER_MASK;
   Message_Decode(message, 1);
 }
 
@@ -833,7 +833,7 @@ void Portrait_CloseWindow(s32 id) {
 
   id = state->outputIds[index];
 
-  for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
+  for (i = 0; i != WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;
     if ((u8)entity->kind == WINDOW_SPRITE_PORTRAIT && (u8)entity->index == id) {
       Window_Close(work, 2);

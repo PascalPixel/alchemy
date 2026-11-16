@@ -1195,7 +1195,7 @@ void Menu_WatchStart(void) {
   // DEAD: walks the free window sprites to the end of their list and keeps
   // nothing; the ROM keeps the loop.
   node = (u32 *)&((struct WindowWork *)Ram_HeapSlots->windowWork)
-             ->freeOutputs.head;
+             ->freeSprites.head;
   while ((node = (u32 *)*node) != 0)
     ;
 }

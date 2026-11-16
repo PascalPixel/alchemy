@@ -13,22 +13,24 @@
 #include "window/message_argument.h"
 #include "window/message_speed.h"
 #include "edition.h"
+#include "tla_edition.h"
 #include "graphics/oam.h"
 #include "graphics/render_input.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
 
-enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
+/// The window sprites WindowWork keeps, free or in a window.
+enum { WINDOW_SPRITE_COUNT = 64 };
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-enum { UI_TEXT_ENTRY_COUNT = 512 };
-#else
-enum { UI_TEXT_ENTRY_COUNT = 256 };
-#endif
+/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
+/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+#define TEXT_TILE_FIRST 128
+#define TEXT_TILES 128
+#define TEXT_EXTRA_TILE_FIRST 512
 
 /// The window system's work, as ☀️'s with its bytes before the tilemap: the
-/// windows' tilemap, the windows, the three text channels, the 64 render
-/// outputs, and the decoded message and its arguments.
+/// windows' tilemap, the windows, the three text channels, the 64 window
+/// sprites, and the decoded message and its arguments.
 struct WindowWork {
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use the second range of tiles
@@ -39,16 +41,18 @@ struct WindowWork {
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;       ///< text tiles' palette; 15 by default
   u16 tilemap[20][32];  ///< the windows' BG tilemap
-  struct Window windows[UI_WINDOW_COUNT];
+  struct Window windows[WINDOW_COUNT];
   struct UiChannelSlot channels[3];
-  struct WindowSprite outputs[UI_OUTPUT_COUNT];
-  struct WindowSpriteList freeOutputs; ///< the outputs not in any window
-  u8 textTileState[0x100];             ///< per text tile
+  struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
+  struct WindowSpriteList freeSprites; ///< the sprites not in any window
+  /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
+  /// bit 1 while the tilemap shows it, 0 when free.
+  u8 textTileState[2 * TEXT_TILES];
   u16 lineSpacing;            ///< the current channel's, copied in to draw
   u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
   u16 outline;                ///< the current channel's, copied in to draw
   u16 colour;                 ///< the current channel's, copied in to draw
-  u16 textBuffer[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
+  u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
   u16 textBufferEnd;     ///< where the next code goes in textBuffer
   u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
@@ -72,9 +76,9 @@ struct WindowWork {
 STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
 STATIC_ASSERT(offsetof(struct WindowWork, windows) == 0x508);
 STATIC_ASSERT(offsetof(struct WindowWork, channels) == 0x6b8);
-STATIC_ASSERT(offsetof(struct WindowWork, outputs) == 0x730);
-STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.head) == 0xe30);
-STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.tailLink) == 0xe34);
+STATIC_ASSERT(offsetof(struct WindowWork, sprites) == 0x730);
+STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) == 0xe30);
+STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) == 0xe34);
 
 STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 0xf38);
 STATIC_ASSERT(offsetof(struct WindowWork, colour) == 0xf3e);
@@ -99,12 +103,6 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
-
-/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
-/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
-#define TEXT_TILE_FIRST 128
-#define TEXT_TILES 128
-#define TEXT_EXTRA_TILE_FIRST 512
 
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255

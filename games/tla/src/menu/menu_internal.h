@@ -282,16 +282,16 @@ struct ItemMenuWork {
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode;                     ///< PsynergyMenuWork's; not named here
   u8 unusedAfterMode[3];       ///< no view of the menu work names it
-  u8 shopStock[0x27e];         ///< ShopWork's stock and party; not named here
+  u8 shopStock[638];           ///< ShopWork's stock and party; not named here
   u16 resourceSlots[2];        ///< VRAM cache slots of two arrow pictures
-  u8 shopKeeper[0x17];         ///< ShopWork's cursor and keeper; not named here
+  u8 shopKeeper[23];           ///< ShopWork's cursor and keeper; not named here
   /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
   /// (DjinnFigures_SetShown).
   s8 figuresShown;
-  u8 shopEffects[0x6c1]; ///< ShopWork's particles; not named here
+  u8 shopEffects[1729]; ///< ShopWork's particles; not named here
   /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
   /// slot each, queued while menuIconsShown is nonzero.
   ///@{
@@ -445,7 +445,7 @@ struct PsynergyMenuWork {
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
   /// ItemMenuWork's row of figures and the pair after it; not named here.
-  u8 figureRow[0x3e];
+  u8 figureRow[62];
   s16 useResult; ///< the use's result message, after MsgItemUseResult
   /// ItemMenuWork's equipPreview and listMode; not named here.
   u8 listState[4];

@@ -85,7 +85,8 @@ enum MadraInteriorsTravelersActorId {
   /// partner wears the same sprite in other colours.
   ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID = ACTOR_BLACK_CRYSTAL + 1,
   ACTOR_TRAVELERS_PARTNER,
-  /// The two warriors on their way to Colosso in Tolbi, there once flag 0x821
+  /// The two warriors on their way to Colosso in Tolbi, there once
+  /// FLAG_TRANSFERRED_WON_COLOSSO
   /// is set: "I'm Morgan, and this here's Dekka."
   ACTOR_MORGAN,
   ACTOR_DEKKA
@@ -149,6 +150,7 @@ extern s32 gMadraInteriors_OldManComesBack[];
 
 extern s32 gMadraInteriors_CharFollows[];
 
+/// The overlay's veneer to Event_CountAnswer.
 void MadraInteriors_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1121,7 +1123,7 @@ answered:
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  if (Event_GetFlag(0x981) == 0)
+  if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) == 0)
     goto firstGoodbye;
   MadraInteriors_SayGoodbyeAgain();
   goto saidGoodbye;
@@ -1150,7 +1152,7 @@ saidGoodbye:
   MadraInteriors_WalkIntoLeader(ACTOR_SHEBA);
   MadraInteriors_WalkIntoLeader(ACTOR_PIERS);
   MadraInteriors_WalkIntoLeader(ACTOR_JENNA);
-  Event_SetFlag(0x989);
+  Event_SetFlag(FLAG_MADRA_FAREWELL_SAID);
   Event_End();
   return;
 }
@@ -1277,7 +1279,7 @@ void MadraInteriors_AskToStayLonger(void) {
   FieldEvent_Wait(20);
   // "We shall set sail, Felix! To my ship! To the Eastern Sea!"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Event_SetFlag(0x981);
+  Event_SetFlag(FLAG_PIERS_SETTING_SAIL);
   Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
   // "Do you truly mean to leave so soon, Piers?"
@@ -1619,19 +1621,19 @@ struct Trigger gMadraInteriors_JailTriggers[] = {
 struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsInAllThisChaosEveryone)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsInAllThisChaosEveryone)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsSoBriggsAndHisPirates)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsTheresTalkOfMightyTravelers)},
-    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsMadraAndAlhafraOff)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsMadraAndAlhafraOff)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsItWasSureSneaky)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsSinceThingsAreFinallyCalming)},
     {TRIGGER_TALK, ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsOhhOhhh)},
     {TRIGGER_TALK, ACTOR_HER_SISTER, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsImSoHappy)},
     {TRIGGER_TALK, ACTOR_HER_SISTER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIveToldMySisterNot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsWaitSecondIllBetBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsWaitSecondIllBetBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsNowThatBriggsHasBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsWhatIfWeJustTraveled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, 0x8ab, MSGNO(MsgMadraInteriorsAlhafraHasLongBeenTrade)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsAlhafraHasLongBeenTrade)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsItSoundsLikeOsenia)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsBusinessPlanOurPeopleHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SISTER_IN_BED, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsEyesShiningInDarknessNo)},
@@ -1727,7 +1729,7 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 30, 0x989, EVENT(MadraInteriors_WelcomePiersHome)},
+    {TRIGGER_STEP, 30, FLAG_MADRA_FAREWELL_SAID, EVENT(MadraInteriors_WelcomePiersHome)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsOurSalesmanSaidKibombosCeremony)},
     {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIWonderIfKibomboHave)},
     {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, EVENT(MadraInteriors_TalkToMushroomLover)},
@@ -1771,8 +1773,8 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsItMustBeVeryStrange)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIfIHadBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsHmIWonderIfTidal)},
-    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveHealingFungus)},
-    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, 0x98a, EVENT(MadraInteriors_GiveLaughingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraInteriors_GiveHealingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraInteriors_GiveLaughingFungus)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsThereAreSomePotatoesBoiling))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsTheyreMakingNanItLooks))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsAllSpicesAreNeatlyArranged))},

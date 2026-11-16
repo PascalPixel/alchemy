@@ -416,8 +416,8 @@ static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
 }
 
 /// The worker pops up out of the hole the first time the party steps on it,
-/// until the gate inspection is over (flag 0x910); afterwards the hole leads
-/// down into the catacombs.
+/// until the gate inspection is over (FLAG_MADRA_GATE_INSPECTED); afterwards
+/// the hole leads down into the catacombs.
 void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(FLAG_MADRA_GATE_INSPECTED)) {
     Event_PlaySound(SE_MAP_EXIT);
@@ -517,7 +517,7 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(FLAG_OSENIA_PASSAGE_GRANTED) == 0)
     Madra_GrantPassageToOsenia();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 &&
-      Event_GetFlag(0x989) != 0) {
+      Event_GetFlag(FLAG_MADRA_FAREWELL_SAID) != 0) {
     if (gMainRoutineWork.entrance == 7 &&
         Event_GetFlag(FLAG_MADRA_KARST_MET) == 0) {
       Madra_MeetKarst();
@@ -838,10 +838,10 @@ void Madra_InspectPartyAtGate(void) {
   Event_End();
 }
 
-/// Coming out of the jail once Piers has used Frost (flag 0x911), the party
-/// meets the lady and her guard, who fear Piers has escaped; she asks whether
-/// the party is going to Osenia and grants it passage over the drawbridge
-/// (flag 0x913).
+/// Coming out of the jail once Piers has used Frost (FLAG_PIERS_INTERROGATED),
+/// the party meets the lady and her guard, who fear Piers has escaped; she asks
+/// whether the party is going to Osenia and grants it passage over the
+/// drawbridge (FLAG_OSENIA_PASSAGE_GRANTED).
 void Madra_GrantPassageToOsenia(void) {
   if (!GameFlag_Get(FLAG_PIERS_INTERROGATED))
     return;
@@ -1208,8 +1208,9 @@ void Madra_MeetKarst(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  if (GameFlag_Get(0x825) || GameFlag_Get(0x826))
-    GameFlag_Set(0xa76);
+  if (GameFlag_Get(FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES) ||
+      GameFlag_Get(0x826))
+    GameFlag_Set(FLAG_BANDIT_ON_WORLD_MAP);
   Event_SetMessageId(MsgMadraFelixWait);
   // "Felix, wait!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
@@ -1725,7 +1726,7 @@ void Madra_MeetKarst(void) {
                              object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
-  GameFlag_Set(0x980);
+  GameFlag_Set(FLAG_MENARDIS_SHIP_SEEN);
   GameFlag_Set(FLAG_MADRA_KARST_MET);
   Event_End();
 }
@@ -1845,8 +1846,8 @@ struct ActorPlacement gMadra_Placements[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 248, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, IF_FLAG_SET(FLAG_BRIGGS_CAUGHT), MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1879,8 +1880,8 @@ struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(0x911), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1943,8 +1944,10 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksHole)},
-    {TRIGGER_STEP, 19, 0x910, EVENT(Madra_SkipGateInspection)},
-    {TRIGGER_STEP, 20, 0x910, EVENT(Madra_InspectPartyAtGate)},
+    {TRIGGER_STEP, 19, FLAG_MADRA_GATE_INSPECTED,
+     EVENT(Madra_SkipGateInspection)},
+    {TRIGGER_STEP, 20, FLAG_MADRA_GATE_INSPECTED,
+     EVENT(Madra_InspectPartyAtGate)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
      MSGNO(MsgMadraTownElderTookOff)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,

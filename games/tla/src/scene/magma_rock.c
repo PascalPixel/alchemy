@@ -153,6 +153,8 @@ enum MagmaRockSalamanderTailTopActorId {
 };
 #include "shared/tables.h"
 
+/// Creates a hidden effect actor at a place: no motion, never targeted, drawn
+/// under the actors.
 struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = (FieldActor_Create(kind, x, y, z));
 
@@ -197,6 +199,7 @@ extern s32 gPushLeaderSteps[];
 // Move pushes and the crumbling ones, Growth's vines and the slides, and at
 // the top the Psynergy rock that blasts the way in.
 
+/// Talking to Fury starts its battle.
 void MagmaRock_FightFury(void) {
   Field_RequestDjinnBattle(ACTOR_FIRST_PLACED, DJINNI_FURY);
 }
@@ -343,6 +346,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 void Actor_LiftTargetBlock(s16 *table);
 
+/// When a pillar starts to be pushed: frees the cells it blocked and the
+/// passages it opened.
 void MagmaRock_UnblockMovedPillar(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
@@ -372,6 +377,7 @@ void MagmaRock_UnblockMovedPillar(void) {
 
 void Event_Start();
 void Actor_PlaceMovedBlock();
+/// The overlay's veneer to Event_End.
 s32 MagmaRock_EndEvent();
 
 /// Rebuilds the room's opened passages on entry and sets the flag of the cell
@@ -427,8 +433,12 @@ s32 MagmaRock_BlockMovedPillar(void) {
   return MagmaRock_EndEvent();
 }
 
+/// The overlay's import veneer that sets up a field Psynergy's caster and
+/// target.
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
+/// Plays Burst from the leader at an actor, outside the trigger table: as the
+/// statue's fire lands.
 void MagmaRock_PlayBurst(u16 value) {
   struct MainRoutineWork *party;
 
@@ -442,6 +452,9 @@ void MagmaRock_PlayBurst(u16 value) {
 
 extern s32 gMagmaRock_FlameEmberScript[];
 
+/// A statue's update when a magma rock reaches it: throws embers and flashes
+/// red, faster and then white, and after 144 frames sends the rock rolling
+/// back.
 void MagmaRock_ThrowEmbers(struct Actor *object) {
   struct Actor *linked = object->watchedActor;
   s16 *timer = &object->timer;
@@ -525,6 +538,9 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
 
 FIXED Trig_Cos(s32 angle);
 
+/// A magma rock's update: rolls toward the other statue of its pair trailing
+/// embers; touching the leader raises trigger 200 and takes it away, and
+/// reaching the statue hands it over (MagmaRock_ThrowEmbers).
 void MagmaRock_RollMagmaRock(struct Actor *object) {
   FIXED step;
   struct Actor *partner;
@@ -565,6 +581,8 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
 // side, gives it MagmaRock_RollMagmaRock and faces it along the pair first and
 // first + 1.
 
+/// Unless the party keeps its place: sets a magma rock on one statue of its
+/// pair, given by side, facing the other, and starts it rolling.
 void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   struct Actor *object = Actor_Get(id);
   struct Actor *a;
@@ -611,6 +629,7 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
+/// A targeted statue's update: blinks red on the frames its mask picks.
 void MagmaRock_FlashStatue(struct Actor *object) {
   if (gFrameCount & object->flashMask)
     FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
@@ -621,6 +640,9 @@ void MagmaRock_FlashStatue(struct Actor *object) {
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
 // leader, the cracked columns, slides, pillars, vines and the final blast.
 
+/// A lit statue's update, counting down from 1,024 while no menu, Psynergy or
+/// item is in use: it blinks red quickly, then slowly from 528, and from 400 it
+/// burns (MagmaRock_BurnStatue).
 void MagmaRock_WarnStatue(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -643,6 +665,9 @@ void MagmaRock_WarnStatue(struct Actor *object) {
     object->timer--;
 }
 
+/// Looks up the cell under the field Psynergy in an (actor, cell, value) table
+/// ended by 0xffff: on a match, makes the row's actor the target and returns
+/// its value.
 s32 MagmaRock_FindStatue(u16 *table) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
@@ -661,6 +686,8 @@ s32 MagmaRock_FindStatue(u16 *table) {
   return result;
 }
 
+/// Looks up the cell at (x, z) in an (actor, cell, value) table ended by 0xffff
+/// and returns the value of its row.
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
   s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
@@ -731,6 +758,8 @@ void Actor_Release(struct Actor *object);
 s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
 
+/// A statue's fire flies ahead until it meets a wall or an actor: it bursts
+/// into embers there, or plays Burst on the actor.
 s32 MagmaRock_FireFromStatue(struct Actor *source) {
   FIXED position[3];
   struct EffectOptions options;
@@ -776,7 +805,7 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
         continue;
       if (FIELD_CELL(other->y.fixed) != FIELD_CELL(position[1]))
         continue;
-      if (((struct Sprite *)other->sprite)->entries[0]->animationId == 0x110)
+      if (((struct Sprite *)other->sprite)->entries[0]->animationId == 272)
         goto stop;
       goto hit;
     }
@@ -838,6 +867,8 @@ hit:
   return MagmaRock_EndEvent();
 }
 
+/// After Burst on a statue: it flashes white and fires
+/// (MagmaRock_FireFromStatue).
 void MagmaRock_FireStatue(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
@@ -855,6 +886,8 @@ void MagmaRock_FireStatue(void) {
   MagmaRock_EndEvent();
 }
 
+/// After Burst on a statue: it starts to warn and then burn
+/// (MagmaRock_WarnStatue).
 void MagmaRock_IgniteStatue(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
@@ -867,6 +900,9 @@ void MagmaRock_IgniteStatue(void) {
   MagmaRock_EndEvent();
 }
 
+/// Burst on a statue: rocks fall from the ceiling while it lasts, one in mode 2
+/// and eight in mode 3, which also moves the statue away; at frame 178 the
+/// target takes animation 3.
 void MagmaRock_BurstStatue(s32 mode, s32 cue) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -965,30 +1001,9 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 
 void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
-struct SpriteAnimation;
-
-/// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
-/// declares it.
-struct ResourceSprite {
-  u32 imageAttributes[3];
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 useOwnScale : 1;
-  u8 unk11 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags;
-  u8 count;
-  u32 shadowAttributes[3];
-  struct SpriteAnimation *entries[4];
-};
-
+/// A statue's update once it burns: embers first, then at 33 frames its flame
+/// column of four parts rises, and the flame on its top with it
+/// (MagmaRock_RaiseFlameTop).
 void MagmaRock_BurnStatue(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 type = SPRITE_STEAM_VENT;
@@ -1029,9 +1044,9 @@ void MagmaRock_BurnStatue(struct Actor *object) {
         (FieldActor_Create(type, object->x.fixed + toFIXED(1),
                            object->y.fixed + toFIXED(32), object->z.fixed));
     for (i = 1; i != 4; i++) {
-      struct ResourceSprite *first = parts[0]->sprite;
+      struct Sprite *first = parts[0]->sprite;
       struct Actor *part = (FieldActor_Create(type, 0, 0, 0));
-      struct ResourceSprite *sprite;
+      struct Sprite *sprite;
 
       parts[i] = part;
       sprite = part->sprite;
@@ -1162,6 +1177,8 @@ void MagmaRock_ClearSlideFlag(void) {
     Event_ClearFlag(FLAG_SLID_DOWN);
 }
 
+/// Pushing north onto the slide's cell, unless moved by others: the leader
+/// walks off down the slide and leaves by exit 2.
 void MagmaRock_SlideDown(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1178,17 +1195,22 @@ void MagmaRock_SlideDown(void) {
   Event_SetFlag(FLAG_SLID_DOWN);
 }
 
+/// Before Burst acts on a cell: finishes the actions the field has pending.
 void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
 
+/// Stepping onto the lower level's crumbling pillars
+/// (MagmaRock_StepOnCrumblingPillar).
 void MagmaRock_CheckCrumblingPillars(void) {
   MagmaRock_StepOnCrumblingPillar(gMagmaRock_CrumblingPillars);
 }
 
+/// Stepping onto the ledge: its cell runs trigger 30.
 void MagmaRock_SetLedgeBehavior(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552), 30);
   Event_SetFlag(FLAG_LEDGE_OPEN);
 }
 
+/// Leaving the ledge: its cell's trigger is taken away again.
 void MagmaRock_ClearLedgeBehavior(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552), 0);
   Event_ClearFlag(FLAG_LEDGE_OPEN);
@@ -1197,6 +1219,8 @@ void MagmaRock_ClearLedgeBehavior(void) {
 void Actor_SetAnimationSpeedById(s32 id, s32 action);
 void FieldCamera_WaitForArrival(void);
 
+/// Burst on the leader's own cell: the leader turns grey among dark puffs,
+/// falls with a thump that shakes the ground, and shakes its head.
 void MagmaRock_AmplifyBurst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1278,6 +1302,8 @@ void MagmaRock_AmplifyBurst(void) {
 void MagmaRockInside_ClearBlockCells(struct Actor *object);
 void MagmaRockInside_PushBlockOnto(void);
 
+/// Walking east into the upper level's pillar pushes it onto the cell beyond,
+/// and sets its flag on the cell it was pushed to.
 void MagmaRock_PushPillarEast(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -1312,6 +1338,8 @@ void MagmaRock_PushPillarEast(void) {
     Event_SetFlag(FLAG_UPPER_PILLAR_PUSHED);
 }
 
+/// Pushing the top's pillar west onto the cell beyond, and setting its flag on
+/// the cell it was pushed to.
 void MagmaRock_PushPillarWest(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -1345,21 +1373,26 @@ void MagmaRock_PushPillarWest(void) {
     Event_SetFlag(FLAG_TOP_PILLAR_B_PUSHED);
 }
 
+/// Growth on the top's first sprout: its vine grows up the wall.
 void MagmaRock_GrowVineA(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
   Event_SetFlag(FLAG_VINE_A_GROWN);
 }
 
+/// Growth on the top's second sprout: its vine grows up the wall.
 void MagmaRock_GrowVineB(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
   Event_SetFlag(FLAG_VINE_B_GROWN);
 }
 
+/// Growth on the top's third sprout: its vine grows up the wall.
 void MagmaRock_GrowVineC(void) {
   MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
   Event_SetFlag(FLAG_VINE_C_GROWN);
 }
 
+/// The statue's blast: four large flame puffs scatter round (x, z), and the way
+/// in is open for good.
 void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   struct EffectOptions config;
   s32 position[3];
@@ -1384,6 +1417,7 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   Event_SetFlag(FLAG_WAY_IN_BLASTED);
 }
 
+/// The blasted wall's update: blinks white on the frames its mask picks.
 void MagmaRock_FlashTarget(struct Actor *object) {
   if (gFrameCount & object->flashMask)
     FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
@@ -1473,6 +1507,8 @@ FIXED Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void MapGrid_CenterOnFollowedPoint(void);
 
+/// Arriving by a flame column: the leader drops in from 130 pixels up and lands
+/// in a burst of dust.
 void MagmaRock_LaunchLeader(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1532,6 +1568,8 @@ void MagmaRock_LaunchLeader(void) {
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
+/// Arriving with the party's place kept: sets the leader on the ground under
+/// it.
 void MagmaRock_LandLeader(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -1549,28 +1587,8 @@ void MagmaRock_LandLeader(void) {
   }
 }
 
-struct LayeredSprite {
-  u8 unk00[4];
-  u32 attributes;
-  u8 unk08[4];
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 useOwnScale : 1;
-  u8 unk11 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags;
-  u8 count;
-  struct AnimationSpritePart shadow;
-  struct SpriteAnimation *entries[4];
-};
-
+/// Hangs a flame part on its statue at the given level of the column
+/// (MagmaRock_RaiseFlamePart).
 static inline void AttachPart(struct Actor *part, struct Actor *anchor,
                               u8 order) {
   part->flameLevel = order;
@@ -1579,11 +1597,13 @@ static inline void AttachPart(struct Actor *part, struct Actor *anchor,
   FieldActor_SetSpriteColor(part, SPRITE_COLOR_BGR);
 }
 
+/// Builds the four parts of a statue's flame column on re-entry, as
+/// MagmaRock_BurnStatue does.
 static inline void BuildParts(struct Actor *anchor) {
   struct Actor *parts[4];
   struct Actor *part;
-  struct LayeredSprite *first;
-  struct LayeredSprite *sprite;
+  struct Sprite *first;
+  struct Sprite *sprite;
   u32 i;
 
   parts[0] = ((struct Actor *)Import_ActorCreate(
@@ -1612,6 +1632,7 @@ static inline void BuildParts(struct Actor *anchor) {
   AttachPart(parts[0], anchor, 3);
 }
 
+/// On entry: rebuilds the flame column of a statue that was burning.
 void MagmaRock_RebuildFlameParts(u16 id) {
   if (Actor_Get(id)->update != MagmaRock_RaiseFlameTop)
     return;
@@ -1639,7 +1660,7 @@ s32 Scene_Initialize(void) {
   work->retreatEntrance = 1;
   scene = work->next;
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
-    priorityBit = 32;
+    priorityBit = ACTOR_PRIORITY_IGNORES_RISES;
     Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_A)->priorityFlags |= priorityBit;
     Actor_GetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
@@ -1870,6 +1891,8 @@ extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 
+/// On entry: sets each listed pillar from its two flags (cracked, then fallen),
+/// then lifts the leader onto the ground under it.
 void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;
@@ -1924,6 +1947,8 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
 
 void MagmaRock_SpawnDustRing(void);
 
+/// Stepping onto a crumbling pillar: the first time it cracks, the second time
+/// it gives way with the leader.
 void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   struct Actor *leader;
   struct Actor *target;
@@ -1990,6 +2015,8 @@ void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   }
 }
 
+/// A crumbling pillar named in the (actor, flag) table gives way with a shake,
+/// rubble and a thump.
 void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
   struct Actor *target;
   s32 flag;
@@ -2028,6 +2055,8 @@ void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
   }
 }
 
+/// Keeps a pillar's sprite in VRAM (retainSpriteCache 3) and takes the pillar
+/// out of play.
 void MagmaRockInside_SetPillarMode3(s32 id) {
   Actor_Get(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
@@ -2043,12 +2072,15 @@ void Actor_MoveToObject(s32 id, s32 owner);
 // it copy actor 9's visual attributes.
 #include "shared/pillars_restore.h"
 
+/// Puts an actor where another stands and moves the other away.
 void MagmaRock_TakePlaceOf(struct Actor *object, struct Actor *source) {
   FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
                                        source->z.fixed);
   FieldActor_SetPositionAndResetMotion(source, 0, 0, 0);
 }
 
+/// Stepping onto a crumbling floor: the first time it shakes and cracks, the
+/// second time it gives way with the leader.
 void MagmaRock_StepOnTrap(u16 *list) {
   struct Actor *leader;
   struct Actor *actor8;
@@ -2135,6 +2167,8 @@ void MagmaRock_StepOnTrap(u16 *list) {
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
+/// Scatters dust and rubble around the leader's feet; with spread, they fly
+/// outward.
 void MagmaRock_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
@@ -2173,6 +2207,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
   } while (i <= 7);
 }
 
+/// Throws a ring of dust clouds out from the leader as a pillar lands.
 void MagmaRock_SpawnDustRing(void) {
   struct Actor *leader;
   struct FieldEffect *effect;
@@ -2232,6 +2267,7 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   *shapes = MapCollision_FindOrAddTag(actor->layer, value, height);
 }
 
+/// MagmaRock_SetActorCellShape for the leader's cell.
 void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.leaderActorId);
 }
@@ -2250,6 +2286,7 @@ struct RockWork {
   s16 resource;
 };
 
+/// Drops count rocks from (x, y, z), each flung out at a random angle.
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
@@ -2286,8 +2323,11 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
 // The falling rocks' setup: loads their picture, sets up 64 small sprites,
 // marks each rock idle and starts the task that spawns them.
 
+/// The overlay's import veneer to the tagged LZ decompressor.
 void Import_DecompressTaggedLz(void *entry, void *destination);
 
+/// Starts the falling rocks: loads their picture, prepares 64 small sprites and
+/// adds the task that draws them.
 void MagmaRock_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -2321,6 +2361,7 @@ void MagmaRock_StartFallingRocks(void) {
   Task_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
+/// Ends the falling rocks: removes their task and frees their picture and work.
 void MagmaRock_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 

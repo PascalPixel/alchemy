@@ -4,8 +4,8 @@
 /// rope, puddle and the door Reveal opens, the room whose bookshelf Tremor
 /// shakes until a chest falls into the room below, and the tablet room whose
 /// red double door the Ruin Key opens, lighting its flames before Moloch's
-/// tablet. Once the Black Crystal is stolen (flag 0x8ab) the Champa's way in is
-/// blocked.
+/// tablet. Once the Black Crystal is stolen (FLAG_BRIGGS_CAUGHT) the Champa's
+/// way in is blocked.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -153,6 +153,8 @@ s32 Leader_CanPushObjectAhead(void);
 
 void MadraCatacombs_RockChestWithBookshelf(void);
 
+/// Arriving in the catacombs' village by a way the Champa have since blocked:
+/// the leader leaves again.
 void MadraCatacombs_LeaveBlockedVillage(void);
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
@@ -230,6 +232,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
+/// Examining a locked door: "The door won't budge. ...Must be locked."
 void MadraCatacombs_TryLockedDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -262,6 +265,7 @@ void MadraCatacombs_DropPillarIntoHole(void) {
   }
 }
 
+/// When Move takes hold of the second pillar: the cells it blocked are freed.
 void MadraCatacombs_StartMovingPushedPillar(void) {
   Actor_LiftTargetBlock(gMadraCatacombs_PushedPillar);
 }
@@ -275,6 +279,8 @@ void MadraCatacombs_FinishMovingPushedPillar(void) {
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
+/// Frost on a puddle: it freezes into a pillar, its flag set
+/// (FlagBlock_ApplyFlags).
 void MadraCatacombs_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gMadraCatacombs_Puddles);
 }
@@ -345,6 +351,8 @@ void Actor_PlaceBlocks(const void *data);
 /// The climbable pillar settles where Move left it, its cells raised; on cell
 /// (35, 17) it stays there .
 void MadraCatacombs_SettleClimbablePillar(struct Actor *object);
+/// Arriving in the Champa tunnel by a way the Champa have since blocked: the
+/// leader leaves again.
 void MadraCatacombs_LeaveBlockedTunnel(void);
 
 /// Reveal shows the push button by the closed doorway, pressed in once the door
@@ -357,11 +365,15 @@ void MadraCatacombs_RevealButton(void) {
   Event_SetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
 }
 
+/// As Reveal fades: the push button is hidden again.
 void MadraCatacombs_HideButton(void) {
   MapGrid_CopyCellsTo(70, 63, 36, 38, 1, 2);
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
 }
 
+/// Examining the wall by the doorway: once Reveal shows the push button there,
+/// the button is pressed and the doorway opens; otherwise the inscription reads
+/// "Look upon me with eyes of truth... Then the door will open..."
 void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED) != 0 &&
       Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) == 0) {
@@ -431,6 +443,7 @@ void MadraCatacombs_PushClimbablePillar(void) {
   }
 }
 
+/// When Move takes hold of the climbable pillar: its raised cells are lowered.
 void MadraCatacombs_StartMovingClimbablePillar(void) {
   Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
 }
@@ -439,6 +452,8 @@ void MadraCatacombs_StartMovingClimbablePillar(void) {
 /// walks through it as MadraCatacombs_EnterDoorway does.
 void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
+/// When the climbable pillar comes to rest after Move: settles it where it
+/// stopped (MadraCatacombs_SettleClimbablePillar).
 void MadraCatacombs_FinishMovingClimbablePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -556,18 +571,22 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// The stone door, two cells wide, slides open and the leader goes through.
 void MadraCatacombs_SlideOpenStoneDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(78, 29, 78, 31, 2, 2);
 }
 
+/// The bookshelf room's west door opens and the leader goes through.
 void MadraCatacombs_OpenBookshelfRoomWestDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(109, 1, 109, 3, 1, 2);
 }
 
+/// The bookshelf room's east door opens and the leader goes through.
 void MadraCatacombs_OpenBookshelfRoomEastDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(118, 1, 118, 3, 1, 2);
 }
 
+/// The tablet room's door opens and the leader goes through.
 void MadraCatacombs_OpenTabletRoomDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(92, 29, 92, 31, 1, 2);
 }
@@ -610,6 +629,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Sets up the catacombs' village: its rope, the pillars Move has placed, the
+/// frozen puddles, the opened doorway and, once Briggs is caught, its blocked
+/// way.
 void MadraCatacombs_SetUpVillage(void) {
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
@@ -646,6 +668,8 @@ void MadraCatacombs_SetUpVillage(void) {
   }
 }
 
+/// Sets up the Champa tunnel: its rope and, once Briggs is caught, its blocked
+/// way.
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
   FieldRope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
@@ -662,11 +686,15 @@ void MadraCatacombs_SetUpChampaTunnel(void) {
   }
 }
 
+/// Sets up the room below the bookshelf: the fallen chest is there only once it
+/// has fallen.
 void MadraCatacombs_SetUpRoomBelowBookshelf(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0)
     Actor_SetPosition(ACTOR_FALLEN_CHEST, 0, 0);
 }
 
+/// Sets up the bookshelf room: the shaken chest stands on top of its shelf
+/// until it has fallen.
 void MadraCatacombs_SetUpBookshelfRoom(void) {
   struct Actor *object;
 

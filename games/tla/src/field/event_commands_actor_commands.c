@@ -6,6 +6,7 @@
 #include "event_commands_internal.h"
 #include "fixed_math.h"
 #include "field/field.h"
+#include "field/speaker.h"
 #include "system/system.h"
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -112,9 +113,11 @@ void Actor_FallOverById(u32 id, u32 angle) {
     angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
     position[0] = object->x.fixed;
     position[2] = object->z.fixed;
-    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+                                 CELL_BEHAVIOR_WALL);
     Vector_AddPolarOffset(toFIXED(16), angle, position);
-    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
+    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+                                 CELL_BEHAVIOR_WALL);
     switch (angle) {
     case FACING_EAST:
       sprite->offsetX -= 3;
@@ -152,9 +155,11 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   position[0] = object->x.fixed;
   angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   position[2] = object->z.fixed;
-  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+                               CELL_BEHAVIOR_WALL);
   Vector_AddPolarOffset(toFIXED(16), angle, position);
-  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
+  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+                               CELL_BEHAVIOR_WALL);
   switch (angle) {
   case 0:
     object->x.fixed += toFIXED(8);
@@ -162,16 +167,16 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     sprite->offsetX -= 4;
     sprite->offsetY += 15;
     break;
-  case 0x8000:
+  case DEGtoANG(180):
     object->x.fixed -= toFIXED(8);
     object->z.fixed += toFIXED(1);
     sprite->offsetX += 3;
     sprite->offsetY += 16;
     break;
-  case 0xc000:
+  case DEGtoANG(270):
     sprite->offsetY += 1;
     break;
-  case 0x4000:
+  case DEGtoANG(90):
     object->z.fixed += toFIXED(8);
     sprite->offsetY += 13;
     break;
@@ -195,7 +200,7 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
 
   if (object != NULL) {
     kind = object->spriteStorageKind;
-    if (kind == 1) {
+    if (kind == ACTOR_SPRITE_ONE) {
       sprite = object->sprite;
       if (resource & 0x8000)
         resource = 0;
@@ -232,9 +237,9 @@ void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 s32 Actor_GetSpriteById(s32 key) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
-  struct Actor *object = event->actors[key & 0x0fff];
+  struct Actor *object = event->actors[key & SPEAKER_ACTOR_MASK];
 
-  if (object != NULL && object->spriteStorageKind == 1)
+  if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
     result = ((struct Sprite *)object->sprite)->entries[0]->animationId;
   return result;
 }
@@ -247,9 +252,9 @@ s32 Actor_FindBySprite(s32 value) {
   s32 index;
   struct Actor *object;
 
-  for (index = 8; index <= 79; index++) {
+  for (index = ACTOR_FIRST_PLACED; index < FIELD_ACTOR_COUNT; index++) {
     object = event->actors[index];
-    if (object != NULL && object->spriteStorageKind == 1 &&
+    if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE &&
         ((struct Sprite *)object->sprite)->entries[0]->animationId == value) {
       result = index;
       break;

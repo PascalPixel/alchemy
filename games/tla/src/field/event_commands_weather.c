@@ -14,9 +14,9 @@
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
 /// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct WeatherWork *work = Ram_HeapSlots->weather;
-  s32 *origin = (s32 *)(map + 228);
+  s32 *origin = &map->viewX;
   s32 originX = origin[0];
   s32 originZ = origin[1];
   struct GroundParticle *particle = work->particles;
@@ -65,9 +65,9 @@ void GroundParticles_Update(void) {
 /// again at a random point (x within -64 to +192, z within -128 to +128 pixels
 /// of the map's focus), on the ground, for 12 frames.
 void Weather_UpdateRain(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct WeatherWork *work = Ram_HeapSlots->weather;
-  s32 *origin = (s32 *)(map + 228);
+  s32 *origin = &map->viewX;
   s32 originX = origin[0];
   struct GroundParticle *particle = work->particles;
   s32 originZ = origin[1];

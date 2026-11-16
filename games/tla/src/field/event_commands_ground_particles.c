@@ -22,7 +22,7 @@ void GroundParticles_Start(void) {
   // The fill's value; as a literal 0 the fill differs.
   u32 zero = 0;
 
-  work = HeapSlot_AllocEwram(116, sizeof(struct WeatherWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = Ram_HeapSlots->mapGrid->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
@@ -145,7 +145,7 @@ void RisingParticles_Start(void) {
     particle->drift = 0;
     particle->timer = i * 2;
   }
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   Task_Add(RisingParticles_Update, priority);
 }
 

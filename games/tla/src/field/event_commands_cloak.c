@@ -150,7 +150,7 @@ void FieldPsynergy_Douse(void) {
   to->z = work->z;
   if ((s8)work->childOption != 0)
     to->y = y + toFIXED(80);
-  if (Actor_GetSpriteIdFar(anchor) == 380) {
+  if (Actor_GetSpriteIdFar(anchor) == SPRITE_MOAI) {
     to->y += toFIXED(32);
     raised = 1;
   }
@@ -382,7 +382,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
       break;
     angle = (u16)Input_GetDpadAngle(gInput.held);
-    if (angle == 0xffff) {
+    if (angle == DPAD_ANGLE_NONE) {
       SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                    target->z.fixed);
       Actor_SetMoveTargetFar(anchors[0], position.x + toFIXED(16), position.y,

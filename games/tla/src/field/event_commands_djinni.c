@@ -8,6 +8,7 @@
 #include "sounds.h"
 #include "gamepak/far_call/game.h"
 #include "field/event_commands.h"
+#include "field/emote.h"
 #include "field/field.h"
 #include "field/object.h"
 #include "system/system.h"
@@ -83,11 +84,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   wait(10);
-  back = dir + 0x8000;
+  back = dir + DEGtoANG(180);
   Actor_FaceDirectionById(djinniId, back, 0);
   wait(10);
   djinni->facing = back;
-  Actor_ShowEmoteById(djinniId, 0x103, 50);
+  Actor_ShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_GetById(djinniId)->steeringFlags &= ~1;
   djinni->motionFlags = ACTOR_FALLS;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
@@ -117,9 +118,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     tint = 2;
   if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
-  // DEAD: tint is already 9 for sprite 244; the ROM keeps the test and the
-  // store.
-  if (sprite == 244)
+  // DEAD: tint is already 9 for SPRITE_MERCURY_DJINNI; the ROM keeps the test
+  // and the store.
+  if (sprite == SPRITE_MERCURY_DJINNI)
     tint = 9;
   sharedSprite = NULL;
   prev = djinni;

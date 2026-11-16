@@ -61,7 +61,7 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
-    result = ratio(zoom, 0x10000);
+    result = ratio(zoom, FIXED_ONE);
   }
   map->zoomFrom = map->zoomTo;
   map->zoomTo = result;

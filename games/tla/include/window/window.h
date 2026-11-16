@@ -525,7 +525,11 @@ enum FieldMessageFlag {
 enum PauseMenuEntry {
   PAUSE_MENU_SAVE_QUEST = 0,
   PAUSE_MENU_SLEEP = 1,
-  PAUSE_MENU_CHANGE_SETTINGS = 2
+  PAUSE_MENU_CHANGE_SETTINGS = 2,
+  /// In debug mode, R and L also leave the menu with these; PauseMenu_Run acts
+  /// on neither.
+  PAUSE_MENU_DEBUG_R = 20,
+  PAUSE_MENU_DEBUG_L = 21
 };
 
 #define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23

@@ -275,6 +275,10 @@ enum DisplayControl {
 /// word each HBlank to a register reloaded every line (a scanline table that
 /// drives a window edge, a scroll or an affine register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+/// Fill n words or halfwords with the value at the source, as The Broken
+/// Seal's.
+#define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
+#define DMA_FILL_HALFWORDS(n) ((DMA_ENABLE | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \

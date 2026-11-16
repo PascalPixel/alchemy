@@ -676,6 +676,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   }
 }
 
+/// Sets the colour mode (enum SpriteColorMode) of the sprite's first layer
+/// and has it drawn again.
 void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   if (record != NULL) {
     record->entries[0]->colorMode = value;
@@ -683,12 +685,14 @@ void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   }
 }
 
+/// Sets the colour mode of every layer of the sprite that is not hidden
+/// (SPRITE_COLOR_HIDDEN) and has it drawn again.
 void Sprite_SetAnimationColorModes(struct Sprite *record, u32 value) {
   s32 i;
 
   if (record != NULL) {
     for (i = 0; i < record->count; i++) {
-      if (record->entries[i]->colorMode != 15)
+      if (record->entries[i]->colorMode != SPRITE_COLOR_HIDDEN)
         record->entries[i]->colorMode = value;
     }
     record->dirty = 1;

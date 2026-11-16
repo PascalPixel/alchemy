@@ -646,8 +646,9 @@ void Sprite_Destroy(struct Sprite *sprite) {
 }
 
 /// Sums the first cnt frame durations of animation id's entry number `no`.
-/// Commands are two bytes (command, value); 254, 241, 253 and 239 end the
-/// list, and the values of commands 245, 255 and those up to 238 count.
+/// Commands are two bytes (command, value); ANIMCMD_PLAY, ANIMCMD_HOLD,
+/// ANIMCMD_JUMP and ANIMCMD_END end the list, and the values of ANIMCMD_WAIT,
+/// ANIMCMD_BLANK and the frames below ANIMCMD_END count.
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;
   u8 *script;

@@ -4,8 +4,10 @@
 
 #include "field_internal.h"
 
+/// Returns the animation metadata of the sprite id in id's low twelve bits;
+/// an id past the last sprite reads the first's.
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
-  id &= 0xfff;
+  id &= ACTOR_CREATE_SPRITE_MASK;
   if (id >= 716)
     id = 0;
   return &gSprite_AnimationMetadata[id];

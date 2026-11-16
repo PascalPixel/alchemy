@@ -820,8 +820,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     before = Heap_AllocEwram(sizeof(struct Unit));
     Iwram_CopyWordsEntry(before, unit, sizeof(struct Unit));
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      // A summon raises an element by one level for each of its Djinn the
-      // summon used, four at most.
+      // A summon's boost to an element is how many of its Djinn the summons
+      // used, four at most, and never falls during the battle.
       if (counts[i] > 4)
         counts[i] = 4;
       if (unit->summonBoost[i] < counts[i])

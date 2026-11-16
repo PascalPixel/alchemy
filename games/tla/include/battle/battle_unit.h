@@ -464,8 +464,8 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 /// The eight characters' units, ISAAC to PIERS, kept in the save.
 extern struct Unit gCharacterUnits[PARTY_UNIT_COUNT];
 
-/// A unit's base stats from Unit.baseHp on, as BattleUnit_Strengthen's copy and
-/// the Clear Data read them.
+/// A unit's base stats from Unit.baseHp on, as the Clear Data reads them
+/// (battle_formation.c copies the whole block as struct BattleBaseStats).
 struct UnitBaseStats {
   s16 hp;
   s16 pp;

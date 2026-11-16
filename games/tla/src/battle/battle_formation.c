@@ -127,8 +127,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// A unit's base stats as BattleEnemy_AdjustLevel copies them, from
-/// Unit.baseHp: the copy keeps the levels' floor, 7/10 of each old value.
+/// A unit's base stats as they were before its level or strength changed: a
+/// copy from Unit.baseHp on, as The Broken Seal's.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;

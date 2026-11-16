@@ -174,8 +174,9 @@ s32 Battle_Run(s32 enemyGroup) {
   transition->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
-  // XXX: flag 0x169 is set as every battle starts and no code here reads it
-  // by that number; the field code that tests it would name it.
+  // XXX (no evidence): what flag 0x169 marks; it is set as every battle
+  // starts, as The Broken Seal's, and nothing in C reads it. A reader of the
+  // flag would settle it.
   GameFlag_Set(0x169);
   Matrix_Initialize();
 

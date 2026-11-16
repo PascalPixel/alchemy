@@ -23,7 +23,7 @@ void BattleEffect_RunFormChangeFar(struct BattlePresentationWork *request,
 void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 /// Starts the element streaks, which then draw by themselves while the battle
 /// runs on.
-void BattleEffect_StartElementStreaksFar(s32 mode);
+void BattleEffect_StartElementStreaksFar(s32 kind);
 /// Ends the element streaks: removes their callbacks, clears the canvas in VRAM
 /// and frees their heap blocks.
 void BattleEffect_EndElementStreaksFar(void);

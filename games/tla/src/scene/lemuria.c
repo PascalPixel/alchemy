@@ -145,33 +145,27 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
-  struct FieldEffectWork *effect;
   struct Actor *other;
 
   Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
                                           gMainRoutineWork.leaderActorId)));
   mode = 0x3ff & event->psynergy;
   state = &self->paused;
-  if (mode == ABILITY_MIND_READ) {
-    effect = Ram_HeapSlots->fieldEffectWork;
-    if ((s8)effect->messageShown != 0)
-      goto near;
+  if (mode != ABILITY_MIND_READ ||
+      (s8)((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)
+              ->messageShown == 0) {
+    if (self->timer != 1) {
+      other = Actor_Get(gMainRoutineWork.leaderActorId);
+      if (Position_Distance(&self->x.fixed, &other->x.fixed) <= 11 ||
+          (Actor_IsFacingNear(self, self->watchedActor, 18) == 0 &&
+           Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.leaderActorId),
+                              26) == 0)) {
+        *state = 0;
+        Actor_SelectAnimation(self, 2);
+        return 0;
+      }
+    }
   }
-  if (self->timer == 1)
-    goto near;
-  other = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (Position_Distance(&self->x.fixed, &other->x.fixed) <= 11)
-    goto far;
-  if (Actor_IsFacingNear(self, self->watchedActor, 18) != 0)
-    goto near;
-  if (Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.leaderActorId), 26) !=
-      0)
-    goto near;
-far:
-  *state = 0;
-  Actor_SelectAnimation(self, 2);
-  return 0;
-near:
   *state = 1;
   Actor_SelectAnimation(self, 1);
   return 0;
@@ -463,7 +457,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_SetMessageId((s32)&MsgLemuriaAreYouKidsPierssTraveling);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 872, 880);
   object = Actor_Get(ACTOR_KRADEN_STAND_IN);
-  Actor_SetFirstSpriteAnimation(object, 43);
+  Actor_SetFirstSpriteAnimation(object, SPRITE_LUNPA);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 3);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
   // "Are you kids Piers's traveling companions?"
@@ -484,45 +478,46 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
-  if (Party_FindOwnerWithAction(ABILITY_LASH) != -1 ||
-      Event_GetFlag(FLAG_ROPE_TIED))
-    goto done;
-  FieldEvent_SetMessageId((s32)&MsgLemuriaWhatsMatterCantYouClimb);
-  FieldEvent_Wait(20);
-  Actor_WalkToAndWait(ACTOR_FELIX, 856, 952);
-  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
-  FieldEvent_Wait(10);
-  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldCamera_MoveTo(872, CAMERA_KEEP, 792, 1);
-  FieldCamera_WaitForArrival();
-  FieldEvent_Wait(20);
-  Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  // "What's the matter? Can't you climb up? ...Fine. Just a moment."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
-  FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
-  FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 4, 0);
-  Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 872, 912);
-  FieldEvent_Wait(20);
-  Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1);
-  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, -32, 0);
-  Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHEAST);
-  FieldCamera_MoveTo(848, CAMERA_KEEP, 904, 1);
-  FieldCamera_WaitForArrival();
-  FieldEvent_Wait(15);
-  // "You came all this way and then got stuck here? You can't be very bright."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
-  Actor_SetPosition(ACTOR_LET_DOWN_ROPE_LOW_POST, 840, 920);
-  Actor_SetPosition(ACTOR_LET_DOWN_ROPE_HIGH_POST, 840, 936);
-  Value3((s32 (*)())Rope_Coil, 1, 28, 27);
-  Rope_Lash(1, 28, 27);
-  FieldEvent_Wait(30);
-  // "There! Is that better? Now climb up here."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
-  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 32, 0);
-  EventCamera_FollowActor(ACTOR_FELIX, 1);
-  Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 0, -32);
-  Event_SetFlag(FLAG_LEMURIA_ROPE_LET_DOWN);
-done:
+  if (Party_FindOwnerWithAction(ABILITY_LASH) == -1 &&
+      !Event_GetFlag(FLAG_ROPE_TIED)) {
+    FieldEvent_SetMessageId((s32)&MsgLemuriaWhatsMatterCantYouClimb);
+    FieldEvent_Wait(20);
+    Actor_WalkToAndWait(ACTOR_FELIX, 856, 952);
+    Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
+    FieldEvent_Wait(10);
+    Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    FieldCamera_MoveTo(872, CAMERA_KEEP, 792, 1);
+    FieldCamera_WaitForArrival();
+    FieldEvent_Wait(20);
+    Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "What's the matter? Can't you climb up? ...Fine. Just a moment."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
+    FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
+    FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 4, 0);
+    Actor_WalkToAndWait(ACTOR_KRADEN_STAND_IN, 872, 912);
+    FieldEvent_Wait(20);
+    Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1);
+    Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, -32, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHEAST);
+    FieldCamera_MoveTo(848, CAMERA_KEEP, 904, 1);
+    FieldCamera_WaitForArrival();
+    FieldEvent_Wait(15);
+    // "You came all this way and then got stuck here? You can't be very
+    // bright."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+    Actor_SetPosition(ACTOR_LET_DOWN_ROPE_LOW_POST, 840, 920);
+    Actor_SetPosition(ACTOR_LET_DOWN_ROPE_HIGH_POST, 840, 936);
+    Value3((s32 (*)())Rope_Coil, 1, ACTOR_LET_DOWN_ROPE_LOW_POST,
+           ACTOR_LET_DOWN_ROPE_HIGH_POST);
+    Rope_Lash(1, ACTOR_LET_DOWN_ROPE_LOW_POST, ACTOR_LET_DOWN_ROPE_HIGH_POST);
+    FieldEvent_Wait(30);
+    // "There! Is that better? Now climb up here."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
+    Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 32, 0);
+    EventCamera_FollowActor(ACTOR_FELIX, 1);
+    Actor_WalkByAndWait(ACTOR_KRADEN_STAND_IN, 0, -32);
+    Event_SetFlag(FLAG_LEMURIA_ROPE_LET_DOWN);
+  }
   Lemuria_RestoreGirl();
   Event_End();
 }
@@ -748,7 +743,7 @@ void Lemuria_AdmirePalace(s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaOh);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
                                 SPRITE_KRADEN);
   if (id == ACTOR_DOG) {
     Actor_WalkToAndWait(ACTOR_FELIX, 376, 968);
@@ -821,7 +816,7 @@ void Lemuria_KeepLookingAround(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgLemuriaWhereAreYouGoingFelix);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
                                 SPRITE_KRADEN);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_SetSpritePriority(ACTOR_KRADEN_STAND_IN, 1);
@@ -858,7 +853,7 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_SetMessageId((s32)MsgLemuriaThisPlaceIsRemarkableTruly);
   Actor_SetSpeed(ACTOR_WEST_PALACE_GUARD, 1);
   Actor_SetSpeed(ACTOR_EAST_PALACE_GUARD, 1);
-  Actor_SetFirstSpriteAnimation((s32)Actor_Get(ACTOR_KRADEN_STAND_IN),
+  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
                                 SPRITE_KRADEN);
   Actor_WalkToAndWait(ACTOR_FELIX, 472, 568);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN_STAND_IN, -16, 0,

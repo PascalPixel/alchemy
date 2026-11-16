@@ -79,13 +79,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Shop_Run(s32 slot, s32 actor);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {

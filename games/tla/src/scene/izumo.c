@@ -47,10 +47,12 @@
 #define FLAG_REVEALING 0x301
 
 /// The village's actors the events move: the stone Move sets back in the
-/// circle ("The misaligned stone! It's back in its original position!"), the
-/// circle's guard, the seven who dance once the Serpent is slain, and Susa.
+/// circle ("The misaligned stone! It's back in its original position!"), Okuni
+/// the dancer ("My name's Okuni. I'm a great dancer..."), the circle's guard,
+/// the seven who dance once the Serpent is slain, and Susa.
 enum {
   ACTOR_MISALIGNED_STONE = 12,
+  ACTOR_OKUNI = 15,
   ACTOR_STONE_CIRCLE_GUARD = 22,
   ACTOR_DANCER_A = 25,
   ACTOR_DANCER_B,
@@ -202,7 +204,7 @@ void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(0xf9f)) {
+  if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR, toFIXED(456), toFIXED(584));
     if (FIELD_CELL(object->x.fixed) == 28 &&
@@ -224,7 +226,7 @@ void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(0xfa0)) {
+  if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 1, toFIXED(472), toFIXED(552));
     if (FIELD_CELL(object->x.fixed) == 29 &&
@@ -262,7 +264,7 @@ void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
-  if (!GameFlag_Get(0xfa1)) {
+  if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 2, toFIXED(168), toFIXED(328));
     if (FIELD_CELL(object->x.fixed) == 10 &&
@@ -562,7 +564,7 @@ s32 Scene_Initialize(void) {
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-    Actor_GetById(15)->steeringFlags = 2;
+    Actor_GetById(ACTOR_OKUNI)->steeringFlags = 2;
     Actor_SetAnimationById(ACTOR_DANCER_A, 5);
     Actor_SetAnimationById(ACTOR_DANCER_B, 5);
     Actor_SetAnimationById(ACTOR_DANCER_C, 5);

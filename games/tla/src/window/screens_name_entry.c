@@ -62,7 +62,7 @@ UNUSED s32 Window_ReturnOne(void) { return 1; }
 /// rectangle, into the BG map in VRAM and the window work's mirror of it.
 void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  u16 *buffer = Heap_AllocEwram(0x300);
+  u16 *buffer = Heap_AllocEwram(768);
   s32 offset;
   u16 *map;
   u16 *vram;

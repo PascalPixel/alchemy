@@ -99,18 +99,18 @@ void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 
-  Iwram_FillWords(destination, 0x100, -1);
-  destination += 0x40;
-  Iwram_FillWords(destination, 0x80, 0x03ff03ff);
+  Iwram_FillWords(destination, 256, -1);
+  destination += 64;
+  Iwram_FillWords(destination, 128, 0x03ff03ff);
   entry = (0x0201 << 16) | 0x0200;
-  destination += 0x20;
+  destination += 32;
   index = 0;
   do {
     index++;
     *destination++ = entry;
     entry += 0x00020002;
   } while (index <= 239);
-  Iwram_FillWords(destination, 0x280, 0x03ff03ff);
+  Iwram_FillWords(destination, 640, 0x03ff03ff);
 }
 
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines

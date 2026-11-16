@@ -69,7 +69,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   s32 kindCount;
 
   work = WINDOW_WORK;
-  iconSlot = VramCache_AllocEntry(0x400);
+  iconSlot = VramCache_AllocEntry(1024);
   stripDirty = 1;
   tradeCount = 0;
   battleMenu = BATTLE_MENU_WORK;

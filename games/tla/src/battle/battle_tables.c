@@ -126,10 +126,10 @@ const s8 gBattlePlacement_StepPairs[] = {
 
 /// A shear: x gains -0.8 of y.
 const FIXED gBattleCamera_CommandMatrix[] = {
-    FIXED_ONE, 0,         0,
-    -0xcccc,   FIXED_ONE, 0,
-    0,         0,         FIXED_ONE,
-    0,         0,         0,
+    FIXED_ONE,     0,         0,
+    toFIXED(-0.8), FIXED_ONE, 0,
+    0,             0,         FIXED_ONE,
+    0,             0,         0,
 };
 // clang-format on
 

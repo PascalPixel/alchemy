@@ -624,7 +624,7 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   created = 0;
   handle = state->statusWindow;
   if (handle == 0) {
-    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 0x1E, 0xF, 2);
+    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 30, 15, 2);
     handle = state->statusWindow;
   }
   if (created != 0) {
@@ -1144,7 +1144,7 @@ void Menu_BuildPatternTiles(void) {
 
   for (set = 0; set < 2; set++) {
     for (n = 0; n < 6; n++) {
-      u32 *tile = (u32 *)BG_SCREEN_BLOCK(12) + set * 0x60 + n * 0x10;
+      u32 *tile = (u32 *)BG_SCREEN_BLOCK(12) + set * 96 + n * 16;
       s32 x;
 
       Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
@@ -1165,7 +1165,7 @@ void Menu_BuildPatternTiles(void) {
   }
 }
 
-#define RANGE_ICON_TILE 0xf300
+#define RANGE_ICON_TILE WINDOW_TILE(768)
 
 /// Draws a Psynergy range icon at tile (x, y) of window: three tiles from pair
 /// range of the range icon tiles (Menu_BuildPatternTiles), the side tile on

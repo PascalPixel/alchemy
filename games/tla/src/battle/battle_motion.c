@@ -277,7 +277,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
   SET_POSITION(&pos, (x1 + x2) / 2, 0, (z1 + z2) / 2);
 
-  BattleMotion_MidpointNoOp(&pos, 0x1000);
+  BattleMotion_MidpointNoOp(&pos, toFIXED(1) / 16);
 }
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a

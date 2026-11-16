@@ -228,20 +228,20 @@ struct ShopWork {
   void *listWindow; ///< the party row's window at the sell and forge counters
 };
 
-STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 0x024);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 0x0f8);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 0x138);
-STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 0x270);
-STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 0x4ca);
-STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 0x4dc);
-STATIC_ASSERT(offsetof(struct ShopWork, keeperGraphics) == 0x4fa);
-STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x502);
-STATIC_ASSERT(offsetof(struct ShopWork, action) == 0x507);
-STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x50c);
-STATIC_ASSERT(offsetof(struct ShopWork, iconSprites) == 0xc14);
-STATIC_ASSERT(offsetof(struct ShopWork, iconsVisible) == 0xce6);
-STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 0xce8);
-STATIC_ASSERT(sizeof(struct ShopWork) == 0xcec);
+STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 36);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 248);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 312);
+STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 624);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 1226);
+STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 1244);
+STATIC_ASSERT(offsetof(struct ShopWork, keeperGraphics) == 1274);
+STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 1282);
+STATIC_ASSERT(offsetof(struct ShopWork, action) == 1287);
+STATIC_ASSERT(offsetof(struct ShopWork, effects) == 1292);
+STATIC_ASSERT(offsetof(struct ShopWork, iconSprites) == 3092);
+STATIC_ASSERT(offsetof(struct ShopWork, iconsVisible) == 3302);
+STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 3304);
+STATIC_ASSERT(sizeof(struct ShopWork) == 3308);
 
 // The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
 // left in the longer languages.

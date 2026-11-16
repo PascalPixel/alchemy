@@ -495,11 +495,11 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu->psynergyCount =
       PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
-  PsynergyMenu_RefreshMemberEntries(0x6c, 0x20, 8);
+  PsynergyMenu_RefreshMemberEntries(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow,
-                               0, 0x18);
+                               0, 24);
   }
 }
 
@@ -986,7 +986,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
     visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 0x22);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
   PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
                             state->page, 15);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,

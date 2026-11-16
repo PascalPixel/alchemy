@@ -559,7 +559,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
       slot->active = 0;
     }
     i += 1;
-  } while (i <= 0xD);
+  } while (i <= 13);
 }
 
 /// Writes a battle object's anchor to out, at height 0.

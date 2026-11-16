@@ -14,7 +14,7 @@
 /// The hand cursor's bob in x, indexed by (gFrameCount >> 1) & 7.
 u8 gMenuCursor_BobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
 /// The hand cursor's bob in y, as bytes: 0, -1, -1, -2, -2, -1, -1, 0.
-u8 gMenuCursor_BobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
+u8 gMenuCursor_BobY[9] = {0, 255, 255, 254, 254, 255, 255, 0, 0};
 
 // The item menu's sort orders (enum ListSort, Menu_CopyListOrder): one item
 // type per byte, with LIST_ORDER_EQUIPPED for only the equipped items of that

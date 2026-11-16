@@ -21,7 +21,7 @@ void System_Initialize(void) {
     dma0[5];
   }
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
-  Dma_Fill32(0, (void *)IWRAM_START, 0x7800);
+  Dma_Fill32(0, (void *)IWRAM_START, 30720);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   *(u32 *)&gIoWriteQueue.count = 0;

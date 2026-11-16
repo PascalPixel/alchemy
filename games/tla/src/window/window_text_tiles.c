@@ -594,7 +594,7 @@ void Text_DrawMessageAsTiles(s32 character, struct Window *position,
 
   cell = (((s16)position->y + (offsetY >> 3) + 1) << 5) +
          ((s16)position->x + (offsetX >> 3)) + 1;
-  if (cell < 0x280U) {
+  if (cell < 640U) {
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
     text = canvas->textBuffer;
@@ -644,7 +644,7 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *work, s32 offsetX,
 
   cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
          ((s16)work->x + ((u32)offsetX >> 3)) + 1;
-  if (cell < 0x280) {
+  if (cell < 640) {
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;

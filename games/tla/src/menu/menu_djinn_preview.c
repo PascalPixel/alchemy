@@ -208,7 +208,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       u8 *saved;
       s32 size;
 
-      size = 0x200;
+      size = 512;
       saved = Heap_AllocEwram(size);
       pressed = 0;
       repeat = 0;

@@ -141,9 +141,9 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define DATA018_TILE_BYTES 0xa000
+#define DATA018_TILE_BYTES 40960
 #else
-#define DATA018_TILE_BYTES 0x9c00
+#define DATA018_TILE_BYTES 39936
 #endif
 
 /// Blanks the display, loads resource 0x18's palette into the BG palette with
@@ -738,7 +738,7 @@ s32 TitleIntro_ShowLighthouse(void) {
 
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
   tile = 0;
-  q16One = 0x10000;
+  q16One = FIXED_ONE;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     for (i = DISPLAY_TILE_WIDTH - 1; i >= 0; i--) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
@@ -1582,10 +1582,10 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
   return value;
 }
 
-/// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
+/// Caps a colour component at 31 << 10, the largest a five-bit channel shifted
 /// into the high bits reaches. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
-  if (value > 0x7c00)
-    value = 0x7c00;
+  if (value > 31 << 10)
+    value = 31 << 10;
   return value;
 }

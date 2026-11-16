@@ -133,7 +133,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(0, 2), colour);
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(1, 2), colour);
-      secondWidth = (s32)(((u32)secondWidth << 16) + 0x10000) >> 16;
+      secondWidth = (s32)(((u32)secondWidth << 16) + (1 << 16)) >> 16;
     } else {
       u8 *dst = pixels + width;
       u8 *p;

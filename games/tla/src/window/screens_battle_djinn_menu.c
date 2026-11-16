@@ -88,7 +88,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   previewWindow = NULL;
   drawnRow = -1;
-  cursorSlot = VramCache_AllocEntry(0x80);
+  cursorSlot = VramCache_AllocEntry(128);
   djinnEntries = Heap_AllocEwram(84 * sizeof(*djinnEntries));
   djinnCount = 0;
   drawnFirstEntry = drawnRow;

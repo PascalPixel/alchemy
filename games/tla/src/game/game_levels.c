@@ -326,7 +326,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   level = unit->level;
   work->level = level;
   gains->level = level;
-  gains->ability = 0xffff;
+  gains->ability = -1;
   gains->hp = 0;
   gains->pp = 0;
   gains->atk = 0;

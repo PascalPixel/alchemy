@@ -103,7 +103,7 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     firstMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
-  VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
+  VramCache_Load((u8)work->marker[0].sprite->index, 256,
                  Resource_GetTableEntry(firstMarkerPicture));
 
   if (selection == 1) {
@@ -112,7 +112,7 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     secondMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
-  VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
+  VramCache_Load((u8)work->marker[1].sprite->index, 256,
                  Resource_GetTableEntry(secondMarkerPicture));
 
   if (selection > 1)

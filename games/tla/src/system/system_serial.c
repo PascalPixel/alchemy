@@ -705,16 +705,16 @@ void SerialTest_Run(void) {
     tile--;
     value--;
   } while (remaining >= 0);
-  Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
+  Cpu_Fill32(0, gMapGridCellBuffer, 1024);
   Serial_WaitForStatusMask(3);
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
   held = &gInput.held;
   for (;;) {
     if (*held & KEY_A)
-      Serial_StartSend((void *)Cart_Start, 0x280);
+      Serial_StartSend((void *)Cart_Start, 640);
     if (*held & KEY_B)
-      Serial_StartSend((void *)(Rom_Start + 0x1000), 0x280);
+      Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
     if (*held & KEY_START) {
       delay = 9999;
       do {

@@ -380,7 +380,7 @@ void SelectionMenu_Draw(void) {
     {
       void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
 
-      cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
+      cursorEntry->tile = VramCache_Load(cursor->slot, 256, src);
     }
     if (cursor->targetX != cursor->x) {
       tmp = (cursor->targetX - cursor->x) >> 1;
@@ -1374,7 +1374,7 @@ void SelectionMenu_LoadLargeIcon(void) {
 
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = VramCache_FindFreeEntry();
-  transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
+  transfer->tile = VramCache_Load(transfer->slot, 1024, buffer);
   transfer->kind = ICON_KIND_COMMAND;
   transfer->base = no;
   transfer->scale = 40;

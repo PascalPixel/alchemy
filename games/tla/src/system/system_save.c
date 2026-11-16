@@ -392,7 +392,7 @@ s32 Save_LoadExtraSummary(void) {
   index = Save_FindLatestSector(SAVE_PART_EXTRA);
   if (index < SAVE_SECTOR_COUNT) {
     ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
-    ReadFlash(index + 1, 0x110, (u8 *)&work->extra.secondPartPlayTime,
+    ReadFlash(index + 1, 272, (u8 *)&work->extra.secondPartPlayTime,
               sizeof(work->extra.secondPartPlayTime));
     return 1;
   }

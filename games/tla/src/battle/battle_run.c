@@ -357,7 +357,7 @@ s32 Battle_Run(s32 enemyGroup) {
         battle->actions[i].unitId = queue << 7;
         battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
-        battle->actions[i].target = queue != 0 ? 0 : 0x80;
+        battle->actions[i].target = queue != 0 ? 0 : FIRST_ENEMY_UNIT;
         battle->actions[i].range = 255;
         i--;
       }
@@ -554,8 +554,8 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   if (output != NULL) {
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
       limit = 3;
-    id = 0x80;
-    limit += 0x80;
+    id = FIRST_ENEMY_UNIT;
+    limit += FIRST_ENEMY_UNIT;
     for (; id < limit; id++) {
       if (Unit_Get(id)->side != BATTLE_SIDE_NONE) {
         *output = id;

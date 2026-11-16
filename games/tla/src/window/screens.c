@@ -129,7 +129,7 @@ union NameCursor {
 /// party row of the shop's ShopWork (shop/shop_internal.h), holding the party
 /// sprites of the file under the cursor, where each stands and its scale.
 struct FileListWork {
-  u8 menuScreens[0xf8]; ///< the windows and lists before the party row
+  u8 menuScreens[248]; ///< the windows and lists before the party row
   /// Up to four party sprites, null for none; the row has room for eight.
   void *partyMemberIcons[8];
   s16 partyMemberX[8];       ///< pixels

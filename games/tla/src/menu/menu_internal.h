@@ -257,7 +257,7 @@ struct ItemMenuWork {
   u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 items[32];    ///< the inventory entries listed
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
@@ -307,28 +307,28 @@ struct ItemMenuWork {
   ///@}
 };
 
-STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 0x24);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 0x48);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 0x4c);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 0xf0);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 0xf8);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 0x128);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpriteIds) == 0x158);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 0x168);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, pageArrows) == 0x178);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 0x1c4);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 0x216);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, flags) == 0x21c);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 0x21e);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25e);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x264);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 0x220);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figureFacings) == 0x250);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x4ee);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 0x509);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 0xbcc);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 0xc12);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 36);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 72);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 76);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 240);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSprites) == 248);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 296);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpriteIds) == 344);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 360);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 452);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 534);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, flags) == 540);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 542);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 606);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 609);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 612);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 544);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figureFacings) == 592);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 1262);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 1289);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 3020);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 3090);
 
 /// The work of the party member chooser and the Status menu (heap slot 220),
 /// which each takes as it opens and frees before it returns. The Broken Seal's
@@ -366,7 +366,7 @@ struct StatusScreenWork {
   u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 entries[32];
   u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
@@ -381,21 +381,21 @@ struct StatusScreenWork {
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 0x10);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, actionWindow) == 0x24);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 0x4c);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 0xf0);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 0xf4);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 0x128);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 0x168);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 0x170);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, pageArrows) == 0x178);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 0x204);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 0x216);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 0x21c);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 0x220);
-STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 0x230);
-STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x240);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 16);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, actionWindow) == 36);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 76);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 240);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 244);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 296);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 360);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 368);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 516);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 534);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 540);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 544);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 560);
+STATIC_ASSERT(sizeof(struct StatusScreenWork) == 576);
 
 /// The Psynergy menu's work (heap slot 220): its windows, icons and cursors,
 /// the party members' tabs and the Psynergy listed for the chosen party
@@ -437,7 +437,7 @@ struct PsynergyMenuWork {
   u8 itemCursor[8];
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
-  /// DjinnMenuWork's backdrop pointer at 0x180; no view names the rest.
+  /// DjinnMenuWork's backdrop pointer at offset 384; no view names the rest.
   u8 aroundBackdrop[68];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembersFar)
@@ -460,21 +460,20 @@ struct PsynergyMenuWork {
   u8 unusedAfterMode[3]; ///< no view of the menu work names it
 };
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 0x010);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 0x024);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 0x048);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 0x0f0);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 0x0f8);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 0x138);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction) == 0x16c);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, pageArrows) == 0x178);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 0x1c4);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 0x216);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 0x21e);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, useResult) == 0x25e);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
-              0x264);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 0x26c);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 16);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 36);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 72);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 240);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 248);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 312);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction) == 364);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, pageArrows) == 376);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 452);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 534);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 542);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, useResult) == 606);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) == 612);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 620);
 
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.

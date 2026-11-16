@@ -844,7 +844,7 @@ UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
-      scale += 0x51e;
+      scale += toFIXED(0.02);
       actor->scaleX = scale;
       actor->scaleY = scale;
     }
@@ -862,7 +862,7 @@ UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = 3;
-    actor->gravity = 0x170a;
+    actor->gravity = toFIXED(0.09);
     wait(50);
   }
 }
@@ -896,7 +896,7 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
       actor->scaleY = FIXED_ONE * 2 / 5;
       while (actor->scaleX < FIXED_ONE) {
         wait(1);
-        scale = actor->scaleX + 0x51e;
+        scale = actor->scaleX + toFIXED(0.02);
         actor->facing += FACING_STEP;
         actor->scaleX = scale;
         actor->scaleY = scale;

@@ -275,7 +275,7 @@ void PsynergyTest2_StartRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(PsynergyTest2_UpdateRocks, 0x480);
+  FieldTask_AddFrame(PsynergyTest2_UpdateRocks, TASK_PASS_VBLANK);
 }
 
 /// Stops the rocks and frees their tiles and work.
@@ -311,7 +311,7 @@ UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
     while (actor->scaleX < FIXED_ONE) {
       System_Wait(1);
       scale = actor->scaleX;
-      scale += 0x51e;
+      scale += toFIXED(0.02);
       actor->scaleX = scale;
       actor->scaleY = scale;
     }
@@ -329,7 +329,7 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
     actor->motionFlags = 3;
-    actor->gravity = 0x170a;
+    actor->gravity = toFIXED(0.09);
     System_Wait(50);
   }
 }
@@ -359,7 +359,7 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
       actor->scaleY = FIXED_ONE * 2 / 5;
       while (actor->scaleX < FIXED_ONE) {
         System_Wait(1);
-        scale = actor->scaleX + 0x51e;
+        scale = actor->scaleX + toFIXED(0.02);
         actor->facing += FACING_STEP;
         actor->scaleX = scale;
         actor->scaleY = scale;

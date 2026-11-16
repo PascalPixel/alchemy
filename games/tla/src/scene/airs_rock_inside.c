@@ -3397,31 +3397,39 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 s16 gAirsRockInside_HallPillars[] = {
-    12, -1,
+    ACTOR_HALL_POOL_STATUE, -1,
 };
 
 s16 gAirsRockInside_VialChestPillars[] = {
-    9, 11, -1,
+    ACTOR_VIAL_CHEST_EAST_PILLAR, ACTOR_VIAL_CHEST_WEST_PILLAR, -1,
 };
 
 s16 gAirsRockInside_ClarityCircletChestPillars[] = {
-    8, 11, 12, 10, -1,
+    ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
+    ACTOR_CLARITY_CIRCLET_CHEST_SECOND_PILLAR,
+    ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR,
+    ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B,
+    -1,
 };
 
 s16 gAirsRockInside_TightropesPillars[] = {
-    9, -1,
+    ACTOR_TIGHTROPES_PILLAR, -1,
 };
 
 s16 gAirsRockInside_PairedStatuesPillars[] = {
-    8, 9, 10, 11, -1,
+    ACTOR_PAIRED_STATUES_PILLAR,   ACTOR_PAIRED_STATUES_PILLAR_A,
+    ACTOR_PAIRED_STATUES_PILLAR_B, ACTOR_PAIRED_STATUES_PILLAR_C,
+    -1,
 };
 
 s16 gAirsRockInside_FaceWarpPillars[] = {
-    12, 8, 9, 13, 14, -1,
+    ACTOR_FACE_WARP_THIRD_PILLAR, ACTOR_FACE_WARP_FIRST_PILLAR,
+    ACTOR_FACE_WARP_SECOND_PILLAR, ACTOR_FACE_WARP_PILLAR_A,
+    ACTOR_FACE_WARP_PILLAR_B, -1,
 };
 
 s16 gAirsRockInside_CoinsChestPillars[] = {
-    9, 10, -1,
+    ACTOR_COINS_CHEST_PILLAR, ACTOR_COINS_CHEST_STATUE, -1,
 };
 
 u32 gAirsRockInside_OrbitSparkScript[] = {

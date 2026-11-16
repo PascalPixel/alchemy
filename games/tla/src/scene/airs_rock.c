@@ -1965,7 +1965,8 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 s16 gAirsRock_EntrancePillars[] = {
-    12, 13, 15, 16, 22, -1,
+    ACTOR_FIRST_LEDGE_PILLAR,  ACTOR_SECOND_LEDGE_PILLAR, ACTOR_THIRD_LEDGE_PILLAR,
+    ACTOR_FOURTH_LEDGE_PILLAR, ACTOR_FIFTH_LEDGE_PILLAR,  -1,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -2006,7 +2007,7 @@ s32 gAirsRock_RubbleScript[] = {
 };
 
 s16 gAirsRock_FrozenPuddle[] = {
-    14, 512, -1, 0,
+    ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

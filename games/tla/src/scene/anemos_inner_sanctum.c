@@ -1935,15 +1935,17 @@ s32 gAnemosInnerSanctum_SparkScript[] = {
 };
 
 s16 gAnemosInnerSanctum_ElevatorBlocks[] = {
-    8, 10, -1,
+    ACTOR_ELEVATOR_FIRST_PILLAR, ACTOR_ELEVATOR_SECOND_PILLAR, -1,
 };
 
 s16 gAnemosInnerSanctum_SwitchesBlocks[] = {
-    8, 10, 11, 12, 13, -1,
+    ACTOR_SWITCHES_FIRST_PILLAR, ACTOR_SWITCHES_SECOND_PILLAR,
+    ACTOR_SWITCHES_PILLAR_A,     ACTOR_SWITCHES_PILLAR_B,
+    ACTOR_SWITCHES_THIRD_PILLAR, -1,
 };
 
 s16 gAnemosInnerSanctum_OrihalconChestBlocks[] = {
-    9, 10, -1,
+    ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, ACTOR_ORIHALCON_CHEST_SECOND_PILLAR, -1,
 };
 
 s32 gAnemosInnerSanctum_SparkOffsets[][2] = {

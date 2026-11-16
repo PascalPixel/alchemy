@@ -1245,7 +1245,8 @@ void Alhafra_LookoutSeesMadrasMayor(s32 how) {
 
 // clang-format off
 s16 gAlhafra_Puddles[] = {
-    26, 512, 27, 513, 28, 514, -1, 0,
+    ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01,
+    ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_02, -1,             0,
 };
 
 u32 gAlhafra_LookAroundScript[] = {

@@ -306,7 +306,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
     return 0;
   }
   classification = 2;
-  if (action->range != 0xff) {
+  if (action->range != ABILITY_RANGE_ALL) {
     u8 kind = action->targetMode;
     // 1 when kind is 2, else 0.
     targetModeDifference = kind ^ 2;

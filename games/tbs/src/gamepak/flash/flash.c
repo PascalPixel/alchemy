@@ -239,7 +239,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size) {
   u16 index = size - 1;
 
-  while (index != 0xFFFF) {
+  while (index != (u16)-1) {
     u8 rightByte = *right;
     u8 leftByte = *left;
 

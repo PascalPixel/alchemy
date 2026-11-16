@@ -62,6 +62,6 @@ const u16 gBattleUnit_WeaponKinds[] = {
     WEAPON(ITEM_CRYSTAL_ROD, WEAPON_KIND_STAFF),
     WEAPON(ITEM_ZODIAC_WAND, WEAPON_KIND_STAFF),
     WEAPON(ITEM_SHAMANS_ROD, WEAPON_KIND_STAFF),
-    0xffff,
+    -1, // the end, read as an s16
 };
 // clang-format on

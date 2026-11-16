@@ -130,8 +130,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 a = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(128);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
-    PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
-    PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
+    PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - toFIXED(1) / 32) << 5;
+    PARTICLES[i].velocityY = (-(Random16() & 0xfff) - toFIXED(3) / 32) << 5;
     PARTICLES[i].variant = 0;
   }
 

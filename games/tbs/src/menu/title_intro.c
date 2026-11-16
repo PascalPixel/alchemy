@@ -1109,11 +1109,11 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
   return value;
 }
 
-/// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
-/// into the high bits reaches. There is no lower bound.
+/// Caps a colour component at RGB(0, 0, 31), the largest a five-bit channel
+/// shifted into the high bits reaches. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
-  if (value > 0x7c00)
-    value = 0x7c00;
+  if (value > RGB(0, 0, 31))
+    value = RGB(0, 0, 31);
   return value;
 }
 

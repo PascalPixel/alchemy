@@ -54,8 +54,8 @@ void AreaNameWindow_Update(void) {
   u16 framesLeft;
 
   notice = (struct TimedNoticeWork *)gFieldWork;
-  // Adding 0xffff takes one off in 16 bits.
-  notice->countdown = (framesLeft = notice->countdown + 0xffff);
+  // Adding (u16)-1 takes one off in 16 bits.
+  notice->countdown = (framesLeft = notice->countdown + (u16)-1);
   if ((framesLeft << 16) == 0) {
     Window_Close(notice->window, 2);
     Task_Remove(AreaNameWindow_Update);
@@ -86,7 +86,7 @@ s32 Item_ReturnTrue(void) { return 1; }
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
   u8 hue = gMainRoutineWork.windowHue;
   if (keys & KEY_LEFT)
-    hue += 0xff;
+    hue += (u8)-1;
   else
     hue += 1;
   gMainRoutineWork.windowHue = hue;
@@ -309,20 +309,20 @@ void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 /// VRAM cache entries with their flags and a window, among fields nothing here
 /// uses. Only the two unused functions below touch it.
 struct SelectionWorkspace {
-  u8 unusedBeforeFirst[0x46];
+  u8 unusedBeforeFirst[70];
   /// Nonzero when firstResource is a VRAM cache entry to free on release.
   u16 firstActive;
   u16 firstResource; ///< a VRAM cache entry
-  u8 unusedBetweenResources[0x352 - 0x4a];
+  u8 unusedBetweenResources[850 - 74];
   /// Nonzero when secondResource is a VRAM cache entry to free on release.
   u16 secondActive;
   u16 secondResource; ///< a VRAM cache entry
-  u8 unusedBeforeWindow[0xff4 - 0x356];
+  u8 unusedBeforeWindow[4084 - 854];
   struct Window *window; ///< closed, and waited for, on release
   u8 unusedAfterWindow[12];
 };
 
-STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 0x1004);
+STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 4100);
 
 /// Allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears its two
 /// flags. Nothing calls it.

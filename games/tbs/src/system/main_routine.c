@@ -20,8 +20,8 @@
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
 #define EXIT_HAS_FLAG 0x10000000
-#define EXIT_TABLE_END 0x1ff
-#define EXIT_ID_ANY 0xff
+#define EXIT_TABLE_END 511
+#define EXIT_ID_ANY 255
 
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's

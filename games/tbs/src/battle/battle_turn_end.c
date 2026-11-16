@@ -121,14 +121,14 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   sealCounter = unit->psySeal;
   turns = sealCounter & 0xFF;
   if (turns != 0) {
-    // In the byte, adding 0xf8 is -8 and adding 0xff is -1.
+    // In the byte, adding (u8)-8 takes 8 off and adding (u8)-1 takes 1 off.
     if (turns > 7U) {
-      turns += 0xF8;
+      turns += (u8)-8;
       unit->psySeal = turns;
       sealCounter = turns;
     }
     if (sealCounter & 7) {
-      decremented = sealCounter + 0xFF;
+      decremented = sealCounter + (u8)-1;
       unit->psySeal = decremented;
       sealCounter = decremented;
     }

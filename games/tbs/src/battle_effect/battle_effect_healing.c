@@ -299,7 +299,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC)
             endFrame = start + i / 2 + 32;
           else
-            endFrame = 0x10000;
+            endFrame = 65536;
           if (frame > start + i / 4 && frame < endFrame) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);

@@ -628,7 +628,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
-    work->previousMode = 0xffff;
+    work->previousMode = -1;
     window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
                            PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
@@ -652,7 +652,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #endif
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_FRAME - 10);
-    work->previousMode = 0xffff;
+    work->previousMode = -1;
     window =
         Window_Create(TRANSFER_METHOD_WINDOW_X, 0, TRANSFER_METHOD_WINDOW_WIDTH,
                       4, WINDOW_FLAG_INSTANT);

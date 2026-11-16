@@ -173,7 +173,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   if (state->figures[index] != NULL) {
     state->figureX[index] = x;
     state->figureY[index] = negative != 0 ? y | (s32)0xffff8000 : y;
-    return 0x23c + index * 2;
+    return offsetof(struct ItemMenuWork, figureY) + index * 2;
   }
   return index;
 }

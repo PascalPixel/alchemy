@@ -78,7 +78,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
       distance = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
                              (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
                              (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
-      if (distance <= 0xfff) {
+      if (distance <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(distance, FIXED_ONE);
@@ -108,7 +108,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
         spark->motion[0] = -spark->motion[0];
       if (spark->motion[1] & 1)
         spark->motion[1] = -spark->motion[1];
-      spark->motion[2] = (Random16() + 0x8000) >> 2;
+      spark->motion[2] = (Random16() + toFIXED(0.5)) >> 2;
       spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
       spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
       spark->motion[5] = 0;
@@ -212,7 +212,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
       spark->motion[0] = -spark->motion[0];
     if (spark->motion[1] & 1)
       spark->motion[1] = -spark->motion[1];
-    spark->motion[2] = (Random16() + 0x8000) >> 2;
+    spark->motion[2] = (Random16() + toFIXED(0.5)) >> 2;
     spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
     spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
     spark->motion[5] = 0;

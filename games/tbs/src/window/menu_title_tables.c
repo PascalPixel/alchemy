@@ -7,7 +7,8 @@
 /// The scale, 16.16, of WindowSprite_Pulse's eight steps: about 1.10 up to
 /// 1.22 and back.
 const s32 gWindowSprite_PulseScales[] = {
-    0x11999, 0x12147, 0x128f5, 0x130a3, 0x13851, 0x130a3, 0x128f5, 0x12147,
+    toFIXED(1.1),  toFIXED(1.13), toFIXED(1.16), toFIXED(1.19),
+    toFIXED(1.22), toFIXED(1.19), toFIXED(1.16), toFIXED(1.13),
 };
 
 /// A row of 4-bit pixels for the centre tile and one for the end tile, colour

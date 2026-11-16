@@ -110,10 +110,10 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
     effect.angle = 0;
     obj->oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
-    // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
+    // pixels (-16 in the 16-bit x and 8-bit y) to keep its centre.
     obj->oam.affineMode = 3;
-    obj->oam.x = obj->x + 0xfff0;
-    obj->oam.y = (u8)obj->y + 0xf0;
+    obj->oam.x = obj->x + (u16)-16;
+    obj->oam.y = (u8)obj->y + (u8)-16;
     obj->depth = OAM_DEPTH_FRONT - 3;
   }
 }

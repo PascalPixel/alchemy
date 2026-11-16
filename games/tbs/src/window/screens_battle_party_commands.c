@@ -182,7 +182,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
-    // first in the turn (priority 0x7ffe).
+    // first in the turn (priority 32766).
     if (mode == COMMAND_ICON_FLEE) {
       if (Battle_RefuseFlee() != 0) {
         continue;
@@ -190,7 +190,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       commandCount = 1;
       command = commands;
       command->unitId = actors[0];
-      command->priority = 0x7ffe;
+      command->priority = 32766;
       command->command = COMMAND_FLEE;
       command->parameter = 0;
       command->target = 256;

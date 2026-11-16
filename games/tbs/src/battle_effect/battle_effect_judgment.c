@@ -161,7 +161,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   depth = -toFIXED(64);
   zoom = toFIXED(8);
-  minimumDepth = 0xffff;
+  minimumDepth = 65535;
   maximumDepth = 0;
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_B,

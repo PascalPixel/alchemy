@@ -197,7 +197,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
               part->colorMode = BattleObject_GetPaletteFar(unitId);
             else
               part->colorMode = palette;
-            part->picture = 0xff;
+            part->picture = SPRITE_PICTURE_NONE;
           }
         }
       }

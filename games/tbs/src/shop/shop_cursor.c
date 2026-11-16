@@ -127,7 +127,9 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 #endif
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette, eventBytes + 0x236, DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(savedPalette,
+          eventBytes + offsetof(struct FieldWork, savedFadeTarget),
+          DMA_COPY_WORDS(336), REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
   PaletteFade_SetTargetFar(layer, 1);
@@ -137,7 +139,8 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
 /// frames.
 void Shop_RestoreFieldPalette(void) {
-  PaletteFade_SetTargetFar((s32)gFieldWork + 0x236, 1);
+  PaletteFade_SetTargetFar(
+      (s32)gFieldWork + offsetof(struct FieldWork, savedFadeTarget), 1);
   PaletteFade_StartInterpolationFar(16);
 }
 

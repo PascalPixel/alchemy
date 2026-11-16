@@ -79,7 +79,7 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
   scaledDamage =
       Battle_GetElementMultiplier(damage, 1) * (attack + (addedPower * 2));
   if (scaledDamage < 0)
-    scaledDamage += 0x1ff;
+    scaledDamage += 511;
   damage = scaledDamage >> 9;
   if (damage < 0)
     damage = 0;
@@ -94,7 +94,7 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
   scaledPower = Battle_GetElementMultiplier(elementDifference, 0) * power *
                 powerMultiplier;
   if (scaledPower < 0)
-    scaledPower = scaledPower + 0xffff;
+    scaledPower = scaledPower + 65535;
   return scaledPower >> 16;
 }
 
@@ -109,7 +109,7 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   scaledRecovery = powerMultiplier * scaledRecovery;
   signedProduct = scaledRecovery;
   if (signedProduct < 0)
-    signedProduct = signedProduct + 0xffff;
+    signedProduct = signedProduct + 65535;
   return signedProduct >> 16;
 }
 

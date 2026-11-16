@@ -174,7 +174,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 /// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
-    u32 decrement = 0xffff;
+    u32 decrement = (u16)-1;
 
     gBgScroll[2].x += decrement;
     gBgScroll[3].x += decrement;

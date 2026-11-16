@@ -119,7 +119,7 @@
 /// BattleWork.objectIndex of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it, and BattleObject_Get
 /// returns NULL for it.
-#define BATTLE_OBJECT_NONE 0xff
+#define BATTLE_OBJECT_NONE 255
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single

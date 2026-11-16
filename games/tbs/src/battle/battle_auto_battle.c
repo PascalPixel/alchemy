@@ -497,12 +497,12 @@ void BattleMotion_PlayFall(s32 unitId) {
   struct SpriteAnimation *actorData;
   struct Sprite *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {
-    // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
+    // POSE_DAMAGE in grey, its first entry showing SPRITE_PICTURE_NONE.
     animation = BattleObject_Get(unitId)->actor->sprite;
     Sprite_StartAnimationFar(animation, POSE_DAMAGE);
     actorData = animation->entries[0];
     actorData->colorMode = SPRITE_COLOR_GREY;
-    actorData->picture = 0xFF;
+    actorData->picture = SPRITE_PICTURE_NONE;
     wait(4);
     SpriteDissolve_RunFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);

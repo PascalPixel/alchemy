@@ -24,6 +24,14 @@ struct Window;
 #define FIELD_ACTOR_COUNT 80
 /// The first actor id of a treasure spot (Field_PlaceTreasureSpots).
 #define FIELD_TREASURE_ACTOR 64
+/// The actor id of the spot Scoop dug up, examined as a buried container that
+/// holds FieldWork.scoopedItem.
+#define FIELD_SCOOP_ACTOR 79
+/// FieldWork.talk and Scene_TalkToActor: with this bit a container is opened
+/// without its "checked the ..." message, as Scoop opens what it digs up; the
+/// actor id is in the bits under it.
+#define FIELD_TALK_SILENT 0x1000
+#define FIELD_TALK_ACTOR 0xfff
 
 /// The values of FieldWork.raisedTrigger that the field sequence handles
 /// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).

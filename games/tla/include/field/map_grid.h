@@ -46,6 +46,18 @@ enum MapGridLayerIndex {
 /// Seal's CELL_BEHAVIOR_WALL.
 #define CELL_BEHAVIOR_WALL 255
 
+/// 242 to 247: examine triggers with lines of their own, the same on every
+/// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets), as The Broken
+/// Seal's.
+enum {
+  CELL_BEHAVIOR_JAR = 242,
+  CELL_BEHAVIOR_BARREL = 243,
+  CELL_BEHAVIOR_WOODEN_BOX = 244,
+  CELL_BEHAVIOR_GRAVE = 245,
+  CELL_BEHAVIOR_BOOKS = 246,
+  CELL_BEHAVIOR_WELL = 247
+};
+
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.
 struct MapCell {
@@ -53,9 +65,16 @@ struct MapCell {
   u8 collisionCode;
   u8 attributeB;
 };
-/// MapCell.attributeB bit 6: the cell can be climbed, as a wall of vines or a
-/// ladder is (MapGrid_IsClimbableCell).
+
+/// MapCell.attributeB bit 1: pushing against the cell pushes the actor ahead
+/// (Field_RunPushCell).
+#define MAP_CELL_PUSH 0x02
+/// MapCell.attributeB bit 5: a ledge, jumped down by pushing KEY_DOWN.
+#define MAP_CELL_LEDGE 0x20
+/// MapCell.attributeB bit 6: the cell can be climbed (MapGrid_IsClimbableCell).
 #define MAP_CELL_CLIMBABLE 0x40
+/// MapCell.attributeB bit 7: a gap the leader jumps across, pushing forward.
+#define MAP_CELL_JUMP 0x80
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {

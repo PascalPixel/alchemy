@@ -156,6 +156,9 @@ struct ContainerRow {
   /// Stone's number; a tablet's summon.
   s16 contents;
 };
+/// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
+/// their count in the bits under it.
+#define CONTAINER_COINS 0x8000
 
 /// A box of the map in whole cells (16.16 when compared) and the value it
 /// selects while its condition holds; a row with minX -1 ends the list.

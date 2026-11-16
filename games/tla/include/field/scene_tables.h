@@ -203,6 +203,11 @@ struct Trigger {
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
 #define FIND_MESSAGE(message) (0x00400000 | (message))
+/// A search result's type, its top twelve bits (FIND_ITEM to FIND_MESSAGE).
+#define FIND_TYPE_MASK 0xfff00000
+/// Bits 27..24 of a search result, set only in a routine's address: the result
+/// is then a function to call.
+#define FIND_FUNCTION_BITS 0x0f000000
 #define EVENT(event) ((u32)(event))
 #define TRIGGER_TABLE_END 0xffffffff
 

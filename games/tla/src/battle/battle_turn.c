@@ -92,13 +92,13 @@ s32 BattleFlee_CheckSuccess(void) {
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
-    chance += __divsi3(levelTotal * 500, livingCount);
+    chance += levelTotal * 500 / livingCount;
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
-    chance -= __divsi3(levelTotal * 500, livingCount);
+    chance -= levelTotal * 500 / livingCount;
     if ((chance > 0) &&
         // A roll from 0 to 9999 against the chance.
         ((u32)((u32)(10000 * Random16()) >> 16) < (u32)chance)) {

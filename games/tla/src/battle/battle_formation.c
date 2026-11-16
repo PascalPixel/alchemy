@@ -73,10 +73,15 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_H)))
     GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
-  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
+  for (candidateOrUnitIndex = 0;
+       candidateOrUnitIndex < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies);
        candidateOrUnitIndex++)
     GameFlag_Clear(ENEMY_DEFEATED_FLAG(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
+  // XXX: 71, 230 and 117 are the ids of the Punch Ant, the Giant Bat and the
+  // Wild Wolf, none of them in the list above; as flag numbers they are
+  // Spritz's and Ether's Djinni flags and a flag after the hiding ones. A
+  // reader of these flags would settle which was meant.
   GameFlag_Set(71);
   GameFlag_Set(230);
   GameFlag_Set(117);
@@ -122,106 +127,64 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// A unit's calculated stats as BattleEnemy_AdjustLevel reads them.
-struct OwnerStats {
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 actionsPerTurn;
-  u8 hpRegen;
-  u8 ppRegen;
-  u8 unused[2]; ///< no code names it
-  struct BattleElementStats element[ELEMENT_COUNT];
-};
-
-/// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.
-struct OwnerState {
-  u8 name[UNIT_NAME_SIZE]; ///< not read here
-  u8 level;
-  struct OwnerStats stats;
+/// A unit's base stats as BattleEnemy_AdjustLevel copies them, from
+/// Unit.baseHp: the copy keeps the levels' floor, 7/10 of each old value.
+struct BattleBaseStats {
+  s16 baseHp;
+  s16 basePp;
+  s16 hpGauge; ///< copied, not read
+  s16 ppGauge; ///< copied, not read
+  u16 baseAttack;
+  u16 baseDefense;
+  u16 baseAgility;
+  u8 baseLuck;                                      ///< copied, not read
+  u8 actionCount;                                   ///< copied, not read
+  u8 hpRegen;                                       ///< copied, not read
+  u8 ppRegen;                                       ///< copied, not read
+  u8 unused[2];                                     ///< Unit's baseUnused
+  struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
 };
 
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
-/// HP capped at 16383 instead of 9999. Returns nothing, though declared s32 as
-/// there.
-s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
-  struct OwnerStats *base;
-  struct OwnerState *state;
-  struct OwnerStats *stats;
+/// HP capped at 16383 instead of 9999: each base stat gains its share a level
+/// and keeps at least 7/10 of what it was. Returns nothing, though declared s32
+/// as there.
+s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
+  struct BattleBaseStats *base = Heap_AllocEwram(sizeof *base);
+  struct Unit *unit = Unit_Get(unitId);
   s32 value;
-  s32 floor;
-  s32 i;
+  s32 element;
 
-  base = Heap_AllocEwram(sizeof(struct OwnerStats));
-  state = Unit_Get(owner);
-  stats = &state->stats;
-  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats));
+  Iwram_CopyWordsEntry(base, &unit->baseHp, sizeof *base);
 
-  value = stats->maxHp;
-  value += __divsi3(levels * 97, 10);
-  floor = __divsi3(base->maxHp * 7, 10);
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_ENEMY_HP_MAX)
-    value = UNIT_ENEMY_HP_MAX;
-  stats->maxHp = value;
+  value = unit->baseHp + levels * 97 / 10;
+  CLAMP(value, base->baseHp * 7 / 10, UNIT_ENEMY_HP_MAX);
+  unit->baseHp = value;
 
-  value = state->stats.maxPp;
-  value += __divsi3(levels * 15, 10);
-  floor = __divsi3(base->maxPp * 7, 10);
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_ENEMY_PP_MAX)
-    value = UNIT_ENEMY_PP_MAX;
-  state->stats.maxPp = value;
+  value = unit->basePp + levels * 15 / 10;
+  CLAMP(value, base->basePp * 7 / 10, UNIT_ENEMY_PP_MAX);
+  unit->basePp = value;
 
-  floor = __divsi3(levels * 123, 10);
-  value = state->stats.atk;
-  value += floor;
-  floor = __divsi3(base->atk * 7, 10);
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_STAT_MAX)
-    value = UNIT_STAT_MAX;
-  state->stats.atk = value;
+  value = unit->baseAttack + levels * 123 / 10;
+  CLAMP(value, base->baseAttack * 7 / 10, UNIT_STAT_MAX);
+  unit->baseAttack = value;
 
-  floor = __divsi3(levels * 33, 10);
-  value = state->stats.def;
-  value += floor;
-  floor = __divsi3(base->def * 7, 10);
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_STAT_MAX)
-    value = UNIT_STAT_MAX;
-  state->stats.def = value;
+  value = unit->baseDefense + levels * 33 / 10;
+  CLAMP(value, base->baseDefense * 7 / 10, UNIT_STAT_MAX);
+  unit->baseDefense = value;
 
-  floor = __divsi3(levels * 51, 10);
-  value = state->stats.agi;
-  value += floor;
-  floor = __divsi3(base->agi * 7, 10);
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_STAT_MAX)
-    value = UNIT_STAT_MAX;
-  state->stats.agi = value;
+  value = unit->baseAgility + levels * 51 / 10;
+  CLAMP(value, base->baseAgility * 7 / 10, UNIT_STAT_MAX);
+  unit->baseAgility = value;
 
-  for (i = 0; i < ELEMENT_COUNT; i++) {
-    value = state->stats.element[i].power + levels * 15;
-    floor = __divsi3(base->element[i].power * 7, 10);
-    if (value < floor)
-      value = floor;
-    if (value > UNIT_ELEMENT_MAX)
-      value = UNIT_ELEMENT_MAX;
-    state->stats.element[i].power = value;
+  for (element = 0; element < ELEMENT_COUNT; element++) {
+    value = unit->baseElement[element].power + levels * 15;
+    CLAMP(value, base->element[element].power * 7 / 10, UNIT_ELEMENT_MAX);
+    unit->baseElement[element].power = value;
   }
 
-  state->level += levels;
-  Unit_CalculateFar(owner);
+  unit->level += levels;
+  Unit_CalculateFar(unitId);
   Heap_Release(base);
 }
 
@@ -229,32 +192,19 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 /// least 7/10 of the old values, at most 16383 and 999), from a copy of its
 /// base block, then recalculates its stats.
 void BattleUnit_Strengthen(s32 unitId) {
-  struct UnitBaseStats *saved = Heap_AllocEwram(36);
+  struct BattleBaseStats *saved = Heap_AllocEwram(sizeof *saved);
   struct Unit *unit = Unit_Get(unitId);
   s32 value;
-  s32 floor;
 
-  Iwram_CopyWordsEntry(saved, &unit->baseHp, 36);
+  Iwram_CopyWordsEntry(saved, &unit->baseHp, sizeof *saved);
   value = unit->baseHp * 3 / 2;
-  floor = saved->hp * 7 / 10;
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_ENEMY_HP_MAX)
-    value = UNIT_ENEMY_HP_MAX;
+  CLAMP(value, saved->baseHp * 7 / 10, UNIT_ENEMY_HP_MAX);
   unit->baseHp = value;
   value = unit->baseAttack * 5 / 4;
-  floor = saved->attack * 7 / 10;
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_STAT_MAX)
-    value = UNIT_STAT_MAX;
+  CLAMP(value, saved->baseAttack * 7 / 10, UNIT_STAT_MAX);
   unit->baseAttack = value;
   value = unit->baseDefense * 5 / 4;
-  floor = saved->defense * 7 / 10;
-  if (value < floor)
-    value = floor;
-  if (value > UNIT_STAT_MAX)
-    value = UNIT_STAT_MAX;
+  CLAMP(value, saved->baseDefense * 7 / 10, UNIT_STAT_MAX);
   unit->baseDefense = value;
   Unit_CalculateFar(unitId);
   Heap_Release(saved);
@@ -354,43 +304,40 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
 s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
-  struct Unit *summon;
-  s32 objectIndex;
-  s32 slot;
-  s32 nextSlot;
-  u8 occupied;
-  u8 marker;
+  struct Unit *unit;
+  s32 enemyIndex;
+  s32 nameIndex;
+  s32 terminatorIndex;
+  u8 nameByte;
 
-  objectIndex = 0;
-  marker = LIST_MARKER_CHAR;
-scan_objects:
-  summon = Unit_Get(objectIndex + FIRST_ENEMY_UNIT);
-  occupied = summon->side;
-  if (occupied != 1)
-    goto next_object;
-  if (summon->enemyId != enemyId)
-    goto next_object;
-  slot = 0;
-  if (summon->name[0] != 0)
-    goto scan_slots;
-  summon->name[0] = marker;
-  summon->name[occupied] = slot;
-  return;
-scan_slots:
-  slot++;
-  if (slot > 13)
+  for (enemyIndex = 0; enemyIndex <= 5; enemyIndex++) {
+    unit = Unit_Get(enemyIndex + FIRST_ENEMY_UNIT);
+    nameByte = unit->side;
+    if (nameByte != BATTLE_SIDE_ENEMY)
+      continue;
+    if (unit->enemyId != enemyId)
+      continue;
+    // nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
+    // the letter; nameIndex holds the terminator, 0.
+    nameIndex = 0;
+    if (unit->name[0] == 0) {
+      unit->name[0] = LIST_MARKER_CHAR;
+      unit->name[nameByte] = nameIndex;
+      return;
+    }
+    // The name's end, then the letter and a new terminator after it.
+  scan_slots:
+    nameIndex++;
+    if (nameIndex > 13)
+      return;
+    nameByte = unit->name[nameIndex];
+    if (nameByte != 0)
+      goto scan_slots;
+    terminatorIndex = nameIndex + 1;
+    unit->name[nameIndex] = LIST_MARKER_CHAR;
+    unit->name[terminatorIndex] = nameByte;
     return;
-  occupied = summon->name[slot];
-  if (occupied != 0)
-    goto scan_slots;
-  nextSlot = slot + 1;
-  summon->name[slot] = marker;
-  summon->name[nextSlot] = occupied;
-  return;
-next_object:
-  objectIndex++;
-  if (objectIndex <= 5)
-    goto scan_objects;
+  }
 }
 
 /// Returns the class of a random member of the formation that may appear.
@@ -475,7 +422,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     if (record->minimumCounts[memberOrEnemyIndex] != 0) {
       s32 requiredSlots =
           2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                    8) != 0);
+                                    ENEMY_ID_FIRST) != 0);
 
       freeSpriteSlots -=
           requiredSlots * record->minimumCounts[memberOrEnemyIndex];
@@ -581,45 +528,41 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     Iwram_ClearWordsEntry(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
-  if (enemyClasses[0] == 0)
-    goto assigned;
-assign_enemy:
-  // Repeated enemy classes get distinct suffixes within this encounter.
-  {
-    s32 suffixCode =
-        BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
-    struct Unit *unit;
-    s32 enemyId;
+  if (enemyClasses[0] != 0) {
+    for (;;) {
+      // Repeated enemy classes get distinct suffixes within this encounter.
+      s32 suffixCode =
+          BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
+      struct Unit *unit;
+      s32 enemyId;
 
-    if (suffixCode & ENEMY_LETTER_FIRST_TOO)
-      BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
-    BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                      enemyClasses[memberOrEnemyIndex],
-                      suffixCode & ENEMY_LETTER_MASK);
-    unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
-    if (levelAdjustment != 0)
-      BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                              levelAdjustment);
-    else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) &&
-             GameFlag_Get(FLAG_HARD_LEVEL))
-      BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
-    battle->forceField = 0;
-    enemyId = unit->enemyId;
-    switch (enemyId) {
-    case ENEMY_POSEIDON:
-    case ENEMY_POSEIDON_SECOND_ACTION:
-    case ENEMY_UNUSED_POSEIDON:
-      if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
-        battle->forceField = 1;
-      break;
+      if (suffixCode & ENEMY_LETTER_FIRST_TOO)
+        BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
+      BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                        enemyClasses[memberOrEnemyIndex],
+                        suffixCode & ENEMY_LETTER_MASK);
+      unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
+      if (levelAdjustment != 0)
+        BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                                levelAdjustment);
+      else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) &&
+               GameFlag_Get(FLAG_HARD_LEVEL))
+        BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
+      battle->forceField = 0;
+      enemyId = unit->enemyId;
+      switch (enemyId) {
+      case ENEMY_POSEIDON:
+      case ENEMY_POSEIDON_SECOND_ACTION:
+      case ENEMY_UNUSED_POSEIDON:
+        if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
+          battle->forceField = 1;
+        break;
+      }
+      memberOrEnemyIndex++;
+      if (memberOrEnemyIndex > 5 || enemyClasses[memberOrEnemyIndex] == 0)
+        break;
     }
   }
-  memberOrEnemyIndex++;
-  if (memberOrEnemyIndex > 5)
-    goto assigned;
-  if (enemyClasses[memberOrEnemyIndex] != 0)
-    goto assign_enemy;
-assigned:
   return memberOrEnemyIndex;
 }
 

@@ -12,6 +12,8 @@
 #define SWIRLING_STARS_FRAMES 160
 
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+/// The angle star `i` turns each frame about its axis: each later star faster.
+#define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
@@ -60,17 +62,17 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Matrix_Push();
         switch (i & 3) {
         case 0:
-          Matrix_RotateY(frame * (i + 32) * 8);
+          Matrix_RotateY(frame * SWIRLING_STAR_SPIN(i));
           break;
         case 1:
-          Matrix_RotateX(-frame * (i + 32) * 8);
+          Matrix_RotateX(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case 2:
-          Matrix_RotateZ(-frame * (i + 32) * 8);
+          Matrix_RotateZ(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case 3:
-          Matrix_RotateX(-frame * (i + 32) * 8);
-          Matrix_RotateZ(-frame * (i + 32) * 8);
+          Matrix_RotateX(-frame * SWIRLING_STAR_SPIN(i));
+          Matrix_RotateZ(-frame * SWIRLING_STAR_SPIN(i));
           break;
         }
         EffectPosition_ProjectPoint((s32 *)star, &pos);
@@ -80,8 +82,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         // Depth 250-634 gives sizes 9 down to 3.
         if (pos.depth < 250)
           pos.depth = 250;
-        if (pos.depth > 0x27a)
-          pos.depth = 0x27a;
+        if (pos.depth > 634)
+          pos.depth = 634;
         size = 9 - (pos.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
@@ -106,7 +108,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define BURST_IMAGE 0x1b00 ///< the burst pictures, after the smoke
+#define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -129,7 +131,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
-                             work->sheet + BURST_IMAGE, 0, 0);
+                             work->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -190,13 +192,16 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           screen.x >>= 1;
           if (i == 5) {
             BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
-            rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
+            rectangleA(canvas,
+                       work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF) +
+                           TARGET_BURST_PICTURES,
                        screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
                        SMOKE_PUFF_HEIGHT);
           } else {
             BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 128);
-            rectangleB(canvas, work->sheet + cel * 0x480, screen.x - 12,
-                       screen.y - 36, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
+            rectangleB(canvas, work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF),
+                       screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
+                       SMOKE_PUFF_HEIGHT);
           }
           p->variant += 1;
         }

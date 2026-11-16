@@ -10,8 +10,10 @@
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
-#define GROUND_Y toFIXED(56)
-#define SHATTERED 1 ///< a crystal's z once it has hit the ground
+#define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
+#define PRISM_SHARD_PICTURES                                                   \
+  PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
+#define SHATTERED 1      ///< a crystal's z once it has hit the ground
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -95,7 +97,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                    (shards[i * SHARDS_PER_CRYSTAL + j].variant / 96) % 3;
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](
-                canvas, work->sheet + gPrism_ShardPictures[cell] + 0x800,
+                canvas,
+                work->sheet + gPrism_ShardPictures[cell] + PRISM_SHARD_PICTURES,
                 FIXED_INTEGER_PART(shard->x) - gPrism_ShardWidths[cell] / 2,
                 FIXED_INTEGER_PART(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
@@ -112,9 +115,9 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                       CRYSTAL_HEIGHT);
           BattleEffectKernels_IntegrateVector2(cry, PARTICLE_DAMPING_NONE,
                                                toFIXED(1));
-          if (cry->y > GROUND_Y) {
+          if (cry->y > PRISM_GROUND_Y) {
             cry->z = SHATTERED;
-            cry->y = GROUND_Y;
+            cry->y = PRISM_GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
               shard->x = INTtoFIXED(gPrism_ShardStarts[j * 2] - 40) + cry->x;
@@ -147,7 +150,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 }
 
 #undef SPARK_COUNT
-#undef GROUND_Y
+#undef PRISM_GROUND_Y
 
 /// Rebuilds the background palette's first ramp as a grey whose channels sway
 /// with the frame, so the effect shimmers through colours.

@@ -880,9 +880,9 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /// The ending picture's VBlank task: fades the new picture in over 64
-/// frames, moves the row toward gEndingPicture_TargetRow by at most gEndingPicture_Speed,
-/// eases the 16.16 scroll after it, and copies the map strip that scrolls into
-/// view.
+/// frames, moves the row toward gEndingPicture_TargetRow by at most
+/// gEndingPicture_Speed, eases the 16.16 scroll after it, and copies the map
+/// strip that scrolls into view.
 void EndingPicture_Scroll(void) {
   s32 old = gEndingPicture_Scroll;
   s32 d;
@@ -982,7 +982,8 @@ void EndingPicture_Start(void) {
   gEndingPicture_Scroll = 0;
   // One chained assignment: the three addresses are loaded nested, the map
   // pointer's innermost.
-  gEndingPicture_TargetRow = gEndingPicture_Row = (s32)(gEndingPicture_Map = NULL);
+  gEndingPicture_TargetRow = gEndingPicture_Row =
+      (s32)(gEndingPicture_Map = NULL);
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_VBLANK);

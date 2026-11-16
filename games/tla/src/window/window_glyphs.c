@@ -344,8 +344,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
   if (buffer == NULL) {
     buffer = canvas->textBuffer;
     canvas->textBuffer[canvas->textBufferEnd] = 0;
-    canvas->textBufferEnd =
-        (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+    canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;

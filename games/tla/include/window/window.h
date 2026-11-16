@@ -417,7 +417,6 @@ extern s16 gTitleUpdateOptionEnabled;
 
 s32 Save_ScanFileSummaries(void);
 
-
 void Text_UseExtraTiles(s32 allowAlternateTiles);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);

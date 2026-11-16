@@ -31,9 +31,19 @@
 #define FLAG_DEFENDED_THE_MAYOR 0x8bb
 #define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
 
-/// Where Eastern Alhafra sends the party to see Briggs escape from the
-/// manor (AlhafraManor_BriggsEscapes).
-enum { ENTRANCE_BRIGGS_ESCAPES = 81 };
+/// The manor's entrances its set-up tests.
+enum AlhafraManorEntrance {
+  /// Back from the world map's view of Air's Rock
+  /// (AlhafraManor_PointOutAirsRock), beside the man who showed it.
+  ENTRANCE_BACK_FROM_THE_VIEW = 80,
+  /// Where Eastern Alhafra sends the party to see Briggs escape from the
+  /// manor (AlhafraManor_BriggsEscapes).
+  ENTRANCE_BRIGGS_ESCAPES = 81,
+  /// Unused: no exit leads here. The camera pans west across the room and
+  /// waits for a key, then the party enters again by
+  /// ENTRANCE_BACK_FROM_THE_VIEW.
+  ENTRANCE_PAN_WEST = 99
+};
 
 /// The household and guests of gActorPlacements, while the mast lies fallen.
 enum AlhafraManorActorId {
@@ -98,6 +108,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// The woman who asks what the party thinks of Alhafra, and answers yes or no.
 void AlhafraManor_AskAboutAlhafra(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorWhatDoYouThinkOf;
 
@@ -113,6 +124,8 @@ void AlhafraManor_AskAboutAlhafra(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
+/// The man gazing south asks whether the party can see Air's Rock; on a yes
+/// the leader steps up beside him and the world map shows it.
 void AlhafraManor_PointOutAirsRock(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorLookeeHereCantYouSee;
 
@@ -136,6 +149,8 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
   Event_End();
 }
 
+/// The woman who asks whether the party are the heroes who beat the pirates,
+/// and answers yes or no.
 void AlhafraManor_AskIfTheHeroes(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorAreYouTheBraveHero;
 
@@ -151,6 +166,8 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
+/// Talking to the mayor of Madra, or reading his mind, once: he grumbles that
+/// Alhafra's mayor never meant to fix the mast.
 void AlhafraManor_GrumbleAboutTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -174,6 +191,8 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   Event_End();
 }
 
+/// Talking to Jiya, or reading her mind, once: she explains why the mayor keeps
+/// the pirates' money for Alhafra's own repairs.
 void AlhafraManor_DefendTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -216,6 +235,8 @@ void AlhafraManor_DefendTheMayor(void) {
   Event_End();
 }
 
+/// Talking to Alhafra's mayor, or reading his mind, once: he tells of the towns
+/// Briggs speaks of across the eastern sea.
 void AlhafraManor_TellOfTheEasternSea(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -289,7 +310,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
-  if (gMainRoutineWork.entrance == 80) {
+  if (gMainRoutineWork.entrance == ENTRANCE_BACK_FROM_THE_VIEW) {
     gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance = 14;
     Actor_FaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK,
                             FACING_SOUTH_SOUTHWEST, 0);
@@ -311,7 +332,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
     Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == ENTRANCE_PAN_WEST) {
     FieldCamera_MoveWithinMapBounds(toFIXED(304), cameraY, cameraZ, 0);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_StartScreenTransition();
@@ -321,7 +342,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveWithinMapBounds(toFIXED(144), cameraY, cameraZ, 1);
     while (gInput.held == 0)
       wait(1);
-    Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
+    Event_SetDestination(SCENE_ALHAFRA_MANOR, ENTRANCE_BACK_FROM_THE_VIEW);
   }
   return 0;
 }
@@ -738,10 +759,10 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(25);
-  WALK_TO_LEADER(7);
-  WALK_TO_LEADER(5);
-  WALK_TO_LEADER(6);
-  WALK_TO_LEADER(13);
+  WALK_TO_LEADER(ACTOR_PIERS);
+  WALK_TO_LEADER(ACTOR_JENNA);
+  WALK_TO_LEADER(ACTOR_SHEBA);
+  WALK_TO_LEADER(ACTOR_KRADEN);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
   gFieldWork->transitionFrames = 16;
@@ -751,6 +772,7 @@ void AlhafraManor_BriggsEscapes(void) {
 
 void Actor_TakeLeaderLayer(void);
 
+/// The old man's update: he takes the party leader's display layer.
 void AlhafraManor_KeepToTheLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 struct SceneEntrance gSceneEntrances[] = {

@@ -146,9 +146,9 @@ struct EffectSprite gAlhafranCave_CrateSprite BSS_DATA ALIGNED(16);
 s32 gAlhafranCave_ClearedWord BSS_DATA;
 
 /// Sets the behavior of the map cell under a 16.16 position.
-static __inline__ void MapGrid_SetCellBehavior_(FIXED x, FIXED z, s32 a,
-                                                s32 b) {
-  MapGrid_SetCellBehavior(x, z, a, b);
+static __inline__ void MapGrid_SetCellBehavior_(FIXED x, FIXED z, s32 layer,
+                                                s32 behavior) {
+  MapGrid_SetCellBehavior(x, z, layer, behavior);
 }
 
 /// The current scene's actors: the cave's or the jail's.
@@ -202,7 +202,7 @@ void AlhafranCave_OpenWayToJail(void) {
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);
   FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 4);
   MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 4);
-  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, 255);
+  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, CELL_BEHAVIOR_WALL);
   FieldMapGrid_SetCellHeight(toFIXED(288), toFIXED(384), 0, 4);
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 4);
 }
@@ -463,6 +463,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// An empty task, added as Eoleo starts crying and never removed; it does
+/// nothing.
 void AlhafranCave_IdleTask(void) {}
 
 extern u8 MsgYouHereTo[];
@@ -802,6 +804,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Event_End();
 }
 
+/// An actor's update: it takes the party leader's display layer.
 void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 /// While Eoleo's Psynergy runs, the actors shake.

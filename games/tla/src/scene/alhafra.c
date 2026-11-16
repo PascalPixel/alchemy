@@ -37,7 +37,11 @@
 
 #include "text/msg_ids.h"
 
-void Alhafra_LookoutSeesMadrasMayor(s32 a0);
+/// How the lookout's scene starts: the leader stepping past him, or reading his
+/// mind, which lets the party question him before he runs.
+enum AlhafraLookoutScene { LOOKOUT_STEPPED_PAST, LOOKOUT_READ_BY_MIND_READ };
+
+void Alhafra_LookoutSeesMadrasMayor(s32 how);
 void Alhafra_TalkToHungryBoy(s32 a);
 void Alhafra_TakeLeadersLayer();
 s32 Actor_TakeLeaderLayer();
@@ -234,6 +238,8 @@ void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
   Event_End();
 }
 
+/// Walking into one of the town's doors: it opens and the leader goes
+/// through to the exit of the same number.
 void Alhafra_EnterDoor(s32 index) {
   struct MapGridCellAnimation *table = gAlhafra_Doors;
 
@@ -245,10 +251,30 @@ s32 Shop_Run();
 /// Alhafra's shops, as Shop_Run numbers them.
 enum { SHOP_ALHAFRA_WEAPONS = 7, SHOP_ALHAFRA_ARMOR = 8 };
 
-void Alhafra_OpenWeaponShop(s32 a0) { Shop_Run(SHOP_ALHAFRA_WEAPONS, a0); }
+/// The cell behaviors of the town's step triggers: the lookout drawn behind or
+/// in front of the wall as the leader passes, the Madrans arriving (from the
+/// first Felix stands in their way and steps aside, from the second he only
+/// turns to them), and the lookout running off to warn the crew.
+enum AlhafraCellBehavior {
+  CELL_BEHAVIOR_LOOKOUT_BEHIND = 18,
+  CELL_BEHAVIOR_LOOKOUT_IN_FRONT,
+  CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX,
+  CELL_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX,
+  CELL_BEHAVIOR_LOOKOUT_RUNS_OFF
+};
 
-void Alhafra_OpenArmorShop(s32 a0) { Shop_Run(SHOP_ALHAFRA_ARMOR, a0); }
+/// Talking to the weapon merchant across his counter opens his shop.
+void Alhafra_OpenWeaponShop(s32 keeperId) {
+  Shop_Run(SHOP_ALHAFRA_WEAPONS, keeperId);
+}
 
+/// Talking to the armor merchant across his counter opens his shop.
+void Alhafra_OpenArmorShop(s32 keeperId) {
+  Shop_Run(SHOP_ALHAFRA_ARMOR, keeperId);
+}
+
+/// The fisherman asks whether the tidal wave really knocked Indra into
+/// Osenia; a yes is remembered, and after it he only marvels that it is true.
 void Alhafra_AskWhetherIndraMoved(s32 actor) {
   s32 msg;
 
@@ -271,6 +297,8 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
   }
 }
 
+/// The canoe maker guesses the party wants to buy a canoe; yes or no, he is too
+/// backlogged to make one.
 void Alhafra_CanoeMakerBacklogged(s32 actor) {
   s32 msg = (s32)&MsgAlhafraLetMeGuessYoureHere;
 
@@ -286,6 +314,8 @@ void Alhafra_CanoeMakerBacklogged(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
+/// The manor's guard asks whether the party wants to see the mayor, who is in
+/// a meeting.
 void Alhafra_MayorInAMeeting(s32 actor) {
   s32 msg = (s32)&MsgAlhafraDidYouWantToSee;
 
@@ -301,16 +331,24 @@ void Alhafra_MayorInAMeeting(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-void Alhafra_ReadLookoutsMind(void) { Alhafra_LookoutSeesMadrasMayor(1); }
-
-void Alhafra_LookoutRunsToWarnTheCrew(void) {
-  Alhafra_LookoutSeesMadrasMayor(0);
+/// Mind Read on the Champa lookout: he sees the mayor of Madra, and the party
+/// can question him before he runs to warn the crew.
+void Alhafra_ReadLookoutsMind(void) {
+  Alhafra_LookoutSeesMadrasMayor(LOOKOUT_READ_BY_MIND_READ);
 }
 
+/// Stepping past the lookout: he sees the mayor of Madra and runs to warn the
+/// crew.
+void Alhafra_LookoutRunsToWarnTheCrew(void) {
+  Alhafra_LookoutSeesMadrasMayor(LOOKOUT_STEPPED_PAST);
+}
+
+/// Passing the lookout's wall: he is drawn behind it.
 void Alhafra_DrawLookoutBehind(void) {
   FieldActor_SetSpritePriority(ACTOR_LOOKOUT, 2);
 }
 
+/// Coming back past it: he is drawn in front of it again.
 void Alhafra_DrawLookoutInFront(void) {
   FieldActor_SetSpritePriority(ACTOR_LOOKOUT, 3);
 }
@@ -318,12 +356,14 @@ void Alhafra_DrawLookoutInFront(void) {
 s32 FlagBlock_ApplyFlags();
 extern s16 gAlhafra_Puddles[];
 
-void Alhafra_FreezePuddle(s32 a0, s32 a1) {
-
+/// Frost on one of the town's puddles freezes it into a pillar.
+void Alhafra_FreezePuddle(s32 unused, s32 actorId) {
   FlagBlock_ApplyFlags((s32)gAlhafra_Puddles);
-  Actor_GetById(a1)->priorityFlags = 0;
+  Actor_GetById(actorId)->priorityFlags = 0;
 }
 
+/// The sailor building houses grumbles, and the woman beside him tells him to
+/// get back to work.
 void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafraWhatDoesASailorLike);
   // "What does a sailor like me know about building houses, anyway?"
@@ -343,6 +383,8 @@ void Alhafra_SailorToldToWork(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 0);
 }
 
+/// Giving the hungry boy Large Bread: he eats it, jumps up full of energy and
+/// talks to the party.
 void Alhafra_GiveBreadToHungryBoy(void) {
   GameFlag_Set(FLAG_HUNGRY_BOY_FED);
   PartyInventory_Remove(ITEM_LARGE_BREAD);
@@ -366,6 +408,8 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_End();
 }
 
+/// The hungry boy: too hungry to move until fed, then he tells the party of
+/// the caves under the mayor's manor if they like adventures.
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
     gFieldWork->fieldMenu = 1;
@@ -386,7 +430,7 @@ void Alhafra_TalkToHungryBoy(s32 id) {
     // "Wait, I've got it! Do you like...adventures?"
     FieldMessage_ShowAtActor(id, 0);
     Event_Wait(10);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       GameFlag_Set(FLAG_BOY_TOLD_OF_CAVE);
       Event_Wait(20);
       // "Then you totally have to go check out the caves under the mayor's..."
@@ -401,6 +445,8 @@ void Alhafra_TalkToHungryBoy(s32 id) {
   }
 }
 
+/// Stepping by the family on the step: the mother finds five gold coins, and
+/// her husband and child cheer.
 void Alhafra_FindGoldCoins(void) {
   GameFlag_Set(FLAG_GOLD_COINS_FOUND);
   Event_Start();
@@ -418,9 +464,9 @@ void Alhafra_FindGoldCoins(void) {
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
   Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDER, 5);
   Sound_Play(MUS_LEVEL_UP);
-  gMainRoutineWork.leaderActorId = 0x1d;
+  gMainRoutineWork.leaderActorId = ACTOR_GOLD_COIN_FINDER;
   ItemDisplay_ShowItem(0, 3);
-  gMainRoutineWork.leaderActorId = 4;
+  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
   Event_Wait(50);
   FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 15);
   FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 23);
@@ -503,10 +549,12 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
   }
 }
 
+/// Reveal shows the Psy Crystal chest's hidden spot.
 void Alhafra_RevealTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, toFIXED(184), toFIXED(552));
 }
 
+/// As Reveal fades, the spot hides again.
 void Alhafra_HideTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, -1, -1);
 }
@@ -624,6 +672,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// An actor's update: it takes the party leader's display layer, so it is drawn
+/// over or under what the leader is.
 void Alhafra_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 extern s32 gAlhafra_OfficialStepsBackScript[];
@@ -645,7 +695,9 @@ extern u32 gAlhafra_FirstSoldierFollowsFromCell20Script[];
 extern s32 gAlhafra_SecondMadranFollowsFromCell20Script[];
 extern u32 gAlhafra_SecondSoldierFollowsFromCell20Script[];
 
-void Alhafra_MadransArrive(s32 a0) {
+/// The mayor and elder of Madra arrive with their soldiers and townsfolk,
+/// ask the way to Alhafra's mayor and follow an Alhafran to the manor.
+void Alhafra_MadransArrive(s32 cellBehavior) {
   GameFlag_Set(FLAG_ALHAFRA_MADRANS_ARRIVED);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -659,14 +711,14 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetSpeed(ACTOR_PARCHED_MADRAN, 1);
   Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
   Actor_SetSpeed(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 0.5);
-  if (a0 == 0x14) {
+  if (cellBehavior == CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX) {
     Actor_WalkByAndWait(ACTOR_FELIX, 0, -8);
   }
   Actor_SetPosition(ACTOR_FIRST_MADRAN_SOLDIER, 408, 872);
   Actor_SetPosition(ACTOR_SECOND_MADRAN_SOLDIER, 392, 888);
   // "Finally! We made it!"
   Event_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
-  if (a0 == 0x14) {
+  if (cellBehavior == CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   } else {
     Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
@@ -967,7 +1019,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
   EventCamera_FollowActor(ACTOR_MADRAS_MAYOR, 1);
   FieldCamera_WaitForArrival();
-  if (a0 == 0x15) {
+  if (cellBehavior == CELL_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX) {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
     FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER,
                                  ACTOR_MADRAS_ELDER);
@@ -1114,13 +1166,14 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_End();
 }
 
-void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
-
+/// The Champa lookout recognizes the mayor of Madra and runs to warn Briggs's
+/// crew, after answering the party if they read his mind.
+void Alhafra_LookoutSeesMadrasMayor(s32 how) {
   Event_SetFlag(FLAG_LOOKOUT_LEFT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraOooThisAintGood);
-  if (a0 == 1) {
+  if (how == LOOKOUT_READ_BY_MIND_READ) {
     FieldEvent_Wait(10);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 736);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1139,8 +1192,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   FieldEvent_Wait(20);
   // "I'd better go tell the others!"
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  if (a0 != 1) {
-  } else {
+  if (how == LOOKOUT_READ_BY_MIND_READ) {
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
@@ -1155,7 +1207,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Event_OpenMessage(ACTOR_LOOKOUT, 0);
-    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Event_Wait(30);
       Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
       Event_Wait(20);
@@ -1181,7 +1233,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   }
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 184, 728);
   Actor_WalkByAndWait(ACTOR_LOOKOUT, 0, -110);
-  if (a0 == 0) {
+  if (how == LOOKOUT_STEPPED_PAST) {
     Event_Wait(50);
     Actor_SetPosition(ACTOR_LOOKOUT, 264, 648);
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 0, 32);
@@ -1384,11 +1436,11 @@ struct Trigger gAlhafra_Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
-    {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutBehind)},
-    {TRIGGER_STEP, 19, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutInFront)},
-    {TRIGGER_STEP, 20, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
-    {TRIGGER_STEP, 21, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
-    {TRIGGER_STEP, 22, FLAG_LOOKOUT_LEFT, EVENT(Alhafra_LookoutRunsToWarnTheCrew)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_BEHIND, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutBehind)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_IN_FRONT, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutInFront)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_RUNS_OFF, FLAG_LOOKOUT_LEFT, EVENT(Alhafra_LookoutRunsToWarnTheCrew)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeWereHitByA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingAllMyMostExpensive)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatTidalWaveMayWell)},

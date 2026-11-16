@@ -222,11 +222,11 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 }
 
 /// The lady of the house, worn out by her houseguests.
-void AlhafraInteriors_TalkToHostess(s32 a0) {
-  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+void AlhafraInteriors_TalkToHostess(s32 actor) {
+  Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsAughWithAllTheseDemanding);
   // "Augh! With all these demanding houseguests, I feel like I've lost..."
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(actor, 0);
 }
 
 /// The old couple who lost their house in the wave ask the lady of the house
@@ -285,35 +285,35 @@ void AlhafraInteriors_GuestsAskForTea(void) {
 }
 
 /// The old houseguest, put out by the lady of the house.
-void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
-  Actor_FaceEachOther(a0, gMainRoutineWork.leaderActorId, 0);
+void AlhafraInteriors_TalkToDemandingGuest(s32 actor) {
+  Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsWellISayItSeems);
   // "Well! I say! It seems the lady of the house is no lady at all!"
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(actor, 0);
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
 }
 
 /// Mind Read on Alex: he turns to the party and asks them to stop.
-void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
-  Actor_FaceEachOther(a1, gMainRoutineWork.leaderActorId, 0);
+void AlhafraInteriors_ReadAlexsMind(s32 unused, s32 actor) {
+  Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsReallyIDoWishYou);
   // "Really, I do wish you would quit using your Mind Read on me... Trust..."
-  Event_ShowMessage(a1, 0);
-  Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
+  Event_ShowMessage(actor, 0);
+  Actor_FaceDirection(actor, FACING_NORTHEAST, 0);
 }
 
 /// The master of the house tells that the town has started rebuilding,
 /// once.
-void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
+void AlhafraInteriors_HostTellsOfRepairs(s32 actor) {
   Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
   FieldEvent_SetMessageId(
       (s32)MsgAlhafraInteriorsWeveAllStartedWorkingTogether);
   // "We've all started working together to repair the houses!"
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Oooh... Not much longer, and then I can kick these folks out of my..."
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(actor, 0);
 }
 
 /// Alex asks whether the party caught Briggs.

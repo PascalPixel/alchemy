@@ -1,6 +1,6 @@
 # Field code
 
-This folder is the field sequence: the code that runs any place, the same
+This folder is the field sequence: the code that runs any scene, the same
 in every town, dungeon and on the World Map. [Field](../../field.md) gives
 the idea. This page goes one step closer, mechanism by mechanism, so you
 know where each lives before you open the code.
@@ -9,17 +9,61 @@ know where each lives before you open the code.
 
 ![In Daila Felix walks up to the man by the pond and talks to him (`That tidal wave left a lot of standing water...`), then walks on](https://alchemy.pascalpixel.com/tla/guides/field/talk-walk.gif)
 
-Setting a place up always goes in the same order, because each step needs
-the one before: load the map, choose its random battles, clear room for 64
-actors, take the scene's tables, place the party and the people, put out
-the chests, run the scene's own set-up, fade in.
+The field sequence is one routine, `FieldSequence_Run` in
+`field_sequence_run.c`. Setting a scene up always goes in the same order,
+because each step needs the one before: load the map, choose its random
+battles, clear room for 64 actors, take the scene's tables, place the party
+and the people, put out the chests, run the scene's own set-up, fade in.
 
-Then it walks: one frame, and a look at the requests.
+Then it walks. The walking loop is three lines: call `wait(1)`, which is
+one frame; look at the ground the leader now stands on; go round again
+unless a request is set. The routine is the code that waits, and everything
+that moves during that frame is a task's doing
+([Waiting and tasks](../../system.md#waiting-and-tasks)).
+
+### The field's tasks
+
+Setting a scene up puts these [tasks](../../glossary.md#task) on the list,
+and they stay there until the party leaves. A higher rank runs earlier in
+the frame.
+
+| Rank | Task | Each frame it |
+| --- | --- | --- |
+| 15 | `PaletteFade_Update` | moves the colours a step toward their target |
+| 11 | `Actor_UpdateAllThumb` | carries every actor's script on and moves the actor |
+| 10 | `Actor_MoveWithCarriers` | moves each actor that rides another along with it |
+| 5 | `MapGrid_UpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
+| 0 | `ActorSystem_PlaceSprites` | places every actor's sprite on the screen |
+| 0 | `WindowSystem_Update` | grows, shrinks and types into the windows |
+
+On the World Map the tasks at ranks 5 and 0 are `WorldMap_UpdateView` and
+`ActorSystem_ProjectSprites`. A map with animated tiles adds
+`TilesetAnim_Update` at rank 0, and a scene adds tasks of its own for
+whatever only it has. One more runs from the VBlank handler,
+`WindowSystem_UploadTilemap`, which copies the windows to the screen.
+
+The Broken Seal has no task for riders: `Actor_MoveWithCarriers` is The
+Lost Age's own, and its actors' task ranks one higher to run before it.
+
+None of these is a villager or a door. `Actor_UpdateAllThumb` is the one
+task for all 64 actors.
 
 ### The twelve requests
 
-A request is a note that something needs an answer. When several are set
-at once they are answered in a fixed order, and the order is the design:
+A request is a note that something needs an answer: a number in the
+field's work, 0 while nothing is asked. Three kinds of code set one.
+
+- The leader's script. Its control order, `SC_PLAYER` on foot, which the
+  actors' task runs, looks at the buttons and sets the request for A, the
+  field menu, the Pause menu, or the Psynergy or item on a shortcut button.
+- The field's routine. After each frame it looks at where the leader
+  stands and sets a step, a push or a battle.
+- An event or a menu, when the field has to carry something out after it
+  has returned: an event sets an exit, and the field menu sets a field
+  Psynergy.
+
+When several are set at once they are answered in a fixed order, and the
+order is the design:
 
 1. an exit, since nothing else matters once the party has gone;
 2. something the scene or the field itself raised, such as a party member
@@ -58,18 +102,30 @@ Djinni back and finishes its event (`Djinn_RestoreActorAfterBattle`).
 
 Felix, a villager, a chest, a footprint, a grain the Sand Psynergy leaves
 behind and the unseen point the screen follows are all the same thing: one
-of 64 [actors](../../glossary.md#actor), each with a place, a speed and a
-script. The fighters in a battle are actors too.
+of 64 [actors](../../glossary.md#actor), each with a position, a speed and
+a script. The sparks a field Psynergy throws, its
+[field effects](../../glossary.md#field-effect), are actors with scripts
+as well. The fighters in a battle are actors too.
+
+The 64 are rows of one table. A scene's actor ids are another thing: 80
+numbers, for the eight characters, the people a scene places and the map's
+treasure spots, each pointing at the row that actor has.
 
 ### How an actor script runs
 
 An [actor script](../../glossary.md#actor-script) is a list of orders
-written with `SC_` macros: set an animation, set a speed, move to a spot,
-wait, loop. The commands behind them are the `Script_` and `ActorScript_`
-routines. An order that takes no time runs at once, and one that takes
-time holds the script there until it is done. Kraden stepping aside on
-Idejima is a few lines, `gIdejima_KradenStepsAsideScript`, in
-[the scenes](../scene/README.md).
+written with `SC_` macros (script command): set an animation, set a speed,
+move to a spot, wait, loop. It is a table of numbers, not code, and the
+routines that carry the orders out are the `Script_` and `ActorScript_`
+ones. One [task](../../glossary.md#task), `Actor_UpdateAllThumb`, visits
+every actor each frame and reads its script on from where it stopped. In a
+battle the task is `Actor_UpdateAllMotion`. An order that takes no time
+runs at once, and one that takes time holds the script there until it is
+done: `SC_WAIT(20)` sets a count in the actor that the task takes one off
+each frame, which is not the `wait()` an event calls
+([Two kinds of waiting](../../system.md#two-kinds-of-waiting)). Kraden
+stepping aside on Idejima is a few lines,
+`gIdejima_KradenStepsAsideScript`, in [the scenes](../scene/README.md).
 
 Moving is eased. An actor has a top speed and an acceleration, and gains
 speed toward its target each frame up to the top. Once it has no target it
@@ -77,22 +133,39 @@ loses the same acceleration each frame until it stands still.
 
 ### Who runs which script
 
-Most townspeople never get a script written for them. The scene lists each
-person once, with a place and one of eleven stock behaviours: stand, wander
-near home, and so on. The player's control is one such order in the
-leader's script, and an event takes control by swapping that script.
+The actors' task runs every script. What differs is where a script comes
+from.
+
+Most townspeople never get one written for them. The scene lists each
+person once, with a spot and one of eleven stock behaviours: stand, wander
+near home, and so on. A behaviour is a script the field keeps ready, such
+as `gMovementType_WanderScript`.
+
+The leader's script, while the player steers, is one control order on
+repeat: on foot it is `SC_PLAYER`. Each frame that order reads the D-pad
+and the buttons. An event takes control by giving the leader another
+script, and the field gives the control order back when the event has
+returned.
 
 The Lost Age has many of those control orders, one for each way the party
 gets about: walking, crossing a rope or a tightrope, moving as Sand,
-hovering, walking the World Map, and the ship sailing or flying.
+hovering, walking the World Map, and the ship sailing or flying. The field
+picks the script by how the party is moving just then
+(`Actor_StartRenderModeScript`).
+
+An order to face someone or to walk up to someone does not say whom. It
+means the actor's [watched actor](../../glossary.md#watched-actor), which
+is set when the script is handed out. So one script serves whoever is
+watching whomever.
 
 ## Walking and running
 
-Each frame the field reads the D-pad, picks a speed, and probes the ground
-8 pixels ahead and to either side. If the way is blocked it tries the
-directions a little further round and takes the first that is clear, which
-is why Felix slides along a wall. A frame with no clear direction counts
-as a push, and ledges and ladders answer only after more than 12 in a row.
+Each frame the leader's `SC_PLAYER` order reads the D-pad, picks a speed,
+and probes the ground 8 pixels ahead and to either side. If the way is
+blocked it tries the directions a little further round and takes the first
+that is clear, which is why Felix slides along a wall. A frame with no
+clear direction counts as a push, and ledges and ladders answer only after
+more than 12 in a row.
 
 ### How high a step can go
 
@@ -128,8 +201,10 @@ to four pictures laid over one another, each playing its own animation
 battle Felix is four: body, weapon, a status icon and shadow.
 
 Order matters inside a frame: every actor moves, then the map scrolls to
-the camera actor, then each sprite is placed. Any other order and Felix
-would trail a frame behind himself.
+the camera actor, then each sprite is placed. Those are tasks, and their
+ranks, 11, 5 and 0, put them in that order
+([The field's tasks](#the-fields-tasks)). Any other order and Felix would
+trail a frame behind himself.
 
 ## Towns and dungeons on screen
 
@@ -158,20 +233,22 @@ alone would stop.
 ### The world picture
 
 R on the World Map shows a picture of the whole world with a marker on
-each place visited, and a cursor that L and R step from one marker to the
-next. Each place is a row of a table with its flag and its spot on the
-real map: arriving there sets the flag, and its marker is that spot,
-scaled down.
+each town or dungeon visited, and a cursor that L and R step from one
+marker to the next. Each marker is a row of a table with its flag and its
+spot on the real map: arriving there sets the flag, and the marker is that
+spot, scaled down.
 
 ## Random battles
 
 A counter fills as the leader walks, at a rate the ground's zone sets, and
-a battle starts when it is full. So battles come after a distance, not a
-time, with some luck mixed in after each one. The zone also names the
-groups of enemies that can appear there and how likely each is. In a town
-or a dungeon the scene chooses its zones when it is set up. On the World
-Map the ground under the party chooses, and the ship has its own: sailing
-reads a second table, and flying meets no battles at all.
+a battle starts when it is full. The field's routine does the counting,
+after each frame of its walking loop, and sets the battle request. So
+battles come after a distance, not a time, with some luck mixed in after
+each one. The zone also names the groups of enemies that can appear there
+and how likely each is. In a town or a dungeon the scene chooses its zones
+when it is set up. On the World Map the ground under the party chooses,
+and the ship has its own: sailing reads a second table, and flying meets
+no battles at all.
 
 Walking does other things on the same measure: the party regains a little
 PP, a Djinni waiting to recover counts down, and poison bites.

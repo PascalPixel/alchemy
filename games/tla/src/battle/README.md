@@ -28,7 +28,7 @@ levels by the difference.
 
 ## Turns
 
-![One round against the Wild Wolf, Punch Ant and Giant Bat: Sheba and Felix attack and fell the Giant Bat, Jenna defends, the Wild Wolf uses Fatal Fang on Felix, the Punch Ant attacks Jenna, and the next menu opens](https://alchemy.pascalpixel.com/tla/guides/battle/turn-order.gif)
+![One turn against the Wild Wolf, Punch Ant and Giant Bat: Sheba and Felix attack and fell the Giant Bat, Jenna defends, the Wild Wolf uses Fatal Fang on Felix, the Punch Ant attacks Jenna, and the next menu opens](https://alchemy.pascalpixel.com/tla/guides/battle/turn-order.gif)
 
 A turn is written down before it is played. Each action is brief: who
 acts, the command, where it is aimed, and a priority to sort by. Then the
@@ -37,7 +37,7 @@ list is sorted and played from the top (`Battle_GatherActions`).
 ### The party's commands
 
 The Lost Age's party can be eight strong, and four fight at once: the
-first four in the party's order, with the rest waiting behind. A turn opens
+first four in the party's order, with the rest standing behind. A turn opens
 on the party's row: Fight, Switch, Flee and Status. Switch is there while
 more than four travel together. It picks a place in the line, then the one
 from behind who takes it, and B on the party's row puts the last switch
@@ -53,7 +53,7 @@ behind step into the fallen places at the start of the next turn
 (`BattleParty_SwapInReserves`). The battle is lost only when all of them
 are down. A link battle is three against three, with nobody behind.
 
-Enemies choose by dice from a list of eight moves in their row of the
+Enemies choose at random from a list of eight moves in their row of the
 enemy table, weighted by a habit, such as favouring the start of the list
 (`BattleAI_ChooseAction`). An enemy may act more than once a turn, each
 later action a little slower than the one before.

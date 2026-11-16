@@ -62,17 +62,18 @@ next one.
 
 ## The text buffer
 
-Decoded text waits in a ring of 512 places, each a letter or a control
+Decoded text is kept in a ring of 512 entries, each a letter or a control
 code, until it has been typed.
 
 ## Typing
 
 ![As above](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
 
-Each frame the task reads the next few places for each open message. A
+Each frame the task reads the next few entries for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
-control code is obeyed: new line, pause, wait for a button, turn the page,
-change colour, stop.
+control code is obeyed: new line, pause, hold for a button, turn the page,
+change colour, stop. A pause or a hold is a state the task finds again on
+its next visit. The task returns every frame and never calls `wait()`.
 
 On the field the message speed in the settings decides how many letters
 come in a frame; in a battle it is eight. Lines are also set level at the
@@ -101,7 +102,7 @@ Start opens the Pause menu: save, sleep and the settings. The settings are
 few and global. The window colour is the one worth noticing: every window
 is drawn from one set of colours, so changing it changes them all at once.
 
-Some places won't let you save. Two game flags make the menu answer
+Some scenes won't let you save. Two game flags make the menu answer
 `Cannot save here` or `This is no place for that!` and go back to its
 choices.
 

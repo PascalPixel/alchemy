@@ -14,15 +14,15 @@ A box is a [window](glossary.md#window). Whoever wants one asks for it
 once, then carries on or waits. It never draws it.
 
 The drawing is done by the windows' own [task](glossary.md#task), which
-runs once in every frame whatever else is going on. Each frame it grows
-every opening window a little, shrinks every closing one, and types the
-next letters into any that have text coming. That is why a line and the
-portrait beside it can both be on the move while the conversation that
-asked for them stands still.
+runs once in every frame from inside whatever code is waiting. Each frame
+it grows every opening window a little, shrinks every closing one, and
+types the next letters into any that have text coming. That is why a line
+and the portrait beside it can both be on the move while the conversation
+that asked for them stands still.
 
 It is also why every window in the game looks and behaves alike. Change the
 window colour in the settings and a conversation, a menu and a shop counter
-all change together, because there is only one place that draws them.
+all change together, because only one piece of code draws them.
 [Windows](src/window/README.md#windows) follows one from opening to
 closing.
 
@@ -36,7 +36,7 @@ player gave Felix.
 Showing one is two steps. First the whole message is decoded: unpacked,
 with its blanks filled from the game's state at that moment. Then the
 windows' task types it a few letters a frame, stops at the end of each
-page, and waits for a button.
+page, and each frame after that looks for a button.
 
 [Decoding a message](src/window/README.md#decoding-a-message) shows the
 packing and what a blank can hold.
@@ -58,7 +58,7 @@ flowchart LR
 
 A menu is not a state the game switches into. It is a function the field
 calls, which returns when the menu closes. Inside, it is code that waits:
-draw the choices, wait a frame, look at the buttons, go round again. A
+draw the choices, call `wait(1)`, look at the buttons, go round again. A
 question inside a screen is another call, one level deeper, and B returns
 from it.
 
@@ -69,7 +69,7 @@ shows one screen open, ask and close.
 
 One rule decides what a menu may do by itself. Anything that needs only the
 party, such as casting Cure on Jenna, the screen does on the spot. Anything
-that touches the place, such as Frost on one of Daila's puddles, it cannot
+that touches the scene, such as Frost on one of Daila's puddles, it cannot
 do: it writes down who is casting what, sets a request, and closes. The
 field finds the request and does the casting. That is why the menu is
 always gone before the puddle freezes.
@@ -81,9 +81,9 @@ who fights in front.
 ## Shops, sanctums and inns
 
 A visit to a counter starts as an ordinary conversation. The shopkeeper's
-[event](glossary.md#event) calls the shop's code and waits for it to
-return, exactly as the field waits for a menu. So a whole shop visit can
-sit in the middle of a conversation.
+[event](glossary.md#event) calls the shop's code as a function and goes on
+when it returns, exactly as the field calls a menu. So a whole shop visit
+can sit in the middle of a conversation.
 
 There are three kinds, and The Lost Age adds a fourth. A shop buys, sells
 and repairs. A sanctum revives and cures. An inn restores HP and PP, and

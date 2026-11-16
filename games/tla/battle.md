@@ -36,7 +36,7 @@ strengths that share one picture.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  choose(["Everyone chooses: the party from the menu, the enemies by dice"]) --> sort(["Sort by Agility"])
+  choose(["Everyone chooses: the party from the menu, the enemies at random"]) --> sort(["Sort by Agility"])
   sort --> act(["The next unit acts"])
   act --> check{"Is a side beaten?"}
   check -- "no, more to act" --> act
@@ -56,10 +56,10 @@ plays it from the top. After every single action it checks for a winner, so
 a battle can end in the middle of a turn.
 
 The Lost Age's party can be eight strong, and four fight at once. The rest
-wait behind, Switch trades one in, and when everyone in front is down the
+stand behind, Switch trades one in, and when everyone in front is down the
 ones behind step forward at the start of the next turn. The party has lost
 only when all of them are down.
-[Turns](src/battle/README.md#turns) has the order and the dice.
+[Turns](src/battle/README.md#turns) has the order and the odds.
 
 ## An action, in three steps
 
@@ -84,12 +84,17 @@ take one each.
 Watch the end of Quake: the first target flinches while the ground is still
 shaking.
 
-Two things run at once. The ability's picture is its
-[battle effect](glossary.md#battle-effect), which draws the pillars and
-knows nothing about damage. The battle knows the damage and draws no rock.
-They meet at one moment: the effect gives a signal when the blow should
-land, and from then on the battle shows what happened, one target at a
-time.
+Two pieces of code share each of those frames, and they are of the two
+kinds [System](system.md#waiting-and-tasks) describes. The ability's
+picture is its [battle effect](glossary.md#battle-effect). It is the code
+that waits: a loop that draws one frame of pillars and calls `wait(1)`. It
+knows nothing about damage. The battle knows the damage and draws no rock,
+and its showing is a [task](glossary.md#task), the playback, which `wait()`
+calls once in each of the effect's frames.
+
+They meet at one moment. When the blow should land the effect calls one
+function, `BattlePlayback_Start`, and from then on the task shows what
+happened, one target at a time. Quake calls it 16 frames before its last.
 
 So an effect is free to be any length and any shape, and the rules never
 need to know. The Lost Age leans on that hard: it has 29 summons to The
@@ -113,7 +118,7 @@ frame by frame.
 A win hands out experience, then coins, then items. The ones in front get
 their experience in full and the ones behind get half. A flight just fades
 out. After a defeat the leader is revived with 1 HP and the party wakes at
-its restart point, unless an event named another place.
+its restart point, unless an event named another scene.
 [The end of the battle](src/battle/README.md#the-end-of-the-battle) has the
 spoils.
 

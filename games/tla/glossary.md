@@ -127,8 +127,8 @@ Evidence: plain English; the project's own word.
 Each game was released in Japanese, English, German, Spanish, French and
 Italian, and each release is an edition (`tla-ja` to `tla-it`). The five
 other than the Japanese are the international editions. They differ in more
-than their text: when the cursor on the world picture reaches a new place,
-the Japanese edition draws the place's name at once, and the others six
+than their text: when the cursor on the world picture reaches a new marker,
+the Japanese edition draws its name at once, and the others six
 [frames](#frame) later.
 
 Evidence: plain English; the project's own word.
@@ -216,10 +216,13 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 ### Main routine
 
 The main routine, `MainRoutine_Run`, starts when the console is switched on
-and never finishes. All it does is run one [sequence](#sequence), clear away
-what that one set up, and start the next. Walk into a battle, win it and
-walk on, and the main routine has run three: the place, the battle, the
-place again ([System](system.md#the-main-routine)).
+and never finishes. All it does is call one [sequence](#sequence) as a
+function, clear away what that one set up when it returns, and call the
+next. Walk into a battle, win it and walk on, and the main routine has run
+three: the cave, the battle, the cave again. It is a loop, but one trip
+round it is a whole sequence: the loop that goes round once a
+[frame](#frame) is inside [`wait()`](#wait)
+([System](system.md#the-main-routine)).
 
 Evidence: tradition: メインルーチン, the period's word for the code that runs
 outside the interrupts.
@@ -227,12 +230,15 @@ outside the interrupts.
 ### Sequence
 
 A sequence is one whole kind of play, run from its start to its end. There
-are five: the field sequence (walking around a place), the battle sequence
-(one fight), the dice sequence (Lucky Dice), the slots sequence (Lucky
-Wheels) and a fifth that runs [Super Lucky Dice](#super-lucky-dice). The
-code names four of them `SEQUENCE_BATTLE`, `SEQUENCE_DICE`, `SEQUENCE_SLOTS`
-and `SEQUENCE_SUPER_DICE`. The field sequence has no such name: it is asked
-for by naming the place to walk around. Only one sequence runs at a time
+are five: the field sequence (walking around a [scene](#scene)), the battle
+sequence (one fight), the dice sequence (Lucky Dice), the slots sequence
+(Lucky Wheels) and a fifth that runs [Super Lucky Dice](#super-lucky-dice).
+The code names four of them `SEQUENCE_BATTLE`, `SEQUENCE_DICE`,
+`SEQUENCE_SLOTS` and `SEQUENCE_SUPER_DICE`. The field sequence has no such
+name: it is asked for by naming the scene to walk around. The Title and the
+File Screen are scenes, so the field sequence runs them too, and a menu or
+a shop is a function called from inside a sequence. Only one sequence runs
+at a time
 ([System](system.md#the-main-routine)).
 
 Evidence: tradition: ゲームシーケンス.
@@ -264,20 +270,25 @@ A transition is the handover from one [sequence](#sequence) to the next.
 Stepping through a door is one, and so is going into a battle. The sequence
 that is ending writes down what should run next, a scene or another
 sequence, in the [main routine's work](#main-routines-work), and the
-[main routine](#main-routine) starts it
+[main routine](#main-routine) starts it. The word is kept for this
+handover. The wipe or fade the player sees while it happens is a screen
+transition, `ScreenTransition_` in the code, which is only the drawing
 ([System code](src/system/README.md#the-main-routine)).
 
 Evidence: tradition: シーケンス遷移.
 
 ### Main routine's work
 
-`gMainRoutineWork` is the one block of memory that outlives every
-[sequence](#sequence). Everything else a battle or a place set up is cleared
-away when it ends, but this block is left alone, so the next sequence can
-read it. It holds what runs next, who is in the party and their coins,
-which is why a battle's winnings are still there back on the field. It is
-set to its defaults when the console is switched on, and a new game fills
-it in. A save file keeps it, with the [game flags](#game-flag)
+`gMainRoutineWork` is the block of memory that outlives every
+[sequence](#sequence): one C struct in a global. What a battle or a scene
+set up for itself is cleared away when it ends, but this block is left
+alone, so the next sequence can read it. It holds what runs next, who is in
+the party and their coins, which is why a battle's winnings are still there
+back on the field. It is set to its defaults when the console is switched
+on, and a new game fills it in. Three other things are left alone with it,
+the [game flags](#game-flag), the characters' [units](#unit) and the
+snapshot of where a scene's [actors](#actor) stand, and a save file keeps
+all four
 ([System](system.md#saving)).
 
 Evidence: tradition: work, named for its owner, the main routine.
@@ -286,8 +297,9 @@ Evidence: tradition: work, named for its owner, the main routine.
 
 A frame is one picture on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
-frames. When Jenna wakes on Idejima and says `What...`, her event waits 40
-frames before she goes on: two thirds of a second
+frames. When Jenna wakes on Idejima and says `What...`, her event then
+calls [`wait()`](#wait) for 40 frames before she goes on: two thirds of a
+second, when nothing slows the game down
 ([System code](src/system/README.md#the-frame-loop)).
 
 Evidence: tradition: フレーム, one pass of a game's processing.
@@ -295,20 +307,28 @@ Evidence: tradition: フレーム, one pass of a game's processing.
 ### Wait
 
 To wait is to let [frames](#frame) go by in the middle of a piece of code.
-`wait(10)` lets ten frames of the game run and then carries on with the next
-line. When the waves rise in the Sea of Time, its code moves the colours one
-shade toward violet, waits ten frames, and goes round again until none has
-changed. So a scene can be written top to bottom, in the order things
-happen ([System](system.md#waiting-and-tasks)).
+`wait(10)` runs ten frames of the game, there inside the call, and then
+carries on with the next line: the game's frame loop is this function, and
+there is no other. One piece of code waits at a time. An
+[actor script](#actor-script)'s `SC_WAIT` is another thing, a count kept in
+the actor. When the waves rise in the Sea of Time, its code moves the
+colours one shade toward violet, waits ten frames, and goes round again
+until none has changed. So a scene can be written top to bottom, in the
+order things happen ([System](system.md#waiting-and-tasks)).
 
 Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
-A task is a routine the game runs once in every [frame](#frame), even
-while other code is [waiting](#wait), until it is taken off the list. The
-task that types a villager's line into its window letter by letter is
-one. The list, `gTasks`, has room for 24
+A task is a routine on a list that [`wait()`](#wait) calls once in every
+[frame](#frame), until it is taken off the list. Tasks run only while some
+code is waiting, and a task never waits itself. A task is a whole piece
+of work, such as moving every [actor](#actor) a step, not one thing in the
+world. The task that types a villager's line into its window letter by
+letter is one. Each task has a rank, which the code calls its `priority`,
+and a higher rank runs earlier in the frame. A few tasks are called by the
+[VBlank](#vblank) handler instead, once a VBlank. The list, `gTasks`, has
+room for 24
 ([System code](src/system/README.md#the-task-runner)).
 
 Evidence: tradition: タスク and its 実行関数.
@@ -396,7 +416,7 @@ for internal and external work RAM, RAM being memory. IWRAM is 32 KB inside
 the processor, the chip that follows the game's instructions, and it is the
 fastest memory there is. EWRAM is 256 KB beside the processor, and slower.
 So the code that must be quickest is copied into IWRAM, and the big things
-go in EWRAM: the place the party is in unpacks its [overlay](#overlay) into
+go in EWRAM: the scene the party is in unpacks its [overlay](#overlay) into
 32 KB of it
 ([System code](src/system/README.md#memory-map)).
 
@@ -406,8 +426,8 @@ Evidence: tradition: the hardware's own names.
 
 The main image is the code the processor runs straight from the cartridge,
 without copying it into memory first. It is cut into fifteen
-[banks](#bank), and holds what is needed all the time: walking, battles, windows, menus, shops,
-sound. What only one place needs is kept apart, in
+[banks](#bank), and holds what is needed all the time: walking, battles,
+windows, menus, shops, sound. What only one scene needs is kept apart, in
 [overlays](#overlay) ([System](system.md#overlays)).
 
 Evidence: plain English; the project's own word.
@@ -440,7 +460,7 @@ file names are the project's, from the chip makers' names as GBATEK lists them
 ### Bank
 
 A bank is one of the fifteen stretches the [main image](#main-image) is cut
-into, roughly one for each job: one for the field, one for the windows, one
+into, roughly one for each part: one for the field, one for the windows, one
 for the battles, one for sound. The Lost Age has one more than The Broken
 Seal, for [Super Lucky Dice](#super-lucky-dice). Each starts at a fixed
 place with room to spare after its code, so one bank can grow without
@@ -494,20 +514,22 @@ Evidence: plain English; the project's own word.
 
 ### Overlay
 
-An overlay is the code of one place, stored packed small on the cartridge
-and unpacked into memory only when the party arrives there. Daila's
-townspeople and what happens in Daila are in Daila's overlay, and are of no
-use in Madra. There are 114 overlays for the 325 [scenes](#scene), because
-neighbours share: the eleven floors of the Shrine of the Sea God have one
-between them. They all unpack into the same 32 KB of memory, so only one is
-loaded at a time ([System](system.md#overlays)).
+An overlay is the code of one scene, or of a few that belong together,
+stored packed small on the cartridge and unpacked into memory only when the
+party arrives there. Daila's townspeople and what happens in Daila are in
+Daila's overlay, and are of no use in Madra. There are 114 overlays for the
+325 [scenes](#scene), because neighbours share: the eleven floors of the
+Shrine of the Sea God have one between them. Such an overlay's code looks
+at which of its scenes the party is in, as the Suhalla Gate's does for its
+three. They all unpack into the same 32 KB of memory, so only one is loaded
+at a time ([System](system.md#overlays)).
 
 Evidence: tradition: the GNU linker's word; the linker's `.bss` for the
 globals' folder.
 
 ### Entry table and import table
 
-An [overlay](#overlay) is a place's own code, loaded only while the party
+An [overlay](#overlay) is a scene's own code, loaded only while the party
 is there. The rest of the game, the [main image](#main-image), cannot know
 where things are inside it, so the two reach each other through two lists
 of [veneers](#veneer).
@@ -601,7 +623,7 @@ Evidence: plain English for the hardware's own field.
 
 A palette fade moves every colour on screen a little closer to a target
 colour each [frame](#frame), in equal steps, so that they all arrive
-together. A place fading in as the party arrives is one, and so is the
+together. A scene fading in as the party arrives is one, and so is the
 change of light over 60 frames before the Gabomba Statue speaks
 ([Field code](src/field/README.md#the-palette-fade)).
 
@@ -638,7 +660,7 @@ Evidence: the game: "Lemurian Ship".
 
 ### Scene
 
-A scene is one place the game loads as a whole: a town's streets, a floor
+A scene is what the game loads as a whole: a town's streets, a floor
 of a dungeon, a set of rooms, or the World Map. A few are screens instead,
 such as the Title. There are 325, each a row of the list `gScenes`: Daila is
 one, and its sanctum another, which is why the screen fades between them.
@@ -757,12 +779,16 @@ Evidence: plain English for what a row does, place an actor.
 
 ### Actor script
 
-An actor script is the list of small commands an [actor](#actor) follows, a
+An actor script is the list of small orders an [actor](#actor) follows, a
 little each [frame](#frame): move here, wait, jump, go back to the start.
-The commands' names start `SC_`. A villager who wanders near home is running
-one. A command can also hand the actor to a built-in script, a piece of the
-field's own code that steers it, and the player's control of the leader is
-one of those
+These pages call its items orders, and keep "command" for an
+[event command](#event-command). The orders' names start `SC_`, for script
+command, the code's own word. A script does not run by itself: one
+[task](#task) steps every actor's script each frame, and a script's wait,
+`SC_WAIT`, is a count in the actor, not [`wait()`](#wait). A villager who
+wanders near home is running one. An order can also hand the actor to a
+piece of the field's own code that steers it each frame, and the player's
+control of the leader on foot is one of those, `SC_PLAYER`
 ([Field code](src/field/README.md#how-an-actor-script-runs)).
 
 Evidence: tradition: スクリプト for a character's commands.
@@ -770,19 +796,20 @@ Evidence: tradition: スクリプト for a character's commands.
 ### Watched actor
 
 The watched actor is the one another [actor](#actor) keeps its eye on. An
-[actor script](#actor-script)'s commands to face, follow or walk up to
+[actor script](#actor-script)'s orders to face, follow or walk up to
 someone do not say whom. They mean the watched actor, so one script serves
 whoever is watching whomever. In Lemuria, two people walking their rounds
 are each given the other to watch
 ([Field code](src/field/README.md#who-runs-which-script)).
 
-Evidence: plain English for what the commands do.
+Evidence: plain English for what the orders do.
 
 ### Field effect
 
 A field effect is a small [actor](#actor) that is only decoration, such as
-the sparks of a field Psynergy. It moves, grows and spins by a script of its
-own ([Field code](src/field/README.md#one-actor-for-everything)).
+the sparks of a field Psynergy. It moves, grows and spins by an
+[actor script](#actor-script) of its own
+([Field code](src/field/README.md#one-actor-for-everything)).
 
 Evidence: plain English.
 
@@ -813,7 +840,7 @@ Evidence: plain English.
 An examine trigger is a [trigger](#trigger) that runs when the player
 presses A facing a [cell](#cell). On Idejima, searching the spot where
 Jenna lies is one: she wakes and joins the party. Chests, jars, barrels,
-rocks, graves and trees have lines of their own, the same in every place
+rocks, graves and trees have lines of their own, the same in every scene
 ([Scenes](src/scene/README.md#which-triggers-a-cell-starts)).
 
 Evidence: plain English.
@@ -838,11 +865,16 @@ Evidence: Camelot: the game's text, 入口.
 
 ### Field request
 
-A field request is the field asking itself to deal with something the
-walking leader has run into. There are twelve kinds: an exit taken, a
-battle due, a person to talk to, a cell to search, a menu to open, and
-others. Press Start and the request for the Pause menu is set. The
-[field sequence](#field-sequence) reads the requests and answers the most
+A field request is a note in the field's [work](#work) that something
+needs an answer. There are twelve kinds: an exit taken, a battle due, a
+person to talk to, a cell to search, a menu to open, and others. Three
+kinds of code set one. The leader's [actor script](#actor-script) sets the
+ones for buttons: press Start and its order `SC_PLAYER` sets the request
+for the Pause menu. The field sequence's own routine sets the ones for
+where the leader has stepped. And an [event](#event) or a menu sets one for
+something the field must do after it has returned. The
+[field sequence](#field-sequence) reads the requests each time its
+`wait(1)` returns, never in the middle of a frame, and answers the most
 urgent first ([Field code](src/field/README.md#the-twelve-requests)).
 
 Evidence: plain English; the project's own word.
@@ -867,7 +899,13 @@ An event command is one step of an [event](#event). The ones named `Event_`
 are for speech, pauses and where the party goes next, the ones named
 `Actor_` move the people, and the ones named `FieldCamera_` move the camera.
 On Idejima, `Event_ShowMessage(ACTOR_JENNA, 0)` shows the event's next line
-as Jenna's. The 0 asks for nothing special
+as Jenna's. The 0 asks for nothing special. A command is a C call. It is
+not an order of an [actor script](#actor-script), although both can be
+about an actor: `Actor_WalkTo` is a command an event calls, and `SC_MOVE`
+is an order in a script's table. A command that takes time, such as
+showing a line or one whose name ends `AndWait`, calls [`wait()`](#wait)
+until what it started is over. One that only starts something, such as
+`Actor_WalkTo`, returns at once
 ([Scenes](src/scene/README.md#events)).
 
 Evidence: plain English.
@@ -890,8 +928,11 @@ Evidence: plain English.
 A game flag is one of the 4,096 yes-or-no facts the game remembers and
 saves, such as Jenna having joined the party or Briggs having been caught.
 Two ranges of 256 are short-lived instead. One is wiped each time the party
-enters a scene, which is why a puzzle is set up again when the party walks
-back in. The other is wiped on entering a new [area](#area)
+enters a scene, which is why a puddle frozen into a pillar of ice in Daila
+is a puddle again when the party walks back in. The other is wiped on
+entering a new [area](#area), which is why the spot where the Psy Crystal
+was dug up stays dug while the party goes in and out of Daila's houses. A
+battle wipes neither
 ([Game rules](src/game/README.md#the-game-flags)).
 
 Evidence: Camelot: 田口泰宏, the System programmer, speaks of flags (Shining
@@ -921,8 +962,8 @@ scene codes TEST0 to TEST7 and サウンドテスト.
 
 A battle is one fight between the party and a
 [formation](#formation) of enemies, from its opening to the experience and
-coins at the end. It is a [sequence](#sequence) of its own, so the place the
-party was walking in is cleared away while it runs and loaded again after
+coins at the end. It is a [sequence](#sequence) of its own, so the scene the
+party was walking in is cleared away while it runs and set up again after
 ([Battle](battle.md)).
 
 Evidence: Camelot: the credits' "Battle".
@@ -948,7 +989,8 @@ Evidence: plain English.
 
 ### Turns and actions
 
-A turn is one round of a battle, in which every [unit](#unit) acts once. An
+A turn is one pass through a battle's fighters, in which every
+[unit](#unit) has its go. An
 action is one unit's go within it: Felix's attack is one action, and the
 Wild Wolf's answer is another ([Battles](src/battle/README.md#turns)).
 
@@ -969,7 +1011,8 @@ Evidence: tradition: 演出.
 The game works out what an [action](#turns-and-actions) does before it
 shows any of it. The playback queue is the list of what is left to show for
 each target: the flinch, the line such as `Felix takes 27 damage!`, the HP
-going down. It is played once the [battle effect](#battle-effect) says the
+going down. A [task](#task) plays it, a little each frame, once the
+[battle effect](#battle-effect) has called `BattlePlayback_Start` to say the
 blow has landed
 ([Battles](src/battle/README.md#how-outcomes-reach-the-screen)).
 
@@ -979,8 +1022,9 @@ Evidence: plain English.
 
 A battle effect is the show an ability puts on over a battle, such as
 Quake's shaking ground or a summon's arrival. Each is a piece of code that
-moves and draws its parts [frame](#frame) by frame. It decides when a hit
-is shown, never what the hit does
+moves and draws its parts [frame](#frame) by frame: a loop that draws one
+frame and calls [`wait(1)`](#wait). It decides when a hit is shown, never
+what the hit does
 ([Battle effects](src/battle_effect/README.md)).
 
 Evidence: Camelot: the credits' "Battle Effects", beside "Battle Characters"

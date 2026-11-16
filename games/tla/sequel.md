@@ -86,5 +86,30 @@ through a table it links by name, `gHeapSlots`, and the field's work is
 `gFieldWork`, one of its entries. The Lost Age keeps its slots at a fixed
 address and reads them as the fields of one struct,
 `Ram_HeapSlots->fieldWork`, in 384 of its source files. So a routine that
-does the same job in both games is often written, and compiled, differently
-in each.
+does the same thing in both games is often written, and compiled,
+differently in each.
+
+## Time passes the same way
+
+Both games keep their frame loop inside `wait()` and run a short list of
+[tasks](glossary.md#task) from it ([System](system.md#waiting-and-tasks)).
+The differences are small, and each can be read in
+[system_frame.c](src/system/system_frame.c) beside
+[The Broken Seal's](../tbs/src/system/system_frame.c).
+
+- The list holds 24 tasks. The Broken Seal's holds 20.
+- The Broken Seal's `wait()` moves the stack to a fixed spot before it runs
+  the tasks and puts it back after. The Lost Age's runs them on the
+  caller's stack.
+- The two passes have changed numbers. A task's pass is the high byte of
+  its priority. The Broken Seal's `wait()` runs the tasks whose high byte
+  is 12 and its VBlank handler those with 4. The Lost Age's `wait()` runs
+  the 4s and its handler the 12s. The list is sorted highest first, so here
+  the handler's tasks come first, and the handler stops at the first task
+  of the other pass.
+- The field keeps one task more. Actors that ride other actors are moved by
+  `Actor_MoveWithCarriers`, at rank 10, and the actors' own task ranks 11
+  to run before it ([Field code](src/field/README.md#the-fields-tasks)).
+- The field answers a battle request after a step and a push, where The
+  Broken Seal answers it before them
+  ([Field code](src/field/README.md#the-twelve-requests)).

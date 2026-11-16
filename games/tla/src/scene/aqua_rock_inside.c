@@ -1144,20 +1144,20 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->radius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == toFIXED(2))
+  if (orbiter->orbitRadius == toFIXED(2))
     return 1;
   AquaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->radius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
   AquaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   return 1;
 }
 

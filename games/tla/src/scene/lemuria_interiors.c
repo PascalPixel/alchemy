@@ -782,7 +782,7 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
     {
       /* FAKEMATCH(barrier): the empty asm before the timer's store. */
       __asm__("");
-      ((struct SpawnedActor *)object)->timer = timer;
+      object->wait = timer;
     }
     sprite->nextPicture = 0;
     sprite->rotation = rotation;

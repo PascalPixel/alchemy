@@ -221,14 +221,10 @@ void JupiterLighthouse_EnergizeLeftAngel(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldEvent_Wait(40);
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ANGEL)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ANGEL)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ARCHER)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ARCHER)));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ANGEL));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ANGEL));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ARCHER));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ARCHER));
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -249,23 +245,18 @@ void JupiterLighthouse_EnergizeRightAngel(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldEvent_Wait(40);
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ANGEL)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ANGEL)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ARCHER)));
-  JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ARCHER)));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ANGEL));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ANGEL));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_LEFT_ARCHER));
+  JupiterLighthouse_StopBeamFlicker(Actor_Get(ACTOR_RIGHT_ARCHER));
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 actor) {
-  struct JupiterLighthouseAerieObject *object =
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(actor));
+  struct Actor *object = Actor_Get(actor);
 
-  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
 }
 
 /// An energy path block set down: in its side's gap, cell (6, 12) on the

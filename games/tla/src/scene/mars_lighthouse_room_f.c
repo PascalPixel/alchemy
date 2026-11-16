@@ -1456,10 +1456,10 @@ enum {
 
 /// Unused here: the Jupiter Lighthouse's angels where their flags leave them.
 UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
-  struct PositionedActor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
-  struct PositionedActor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
-  struct PositionedActor *lid = Actor_GetById(ACTOR_LID);
-  struct FieldSprite *sprite = lid->animation;
+  struct Actor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
+  struct Actor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
+  struct Actor *lid = Actor_GetById(ACTOR_LID);
+  struct FieldSprite *sprite = lid->sprite;
 
   Actor_SetPosition(24, 512, 248);
   Actor_SetPosition(ACTOR_LID, 512, 248);
@@ -1467,11 +1467,11 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_GetById(24)->scaleX = 0;
   lid->motionFlags = 0;
-  lid->y.fixed = lid->terrainHeight;
+  lid->y.fixed = lid->groundHeight;
   leftAngel->motionFlags = 0;
-  leftAngel->y.fixed = leftAngel->terrainHeight;
+  leftAngel->y.fixed = leftAngel->groundHeight;
   rightAngel->motionFlags = 0;
-  rightAngel->y.fixed = rightAngel->terrainHeight;
+  rightAngel->y.fixed = rightAngel->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     leftAngel->y.fixed += 0x66640;
     {

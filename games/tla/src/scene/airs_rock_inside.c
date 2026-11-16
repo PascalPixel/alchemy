@@ -2384,21 +2384,21 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->radius, orbiter->angle,
+  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle,
                                (s32)&orbiter->x);
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == toFIXED(2))
+  if (orbiter->orbitRadius == toFIXED(2))
     return 1;
   AirsRockInside_SpawnOrbitSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  Vector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  Vector_AddPolarOffset(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
   AirsRockInside_SpawnOrbitSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   return 1;
 }
 
@@ -2407,12 +2407,12 @@ s32 Orbit_Update(struct Orbit *object) {
   FIXED z;
 
   object->angle += object->speed;
-  object->x = IwramMulFX(Trig_Cos(object->angle), object->radius);
-  z = IwramMulFX(Trig_Sin(object->angle), object->radius);
+  object->x = IwramMulFX(Trig_Cos(object->angle), object->orbitRadius);
+  z = IwramMulFX(Trig_Sin(object->angle), object->orbitRadius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {
-    object->radius = object->growth * Trig_Sin(object->phase << 10);
+    object->orbitRadius = object->growth * Trig_Sin(object->phase << 10);
     object->growth += 10;
   }
   if (object->speed == 0)

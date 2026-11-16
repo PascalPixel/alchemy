@@ -436,7 +436,7 @@ void JupiterLighthouse_LeaveTheCenter(void) {
 void JupiterLighthouse_AlexAppears(void) {
   struct EffectParams params;
   struct EffectParams *p;
-  struct SparkActor *actor;
+  struct Actor *actor;
   u32 i;
   FIXED x;
   s32 y;
@@ -444,9 +444,9 @@ void JupiterLighthouse_AlexAppears(void) {
   u32 randomY;
   u32 scaled;
 
-  actor = ((struct SparkActor *)Actor_Get(ACTOR_ALEX));
+  actor = Actor_Get(ACTOR_ALEX);
   Event_PlaySound(SE_WARP);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -461,19 +461,19 @@ void JupiterLighthouse_AlexAppears(void) {
       // loads between the multiply's add and its last shift.
       scaled = random << 1;
       scaled += random;
-      x = actor->x;
+      x = actor->x.fixed;
       x += (((scaled << 3) >> 16) << 16);
       x += -toFIXED(12);
       randomY = Random16();
-      y = actor->y;
+      y = actor->y.fixed;
       FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + toFIXED(32),
-                        actor->z, 0, -toFIXED(4), 0, toFIXED(27), p);
+                        actor->z.fixed, 0, -toFIXED(4), 0, toFIXED(27), p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
   }
   Actor_SetSpriteColorById(ACTOR_ALEX, 0);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 1);
 }
 
 void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {

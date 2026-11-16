@@ -46,35 +46,97 @@ struct SpriteAttr2High {
   u8 priority : 2;
 };
 
+/// An actor spiralling round its anchor (Orbiter_Spiral): the circle it keeps
+/// in the actor's scene-owned words, and the frames it has left.
 struct Orbiter {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x38];
-  s32 radius;
-  u8 unk50[0x12];
-  u8 countdown;
-  u8 unk63;
-  s16 angle;
-  u16 speed;
-  struct Actor *anchor;
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
+  FIXED groundHeight;
+  FIXED scaleX;
+  FIXED scaleY;
+  u16 radius;
+  u8 layer;
+  u8 priorityFlags;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
+  FIXED speedLimit;
+  FIXED acceleration;
+  FIXED targetX;
+  FIXED targetY;
+  FIXED targetZ;
+  FIXED bounce;
+  FIXED gravity;
+  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in riseBaseY
+  void *sprite;
+  u8 spriteStorageKind;
+  u8 motionFlags;
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 countdown; ///< frames left of the spiral
+  u8 riseEnabled;
+  s16 angle; ///< its place on the circle, 1/65536 turns
+  u16 speed; ///< twice its turn a frame, 1/65536 turns
+  struct Actor *anchor; ///< the actor it circles, in watchedActor
 };
 
+/// An actor circling a centre on a growing circle (Orbit_Update), its
+/// centre, radius and turn kept in the actor's scene-owned words.
 struct Orbit {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x30];
-  s32 centreX;
-  s32 centreZ;
-  s32 radius;
-  u8 unk50[0x12];
-  u8 phase;
-  u8 growth;
-  s16 angle;
-  s16 speed;
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
+  FIXED groundHeight;
+  FIXED scaleX;
+  FIXED scaleY;
+  u16 radius;
+  u8 layer;
+  u8 priorityFlags;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
+  FIXED speedLimit;
+  FIXED acceleration;
+  FIXED targetX;
+  FIXED targetY;
+  FIXED targetZ;
+  FIXED centreX;     ///< 16.16 fixed-point pixels, in bounce
+  FIXED centreZ;     ///< 16.16 fixed-point pixels, in gravity
+  FIXED orbitRadius; ///< 16.16 fixed-point pixels, in riseBaseY
+  void *sprite;
+  u8 spriteStorageKind;
+  u8 motionFlags;
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 phase;   ///< where the circle's growth starts, 1/64 turns
+  u8 growth;  ///< grows by 10 every other frame up to 141
+  s16 angle;  ///< its place on the circle, 1/65536 turns
+  s16 speed;  ///< its turn a frame, slowed by 128 a frame once grown
 };
 
 struct DoorStep {
@@ -154,15 +216,6 @@ struct MapBits {
   u8 mode : 2;
 };
 
-/// The bytes of an actor this handler uses. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
-struct TalkActor {
-  u8 unk00[6];
-  u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63; ///< Func_020006d0 reads it
-};
-
 /// One id of a list ended by 0xffff, as Pillars_Raise reads it.
 struct ListedActor {
   u16 id;
@@ -238,13 +291,6 @@ union ActorCoordinate {
   u16 half;
 };
 
-struct JupiterLighthouseAerieObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /// A coordinate as the scenes' actor views read it: struct FieldCoordinate's
 /// layout as a union, whose members may alias anything.
 union ViewCoordinate {
@@ -255,41 +301,12 @@ union ViewCoordinate {
   } part[1];
 };
 
-/// struct Actor as this function reads it, its coordinates as
-/// FieldCoordinate.
-struct PositionedActor {
-  u8 unk00[8];
-  union ViewCoordinate x;
-  union ViewCoordinate y;
-  union ViewCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  u8 unk1c[0x34];
-  struct FieldSprite *animation;
-  u8 animationKind;
-  u8 motionFlags;
-};
-
 struct BeamSpark {
   s32 position[3];
   s32 unk0c;
   s32 drift;
   s32 unk14;
   u32 age;
-};
-
-struct SceneEffectSource {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SparkActor {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 struct EffectParams {
@@ -305,11 +322,6 @@ struct EffectParams {
 
 struct Probe {
   s32 unk00[6];
-};
-
-struct SpawnedActor {
-  u8 unk00[0x5e];
-  u16 timer;
 };
 
 struct SpringTossMotion {
@@ -361,29 +373,6 @@ struct MadraPlacement {
   const void *data;
   u16 x;
   u16 y;
-};
-
-struct StagedActor {
-  u8 unk00[6];
-  u16 facing;
-  union ViewCoordinate x;
-  union ViewCoordinate y;
-  union ViewCoordinate z;
-  u8 unk14[0x0e];
-  u8 transitionMode;
-  u8 unk23;
-  s32 velocityX;
-  u8 unk28[4];
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  u8 unk3c[4];
-  s32 targetZ;
-  u8 unk44[0x15];
-  u8 collisionFlags;
-  u8 unk5a[8];
-  u8 transitionBusy;
 };
 
 /// The cell watch's work: the object found on the leader's cell.
@@ -562,15 +551,50 @@ struct SparkState {
   s32 frame;
 };
 
+/// The World Map's Echo (WorldMap_CircleEcho), which circles and bobs where it
+/// waits: struct Actor with its timer and userValue words named.
 struct BobbingMarker {
-  u8 unk00[6];
+  const s32 *script;
+  s16 scriptCursor;
   u16 facing;
   union ViewCoordinate x;
   union ViewCoordinate y;
   union ViewCoordinate z;
-  u8 unk14[80];
-  s16 angle;
-  s16 stopped;
+  FIXED groundHeight;
+  FIXED scaleX;
+  FIXED scaleY;
+  u16 radius;
+  u8 layer;
+  u8 priorityFlags;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
+  FIXED speedLimit;
+  FIXED acceleration;
+  FIXED targetX;
+  FIXED targetY;
+  FIXED targetZ;
+  FIXED bounce;
+  FIXED gravity;
+  s32 riseBaseY;
+  void *sprite;
+  u8 spriteStorageKind;
+  u8 motionFlags;
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 angle;   ///< its place on the circle, 1/65536 turns, in timer
+  s16 stopped; ///< nonzero holds it still, in userValue
 };
 
 /// gMainRoutineWork.restartScene and savedEntrance as this script reads them.

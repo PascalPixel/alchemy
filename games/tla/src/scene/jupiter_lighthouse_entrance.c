@@ -232,7 +232,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   return object;
 }
 
-s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
+s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
   struct SceneEffectParams params;
   s32 phase;
   FIXED x, y, speed;
@@ -243,10 +243,11 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = object->y + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, toFIXED(11), &params);
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase, toFIXED(11),
+                      &params);
   }
   return 0;
 }

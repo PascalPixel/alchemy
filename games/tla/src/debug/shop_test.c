@@ -156,7 +156,7 @@ void Inn_CheckIn(s32 kind, s32 value);
 void ItemPicker_RunToShow(s32 *a, s32 *b);
 void NameEntry_EditMemberName(s32 index);
 void Summon_ShowLearnedMessage(s32 value);
-void Class_GetSeries(s32 value);
+void Summon_Learn(s32 summonId);
 void DebugBrowser_Icons(void);
 void DebugBrowser_Portraits(void);
 
@@ -211,7 +211,7 @@ void Forge_Run(s32 actor);
 void Forge_SetItem(s32 value);
 s32 Forge_GetItem(void);
 
-/// Sunshine, as in Yallam (YallamInteriors_TalkToSunshine) without his walk to
+/// Sunshine, as in Yallam (YallamRooms_TalkToSunshine) without his walk to
 /// the anvil: while FLAG_FORGE_OPEN is set he forges what the party
 /// brings.
 void ShopTest_TalkToSunshine(s32 actor) {
@@ -252,7 +252,7 @@ void ShopTest_TalkToSunshine(s32 actor) {
   }
 }
 
-/// Sunshine's wife, as in Yallam (YallamInteriors_TalkToSunshinesWife): she
+/// Sunshine's wife, as in Yallam (YallamRooms_TalkToSunshinesWife): she
 /// hands over what Sunshine made and takes the payment.
 void ShopTest_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(FLAG_FORGE_OPEN)) {
@@ -607,7 +607,7 @@ void ShopTest_NoOp(void) {}
 void ShopTest_GiveMuramasaAndSummon(void) {
   PartyInventory_GiveItem(ITEM_MURAMASA, 0);
   Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
-  Class_GetSeries(SUMMON_ECLIPSE);
+  Summon_Learn(SUMMON_ECLIPSE);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -831,38 +831,38 @@ UNUSED void ShopTest_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
 UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 scale;
 
-  object = Actor_GetById(id);
+  actor = Actor_GetById(id);
   if (mode == 1) {
     Actor_SetPosition(id, x, z);
-    object->scaleX = 0;
-    object->scaleY = 0;
+    actor->scaleX = 0;
+    actor->scaleY = 0;
   }
   if (mode == 2) {
-    while (object->scaleX < FIXED_ONE) {
+    while (actor->scaleX < FIXED_ONE) {
       wait(1);
-      scale = object->scaleX;
+      scale = actor->scaleX;
       scale += 0x51e;
-      object->scaleX = scale;
-      object->scaleY = scale;
+      actor->scaleX = scale;
+      actor->scaleY = scale;
     }
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DropActor again.
 UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_GetById(id);
+  actor = Actor_GetById(id);
   if (mode == 2) {
     Actor_SetPosition(id, x, z);
-    object->y.fixed = toFIXED(32);
-    object->motionFlags = 3;
-    object->gravity = 0x170a;
+    actor->y.fixed = toFIXED(32);
+    actor->motionFlags = 3;
+    actor->gravity = 0x170a;
     wait(50);
   }
 }
@@ -875,35 +875,35 @@ void Field_RequestBattleFromEncounterTable(s32 scene, s32 entrance);
 /// Field_RequestBattleFromEncounterTable.
 UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
                                   s32 entrance) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (mode == 1) {
-    object = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
-    if (object != NULL) {
-      Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags = 2;
+    actor = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
+    if (actor != NULL) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
-                                                 toFIXED(x), 0, toFIXED(z)));
-    if (object != NULL) {
+    actor = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
+                                                toFIXED(x), 0, toFIXED(z)));
+    if (actor != NULL) {
       s32 scale;
 
-      Actor_SetSpriteFlags(object, 0);
-      object->velocityY = toFIXED(6);
-      object->scaleX = FIXED_ONE * 2 / 5;
-      object->scaleY = FIXED_ONE * 2 / 5;
-      while (object->scaleX < FIXED_ONE) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->velocityY = toFIXED(6);
+      actor->scaleX = FIXED_ONE * 2 / 5;
+      actor->scaleY = FIXED_ONE * 2 / 5;
+      while (actor->scaleX < FIXED_ONE) {
         wait(1);
-        scale = object->scaleX + 0x51e;
-        object->facing += FACING_STEP;
-        object->scaleX = scale;
-        object->scaleY = scale;
+        scale = actor->scaleX + 0x51e;
+        actor->facing += FACING_STEP;
+        actor->scaleX = scale;
+        actor->scaleY = scale;
       }
-      object->scaleX = FIXED_ONE;
-      object->scaleY = FIXED_ONE;
-      object->facing =
+      actor->scaleX = FIXED_ONE;
+      actor->scaleY = FIXED_ONE;
+      actor->facing =
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }

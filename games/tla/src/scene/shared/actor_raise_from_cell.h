@@ -1,17 +1,15 @@
 /// Lifts an actor out of its cell and opens the cells it stood on.
 void Actor_RaiseFromCell(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + 0x200000;
-  object->priorityFlags |= 128;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
-                        (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + 0x200000;
+  actor->priorityFlags |= 128;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }

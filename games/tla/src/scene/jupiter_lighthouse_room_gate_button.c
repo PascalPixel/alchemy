@@ -123,10 +123,10 @@ void JupiterLighthouse_CloseDoor(void) {
 /// Opens the gates for good once the pillar stands on the button, cell (17,
 /// 33).
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_GATES_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_GATES_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED) &&
-      FIELD_CELL(object->x.fixed) == 17 && FIELD_CELL(object->z.fixed) == 33) {
+      FIELD_CELL(actor->x.fixed) == 17 && FIELD_CELL(actor->z.fixed) == 33) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -151,11 +151,7 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
-/// After Move: once the pillar settles, checks whether it stands on the button.
-void JupiterLighthouse_FinishMovingBlock(void) {
-  System_Wait(10);
-  JupiterLighthouse_CheckBlockOnCell();
-}
+#include "shared/jupiter_lighthouse_finish_moving_block.c"
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
@@ -231,7 +227,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 extern s32 gWhirlwindEndScript[];
 
 s32 Position_FlatDistance(FIXED *from, FIXED *to);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
@@ -269,31 +265,9 @@ void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_FinishMovingBlock(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomGateButton),
@@ -358,18 +332,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find_lower.h"
+#include "shared/cracked_tile_find_lower.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -396,6 +370,6 @@ extern u32 gFieldEffect_LongScript[];
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

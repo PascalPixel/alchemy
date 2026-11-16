@@ -111,16 +111,16 @@ void WorldPicture_Release(void) {
 void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
   s32 owner = Party_GetLeaderActor();
   s32 *camera = *(s32 **)Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Lookup(owner);
+  struct Actor *actor = Actor_Lookup(owner);
 
-  if (object != NULL) {
+  if (actor != NULL) {
     x >>= 16;
     x = ((x << 14) + 269 * 16384) / 853;
     z >>= 16;
-    object->x.fixed = toFIXED(x);
-    object->z.fixed = toFIXED(((z << 14) + toFIXED(28)) / 640);
-    camera[0] = object->x.fixed;
-    camera[2] = object->z.fixed;
+    actor->x.fixed = toFIXED(x);
+    actor->z.fixed = toFIXED(((z << 14) + toFIXED(28)) / 640);
+    camera[0] = actor->x.fixed;
+    camera[2] = actor->z.fixed;
   }
 }
 
@@ -131,17 +131,17 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
   struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 z;
 
   GameFlag_Clear(FLAG_LEADER_OFF_MAP_PICTURE);
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    object = Actor_Lookup(leader);
-    if (object == 0)
+    actor = Actor_Lookup(leader);
+    if (actor == 0)
       return;
-    x = object->x.part[0].integer;
-    z = object->z.part[0].integer;
+    x = actor->x.part[0].integer;
+    z = actor->z.part[0].integer;
     if (z < 1832) {
       if (x < 12000) {
         GameFlag_Set(FLAG_LEADER_OFF_MAP_PICTURE);

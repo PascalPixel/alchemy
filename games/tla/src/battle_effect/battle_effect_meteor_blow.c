@@ -576,7 +576,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(p->x) - n / 2,
                   FIXED_INTEGER_PART(p->y) - n, n, n * 2);
           p->variant--;
-          BattleEffectKernels_IntegrateVector2(p, 56, toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(p, 56, toFIXED(1) / 8);
         }
       }
     }

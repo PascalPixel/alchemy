@@ -63,9 +63,8 @@ void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
 extern struct Actor *gWorldMap_PlacedActors[];
 extern s32 gWorldMap_PlacedActorScript[];
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
-void Actor_Release(struct Actor *object);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
+void Actor_Release(struct Actor *actor);
 
 void WorldMap_UpdatePlacedActors(void) {
   const struct FlagEntry *placement = FlagEntries_GetTable();
@@ -78,11 +77,11 @@ void WorldMap_UpdatePlacedActors(void) {
   /* FAKEMATCH(pin): the form kept. */
   register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = work->camera;
+  struct Actor *actor = work->camera;
   s32 zoom = map->zoom;
-  FIXED x = object->x.fixed;
+  FIXED x = actor->x.fixed;
   u8 kind = placement->flag;
-  FIXED z = object->z.fixed;
+  FIXED z = actor->z.fixed;
   struct Actor **objects = gWorldMap_PlacedActors;
 
   if (zoom <= FIXED_ONE) {
@@ -108,7 +107,7 @@ void WorldMap_UpdatePlacedActors(void) {
 
     if (placement->value == WORLD_MAP_MARKER_SHIP)
       goto next;
-    object = *slot;
+    actor = *slot;
     px = toFIXED(placement->x);
     pz = toFIXED(placement->z);
     if (px > left && px < right && pz > top && pz < bottom) {
@@ -122,35 +121,35 @@ void WorldMap_UpdatePlacedActors(void) {
       else
         shown = Flag_IsClear(flag);
       if (shown) {
-        if (object == NULL) {
+        if (actor == NULL) {
           struct Sprite *sprite;
 
-          object = ((struct Actor *)Import_ActorCreate(placement->sprite, px, 0,
-                                                       pz));
-          if (object == NULL)
+          actor = ((struct Actor *)Import_ActorCreate(placement->sprite, px, 0,
+                                                      pz));
+          if (actor == NULL)
             goto next;
-          Actor_StartScript(object, gWorldMap_PlacedActorScript);
-          object->motionFlags = 0;
-          object->collisionFlags = ACTOR_SOLID;
-          object->facing = placement->facing;
-          Import_ActorSelectAnimation(object, 1);
-          sprite = object->sprite;
+          Actor_StartScript(actor, gWorldMap_PlacedActorScript);
+          actor->motionFlags = 0;
+          actor->collisionFlags = ACTOR_SOLID;
+          actor->facing = placement->facing;
+          Actor_SelectAnimation(actor, 1);
+          sprite = actor->sprite;
           sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
-          *slot = object;
+          *slot = actor;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
-          s32 scale = ((struct Sprite *)object->sprite)->scale;
+          s32 scale = ((struct Sprite *)actor->sprite)->scale;
           FIXED dx;
           s32 reach;
           FIXED dz;
 
-          dx = object->x.fixed - leader->x.fixed;
+          dx = actor->x.fixed - leader->x.fixed;
           if (dx < 0)
-            dx = leader->x.fixed - object->x.fixed;
-          reach = leaderReach + object->radius * scale;
-          dz = object->z.fixed - leader->z.fixed;
+            dx = leader->x.fixed - actor->x.fixed;
+          reach = leaderReach + actor->radius * scale;
+          dz = actor->z.fixed - leader->z.fixed;
           if (dz >= 0 ? dx + dz < reach
-                      : dx + (leader->z.fixed - object->z.fixed) < reach) {
+                      : dx + (leader->z.fixed - actor->z.fixed) < reach) {
             if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
               if (gMainRoutineWork.movementMode == 9)
                 work->psynergy = 0x208b;
@@ -162,8 +161,8 @@ void WorldMap_UpdatePlacedActors(void) {
         goto next;
       }
     }
-    if (object != NULL) {
-      Actor_Release(object);
+    if (actor != NULL) {
+      Actor_Release(actor);
       *slot = NULL;
     }
   next:
@@ -198,59 +197,59 @@ s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
   return x / toFIXED(16) + (z / toFIXED(16)) * 128;
 }
 
-s32 WorldMap_RiseFromAnchor(struct Actor *object) {
-  struct Actor *parent = object->watchedActor;
-  s32 step = ++object->timer;
+s32 WorldMap_RiseFromAnchor(struct Actor *actor) {
+  struct Actor *parent = actor->watchedActor;
+  s32 step = ++actor->timer;
   FIXED scale;
 
   if (step > 31)
     return 0;
   scale = Iwram_MulFX(Math_Sin(step << 10), FIXED_ONE * 5 / 4);
-  object->scaleX = scale;
-  object->scaleY = scale;
-  object->x.fixed = parent->x.fixed;
-  object->y.fixed += toFIXED(1);
-  object->z.fixed = parent->z.fixed;
+  actor->scaleX = scale;
+  actor->scaleY = scale;
+  actor->x.fixed = parent->x.fixed;
+  actor->y.fixed += toFIXED(1);
+  actor->z.fixed = parent->z.fixed;
   return 1;
 }
 
 extern s32 gWorldMap_SparkScript[];
 extern u32 gWorldMap_ParticleScript[];
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
-/// Spawns a pair of sparks at the object.
+/// Spawns a pair of sparks at the actor.
 // As ☀️'s MercuryLighthouse_SpawnSparkPair does at a spawn point.
-void WorldMap_SpawnSparkPair(struct Actor *object) {
+void WorldMap_SpawnSparkPair(struct Actor *actor) {
   struct Actor *spark;
   struct FieldSprite *sprite;
 
   // DEAD: a scale multiplied and dropped; the ROM keeps the call.
-  Math_MulFX(object->scaleX, FIXED_ONE * 3 / 2);
-  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
-                            object->y.fixed, object->z.fixed);
+  Math_MulFX(actor->scaleX, FIXED_ONE * 3 / 2);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
   if (spark != NULL) {
-    spark->groundHeight = object->groundHeight;
+    spark->groundHeight = actor->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = object;
+    spark->watchedActor = actor;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->priority = 1;
     }
   }
-  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
-                            object->y.fixed, object->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
   if (spark != NULL) {
-    spark->groundHeight = object->groundHeight;
+    spark->groundHeight = actor->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = object;
+    spark->watchedActor = actor;
     spark->layer = 1;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 1);
@@ -260,21 +259,21 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
 }
 
 /// Spawns a particle at a random spot around the object.
-void WorldMap_SpawnParticle(struct Actor *object) {
+void WorldMap_SpawnParticle(struct Actor *actor) {
   s32 position[3];
   s32 angle;
   struct Actor *particle;
   struct FieldSprite *sprite;
 
-  Iwram_MulFX(object->scaleX, FIXED_ONE * 3 / 2);
-  SET_VECTOR(position, object->x.fixed, object->y.fixed + toFIXED(2),
-             object->z.fixed);
+  Iwram_MulFX(actor->scaleX, FIXED_ONE * 3 / 2);
+  SET_VECTOR(position, actor->x.fixed, actor->y.fixed + toFIXED(2),
+             actor->z.fixed);
   angle = Random16();
   FieldVector_AddPolarOffsetFX(angle * 20, Random16(), position);
   particle =
       (FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]));
   if (particle != NULL) {
-    particle->groundHeight = object->groundHeight;
+    particle->groundHeight = actor->groundHeight;
     sprite = particle->sprite;
     Actor_StartScript(particle, gWorldMap_ParticleScript);
     Sprite_StartAnimation(sprite, 2);

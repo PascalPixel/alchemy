@@ -50,7 +50,7 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return MapGrid_IsSandCell(x, z, layer);
-  if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
+  if (MapGrid_GetCycloneCellKind(x, z, layer) != CYCLONE_CELL_NONE ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
@@ -128,19 +128,18 @@ s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
 }
 
 /// The Cyclone's kind of the cell at (x, z), from the overhead layer's
-/// collision code: 1 for CELL_BEHAVIOR_CYCLONE, 2 for
-/// CELL_BEHAVIOR_CYCLONE_CARRY, 3 for CELL_BEHAVIOR_CYCLONE_LIFT, else 0.
+/// collision code (enum CycloneCellKind).
 /// FieldPsynergy_GatherNearbyCells lists them.
 s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer) {
   u8 code = MapGrid_GetCellAt(x, z, MAPGRID_LAYER_OVERHEAD)->collisionCode;
 
   if (code == CELL_BEHAVIOR_CYCLONE)
-    return 1;
+    return CYCLONE_CELL_BURST;
   if (code == CELL_BEHAVIOR_CYCLONE_CARRY)
-    return 2;
+    return CYCLONE_CELL_CARRY;
   if (code == CELL_BEHAVIOR_CYCLONE_LIFT)
-    return 3;
-  return 0;
+    return CYCLONE_CELL_LIFT;
+  return CYCLONE_CELL_NONE;
 }
 
 /// Returns the behaviour (collision code) of the map cell at x, z in layer.
@@ -206,22 +205,22 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
 
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
-void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
+void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor = scene->mainActor;
   FIXED start[3];
   s32 i = 0;
 
   if (scene->angle != TRIG_TURN * 3 / 4)
-    Actor_SetSpritePriorityDirectFar(object, 0);
+    Actor_SetSpritePriorityDirectFar(actor, 0);
   start[0] = mainActor->x.fixed;
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
-    SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
+    SET_ACTOR_POSITION(actor, start[0] + (x - start[0]) * i / 10,
                        start[1] + (y - start[1]) * i / 10,
                        start[2] + (z - start[2]) * i / 10);
-    object->scaleY = object->scaleX =
+    actor->scaleY = actor->scaleX =
         i * (FIXED_ONE * 3 / 4) / 10 + FIXED_ONE / 4;
     wait(1);
     i++;
@@ -232,7 +231,7 @@ struct MapCell;
 
 /// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
 /// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
-void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
+void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   FIXED start[3];
@@ -243,10 +242,10 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
-    SET_ACTOR_POSITION(object, x + (start[0] - x) * i / 10,
+    SET_ACTOR_POSITION(actor, x + (start[0] - x) * i / 10,
                        y + (start[1] - y) * i / 10,
                        z + (start[2] - z) * i / 10);
-    object->scaleY = object->scaleX = i * -(FIXED_ONE * 3 / 4) / 10 + FIXED_ONE;
+    actor->scaleY = actor->scaleX = i * -(FIXED_ONE * 3 / 4) / 10 + FIXED_ONE;
     wait(1);
     i++;
   } while (i <= 10);
@@ -255,22 +254,22 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
 /// Spawns a sparkle at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_Spawn(SPRITE_SPARKLE, x, y, z);
+  struct Actor *actor = Actor_Spawn(SPRITE_SPARKLE, x, y, z);
   s32 magnitude;
 
-  if (object != NULL) {
-    Actor_StartScriptFar(object, gFieldEffect_FragmentScript);
-    object->speedLimit = Random16() + FIXED_ONE;
-    object->acceleration = FIXED_ONE;
-    object->motionFlags = ACTOR_FALLS;
-    object->gravity = toFIXED(1) / 25;
+  if (actor != NULL) {
+    Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
+    actor->speedLimit = Random16() + FIXED_ONE;
+    actor->acceleration = FIXED_ONE;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->gravity = toFIXED(1) / 25;
     magnitude = Random16();
     magnitude -= Random16();
-    object->velocityY = magnitude;
+    actor->velocityY = magnitude;
     Actor_SetTargetPositionFromMagnitudeAngle(
-        object, Random16() * 24 + toFIXED(8), Random16());
+        actor, Random16() * 24 + toFIXED(8), Random16());
   }
-  return object;
+  return actor;
 }
 
 /// Counts the free blocks of the sprite VRAM cache.
@@ -319,22 +318,22 @@ void *Sprite_ShareVramCacheEntry(void *sourceSprite, void *sharedSprite) {
 /// sprite priority 0 and animation 1.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_CreateFar(kind, x, y, z);
-  if (object != NULL) {
-    if (object->spriteStorageKind == ACTOR_SPRITE_NONE) {
-      Actor_ReleaseFar(object);
+  actor = Actor_CreateFar(kind, x, y, z);
+  if (actor != NULL) {
+    if (actor->spriteStorageKind == ACTOR_SPRITE_NONE) {
+      Actor_ReleaseFar(actor);
       return NULL;
     }
-    object->groundHeight = scene->mainActor->groundHeight;
-    object->motionFlags = ACTOR_FLOATS;
-    object->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
-    ((struct Sprite *)object->sprite)->image.priority = 0;
-    Actor_SetSpriteFlagsFar(object, 0);
-    Actor_SelectAnimationFar(object, 1);
+    actor->groundHeight = scene->mainActor->groundHeight;
+    actor->motionFlags = ACTOR_FLOATS;
+    actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
+    ((struct Sprite *)actor->sprite)->image.priority = 0;
+    Actor_SetSpriteFlagsFar(actor, 0);
+    Actor_SelectAnimationFar(actor, 1);
   }
-  return object;
+  return actor;
 }
 
 /// Sets the movement state and animation timer steps of every actor but the
@@ -389,11 +388,11 @@ void Field_StartColorTransition(s32 frames, s32 color) {
 /// frames, the BG half to grey while Reveal is active; clears
 /// FLAG_PSYNERGY_TINTED.
 void Field_StartPaletteTransition(s32 frames) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  s32 savedPalettes = (s32)field->savedFadeTarget;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 savedPalettes = (s32)work->savedFadeTarget;
 
   PaletteFade_SetTarget(savedPalettes, 2);
-  if (field->revealActive != 0)
+  if (work->revealActive != 0)
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   else
     PaletteFade_SetTarget(savedPalettes, 1);

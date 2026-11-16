@@ -18,7 +18,7 @@ struct SparkleWork {
   s16 heights[2];
   s16 vramEntry;
   s16 nextPair;
-  struct Actor *object;
+  struct Actor *actor;
 };
 
 /// The sparkle's frame counter in Actor.riseEnabled: bit 0 alternates, the

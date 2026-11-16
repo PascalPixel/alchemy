@@ -72,9 +72,9 @@ void AncientLemuria_RimeJoins(void) {
 
 /// The update of the statue Rime hides in: it rocks from side to side,
 /// clicking every sixteenth frame.
-void AncientLemuria_ShakeTheStatue(struct Actor *object) {
-  struct FieldSprite *sprite = object->sprite;
-  s16 time = object->timer++;
+void AncientLemuria_ShakeTheStatue(struct Actor *actor) {
+  struct FieldSprite *sprite = actor->sprite;
+  s16 time = actor->timer++;
 
   sprite->rotation = Iwram_MulFX(Trig_Sin(time << 12), TRIG_TURN / 256);
   if ((time & 15) == 0)
@@ -83,11 +83,11 @@ void AncientLemuria_ShakeTheStatue(struct Actor *object) {
 
 /// Stops actor id rocking.
 void AncientLemuria_StillTheStatue(s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->sprite;
+  struct Actor *actor = Actor_GetById(id);
+  struct FieldSprite *sprite = actor->sprite;
 
-  object->update = 0;
-  object->timer = 0;
+  actor->update = 0;
+  actor->timer = 0;
   sprite->rotation = 0;
 }
 
@@ -118,9 +118,9 @@ void AncientLemuria_StartMovingStatue(void) {}
 /// Move sets the blue statue down: on cell (8, 36) it stays moved, and once it
 /// is the Lemurians come out to meet the party.
 void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(id);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   if (x == 8 && z == 36)
     GameFlag_Set(FLAG_BLUE_STATUE_MOVED);
@@ -139,30 +139,30 @@ static inline void Hop(s32 dx, s32 dz) {
 /// away with the leader after it and hides in the blue statue, which starts to
 /// shake.
 void AncientLemuria_CycloneRevealsRime(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
   FieldTileCopies_CopyTouchedCells(7, 13, 1, 1, 5, 13, 0);
   if (Event_GetFlag(FLAG_RIME_REVEALED))
     return;
-  object = Actor_GetById(ACTOR_RIME);
+  actor = Actor_GetById(ACTOR_RIME);
   Event_SetFlag(FLAG_RIME_REVEALED);
   Event_SetFlag(FLAG_RIME_IN_THE_STATUE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 0);
   Actor_SetPosition(ACTOR_RIME, 88, 216);
   Actor_Jump(ACTOR_RIME, 9, 0);
-  object->scaleY = FIXED_ONE / 2;
-  object->scaleX = FIXED_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
+  actor->scaleX = FIXED_ONE / 2;
   for (i = 29; i >= 0; i--) {
-    object->facing += TRIG_TURN / 16;
-    if (object->scaleX < FIXED_ONE)
-      object->scaleX += FIXED_ONE * 5 / 128;
-    object->scaleY = object->scaleX;
+    actor->facing += TRIG_TURN / 16;
+    if (actor->scaleX < FIXED_ONE)
+      actor->scaleX += FIXED_ONE * 5 / 128;
+    actor->scaleY = actor->scaleX;
     wait(1);
   }
-  object->facing = FACING_SOUTH_SOUTHEAST;
-  object->scaleY = FIXED_ONE;
-  object->scaleX = FIXED_ONE;
+  actor->facing = FACING_SOUTH_SOUTHEAST;
+  actor->scaleY = FIXED_ONE;
+  actor->scaleX = FIXED_ONE;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 1);
   Actor_SetSpritePriority(ACTOR_RIME, 1);
   Event_Wait(8);
@@ -225,34 +225,34 @@ void AncientLemuria_StartTremorOnTheStatue(void) {
 /// Tremor on the shaking statue, once Rime hides in it: Rime is thrown out,
 /// spinning as it grows back to its full size.
 void AncientLemuria_TremorShakesOutRime(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
   if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
     return;
   if (!GameFlag_Get(FLAG_RIME_REVEALED))
     return;
-  object = Actor_GetById(ACTOR_RIME);
+  actor = Actor_GetById(ACTOR_RIME);
   GameFlag_Set(FLAG_RIME_SHAKEN_OUT);
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(ACTOR_RIMES_STATUE);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
-  object->y.fixed = toFIXED(22);
+  actor->y.fixed = toFIXED(22);
   Actor_Jump(ACTOR_RIME, 11, 0);
-  object->scaleY = FIXED_ONE / 2;
-  object->scaleX = FIXED_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
+  actor->scaleX = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
   for (i = 23; i >= 0; i--) {
-    object->facing += TRIG_TURN / 8;
-    if (object->scaleX < FIXED_ONE)
-      object->scaleX += FIXED_ONE * 5 / 128;
-    object->scaleY = object->scaleX;
+    actor->facing += TRIG_TURN / 8;
+    if (actor->scaleX < FIXED_ONE)
+      actor->scaleX += FIXED_ONE * 5 / 128;
+    actor->scaleY = actor->scaleX;
     wait(1);
   }
-  object->facing = FACING_SOUTH_SOUTHEAST;
-  object->scaleY = FIXED_ONE;
-  object->scaleX = FIXED_ONE;
+  actor->facing = FACING_SOUTH_SOUTHEAST;
+  actor->scaleY = FIXED_ONE;
+  actor->scaleX = FIXED_ONE;
   Actor_WaitForMoveById(ACTOR_RIME);
 }
 
@@ -260,7 +260,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
 /// until King Hydros is met, Kraden calls Felix back to keep exploring;
 /// otherwise the party leaves.
 void AncientLemuria_HeadForTheDock(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (!GameFlag_Get(FLAG_BLUE_STATUE_MOVED) ||
       GameFlag_Get(FLAG_MET_KING_HYDROS)) {
@@ -284,10 +284,10 @@ void AncientLemuria_HeadForTheDock(void) {
     }
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
-                               object->z.part[0].integer);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (actor != NULL)
+      Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
+                               actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_WalkToAndWait(ACTOR_FELIX, 168, 832);
@@ -360,16 +360,16 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)
-    GameFlag_Set(0x960);
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 2)
-    GameFlag_Clear(0x960);
+    GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 3)
-    GameFlag_Clear(0x960);
+    GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 4)
-    GameFlag_Set(0x960);
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 5)
-    GameFlag_Set(0x960);
-  if (GameFlag_Get(0x960)) {
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
+  if (GameFlag_Get(FLAG_LEMURIA_OTHER_WAY_IN)) {
     MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
     MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);

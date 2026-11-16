@@ -623,7 +623,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                 FIXED_INTEGER_PART(p->x) - n / 2, FIXED_INTEGER_PART(p->y) - n,
                 n, n * 2);
-        BattleEffectKernels_IntegrateVector2(p, 63, 0);
+        Particle_AdvanceWithGravity2D(p, 63, 0);
         p->variant--;
       }
     }
@@ -1471,7 +1471,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                     FIXED_INTEGER_PART(q2->x) - 16,
                     FIXED_INTEGER_PART(q2->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(q2, 63, 0);
+            Particle_AdvanceWithGravity2D(q2, 63, 0);
             q2->variant++;
           }
         }
@@ -1631,7 +1631,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                         FIXED_INTEGER_PART(d->x) - n / 2,
                         FIXED_INTEGER_PART(d->y) - n, n, h);
-                BattleEffectKernels_IntegrateVector2(d, 56, toFIXED(1) / 8);
+                Particle_AdvanceWithGravity2D(d, 56, toFIXED(1) / 8);
                 d->velocityX -= work->scrollStepX << 12;
                 d->variant--;
               }

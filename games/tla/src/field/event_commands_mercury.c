@@ -19,12 +19,12 @@
 
 /// Moves the actor halfway to the actor it watches; a copy of
 /// Actor_MoveHalfwayTowardTarget.
-void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
-  struct Actor *target = object->watchedActor;
+void Actor_MoveHalfwayTowardTargetCopy(struct Actor *actor) {
+  struct Actor *target = actor->watchedActor;
 
-  object->x.fixed += (target->x.fixed - object->x.fixed) / 2;
-  object->y.fixed += (target->y.fixed - object->y.fixed) / 2;
-  object->z.fixed += (target->z.fixed - object->z.fixed) / 2;
+  actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
+  actor->y.fixed += (target->y.fixed - actor->y.fixed) / 2;
+  actor->z.fixed += (target->z.fixed - actor->z.fixed) / 2;
 }
 
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
@@ -128,7 +128,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(effect,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     wait(1);
     effect++;

@@ -75,17 +75,17 @@ void Field_UpdateHoverReady(void) {
 /// leader (a World Map cell picture on the World Map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Field_GetPartyActor();
+  struct Actor *actor = Field_GetPartyActor();
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   FIXED position[3];
   u8 *cell;
 
-  if (object == NULL)
+  if (actor == NULL)
     return 0;
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed;
-  Vector_AddPolarOffset(toFIXED(16), object->facing, position);
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed;
+  Vector_AddPolarOffset(toFIXED(16), actor->facing, position);
   if (block->mode == 3) {
     s32 x, z;
 
@@ -108,14 +108,14 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// block), or 0 with no leader. Teleport's triggers match it.
 s32 Field_GetCollisionUnderLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Field_GetPartyActor();
+  struct Actor *actor = Field_GetPartyActor();
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Vector3 position;
   struct MapCell *cell;
 
-  if (object == NULL)
+  if (actor == NULL)
     return 0;
-  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gCellPictures it
     // loads

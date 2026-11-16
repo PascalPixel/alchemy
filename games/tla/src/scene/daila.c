@@ -12,7 +12,7 @@
 /// Madra (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch
 /// dries one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle)
 /// and Frost freezes one into a pillar of ice to stand on
-/// (Scene_RaiseHeldActor, gDailaInteriors_PillarFrozenFlags). Scoop on one spot
+/// (Scene_RaiseHeldActor, gDailaRooms_PillarFrozenFlags). Scoop on one spot
 /// digs up a Psy Crystal (Daila_DigUpPsyCrystal).
 
 #include "field/field_sequence_event.h"
@@ -48,7 +48,7 @@
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
 /// The first of six flags, one for each of the drained village's puddles that
 /// Frost has frozen into a pillar for this visit, by
-/// gDailaInteriors_PillarFrozenFlags.
+/// gDailaRooms_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
@@ -104,7 +104,7 @@ extern struct ActorPlacement gDailaFloodedActorPlacements[];
 extern struct ActorPlacement gDailaActorPlacements[];
 extern struct Trigger gDailaFloodedTriggers[];
 extern struct Trigger gDailaTriggers[];
-extern s16 gDailaInteriors_PillarFrozenFlags[];
+extern s16 gDailaRooms_PillarFrozenFlags[];
 extern s32 gDaila_FallenOldManScript[];
 extern u32 gDaila_PuddleChildScript[];
 void Field_TryJumpForward(void);
@@ -524,7 +524,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_FLOODED)
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
   else if (gMainRoutineWork.next == SCENE_DAILA)
-    FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
+    FlagBlock_PlaceAll(gDailaRooms_PillarFrozenFlags);
   Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
   if (gMainRoutineWork.next == SCENE_DAILA &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
@@ -554,7 +554,7 @@ s32 Scene_PrepareMap(void) {
 void Daila_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
-s16 gDailaInteriors_PillarFrozenFlags[] = {
+s16 gDailaRooms_PillarFrozenFlags[] = {
     ACTOR_FIRST_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
     ACTOR_SECOND_PUDDLE, FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1,
     ACTOR_THIRD_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2,
@@ -632,13 +632,13 @@ struct SceneEntrance gDailaEntrances[] = {
 
 s32 gDailaFloodedExits[] = {
     SCENE_EXITS(DailaFlooded),
-    SCENE_EXIT_UNLESS(1, DailaInteriorsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, DailaInteriorsHouses, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, DailaInteriorsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, DailaInteriorsHouses, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, DailaInteriorsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, DailaInteriorsHouses, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, DailaInteriorsSanctum, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, DailaRoomsHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, DailaRoomsHouses, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, DailaRoomsHouses, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, DailaRoomsHouses, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, DailaRoomsHouses, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, DailaRoomsHouses, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, DailaRoomsSanctum, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, WorldMap, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,

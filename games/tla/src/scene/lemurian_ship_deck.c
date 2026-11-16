@@ -76,11 +76,11 @@ void LemurianShipDeck_EnterCabin(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-      struct Actor *object = Actor_Get(i);
+      struct Actor *actor = Actor_Get(i);
 
-      if (object != 0) {
-        object->motionFlags = 0;
-        object->y.fixed = toFIXED(32);
+      if (actor != 0) {
+        actor->motionFlags = 0;
+        actor->y.fixed = toFIXED(32);
       }
     }
     if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
@@ -177,10 +177,10 @@ void LemurianShipDeck_ScrollWaves(void) {
 /// wave, a full wave every 128 frames.
 void LemurianShipDeck_BobDeck(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
-  struct Actor *object = EventCamera_GetActor();
+  struct Actor *actor = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
-  object->y.fixed += offset;
+  actor->y.fixed += offset;
   layer->offsetY += offset;
   gLemurianShipDeck_BobPhase += TRIG_TURN / 128;
 }
@@ -214,7 +214,7 @@ void FlagBlock_ApplyFlags(const void *data);
 extern u32 gLemurianShipDeck_SparkleFades[];
 extern s32 gLemurianShipDeck_ReturnToShipScript[];
 
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 extern s32 gLemurianShipDeck_ReachPiersShipScript[];
 extern u32 gLemurianShipDeck_SmokePuff[];
@@ -686,7 +686,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 /// Stepping toward the gangway before Piers is back aboard: on the third step
 /// Kraden tires of waiting and goes to find a ship the party can use.
 void LemurianShipDeck_KradenGoesToFindShip(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_12))
     return;
@@ -706,10 +706,10 @@ void LemurianShipDeck_KradenGoesToFindShip(void) {
     // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-    object = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (object != 0)
-      Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                           object->z.part[0].integer);
+    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    if (actor != 0)
+      Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                           actor->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Event_SetFlag(FLAG_KRADEN_WENT_TO_FIND_A_SHIP);
@@ -727,51 +727,51 @@ void LemurianShipDeck_StepBackFromGangway(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_12);
 }
 
-void Actor_StartScript(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *actor, const void *data);
 
 /// A task: a sparkle rises from around the Black Crystal toward the ship's
 /// core.
 void LemurianShipDeck_EmitSparkle(void) {
   s32 position[3];
-  struct Actor *object;
+  struct Actor *actor;
 
   SET_VECTOR(position, toFIXED(360), toFIXED(64), toFIXED(424));
   FieldVector_AddPolarOffset(32, Random16(), position);
-  object =
+  actor =
       FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]);
-  if (object != NULL) {
-    object->motionFlags = 0;
-    object->speedLimit = toFIXED(2);
-    object->acceleration = toFIXED(1) / 2;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SelectAnimation(object, 0);
-    FieldActor_SetMoveTarget(object, 360, 64, 424);
-    Actor_StartScript(object, gLemurianShipDeck_SparkleFades);
+  if (actor != NULL) {
+    actor->motionFlags = 0;
+    actor->speedLimit = toFIXED(2);
+    actor->acceleration = toFIXED(1) / 2;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SelectAnimation(actor, 0);
+    FieldActor_SetMoveTarget(actor, 360, 64, 424);
+    Actor_StartScript(actor, gLemurianShipDeck_SparkleFades);
   }
 }
 
 /// The Black Crystal, drawn from its item icon, as an actor on the deck.
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
-  struct Actor *object = (struct Actor *)Import_ActorCreate(
+  struct Actor *actor = (struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(360), toFIXED(64), toFIXED(424));
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
-  if (object == 0)
+  if (actor == 0)
     return 0;
-  sprite = object->sprite;
+  sprite = actor->sprite;
   sprite->fullColor = 0;
   sprite->palette = 0;
   sprite->priority = 1;
-  object->motionFlags = 0;
-  object->retainSpriteCache = 1;
+  actor->motionFlags = 0;
+  actor->retainSpriteCache = 1;
   sprite->flags = 0;
   sprite->countAndShadow[0] = 0;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_BLACK_CRYSTAL);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  return object;
+  return actor;
 }
 
 /// Once Piers is in the party, the first time: "At last, I'm back on my ship."
@@ -780,7 +780,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
 void LemurianShipDeck_ReturnToShip(void) {
   struct Actor *handle;
   void (*func)(void);
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP) != 0)
     return;
@@ -843,10 +843,10 @@ void LemurianShipDeck_ReturnToShip(void) {
   // "Let's head down."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object != 0)
-    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (actor != 0)
+    Actor_SetDestination(ACTOR_PIERS, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_SetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP);
@@ -1130,12 +1130,12 @@ void LemurianShipDeck_ReachPiersShip(void) {
 }
 
 /// Smoke rises from an actor every eighth frame.
-void Actor_EmitSmoke(struct Actor *object) {
+void Actor_EmitSmoke(struct Actor *actor) {
   struct Actor *spawned;
 
   if ((gFrameCount & 7) == 0) {
-    spawned = FieldActor_Create(14, object->x.fixed, object->y.fixed,
-                                object->z.fixed);
+    spawned =
+        FieldActor_Create(14, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     if (spawned != 0) {
       Actor_SetSpriteFlags(spawned, 0);
       Actor_SelectAnimation(spawned, 1);
@@ -1148,7 +1148,7 @@ void Actor_EmitSmoke(struct Actor *object) {
 /// waste no time! We should set out for Madra at once!"
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
-    struct Actor *object;
+    struct Actor *actor;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1169,10 +1169,10 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
     Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    object = Actor_Get(ACTOR_FELIX);
-    if (object != 0)
-      Actor_SetDestination(ACTOR_PIERS, object->x.part[0].integer,
-                           object->z.part[0].integer);
+    actor = Actor_Get(ACTOR_FELIX);
+    if (actor != 0)
+      Actor_SetDestination(ACTOR_PIERS, actor->x.part[0].integer,
+                           actor->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_Get(ACTOR_PIERS)->update = NULL;
@@ -1246,10 +1246,7 @@ s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(LemurianShipMainDeck),

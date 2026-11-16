@@ -288,7 +288,7 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
  * s32 Trig_Atan(s32 x, s32 y), which the object already declares, Rope_LayBowed
  * moves: 1 of 120 instructions in every edition (the result leaves r0 as a
  * halfword, which only a 16-bit return type copies so). */
-extern s16 Trig_Atan__f0d8ff8(s32 y, s32 x) __asm__("Trig_Atan");
+extern s16 Trig_AtanHalfword(s32 y, s32 x) __asm__("Trig_Atan");
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
@@ -300,7 +300,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   s32 dy = toY - y;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
-  u16 angle = Trig_Atan__f0d8ff8(ax, dy >> 8);
+  u16 angle = Trig_AtanHalfword(ax, dy >> 8);
   FIXED sin = Trig_Sin(angle);
   FIXED cos = Trig_Cos(angle);
   s32 segments = slot->segments;
@@ -653,8 +653,8 @@ extern s32 gRope_DebugSwinging;
 
 /// Unused: nothing refers to it. An actor hook that, once L is pressed, swings
 /// rope 0 between actors 12 and 13 every frame.
-void Rope_DebugSwing(struct Actor *object) {
-  struct Sprite *sprite = object->sprite;
+void Rope_DebugSwing(struct Actor *actor) {
+  struct Sprite *sprite = actor->sprite;
 
   sprite->offsetX = -3;
   sprite->offsetY = 12;
@@ -1286,8 +1286,8 @@ void Tightrope_Settle(s32 index) {
 }
 
 /// Unused: nothing refers to it. Rope_DebugSwing for a tightrope.
-void Tightrope_DebugSwing(struct Actor *object) {
-  struct Sprite *sprite = object->sprite;
+void Tightrope_DebugSwing(struct Actor *actor) {
+  struct Sprite *sprite = actor->sprite;
 
   sprite->offsetX = -3;
   sprite->offsetY = 12;
@@ -1542,7 +1542,7 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
 /// five cells it hangs over, starting the vines first if they are not running;
 /// with grow set, the vine drops into place over 28 frames.
 void HangingVine_Hang(s32 objectId, s32 grow) {
-  struct Actor *object;
+  struct Actor *actor;
   struct MapWork *map;
   struct HangingVineSlot *slot;
   struct HangingVineLink *link;
@@ -1559,14 +1559,13 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   s32 kind;
   s32 running;
 
-  object = Actor_GetById(objectId);
+  actor = Actor_GetById(objectId);
   running = Ram_HeapSlots->hangingVine;
   kind = SPRITE_SPROUTING_LEAVES;
   map = Ram_HeapSlots->mapGrid;
   if (running == 0) {
-    if (object->sprite != 0 &&
-        ((struct Sprite *)object->sprite)->entries[0] != 0)
-      kind = ((struct Sprite *)object->sprite)->entries[0]->animationId;
+    if (actor->sprite != 0 && ((struct Sprite *)actor->sprite)->entries[0] != 0)
+      kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
     HangingVine_Initialize(kind);
   }
   if (HangingVine_FindSlot(objectId) != 0)
@@ -1575,9 +1574,9 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   if (slot == 0)
     return;
 
-  // Clear the collision codes of the five cells above the object.
-  x = FIELD_CELL(object->x.fixed);
-  z = FIELD_CELL(object->z.fixed - object->y.fixed);
+  // Clear the collision codes of the five cells above the actor.
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
   cells = map->layers[2].cells;
   for (i = 0; i < 5; i++) {
     z++;
@@ -1586,16 +1585,16 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     cell->collisionCode = 0;
   }
 
-  x = (object->x.fixed & CELL_MASK) + toFIXED(8);
-  y = object->y.fixed & CELL_MASK;
+  x = (actor->x.fixed & CELL_MASK) + toFIXED(8);
+  y = actor->y.fixed & CELL_MASK;
   top = y + toFIXED(8);
-  z = (object->z.fixed & CELL_MASK) + toFIXED(16);
-  Actor_SelectAnimationFar((struct Actor *)object, 0);
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->z.fixed += toFIXED(16);
-  object->y.fixed -= toFIXED(64);
-  Actor_SetSpriteFlagsFar(object, 0);
+  z = (actor->z.fixed & CELL_MASK) + toFIXED(16);
+  Actor_SelectAnimationFar((struct Actor *)actor, 0);
+  actor->motionFlags = 0;
+  actor->collisionFlags = 0;
+  actor->z.fixed += toFIXED(16);
+  actor->y.fixed -= toFIXED(64);
+  Actor_SetSpriteFlagsFar(actor, 0);
 
   // Hang the links.
   last = 6;
@@ -1802,16 +1801,16 @@ void HangingVine_Swing(s32 id) {
 /// flags is first moved -16 pixels in z and 64 pixels in y; one with motion
 /// flags starts it only when force is set.
 void HangingVine_Place(s32 id, s32 force) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   FIXED y;
   s32 zero;
 
-  if (object != NULL) {
-    if (object->motionFlags == 0) {
+  if (actor != NULL) {
+    if (actor->motionFlags == 0) {
       zero = 0;
-      object->z.fixed += -toFIXED(16);
-      y = object->y.fixed;
-      object->y.fixed = y + toFIXED(64);
+      actor->z.fixed += -toFIXED(16);
+      y = actor->y.fixed;
+      actor->y.fixed = y + toFIXED(64);
       HangingVine_Hang(id, zero);
     } else if (force) {
       HangingVine_Hang(id, 0);

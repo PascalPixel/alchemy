@@ -63,9 +63,9 @@ void FieldPsynergy_Parch(void) {
   struct HeapSlots *slots;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  s32 offset; // byte offset of the event work's 80 object pointers
+  s32 offset; // byte offset of the event work's 80 actor pointers
   struct Actor *caster;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *actorSprite;
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
@@ -112,13 +112,12 @@ void FieldPsynergy_Parch(void) {
   slots = Ram_HeapSlots;
   for (offset = offsetof(struct FieldWork, actors); i < FIELD_ACTOR_COUNT;
        i++, offset += sizeof(struct Actor *)) {
-    object = *(struct Actor **)((u8 *)slots->fieldWork + offset);
-    actorSprite = object->sprite;
-    if (object->script != NULL &&
-        actorSprite->entries[0]->animationId == kind &&
+    actor = *(struct Actor **)((u8 *)slots->fieldWork + offset);
+    actorSprite = actor->sprite;
+    if (actor->script != NULL && actorSprite->entries[0]->animationId == kind &&
         actorSprite->lastNo == 1 &&
-        FieldPsynergy_CheckOverlap(pos, 4, &object->x.fixed,
-                                   object->radius - 2) >= 0) {
+        FieldPsynergy_CheckOverlap(pos, 4, &actor->x.fixed,
+                                   actor->radius - 2) >= 0) {
       result = PARCH_DRIES;
       found = i;
       Actor_GetById(i)->priorityFlags |= 2;

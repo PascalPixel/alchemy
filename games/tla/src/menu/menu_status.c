@@ -1197,11 +1197,11 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 #define USABLE_RIGHT 64
 #define USABLE_BOTTOM 96
 // まちやダンジョン ("towns and dungeons"), the message two after MsgExpLabel.
-#define MSG_USABLE_IN_FIELD ((s32)MsgExpLabel + 2)
+#define USABLE_IN_FIELD_MESSAGE ((s32)MsgExpLabel + 2)
 // せんとう ("battle"), the message after MsgExpLabel.
-#define MSG_USABLE_IN_BATTLE ((s32)MsgExpLabel + 1)
+#define USABLE_IN_BATTLE_MESSAGE ((s32)MsgExpLabel + 1)
 // でつかえます ("can be used"), the message before MsgDjinnListHelp.
-#define MSG_CAN_BE_USED ((s32)MsgDjinnListHelp - 1)
+#define CAN_BE_USED_MESSAGE ((s32)MsgDjinnListHelp - 1)
 #else
 #define PAGE_ROWS 5
 #define FIRST_TILE_ROW 2
@@ -1253,15 +1253,16 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     // sentence on the line below them.
     if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
-      Text_DrawMessageAsTilesFar(MSG_USABLE_IN_FIELD, window, 0, USABLE_TOP);
+      Text_DrawMessageAsTilesFar(USABLE_IN_FIELD_MESSAGE, window, 0,
+                                 USABLE_TOP);
       row = 1;
     }
     if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
-      Text_DrawMessageAsTilesFar(MSG_USABLE_IN_BATTLE, window, 0,
+      Text_DrawMessageAsTilesFar(USABLE_IN_BATTLE_MESSAGE, window, 0,
                                  row * 8 + USABLE_TOP);
       row++;
     }
-    Text_DrawMessageAsTilesFar(MSG_CAN_BE_USED, window, 0,
+    Text_DrawMessageAsTilesFar(CAN_BE_USED_MESSAGE, window, 0,
                                row * 8 + USABLE_TOP);
 #else
     if (ability->fieldPsynergy != 0 ||

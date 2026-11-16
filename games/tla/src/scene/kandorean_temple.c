@@ -223,7 +223,7 @@ enum {
   FLAG_POT_MOVED = FLAG_AREA_TEMP_04
 };
 
-s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Actor_DisableById(s32 id);
 s32 gKandoreanTemple_SteamCounter BSS_DATA;
 s32 gKandoreanTemple_LeftVentBlowing BSS_DATA;
@@ -252,9 +252,9 @@ extern s16 gKandoreanTemple_BlockActors[];
 extern s16 gKandoreanTemple_PillarActors[];
 
 /// Sets an actor's sprite flags (Actor_SetSpriteFlags).
-static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
+static __inline__ void Actor_SetSingleChildFlags_(struct Actor *actor,
                                                   s32 flags) {
-  Actor_SetSpriteFlags(object, flags);
+  Actor_SetSpriteFlags(actor, flags);
 }
 
 /// Creates an actor of the given sprite at a 16.16 position.
@@ -320,64 +320,64 @@ void KandoreanTemple_FightFog(void) {
 
 /// A puff of steam's script step: counts down its life and reports whether any
 /// is left.
-u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
+u32 KandoreanTemple_CountDownSteam(struct Actor *actor) {
   s32 left;
 
-  left = --*(s16 *)&object->userValue;
+  left = --*(s16 *)&actor->userValue;
   return NONZERO(left);
 }
 
 /// A meditating student's update: now and then, every four to eight seconds, an
 /// ellipsis over his head.
-s32 KandoreanTemple_MeditateRestlessly(struct Actor *object) {
-  if (object->timer != 0) {
-    object->timer--;
+s32 KandoreanTemple_MeditateRestlessly(struct Actor *actor) {
+  if (actor->timer != 0) {
+    actor->timer--;
   } else {
-    Actor_ShowEmoteById((s16)object->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+    Actor_ShowEmoteById((s16)actor->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
-    object->timer = (Random_Below(240)) + 240;
+    actor->timer = (Random_Below(240)) + 240;
   }
   return 1;
 }
 
 /// A levitating student's update: every second or two his sprite squashes and
 /// springs back.
-s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
-  switch (object->timer) {
+s32 KandoreanTemple_LevitateStudentBob(struct Actor *actor) {
+  switch (actor->timer) {
   case 6:
-    object->scaleX -= FIXED_ONE / 4;
+    actor->scaleX -= FIXED_ONE / 4;
     {
-      s32 scale = object->scaleY;
+      s32 scale = actor->scaleY;
 
-      object->scaleY = scale + 0x2000;
+      actor->scaleY = scale + 0x2000;
     }
     break;
   case 4:
-    object->scaleX += FIXED_ONE / 8;
-    object->scaleY -= FIXED_ONE / 16;
+    actor->scaleX += FIXED_ONE / 8;
+    actor->scaleY -= FIXED_ONE / 16;
     break;
   case 2:
-    object->scaleX += FIXED_ONE / 16;
-    object->scaleY -= FIXED_ONE / 32;
+    actor->scaleX += FIXED_ONE / 16;
+    actor->scaleY -= FIXED_ONE / 32;
     break;
   case 0:
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
-    object->timer = Random16() % 90 + 60;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
+    actor->timer = Random16() % 90 + 60;
     break;
   }
-  object->timer--;
+  actor->timer--;
   return 1;
 }
 
 /// Sets up a levitating student: held off the ground, at four fifths of his
 /// size, with no shadow.
-s32 KandoreanTemple_PlaceLevitatingStudent(struct Actor *object) {
-  object->motionFlags = 0;
-  object->scaleX = FIXED_ONE * 4 / 5;
-  object->scaleY = FIXED_ONE * 4 / 5;
-  object->collisionFlags |= 8;
-  Actor_SetSpriteFlags(object, 0);
+s32 KandoreanTemple_PlaceLevitatingStudent(struct Actor *actor) {
+  actor->motionFlags = 0;
+  actor->scaleX = FIXED_ONE * 4 / 5;
+  actor->scaleY = FIXED_ONE * 4 / 5;
+  actor->collisionFlags |= 8;
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -442,7 +442,7 @@ void *Scene_GetActorPlacements(void) {
 /// By the gate, until the hidden passage is found, Kraden walks up to the
 /// leader and points out the suspicious wall.
 void KandoreanTemple_KradenSuspectsTheWall(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND) == 0) {
     GameFlag_Set(FLAG_KRADEN_EYED_THE_WALL);
@@ -463,10 +463,10 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_GATE_KRADEN, 1.2);
     Actor_SetAnimationById(ACTOR_GATE_KRADEN, ANIM_WALK);
-    object = Actor_GetById(ACTOR_FELIX);
-    if (object)
-      Actor_SetDestinationById(ACTOR_GATE_KRADEN, object->x.part[0].integer,
-                               object->z.part[0].integer);
+    actor = Actor_GetById(ACTOR_FELIX);
+    if (actor)
+      Actor_SetDestinationById(ACTOR_GATE_KRADEN, actor->x.part[0].integer,
+                               actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_GATE_KRADEN);
     Actor_SetPosition(ACTOR_GATE_KRADEN, 0, 0);
     Event_End();
@@ -518,8 +518,8 @@ void KandoreanTemple_StartSteamTrail(void) {
 
 /// Counts an actor's steps through the steam, faster when it runs, and puffs a
 /// cloud of steam every so often.
-void KandoreanTemple_TrailSteam(struct Actor *object, s32 step) {
-  s32 speed = (object->velocityX + object->velocityZ) >> 1;
+void KandoreanTemple_TrailSteam(struct Actor *actor, s32 step) {
+  s32 speed = (actor->velocityX + actor->velocityZ) >> 1;
   s32 *counter = &gKandoreanTemple_SteamCounter;
 
   if (speed < 0)
@@ -530,15 +530,15 @@ void KandoreanTemple_TrailSteam(struct Actor *object, s32 step) {
     *counter += 2;
   gKandoreanTemple_SteamCounter += step;
   if (gKandoreanTemple_SteamCounter > 40) {
-    KandoreanTemple_PuffSteam(object);
+    KandoreanTemple_PuffSteam(actor);
     gKandoreanTemple_SteamCounter = 0;
   }
 }
 
 /// Puffs a cloud of steam at an actor's feet.
-void KandoreanTemple_PuffSteam(struct Actor *object) {
+void KandoreanTemple_PuffSteam(struct Actor *actor) {
   struct Actor *steam = KandoreanTemple_CreateActor(
-      269, object->x.fixed, object->y.fixed, object->z.fixed);
+      269, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   struct FieldSprite *sprite;
 
   if (steam) {
@@ -575,31 +575,31 @@ void KandoreanTemple_PushThroughTheSteam(void) {
 }
 
 /// Moves an actor and the camera north by dz, unless the map stops it.
-void KandoreanTemple_PushNorth(struct Actor *object, FIXED dz) {
+void KandoreanTemple_PushNorth(struct Actor *actor, FIXED dz) {
   struct Actor *focus = gFieldWork->camera;
   FIXED position[3];
 
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed + dz;
-  MapGrid_CheckCollision(object, position);
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed + toFIXED(8);
-  if (MapGrid_CheckCollision(object, position) > 0)
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed + dz;
+  MapGrid_CheckCollision(actor, position);
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed + toFIXED(8);
+  if (MapGrid_CheckCollision(actor, position) > 0)
     return;
-  position[0] = object->x.fixed + 0x5b333;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed + 0x5b333;
-  if (MapGrid_CheckCollision(object, position) > 0)
+  position[0] = actor->x.fixed + 0x5b333;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed + 0x5b333;
+  if (MapGrid_CheckCollision(actor, position) > 0)
     return;
-  position[0] = object->x.fixed - 0x5b333;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed + 0x5b333;
-  if (MapGrid_CheckCollision(object, position) > 0)
+  position[0] = actor->x.fixed - 0x5b333;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed + 0x5b333;
+  if (MapGrid_CheckCollision(actor, position) > 0)
     return;
   focus->z.fixed += dz;
-  object->z.fixed += dz;
+  actor->z.fixed += dz;
 }
 
 /// Whether actor a is within twelve pixels across and eight deep of actor b.
@@ -616,132 +616,132 @@ s32 KandoreanTemple_IsOverActor(struct Actor *a, struct Actor *b) {
 
 /// A cloud of the vents' steam: drifts and slows, grows and turns, and rises
 /// instead of drifting on where the leader or the pillar stands over it.
-void KandoreanTemple_UpdateVentSteam(struct Actor *object) {
+void KandoreanTemple_UpdateVentSteam(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
-  FIXED vx = object->bounce;
+  FIXED vx = actor->bounce;
   FIXED vz;
   struct FieldSprite *sprite;
   s32 rate;
   s32 scale;
 
-  object->x.fixed += vx;
-  object->y.fixed += object->gravity;
-  vz = object->riseBaseY;
-  object->z.fixed += vz;
-  object->bounce = vx - vx / 18;
-  object->riseBaseY = vz - vz / 16;
-  rate = object->speedLimit;
-  scale = object->scaleX;
-  sprite = object->sprite;
-  object->scaleX = scale + rate;
-  object->scaleY += object->acceleration;
-  sprite->rotation += object->timer;
+  actor->x.fixed += vx;
+  actor->y.fixed += actor->gravity;
+  vz = actor->riseBaseY;
+  actor->z.fixed += vz;
+  actor->bounce = vx - vx / 18;
+  actor->riseBaseY = vz - vz / 16;
+  rate = actor->speedLimit;
+  scale = actor->scaleX;
+  sprite = actor->sprite;
+  actor->scaleX = scale + rate;
+  actor->scaleY += actor->acceleration;
+  sprite->rotation += actor->timer;
   if (leader->y.fixed == 0) {
-    if (KandoreanTemple_IsOverActor(object, leader)) {
-      object->z.fixed -= object->riseBaseY;
-      object->gravity += object->riseBaseY >> 2;
-      object->riseBaseY = 0;
+    if (KandoreanTemple_IsOverActor(actor, leader)) {
+      actor->z.fixed -= actor->riseBaseY;
+      actor->gravity += actor->riseBaseY >> 2;
+      actor->riseBaseY = 0;
     }
-    if (leader->y.fixed == 0 && KandoreanTemple_IsOverActor(object, other)) {
-      object->z.fixed -= object->riseBaseY;
-      object->gravity += object->riseBaseY >> 2;
-      object->riseBaseY = 0;
+    if (leader->y.fixed == 0 && KandoreanTemple_IsOverActor(actor, other)) {
+      actor->z.fixed -= actor->riseBaseY;
+      actor->gravity += actor->riseBaseY >> 2;
+      actor->riseBaseY = 0;
     }
   }
 }
 
 /// Sets up a cloud of steam on the given sprite priority: translucent, no
 /// shadow, its puff script.
-void KandoreanTemple_InitializeSteam(struct Actor *object, s32 priority) {
+void KandoreanTemple_InitializeSteam(struct Actor *actor, s32 priority) {
   struct FieldSprite *sprite;
 
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  sprite = object->sprite;
+  actor->motionFlags = 0;
+  actor->collisionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  sprite = actor->sprite;
   sprite->priority = priority;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object, 2);
-  Actor_StartScript(object, gKandoreanTemple_SteamScript);
-  Actor_SetSpriteColor(object, SPRITE_COLOR_BLUE_TINT);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_SelectAnimation(actor, 2);
+  Actor_StartScript(actor, gKandoreanTemple_SteamScript);
+  Actor_SetSpriteColor(actor, SPRITE_COLOR_BLUE_TINT);
+  actor->timer = 0;
+  actor->speedLimit = 0;
+  actor->acceleration = 0;
 }
 
 /// Blows a cloud of steam from a vent at position, rising at the given speed.
 void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
-  struct Actor *object = KandoreanTemple_CreateActor(
+  struct Actor *actor = KandoreanTemple_CreateActor(
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
 
-  if (object) {
+  if (actor) {
     s32 timer;
 
-    object->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() * 2) + value;
+    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->gravity = (u16)Random16();
+    actor->riseBaseY = (u16)(Random16() * 2) + value;
     timer = (u16)Random16() - 0x8000;
-    object->timer = timer;
-    KandoreanTemple_InitializeSteam(object, 3);
-    object->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
-    Actor_SetBlendMode(object, 1);
+    actor->timer = timer;
+    KandoreanTemple_InitializeSteam(actor, 3);
+    actor->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
 /// A cloud of the lift room's stream of steam: as the vents' clouds, held down
 /// by the leader or the lift room's pillar.
-void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
+void KandoreanTemple_UpdateStreamSteam(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other = Actor_GetById(ACTOR_LIFT_ROOM_PILLAR);
-  FIXED vx = object->bounce;
+  FIXED vx = actor->bounce;
   FIXED vz;
   struct FieldSprite *sprite;
   s32 rate;
   s32 scale;
 
-  object->x.fixed += vx;
-  object->y.fixed += object->gravity;
-  vz = object->riseBaseY;
-  object->z.fixed += vz;
-  object->bounce = vx - vx / 18;
-  object->riseBaseY = vz - vz / 16;
-  rate = object->speedLimit;
-  scale = object->scaleX;
-  sprite = object->sprite;
-  object->scaleX = scale + rate;
-  object->scaleY += object->acceleration;
-  sprite->rotation += object->timer;
-  if (KandoreanTemple_IsOverActor(object, leader)) {
-    ((struct FieldSprite *)object->sprite)->priority = 3;
-    object->z.fixed -= object->riseBaseY;
-    object->gravity += object->riseBaseY >> 2;
-    object->riseBaseY = 0;
+  actor->x.fixed += vx;
+  actor->y.fixed += actor->gravity;
+  vz = actor->riseBaseY;
+  actor->z.fixed += vz;
+  actor->bounce = vx - vx / 18;
+  actor->riseBaseY = vz - vz / 16;
+  rate = actor->speedLimit;
+  scale = actor->scaleX;
+  sprite = actor->sprite;
+  actor->scaleX = scale + rate;
+  actor->scaleY += actor->acceleration;
+  sprite->rotation += actor->timer;
+  if (KandoreanTemple_IsOverActor(actor, leader)) {
+    ((struct FieldSprite *)actor->sprite)->priority = 3;
+    actor->z.fixed -= actor->riseBaseY;
+    actor->gravity += actor->riseBaseY >> 2;
+    actor->riseBaseY = 0;
   }
-  if (KandoreanTemple_IsOverActor(object, other)) {
-    ((struct FieldSprite *)object->sprite)->priority = 3;
-    object->z.fixed -= object->riseBaseY;
-    object->gravity += object->riseBaseY >> 3;
-    object->riseBaseY = 0;
+  if (KandoreanTemple_IsOverActor(actor, other)) {
+    ((struct FieldSprite *)actor->sprite)->priority = 3;
+    actor->z.fixed -= actor->riseBaseY;
+    actor->gravity += actor->riseBaseY >> 3;
+    actor->riseBaseY = 0;
   }
 }
 
 /// Blows a cloud of steam from the lift room's stream.
 void KandoreanTemple_BlowStreamSteam(void) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+  struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_DUST_CLOUD, toFIXED(696), toFIXED(28), toFIXED(156)));
 
-  if (object) {
+  if (actor) {
     s32 timer;
 
-    object->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() * 2) + 0x58000;
+    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->gravity = (u16)Random16();
+    actor->riseBaseY = (u16)(Random16() * 2) + 0x58000;
     timer = (u16)Random16() - 0x8000;
-    object->timer = timer;
-    KandoreanTemple_InitializeSteam(object, 1);
-    object->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
-    Actor_SetBlendMode(object, 1);
+    actor->timer = timer;
+    KandoreanTemple_InitializeSteam(actor, 1);
+    actor->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
@@ -753,10 +753,10 @@ void KandoreanTemple_ShowLeader(void) {
 /// Sets a lift or platform at rest: on the ground, in front, in its lowered
 /// animation, disabled.
 void KandoreanTemple_PrepareLift(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->riseCounter = 1;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->riseCounter = 1;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimationById(id, 1);
   Actor_SetSpritePriority(id, 3);
   Actor_DisableById(id);
@@ -821,20 +821,20 @@ void KandoreanTemple_LowerRightColumn(s32 id) {
 
 /// Grows a column piece by scale and raises it by dy.
 void KandoreanTemple_GrowColumn(s32 id, FIXED dy, s32 scale) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->scaleY += scale;
-  object->y.fixed += dy;
-  object->z.fixed -= dy;
+  actor->scaleY += scale;
+  actor->y.fixed += dy;
+  actor->z.fixed -= dy;
 }
 
 /// Shrinks a column piece by scale and lowers it by dy.
 void KandoreanTemple_ShrinkColumn(s32 id, FIXED dy, s32 scale) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->scaleY -= scale;
-  object->y.fixed -= dy;
-  object->z.fixed += dy;
+  actor->scaleY -= scale;
+  actor->y.fixed -= dy;
+  actor->z.fixed += dy;
 }
 
 /// Whether the west vent stays shut: while Move carries the pillar off a
@@ -1654,9 +1654,9 @@ void KandoreanTemple_StartMovingPillar(void) {
 /// Sets the vent room's pillar down, and notes which platform, if either, it
 /// weighs down.
 void KandoreanTemple_FinishMovingPillar(void) {
-  struct Actor *object = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 13 && z == 13)
@@ -1730,7 +1730,7 @@ void KandoreanTemple_OpenTheWellPassage(void) {
 /// Whirlwind has blown the bush away: the passage behind it opens and Kraden
 /// follows the leader in.
 void KandoreanTemple_FindTheHiddenPassage(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   GameFlag_Set(FLAG_HIDDEN_PASSAGE_FOUND);
@@ -1750,10 +1750,10 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_GATE_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_GATE_KRADEN, ANIM_WALK);
-  object = Actor_GetById(ACTOR_FELIX);
-  if (object)
-    Actor_SetDestinationById(ACTOR_GATE_KRADEN, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(ACTOR_FELIX);
+  if (actor)
+    Actor_SetDestinationById(ACTOR_GATE_KRADEN, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_GATE_KRADEN);
   Actor_SetPosition(ACTOR_GATE_KRADEN, 0, 0);
   Event_End();
@@ -1763,7 +1763,7 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
 /// how to use it.
 void KandoreanTemple_ReceiveLash(void) {
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
 
   Event_Start();
@@ -1798,8 +1798,8 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(424, 0, 400, 1);
-  object = Actor_GetById(ACTOR_POI);
-  sprite = object->sprite;
+  actor = Actor_GetById(ACTOR_POI);
+  sprite = actor->sprite;
   Actor_SetSpeed(ACTOR_POI, 0.8);
   Actor_WalkToAndWait(ACTOR_POI, 424, 376);
   FieldActor_SetSpritePriority(ACTOR_POI, 1);
@@ -1807,17 +1807,17 @@ void KandoreanTemple_ReceiveLash(void) {
   FieldActor_Jump(ACTOR_POI, 4, 0);
   Actor_MoveToAndWait(ACTOR_POI, 444, 376);
   Actor_SetAnimation(ACTOR_POI, 7);
-  object->scaleX = -FIXED_ONE;
+  actor->scaleX = -FIXED_ONE;
   sprite->rotation = TRIG_TURN * 7 / 8;
-  object->motionFlags = 0;
-  object->y.fixed += toFIXED(4);
+  actor->motionFlags = 0;
+  actor->y.fixed += toFIXED(4);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);
   Actor_SetSpeed(ACTOR_POI, 0.4);
-  FieldActor_SetMoveTarget(object, 492, 8, 376);
+  FieldActor_SetMoveTarget(actor, 492, 8, 376);
   FieldActor_WaitForMoveById(ACTOR_POI);
-  object->motionFlags = 3;
-  object->groundHeight = 0;
-  object->scaleX = FIXED_ONE;
+  actor->motionFlags = 3;
+  actor->groundHeight = 0;
+  actor->scaleX = FIXED_ONE;
   sprite->rotation = 0;
   Actor_SetAnimation(ACTOR_POI, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 1);
@@ -1986,13 +1986,13 @@ void KandoreanTemple_StartMimicRoom(void) {
 /// Sets up the Chestbeaters' room: the pot where Move left it, the sign, and
 /// the Chestbeaters gone once the ladder is lowered.
 void KandoreanTemple_StartChestbeaterRoom(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SECOND_BOILING_POT);
+  struct Actor *actor = Actor_GetById(ACTOR_SECOND_BOILING_POT);
 
   Actor_DisableById(ACTOR_SECOND_BOILING_POT);
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimationById(ACTOR_SECOND_BOILING_POT, 2);
-  object = Actor_GetById(ACTOR_BOILING_POT);
-  object->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_BOILING_POT);
+  actor->motionFlags = 0;
   if (GameFlag_Get(FLAG_POT_PUSHED_WEST)) {
     FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_BOILING_POT),
                                          toFIXED(312), toFIXED(32),
@@ -2005,10 +2005,10 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
     MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
   }
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
-  object = Actor_GetById(ACTOR_POIS_SIGN);
-  object->scaleX = FIXED_ONE * 7 / 10;
-  object->scaleY = FIXED_ONE * 7 / 10;
-  object->collisionFlags = 0;
+  actor = Actor_GetById(ACTOR_POIS_SIGN);
+  actor->scaleX = FIXED_ONE * 7 / 10;
+  actor->scaleY = FIXED_ONE * 7 / 10;
+  actor->collisionFlags = 0;
   FieldEffect_StartBlankOverlay(0);
   if (Event_GetFlag(FLAG_LADDER_LOWERED)) {
     {
@@ -2357,25 +2357,25 @@ void KandoreanTemple_LeaveByEastVent(void) {
 
 /// The leader slips into the lift room's shaft of steam and is carried away.
 void KandoreanTemple_SinkIntoTheSteam(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 i;
   struct MainRoutineWork *party;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  object->facing = 0;
+  actor->facing = 0;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 16);
   for (i = 0; i <= 7; i++) {
-    Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
-                                    object->z.fixed + toFIXED(3));
+    Actor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                    actor->z.fixed + toFIXED(3));
     wait(1);
   }
   Event_Wait(20);
   party = &gMainRoutineWork;
-  object->facing = FACING_SOUTH;
+  actor->facing = FACING_SOUTH;
   FieldEffect_SetAttached(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAnimationById(party->leaderActorId, 27);
@@ -2385,12 +2385,12 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   Actor_SetSpritePriority(party->leaderActorId, 3);
   for (i = 0; i <= 39; i++) {
     {
-      s32 scale = object->scaleX;
+      s32 scale = actor->scaleX;
 
-      object->scaleX = scale + -0x400;
+      actor->scaleX = scale + -0x400;
     }
-    object->scaleY += -0x400;
-    object->y.fixed += -toFIXED(2);
+    actor->scaleY += -0x400;
+    actor->y.fixed += -toFIXED(2);
     wait(1);
     if (i == 10)
       Sound_Play(SE_DUST_PUFF);
@@ -2468,15 +2468,15 @@ DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, ACTOR_EAST_LIFT,
 /// The west lift rises out of view on its growing column, then the scene moves
 /// on.
 void KandoreanTemple_RideWestLiftUp(void) {
-  struct Actor *object = Actor_GetById(ACTOR_WEST_LIFT);
+  struct Actor *actor = Actor_GetById(ACTOR_WEST_LIFT);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   do {
-    object->y.fixed -= toFIXED(4);
+    actor->y.fixed -= toFIXED(4);
     KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
     wait(1);
-  } while (object->y.fixed > -toFIXED(20));
+  } while (actor->y.fixed > -toFIXED(20));
   Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2487,15 +2487,15 @@ void KandoreanTemple_RideWestLiftUp(void) {
 
 /// As KandoreanTemple_RideWestLiftUp, for actors 14 and 16.
 void KandoreanTemple_RideEastLiftUp(void) {
-  struct Actor *object = Actor_GetById(ACTOR_EAST_LIFT);
+  struct Actor *actor = Actor_GetById(ACTOR_EAST_LIFT);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   do {
-    object->y.fixed -= toFIXED(4);
+    actor->y.fixed -= toFIXED(4);
     KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
     wait(1);
-  } while (object->y.fixed > -toFIXED(20));
+  } while (actor->y.fixed > -toFIXED(20));
   Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2550,11 +2550,11 @@ void KandoreanTemple_StartFogRoom(void) {
 /// A student sits meditating, his first ellipsis after base frames and up to
 /// 400 more.
 void KandoreanTemple_StartMeditating(s32 id, s32 base) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
   Actor_SetAnimationById(id, 5);
-  object->timer = base + (Random_Below(400));
-  object->userValue = id;
+  actor->timer = base + (Random_Below(400));
+  actor->userValue = id;
   Actor_SetMovementTypeById(id, gKandoreanTemple_MeditateScript);
 }
 
@@ -2689,12 +2689,12 @@ void KandoreanTemple_Wobble(struct FieldSprite *sprite, u32 frames, s32 step) {
 }
 
 /// Turns an actor's sprite by step each frame for the given frames.
-void KandoreanTemple_Sway(struct Actor *object, u32 frames, FIXED step) {
+void KandoreanTemple_Sway(struct Actor *actor, u32 frames, FIXED step) {
   u32 count = frames;
   u32 i;
 
   for (i = 0; i < count; i++) {
-    object->x.fixed += step;
+    actor->x.fixed += step;
     Event_Wait(1);
   }
 }
@@ -2702,7 +2702,7 @@ void KandoreanTemple_Sway(struct Actor *object, u32 frames, FIXED step) {
 /// Poi tests his three students in turn: the first two fall, and the third
 /// levitates and passes.
 void KandoreanTemple_TestTheStudents(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
   u32 i;
 
@@ -2730,12 +2730,12 @@ void KandoreanTemple_TestTheStudents(void) {
   Event_Wait(20);
   Actor_ConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, 0);
   Event_Wait(20);
-  object = Actor_GetById(ACTOR_FIRST_TESTED_STUDENT);
-  sprite = object->sprite;
-  object->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_FIRST_TESTED_STUDENT);
+  sprite = actor->sprite;
+  actor->motionFlags = 0;
   i = 0;
   do {
-    object->y.fixed += 0xccc;
+    actor->y.fixed += 0xccc;
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -2749,10 +2749,10 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldEffect_SetAttached(ACTOR_FIRST_TESTED_STUDENT,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   Event_Wait(5);
   Sound_Play(SE_DOOR_CLOSE);
-  object->velocityY = toFIXED(3);
+  actor->velocityY = toFIXED(3);
   sprite->rotation = 0;
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_FIRST_TESTED_STUDENT, 0);
@@ -2786,25 +2786,25 @@ void KandoreanTemple_TestTheStudents(void) {
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_SECOND_TESTED_STUDENT,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  object = Actor_GetById(ACTOR_SECOND_TESTED_STUDENT);
-  object->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_SECOND_TESTED_STUDENT);
+  actor->motionFlags = 0;
   i = 0;
   do {
-    object->y.fixed += toFIXED(3) / 20;
+    actor->y.fixed += toFIXED(3) / 20;
     Event_Wait(1);
     i++;
   } while (i <= 63);
-  KandoreanTemple_Sway(object, 64, 4096);
-  KandoreanTemple_Sway(object, 128, -4096);
-  KandoreanTemple_Sway(object, 128, 4096);
-  KandoreanTemple_Sway(object, 64, -4096);
+  KandoreanTemple_Sway(actor, 64, 4096);
+  KandoreanTemple_Sway(actor, 128, -4096);
+  KandoreanTemple_Sway(actor, 128, 4096);
+  KandoreanTemple_Sway(actor, 64, -4096);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_SECOND_TESTED_STUDENT,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   Event_Wait(5);
   Sound_Play(SE_DOOR_CLOSE);
-  object->velocityY = toFIXED(3);
+  actor->velocityY = toFIXED(3);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_SECOND_TESTED_STUDENT, 0);
   FieldCamera_MoveTo(364, 72, 664, 1);
@@ -2820,12 +2820,12 @@ void KandoreanTemple_TestTheStudents(void) {
   Event_Wait(20);
   Actor_ConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, 0);
   Event_Wait(20);
-  object = Actor_GetById(ACTOR_THIRD_TESTED_STUDENT);
-  sprite = object->sprite;
-  object->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_THIRD_TESTED_STUDENT);
+  sprite = actor->sprite;
+  actor->motionFlags = 0;
   i = 0;
   do {
-    object->y.fixed += toFIXED(1) / 5;
+    actor->y.fixed += toFIXED(1) / 5;
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -2839,7 +2839,7 @@ void KandoreanTemple_TestTheStudents(void) {
   Event_Wait(60);
   i = 0;
   do {
-    object->y.fixed += -toFIXED(1) / 5;
+    actor->y.fixed += -toFIXED(1) / 5;
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -3001,7 +3001,7 @@ void KandoreanTemple_PoiWalksUp(void) {
 /// Poi meets the party who came through the cave, and must give them the secret
 /// of Lash.
 void KandoreanTemple_MeetPoi(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
   u8 *flags;
 
@@ -3173,26 +3173,26 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_WalkToAndWait(ACTOR_POI, 488, 416);
   Actor_WalkToAndWait(ACTOR_POI, 504, 376);
   Actor_FaceDirectionById(ACTOR_POI, FACING_WEST, 20);
-  object = Actor_GetById(ACTOR_POI);
-  sprite = object->sprite;
+  actor = Actor_GetById(ACTOR_POI);
+  sprite = actor->sprite;
   Actor_SetSpritePriority(ACTOR_POI, 1);
   Actor_SetSpeed(ACTOR_POI, 1.6);
   Actor_Jump(ACTOR_POI, 4, 0);
   Actor_MoveToAndWait(ACTOR_POI, 492, 376);
   Actor_SetAnimationById(ACTOR_POI, 7);
-  object->scaleX = -FIXED_ONE;
+  actor->scaleX = -FIXED_ONE;
   sprite->rotation = TRIG_TURN * 7 / 8;
-  object->motionFlags = 0;
-  object->y.fixed += toFIXED(4);
+  actor->motionFlags = 0;
+  actor->y.fixed += toFIXED(4);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);
   Actor_SetSpeed(ACTOR_POI, 0.4);
-  FieldActor_SetMoveTarget((s32)object, 444, 40, 376);
+  FieldActor_SetMoveTarget((s32)actor, 444, 40, 376);
   Actor_WaitForMoveById(ACTOR_POI);
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 1);
   sprite->rotation = 0;
-  object->scaleX = FIXED_ONE;
-  object->groundHeight = toFIXED(32);
+  actor->scaleX = FIXED_ONE;
+  actor->groundHeight = toFIXED(32);
   Actor_SetAnimationById(ACTOR_POI, ANIM_STAND);
   Actor_SetSpeed(ACTOR_POI, 1.6);
   Actor_Jump(ACTOR_POI, 4, 0);
@@ -3231,18 +3231,18 @@ void KandoreanTemple_MeetPoi(void) {
 void KandoreanTemple_CreateLashPebble(void) {
   struct Actor **slot = &gKandoreanTemple_LashPebble;
   s32 zero = 0;
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+  struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(408), toFIXED(40), toFIXED(344)));
 
-  *slot = object;
-  if (object) {
-    struct FieldSprite *sprite = object->sprite;
+  *slot = actor;
+  if (actor) {
+    struct FieldSprite *sprite = actor->sprite;
     u8 *buffer;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
-    object->motionFlags = zero;
-    object->retainSpriteCache = 1;
+    actor->motionFlags = zero;
+    actor->retainSpriteCache = 1;
     sprite->flags = zero;
     sprite->countAndShadow[0] = zero;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -3279,26 +3279,7 @@ void KandoreanTemple_ReceiveLash(void);
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 s32 gKandoreanTemple_SteamScript[] = {
     SC_WAIT(44),
@@ -3402,10 +3383,7 @@ s32 gKandoreanTemple_StandStillScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gKandoreanTemple_ChestbeaterRoomRegions[] = {
     0x4a0140, 0x1500060, 0x70005a, 0x2ffff, 0xffff, 0,

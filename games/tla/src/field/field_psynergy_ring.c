@@ -333,7 +333,7 @@ void FieldPsynergy_Ring(void) {
   Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
 }
 
-/// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
+/// One mote: a position and a velocity (Field_AdvanceWithGravity3D's vector)
 /// and a frame count, negative before it starts.
 struct BurstMote {
   s32 x;
@@ -425,7 +425,7 @@ void FieldPsynergy_EndRing(void) {
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
         EffectSprite_DrawAtWorldPosition(spark, mote);
-        BattleEffect_IntegrateVector3(&mote->x, 62, toFIXED(1) / 2);
+        Field_AdvanceWithGravity3D(&mote->x, 62, toFIXED(1) / 2);
       }
       mote->timer++;
     }

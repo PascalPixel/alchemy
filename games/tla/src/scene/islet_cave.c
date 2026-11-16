@@ -169,49 +169,7 @@ void IsletCave_StartFastPaletteCycle(void) {
 
 #include "shared/list_count_entries.h"
 
-/// Each frame while the cycle runs: when its timer runs out, writes the next
-/// row of cycled colours into the listed palette slots and flashes the last
-/// slot between its bright and dim colour.
-void PaletteCycle_Fade(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gPaletteCycleTimer != 0) {
-    if (--gPaletteCycleTimer == 0) {
-      step = 1;
-      gPaletteCycleTimer = gPaletteCycleDelay;
-      if (gPaletteCycleDelay > 2)
-        gPaletteCycleDelay--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = gPaletteCycleColors;
-  for (i = 0; i < gPaletteCycleLength; i++) {
-    dst = &BG_PLTT[gPaletteCycleSlots[gPaletteCycleIndex * gPaletteCycleLength +
-                                      i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    SET_RGB(*dst, red, green, blue);
-  }
-  dst = &BG_PLTT[gPaletteSlots[gPaletteCycleLength]];
-  if (gPaletteCycleBright != 0)
-    src = gPaletteColors + gPaletteCycleLength * 3;
-  else
-    src = gPaletteCycleColors + gPaletteCycleLength * 3;
-  red = *src++;
-  green = *src++;
-  blue = *src++;
-  SET_RGB(*dst, red, green, blue);
-  gPaletteCycleBright ^= 1;
-  if (++gPaletteCycleIndex == gPaletteCycleLength)
-    gPaletteCycleIndex = 0;
-}
+#include "shared/palette_cycle_fade.h"
 
 /// Arriving by Teleport: the water's colours spin fast while the whirl plays,
 /// then settle.
@@ -280,17 +238,17 @@ s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
 
 /// The winged statue's script while Serac hides in it: every 64 frames it
 /// hops, rocking its sprite through the first half of the cycle.
-s32 IsletCave_HopWingedStatue(struct Actor *object) {
-  s32 step = object->riseCounter & 63;
-  struct FieldSprite *sprite = object->sprite;
+s32 IsletCave_HopWingedStatue(struct Actor *actor) {
+  s32 step = actor->riseCounter & 63;
+  struct FieldSprite *sprite = actor->sprite;
 
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = toFIXED(1);
+      actor->velocityY = toFIXED(1);
     sprite->rotation = Trig_Cos(step << 12) / 128;
   }
-  object->riseCounter++;
+  actor->riseCounter++;
   return -1;
 }
 
@@ -423,10 +381,10 @@ void IsletCave_OpenDoorAndEnter(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   for (i = ACTOR_FIRST_PLACED; i <= 63; i++) {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *actor = Actor_GetById(i);
 
-    if (object != 0)
-      object->motionFlags = 0;
+    if (actor != 0)
+      actor->motionFlags = 0;
   }
   index = work->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
@@ -840,7 +798,7 @@ void IsletCave_RideSeventhLogSouth(void) {
 /// Sentinel fights.
 void IsletCave_SentinelAwaits(void) {
   s32 cue;
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -854,10 +812,10 @@ void IsletCave_SentinelAwaits(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object != 0) {
-    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (actor != 0) {
+    Actor_SetDestinationById(ACTOR_SENTINEL, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL,
@@ -871,16 +829,16 @@ void IsletCave_SentinelAwaits(void) {
 /// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
-    struct Actor *object = Actor_GetById(ACTOR_SERAC);
+    struct Actor *actor = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
-    object->speedLimit = toFIXED(3) / 2;
-    object->velocityY = toFIXED(15);
+    actor->speedLimit = toFIXED(3) / 2;
+    actor->velocityY = toFIXED(15);
     Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
-    object->speedLimit = toFIXED(1);
+    actor->speedLimit = toFIXED(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
   }
 }
@@ -923,10 +881,7 @@ s32 gIsletCave_TremorTargetScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IsletCaveMeld),

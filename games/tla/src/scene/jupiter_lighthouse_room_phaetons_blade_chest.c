@@ -90,7 +90,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-s32 CrackedTiles_Step();
+s32 CrackedTile_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
 /// As Hover lifts the party: while the leader hovers, walls off the cell at
@@ -109,20 +109,20 @@ void JupiterLighthouse_StopHovering(void) {
 /// Stepping on event 30 or 31 on the floor: unless a whirlwind is already
 /// carrying the party, the stone face there blows one across the hall.
 void JupiterLighthouse_RaiseWhirlwind(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (gWhirlwindRiding == 0) {
-    object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
+    actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 30) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 296, 600);
-      object->y.fixed = 0;
-      object->facing = FACING_WEST;
+      actor->y.fixed = 0;
+      actor->facing = FACING_WEST;
     } else if (id == 31) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 136, 680);
-      object->y.fixed = 0;
-      object->facing = 0;
+      actor->y.fixed = 0;
+      actor->facing = 0;
     }
-    Whirlwind_SpawnUpper(object);
+    Whirlwind_SpawnUpper(actor);
     gWhirlwindRiding = 1;
   }
 }
@@ -131,30 +131,30 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
 /// carrying the party, the stone face there blows a slower one, at a pixel a
 /// frame, from 32 pixels up.
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *motion;
 
   if (gWhirlwindRiding == 0 &&
       Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {
-    object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
+    actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
-      object->y.fixed = toFIXED(32);
-      object->facing = FACING_WEST;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = FACING_WEST;
     } else if (id == 51) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
-      object->y.fixed = toFIXED(32);
-      object->facing = FACING_WEST;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = FACING_WEST;
     } else if (id == 52) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
-      object->y.fixed = toFIXED(32);
-      object->facing = 0;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = 0;
     } else if (id == 53) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
-      object->y.fixed = toFIXED(32);
-      object->facing = 0;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = 0;
     }
-    motion = Whirlwind_SpawnUpper(object);
+    motion = Whirlwind_SpawnUpper(actor);
     if (motion != NULL)
       motion->speedLimit = toFIXED(1);
     gWhirlwindRiding = 1;
@@ -165,7 +165,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 /// below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(arg) != 0)
+      CrackedTile_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
@@ -185,7 +185,7 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-    if (CrackedTiles_Step(arg) != 0)
+    if (CrackedTile_Step(arg) != 0)
       FieldEvent_SetExitRequest(14);
   }
 }
@@ -232,18 +232,18 @@ s32 Scene_Initialize(void) {
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    CrackedTiles_Find(33, 0x280, 0x380, 48, 1);
+    CrackedTile_Find(33, 0x280, 0x380, 48, 1);
     CrackedTile_PlaceLanding(
         0, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
-    CrackedTiles_Find(43, 0x280, 0x380, 49, 1);
+    CrackedTile_Find(43, 0x280, 0x380, 49, 1);
     CrackedTile_PlaceLanding(
         -21, 32,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else {
-    CrackedTiles_Find(43, 0x280, 0x380, 0, 0);
+    CrackedTile_Find(43, 0x280, 0x380, 0, 0);
     CrackedTile_PlaceLanding(
         -2, -27,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -286,7 +286,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -323,31 +323,9 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomPhaetonsBladeChest),
@@ -455,18 +433,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -491,6 +469,6 @@ extern u32 gFieldEffect_MediumScript[];
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

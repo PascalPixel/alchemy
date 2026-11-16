@@ -32,7 +32,7 @@ void SpriteDissolve_Step(u8 *object, u32 position);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 void ActorSystem_ProjectSprites(void);
 s32 Actor_FindLastActiveId(void);
 void BattleMotion_ProjectPositionFar(s32, s32 *);
@@ -61,7 +61,7 @@ extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkSpriteColors[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
-void Actor_SetBlendMode(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *actor, u32 value);
 s32 PaletteFade_SetTargetFar(s32, s32);
 void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_Dispatch(void);
@@ -90,12 +90,12 @@ void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
 s32 MapGrid_GetTerrainHeightFar(u8, s32, s32);
 void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
-s32 Actor_IsTargetUnset(struct Actor *object);
+s32 Actor_IsTargetUnset(struct Actor *actor);
 #ifndef OWN_Actor_SetPartAttribute
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 #endif
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_StartCameraFar(void *object, void *effect);
+void Scene_SetActorSpritePriority(struct Actor *actor, s32 priority);
+void Actor_StartCameraFar(void *actor, void *effect);
 void Entrance_EndArrivalAnimation(s32 effect);
 void Exit_PrepareAnimation(s32 effect);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
@@ -276,8 +276,8 @@ struct ReelEffectWork {
   u8 unusedAfterParticles[0x700 -
                           LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[256];
-  u16 objShade[256];
-  u8 unusedAfterObjShade[27776]; ///< no code names it
+  u16 spriteShade[256];
+  u8 unusedAfterSpriteShade[27776]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
   u8 unusedAfterTransferValue[4]; ///< no code names it
@@ -521,7 +521,7 @@ extern const s32 gFieldEffect_LongEffectScript[];
 
 extern const s32 gFieldEffect_FragmentScript[];
 
-s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollisionFar(struct Actor *actor, s32 *position);
 
 s32 Field_CheckSpheresOverlapFar(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
@@ -536,7 +536,7 @@ void WorldMap_ReloadPendingAreaGraphics(void);
 
 void Event_NoOp(void);
 
-void Actor_UpdateBlink(struct Actor *object);
+void Actor_UpdateBlink(struct Actor *actor);
 
 /// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
 /// built for; the vertex update rebuilds them when it changes.
@@ -780,7 +780,7 @@ extern const struct SparklePicture gFieldEffect_SparklePictures[];
 /// The sparkles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_SparkleTiles[];
 
-void Actor_SpawnWaterSplashFar(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplashFar(struct Actor *actor, s32 kind);
 
 s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
@@ -792,7 +792,7 @@ extern const u16 gFieldEffect_CyclePatternWords[];
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
-extern const s16 gGroundParticle_Offsets[];
+extern const s16 gGroundParticles_Offsets[];
 
 void Actor_UpdateAllMotion(void);
 
@@ -818,12 +818,12 @@ extern const s32 gActor_ApproachWatchedScript[];
 
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z);
 
-s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
+s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values);
 
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
+void Actor_SelectAnimation(struct Actor *actor, s32 argument);
 struct Actor *Actor_Create(s32 kind, FIXED x, FIXED y, FIXED z);
 
-void Actor_SpawnWaterSplash(struct Actor *object, s32 kind);
+void Actor_SpawnWaterSplash(struct Actor *actor, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
 void TileMap_DecodeStagedBuffer(s32 size);
@@ -840,13 +840,13 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes);
 
 s32 MapGrid_IsWallAt(s32 *position);
 
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 
 void ObjectTable_Snapshot(void);
 
 void Actor_ResetTargetsAndVelocity(u32 objectId);
 
-void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
+void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 index);
 
 void Scene_ChooseMusic(void);
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant);

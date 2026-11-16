@@ -115,8 +115,8 @@ s16 gAnemosInnerSanctumEntrance_LightPicture BSS_DATA;
 /// The call gAnemosInnerSanctumEntrance_DragonStatueScript makes: clears the
 /// actor's sprite flags, hiding it.
 s32 AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags(
-    struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+    struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -157,11 +157,11 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 /// After the Dullahan's battle: the shadow and the blue orb flash, the orb
 /// swells and rises while the shadow shrinks away.
 void AnemosInnerSanctumEntrance_GlowRises(void) {
-  struct Actor *object = Actor_GetById(ACTOR_BLUE_ORB);
+  struct Actor *actor = Actor_GetById(ACTOR_BLUE_ORB);
 
-  object->motionFlags = 0;
-  object->scaleX = FIXED_ONE / 4;
-  object->scaleY = FIXED_ONE / 4;
+  actor->motionFlags = 0;
+  actor->scaleX = FIXED_ONE / 4;
+  actor->scaleY = FIXED_ONE / 4;
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
@@ -187,21 +187,21 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
   s32 i;
 
   for (i = ACTOR_STATUE_A; i <= ACTOR_STATUE_F; i++) {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *actor = Actor_GetById(i);
 
-    object->riseCounter = 1;
-    object->update = 0;
+    actor->riseCounter = 1;
+    actor->update = 0;
   }
 }
 
 /// A lowering statue's per-frame hook: shows its sprite while the ground under
 /// it is no more than 32 pixels down, and hides it below that.
-void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->groundHeight = Map_GetTerrainHeight(
-           0, object->x.fixed, object->z.fixed)) >= -toFIXED(32))
-    Actor_SetSpriteFlags(object, 1);
+void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *actor) {
+  if ((actor->groundHeight = Map_GetTerrainHeight(
+           0, actor->x.fixed, actor->z.fixed)) >= -toFIXED(32))
+    Actor_SetSpriteFlags(actor, 1);
   else
-    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteFlags(actor, 0);
 }
 
 extern s8 gAnemosInnerSanctumEntrance_StatueSpots[];
@@ -216,16 +216,16 @@ void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
   const s8 *z = gAnemosInnerSanctumEntrance_StatueSpots + 1;
 
   for (i = ACTOR_STATUE_A; i <= ACTOR_STATUE_F; i++) {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *actor = Actor_GetById(i);
 
-    if (FIELD_CELL(object->x.fixed) != *x)
+    if (FIELD_CELL(actor->x.fixed) != *x)
       return;
     {
       s32 cellZ = *z;
 
       z += 2;
       x += 2;
-      if (FIELD_CELL(object->z.fixed) != cellZ)
+      if (FIELD_CELL(actor->z.fixed) != cellZ)
         return;
     }
   }
@@ -257,24 +257,23 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
 /// away from the leader and settle; facing north with the Dullahan unbeaten,
 /// the shadow then challenges the party.
 void AnemosInnerSanctumEntrance_OpenTheWay(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 shift = toFIXED(304);
   s32 i;
 
-  if (FIELD_CELL(object->z.fixed) <= 9)
+  if (FIELD_CELL(actor->z.fixed) <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
   if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
     return;
-  if (MapGrid_GetCellBehaviorAt(object->layer, object->x.fixed,
-                                object->z.fixed) !=
+  if (MapGrid_GetCellBehaviorAt(actor->layer, actor->x.fixed, actor->z.fixed) !=
       CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER)
     return;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
   FieldActor_SetMoveTargetFX(
-      object, (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8), object->y.fixed,
-      (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+      actor, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8), actor->y.fixed,
+      (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;
@@ -289,14 +288,14 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   // BUG: the loop runs seven times, reading one byte past the six statues of
   // gAnemosInnerSanctumEntrance_StatueOrder; BUGFIX stops at the sixth.
   do {
-    object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
-    object->motionFlags = 0;
-    object->y.fixed += toFIXED(1) / 2;
-    object->acceleration = toFIXED(1) / 16;
-    object->speedLimit = toFIXED(2);
-    Actor_SetSpriteFlags(object, 1);
-    Actor_SetMoveTarget(object, object->x.fixed, -toFIXED(8), object->z.fixed);
-    object->update = AnemosInnerSanctumEntrance_ShowByHeight;
+    actor = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
+    actor->motionFlags = 0;
+    actor->y.fixed += toFIXED(1) / 2;
+    actor->acceleration = toFIXED(1) / 16;
+    actor->speedLimit = toFIXED(2);
+    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetMoveTarget(actor, actor->x.fixed, -toFIXED(8), actor->z.fixed);
+    actor->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random_Below(4)) + 3);
 #ifdef BUGFIX
@@ -308,21 +307,21 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   Sound_Play(SE_KOLIMA_BRIDGE_POST);
   i = ACTOR_STATUE_A;
   do {
-    object = Actor_GetById(i);
+    actor = Actor_GetById(i);
     {
-      FIXED z = object->z.fixed - shift;
+      FIXED z = actor->z.fixed - shift;
 
-      Actor_SetMoveTarget(object, object->x.fixed, -toFIXED(8), z);
+      Actor_SetMoveTarget(actor, actor->x.fixed, -toFIXED(8), z);
     }
   } while (++i <= ACTOR_STATUE_F);
   Actor_WaitForMove(Actor_GetById(ACTOR_STATUE_A));
   wait(40);
   i = ACTOR_STATUE_A;
   do {
-    object = Actor_GetById(i);
-    object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    object->update = 0;
+    actor = Actor_GetById(i);
+    actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->update = 0;
   } while (++i <= ACTOR_STATUE_F);
   wait(3);
   Sound_Play(SE_THUMP);
@@ -481,11 +480,11 @@ void AnemosInnerSanctumEntrance_StartLightSprites(void) {
 }
 
 void LightSprites_Add(s32 id, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
-    object->timer = value;
-    gLightSpriteActors[gLightSpriteCount] = object;
+  if (actor != NULL) {
+    actor->timer = value;
+    gLightSpriteActors[gLightSpriteCount] = actor;
     gLightSpriteCount++;
   }
 }
@@ -501,35 +500,7 @@ void AnemosInnerSanctumEntrance_SetLightPicture(u16 value) {
 }
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The blue orb's rise: it grows and climbs for 40 frames.
 s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
@@ -596,10 +567,8 @@ LATE_DATA s32 gAnemosInnerSanctumEntrance_DragonStatueScript[] = {
     SC_END,
 };
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumEntrance),

@@ -1177,7 +1177,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                     gravity = 0;
                   else
                     gravity = -toFIXED(1) / 32;
-                  BattleEffectKernels_IntegrateVector3(r, 62, gravity);
+                  Particle_AdvanceWithGravity3D(r, 62, gravity);
                 }
                 r->variant -= 2;
               }
@@ -1193,7 +1193,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 drawFuncs.draw[(i / 2) & 1](
                     screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
                     point.x - n / 2, point.y - n, n, n * 2);
-                BattleEffectKernels_IntegrateVector3(p, 62, -toFIXED(1) / 32);
+                Particle_AdvanceWithGravity3D(p, 62, -toFIXED(1) / 32);
                 p->variant--;
               }
             }
@@ -1258,7 +1258,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               drawFuncs.draw[slot](
                   screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
                   point.x - n / 2, point.y - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector3(p, 62, 0);
+              Particle_AdvanceWithGravity3D(p, 62, 0);
               if (frame > i + 22) {
                 dx = (casterObject->x - p->x) >> 8;
                 dy = (casterObject->y + half - p->y) >> 8;
@@ -1291,7 +1291,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             point.x = point.x / 2;
             drawFuncs.draw[0](screen, buffer, point.x - 20, point.y - 32,
                               FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
+            Particle_AdvanceWithGravity3D(p, PARTICLE_DAMPING_NONE, 0);
             p->variant++;
           }
         }
@@ -1415,7 +1415,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                 point.x - SMOKE_PUFF_WIDTH / 2,
                                 point.y - SMOKE_PUFF_HEIGHT / 2,
                                 SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-              BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 16);
+              Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 16);
               p->variant++;
             }
           }
@@ -1532,7 +1532,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                   point.x - FLASH_BURST_WIDTH / 2,
                                   point.y - FLASH_BURST_HEIGHT / 2,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-                BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 16);
+                Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 16);
                 p->variant++;
               }
             }
@@ -1717,8 +1717,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                   point.x - FLASH_BURST_WIDTH / 2,
                                   point.y - FLASH_BURST_HEIGHT / 2,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-                BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE,
-                                                     toFIXED(1) / 16);
+                Particle_AdvanceWithGravity3D(p, PARTICLE_DAMPING_NONE,
+                                              toFIXED(1) / 16);
                 p->variant++;
               }
             }
@@ -1999,13 +1999,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                             FIXEDtoINT(p->y) - HAMMERSPHERE_BALL_HEIGHT,
                             HAMMERSPHERE_BALL_WIDTH, HAMMERSPHERE_BALL_HEIGHT);
           if (frame < 12)
-            BattleEffectKernels_IntegrateVector2(sparks, PARTICLE_DAMPING_NONE,
-                                                 0);
+            Particle_AdvanceWithGravity2D(sparks, PARTICLE_DAMPING_NONE, 0);
           else if (frame == 12)
             p->velocityY = -p->velocityY / 3;
           else if (frame < 13 || frame > 18)
-            BattleEffectKernels_IntegrateVector2(sparks, PARTICLE_DAMPING_NONE,
-                                                 toFIXED(1) / 4);
+            Particle_AdvanceWithGravity2D(sparks, PARTICLE_DAMPING_NONE,
+                                          toFIXED(1) / 4);
         }
         if (frame == 11) {
           Sound_PlayFar(SE_CLATTER);
@@ -2070,8 +2069,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 (FIXEDtoINT(particle->x)) - gPrism_ShardWidths[m] / 2,
                 (FIXEDtoINT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
-            BattleEffectKernels_IntegrateVector2(
-                particle, PARTICLE_DAMPING_NONE, toFIXED(1) / 8);
+            Particle_AdvanceWithGravity2D(particle, PARTICLE_DAMPING_NONE,
+                                          toFIXED(1) / 8);
             particle->variant += particle->z;
             if (particle->z > 1 && (frame & 1))
               particle->z--;
@@ -2133,7 +2132,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             top -= h / 2;
             drawFuncs.draw[0](screen, buffer + 0x83c + gSpire_ShardPictures[m],
                               left, top, w, h);
-            BattleEffectKernels_IntegrateVector2(particle, 63, toFIXED(1) / 2);
+            Particle_AdvanceWithGravity2D(particle, 63, toFIXED(1) / 2);
             particle->z += particle->velocityZ;
             if ((frame & 1) && particle->velocityZ > 0)
               particle->velocityZ--;
@@ -2584,8 +2583,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             point.x = point.x / 2;
             drawFuncs.draw[1](screen, buffer + m * 0x400, point.x - 16,
                               point.y - 16, FALLING_FLAME_WIDTH, 32);
-            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
-            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
+            Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
+            Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
             p->variant++;
           }
         }
@@ -2611,7 +2610,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                               point.x - FLASH_BURST_WIDTH / 2,
                               point.y - FLASH_BURST_HEIGHT / 2,
                               FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(p, 58, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity3D(p, 58, toFIXED(1) / 16);
             p->variant++;
           }
         }
@@ -2632,7 +2631,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                 point.x - SKULL_WIDTH / 2,
                                 point.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                                 SKULL_HEIGHT);
-          BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
+          Particle_AdvanceWithGravity3D(p, 60, 1 << ((i & 3) + 11));
           p->variant++;
         }
       } else if (kind == CASTING_IMPACT_IMPACT_FLASH_EDGE) {
@@ -2661,8 +2660,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                 point.x - SMOKE_PUFF_WIDTH / 2,
                                 point.y - SMOKE_PUFF_HEIGHT / 2,
                                 SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-              BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
-              BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
+              Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
+              Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
               p->variant++;
             }
           }
@@ -2694,9 +2693,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                       point.y - SMOKE_PUFF_HEIGHT / 2,
                                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
               if (kind == CASTING_IMPACT_IMPACT_ACID_BATH)
-                BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 64);
+                Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 64);
               else
-                BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 16);
+                Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 16);
               p->variant++;
             }
           }

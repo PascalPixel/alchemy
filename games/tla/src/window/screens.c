@@ -175,7 +175,7 @@ extern const u16 gSummon_Abilities[];
 
 /// The heading pair's bob (MenuTitle_Bob), in pixels, a step every four
 /// VBlanks.
-extern const u8 gWindow_PairBobOffsets[];
+extern const u8 gMenuTitleBobOffsets[];
 
 /// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];

@@ -73,7 +73,6 @@
 	export SpriteAnimation_Clear, SpriteAnimation_ClearFar
 	export Sprite_StartAnimation, Sprite_StartAnimationFar
 	export Sprite_AddAnimation, Sprite_AddAnimationFar
-	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export Actor_SelectAnimation, Actor_SelectAnimationFar
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
 	export TundariaTower_StartEffectScript, Actor_StartScriptFar
@@ -227,7 +226,7 @@
 	export BuildStamp_GetTime, BuildStamp_GetTimeFar
 	export Party_GetPpRatio, Party_GetPpRatioFar
 	export PartyInventory_FindRoom, PartyInventory_FindRoomFar
-	export Class_GetSeries, Class_GetSeriesFar
+	export Summon_Learn, Summon_LearnFar
 	export InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 	export FieldEvent_Wait, Event_WaitFar
 	export Inventory_ClearSlot, Inventory_ClearSlotFar
@@ -421,7 +420,7 @@
 	export Kibombo_CountAnswer, Event_CountAnswerFar
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
 	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
-	export MadraInteriors_CountAnswer, Event_CountAnswerFar
+	export MadraRooms_CountAnswer, Event_CountAnswerFar
 	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar

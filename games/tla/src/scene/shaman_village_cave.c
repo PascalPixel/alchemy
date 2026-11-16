@@ -129,19 +129,19 @@ void ShamanVillageCave_DropPillarIntoGap(s32 id);
 /// The pillar falls until it lands, or for a second, then vanishes into the
 /// gap it fills.
 void ShamanVillageCave_DropPillarIntoGap(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 frames = 60;
 
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   while (frames != 0) {
     System_Wait(1);
-    if (object->velocityY == 0)
+    if (actor->velocityY == 0)
       break;
     frames--;
   }
   System_Wait(10);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->motionFlags = 0;
 }
 
 /// Move on the brown pillar: its old cells open first.
@@ -152,12 +152,12 @@ void ShamanVillageCave_StartMovingPillar(void) {
 /// Pushed two spots to column 38, the pillar drops into the gap there and makes
 /// the shortcut (FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED).
 void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
-  s32 x = FIELD_CELL(object->x.fixed);
+  struct Actor *actor = Actor_Get(id);
+  s32 x = FIELD_CELL(actor->x.fixed);
 
   if (x == 38) {
     Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED);
-    object->priorityFlags = 0;
+    actor->priorityFlags = 0;
     ShamanVillageCave_DropPillarIntoGap(id);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, x, 19);
   }
@@ -166,11 +166,11 @@ void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
 
 /// Frost freezes the puddle into a pillar of ice.
 void ShamanVillageCave_FreezePuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_PUDDLE);
 
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
 
@@ -181,11 +181,11 @@ void ShamanVillageCave_FreezePuddle(void) {
 /// once; otherwise it slides two cells along z, one and then three along x
 /// away from the leader with a hop, and back along z.
 void ShamanVillageCave_EddyFlees(void) {
-  struct Actor *object = Actor_GetById(ACTOR_EDDY);
+  struct Actor *actor = Actor_GetById(ACTOR_EDDY);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 leaderX = leader->x.fixed >> 19;
   s32 leaderZ = leader->z.fixed >> 19;
-  s32 objectX = object->x.fixed >> 19;
+  s32 objectX = actor->x.fixed >> 19;
   s32 dx;
   s32 dz;
 
@@ -236,7 +236,7 @@ void ShamanVillageCave_EddyFlees(void) {
   Actor_SetDestinationOffset(ACTOR_EDDY, dx << 4, 0);
   FieldActor_WaitForMoveById(ACTOR_EDDY);
   Actor_SetDestinationOffset(ACTOR_EDDY, dx * 48, 0);
-  object->velocityY = toFIXED(8);
+  actor->velocityY = toFIXED(8);
   dz = -dz;
   FieldActor_WaitForMoveById(ACTOR_EDDY);
   Actor_SetDestinationOffset(ACTOR_EDDY, 0, dz);
@@ -253,10 +253,10 @@ void ShamanVillageCave_FightEddy(void) {
 
 /// An overgrowth's update once Whirlwind has blown it away: it settles, drawn
 /// at priority 2, and stops moving.
-s32 ShamanVillageCave_SettleOvergrowth(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
-  ((struct FieldSprite *)object->sprite)->priority = 2;
-  object->motionFlags = 0;
+s32 ShamanVillageCave_SettleOvergrowth(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
+  ((struct FieldSprite *)actor->sprite)->priority = 2;
+  actor->motionFlags = 0;
   return 0;
 }
 
@@ -640,16 +640,16 @@ void ShamanVillageCave_BeatColossoFans(void) {
 /// fades.
 void ShamanVillageCave_EnterPassage(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   u32 id;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   id = ACTOR_FIRST_PLACED;
   do {
-    object = Actor_Get(id);
-    if (object)
-      object->motionFlags = 0;
+    actor = Actor_Get(id);
+    if (actor)
+      actor->motionFlags = 0;
     id++;
   } while (id < 64);
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
@@ -664,7 +664,7 @@ void ShamanVillageCave_EnterPassage(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_OVERGROWTH_CLEARED))
@@ -675,23 +675,23 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(FLAG_DJINNI_HIDING(DJINNI_EDDY)))
     Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED)) {
-    object = Actor_Get(ACTOR_PILLAR);
-    object->motionFlags = 0;
-    object->priorityFlags = 0;
-    object->x.fixed = toFIXED(616);
-    object->y.fixed = 0;
-    Actor_SetSpriteFlags(object, 0);
+    actor = Actor_Get(ACTOR_PILLAR);
+    actor->motionFlags = 0;
+    actor->priorityFlags = 0;
+    actor->x.fixed = toFIXED(616);
+    actor->y.fixed = 0;
+    Actor_SetSpriteFlags(actor, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PUDDLE), 0);
   Actor_SetAnimation(ACTOR_PUDDLE, 1);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN)) {
-    object = Actor_Get(ACTOR_PUDDLE);
+    actor = Actor_Get(ACTOR_PUDDLE);
     Actor_SetAnimation(ACTOR_PUDDLE, 5);
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_PUDDLE), 0);
-    object->motionFlags = 0;
-    object->priorityFlags = 0;
-    object->y.fixed = 0;
+    actor->motionFlags = 0;
+    actor->priorityFlags = 0;
+    actor->y.fixed = 0;
     MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_06))
@@ -742,10 +742,7 @@ void ShamanVillageCave_JumpForward(void) {
   return;
 }
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillageCave),

@@ -112,11 +112,11 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
   if ((u32)side > 1) {
     u32 current;
 
-    current = work->resourceIds[1];
+    current = work->portraitPictures[1];
     side = 1;
     if (current != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (work->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
+      if (work->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
         return portrait;
     }
   }
@@ -132,8 +132,8 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
 
   // Recorded even when no sprite was free and WindowSprite_Create released
   // the VRAM slot.
-  work->resourceIds[side] = icon;
-  work->outputIds[side] = slot;
+  work->portraitPictures[side] = icon;
+  work->portraitSprites[side] = slot;
   return portrait;
 }
 
@@ -150,14 +150,14 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   if (id == -1)
     return;
   if (slot > 1) {
-    if (work->resourceIds[1] == id)
+    if (work->portraitPictures[1] == id)
       slot = 1;
-    else if (work->resourceIds[0] == id)
+    else if (work->portraitPictures[0] == id)
       slot = 0;
     else
       return;
   }
-  entry = work->outputIds[slot];
+  entry = work->portraitSprites[slot];
   Icon_LoadWithPalette(id, unused, &entry, &tile, PORTRAIT_PALETTE + slot, 1);
 }
 

@@ -416,15 +416,14 @@ s32 AnemosInnerSanctum_ClearScriptedActorSpriteFlags(s32 actorId) {
 
 /// A spark ring's orb: it circles its centre at its own speed while the
 /// radius shrinks a pixel a frame; 0 once it reaches the centre.
-s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
+s32 AnemosInnerSanctum_CircleOrb(struct Actor *actor) {
   FIXED radius;
 
-  object->timer += object->userValue;
-  SET_ACTOR_POSITION(object, object->bounce, object->gravity, toFIXED(152));
-  FieldVector_AddPolarOffsetFX(object->riseBaseY, object->timer,
-                               &object->x.fixed);
-  radius = object->riseBaseY - toFIXED(1);
-  object->riseBaseY = radius;
+  actor->timer += actor->userValue;
+  SET_ACTOR_POSITION(actor, actor->bounce, actor->gravity, toFIXED(152));
+  FieldVector_AddPolarOffsetFX(actor->riseBaseY, actor->timer, &actor->x.fixed);
+  radius = actor->riseBaseY - toFIXED(1);
+  actor->riseBaseY = radius;
   if (radius)
     return 1;
   return 0;
@@ -434,16 +433,16 @@ extern u32 gAnemosInnerSanctum_MoteScript[];
 
 /// Leaves a fading mote of the source's palette where the source is.
 void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
-  struct Actor *object = (FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
-                                            source->y.fixed, source->z.fixed));
+  struct Actor *actor = (FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
+                                           source->y.fixed, source->z.fixed));
 
-  object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, source->riseCounter);
-  Scene_SetActorSpritePriority(object, 2);
-  Actor_SelectAnimation(object, 1);
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gAnemosInnerSanctum_MoteScript);
-  Actor_SetBlendMode(object, 1);
+  actor->motionFlags = 0;
+  FieldActor_SetSpriteColor(actor, source->riseCounter);
+  Scene_SetActorSpritePriority(actor, 2);
+  Actor_SelectAnimation(actor, 1);
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_StartScript(actor, gAnemosInnerSanctum_MoteScript);
+  Actor_SetBlendMode(actor, 1);
 }
 
 /// A spark's update: two steps a frame along its spiral, closing in and
@@ -471,18 +470,18 @@ s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
 
 /// Puffs sparks of the actor's palette where it is, and copies the cell
 /// picture under its centre.
-s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
+s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *actor) {
   struct EffectOptions options;
   s32 x;
   s32 y;
 
   options.priority = 2;
-  options.palette = object->riseCounter;
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
+  options.palette = actor->riseCounter;
+  FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                     toFIXED(1), 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &options);
-  x = FIELD_CELL(object->bounce) + 64;
-  y = FIELD_CELL(object->gravity);
+  x = FIELD_CELL(actor->bounce) + 64;
+  y = FIELD_CELL(actor->gravity);
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
   return 0;
 }
@@ -856,10 +855,12 @@ void AnemosInnerSanctum_StartMovingBlock(void) {
                                 CELL_BEHAVIOR_WALL);
         Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360),
                                 CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(360), 232);
+        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(360),
+                                CELL_BEHAVIOR_SAND);
         Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632),
                                 CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(616), 232);
+        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(616),
+                                CELL_BEHAVIOR_SAND);
       }
     }
   }
@@ -881,15 +882,15 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
   x = leader->x.fixed >> 19;
   z = leader->z.fixed >> 19;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), CELL_BEHAVIOR_SAND);
     if (x != 8)
-      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(424), 232);
+      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(424), CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
     Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(344), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376), CELL_BEHAVIOR_SAND);
     Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632), CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR) {
     if (x == 37 && z == 31) {
@@ -943,7 +944,7 @@ extern s32 gAnemosInnerSanctum_TileGlowScript[];
 void AnemosInnerSanctum_StepOnTile(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object;
+  struct Actor *actor;
   s32 all;
   s32 i;
   s32 id;
@@ -955,18 +956,18 @@ void AnemosInnerSanctum_StepOnTile(void) {
     MapGrid_CopyCellsTo(54, 87, FIELD_CELL(leader->x.fixed),
                         FIELD_CELL(leader->z.fixed) + 64, 1, 1);
   Event_PlaySound(SE_DRIP);
-  object =
+  actor =
       FieldActor_Create(349, (FIELD_CELL(leader->x.fixed) << 20) + toFIXED(8),
                         0, (FIELD_CELL(leader->z.fixed) << 20) + toFIXED(8));
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, SPRITE_COLOR_GBR);
-  object->scaleY = FIXED_ONE * 11 / 8;
-  object->scaleX = FIXED_ONE * 11 / 8;
-  Scene_SetActorSpritePriority(object, 2);
-  Actor_SelectAnimation(object, 3);
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gAnemosInnerSanctum_TileGlowScript);
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->motionFlags = 0;
+  FieldActor_SetSpriteColor(actor, SPRITE_COLOR_GBR);
+  actor->scaleY = FIXED_ONE * 11 / 8;
+  actor->scaleX = FIXED_ONE * 11 / 8;
+  Scene_SetActorSpritePriority(actor, 2);
+  Actor_SelectAnimation(actor, 3);
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_StartScript(actor, gAnemosInnerSanctum_TileGlowScript);
   Event_SetFlag(work->stepTrigger - TRIGGER_FIRST_TILE + FLAG_SCENE_TEMP_00);
   all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
@@ -996,15 +997,15 @@ void AnemosInnerSanctum_StepOnTile(void) {
 /// upper exit.
 void AnemosInnerSanctum_RaisePlatform(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
-    object = Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE);
+    actor = Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE);
     FieldEvent_SetExitRequest(13);
   } else {
-    object = Actor_Get(ACTOR_ELEVATOR_STATUE);
+    actor = Actor_Get(ACTOR_ELEVATOR_STATUE);
     FieldEvent_SetExitRequest(11);
   }
   {
@@ -1015,18 +1016,18 @@ void AnemosInnerSanctum_RaisePlatform(void) {
   }
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  object->speedLimit = toFIXED(2);
-  object->acceleration = toFIXED(1) / 32;
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1) / 32;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  FieldActor_SetMoveTargetFX(object, object->x.fixed,
-                             object->y.fixed + toFIXED(4), object->z.fixed);
-  FieldActor_WaitForMove(object);
+  FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed + toFIXED(4),
+                             actor->z.fixed);
+  FieldActor_WaitForMove(actor);
   Scene_SetActorSpritePriority(leader, 1);
-  Scene_SetActorSpritePriority(object, 1);
-  FieldActor_SetMoveTargetFX(object, object->x.fixed,
-                             object->y.fixed + toFIXED(128), object->z.fixed);
+  Scene_SetActorSpritePriority(actor, 1);
+  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
+                             actor->y.fixed + toFIXED(128), actor->z.fixed);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1035,14 +1036,13 @@ void AnemosInnerSanctum_RaisePlatform(void) {
 
 /// Sand on a cell of behavior 232: the leader sinks into the layer below.
 void AnemosInnerSanctum_SinkIntoSand(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 behavior;
 
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  behavior =
-      FieldMapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  behavior = FieldMapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed);
   if (behavior == 232) {
-    object->layer = 2;
+    actor->layer = 2;
   }
 }
 
@@ -1074,15 +1074,15 @@ void AnemosInnerSanctum_PressFirstSwitch(void) {
 /// Stepping onto the second switch once the first is pressed: the first
 /// switch's actor sinks under it and the way opens.
 void AnemosInnerSanctum_PressSecondSwitch(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
+  actor = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->x.fixed = toFIXED(536);
-  object->z.fixed = toFIXED(360);
-  object->groundHeight = -toFIXED(14);
-  object->y.fixed = -toFIXED(14);
+  actor->x.fixed = toFIXED(536);
+  actor->z.fixed = toFIXED(360);
+  actor->groundHeight = -toFIXED(14);
+  actor->y.fixed = -toFIXED(14);
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
   Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
@@ -1095,13 +1095,13 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
   Event_End();
 }
 
-s32 CrackedTiles_Step();
+s32 CrackedTile_Step();
 
 #define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, exit)                        \
   void name(void) {                                                            \
     s32 fell;                                                                  \
                                                                                \
-    fell = CrackedTiles_Step();                                                \
+    fell = CrackedTile_Step();                                                 \
     if (fell != 0) {                                                           \
       FieldEvent_SetExitRequest(exit);                                         \
     }                                                                          \
@@ -1188,19 +1188,19 @@ void AnemosInnerSanctum_StartFastPaletteCycle(void);
 /// Stepping by a mimic stone in the guardian's room: the stone of the way
 /// the party came in by starts to follow the leader's steps.
 void AnemosInnerSanctum_StartFollower(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A)
-    object = Actor_Get(ACTOR_MIMIC_STONE_A);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_A);
   else if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_B)
-    object = Actor_Get(ACTOR_MIMIC_STONE_B);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
-    object = Actor_Get(ACTOR_MIMIC_STONE_C);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_C);
   if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].integer <= 247) {
-    object->motionFlags = 0;
-    object->update = AnemosInnerSanctum_FollowLeader;
-    object->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
-    object->acceleration = Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed;
+    actor->motionFlags = 0;
+    actor->update = AnemosInnerSanctum_FollowLeader;
+    actor->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
+    actor->acceleration = Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed;
     Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
@@ -1208,25 +1208,25 @@ void AnemosInnerSanctum_StartFollower(void) {
 /// A mimic stone reaches its hole: it settles into the middle of its cell in
 /// a cloud of dust and drops in.
 void AnemosInnerSanctum_RaiseDust(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *effect;
   struct FieldSprite *sprite;
   FIXED position[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A)
-    object = Actor_Get(ACTOR_MIMIC_STONE_A);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_A);
   else if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_B)
-    object = Actor_Get(ACTOR_MIMIC_STONE_B);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
-    object = Actor_Get(ACTOR_MIMIC_STONE_C);
-  position[0] = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position[2] = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  object->acceleration = toFIXED(1);
-  object->speedLimit = toFIXED(1);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_C);
+  position[0] = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[2] = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  actor->acceleration = toFIXED(1);
+  actor->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFX(object, position[0], 0, position[2]);
-  effect = OverlayObject_PrepareObject(object->x.fixed, 0,
+  FieldActor_SetMoveTargetFX(actor, position[0], 0, position[2]);
+  effect = OverlayObject_PrepareObject(actor->x.fixed, 0,
                                        position[2] + toFIXED(59), 286);
   effect->scaleX = FIXED_ONE * 3 / 2;
   effect->scaleY = FIXED_ONE * 3 / 2;
@@ -1236,11 +1236,11 @@ void AnemosInnerSanctum_RaiseDust(void) {
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Event_PlaySound(SE_DUST_PUFF);
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  OverlayObject_WaitUntilIdle(object);
-  object->x.fixed = 0;
-  object->y.fixed = 0;
-  object->z.fixed = 0;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  OverlayObject_WaitUntilIdle(actor);
+  actor->x.fixed = 0;
+  actor->y.fixed = 0;
+  actor->z.fixed = 0;
   Actor_SetPosition(ACTOR_MIMIC_STONE_A, 0, 0);
   Actor_Release(effect);
   Event_End();
@@ -1249,33 +1249,33 @@ void AnemosInnerSanctum_RaiseDust(void) {
 /// By the entrance taken, sets that entrance's flag, moves its actor to the
 /// middle of its cell and copies a cell picture column twice beside it.
 void AnemosInnerSanctum_MarkEntrance(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 column;
   FIXED target[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A) {
-    object = Actor_Get(ACTOR_MIMIC_STONE_A);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_A);
     Event_SetFlag(FLAG_MIMIC_STONE_A_DROPPED);
     column = 11;
   } else if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_B) {
-    object = Actor_Get(ACTOR_MIMIC_STONE_B);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_B);
     Event_SetFlag(FLAG_MIMIC_STONE_B_DROPPED);
     column = 26;
   } else {
-    object = Actor_Get(ACTOR_MIMIC_STONE_C);
+    actor = Actor_Get(ACTOR_MIMIC_STONE_C);
     Event_SetFlag(FLAG_MIMIC_STONE_C_DROPPED);
     column = 53;
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  target[0] = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  target[2] = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  object->acceleration = toFIXED(1);
-  object->speedLimit = toFIXED(1);
+  target[0] = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  target[2] = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  actor->acceleration = toFIXED(1);
+  actor->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFX(object, target[0], 0, target[2]);
-  FieldActor_WaitForMove(object);
+  FieldActor_SetMoveTargetFX(actor, target[0], 0, target[2]);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
@@ -1351,10 +1351,10 @@ void AnemosInnerSanctum_EnterTheRoom(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (i = ACTOR_FIRST_PLACED; (u32)i <= 63; i++) {
-    struct Actor *object = Actor_Get(i);
+    struct Actor *actor = Actor_Get(i);
 
-    if (object != NULL)
-      object->motionFlags = 0;
+    if (actor != NULL)
+      actor->motionFlags = 0;
   }
   Event_PlaySound(SE_DOOR_OPEN);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
@@ -1379,45 +1379,45 @@ void AnemosInnerSanctum_EnterTheRoom(void) {
 /// Entering the elevator room on its statue: the statue rises 48 pixels with
 /// the leader on it, up to the floor.
 void AnemosInnerSanctum_RaiseFirstStatue(void) {
-  struct Actor *object = Actor_Get(ACTOR_ELEVATOR_STATUE);
+  struct Actor *actor = Actor_Get(ACTOR_ELEVATOR_STATUE);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
-  object->y.fixed = -toFIXED(64);
+  actor->y.fixed = -toFIXED(64);
   Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  object->acceleration = toFIXED(1);
-  object->speedLimit = toFIXED(1);
-  FieldActor_SetMoveTargetFX(object, object->x.fixed,
-                             object->y.fixed + toFIXED(48), object->z.fixed);
-  FieldActor_WaitForMove(object);
+  actor->acceleration = toFIXED(1);
+  actor->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
+                             actor->y.fixed + toFIXED(48), actor->z.fixed);
+  FieldActor_WaitForMove(actor);
   Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
 }
 
 /// As AnemosInnerSanctum_RaiseFirstStatue, on the guardian room's statue.
 void AnemosInnerSanctum_RaiseSecondStatue(void) {
-  struct Actor *object = Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE);
+  struct Actor *actor = Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->motionFlags = 0;
-  object->y.fixed = -toFIXED(64);
+  actor->motionFlags = 0;
+  actor->y.fixed = -toFIXED(64);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  object->acceleration = toFIXED(1);
-  object->speedLimit = toFIXED(1);
-  FieldActor_SetMoveTargetFX(object, object->x.fixed,
-                             object->y.fixed + toFIXED(48), object->z.fixed);
-  FieldActor_WaitForMove(object);
+  actor->acceleration = toFIXED(1);
+  actor->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
+                             actor->y.fixed + toFIXED(48), actor->z.fixed);
+  FieldActor_WaitForMove(actor);
   Event_SetFlag(FLAG_AREA_TEMP_04);
   Event_End();
 }
 
-s32 CrackedTiles_Find();
+s32 CrackedTile_Find();
 extern s16 gAnemosInnerSanctum_PaletteSlots[];
 extern s16 gAnemosInnerSanctum_PaletteColors[];
 extern s16 gAnemosInnerSanctum_DimColors[];
@@ -1535,7 +1535,7 @@ s32 Scene_Initialize(void) {
     nearStairs = (u16)gMainRoutineWork.entrance;
     entrance = gMainRoutineWork.entrance;
     if (entrance == 1) {
-      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
         Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
             ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
@@ -1569,14 +1569,14 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_SCENE_TEMP_06))
         MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
     } else if (entrance == 11) {
-      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       CrackedTile_PlaceLanding(22, 0, FLAG_SCENE_TEMP_04);
     } else if (entrance == 12) {
-      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
         CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
     } else if ((u32)((nearStairs - 4) << 16) <= 0x10000) {
-      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1660,7 +1660,7 @@ void Effect_MoveLocal(union FieldObject *object) {
 }
 
 extern s32 gFieldEffect_DurationScripts[];
-void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
+void Actor_SetSpritePriorityB(struct Actor *actor, s32 priority);
 /// As FieldEffect_Spawn, the effect taking the leader's sprite priority and
 /// moved by Effect_MoveLocal.
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1739,7 +1739,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -1747,7 +1747,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -1817,7 +1817,7 @@ void CrackedTile_DropIn(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
@@ -1942,35 +1942,7 @@ s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
     {32, 16}, {-48, 32}, {48, 32}, {-16, 32}, {16, 32},
 };
 
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 s32 gAnemosInnerSanctum_DurationScripts[] = {
     (s32)gAnemosInnerSanctum_ShortScript,
@@ -2004,10 +1976,7 @@ s32 gAnemosInnerSanctum_StatueScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumDragonSkinChest),

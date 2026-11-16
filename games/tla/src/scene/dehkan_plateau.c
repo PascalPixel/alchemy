@@ -4,7 +4,7 @@
 /// the first step on a crack opens it, the next drops the leader through to the
 /// cave below (DehkanPlateau_StepOnCrack), and each room puts back the cracks
 /// its flags remember (DehkanPlateau_RestoreFullMetalVestChestCracks). Grey
-/// pillars crumble once stood on (CrumblingPillars_Step), and the Mars Djinni
+/// pillars crumble once stood on (CrumblingPillar_Step), and the Mars Djinni
 /// Cannon runs ahead of the party room by room, cracking floors, crumbling
 /// pillars and casting Pound (DehkanPlateau_CannonCrumblesPillars), until a
 /// fall lands the leader beside it and it drops the Pound Cube
@@ -65,7 +65,7 @@
 #define FLAG_TIGHTROPES_SECOND_PILLAR_PLACED 0x841
 
 // Each room's actors, numbering its placement table. A room's grey pillars
-// crumble once stood on (CrumblingPillars_Step), its Pound pillars sink when
+// crumble once stood on (CrumblingPillar_Step), its Pound pillars sink when
 // Pounded (Pound_SinkTarget), and its stone pillars are Moved. The covers are
 // blank actors over the scenery the leader walks behind, which
 // DehkanPlateau_SetActorsHidden shows and hides. Chests number from 64.
@@ -176,9 +176,9 @@ extern s16 gDehkanPlateau_FullMetalVestChestCrumblingPillars[];
 extern struct Actor *gDehkanPlateau_PoundCube;
 void DehkanPlateau_LeaveConeCell(void);
 void DehkanPlateau_ForgetFall(void);
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
-#include "shared/crumbling_pillars.h"
+#include "shared/crumbling_pillar.h"
 
 #include "../field/field_effect_advance_motion_priority.c"
 
@@ -190,9 +190,9 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-#include "shared/pillars_raise.h"
+#include "shared/pillar_raise.h"
 
-#include "shared/pillars_lower_held_cells.h"
+#include "shared/pillar_lower_held_cells.h"
 
 #include "shared/held_actor_raise_cell.h"
 
@@ -291,7 +291,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Stepping onto one of the first room's grey pillars, each of which can be
 /// stood on only once before it crumbles.
 void DehkanPlateau_StepOnFullMetalVestChestPillars(void) {
-  CrumblingPillars_Step(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
+  CrumblingPillar_Step(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
 }
 
 /// Gives the cells by room 2's four crumbling pillars still standing the
@@ -312,7 +312,7 @@ void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void) {
 void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
   FIXED y;
 
-  CrumblingPillars_StepWithStandIn(
+  CrumblingPillar_StepWithStandIn(
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
@@ -334,7 +334,7 @@ void DehkanPlateau_SetTightropesStandingPillarCells(void) {
 /// Stepping onto one of the third room's grey pillars; below the ledge the
 /// leader is drawn behind it.
 void DehkanPlateau_StepOnTightropesPillars(void) {
-  CrumblingPillars_Step(gDehkanPlateau_TightropesCrumblingPillars);
+  CrumblingPillar_Step(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
   if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -toFIXED(24)) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
@@ -348,7 +348,7 @@ void DehkanPlateau_StepOnTightropesPillars(void) {
 void DehkanPlateau_StepOnCannonPillar(void) {
   FIXED y;
 
-  CrumblingPillars_Step(gDehkanPlateau_CannonCrumblingPillar);
+  CrumblingPillar_Step(gDehkanPlateau_CannonCrumblingPillar);
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
   if (y < toFIXED(24))
     DehkanPlateau_LeaveConeCell();
@@ -388,19 +388,7 @@ void DehkanPlateau_ShowActors(void) {
   GameFlag_Clear(FLAG_ACTORS_HIDDEN);
 }
 
-/// Sets or clears bit 0x10 of count actors' priority flags from first.
-void Actors_SetHidden(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
-    else
-      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
-  }
-}
+#include "shared/actors_set_hidden.c"
 
 /// Pound on the first room's Pound pillar: it sinks into the ground.
 void DehkanPlateau_PoundFullMetalVestChestPillar(s32 a, s32 b) {
@@ -432,14 +420,14 @@ void DehkanPlateau_PoundCannonPillar(s32 a, s32 b) {
 /// Move on the first room's stone pillar: once it stands at the gap's edge it
 /// drops in and stays (FLAG_AREA_TEMP_01).
 void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
+  struct Actor *actor = Actor_GetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
   s32 x;
 
-  x = FIELD_CELL(object->x.fixed);
-  if (x == 56 && FIELD_CELL(object->z.fixed) == 32) {
+  x = FIELD_CELL(actor->x.fixed);
+  if (x == 56 && FIELD_CELL(actor->z.fixed) == 32) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_DropAndWait(object);
+    Actor_DropAndWait(actor);
     Map_CopyCellAttributeRect(54, 32, 2, 1, x, 64);
     GameFlag_Set(FLAG_AREA_TEMP_01);
     Event_End();
@@ -454,8 +442,8 @@ void DehkanPlateau_LiftThemisAxeChestPillar(void) {
 /// Move lets go of the second room's stone pillar: at the gap it drops in for
 /// good (FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED).
 void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
-  struct Actor *object = Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
-  s32 x = FIELD_CELL(object->x.fixed);
+  struct Actor *actor = Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
+  s32 x = FIELD_CELL(actor->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 52) {
@@ -463,7 +451,7 @@ void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(51, 7, 1, 1, x, 7);
     wait(1);
-    Actor_DropAndWait(object);
+    Actor_DropAndWait(actor);
     Map_CopyCellAttributeRect(50, 7, 1, 1, x, 7);
     GameFlag_Set(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED);
     Event_End();
@@ -477,8 +465,8 @@ void DehkanPlateau_LiftTightropesPillar(void) {
 
 /// Move lets go of the third room's stone pillar: at the gap it drops in.
 void DehkanPlateau_PlaceTightropesPillar(void) {
-  struct Actor *object = Actor_GetById(ACTOR_TIGHTROPES_PILLAR);
-  s32 x = FIELD_CELL(object->x.fixed);
+  struct Actor *actor = Actor_GetById(ACTOR_TIGHTROPES_PILLAR);
+  s32 x = FIELD_CELL(actor->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 47) {
@@ -486,7 +474,7 @@ void DehkanPlateau_PlaceTightropesPillar(void) {
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(47, 12, 1, 1, x, 13);
     wait(1);
-    Actor_DropAndWait(object);
+    Actor_DropAndWait(actor);
     Map_CopyCellAttributeRect(50, 16, 1, 1, x, 13);
     Actor_SetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
     Event_End();
@@ -631,7 +619,7 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
   }
 }
 
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *actor, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
 s32 gDehkanPlateau_CrackZ BSS_DATA;
@@ -833,12 +821,12 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 /// The third and fifth rooms' task: once the leader steps off the crack he
 /// opened, it can be stepped on again.
 void DehkanPlateau_ForgetCrackOnLeaving(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Flag_Test(FLAG_STANDING_ON_OPENED_CRACK) != 0) {
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (gDehkanPlateau_CrackX != FIELD_CELL(object->x.fixed) ||
-        gDehkanPlateau_CrackZ != FIELD_CELL(object->z.fixed))
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (gDehkanPlateau_CrackX != FIELD_CELL(actor->x.fixed) ||
+        gDehkanPlateau_CrackZ != FIELD_CELL(actor->z.fixed))
       GameFlag_Clear(FLAG_STANDING_ON_OPENED_CRACK);
   }
 }
@@ -904,27 +892,27 @@ void DehkanPlateau_HideCannonActors(void) {
 /// Sets the cells under a raised pillar of the third room once it is pushed:
 /// off the ledge at column 12 it drops to the ground below, and at columns 18,
 /// 54 and 55 it bridges the way.
-void DehkanPlateau_PlaceRaisedPillar(struct Actor *object) {
+void DehkanPlateau_PlaceRaisedPillar(struct Actor *actor) {
   s32 x;
   struct MapCell *cell;
 
-  HeldActor_RaiseCell(object);
-  x = FIELD_CELL(object->x.fixed);
+  HeldActor_RaiseCell(actor);
+  x = FIELD_CELL(actor->x.fixed);
   if (x == 12) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Map_CopyCellAttributeRect(0, 32, 1, 1, x, 11);
     wait(1);
-    Actor_DropAndWait(object);
+    Actor_DropAndWait(actor);
     Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
     Event_End();
   } else if (x == 18) {
     cell = Ram_HeapSlots->mapGrid->layers[0].cells;
-    cell += Actor_GetCellIndex(object);
+    cell += Actor_GetCellIndex(actor);
     cell->attributeB &= 0x7f;
   } else if (x == 54) {
     cell = Ram_HeapSlots->mapGrid->layers[0].cells;
-    cell += Actor_GetCellIndex(object);
+    cell += Actor_GetCellIndex(actor);
     cell->attributeB &= 0x7f;
     cell->collisionCode = 11;
   } else if (x == 55) {
@@ -937,20 +925,20 @@ extern s16 gDehkanPlateau_TightropesRaisedPillars[];
 
 /// Walking into one of the third room's raised pillars pushes it a cell on.
 void DehkanPlateau_PushRaisedPillar(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Leader_CanPushObjectAhead() != 0) {
-    object = Actor_GetById(
+    actor = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
-    Pillars_LowerHeldCells(gDehkanPlateau_TightropesRaisedPillars);
+    Pillar_LowerHeldCells(gDehkanPlateau_TightropesRaisedPillars);
     Leader_PushObjectAhead();
-    DehkanPlateau_PlaceRaisedPillar(object);
+    DehkanPlateau_PlaceRaisedPillar(actor);
   }
 }
 
 /// Move takes hold of one of the third room's raised pillars.
 void DehkanPlateau_LiftTightropesRaisedPillar(void) {
-  Pillars_LowerHeldCells(gDehkanPlateau_TightropesRaisedPillars);
+  Pillar_LowerHeldCells(gDehkanPlateau_TightropesRaisedPillars);
 }
 
 /// Move lets go of one of the third room's raised pillars.
@@ -987,13 +975,13 @@ void DehkanPlateau_LeaveConeCell(void) {
 /// Jolts the camera down eight pixels and back over eight frames, as the ground
 /// gives way.
 void DehkanPlateau_JoltCamera(void) {
-  struct Actor *object = FieldCamera_GetActor();
+  struct Actor *actor = FieldCamera_GetActor();
   u32 i;
 
-  object->y.fixed -= toFIXED(8);
+  actor->y.fixed -= toFIXED(8);
   wait(1);
   for (i = 0; i <= 7; i++) {
-    object->y.fixed += toFIXED(1);
+    actor->y.fixed += toFIXED(1);
     wait(1);
   }
 }
@@ -1119,16 +1107,16 @@ void DehkanPlateau_CannonPoundsPillar(void) {
 /// once the Psynergy ends it is down for good.
 void DehkanPlateau_SinkPoundedPillar(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
+  struct Actor *actor = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
 
   if (work->frame != -1 && work->frame <= 7)
-    object->scaleY += -(FIXED_ONE * 31 / 256);
+    actor->scaleY += -(FIXED_ONE * 31 / 256);
   if (work->stage != 0) {
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 4);
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->collisionFlags &= ~ACTOR_SOLID;
-    object->scaleY = FIXED_ONE;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    actor->scaleY = FIXED_ONE;
     GameFlag_Set(FLAG_TIGHTROPES_PILLAR_POUNDED);
   }
 }
@@ -1177,23 +1165,23 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   leader = Actor_GetById(center);
   frame = 0;
   for (i = 0; i <= 7; i++) {
-    struct Actor *object;
+    struct Actor *actor;
     struct FieldEffect *effect;
 
     y = leader->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
-    object = ((struct Actor *)Import_ActorCreate(
+    actor = ((struct Actor *)Import_ActorCreate(
         SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - FIXED_ONE * 8,
         y - FIXED_ONE * 2, leader->z.fixed));
-    if (object != NULL) {
-      effect = (struct FieldEffect *)object;
+    if (actor != NULL) {
+      effect = (struct FieldEffect *)actor;
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
-      object->motionFlags = 0;
-      object->collisionFlags = 0;
-      Actor_SetSpriteFlags(object, 0);
-      Actor_SelectAnimation(object, 2);
-      Actor_StartScript(object, gDehkanPlateau_DustScript);
-      object->scaleX = FIXED_ONE * 7 / 10;
-      object->scaleY = FIXED_ONE * 7 / 10;
+      actor->motionFlags = 0;
+      actor->collisionFlags = 0;
+      Actor_SetSpriteFlags(actor, 0);
+      Actor_SelectAnimation(actor, 2);
+      Actor_StartScript(actor, gDehkanPlateau_DustScript);
+      actor->scaleX = FIXED_ONE * 7 / 10;
+      actor->scaleY = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       effect->velocity.x = 0;
       effect->velocity.z = 0;
@@ -1362,7 +1350,7 @@ void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_End();
 }
 
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *actor, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
 /// The leader lands beside Cannon in the fifth room; startled, he drops the
@@ -1551,10 +1539,10 @@ void DehkanPlateau_KeepPriorityWithLeader(void) {
 /// Sets up the first room: its pillars, the stone pillar already in the gap,
 /// its cracks and covers, and the chest's task.
 void DehkanPlateau_InitializeFullMetalVestChest(void) {
-  CrumblingPillars_Place(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
+  CrumblingPillar_Place(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
   Actor_SetSpritePriority(ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR,
                           3);
-  Pillars_Place(gDehkanPlateau_FullMetalVestChestPoundPillars);
+  Pillar_Place(gDehkanPlateau_FullMetalVestChestPoundPillars);
   Actor_DisableById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
   if (GameFlag_Get(FLAG_AREA_TEMP_01) != 0) {
     MapGrid_CopyCellAttributes(54, 32, 2, 1, 56, 64);
@@ -1584,10 +1572,10 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
           ACTOR_PRIORITY_AUTOMATIC;
     }
   }
-  CrumblingPillars_PlaceWithStandIns(
+  CrumblingPillar_PlaceWithStandIns(
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
-  Pillars_Place(gDehkanPlateau_ThemisAxeChestPoundPillars);
+  Pillar_Place(gDehkanPlateau_ThemisAxeChestPoundPillars);
   if (GameFlag_Get(FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED) != 0) {
     Actor_DisableById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
     MapGrid_CopyCellAttributes(50, 7, 1, 1, 52, 7);
@@ -1621,7 +1609,7 @@ void DehkanPlateau_ForgetCrackOnLeaving(void);
 /// DehkanPlateau_InitializePoundCube: sets actors' variants, links, cells and
 /// flags for the room.
 void DehkanPlateau_InitializeTightropes(void) {
-  struct Actor *object;
+  struct Actor *actor;
   FIXED zero, value;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1670,7 +1658,7 @@ void DehkanPlateau_InitializeTightropes(void) {
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_GetById(ACTOR_TIGHTROPES_FOURTH_RAISED_PILLAR)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
-  Pillars_Raise(gDehkanPlateau_TightropesRaisedPillars);
+  Pillar_Raise(gDehkanPlateau_TightropesRaisedPillars);
   {
     struct Actor *pillar = Actor_GetById(ACTOR_TIGHTROPES_FOURTH_RAISED_PILLAR);
 
@@ -1695,11 +1683,11 @@ void DehkanPlateau_InitializeTightropes(void) {
   }
   Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 3);
   if (GameFlag_Get(FLAG_CANNON_POUNDED_PILLAR) != 0) {
-    object = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
+    actor = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 4);
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->collisionFlags &= ~ACTOR_SOLID;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->collisionFlags &= ~ACTOR_SOLID;
     GameFlag_Set(FLAG_TIGHTROPES_PILLAR_POUNDED);
     GameFlag_Set(FLAG_SCENE_TEMP_41);
     MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
@@ -1715,7 +1703,7 @@ void DehkanPlateau_InitializeTightropes(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_16);
     Actor_SetPosition(ACTOR_TIGHTROPES_CANNON, 0, 0);
   }
-  CrumblingPillars_Place(gDehkanPlateau_TightropesCrumblingPillars);
+  CrumblingPillar_Place(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
   DehkanPlateau_HideTightropesActors();
   {
@@ -1903,7 +1891,7 @@ void DehkanPlateau_InitializePoundCube(void) {
       }
     }
   }
-  Pillars_Place(gDehkanPlateau_PoundCubePoundPillars);
+  Pillar_Place(gDehkanPlateau_PoundCubePoundPillars);
   DehkanPlateau_RestorePoundCubeCracks();
   entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
@@ -1931,18 +1919,18 @@ void DehkanPlateau_InitializePoundCube(void) {
 void DehkanPlateau_CreatePoundCube(void) {
   struct Actor **slot = &gDehkanPlateau_PoundCube;
   s32 zero = 0;
-  struct Actor *object =
+  struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_UNSEEN_MARKER, 0, 0, 0));
 
-  *slot = object;
-  if (object != 0) {
-    struct FieldSprite *sprite = object->sprite;
+  *slot = actor;
+  if (actor != 0) {
+    struct FieldSprite *sprite = actor->sprite;
     u8 *buffer;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
-    object->motionFlags = zero;
-    object->retainSpriteCache = 1;
+    actor->motionFlags = zero;
+    actor->retainSpriteCache = 1;
     sprite->flags = zero;
     sprite->countAndShadow[0] = zero;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -1960,8 +1948,8 @@ void DehkanPlateau_InitializeCannon(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_CANNON)) != 0)
     GameFlag_Set(FLAG_CANNON_MET);
-  Pillars_Place(gDehkanPlateau_CannonPoundPillars);
-  CrumblingPillars_Place(gDehkanPlateau_CannonCrumblingPillar);
+  Pillar_Place(gDehkanPlateau_CannonPoundPillars);
+  CrumblingPillar_Place(gDehkanPlateau_CannonCrumblingPillar);
   if (GameFlag_Get(FLAG_CONE_POUNDED) == 0) {
     DehkanPlateau_EnterConeCell();
     wait(10);
@@ -1997,35 +1985,7 @@ u32 gRubble_BurstScript[] = {
     SC_RELEASE,
 };
 
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The puffs of dust a crumbling pillar raises.
 u32 gDehkanPlateau_DustScript[] = {

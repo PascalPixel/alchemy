@@ -24,10 +24,10 @@ Field_KibomboHouses:
 	.incbin "games/tla/src/map/kibombo_houses/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_KibomboHouses_ANIMATION:
-	.incbin "games/tla/src/map/naribwe_interiors/animation.script.lz"
+	.incbin "games/tla/src/map/naribwe_rooms/animation.script.lz"
 	.balign 4, 0
 .LField_KibomboHouses_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
+	.incbin "games/tla/src/map/daila_rooms_houses/blend.script.lz"
 	.balign 4, 0
 .LField_KibomboHouses_SCENE:
 	.incbin "games/tla/src/map/kibombo_houses/scene.scene.lz"

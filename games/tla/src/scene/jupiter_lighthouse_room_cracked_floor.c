@@ -79,7 +79,6 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StepOffButton(void);
 void JupiterLighthouse_FinishMovingBlock(void);
 void MapGrid_SetAttributeBAt();
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void MapGrid_SetCellHeight();
 
@@ -101,7 +100,7 @@ void JupiterLighthouse_LoadPalettes(s32 value);
 /// the party falls to the room below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(value))
+      CrackedTile_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
@@ -109,7 +108,7 @@ void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
 /// the party falls to the room below (exit 14).
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(value))
+      CrackedTile_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
@@ -135,10 +134,10 @@ void JupiterLighthouse_CloseDoor(void) {
 
 /// The shortcut pillar moved onto cell (4, 37) holds the door open for good.
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_SHORTCUT_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED) &&
-      FIELD_CELL(object->x.fixed) == 4 && FIELD_CELL(object->z.fixed) == 37) {
+      FIELD_CELL(actor->x.fixed) == 4 && FIELD_CELL(actor->z.fixed) == 37) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -162,12 +161,7 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
-/// Move sets the shortcut pillar down: on the button's cell it holds the door
-/// open.
-void JupiterLighthouse_FinishMovingBlock(void) {
-  System_Wait(10);
-  JupiterLighthouse_CheckBlockOnCell();
-}
+#include "shared/jupiter_lighthouse_finish_moving_block.c"
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
@@ -195,9 +189,9 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
+    CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
   } else {
-    CrackedTiles_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
+    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
     CrackedTile_PlaceLanding(
         21, -3,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -228,20 +222,18 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 /// Unused: holds an actor 32 pixels above its ground, without gravity.
 UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
-                        (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + toFIXED(32);
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader.h"
@@ -250,7 +242,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
 
 extern s32 gWhirlwindEndScript[];
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -258,36 +250,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Raises a whirlwind eight pixels in front of an actor, moving along its
-/// facing (Whirlwind_Update), with a burst of light. Returns it.
-struct Actor *Whirlwind_Spawn(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *object;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Import_ActorSelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-  return object;
-}
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks.h"
 
@@ -317,31 +280,9 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 void JupiterLighthouse_StepOnButton(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomCrackedFloor),
@@ -430,27 +371,25 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -476,6 +415,6 @@ void JupiterLighthouse_FinishMovingBlock(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

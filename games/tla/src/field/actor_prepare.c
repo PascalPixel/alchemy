@@ -17,16 +17,16 @@
 /// drawing priority 0, still, skipped by target searches, with no outline or
 /// shadow, all black (SPRITE_COLOR_BLACK) and blended.
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = Import_ActorCreate(type, x, y, z);
+  struct Actor *actor = Import_ActorCreate(type, x, y, z);
 
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 0);
-    object->motionFlags = 0;
-    object->collisionFlags = 8;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, 14);
-    Actor_SetBlendMode(object, 1);
-    return object;
+  if (actor != NULL) {
+    Scene_SetActorSpritePriority(actor, 0);
+    actor->motionFlags = 0;
+    actor->collisionFlags = 8;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteColor(actor, 14);
+    Actor_SetBlendMode(actor, 1);
+    return actor;
   }
   return NULL;
 }

@@ -5,7 +5,7 @@
 /// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
 /// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
 /// (IzumoRuins_FinishMovingPillar), grey pillars crumble under a second step
-/// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
+/// (shared/crumbling_pillar.h), and Parch dries the pool before the room of
 /// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
 #include "field/field_sequence.h"
@@ -28,7 +28,7 @@ extern u8 gMapGridCellBuffer[];
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
-void IzumoRuins_ShowPillarState(struct Actor *object);
+void IzumoRuins_ShowPillarState(struct Actor *actor);
 void Event_End(void);
 void Actor_DisableById(s32 id);
 void FlagBlock_ApplyFlags(const void *data);
@@ -52,7 +52,7 @@ void IzumoRuins_PlacePillars(u16 *list);
 void Rubble_Spray(s32 mode);
 void Rubble_Burst(void);
 void MapGrid_CenterOnFollowedPoint(void);
-s32 Actor_GetCellIndex(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *actor);
 void Actor_PlaceBlocks(const void *data);
 void FieldEffect_StartBlankOverlay(s32 value);
 void FlagBlock_PlaceAll(const void *data);
@@ -83,7 +83,7 @@ void Leader_SetCellShapeAt(s32 level, s32 layer);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-#include "shared/crumbling_pillars.h"
+#include "shared/crumbling_pillar.h"
 
 #include "../field/field_effect_advance_motion_priority.c"
 
@@ -161,25 +161,24 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 /// set, the upper layer's cell is marked 0xff in its high byte, the lower
 /// cell loses bit 7, the height drops 4 when the object's ground height is not
 /// the map's and the sprite takes priority 3; clear, the upper cell's high byte
-/// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
-/// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
-/// are written back and MapGrid_SetCellHeight is given the cell's position and
-/// height.
-void IzumoRuins_ShowPillarState(struct Actor *object) {
-  s32 column = FIELD_CELL(object->x.fixed);
-  s32 row = FIELD_CELL(object->z.fixed);
+/// becomes CELL_BEHAVIOR_SAND where the lower cell's is that too, and 0xff
+/// otherwise, the lower cell gains bit 7, the height rises 4 and the sprite
+/// takes priority 2. Both cells are written back and MapGrid_SetCellHeight is
+/// given the cell's position and height.
+void IzumoRuins_ShowPillarState(struct Actor *actor) {
+  s32 column = FIELD_CELL(actor->x.fixed);
+  s32 row = FIELD_CELL(actor->z.fixed);
   s32 lower = MapGrid_GetCellWord(0, column, row);
   s32 upper = MapGrid_GetCellWord(2, column, row);
   s32 height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
-      19;
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
 
-  if (Event_GetFlag(object->timer)) {
+  if (Event_GetFlag(actor->timer)) {
     upper |= 0xff00;
     lower &= ~0x80;
-    if (object->groundHeight >> 19 != height)
+    if (actor->groundHeight >> 19 != height)
       height -= 4;
-    Scene_SetActorSpritePriority((struct Actor *)object, 3);
+    Scene_SetActorSpritePriority((struct Actor *)actor, 3);
   } else {
     if (lower >> 8 != 232)
       upper = (upper & 0xff) | 0xff00;
@@ -187,28 +186,28 @@ void IzumoRuins_ShowPillarState(struct Actor *object) {
       upper = (upper & 0xff) | (232 << 8);
     lower |= 0x80;
     height += 4;
-    Scene_SetActorSpritePriority((struct Actor *)object, 2);
+    Scene_SetActorSpritePriority((struct Actor *)actor, 2);
   }
   MapGrid_SetCellWord(0, column, row, lower);
   MapGrid_SetCellWord(2, column, row, upper);
-  MapGrid_SetCellHeight(column << 20, row << 20, object->layer, height);
+  MapGrid_SetCellHeight(column << 20, row << 20, actor->layer, height);
 }
 
 /// Places Pound's pillars from a list of rows (actor, unused, flag), ended by
 /// 0xffff: each shows its sunk or standing state by its flag.
 void IzumoRuins_PlacePillars(u16 *list) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 flag;
 
   while (list[0] != 0xffff) {
-    object = Actor_Get(list[0]);
+    actor = Actor_Get(list[0]);
     flag = (s16)list[2];
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SelectAnimation(object, Event_GetFlag((u16)flag) + 1);
-    object->motionFlags = 0;
-    object->collisionFlags &= ~ACTOR_SOLID;
-    object->timer = flag;
-    IzumoRuins_ShowPillarState(object);
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SelectAnimation(actor, Event_GetFlag((u16)flag) + 1);
+    actor->motionFlags = 0;
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    actor->timer = flag;
+    IzumoRuins_ShowPillarState(actor);
     list += 3;
   }
 }
@@ -256,25 +255,25 @@ void IzumoRuins_PoundPillar(s32 mode, s32 target) {
 /// Frost on a puddle: it becomes an ice pillar, drawn by the cells under it.
 void IzumoRuins_FreezePuddle(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
-  object = work->movedBlock;
-  object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  actor = work->movedBlock;
+  actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Event_End();
 }
 
-/// Where the cell under the leader is sand (232 in its high byte), the leader
-/// walks on the upper layer, in the sand.
+/// Where the cell under the leader is sand (CELL_BEHAVIOR_SAND in its high
+/// byte), the leader walks on the upper layer, in the sand.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
                                  FIELD_CELL(leader->z.fixed));
 
-  if (cell >> 8 == 232)
+  if (cell >> 8 == CELL_BEHAVIOR_SAND)
     leader->layer = 2;
 }
 
@@ -333,7 +332,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Returns 0.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
   work->transition =
@@ -358,11 +357,11 @@ s32 Scene_Initialize(void) {
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-        object = Actor_Get(gMainRoutineWork.leaderActorId);
-        height = Map_GetTerrainHeight(object->layer, object->x.fixed,
-                                      object->z.fixed - object->y.fixed);
-        object->groundHeight = height;
-        object->y.fixed = height;
+        actor = Actor_Get(gMainRoutineWork.leaderActorId);
+        height = Map_GetTerrainHeight(actor->layer, actor->x.fixed,
+                                      actor->z.fixed - actor->y.fixed);
+        actor->groundHeight = height;
+        actor->y.fixed = height;
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
     }
@@ -384,26 +383,7 @@ u32 gRubble_BurstScript[] = {
     SC_RELEASE,
 };
 
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 /// The pillars Move can lift in each room, ended by -1.
 s16 gIzumoRuins_FirstRoomMovablePillars[] = {
@@ -443,10 +423,7 @@ s16 gIzumoRuins_Puddles[] = {
     -1,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gIzumoRuins_FirstRoomRegions[] = {
     0x2c00d0, 0xe002f0, 0x300003c, 0x1ffff, 0xffff, 0,

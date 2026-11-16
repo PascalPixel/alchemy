@@ -48,8 +48,8 @@ extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
 extern struct MapCell gMapGridCellBuffer[];
 
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+void Scene_SetActorSpritePriority(struct Actor *actor, s32 priority);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 FIXED Trig_Cos(s32 angle);
 void Event_End(void);
 void FieldCamera_WaitForArrival(void);
@@ -66,21 +66,7 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 /// Trig_Cos, through an inline as the swirl's turn calls it.
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 
-struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = Import_ActorCreate(type, x, y, z);
-
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 1);
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
-    object->priorityFlags |=
-        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
-    return object;
-  }
-  return NULL;
-}
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 
@@ -120,9 +106,9 @@ s32 Actor_HasArrived(struct Actor *actor);
 u16 gSeaOfTime_RippleLines[160] BSS_DATA ALIGNED(16);
 
 /// Starts an actor's animation from its first frame, on map layer 1.
-s32 SeaOfTime_ResetAnimationFrame(struct Actor *object) {
-  ((struct FieldSprite *)object->sprite)->flags = 0;
-  object->layer = 1;
+s32 SeaOfTime_ResetAnimationFrame(struct Actor *actor) {
+  ((struct FieldSprite *)actor->sprite)->flags = 0;
+  actor->layer = 1;
   return 1;
 }
 
@@ -243,7 +229,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// In a swirl the ship is drawn to the middle of its 32-pixel square and turned
 /// about it, one way or the other by the swirl's cell.
 void SeaOfTime_CircleSwirl(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SHIP);
+  struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   s32 turn[1];
   FIXED center[3];
   s32 *pos;
@@ -253,18 +239,18 @@ void SeaOfTime_CircleSwirl(void) {
   FIXED x;
   FIXED z;
 
-  center[0] = SWIRL_SQUARE_ORIGIN(object->x.fixed) + toFIXED(16);
-  center[2] = SWIRL_SQUARE_ORIGIN(object->z.fixed) + toFIXED(16);
-  pos = &object->x.fixed;
+  center[0] = SWIRL_SQUARE_ORIGIN(actor->x.fixed) + toFIXED(16);
+  center[2] = SWIRL_SQUARE_ORIGIN(actor->z.fixed) + toFIXED(16);
+  pos = &actor->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
       *pos += 0x3333;
     else
       *pos -= 0x3333;
-    if (object->z.fixed < center[2])
-      object->z.fixed += 0x3333;
+    if (actor->z.fixed < center[2])
+      actor->z.fixed += 0x3333;
     else
-      object->z.fixed -= 0x3333;
+      actor->z.fixed -= 0x3333;
     if (SeaOfTime_GetCellCode(1, FIELD_CELL(center[0]),
                               FIELD_CELL(center[2])) >>
             8 ==
@@ -275,14 +261,14 @@ void SeaOfTime_CircleSwirl(void) {
       turn[0] = SeaOfTime_Cos(TRIG_TURN / 128);
       sine = Trig_Sin(TRIG_TURN / 128);
     }
-    dx = object->x.fixed - center[0];
-    dz = object->z.fixed - center[2];
+    dx = actor->x.fixed - center[0];
+    dz = actor->z.fixed - center[2];
     x = Iwram_MulFX(dx, turn[0]) - Iwram_MulFX(dz, sine);
     z = Iwram_MulFX(dx, sine) + Iwram_MulFX(dz, turn[0]);
     x += center[0];
     z += center[2];
-    object->x.fixed = x;
-    object->z.fixed = z;
+    actor->x.fixed = x;
+    actor->z.fixed = z;
   }
 }
 
@@ -290,7 +276,7 @@ void SeaOfTime_CircleSwirl(void) {
 /// it about that square's middle, throwing up spray on both sides as it goes.
 void SeaOfTime_RideCurrent(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_GetById(ACTOR_SHIP);
+  struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   struct {
     s32 x, y, z;
   } center;
@@ -347,18 +333,18 @@ void SeaOfTime_RideCurrent(void) {
     center.z = -1;
     break;
   }
-  center.x = (((object->x.fixed >> 21) + center.x) << 21) + toFIXED(16);
-  center.z = (((object->z.fixed >> 21) + center.z) << 21) + toFIXED(16);
-  pos = &object->x.fixed;
+  center.x = (((actor->x.fixed >> 21) + center.x) << 21) + toFIXED(16);
+  center.z = (((actor->z.fixed >> 21) + center.z) << 21) + toFIXED(16);
+  pos = &actor->x.fixed;
   if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
       *pos += toFIXED(1) / 2;
     else
       *pos -= toFIXED(1) / 2;
-    if (object->z.fixed < center.z)
-      object->z.fixed += toFIXED(1) / 2;
+    if (actor->z.fixed < center.z)
+      actor->z.fixed += toFIXED(1) / 2;
     else
-      object->z.fixed -= toFIXED(1) / 2;
+      actor->z.fixed -= toFIXED(1) / 2;
   }
   if (SeaOfTime_GetCellCode(1, FIELD_CELL(center.x), FIELD_CELL(center.z)) >>
           8 ==
@@ -369,8 +355,8 @@ void SeaOfTime_RideCurrent(void) {
     turn[0] = SeaOfTime_Cos(TRIG_TURN / 128);
     s = Trig_Sin(TRIG_TURN / 128);
   }
-  dx = object->x.fixed - center.x;
-  dz = object->z.fixed - center.z;
+  dx = actor->x.fixed - center.x;
+  dz = actor->z.fixed - center.z;
   {
     s32 (*mul)(s32 a, s32 b) = Iwram_MulFX;
     x = mul(dx, turn[0]);
@@ -380,8 +366,8 @@ void SeaOfTime_RideCurrent(void) {
   }
   x += center.x;
   z += center.z;
-  object->x.fixed = x;
-  object->z.fixed = z;
+  actor->x.fixed = x;
+  actor->z.fixed = z;
 
   counter = &gFrameCount;
   frame = *counter;
@@ -394,26 +380,26 @@ void SeaOfTime_RideCurrent(void) {
     spark.palette = 7;
     spark.startScaleX = FIXED_ONE * 4 / 5;
     spark.startScaleY = FIXED_ONE * 4 / 5;
-    c = Trig_Cos(object->facing);
+    c = Trig_Cos(actor->facing);
     {
-      FIXED sine = Trig_Sin(object->facing);
+      FIXED sine = Trig_Sin(actor->facing);
       ends[0] = c * 10;
       ends[1] = sine * 10;
       ends[2] = -(c * 10);
       ends[3] = -(sine * 10);
     }
-    ends[0] += object->x.fixed;
-    ends[1] += object->z.fixed;
+    ends[0] += actor->x.fixed;
+    ends[1] += actor->z.fixed;
     speed = toFIXED(1) / 2;
-    ends[2] += object->x.fixed;
-    ends[3] += object->z.fixed;
-    if (ends[1] != object->z.fixed) {
+    ends[2] += actor->x.fixed;
+    ends[3] += actor->z.fixed;
+    if (ends[1] != actor->z.fixed) {
       ends[1] += -toFIXED(12);
       ends[3] += -toFIXED(12);
     }
     flip = *counter & 4;
     px = ends[0];
-    py = object->y.fixed;
+    py = actor->y.fixed;
     pz = ends[1];
     if (flip) {
       FieldEffect_Spawn(px + toFIXED(3), py, pz, speed, 0, 0,
@@ -421,7 +407,7 @@ void SeaOfTime_RideCurrent(void) {
                             EFFECT_USE_PALETTE,
                         &spark);
       FieldEffect_Spawn(
-          ends[2] - toFIXED(3), object->y.fixed, ends[3], -speed, 0, 0,
+          ends[2] - toFIXED(3), actor->y.fixed, ends[3], -speed, 0, 0,
           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
           &spark);
     } else {
@@ -430,7 +416,7 @@ void SeaOfTime_RideCurrent(void) {
                             EFFECT_USE_PALETTE,
                         &spark);
       FieldEffect_Spawn(
-          ends[2] + toFIXED(3), object->y.fixed, ends[3], speed, 0, 0,
+          ends[2] + toFIXED(3), actor->y.fixed, ends[3], speed, 0, 0,
           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
           &spark);
     }
@@ -861,7 +847,7 @@ void SeaOfTime_SweptBack(void) {
 
 /// Every other frame, throws up spray 16 pixels south of the ship, at a random
 /// place across its width.
-void SeaOfTime_UpdateSpray(struct Actor *object) {
+void SeaOfTime_UpdateSpray(struct Actor *actor) {
   struct EffectOptions spark;
   s32 even = gFrameCount & 1;
 
@@ -873,7 +859,7 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
     spark.palette = 7;
     spark.priority = 1;
     FieldEffect_Spawn(
-        object->x.fixed + dx, 0, object->z.fixed + toFIXED(16), 0, even, even,
+        actor->x.fixed + dx, 0, actor->z.fixed + toFIXED(16), 0, even, even,
         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
         &spark);
   }
@@ -886,7 +872,7 @@ void SeaOfTime_CrossToLemuria(void) {
   volatile u16 fill;
   struct EffectOptions burst;
   struct EffectOptions rain;
-  struct Actor *object;
+  struct Actor *actor;
   s32 changed;
   volatile u16 *palette;
   struct SavedColors *saved;
@@ -1003,10 +989,10 @@ void SeaOfTime_CrossToLemuria(void) {
     }
     i++;
   }
-  object = Import_ActorCreate(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
-  object->update = (void (*)(void))SeaOfTime_UpdateSpray;
+  actor = Import_ActorCreate(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
+  actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
   Event_Wait(60);
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   Event_Wait(40);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA, 4);
@@ -1028,12 +1014,12 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
 
 #define DEFINE_GRIND_ROCK(name, rock, flag)                                    \
   void name(void) {                                                            \
-    struct Actor *object;                                                      \
+    struct Actor *actor;                                                       \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    object = Actor_GetById(rock);                                              \
-    SeaOfTime_RemoveRock(object->x.fixed, Actor_GetById(rock)->z.fixed, rock); \
+    actor = Actor_GetById(rock);                                               \
+    SeaOfTime_RemoveRock(actor->x.fixed, Actor_GetById(rock)->z.fixed, rock);  \
     GameFlag_Set(flag);                                                        \
     Event_End();                                                               \
   }
@@ -1409,35 +1395,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 u8 gSeaOfTime_LapsNeeded[] = {16, 24, 16, 24, 16, 24};
 
@@ -1462,10 +1420,7 @@ s32 gSeaOfTime_ShipRests[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(SeaOfTimeWhirlpool),

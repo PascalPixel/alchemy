@@ -165,7 +165,7 @@ extern struct MapGridCellAnimation gMadra_Doors[];
 /// leaves by the exit of the door's number.
 void Madra_EnterDoor(void) {
   struct FieldWork *work;
-  struct Actor *object;
+  struct Actor *actor;
   s16 *trigger;
   u32 id;
   s32 index;
@@ -175,9 +175,9 @@ void Madra_EnterDoor(void) {
   Event_ResolvePendingActions(0);
   id = ACTOR_FIRST_PLACED;
   do {
-    object = Actor_GetById(id);
-    if (object != NULL) {
-      object->motionFlags = 0;
+    actor = Actor_GetById(id);
+    if (actor != NULL) {
+      actor->motionFlags = 0;
     }
     id++;
   } while (id < FIELD_TREASURE_ACTOR);
@@ -483,15 +483,15 @@ void Madra_SealHole(void) {
 /// (Madra_GrantPassageToOsenia), and on the return Karst arrives once at the
 /// gate (entrance 7, Madra_MeetKarst).
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Madra_SealHole();
   } else {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_WORKER), 0);
-    object = Actor_GetById(ACTOR_HOLE_WORKER);
-    object->radius = Actor_GetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;
+    actor = Actor_GetById(ACTOR_HOLE_WORKER);
+    actor->radius = Actor_GetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;
     ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->flags |=
         8;
     {
@@ -683,12 +683,12 @@ void ItemDisplay_ShowItem(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void FieldCamera_FollowActor(s32 id, s32 mode);
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 
 /// The two gate guards stop the party, Kraden answers them, and the second
 /// guard checks the party over before letting it through.
 void Madra_InspectPartyAtGate(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -826,10 +826,10 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (actor != NULL)
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_SetFlag(FLAG_MADRA_GATE_INSPECTED);
@@ -1025,7 +1025,7 @@ void Madra_GrantPassageToOsenia(void) {
 /// After the Kibombo's raid the gate guards stop the party again and question
 /// it, Kraden answering, before letting it go.
 void Madra_StopPartyAfterRaid(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1174,10 +1174,10 @@ void Madra_StopPartyAfterRaid(void) {
   Event_Wait(10);
   Event_SetFlag(FLAG_MADRA_RAID_QUESTIONING_DONE);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (actor != NULL)
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
@@ -1199,7 +1199,7 @@ void Madra_StopPartyAfterRaid(void) {
 /// promised for mending the boat (or, with no room for it, puts it in a pot),
 /// and Karst comes in at the gate looking for Menardi.
 void Madra_MeetKarst(void) {
-  struct Actor *object;
+  struct Actor *actor;
   FIXED x = toFIXED(153);
   FIXED z;
 
@@ -1695,34 +1695,34 @@ void Madra_MeetKarst(void) {
   SET_MODE_AND_WAIT(ACTOR_KRADEN, ANIM_NOD, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   SET_MODE(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_GetById(ACTOR_FELIX);
-  if (object != NULL)
-    Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(ACTOR_FELIX);
+  if (actor != NULL)
+    Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   SET_MODE(ACTOR_JENNA, ANIM_WALK);
-  object = Actor_GetById(ACTOR_FELIX);
-  if (object != NULL)
-    Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(ACTOR_FELIX);
+  if (actor != NULL)
+    Actor_SetDestinationById(ACTOR_JENNA, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   SET_MODE(ACTOR_SHEBA, ANIM_WALK);
-  object = Actor_GetById(ACTOR_FELIX);
-  if (object != NULL)
-    Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(ACTOR_FELIX);
+  if (actor != NULL)
+    Actor_SetDestinationById(ACTOR_SHEBA, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   SET_MODE(ACTOR_PIERS, ANIM_WALK);
-  object = Actor_GetById(ACTOR_FELIX);
-  if (object != NULL)
-    Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(ACTOR_FELIX);
+  if (actor != NULL)
+    Actor_SetDestinationById(ACTOR_PIERS, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   GameFlag_Set(FLAG_MENARDIS_SHIP_SEEN);
@@ -1800,23 +1800,20 @@ void Madra_WorkerBlocksHole(void);
 void Madra_AskAboutJenna(void);
 void Madra_StopPartyAfterRaid(void);
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Madra),
-    SCENE_EXIT_UNLESS(1, MadraInteriorsCavernHomes, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, MadraInteriorsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MadraInteriorsHouses, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, MadraInteriorsHouses, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, MadraInteriorsHouses, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, MadraInteriorsHouses, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, MadraInteriorsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, MadraInteriorsHouses, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, MadraInteriorsHouses, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, MadraInteriorsCavernHomes, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, MadraRoomsCavernHomes, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, MadraRoomsHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MadraRoomsHouses, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MadraRoomsHouses, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, MadraRoomsHouses, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, MadraRoomsHouses, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, MadraRoomsHouses, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, MadraRoomsHouses, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, MadraRoomsHouses, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, MadraRoomsCavernHomes, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, WorldMap, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, MadraCatacombsLadders, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, MadraCatacombsLadders, 3, EXIT_FLAG_NONE),

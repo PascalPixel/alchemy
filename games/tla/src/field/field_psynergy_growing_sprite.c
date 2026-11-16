@@ -27,5 +27,5 @@ void BattleEffect_UpdateGrowingParticleSprite(
   sprite->x = position[0];
   sprite->y = position[2];
   EffectSprite_Draw(sprite);
-  BattleEffect_IntegrateVector3(particle, 60, 0);
+  Field_AdvanceWithGravity3D(particle, 60, 0);
 }

@@ -13,16 +13,16 @@ struct Actor *Actor_FindInCell(s32 *position, struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
   void **objects;
-  struct Actor *object;
+  struct Actor *actor;
 
   i = 8;
   objects = &work->actors[8];
   for (; i < 64; i++) {
-    object = *objects++;
-    if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-        FIELD_CELL(position[1]) == FIELD_CELL(object->y.fixed) &&
-        FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
-      return object;
+    actor = *objects++;
+    if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
+        FIELD_CELL(position[1]) == FIELD_CELL(actor->y.fixed) &&
+        FIELD_CELL(position[2]) == FIELD_CELL(actor->z.fixed))
+      return actor;
   }
   return NULL;
 }

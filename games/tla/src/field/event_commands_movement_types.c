@@ -180,22 +180,22 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
 }
 
 /// Makes the object watch target and keeps it facing it.
-void Actor_WatchActor(struct Actor *object, struct Actor *target) {
-  object->watchedActor = target;
-  object->update = Actor_TurnTowardWatchedActor;
+void Actor_WatchActor(struct Actor *actor, struct Actor *target) {
+  actor->watchedActor = target;
+  actor->update = Actor_TurnTowardWatchedActor;
 }
 
 /// Gives the object the party leader's display layer.
-s32 Actor_TakeLeaderLayer(struct Actor *object) {
+s32 Actor_TakeLeaderLayer(struct Actor *actor) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   s32 layer = ((struct PlacedSprite *)leader->sprite)->priority;
 
-  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-    struct PlacedSprite *sprite = object->sprite;
+  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+    struct PlacedSprite *sprite = actor->sprite;
 
     sprite->priority = layer;
     sprite->shadowPriority = layer;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
   return 0;
 }
@@ -214,7 +214,7 @@ extern const u8 gMovementType_ClearChildScript[];
 
 /// Starts an actor's movement type: an enum MovementType, or any other value as
 /// the actor script to run itself.
-void Actor_SetMovementType(struct Actor *object, s32 kind) {
+void Actor_SetMovementType(struct Actor *actor, s32 kind) {
   switch (kind) {
   case MOVEMENT_TYPE_STAND:
     kind = (s32)gMovementType_StandScript;
@@ -232,7 +232,7 @@ void Actor_SetMovementType(struct Actor *object, s32 kind) {
     kind = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case 7:
@@ -251,7 +251,7 @@ void Actor_SetMovementType(struct Actor *object, s32 kind) {
     kind = (s32)gMovementType_ClearChildScript;
     break;
   }
-  Actor_StartScriptFar(object, (const void *)kind);
+  Actor_StartScriptFar(actor, (const void *)kind);
 }
 
 /// The Broken Seal's Actor_FindNearestFacingTarget: the nearest object
@@ -312,12 +312,12 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 
 /// Whether the ground at position stops a jump: terrain kind above 2 on a
 /// layered map; never on the world map or with no map.
-s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
+s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
-      MapGrid_GetTerrainKindFar(object->layer, position[0], position[2]) <= 2)
+      MapGrid_GetTerrainKindFar(actor->layer, position[0], position[2]) <= 2)
     return 0;
   return 1;
 }

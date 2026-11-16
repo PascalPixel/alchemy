@@ -74,8 +74,8 @@ static inline s32 *ScreenPoint_Coordinates(struct ScreenPoint *position) {
 #endif
 }
 
-void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
-                                   s32 gravity);
+void EffectPosition_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                         s32 gravity);
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct ScreenPoint *position);
 void EffectPosition_ProjectScaledBattler(s32 id, struct ScreenPoint *position);

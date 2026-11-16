@@ -255,7 +255,7 @@ void Actor_Release(struct Actor *actor) {
 /// is in use. encodedSprite / 4096 is the kind of actor (enum
 /// ActorCreateKind) and its low 12 bits the sprite's animation id.
 struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
-  struct Actor *object;
+  struct Actor *actor;
   void *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
@@ -263,33 +263,31 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
 
   spriteStorageKind = encodedSprite / (ACTOR_CREATE_SPRITE_MASK + 1);
   encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
-  object = Actor_FindFree();
-  if (object != NULL) {
-    object->radius = 16;
+  actor = Actor_FindFree();
+  if (actor != NULL) {
+    actor->radius = 16;
     switch (spriteStorageKind) {
     case ACTOR_CREATE_ONE_SPRITE:
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->spriteStorageKind = ACTOR_SPRITE_ONE;
-        object->sprite = sprite;
-        object->radius =
-            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->spriteStorageKind = ACTOR_SPRITE_ONE;
+        actor->sprite = sprite;
+        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
-        object->spriteStorageKind = ACTOR_SPRITE_NONE;
+        actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       }
       break;
     case ACTOR_CREATE_GROUP:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
       spriteSlots = (void **)((u32 *)Ram_HeapSlots->actorSystem +
                               Ram_HeapSlots->actorSystem->count++ + 2);
-      object->spriteStorageKind = spriteStorageKind;
-      object->sprite = spriteSlots;
+      actor->spriteStorageKind = spriteStorageKind;
+      actor->sprite = spriteSlots;
       zero = 0;
       Dma_Set(&zero, spriteSlots, DMA_FILL_WORDS(4), REG_DMA3);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->radius =
-            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
         *spriteSlots = sprite;
         spriteSlots++;
       }
@@ -299,29 +297,29 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
       break;
     }
   }
-  if (object != NULL) {
-    Actor_SetPositionAndResetMotion(object, x, y, z);
-    object->script = (s32 *)gActorScript_EndScript;
-    object->speedLimit = toFIXED(2);
-    object->scriptCursor = 0;
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
-    object->acceleration = FIXED_ONE;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    object->gravity = FIXED_ONE;
-    object->bounce = FIXED_ONE / 4;
-    object->collisionFlags = 0;
-    object->steeringFlags = ACTOR_FACES_MOTION;
-    object->facing = DEGtoANG(90);
-    object->riseBaseY = 0;
-    object->homeX = x / toFIXED(1);
-    object->homeZ = z / toFIXED(1);
-    object->carrier = NULL;
-    object->stepX = 0;
-    object->stepY = 0;
-    object->stepZ = 0;
+  if (actor != NULL) {
+    Actor_SetPositionAndResetMotion(actor, x, y, z);
+    actor->script = (s32 *)gActorScript_EndScript;
+    actor->speedLimit = toFIXED(2);
+    actor->scriptCursor = 0;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
+    actor->acceleration = FIXED_ONE;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->gravity = FIXED_ONE;
+    actor->bounce = FIXED_ONE / 4;
+    actor->collisionFlags = 0;
+    actor->steeringFlags = ACTOR_FACES_MOTION;
+    actor->facing = DEGtoANG(90);
+    actor->riseBaseY = 0;
+    actor->homeX = x / toFIXED(1);
+    actor->homeZ = z / toFIXED(1);
+    actor->carrier = NULL;
+    actor->stepX = 0;
+    actor->stepY = 0;
+    actor->stepZ = 0;
   }
-  return object;
+  return actor;
 }
 
 /// Gives an actor a script and starts it from the top. Sets the script and
@@ -338,18 +336,18 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
 
 /// Starts animation argument on an actor's sprite, or on each of the four
 /// sprites of a group (Sprite_StartAnimation).
-void Actor_SelectAnimation(struct Actor *object, s32 argument) {
+void Actor_SelectAnimation(struct Actor *actor, s32 argument) {
   struct Sprite **items;
   struct Sprite *item;
   s32 count;
 
-  if (object != 0) {
-    switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  if (actor != 0) {
+    switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
     case ACTOR_SPRITE_ONE:
-      Sprite_StartAnimation(((struct Sprite *)object->sprite), argument);
+      Sprite_StartAnimation(((struct Sprite *)actor->sprite), argument);
       break;
     case ACTOR_SPRITE_GROUP:
-      items = ((struct Sprite **)object->sprite);
+      items = ((struct Sprite **)actor->sprite);
       count = 3;
       do {
         item = *items++;
@@ -364,18 +362,18 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
 
 /// Sets the timer step, the animation speed, of an actor's sprite, or of each
 /// sprite of a group (16 is normal speed).
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 value) {
   s32 count;
   struct Sprite *child;
   struct Sprite **children;
 
-  if (object != 0) {
-    switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
+  if (actor != 0) {
+    switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
     case ACTOR_SPRITE_ONE:
-      Sprite_SetAnimationSpeed(((struct Sprite *)object->sprite), value);
+      Sprite_SetAnimationSpeed(((struct Sprite *)actor->sprite), value);
       return;
     case ACTOR_SPRITE_GROUP:
-      children = ((struct Sprite **)object->sprite);
+      children = ((struct Sprite **)actor->sprite);
       count = 3;
       do {
         child = *children++;
@@ -416,20 +414,20 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
 }
 
 /// Sets the rotation of an actor's sprite, when it has just one.
-void Actor_SetSpriteRotation(struct Actor *object, u32 value) {
-  if (object != 0 &&
-      (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
-    ((struct Sprite *)object->sprite)->rotation = value;
+void Actor_SetSpriteRotation(struct Actor *actor, u32 value) {
+  if (actor != 0 &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
+    ((struct Sprite *)actor->sprite)->rotation = value;
 }
 
 /// Gives a one-sprite actor's first sprite animation animation id animationId
 /// and restarts its animations. A negative animationId does nothing.
-void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
+void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 index) {
   struct Sprite *child;
 
-  if (object != NULL && (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
-                            ACTOR_SPRITE_ONE) {
-    child = ((struct Sprite *)object->sprite);
+  if (actor != NULL &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
+    child = ((struct Sprite *)actor->sprite);
     if (index >= 0) {
       child->entries[0]->animationId = index;
       Sprite_ResetAnimations(child);
@@ -457,7 +455,7 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
 /// frame first for sand on the World Map.
-void Actor_StartRenderModeScript(struct Actor *object) {
+void Actor_StartRenderModeScript(struct Actor *actor) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -506,12 +504,12 @@ void Actor_StartRenderModeScript(struct Actor *object) {
     script = gActor_KeyCheckScript;
     break;
   }
-  Actor_StartScript(object, script);
+  Actor_StartScript(actor, script);
 }
 
 /// Starts an actor on the idle script (a lone SC_END).
-void Actor_StartIdle(struct Actor *object) {
-  Actor_StartScript(object, gActorScript_EndScript);
+void Actor_StartIdle(struct Actor *actor) {
+  Actor_StartScript(actor, gActorScript_EndScript);
 }
 
 /// Starts an actor on the camera script (SC_CAMERA). With a leader to follow,
@@ -529,26 +527,26 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
 /// Waits until the actor's script reaches SC_END, at most 600 frames; it
 /// returns as soon as the script idles, and after the limit whether or not it
 /// has.
-void Actor_WaitForScriptEnd(struct Actor *object) {
+void Actor_WaitForScriptEnd(struct Actor *actor) {
   s32 waitedFrames = 0;
 
-  if (object->script != 0 &&
-      ((const s32 *)object->script)[object->scriptCursor] != SC_END) {
+  if (actor->script != 0 &&
+      ((const s32 *)actor->script)[actor->scriptCursor] != SC_END) {
     do {
       wait(1);
       waitedFrames++;
       if (waitedFrames > 599)
         break;
-    } while (object->script != 0 &&
-             ((const s32 *)object->script)[object->scriptCursor] != SC_END);
+    } while (actor->script != 0 &&
+             ((const s32 *)actor->script)[actor->scriptCursor] != SC_END);
   }
 }
 
 /// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
-void Actor_SetSpriteFlags(struct Actor *object, u32 value) {
-  if (object != NULL &&
-      (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
-    ((struct Sprite *)object->sprite)->flags = value;
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value) {
+  if (actor != NULL &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
+    ((struct Sprite *)actor->sprite)->flags = value;
 }
 
 /// Sets the OAM blend mode of a one-sprite actor's sprite.
@@ -561,30 +559,30 @@ void Actor_SetBlendMode(struct Actor *actor, u32 mode) {
 
 /// Sets a one-sprite actor's sprite's own-scale bit: drawn at its own scale,
 /// not scaled by distance.
-void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
-  if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    ((struct Sprite *)object->sprite)->useOwnScale = value;
+void Animation_SetDisplayFlag(struct Actor *actor, u32 value) {
+  if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+    ((struct Sprite *)actor->sprite)->useOwnScale = value;
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
 /// animations, except those drawn hidden.
-void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
-  if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    Sprite_SetAnimationColorModes(((struct Sprite *)object->sprite), value);
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 value) {
+  if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+    Sprite_SetAnimationColorModes(((struct Sprite *)actor->sprite), value);
 }
 
 /// Fixes the priority of a one-sprite actor's sprite and its shadow, which
 /// then no longer follow its depth (clears priorityFlags bit 0).
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
+void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority) {
   struct Sprite *sprite;
 
-  if (object == NULL || object->spriteStorageKind != ACTOR_SPRITE_ONE) {
+  if (actor == NULL || actor->spriteStorageKind != ACTOR_SPRITE_ONE) {
     return;
   }
-  sprite = object->sprite;
+  sprite = actor->sprite;
   sprite->image.priority = priority;
   sprite->shadow.priority = priority;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
@@ -681,7 +679,7 @@ void ActorSystem_PlaceSprites(void) {
   s32 viewX;
   s32 viewZ;
   struct ActorSystemWork *system;
-  struct Actor *object;
+  struct Actor *actor;
   u32 kind;
   FIXED dx;
   FIXED dz;
@@ -715,40 +713,40 @@ void ActorSystem_PlaceSprites(void) {
     // The zero is set before the objects are read.
     u32 zero = 0;
 
-    object = Ram_HeapSlots->actors;
+    actor = Ram_HeapSlots->actors;
     system->used = zero;
   }
-  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, object++) {
-    if (object->script == NULL)
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
+    if (actor->script == NULL)
       continue;
-    if (object->x.fixed != 0 || object->z.fixed != 0) {
-      kind = object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
+    if (actor->x.fixed != 0 || actor->z.fixed != 0) {
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == ACTOR_SPRITE_NONE)
         continue;
       if (kind != ACTOR_SPRITE_ONE)
         continue;
-      if ((u16)system->suspended != 0 && !(object->retainSpriteCache & 1)) {
-        struct PlacedSprite *frozen = object->sprite;
+      if ((u16)system->suspended != 0 && !(actor->retainSpriteCache & 1)) {
+        struct PlacedSprite *frozen = actor->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
         continue;
       }
-      sprite = object->sprite;
-      dx = object->x.fixed - viewX;
-      dz = object->z.fixed - viewZ;
-      screenTop = dz - object->y.fixed;
+      sprite = actor->sprite;
+      dx = actor->x.fixed - viewX;
+      dz = actor->z.fixed - viewZ;
+      screenTop = dz - actor->y.fixed;
       if (dx > -toFIXED(32) && dx < toFIXED(272) && screenTop > -toFIXED(32) &&
           screenTop < toFIXED(224) &&
-          (priorityFlags = &object->priorityFlags,
+          (priorityFlags = &actor->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
-        terrainId = &object->layer;
+        terrainId = &actor->layer;
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
         if (*priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
-          probeX = object->x.fixed - toFIXED(7);
-          feetZ = object->z.fixed + toFIXED(2);
-          objectHeight = FIXEDtoINT(object->groundHeight);
+          probeX = actor->x.fixed - toFIXED(7);
+          feetZ = actor->z.fixed + toFIXED(2);
+          objectHeight = FIXEDtoINT(actor->groundHeight);
           priority = 0;
           leftPriority = 0;
           middlePriority = 0;
@@ -756,7 +754,7 @@ void ActorSystem_PlaceSprites(void) {
             basePriority = &map->basePriority;
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
-                object->groundHeight) {
+                actor->groundHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
               height = FIXEDtoINT(
                   MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
@@ -770,7 +768,7 @@ void ActorSystem_PlaceSprites(void) {
             }
             probeX += toFIXED(13);
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
-                object->groundHeight) {
+                actor->groundHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
               height = FIXEDtoINT(
                   MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
@@ -794,11 +792,11 @@ void ActorSystem_PlaceSprites(void) {
             if (height > objectHeight)
               priority = map->basePriority + 1;
           } else {
-            if (object->groundHeight ==
+            if (actor->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX += toFIXED(13);
-            if (object->groundHeight ==
+            if (actor->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX -= toFIXED(6);
@@ -814,8 +812,8 @@ void ActorSystem_PlaceSprites(void) {
                 priority = rightPriority;
             }
           }
-          if (priority != 0 && object->spriteStorageKind == ACTOR_SPRITE_ONE) {
-            struct PlacedSprite *placed = object->sprite;
+          if (priority != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+            struct PlacedSprite *placed = actor->sprite;
 
             if ((u32)priority > 3)
               priority = 3;
@@ -823,15 +821,15 @@ void ActorSystem_PlaceSprites(void) {
             placed->shadowPriority = priority;
           }
         }
-        layerPlusOne = CELL_LAYER(cells, object->x.fixed, object->z.fixed);
+        layerPlusOne = CELL_LAYER(cells, actor->x.fixed, actor->z.fixed);
         if (layerPlusOne != 0)
           *terrainId = layerPlusOne - 1;
-        scale.x = Iwram_MulFX(object->scaleX, sprite->scale);
-        scale.y = Iwram_MulFX(object->scaleY, sprite->scale);
+        scale.x = Iwram_MulFX(actor->scaleX, sprite->scale);
+        scale.y = Iwram_MulFX(actor->scaleY, sprite->scale);
         point.x = dx;
-        point.height = object->y.fixed - originY;
+        point.height = actor->y.fixed - originY;
         point.y = dz - originY;
-        point.groundHeight = object->groundHeight - originY;
+        point.groundHeight = actor->groundHeight - originY;
         if (*priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
           point.height -= toFIXED(320);
           point.y -= toFIXED(320);
@@ -843,28 +841,27 @@ void ActorSystem_PlaceSprites(void) {
           point.groundHeight += toFIXED(320);
         }
         if (*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
-          Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
-                                                object->facing,
-                                                object->riseEnabled);
+          Render_ApplyProjectedPlacementAtDepth(
+              sprite, &point, scale.values, actor->facing, actor->riseEnabled);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
-                                         scale.values, object->facing);
+                                         scale.values, actor->facing);
         continue;
       }
-      if (object->retainSpriteCache & 2) {
-        Sprite_ComposePicture(sprite, object->facing);
-      } else if (!(object->retainSpriteCache & 1) &&
+      if (actor->retainSpriteCache & 2) {
+        Sprite_ComposePicture(sprite, actor->facing);
+      } else if (!(actor->retainSpriteCache & 1) &&
                  !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;
       }
     } else {
       // At (0, 0): not placed; only the sprite's VRAM is given up.
-      kind = object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
+      kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
       if (kind == 1) {
-        struct PlacedSprite *frozen = object->sprite;
+        struct PlacedSprite *frozen = actor->sprite;
 
-        if (object->retainSpriteCache == 0 && !(frozen->retainCacheEntry & 1)) {
+        if (actor->retainSpriteCache == 0 && !(frozen->retainCacheEntry & 1)) {
           VramCache_ReleaseVram(frozen->slot);
           frozen->dirty = kind;
         }

@@ -183,7 +183,7 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #ifdef MODERN
@@ -193,18 +193,18 @@ void Ride_SetEntry(s32 index, s32 value);
 s32 Ride_GetEntryFlags(s32 index);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 void FieldCamera_WaitForArrival(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
 void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
-void Actor_SetBlendMode(struct Actor *object, u32 value);
+void Actor_SetBlendMode(struct Actor *actor, u32 value);
 FIXED Trig_Cos(s32 angle);
 
 void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id);
-void Actor_SetupScriptedPart(struct Actor *object, s32 part);
+void Actor_SetupScriptedPart(struct Actor *actor, s32 part);
 void MarsLighthouseRoomF_FillGapsWithStones(void);
 void MarsLighthouseRoomF_RouteFireThroughPipes(void);
 void MarsLighthouseRoomF_ScatterRubble(s32 id);
@@ -250,9 +250,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
-void Flame_UpdateForward(struct Actor *object);
+void Flame_UpdateForward(struct Actor *actor);
 
-void Flame_UpdateLanding(struct Actor *object);
+void Flame_UpdateLanding(struct Actor *actor);
 
 void Ride_SpawnForward();
 void Ride_SpawnBackward();
@@ -261,7 +261,7 @@ void Ride_SpawnLandingForward();
 
 void Ride_SpawnLandingBackward();
 void FlameThrowers_Puff(void);
-void MarsLighthouseRoomF_BeginBlazeOnTorch(void);
+void MarsLighthouseRoomF_StartBlazeOnTorch(void);
 
 void MarsLighthouseRoomF_JumpGap(void);
 
@@ -336,18 +336,18 @@ static inline s32 Event_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b,
                                          radiusB);
 }
 
-s32 Actor_HasArrived(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *actor);
 
 void Leader_StopIfPending(void);
-void Actor_SteerByPad(struct Actor *object);
+void Actor_SteerByPad(struct Actor *actor);
 /// Sets byte 2 of a rectangle of one layer's map cells.
 void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
                                             u32 height, s32 value);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 
-s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 
-void Actor_StopAtPushTarget(struct Actor *object);
+void Actor_StopAtPushTarget(struct Actor *actor);
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
@@ -379,8 +379,8 @@ extern struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[];
 
 /// The towers' statues and torches start with their sprite flags clear.
-s32 MarsLighthouseRoomF_SetUpStatue(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+s32 MarsLighthouseRoomF_SetUpStatue(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -400,7 +400,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
 // the mode would settle it.
 /// Blaze is cast at a torch.
-void MarsLighthouseRoomF_BeginBlazeOnTorch(void) {
+void MarsLighthouseRoomF_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
@@ -409,25 +409,24 @@ void MarsLighthouseRoomF_BeginBlazeOnTorch(void) {
 /// Walking east or west at a gap in the Venus tower: across it, unless one of
 /// the stones is in the way, which the leader pushes instead.
 void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  u32 facing = object->facing;
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  u32 facing = actor->facing;
 
   if (facing == FACING_EAST || facing == FACING_WEST) {
-    s32 x = FIELD_CELL(object->x.fixed);
-    s32 z = FIELD_CELL(object->z.fixed);
+    s32 x = FIELD_CELL(actor->x.fixed);
+    s32 z = FIELD_CELL(actor->z.fixed);
 
     if (facing != 0)
       x--;
     else
       x++;
-    object = Actor_Get(ACTOR_FIRST_STONE);
-    if (FIELD_CELL(object->x.fixed) != x || FIELD_CELL(object->z.fixed) != z) {
-      object = Actor_Get(ACTOR_SECOND_STONE);
-      if (FIELD_CELL(object->x.fixed) != x ||
-          FIELD_CELL(object->z.fixed) != z) {
-        object = Actor_Get(ACTOR_THIRD_STONE);
-        if (FIELD_CELL(object->x.fixed) != x ||
-            FIELD_CELL(object->z.fixed) != z) {
+    actor = Actor_Get(ACTOR_FIRST_STONE);
+    if (FIELD_CELL(actor->x.fixed) != x || FIELD_CELL(actor->z.fixed) != z) {
+      actor = Actor_Get(ACTOR_SECOND_STONE);
+      if (FIELD_CELL(actor->x.fixed) != x || FIELD_CELL(actor->z.fixed) != z) {
+        actor = Actor_Get(ACTOR_THIRD_STONE);
+        if (FIELD_CELL(actor->x.fixed) != x ||
+            FIELD_CELL(actor->z.fixed) != z) {
           Field_TryJumpForward();
           return;
         }
@@ -449,19 +448,19 @@ void MarsLighthouseRoomF_JumpGap(void) { Field_TryJumpForward(); }
 /// beyond it.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 position[3];
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 angle = object->facing >> 12;
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 angle = actor->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x.fixed;
-  position[1] = (object->y.fixed + toFIXED(4)) & 0xfff80000;
-  position[2] = object->z.fixed;
+  position[0] = actor->x.fixed;
+  position[1] = (actor->y.fixed + toFIXED(4)) & 0xfff80000;
+  position[2] = actor->z.fixed;
   FieldVector_AddPolarOffset(16, angle, position);
-  object = Actor_FindAtCell(position, 1);
-  if (object != NULL) {
-    position[0] = object->x.fixed;
-    position[1] = object->y.fixed;
-    position[2] = object->z.fixed;
+  actor = Actor_FindAtCell(position, 1);
+  if (actor != NULL) {
+    position[0] = actor->x.fixed;
+    position[1] = actor->y.fixed;
+    position[2] = actor->z.fixed;
     FieldVector_AddPolarOffset(16, angle, position);
     if (Actor_FindAtCell(position, 1) != NULL)
       return;
@@ -481,22 +480,22 @@ extern s16 gMarsLighthouseRoomF_StatueFlameThrowers[];
 
 /// Move brings the statue to cell x 50, where it blocks the flame thrower.
 void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (FIELD_CELL(object->x.fixed) == 50) {
+  if (FIELD_CELL(actor->x.fixed) == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
 /// Pushed east to cell x 50, the statue blocks the flame thrower.
 void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void) {
-  struct Actor *object = Actor_Get(ACTOR_PUSHED_STATUE);
+  struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
 
   Leader_PushObjectAhead();
-  if (FIELD_CELL(object->x.fixed) == 50) {
+  if (FIELD_CELL(actor->x.fixed) == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
@@ -522,27 +521,27 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
 
 /// Move on one of the trap statues: the flame thrower under it shows.
 void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 kind;
 
   kind = gMarsLighthouseRoomF_StatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
-  Actor_SetPositionFX(kind, INTtoFIXED(object->homeX),
-                      (INTtoFIXED(object->homeZ)) - toFIXED(8));
+  Actor_SetPositionFX(kind, INTtoFIXED(actor->homeX),
+                      (INTtoFIXED(actor->homeZ)) - toFIXED(8));
 }
 
 /// Moved back to where it stood, the statue covers its flame thrower again.
 void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   const s16 *table;
   s32 offset;
   FIXED x;
   s32 kind;
 
   table = gMarsLighthouseRoomF_StatueFlameThrowers;
-  x = object->x.fixed;
+  x = actor->x.fixed;
   offset = (id - ACTOR_TRAP_STATUE_A) * 2;
   kind = *(s16 *)((u8 *)table + offset);
-  if (FIELD_CELL(x) == object->timer >> 4)
+  if (FIELD_CELL(x) == actor->timer >> 4)
     Actor_SetPosition(kind, 0, 0);
 }
 
@@ -550,7 +549,7 @@ void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
 /// From patch 1: the gaps at cells 38 and 43 (and 47 for the first stone) are
 /// floor wherever a stone fills them.
 void MarsLighthouseRoomF_FillGapsWithStones(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 id;
   s32 x;
   s32 z;
@@ -559,22 +558,22 @@ void MarsLighthouseRoomF_FillGapsWithStones(void) {
   MapGrid_CopyCellAttributes(53, 72, 1, 1, 43, 72);
   MapGrid_CopyCellAttributes(53, 8, 1, 1, 47, 8);
   for (id = ACTOR_FIRST_STONE; id <= ACTOR_THIRD_STONE; id++) {
-    object = Actor_Get(id);
-    x = FIELD_CELL(object->x.fixed);
-    z = FIELD_CELL(object->z.fixed);
+    actor = Actor_Get(id);
+    x = FIELD_CELL(actor->x.fixed);
+    z = FIELD_CELL(actor->z.fixed);
     if (x == 38 && z == 8)
       MapGrid_CopyCellAttributes(54, 72, 1, 1, 38, 72);
   }
   for (id = ACTOR_FIRST_STONE; id <= ACTOR_THIRD_STONE; id++) {
-    object = Actor_Get(id);
-    x = FIELD_CELL(object->x.fixed);
-    z = FIELD_CELL(object->z.fixed);
+    actor = Actor_Get(id);
+    x = FIELD_CELL(actor->x.fixed);
+    z = FIELD_CELL(actor->z.fixed);
     if (x == 43 && z == 8)
       MapGrid_CopyCellAttributes(54, 72, 1, 1, 43, 72);
   }
-  object = Actor_Get(ACTOR_FIRST_STONE);
-  x = FIELD_CELL(object->x.fixed);
-  z = FIELD_CELL(object->z.fixed);
+  actor = Actor_Get(ACTOR_FIRST_STONE);
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   if (x == 47 && z == 8)
     MapGrid_CopyCellAttributes(54, 8, 1, 1, 47, 8);
 }
@@ -637,10 +636,10 @@ void MarsLighthouseRoomF_PressButton(void) {
 /// The moving flame thrower's flame reaches the dragon statue, which is a
 /// torch from now on.
 void MarsLighthouseRoomF_LightTorch(void) {
-  struct Actor *object = Actor_Get(ACTOR_MARS_TORCH);
+  struct Actor *actor = Actor_Get(ACTOR_MARS_TORCH);
 
   Actor_SetPosition(ACTOR_MARS_TORCH_STATUE, 0, 0);
-  Actor_SetPosition(ACTOR_MARS_TORCH, object->homeX, object->homeZ);
+  Actor_SetPosition(ACTOR_MARS_TORCH, actor->homeX, actor->homeZ);
   Event_SetFlag(FLAG_MARS_TORCH_LIT);
   Event_PlaySound(SE_WHOOSH);
 }
@@ -663,11 +662,11 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
     FIXED x = origin->x.fixed + (a << 4) - (Random16() << 4);
     s32 b = Random16();
     s32 c = Random16();
-    struct Actor *object =
+    struct Actor *actor =
         FieldActor_Create(SPRITE_ROUND_BOULDER, x, (b << 3) + origin->y.fixed,
                           (c << 4) + origin->z.fixed);
 
-    if (object != NULL) {
+    if (actor != NULL) {
       s32 angle = (Random16() >> 2) + 0xe000;
       s32 speed = Random16() << 3;
       s32 scale = (Random16() >> 1) + 0x4000;
@@ -676,24 +675,24 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
         u32 pick = Random16();
 
         if (pick <= 0x7fff)
-          Actor_StartScript(object, gMarsLighthouseRoomF_RubbleScriptA);
+          Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
         else
-          Actor_StartScript(object, gMarsLighthouseRoomF_RubbleScriptB);
+          Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
       }
-      Actor_SetSpriteFlags(object, 0);
-      object->velocityY = (angle << 2) + toFIXED(2);
-      object->velocityZ = Iwram_MulFX(speed, Trig_Cos(angle));
+      Actor_SetSpriteFlags(actor, 0);
+      actor->velocityY = (angle << 2) + toFIXED(2);
+      actor->velocityZ = Iwram_MulFX(speed, Trig_Cos(angle));
       {
         FIXED vx = Iwram_MulFX(speed, Math_Sin(angle));
 
-        object->acceleration = 0;
-        object->scaleX = scale;
-        object->scaleY = scale;
-        object->gravity = toFIXED(33) / 100;
-        object->velocityX = vx;
-        object->bounce = FIXED_ONE / 2;
+        actor->acceleration = 0;
+        actor->scaleX = scale;
+        actor->scaleY = scale;
+        actor->gravity = toFIXED(33) / 100;
+        actor->velocityX = vx;
+        actor->bounce = FIXED_ONE / 2;
       }
-      Actor_SetSpriteColorMode(object, 1);
+      Actor_SetSpriteColorMode(actor, 1);
     }
   }
 }
@@ -779,16 +778,16 @@ void MarsLighthouseRoomF_CycloneToExit14(void) {
 
 /// Moved to cell x 13, the block drops into the gap and bridges it.
 void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (FIELD_CELL(object->x.fixed) == 13) {
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    if (object->groundHeight !=
-        Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed)) {
+  if (FIELD_CELL(actor->x.fixed) == 13) {
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    if (actor->groundHeight !=
+        Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
       s32 frames;
 
       System_Wait(2);
-      for (frames = 0; frames < 30 && object->y.fixed > object->groundHeight;
+      for (frames = 0; frames < 30 && actor->y.fixed > actor->groundHeight;
            frames++)
         System_Wait(1);
       Event_PlaySound(SE_IMPACT);
@@ -825,20 +824,20 @@ void MarsLighthouseRoomF_HideSteppingStones(void) {
 /// The leader sinks into the hole with a puff of dust and drops to the floor
 /// below.
 void MarsLighthouseRoomF_FallIntoHole(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 frame;
 
   Leader_StopMoving();
-  Actor_SetSpriteFlags(object, 0);
+  Actor_SetSpriteFlags(actor, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   for (frame = 0; frame <= 39; frame++) {
     if (frame == 5)
       Event_PlaySound(SE_DUST_PUFF);
-    object->motionFlags = 0;
-    object->scaleX += -(FIXED_ONE / 64);
-    object->scaleY += -(FIXED_ONE * 3 / 256);
-    object->y.fixed += -(toFIXED(6) / 10);
+    actor->motionFlags = 0;
+    actor->scaleX += -(FIXED_ONE / 64);
+    actor->scaleY += -(FIXED_ONE * 3 / 256);
+    actor->y.fixed += -(toFIXED(6) / 10);
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
@@ -914,20 +913,20 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     MarsLighthouseRoomF_RouteFireThroughPipeline();
     if (Ride_GetEntryFlags(0) != FLAME_THROWER_DRY &&
         Flag_IsSet(FLAG_CENTER_PUDDLE_FROZEN)) {
-      struct Actor *object = Actor_Get(ACTOR_CENTER_PUDDLE);
+      struct Actor *actor = Actor_Get(ACTOR_CENTER_PUDDLE);
 
-      object->update = NULL;
-      Actor_SetSpriteColorMode(object, 0);
+      actor->update = NULL;
+      Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(ACTOR_CENTER_PUDDLE, 6);
       Flag_Clear(FLAG_CENTER_PUDDLE_FROZEN);
       MarsLighthouseRoomF_MeltPuddle(ACTOR_CENTER_PUDDLE);
     }
     if (Ride_GetEntryFlags(2) != FLAME_THROWER_DRY &&
         Flag_IsSet(FLAG_UPPER_PUDDLE_FROZEN)) {
-      struct Actor *object = Actor_Get(ACTOR_UPPER_PUDDLE);
+      struct Actor *actor = Actor_Get(ACTOR_UPPER_PUDDLE);
 
-      object->update = NULL;
-      Actor_SetSpriteColorMode(object, 0);
+      actor->update = NULL;
+      Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(ACTOR_UPPER_PUDDLE, 6);
       Flag_Clear(FLAG_UPPER_PUDDLE_FROZEN);
       MarsLighthouseRoomF_MeltPuddle(ACTOR_UPPER_PUDDLE);
@@ -974,10 +973,10 @@ void Leader_SlideOnIceFromEdge(void);
 
 /// A frozen puddle is solid ground.
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 row = FIELD_CELL(object->z.fixed) << 7;
-  FIXED x = object->x.fixed;
+  s32 row = FIELD_CELL(actor->z.fixed) << 7;
+  FIXED x = actor->x.fixed;
   u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
@@ -988,10 +987,10 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
 
 /// A thawed puddle is water again.
 void MarsLighthouseRoomF_MeltPuddle(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 row = FIELD_CELL(object->z.fixed) << 7;
-  FIXED x = object->x.fixed;
+  s32 row = FIELD_CELL(actor->z.fixed) << 7;
+  FIXED x = actor->x.fixed;
   u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
@@ -1011,10 +1010,10 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
     MarsLighthouseRoomF_FreezePuddle(id);                                      \
     Flag_Set(n1);                                                              \
     if (Ride_GetEntryFlags(n2) != FLAME_THROWER_DRY) {                         \
-      struct Actor *object = Actor_Get(id);                                    \
+      struct Actor *actor = Actor_Get(id);                                     \
                                                                                \
-      object->update = NULL;                                                   \
-      Actor_SetSpriteColorMode(object, 0);                                     \
+      actor->update = NULL;                                                    \
+      Actor_SetSpriteColorMode(actor, 0);                                      \
       Actor_SetAnimation(id, 6);                                               \
       Flag_Clear(n1);                                                          \
       MarsLighthouseRoomF_MeltPuddle(id);                                      \
@@ -1408,30 +1407,30 @@ extern s32 gWhirlwindEndScript[];
 UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_PlaySound(SE_WHIRLWIND);
   position.x =
       source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
   position.z =
       source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
+  actor = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                            position.z);
+  Actor_SelectAnimation(actor, 2);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->motionFlags = 0;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->facing = source->facing;
+  actor->timer = 0;
+  actor->riseCounter = 0;
+  actor->riseEnabled = 0;
+  actor->update = Whirlwind_Update;
+  actor->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
                     0, toFIXED(3), &options);
-  return object;
+  return actor;
 }
 
 #include "shared/actor_emit_rising_sparks_b.h"
@@ -1517,77 +1516,21 @@ extern s32 gScriptedPart_Script[];
 
 #include "shared/actor_reset_scripted_for.h"
 
-void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_ResetScriptedFor(object, 2);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_forward.c"
 
 #include "shared/ride_update_landing.h"
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-void Ride_UpdateDrift(struct Actor *object);
+void Ride_UpdateDrift(struct Actor *actor);
 
 #include "shared/actor_setup_scripted_part.h"
 
-void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
+#include "shared/ride_spawn_backward.c"
 
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateForward;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_forward.c"
 
-void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
-
-void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
-                                             position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->riseBaseY = -speed;
-    Actor_SetupScriptedPart(object, 3);
-    object->update = Flame_UpdateLanding;
-    if (mode)
-      object->retainSpriteCache = 2;
-    Actor_SelectAnimation(object, 2);
-  }
-}
+#include "shared/ride_spawn_landing_backward.c"
 
 #include "shared/actor_is_above.h"
 
@@ -1595,167 +1538,13 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
 
 #include "shared/actor_setup_scripted_for.h"
 
-void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object = Import_ActorCreate_(
-      SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
-  s32 spin;
-
-  if (object != NULL) {
-    object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() << 1) + speed;
-    spin = (u16)Random16() + 0xffff8000;
-    object->timer = spin;
-    Actor_SetupScriptedFor(object, 2);
-    object->update = (void (*)(void))Ride_UpdateDrift;
-    Actor_SetBlendMode(object, 1);
-  }
-}
+#include "shared/ride_spawn_spark.c"
 
 typedef struct Actor Actor;
 
-/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
-typedef struct Entry {
-  s16 active;
-  s16 timer; ///< frames to its next puff
-  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
-  /// Puffs even off screen, and its flames keep their sprites.
-  s16 offScreen;
-  struct Actor *actor;
-  FIXED reach; ///< 16.16 pixels, from the flags' low four bits
-} Entry;
+#include "shared/flame_throwers_puff.c"
 
-/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
-/// sets stopped, which calls back once.
-typedef struct State {
-  u8 unusedBeforeStopped[6];
-  s16 stopped;
-  s16 wasStopped;
-  u8 unusedAfterWasStopped[4];
-  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
-  void (*onStopped)();
-  Entry entries[4];
-} State;
-
-/// The heap slots as FlameThrowers_Puff reads them: the field work through a
-/// union, which keeps its read after the stores before it.
-typedef struct HeapSlotsView {
-  u8 unusedBeforeMapGrid[32];
-  struct MapWork *mapGrid;
-  u8 unusedBeforeFieldWork[108 - 36];
-  union {
-    s32 word;
-    void *pointer;
-  } fieldWork;
-} HeapSlotsView;
-
-/// Each frame, every flame thrower in view sends its flame: forward, landing
-/// forward or back, back, or a spark, by its flags, every ninth frame. They
-/// pause while a menu is open, or a Psynergy is used unless the ride work runs
-/// them through it; reaching a stop calls the stop's callback once.
-void FlameThrowers_Puff(void) {
-  s32 saved[2];
-  State *state;
-  Entry *entry;
-  struct MapWork *map;
-  s32 *view;
-  s32 cameraX, cameraZ;
-  s32 v;
-  s32 i;
-
-  state = (State *)RIDE_WORK;
-  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
-  entry = state->entries;
-  view = &map->viewX;
-  cameraX = view[0];
-  cameraX &= FIELD_PIXEL_MASK;
-  cameraZ = view[1] & FIELD_PIXEL_MASK;
-  saved[1] = map->origin[1];
-  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
-  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
-    state->onStopped();
-  v = (u16)state->stopped;
-  state->wasStopped = v;
-  state->stopped = 0;
-  for (i = 3; i >= 0; i--, entry++) {
-    struct Actor *actor;
-    s32 flag, x, y, offScreen, value;
-    FIXED dx, dz;
-    u8 *mark;
-
-    if (entry->active == 0)
-      continue;
-    actor = entry->actor;
-    if (actor == 0)
-      continue;
-    flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (((struct FieldWork *)saved[0])->psynergy != 0)
-      flag |= 1;
-    mark = &actor->paused;
-    *mark = flag;
-    if (state->runsDuringPsynergy != 0)
-      *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dz = actor->z.fixed;
-    dx = actor->x.fixed - cameraX;
-    y = actor->y.fixed;
-    dz -= cameraZ;
-    y = dz - y;
-    offScreen = entry->offScreen;
-    x = dx >> 16;
-    y = (y >> 16) - 8;
-    if (offScreen == 0) {
-      if ((u32)(x + 7) > 334)
-        continue;
-      if (y <= -48)
-        continue;
-      if (y > 239)
-        continue;
-    }
-    y = (u16)entry->timer;
-    if (entry->timer <= 0) {
-      y = entry->flags & 0xf0;
-      switch (y) {
-      case FLAME_SPARK:
-        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
-        break;
-      case FLAME_BACKWARD:
-        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
-        break;
-      case FLAME_LANDING_BACKWARD:
-        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
-                                  offScreen);
-        break;
-      case FLAME_LANDING_FORWARD:
-        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
-                                 offScreen);
-        break;
-      case FLAME_FORWARD:
-        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
-        break;
-      }
-      value = 8;
-    } else {
-      value = y - 1;
-    }
-    entry->timer = value;
-  }
-}
-
-void Ride_Create(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *object;
-  struct Sprite *animation;
-
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWordsEntry(work, sizeof(*work));
-  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  object->retainSpriteCache = 2;
-  Actor_SelectAnimation(object, 1);
-  animation = object->sprite;
-  work->handle = object;
-  work->flameVramBlock = animation->slot;
-  animation->retainCacheEntry = 1;
-}
+#include "shared/ride_create.c"
 
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
@@ -1764,28 +1553,19 @@ struct RideRow {
   struct RideEntry entry;
 };
 
-void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
+void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 
-void Ride_ReleaseHandle(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-
-  Actor_Release(work->handle);
-  work->handle = NULL;
-}
+#include "shared/ride_release_handle.h"
 
 UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-UNUSED s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
-}
+#include "shared/ride_get_entry_value.c"
 
-UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
-}
+#include "shared/ride_set_entry_value.c"
 
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
@@ -1793,13 +1573,9 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_set_entry.h"
 
-void Ride_SetEntryCount(s32 index, s16 value) {
-  RIDE_WORK->entries[index].offScreen = value;
-}
+#include "shared/ride_set_entry_count.c"
 
-s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
-}
+#include "shared/ride_get_entry_flags.c"
 
 #include "shared/ride_set_slot.h"
 
@@ -1998,237 +1774,32 @@ s32 Fireball_CarryLeader(void) {
 /// Whether the leader has been hit.
 s32 MarsLighthouseRoomF_IsSliding(void) { return RIDE_WORK->active; }
 
-extern u32 gMarsLighthouseRoomF_CrumbScript[];
+extern u32 gCrumbs_Script[];
 s32 VramCache_FreeEntry(u32 slot);
 
-/// A crumb breaks from the rolling actor as it shrinks away.
-void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
-  struct FlameHitWork *work = RIDE_WORK;
-  s32 i;
-
-  if (work->handle == NULL)
-    return;
-  // DEAD: a loop of one pass, as the ice chips' loop of six; the ROM keeps its
-  // decrement and test.
-  for (i = 0; i >= 0; i--) {
-    struct Actor *object;
-    s32 a, b, c, d, e;
-    FIXED x, y, z;
-
-    a = Random16();
-    b = Random16();
-    x = actor->x.fixed + a * 16;
-    x -= b * 16;
-    c = Random16();
-    d = Random16();
-    e = Random16();
-    z = actor->z.fixed + d * 16 - e * 16;
-    y = c * 8 + actor->y.fixed + FIXED_ONE * 4;
-    object = (struct Actor *)Import_ActorCreate(SPRITE_UNSEEN_MARKER, x, y, z);
-    if (object != NULL) {
-      s32 angle, radius;
-      u32 sum;
-      FIXED scale;
-      struct Sprite *sprite;
-      struct Sprite *source;
-
-      angle = Random16();
-      radius = Random16();
-      sum = Random16();
-      sum += Random16();
-      scale = (sum >> 2) + FIXED_ONE / 2;
-      Actor_StartScript(object, gMarsLighthouseRoomF_CrumbScript);
-      Actor_SetSpriteFlags(object, 0);
-      object->velocityY = angle * 4 + FIXED_ONE * 2;
-      radius <<= 3;
-      object->velocityZ = Iwram_MulFX(radius, Trig_Cos(angle));
-      object->velocityX = Iwram_MulFX(radius, Trig_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = toFIXED(33) / 100;
-      object->scaleX = scale;
-      object->scaleY = scale;
-      object->bounce = FIXED_ONE / 2;
-      sprite = object->sprite;
-      source = ((struct Actor *)work->handle)->sprite;
-      VramCache_FreeEntry(sprite->slot);
-      sprite->retainCacheEntry = 1;
-      sprite->slot = work->flameVramBlock;
-      SpriteAnimation_Clear(sprite->entries[0]);
-      sprite->entries[0] = NULL;
-      sprite->count = 0;
-      sprite->width = source->width;
-      sprite->height = source->height;
-      sprite->image.shape = source->image.shape;
-      sprite->image.size = source->image.size;
-
-      sprite->image.tile = source->image.tile;
-    }
-  }
-}
+#include "shared/actor_scatter_crumbs.c"
 
 extern u32 gEmbers_Script[];
 
 #include "shared/embers_spawn.h"
 
-/// An attached actor holds still while an event runs.
-void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
-}
+#include "shared/actor_hold_during_event.c"
 #undef position
 #undef WORK
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
-void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor);
+void Actor_ScatterCrumbs(struct Actor *actor);
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
-void Actor_RollAndCrumble(struct Actor *actor) {
-  struct Vector3 position;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 state = actor->timer;
-
-  if (state == 0) {
-    s32 dz;
-    s32 dx;
-    s32 tileX;
-    struct MapCell *cellsA;
-    struct MapCell *cellsB;
-    s32 widthA;
-    s32 widthB;
-    s32 offset;
-    s32 zB;
-    s32 tileZ;
-    s32 heightA;
-    s32 heightB;
-    s32 x;
-    s32 z;
-    s32 xA;
-    s32 xB;
-    s32 zA;
-    s32 flag;
-    struct MapWork *map;
-    struct MapCell *cell;
-    struct FieldWork *fieldWork;
-    struct FlameHitWork *other;
-    struct Actor *target;
-
-    flag = Event_GetFlag(FLAG_MENU_OPEN);
-    if (work->psynergy != 0)
-      flag |= 1;
-    actor->paused = flag;
-
-    position.x = actor->x.fixed;
-    position.y = actor->y.fixed;
-    position.z = actor->z.fixed;
-    FieldVector_AddPolarOffset(8, actor->facing, &position);
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
-        7) {
-      actor->targetZ = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetX = TARGET_UNSET;
-      actor->acceleration = toFIXED(1) / 4;
-      actor->timer = 1;
-      Event_PlaySound(SE_CRASH);
-      MapGrid_SetShake(5, 5, 1);
-      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (actor->watchedActor != NULL)
-        ((void (*)(struct Actor *))actor->watchedActor)(actor);
-    }
-
-    map = Ram_HeapSlots->mapGrid;
-    tileX = FIELD_CELL(actor->x.fixed);
-    tileZ = FIELD_CELL(actor->z.fixed);
-    cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
-    cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
-    widthA = FIELD_CELL(map->layers[1].offsetX);
-    heightA = FIELD_CELL(map->layers[1].offsetY);
-    widthB = FIELD_CELL(map->layers[2].offsetX);
-    heightB = FIELD_CELL(map->layers[2].offsetY);
-
-    for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
-        zA = tileZ + heightA - 1;
-         dz <= 1; zB++, z++, zA++, dz++) {
-      for (dx = -1, xB = tileX + widthB - 1, x = tileX - 1,
-          xA = tileX + widthA - 1;
-           dx <= 1; xB++, x++, xA++, dx++) {
-        offset = ((dz << 7) + dx) * 4;
-        cell = (struct MapCell *)(offset + (s32)cellsA);
-        if (cell->collisionCode == 77) {
-          cell->collisionCode = 0;
-          MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
-          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
-                       FIELD_CELL_CENTER(z), actor->facing);
-        }
-        cell = (struct MapCell *)(offset + (s32)cellsB);
-        if (cell->collisionCode == 77) {
-          cell->collisionCode = 0;
-          MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
-          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
-                       FIELD_CELL_CENTER(z), actor->facing);
-        }
-      }
-    }
-
-    if (actor->scaleX < FIXED_ONE) {
-      actor->scaleX += FIXED_ONE / 16;
-      actor->scaleY += FIXED_ONE / 16;
-    }
-    FieldActor_SetMoveTargetFX(actor, position.x, position.y, position.z);
-
-    fieldWork = Ram_HeapSlots->fieldWork;
-    other = RIDE_WORK;
-    target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < toFIXED(20) &&
-        (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < toFIXED(20)) {
-      other->active = 2;
-      other->car = actor;
-      fieldWork->stepTrigger = other->hitTrigger + 2;
-    }
-  } else if (state == 1) {
-    actor->paused = 0;
-    if (actor->scaleX > 0) {
-      actor->scaleX -= FIXED_ONE / 16;
-      actor->scaleY -= FIXED_ONE / 16;
-      MarsLighthouseRoomF_ScatterCrumbs(actor);
-    } else {
-      actor->z.fixed = 0;
-      actor->y.fixed = 0;
-      actor->x.fixed = 0;
-      actor->velocityZ = 0;
-      actor->velocityY = 0;
-      actor->velocityX = 0;
-      actor->update = NULL;
-    }
-  }
-}
+#include "shared/actor_roll_and_crumble.c"
 #undef ABS
 
-void Actor_HoldDuringEvent(struct Actor *object);
+void Actor_HoldDuringEvent(struct Actor *actor);
 
-void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
-                  const void *script) {
-  struct Actor *source = Actor_Get(sourceId);
-  struct Actor *object = Actor_Get(id);
-
-  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
-                                       source->z.fixed);
-  Actor_StartScript(object, script);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  Actor_SelectAnimation(object, 1);
-  object->watchedActor = source;
-  object->timer = 0;
-  object->userValue = angle;
-  object->launchedActorId = value;
-  object->update = Actor_HoldDuringEvent;
-}
+#include "shared/actor_attach.c"
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
@@ -2258,21 +1829,16 @@ void Actor_LaunchAhead(struct Actor *self) {
   Event_PlaySound(SE_LAUNCH);
 }
 
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
+void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 mode);
 
 #include "shared/actor_pop_up_slow.h"
 
 #include "shared/actor_pop_up.h"
 
 extern u8 gInventorySnapshot[];
-void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
+void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 
-s32 Actor_Park(struct Actor *object) {
-  Actor_LaunchAhead(object);
-  SET_ACTOR_POSITION(object, 0, 0, 0);
-  SET_VELOCITY(object, 0, 0, 0);
-  return 0;
-}
+#include "shared/actor_park.h"
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -2286,85 +1852,24 @@ s32 Actor_Park(struct Actor *object) {
 #undef WORK
 #undef MapLayer
 #undef Camera_SetBounds
-void Actor_StartScript(struct Actor *object, const void *script);
-extern s32 gFieldEffect_DurationScripts[];
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-  u32 start;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
-  else
-    effect =
-        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  start = flags & EFFECT_USE_START_SCALE;
-  if (start != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    FIXED targetX;
-    s32 count;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    targetX = options->targetScaleX;
-    count = script[3];
-    if (start != 0) {
-      effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (targetX - FIXED_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Actor_SelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+void Actor_StartScript(struct Actor *actor, const void *script);
+extern const s32 *gFieldEffect_DurationScripts[];
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -2372,7 +1877,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -2388,10 +1893,10 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 /// The leader on a cracked tile: the first time it cracks, the next it gives
 /// way and he falls through.
-s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+s32 CrackedTile_Step(void) {
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 index;
@@ -2418,7 +1923,7 @@ s32 CrackedTiles_Step(void) {
 
 /// Unused here: places the leader below the tile he fell through.
 UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
@@ -2429,11 +1934,11 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = FIELD_CELL_CENTER(x + dx);
-    object->z.fixed = FIELD_CELL_CENTER(z + dz);
+    actor->x.fixed = FIELD_CELL_CENTER(x + dx);
+    actor->z.fixed = FIELD_CELL_CENTER(z + dz);
     other = event->camera;
-    other->x.fixed = object->x.fixed;
-    other->z.fixed = object->z.fixed;
+    other->x.fixed = actor->x.fixed;
+    other->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;
@@ -2468,8 +1973,8 @@ extern s8 gPushFootprints[][4];
 /// Makes the cells under a pushable actor solid, by its footprint.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Get(id);
-  s16 shape = ((struct Sprite *)object->sprite)->entries[0]->animationId;
+  struct Actor *actor = Actor_Get(id);
+  s16 shape = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
   u32 j;
   s32 width;
@@ -2492,8 +1997,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(object->x.fixed + (gPushFootprints[j][0] << 16));
-  z = FIELD_CELL(object->z.fixed + (gPushFootprints[j][1] << 16));
+  x = FIELD_CELL(actor->x.fixed + (gPushFootprints[j][0] << 16));
+  z = FIELD_CELL(actor->z.fixed + (gPushFootprints[j][1] << 16));
   mapX = map->layers[1].offsetX >> 20;
   i = mapX;
   mapZ = map->layers[1].offsetY >> 20;
@@ -2525,9 +2030,9 @@ void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
 
 extern s32 gPushLeaderSteps[];
 
-static inline s32 PushTarget_CheckCollision(struct Actor *object,
+static inline s32 PushTarget_CheckCollision(struct Actor *actor,
                                             s32 *position) {
-  return MapGrid_CheckCollision(object, position);
+  return MapGrid_CheckCollision(actor, position);
 }
 
 // Finds the object the leader is pushing and steps its footprint, one cell
@@ -2547,7 +2052,7 @@ void PushTarget_Push(struct PushTarget target) {
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(target.id);
+  struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
   s32 footprint;
@@ -2563,10 +2068,10 @@ void PushTarget_Push(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed + (gPushFootprints[footprint][0] << 16));
-  cell[2] = FIELD_CELL(object->z.fixed + (gPushFootprints[footprint][1] << 16));
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed + (gPushFootprints[footprint][0] << 16));
+  cell[2] = FIELD_CELL(actor->z.fixed + (gPushFootprints[footprint][1] << 16));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2586,12 +2091,12 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Actor_SelectAnimation(object, 3);
+    Actor_SelectAnimation(actor, 3);
   else
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -2605,12 +2110,12 @@ void PushTarget_Push(struct PushTarget target) {
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
   target.z = target.z + (gPushFootprints[footprint][1] << 16);
   target.x >>= 20;
@@ -2635,82 +2140,7 @@ void PushTarget_Push(struct PushTarget target) {
 #include "shared/actor_stop_at_push_target.h"
 #undef ABS
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
-void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
-  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
-  viewY = map->origin[1];
-  oam = gLightSpriteOams;
-
-  for (i = 0; i < gLightSpriteCount; i++) {
-    struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox;
-      FIXED y, z;
-      s32 oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + toFIXED(8);
-      z = actor->z.fixed - viewZ - viewY;
-      oy = z - y;
-      depth = ((y + z) >> 16) + 58;
-      big = gLightSpritesLarge;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
@@ -2756,18 +2186,7 @@ void LightSprites_InitC(void) {
   gLightSpritePriority = -1;
 }
 
-void LightSprites_Add(s32 id, s32 value) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    s16 *count;
-
-    object->timer = value;
-    count = &gLightSpriteCount;
-    gLightSpriteActors[*count] = object;
-    (*count)++;
-  }
-}
+#include "shared/light_sprites_add.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
@@ -3023,43 +2442,9 @@ s32 gMarsLighthouseRoomF_FireballDrop[] = {
       SC_END,                                                                  
   };
 
-s32 gScriptedPart_Script[] = {                                                               
-      SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/mars_lighthouse_part_scripts.c"
 
-u32 gMarsLighthouseRoomF_CrumbScript[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
-
-u32 gEmbers_Script[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
-
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 s16 gSlideOnIce_SteerAngles[] = {
     -1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384,
@@ -3085,14 +2470,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 // clang-format on
 
 #undef ABS
@@ -3345,7 +2723,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, FLAG_WEST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstWestWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 21, FLAG_EAST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstEastWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 22, FLAG_CENTER_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstCenterWall)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BeginBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BlazeTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFireballCrackWall)},
     {TRIGGER_TABLE_END},
@@ -3392,7 +2770,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipeOrJump)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BeginBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_LightFlameThrower)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFlameThrower)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_UPPER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostUpperPuddle)},
@@ -3409,7 +2787,7 @@ LATE_DATA s32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-LATE_DATA s32 gFieldEffect_DurationScripts[] = {
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,

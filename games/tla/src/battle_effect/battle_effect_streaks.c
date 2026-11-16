@@ -236,8 +236,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 drawLower(canvas, cell, position.x - 10, position.y,
                           STREAK_WIDTH, STREAK_HEIGHT);
               }
-              BattleEffectKernels_IntegrateVector3(streak,
-                                                   PARTICLE_DAMPING_NONE, 0);
+              Particle_AdvanceWithGravity3D(streak, PARTICLE_DAMPING_NONE, 0);
               streak->variant++;
             }
           }
@@ -432,11 +431,11 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MOTE_FOUNTAIN_SLAVER) {
-          BattleEffectKernels_IntegrateVector3(mote, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity3D(mote, 62, -toFIXED(1) / 8);
           if (mote->y < toFIXED(5))
             mote->velocityY = -mote->velocityY;
         } else {
-          BattleEffectKernels_IntegrateVector3(mote, 62, toFIXED(1) / 64);
+          Particle_AdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
         }
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)

@@ -72,7 +72,7 @@ s32 GabombaStatue_GetPuzzleSeed(void);
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
 void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out);
 
-void Import_ActorRelease(struct Actor *object);
+void Import_ActorRelease(struct Actor *actor);
 
 extern u32 gGabombaStatue_LookAtChannelScript[];
 

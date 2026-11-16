@@ -148,7 +148,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
                       picture * PICTURE_BYTES(STAR),
                   pos.x - STAR_WIDTH / 2, pos.y - STAR_HEIGHT / 2, STAR_WIDTH,
                   STAR_HEIGHT);
-      BattleEffectKernels_IntegrateVector3(star, 63, 0);
+      Particle_AdvanceWithGravity3D(star, 63, 0);
       if (frame <= delay + 10) {
         continue;
       }
@@ -213,7 +213,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
                       FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
-        BattleEffectKernels_IntegrateVector2(particle, 60, -toFIXED(1) / 16);
+        Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
         particle->variant++;
       }
     }
@@ -225,7 +225,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         blitters[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     FIXED_INTEGER_PART(particle->x) - size / 2,
                     FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(particle, 60, toFIXED(1) / 16);
+        Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
         particle->variant--;
       }
     }
@@ -606,8 +606,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
                       FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
             }
-            BattleEffectKernels_IntegrateVector2(particle, 60,
-                                                 -toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
             particle->variant++;
           }
         }
@@ -671,7 +670,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
             blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     FIXED_INTEGER_PART(spark->x) - size / 2,
                     FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
+            Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
           }
         }

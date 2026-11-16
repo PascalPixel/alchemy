@@ -207,7 +207,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         FIXED_INTEGER_PART(step->x) - size / 2,
                         FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(step, 60, 0);
+            Particle_AdvanceWithGravity2D(step, 60, 0);
             step->variant--;
           }
         }
@@ -261,7 +261,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 FIXED_INTEGER_PART(step->x) - DUST_BALL_WIDTH / 2,
                 FIXED_INTEGER_PART(step->y) - DUST_BALL_HEIGHT / 2,
                 DUST_BALL_WIDTH, DUST_BALL_HEIGHT);
-        BattleEffectKernels_IntegrateVector2(step, 56, 0);
+        Particle_AdvanceWithGravity2D(step, 56, 0);
         step->velocityX += step->z;
         step->velocityY += step->velocityZ;
         step->variant++;

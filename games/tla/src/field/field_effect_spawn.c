@@ -16,7 +16,7 @@
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 extern const s32 *EFFECT_SCRIPTS[];
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,

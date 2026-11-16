@@ -158,36 +158,36 @@ void GaiaRock_StepOnThirdStatueSpot(void) {
 /// still ten frames later.
 void GaiaRock_DropPillar(s32 id) {
   s32 frames = 60;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   while (frames != 0) {
     System_Wait(1);
-    if (object->velocityY == 0)
+    if (actor->velocityY == 0)
       break;
     frames--;
   }
   System_Wait(10);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
 }
 #else
 /// Lets pillar id fall until it lands, for at most 60 frames, plays cue (when
 /// not 0) and stands it still ten frames later.
 void GaiaRock_DropPillar(s32 id, s32 cue) {
   s32 frames = 60;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   while (frames != 0) {
     System_Wait(1);
     frames--;
-    if (object->velocityY == 0)
+    if (actor->velocityY == 0)
       break;
   }
   if (cue != 0)
     Event_PlaySound(cue);
   System_Wait(10);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
 }
 #endif
 
@@ -207,25 +207,25 @@ void GaiaRock_StartMovingPillar(void) {
 /// A pillar set down after a Move: the first drops into its gap once Moved far
 /// enough west, the second bridges its gap as it passes over it to (79, 12).
 void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   MapGrid_CopyCellAttributes(8, 90, 1, 1, 8, 91);
   if (id == ACTOR_FIRST_PILLAR &&
       Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
-      (object->x.fixed >> 19) <= 11) {
+      (actor->x.fixed >> 19) <= 11) {
     DROP_PILLAR(ACTOR_FIRST_PILLAR);
     Event_SetFlag(FLAG_FIRST_PILLAR_DROPPED);
     MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
   }
   if (id == ACTOR_SECOND_PILLAR &&
       Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
-    if ((object->x.fixed >> 19) == 77)
+    if ((actor->x.fixed >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
-    if ((object->x.fixed >> 19) == 79 && (object->y.fixed >> 19) == 12) {
+    if ((actor->x.fixed >> 19) == 79 && (actor->y.fixed >> 19) == 12) {
       DROP_PILLAR(ACTOR_SECOND_PILLAR);
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
-    if ((object->x.fixed >> 19) == 81) {
+    if ((actor->x.fixed >> 19) == 81) {
       Event_SetFlag(FLAG_SECOND_PILLAR_DROPPED);
       MapGrid_CopyCellAttributes(41, 46, 1, 1, 39, 46);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
@@ -256,16 +256,16 @@ void GaiaRock_CycloneClearsWall(void) {
 
 /// Reveal: shows the Dancing Idol on the altar until it is taken.
 void GaiaRock_RevealIdol(void) {
-  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
+  struct Actor *actor = Actor_Get(FIELD_TREASURE_ACTOR);
   s32 done;
 
-  if (object == NULL)
+  if (actor == NULL)
     return;
   done = Event_GetFlag(FLAG_DANCING_IDOL_TAKEN);
   if (done == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 657, 246);
-    object->motionFlags = done;
-    object->y.fixed = toFIXED(80);
+    actor->motionFlags = done;
+    actor->y.fixed = toFIXED(80);
   }
 }
 
@@ -278,10 +278,10 @@ void GaiaRock_HideIdol(void) {
 /// The altar: with the Dancing Idol revealed the party takes it; before that
 /// the leader senses something and the field menu opens, and after, nothing.
 void GaiaRock_CheckAltar(void) {
-  struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
+  struct Actor *actor = Actor_Get(FIELD_TREASURE_ACTOR);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
-  if (object != NULL && object->x.fixed != 0) {
+  if (actor != NULL && actor->x.fixed != 0) {
     Scene_TalkToActor(0x1000 | FIELD_TREASURE_ACTOR);
   } else if (Event_GetFlag(FLAG_DANCING_IDOL_TAKEN) == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -463,28 +463,28 @@ void GaiaRock_SwingVineHarder(void) {
   slot->swing += 128;
 }
 
-void Actor_PlaySoundInView(struct Actor *object, s32 a);
+void Actor_PlaySoundInView(struct Actor *actor, s32 a);
 
 /// Every 256 frames the wind statue blows a whirlwind westward.
 void GaiaRock_StatueBlowsWind(void) {
-  struct Actor *object = Actor_Get(ACTOR_WIND_STATUE);
+  struct Actor *actor = Actor_Get(ACTOR_WIND_STATUE);
   u8 phase = gFrameCount;
 
   if (phase == 0) {
-    Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    object = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
-                         object->z.fixed);
-    if (object != NULL) {
-      object->acceleration = toFIXED(2);
-      object->speedLimit = toFIXED(2);
-      object->scaleX = FIXED_ONE / 2;
-      object->scaleY = FIXED_ONE / 10;
-      object->priorityFlags = phase;
-      Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTargetFX(object, object->x.fixed - toFIXED(32),
-                                 object->y.fixed, object->z.fixed);
-      Actor_StartScript(object, gGaiaRock_WindScript);
-      Actor_SetSpritePriorityDirect(object, 2);
+    Actor_PlaySoundInView(actor, SE_FLAME_FLARE);
+    actor = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
+                        actor->z.fixed);
+    if (actor != NULL) {
+      actor->acceleration = toFIXED(2);
+      actor->speedLimit = toFIXED(2);
+      actor->scaleX = FIXED_ONE / 2;
+      actor->scaleY = FIXED_ONE / 10;
+      actor->priorityFlags = phase;
+      Actor_SelectAnimation(actor, 2);
+      FieldActor_SetMoveTargetFX(actor, actor->x.fixed - toFIXED(32),
+                                 actor->y.fixed, actor->z.fixed);
+      Actor_StartScript(actor, gGaiaRock_WindScript);
+      Actor_SetSpritePriorityDirect(actor, 2);
     }
   }
 }
@@ -614,39 +614,24 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// While the leader climbs, runs the step trigger of the wall cell under him.
-void GaiaRock_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
-    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / toFIXED(16);
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / toFIXED(16);
-    struct MapCell *cells = map->layers[2].cells;
-    struct MapCell *cell = &cells[x + (z << 7)];
-    s32 code = cell->collisionCode;
-
-    if (code >= 1 && code <= 230)
-      work->stepTrigger = code;
-  }
-}
+#include "shared/gaia_rock_trigger_wall_cell.c"
 
 /// Stands statue id risen on the cell under (x, y, z), in 16.16 pixels, and
 /// blocks that cell.
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
   s32 cellX = x / toFIXED(16);
   s32 cellZ = (z - y + 0x7fff) / toFIXED(16);
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = CELL_BEHAVIOR_WALL;
-  object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
-  object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  object->y.fixed = object->z.fixed - (cellZ << 20);
-  object->motionFlags = 0;
-  object->priorityFlags |= 2;
-  Actor_SetSpriteFlags(object, 0);
+  actor->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
+  actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
+  actor->y.fixed = actor->z.fixed - (cellZ << 20);
+  actor->motionFlags = 0;
+  actor->priorityFlags |= 2;
+  Actor_SetSpriteFlags(actor, 0);
 }
 
 /// The statue id rises under the leader in a burst of dust and lifts him; once

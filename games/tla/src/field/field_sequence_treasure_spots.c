@@ -71,7 +71,7 @@ void Field_PlaceTreasureSpots(void) {
   s32 position[3];
   s32 kind;
   s32 buried;
-  struct Actor *object;
+  struct Actor *actor;
 
   if (rows == NULL)
     return;
@@ -99,29 +99,29 @@ void Field_PlaceTreasureSpots(void) {
         buried = 1;
         kind = SPRITE_UNSEEN_MARKER;
       }
-      object = Actor_CreateFar(kind, position[0], position[1], position[2]);
-      if (object != NULL) {
+      actor = Actor_CreateFar(kind, position[0], position[1], position[2]);
+      if (actor != NULL) {
         if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-          object->motionFlags = ACTOR_FALLS;
-          object->groundHeight = 0;
-          object->y.fixed = 0;
+          actor->motionFlags = ACTOR_FALLS;
+          actor->groundHeight = 0;
+          actor->y.fixed = 0;
         } else {
-          object->groundHeight =
-              MapGrid_GetTerrainHeightFar(0, object->x.fixed, object->z.fixed);
-          object->y.fixed += object->groundHeight;
+          actor->groundHeight =
+              MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+          actor->y.fixed += actor->groundHeight;
           if (buried) {
-            u8 *motionFlags = &object->motionFlags;
+            u8 *motionFlags = &actor->motionFlags;
             struct MapWork *map;
             struct MapCell *cells;
             s32 x;
             s32 z;
 
             *motionFlags = ACTOR_FALLS;
-            object->groundHeight -= toFIXED(16);
-            object->y.fixed = object->groundHeight;
+            actor->groundHeight -= toFIXED(16);
+            actor->y.fixed = actor->groundHeight;
             map = Ram_HeapSlots->mapGrid;
-            x = FIELD_CELL(object->x.fixed);
-            z = FIELD_CELL(object->z.fixed);
+            x = FIELD_CELL(actor->x.fixed);
+            z = FIELD_CELL(actor->z.fixed);
             cells = (struct MapCell *)gMapGridCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
@@ -131,20 +131,20 @@ void Field_PlaceTreasureSpots(void) {
               cells->collisionCode = 0;
           }
         }
-        Actor_SelectAnimationFar(object, 1);
-        Actor_SetSpriteFlagsFar(object, 0);
+        Actor_SelectAnimationFar(actor, 1);
+        Actor_SetSpriteFlagsFar(actor, 0);
         if (GameFlag_Get(flag))
-          Actor_SelectAnimationFar(object, 2);
-        Actor_StartIdleFar(object);
-        object->homeX = object->x.fixed / FIXED_ONE;
-        object->homeZ = object->z.fixed / FIXED_ONE;
-        object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-        object->collisionFlags = ACTOR_SOLID;
-        work->actors[FIELD_TREASURE_ACTOR + i] = object;
+          Actor_SelectAnimationFar(actor, 2);
+        Actor_StartIdleFar(actor);
+        actor->homeX = actor->x.fixed / FIXED_ONE;
+        actor->homeZ = actor->z.fixed / FIXED_ONE;
+        actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+        actor->collisionFlags = ACTOR_SOLID;
+        work->actors[FIELD_TREASURE_ACTOR + i] = actor;
         if (type == CONTAINER_BURIED)
           Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
         if (type == CONTAINER_POND)
-          object->collisionFlags = 0;
+          actor->collisionFlags = 0;
       }
     }
     i++;
@@ -160,19 +160,19 @@ void Field_PlaceTreasureSpots(void) {
 /// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
 /// pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
 
-  object = Actor_Lookup(objectId);
-  if (object == 0)
+  actor = Actor_Lookup(objectId);
+  if (actor == 0)
     return;
   if (mode == 0) {
-    object->x.fixed = 0;
-    object->z.fixed = 0;
-    object->riseBaseY = TREASURE_SPOT_ON_CELL;
+    actor->x.fixed = 0;
+    actor->z.fixed = 0;
+    actor->riseBaseY = TREASURE_SPOT_ON_CELL;
     return;
   }
-  sprite = object->sprite;
+  sprite = actor->sprite;
   if (sprite == 0)
     return;
   sprite->offsetY += 4;
@@ -182,13 +182,13 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
 
 /// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
 void Actor_SetSquareSprite(u32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
 
-  object = Actor_Lookup(objectId);
-  if (object == 0)
+  actor = Actor_Lookup(objectId);
+  if (actor == 0)
     return;
-  sprite = object->sprite;
+  sprite = actor->sprite;
   if (sprite == 0)
     return;
   sprite->offsetY = 8;
@@ -199,13 +199,13 @@ void Actor_SetSquareSprite(u32 objectId) {
 /// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
 /// 0 without one.
 s32 Actor_GetSpriteShape(u32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
   s32 shape = 0;
 
-  object = Actor_Lookup(objectId);
-  if (object != 0) {
-    sprite = object->sprite;
+  actor = Actor_Lookup(objectId);
+  if (actor != 0) {
+    sprite = actor->sprite;
     if (sprite != 0)
       shape = sprite->image.shape;
   }
@@ -215,45 +215,45 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 /// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
 /// again and drops it back home (homeX, homeZ) at Scoop's anchor.
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Lookup(objectId);
-  if (object == 0)
+  actor = Actor_Lookup(objectId);
+  if (actor == 0)
     return;
   if (mode == 1)
-    object->z.fixed = 0;
+    actor->z.fixed = 0;
   if (mode == 2) {
     GameFlag_Set(flag);
-    if (object->x.fixed != 0)
+    if (actor->x.fixed != 0)
       Actor_SetSquareSprite(objectId);
-    object->x.fixed = toFIXED(object->homeX);
-    object->z.fixed = toFIXED(object->homeZ);
+    actor->x.fixed = toFIXED(actor->homeX);
+    actor->z.fixed = toFIXED(actor->homeZ);
     BattleEffect_DropObjectAtAnchor(objectId);
   }
 }
 
 /// Shakes the actor's facing at random for 16 frames, then turns it back.
 void Actor_ShakeAngle(u32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 angle;
   s32 i;
 
-  object = Actor_Lookup(objectId);
-  if (object == 0)
+  actor = Actor_Lookup(objectId);
+  if (actor == 0)
     return;
-  angle = object->facing;
+  angle = actor->facing;
   for (i = 15; i >= 0; i--) {
     u32 a = Random16();
     u32 b = Random16();
     u32 cur;
 
-    cur = object->facing;
+    cur = actor->facing;
     b >>= 4;
     a >>= 4;
-    object->facing = cur + (a - b);
+    actor->facing = cur + (a - b);
     wait(1);
   }
-  object->facing = angle;
+  actor->facing = angle;
 }
 
 /// Closes the chest of the actor again (its item could not be carried), with
@@ -268,15 +268,15 @@ void TreasureSpot_CloseChest(u32 objectId) {
 /// animation 7, plays SE_ENEMY_CRY and gets an upward velocity of 8 pixels a
 /// frame, its shadow shown.
 void TreasureSpot_LaunchMimic(u32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Lookup(objectId);
+  actor = Actor_Lookup(objectId);
   wait(18);
-  Actor_SelectAnimationFar(object, 7);
+  Actor_SelectAnimationFar(actor, 7);
   Sound_PlayFar(SE_ENEMY_CRY);
-  if (object != 0) {
-    object->velocityY = toFIXED(8);
-    Actor_SetSpriteFlagsFar(object, 1);
+  if (actor != 0) {
+    actor->velocityY = toFIXED(8);
+    Actor_SetSpriteFlagsFar(actor, 1);
   }
 }
 
@@ -310,16 +310,16 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
 void TreasureSpot_SetActorPosition(u32 objectId, FIXED x, FIXED z) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Lookup(objectId);
-  if (object == 0)
+  actor = Actor_Lookup(objectId);
+  if (actor == 0)
     return;
   if (x == -1)
-    x = toFIXED(object->homeX);
+    x = toFIXED(actor->homeX);
   if (z == -1)
-    z = toFIXED(object->homeZ);
-  object->x.fixed = x;
-  object->z.fixed = z;
-  object->y.fixed = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
+    z = toFIXED(actor->homeZ);
+  actor->x.fixed = x;
+  actor->z.fixed = z;
+  actor->y.fixed = actor->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
 }

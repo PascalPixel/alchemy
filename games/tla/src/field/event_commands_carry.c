@@ -69,30 +69,30 @@ void FieldPsynergy_Carry(void) {
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
-  struct Actor *object;
+  struct Actor *actor;
   FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
-  if (object != NULL) {
-    object->scaleY = FIXED_ONE / 4;
-    object->scaleX = FIXED_ONE / 4;
-    object->speedLimit = toFIXED(3);
-    object->acceleration = toFIXED(3);
-    object->steeringFlags = 0;
-    Actor_SelectAnimationFar(object, 1);
-    scale = object->scaleX;
+  actor = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  if (actor != NULL) {
+    actor->scaleY = FIXED_ONE / 4;
+    actor->scaleX = FIXED_ONE / 4;
+    actor->speedLimit = toFIXED(3);
+    actor->acceleration = toFIXED(3);
+    actor->steeringFlags = 0;
+    Actor_SelectAnimationFar(actor, 1);
+    scale = actor->scaleX;
     if (scale < FIXED_ONE) {
       do {
         scale += FIXED_ONE / 32;
-        object->scaleY = scale;
-        object->scaleX = scale;
-        object->facing += DEGtoANG(45);
+        actor->scaleY = scale;
+        actor->scaleX = scale;
+        actor->facing += DEGtoANG(45);
         wait(1);
-        scale = object->scaleX;
+        scale = actor->scaleX;
       } while (scale < FIXED_ONE);
     }
-    object->facing = angle;
+    actor->facing = angle;
   }
-  return object;
+  return actor;
 }

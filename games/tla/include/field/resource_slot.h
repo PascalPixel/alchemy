@@ -15,8 +15,8 @@ s32 Party_GetPpRatioFar(void);
 /// copied to RAM to run.
 extern const u8 Matrix_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
-s32 Actor_GetCellIndexFar(struct Actor *object);
-s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *object);
+s32 Actor_GetCellIndexFar(struct Actor *actor);
+s32 FlagBlock_PlaceAllMarkingEdgesFar(struct Actor *actor);
 s32 Actor_CheckBlockedFar(s32 arg);
 void SpriteAnimation_Reset(struct SpriteAnimation *work);
 

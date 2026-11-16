@@ -1334,18 +1334,18 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     case ABILITY_FORMULA_DAMAGE:
     case ABILITY_FORMULA_ENEMY_DAMAGE:
     case ABILITY_FORMULA_SUMMON: {
-      s32 round;
+      s32 pass;
 
       if (target->defendLevel == DEFEND_VANISHED)
         break;
       if (ability->power == 0)
         break;
       newHp = target->hp;
-      round = 1;
+      pass = 1;
       do {
         if (element != ELEMENT_NONE)
           elementBonus = elementPower - target->element[element].resistance;
-        if (round == 0)
+        if (pass == 0)
           elementBonus = 0;
         power = ability->power;
         // A summon, and Meteor Blow, Star Mine and Cruel Ruin, add a share of
@@ -1447,8 +1447,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
             newHp > amount) {
           amount = newHp;
         }
-        round++;
-      } while (round <= 1);
+        pass++;
+      } while (pass <= 1);
       BattlePlayback_Push(PLAYBACK_HIT, targetId);
       BattlePlayback_Push(PLAYBACK_NUMBER, amount);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);

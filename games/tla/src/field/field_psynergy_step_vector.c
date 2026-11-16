@@ -11,15 +11,15 @@
 #include "field/field_sprite.h"
 
 /// Moves a 2D point by its velocity, damped and pulled by gravity
-/// (BattleEffect_IntegrateVector2).
+/// (Field_AdvanceWithGravity2D).
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
-  BattleEffect_IntegrateVector2(vector, damping, gravity);
+  Field_AdvanceWithGravity2D(vector, damping, gravity);
 }
 
 /// Moves a 3D point by its velocity, damped and pulled by gravity
-/// (BattleEffect_IntegrateVector3).
+/// (Field_AdvanceWithGravity3D).
 void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity) {
-  BattleEffect_IntegrateVector3(vector, damping, gravity);
+  Field_AdvanceWithGravity3D(vector, damping, gravity);
 }
 
 /// Plots a pixel of colour color at (x, y) on the 64-pixel canvas.
@@ -369,9 +369,9 @@ void Actor_VanishInSparks(s32 objectId) {
   s32 entry;
   s32 tiles;
   s32 spawning;
-  struct Actor *object = Actor_Lookup(objectId);
-  s32 depth = BattleEffect_GetObjectDepth(object);
-  s32 angle = (u16)object->facing;
+  struct Actor *actor = Actor_Lookup(objectId);
+  s32 depth = BattleEffect_GetObjectDepth(actor);
+  s32 angle = (u16)actor->facing;
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 i;
@@ -390,13 +390,13 @@ void Actor_VanishInSparks(s32 objectId) {
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
-    sprite->depth = BattleEffect_GetObjectDepth(object);
-    sprite->oam.priority = BattleEffect_GetObjectPriority(object);
+    sprite->depth = BattleEffect_GetObjectDepth(actor);
+    sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
     spark->age = -1;
   }
-  object->scaleX = 0;
-  object->scaleY = FIXED_ONE;
-  Actor_SetSpriteFlagsFar(object, 0);
+  actor->scaleX = 0;
+  actor->scaleY = FIXED_ONE;
+  Actor_SetSpriteFlagsFar(actor, 0);
   spawning = 1;
   phase = 0;
   next = 0;
@@ -410,9 +410,9 @@ void Actor_VanishInSparks(s32 objectId) {
         spark = &work->sparks[next];
 
         spark->age = 0;
-        spark->x = object->x.fixed;
-        spark->y = object->y.fixed + toFIXED(20);
-        spark->z = object->z.fixed;
+        spark->x = actor->x.fixed;
+        spark->y = actor->y.fixed + toFIXED(20);
+        spark->z = actor->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
         spark->angle = sparkAngle;
@@ -438,7 +438,7 @@ void Actor_VanishInSparks(s32 objectId) {
           pos[1] = spark->y;
           pos[2] = spark->z;
           Vector_AddPolarOffset(radius, sparkAngle, pos);
-          if (pos[2] > object->z.fixed)
+          if (pos[2] > actor->z.fixed)
             sprite->depth = depth + 2;
           else
             sprite->depth = depth - 2;
@@ -464,14 +464,14 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= FACING_STEP;
-        object->scaleX = frame << 10;
-        if (object->scaleX > FIXED_ONE)
-          object->scaleX = FIXED_ONE;
+        actor->facing -= FACING_STEP;
+        actor->scaleX = frame << 10;
+        if (actor->scaleX > FIXED_ONE)
+          actor->scaleX = FIXED_ONE;
       }
       if (frame == 64) {
-        object->facing = angle;
-        Actor_SetSpriteFlagsFar(object, 1);
+        actor->facing = angle;
+        Actor_SetSpriteFlagsFar(actor, 1);
       }
       if (frame == 10)
         spawning = 0;
@@ -513,7 +513,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   FIXED scale[2];
   s32 position[4];
 
-  sprite = object->object;
+  sprite = object->actor;
   offset = 0;
   if (object->flags & FIELD_PARTICLE_LIFTED_BY_Z)
     offset = toFIXED(508) - object->z;
@@ -557,15 +557,15 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     }
   }
   angle = Trig_Atan(dz, dx);
-  if (effect->limitTurnStep != 0) {
+  if (effect->turnStepLimited != 0) {
     heading = effect->heading;
     turn = angle - heading;
-    if ((turn >= 0 ? turn : -turn) >= effect->maxTurnStep) {
+    if ((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
       if (turn < 0) {
-        if (-turn > effect->maxTurnStep)
-          turn = -effect->maxTurnStep;
-      } else if (turn > effect->maxTurnStep) {
-        turn = effect->maxTurnStep;
+        if (-turn > effect->turnStepMax)
+          turn = -effect->turnStepMax;
+      } else if (turn > effect->turnStepMax) {
+        turn = effect->turnStepMax;
       }
       angle = turn + heading;
     }
@@ -573,8 +573,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   facing = (u16)angle;
   effect->heading = facing;
   speed = effect->speed + effect->acceleration;
-  if (speed > effect->maxSpeed)
-    speed = effect->maxSpeed;
+  if (speed > effect->speedMax)
+    speed = effect->speedMax;
   angle = (s16)facing;
   effect->speed = speed;
   effect->x += Iwram_MulFX(Trig_Cos(angle), speed);
@@ -604,7 +604,7 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 
 /// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
-  Sprite_StartAnimationFar(effect->object, mode);
+  Sprite_StartAnimationFar(effect->actor, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.
@@ -626,12 +626,12 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
   Dma_Fill32(0, effect, sizeof *effect);
   animation = Sprite_CreateFar(kind);
-  effect->object = animation;
+  effect->actor = animation;
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   effect->scaleX = FIXED_ONE;
-  effect->maxSpeed = toFIXED(2);
+  effect->speedMax = toFIXED(2);
   effect->scaleY = FIXED_ONE;
   effect->acceleration = FIXED_ONE;
   effect->originX = x;
@@ -640,11 +640,11 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->object;
+    struct Sprite *sprite = effect->actor;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
-  effect->limitTurnStep = 1;
+  effect->turnStepLimited = 1;
   effect->updateMotion = 1;
   effect->render = 1;
   effect->active = 1;
@@ -655,7 +655,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
-  if (effect->object)
-    Sprite_DestroyFar(effect->object);
+  if (effect->actor)
+    Sprite_DestroyFar(effect->actor);
   Dma_Fill32(0, effect, sizeof *effect);
 }

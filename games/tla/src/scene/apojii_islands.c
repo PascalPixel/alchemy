@@ -105,12 +105,12 @@ enum ApojiiIslandsHazeActorId {
 #include "system/frame.h"
 #include "text/msg_ids.h"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
-void Actor_StartScript(struct Actor *object, const void *data);
-s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
+void Actor_StartScript(struct Actor *actor, const void *data);
+s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
@@ -120,16 +120,16 @@ void Inn_CheckIn(s32 a, s32 b);
 void ApojiiIslands_CycleFallsColors(void);
 void ApojiiIslands_CycleSeaColors(void);
 void ApojiiIslands_CycleAquaStoneColors(void);
-void ApojiiIslands_StopFlashing(struct Actor *object);
-void Actor_FlickerChild(struct Actor *object);
+void ApojiiIslands_StopFlashing(struct Actor *actor);
+void Actor_FlickerChild(struct Actor *actor);
 void ApojiiIslands_FatherSeesTheStone(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
 void ApojiiIslands_InitializeHaze(void);
 void ApojiiIslands_LeaveQuietly(void);
-void ApojiiIslands_SpawnSplash(struct Actor *object);
-s32 Actor_EmitMist(struct Actor *object);
+void ApojiiIslands_SpawnSplash(struct Actor *actor);
+s32 Actor_EmitMist(struct Actor *actor);
 void Leader_RiseFromWater(void);
 void ApojiiIslands_DrawCellMarkers(void);
 void ApojiiIslands_StartCellMarkers(void);
@@ -409,9 +409,9 @@ void ApojiiIslands_CycleAquaStoneColors(void) {
 }
 
 /// A flashing actor's last update: its sprite's colour back to normal.
-void ApojiiIslands_StopFlashing(struct Actor *object) {
-  Actor_SetSpriteColorMode(object, 0);
-  object->update = 0;
+void ApojiiIslands_StopFlashing(struct Actor *actor) {
+  Actor_SetSpriteColorMode(actor, 0);
+  actor->update = 0;
 }
 
 #include "shared/actor_flicker_child.h"
@@ -773,17 +773,17 @@ void ApojiiIslands_LeaveQuietly(void) {
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
 /// A splash at the actor's feet, on its sprite's priority.
-void ApojiiIslands_SpawnSplash(struct Actor *object) {
+void ApojiiIslands_SpawnSplash(struct Actor *actor) {
   struct Actor *child;
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 
-  child = (FieldActor_Create(14, object->x.fixed, object->y.fixed + toFIXED(4),
-                             object->z.fixed + toFIXED(4)));
-  parent = object->sprite;
+  child = (FieldActor_Create(14, actor->x.fixed, actor->y.fixed + toFIXED(4),
+                             actor->z.fixed + toFIXED(4)));
+  parent = actor->sprite;
   if (child != NULL) {
     sprite = child->sprite;
-    child->groundHeight = object->groundHeight;
+    child->groundHeight = actor->groundHeight;
     Actor_StartScript(child, gApojiiIslands_SplashScript);
     child->motionFlags = 0;
     if (sprite != NULL) {
@@ -1080,11 +1080,11 @@ void ApojiiIslands_StartSparkles(void) {
 /// Ties the sparkles to the actor `id`, or to none.
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
   struct GroundParticleWork *work = Ram_HeapSlots->weather;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   work->leader = NULL;
-  if (id != 0 && object != 0)
-    work->leader = &object->x.fixed;
+  if (id != 0 && actor != 0)
+    work->leader = &actor->x.fixed;
 }
 
 #include "text/msg_ids.h"
@@ -1100,35 +1100,7 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 #endif
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// A splash's script: it shows for 20 frames, then is released.
 u32 gApojiiIslands_SplashScript[] = {
@@ -1195,10 +1167,7 @@ s32 gApojiiIslands_PaceScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ApojiiIslands),
@@ -1210,7 +1179,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_EAST, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_APOJII_ISLANDS_EAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_WEST, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_APOJII_ISLANDS_WEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_NORTHWEST, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_APOJII_ISLANDS_NORTHWEST, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(APOJII_ISLANDS_TO_MIKASALLA_INTERIORS_SANCTUM, MikasallaInteriorsSanctum, MIKASALLA_INTERIORS_SANCTUM_FROM_APOJII_ISLANDS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(APOJII_ISLANDS_TO_MIKASALLA_ROOMS_SANCTUM, MikasallaRoomsSanctum, MIKASALLA_ROOMS_SANCTUM_FROM_APOJII_ISLANDS, EXIT_FLAG_NONE),
     SCENE_EXIT(APOJII_ISLANDS_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_AQUA_ROCK_MOAI_NORTH),
     SCENE_EXITS(ApojiiIslandsShops),
     SCENE_EXIT_UNLESS(APOJII_ISLANDS_SHOPS_TO_APOJII_ISLANDS_SOUTHEAST, ApojiiIslands, APOJII_ISLANDS_FROM_APOJII_ISLANDS_SHOPS_SOUTHEAST, EXIT_FLAG_NONE),

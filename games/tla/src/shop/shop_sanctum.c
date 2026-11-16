@@ -455,9 +455,9 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *sparkle) {
     Vector_AddPolarOffset(toFIXED(4), Random16(), &position.x);
     particle->targetX = position.x;
     particle->targetZ = position.z;
-    particle->maxSpeed = toFIXED(2);
+    particle->speedMax = toFIXED(2);
     particle->acceleration = toFIXED(2) / 5;
-    particle->limitTurnStep = state;
+    particle->turnStepLimited = state;
     *statePointer = (u8)*statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
     result = FieldParticle_HasPendingTargetFar(sparkle);
@@ -517,7 +517,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);

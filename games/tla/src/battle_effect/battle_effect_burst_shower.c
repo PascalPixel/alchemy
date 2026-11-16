@@ -200,13 +200,13 @@ void BattleEffect_RunGravelBlow(struct BattleEffectParams *args) {
 ///
 /// Abilities: Wheeze, Aging Gas.
 void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_AGING_GAS);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the second projectile volley's shots fly
@@ -214,13 +214,13 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
 ///
 /// Abilities: Gel, Fire Dance.
 void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 // BattleEffect_RunBurstShower, the body behind the 22 wrappers
@@ -944,7 +944,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             screen.x >>= 1;
             pair[0](canvas, sheet + gBattleEffect_MotePictures[5], screen.x - 3,
                     screen.y - height / 2, 6, height);
-            BattleEffectKernels_IntegrateVector3(mote, 62, 0);
+            Particle_AdvanceWithGravity3D(mote, 62, 0);
             if (frame > i + 16) {
               s32 dx = (object->x - mote->x) >> 7;
               s32 dy = (object->y + half - mote->y) >> 8;

@@ -297,7 +297,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                   overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
                   FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
                   CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 16);
+          Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 16);
           if (step->y > toFIXED(96)) {
             step->velocityY = 0;
             step->y = toFIXED(96);
@@ -333,7 +333,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                   overflow + FIXED_INTEGER_PART(step->x) - SHEEP_WIDTH / 2,
                   FIXED_INTEGER_PART(step->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                   SHEEP_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(step, 62, toFIXED(1) / 8);
           step->variant++;
         }
       }
@@ -395,7 +395,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                   gStatChange_ShardWidths[cell] / 2,
               FIXED_INTEGER_PART(step->y) - gStatChange_ShardHeights[cell] / 2,
               gStatChange_ShardWidths[cell], gStatChange_ShardHeights[cell]);
-          BattleEffectKernels_IntegrateVector2(step, 60, 0);
+          Particle_AdvanceWithGravity2D(step, 60, 0);
         }
       }
     }

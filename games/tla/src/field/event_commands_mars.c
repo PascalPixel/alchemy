@@ -72,7 +72,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -200,8 +200,8 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = FIXED_ONE;
-    effect->maxSpeed = toFIXED(5);
-    effect->limitTurnStep = state;
+    effect->speedMax = toFIXED(5);
+    effect->turnStepLimited = state;
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)

@@ -1,10 +1,10 @@
 /// Steps an actor toward its target; 0 when it gets there.
-s32 Actor_StepToWatched(struct Actor *object) {
+s32 Actor_StepToWatched(struct Actor *actor) {
   u8 left;
 
-  object->x.fixed += object->bounce;
-  object->y.fixed += object->riseBaseY;
-  object->z.fixed += object->gravity;
-  left = --object->riseCounter;
+  actor->x.fixed += actor->bounce;
+  actor->y.fixed += actor->riseBaseY;
+  actor->z.fixed += actor->gravity;
+  left = --actor->riseCounter;
   return left != 0;
 }

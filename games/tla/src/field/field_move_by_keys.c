@@ -22,7 +22,7 @@
 /// not held. Refuses a step into a wall, from or onto a cell that is not
 /// MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low (down), and
 /// records the held keys in the field work. Returns 1.
-s32 Actor_MoveByKeys(struct Actor *object) {
+s32 Actor_MoveByKeys(struct Actor *actor) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
@@ -36,10 +36,10 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   u32 keys;
   s32 half;
 
-  object->acceleration = toFIXED(1) / 4;
+  actor->acceleration = toFIXED(1) / 4;
   animation = ANIM_LEADER_CLING;
   half = 0x8000;
-  object->speedLimit = half;
+  actor->speedLimit = half;
   if (gDebugMode)
     keys = gInput.held;
   keys = gInput.held;
@@ -60,34 +60,33 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     collisionFlags = 0;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
-    position.x += object->x.fixed;
+    position.x += actor->x.fixed;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->facing = TRIG_TURN * 3 / 4;
+      actor->facing = TRIG_TURN * 3 / 4;
     if (deltaZ > 0)
-      object->facing = DEGtoANG(90);
-    position.y = object->y.fixed - position.z;
-    position.z = object->z.fixed;
+      actor->facing = DEGtoANG(90);
+    position.y = actor->y.fixed - position.z;
+    position.z = actor->z.fixed;
     map = Ram_HeapSlots->mapGrid;
-    sourceCell =
-        &map->layers[object->layer].cells[Actor_GetCellIndexFar(object)];
+    sourceCell = &map->layers[actor->layer].cells[Actor_GetCellIndexFar(actor)];
     destinationCell =
-        &map->layers[object->layer].cells[position.x / toFIXED(16) +
-                                          (position.z / toFIXED(16)) * 128];
+        &map->layers[actor->layer].cells[position.x / toFIXED(16) +
+                                         (position.z / toFIXED(16)) * 128];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
         !(sourceCell->attributeB & MAP_CELL_CLIMBABLE) ||
         !(destinationCell->attributeB & MAP_CELL_CLIMBABLE)) {
       collisionFlags = PLAYER_STEP_STOPPED;
       animation = ANIM_LEADER_CLING;
     } else if (gInput.held & KEY_UP) {
-      terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
+      terrainHeight = MapGrid_GetTerrainHeight(actor->layer, position.x,
                                                position.z - toFIXED(16));
-      if (terrainHeight - object->y.fixed < toFIXED(16))
+      if (terrainHeight - actor->y.fixed < toFIXED(16))
         goto refused;
     } else if (gInput.held & KEY_DOWN) {
       terrainHeight =
-          MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
-      if (terrainHeight - object->y.fixed > -toFIXED(8)) {
+          MapGrid_GetTerrainHeight(actor->layer, position.x, position.z);
+      if (terrainHeight - actor->y.fixed > -toFIXED(8)) {
       refused:
         collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
         animation = ANIM_LEADER_CLING;
@@ -102,24 +101,24 @@ s32 Actor_MoveByKeys(struct Actor *object) {
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  Actor_SelectAnimation(object, animation);
+  Actor_SelectAnimation(actor, animation);
   if (collisionFlags != 0) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityY = 0;
+    actor->velocityZ = 0;
   } else {
-    Actor_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
   }
-  object->scriptCursor++;
+  actor->scriptCursor++;
   return 1;
 }
 
 /// SCRIPT_CMD_ROPE, the leader's control on a tied rope (render mode 3):
 /// the pad moves it from node to node along the rope, a half cell a step.
-s32 Actor_CrossRope(struct Actor *object) {
+s32 Actor_CrossRope(struct Actor *actor) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct Sprite *sprite;
@@ -137,24 +136,24 @@ s32 Actor_CrossRope(struct Actor *object) {
   struct Actor *second;
   struct FieldWork *work;
 
-  sprite = object->sprite;
+  sprite = actor->sprite;
   rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
   speed = FIXED_ONE;
   collisionFlags = 0;
-  object->speedLimit = toFIXED(1) / 2;
-  object->acceleration = toFIXED(1) / 2;
-  object->motionFlags = 0;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 2;
+  actor->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
-    best = (struct RopeNode *)object->watchedActor;
+    best = (struct RopeNode *)actor->watchedActor;
     value = 0;
   } else {
     value = 16;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
-    position.x += object->x.fixed;
-    position.y = object->y.fixed - position.z;
-    position.z = object->z.fixed;
+    position.x += actor->x.fixed;
+    position.y = actor->y.fixed - position.z;
+    position.z = actor->z.fixed;
     rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
@@ -198,16 +197,16 @@ s32 Actor_CrossRope(struct Actor *object) {
     } else {
       turn = DEGtoANG(90);
     }
-    object->scaleX = speed;
-    if (best->x == object->x.fixed && best->y == object->y.fixed &&
-        best->z == object->z.fixed) {
+    actor->scaleX = speed;
+    if (best->x == actor->x.fixed && best->y == actor->y.fixed &&
+        best->z == actor->z.fixed) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
     } else {
       slot->swinging = 1;
       slot->amplitude += toFIXED(1) / 2;
       if (slot->amplitude > toFIXED(2))
         slot->amplitude = toFIXED(2);
-      object->watchedActor = (struct Actor *)best;
+      actor->watchedActor = (struct Actor *)best;
       SET_POSITION(&position, best->x, best->y, best->z);
       sprite->rotation = best->angle + turn;
     }
@@ -221,35 +220,35 @@ done:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  Actor_SelectAnimation(object, 29);
-  Actor_SetAnimationSpeed(object, value);
+  Actor_SelectAnimation(actor, 29);
+  Actor_SetAnimationSpeed(actor, value);
   if (collisionFlags != 0) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityY = 0;
+    actor->velocityZ = 0;
   } else {
-    Actor_SetMoveTarget(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
   }
-  object->scriptCursor++;
+  actor->scriptCursor++;
   return 1;
 }
 
 /// Turns the actor toward angle, at most a sixteenth of a turn.
-static inline void TurnToward(struct Actor *object, u16 angle) {
-  s16 delta = angle - object->facing;
+static inline void TurnToward(struct Actor *actor, u16 angle) {
+  s16 delta = angle - actor->facing;
 
   if (delta > TRIG_TURN / 16)
     delta = TRIG_TURN / 16;
   if (delta < -(TRIG_TURN / 16))
     delta = -(TRIG_TURN / 16);
-  object->facing += delta;
+  actor->facing += delta;
 }
 
 /// Script command 0x1d, Actor_CrossRope on a tightrope (render mode 4).
-s32 Actor_CrossTightrope(struct Actor *object) {
+s32 Actor_CrossTightrope(struct Actor *actor) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct Sprite *sprite;
@@ -263,19 +262,19 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   s32 count;
   struct FieldWork *work;
 
-  sprite = object->sprite;
+  sprite = actor->sprite;
   argument = 1;
   collisionFlags = 0;
-  object->speedLimit = toFIXED(1) / 2;
-  object->acceleration = toFIXED(1) / 2;
-  object->motionFlags = 0;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 2;
+  actor->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = PLAYER_STEP_STOPPED;
-    best = (struct TightropeNode *)object->watchedActor;
-    SET_POSITION(&position, object->x.fixed, best->y, object->z.fixed);
+    best = (struct TightropeNode *)actor->watchedActor;
+    SET_POSITION(&position, actor->x.fixed, best->y, actor->z.fixed);
   } else {
-    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
@@ -302,8 +301,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
       }
       if (best == NULL) {
         collisionFlags |= PLAYER_STEP_BLOCKED_BY_MAP;
-      } else if (best->x == object->x.fixed && best->y == object->y.fixed &&
-                 best->z == object->z.fixed) {
+      } else if (best->x == actor->x.fixed && best->y == actor->y.fixed &&
+                 best->z == actor->z.fixed) {
         collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       } else {
         if (best->slot != 0) {
@@ -312,7 +311,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
           slot->amplitude += toFIXED(1) / 2;
           if (slot->amplitude > toFIXED(2))
             slot->amplitude = toFIXED(2);
-          object->watchedActor = (struct Actor *)best;
+          actor->watchedActor = (struct Actor *)best;
         }
         /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;
@@ -330,44 +329,44 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   }
   if (collisionFlags == 0)
     argument = 2;
-  Actor_SelectAnimation(object, argument);
-  Actor_SetAnimationSpeed(object, 8);
+  Actor_SelectAnimation(actor, argument);
+  Actor_SetAnimationSpeed(actor, 8);
   sprite->offsetY = 4;
   if (collisionFlags != 0) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    object->velocityX = 0;
-    object->velocityY = 0;
-    object->velocityZ = 0;
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityY = 0;
+    actor->velocityZ = 0;
     if (collisionFlags & PLAYER_STEP_BLOCKED)
-      TurnToward(object, angle);
-    object->y.fixed = position.y;
+      TurnToward(actor, angle);
+    actor->y.fixed = position.y;
   } else {
-    object->y.fixed = position.y;
-    Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    if (object->x.fixed == position.x && object->z.fixed == position.z)
-      TurnToward(object, angle);
+    actor->y.fixed = position.y;
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+    if (actor->x.fixed == position.x && actor->z.fixed == position.z)
+      TurnToward(actor, angle);
   }
-  object->scriptCursor++;
+  actor->scriptCursor++;
   return 1;
 }
 
 /// Update of a grain the Sand leaves as the leader moves: it turns and
 /// jitters sideways at random.
-void Sand_JitterGrain(struct Actor *object) {
+void Sand_JitterGrain(struct Actor *actor) {
   u32 first;
   u32 second;
   FIXED x;
 
-  ((struct Sprite *)object->sprite)->rotation += TRIG_TURN / 64;
+  ((struct Sprite *)actor->sprite)->rotation += TRIG_TURN / 64;
   first = Random16();
   second = Random16();
-  x = object->x.fixed;
+  x = actor->x.fixed;
 
   second >>= 1;
   first >>= 1;
-  object->x.fixed = x + (first - second);
+  actor->x.fixed = x + (first - second);
 }
 
 /// Whether the player ends Sand: when the Select, A or Start keys are pressed,
@@ -389,7 +388,7 @@ s32 Sand_CheckEndKeys(s32 arg) {
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(SE_MENU_CANCEL);
-    } else if (!GameFlag_Get(0x146)) {
+    } else if (!GameFlag_Get(FLAG_SAND_CANNOT_END)) {
       work->psynergy = ABILITY_SAND | ACT_PACKED;
       return 1;
     }
@@ -767,7 +766,7 @@ done:
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
 /// the event work and leaves an object of kind 0x164 behind it every fifth
 /// step.
-s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
+s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
   struct FieldPosition rightPosition;
@@ -792,37 +791,37 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
 
   collision = 0;
   count = 0;
-  object->userValue = collision;
-  object->timer = 1;
-  object->speedLimit = toFIXED(1) / 2;
-  object->acceleration = toFIXED(1) / 4;
+  actor->userValue = collision;
+  actor->timer = 1;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 4;
   if (gInput.repeat & KEY_L)
-    object->speedLimit = toFIXED(4);
+    actor->speedLimit = toFIXED(4);
 
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= PLAYER_STEP_STOPPED;
   } else {
-    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
-      SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
-                   object->z.fixed);
+      SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(toFIXED(8), direction + DEGtoANG(30),
                             &leftPosition);
-      rightPosition.x = object->x.fixed;
-      y = object->y.fixed;
+      rightPosition.x = actor->x.fixed;
+      y = actor->y.fixed;
       /* FAKEMATCH(dead): the right probe's y stored in a once-only block. */
       do {
         rightPosition.y = y;
       } while (0);
-      rightPosition.z = object->z.fixed;
+      rightPosition.z = actor->z.fixed;
       Vector_AddPolarOffset(toFIXED(8), direction - DEGtoANG(30),
                             &rightPosition);
-      if ((WorldMap_IsWalkable(object, &position) |
-           WorldMap_IsWalkable(object, &leftPosition) |
-           WorldMap_IsWalkable(object, &rightPosition)) != 0) {
+      if ((WorldMap_IsWalkable(actor, &position) |
+           WorldMap_IsWalkable(actor, &leftPosition) |
+           WorldMap_IsWalkable(actor, &rightPosition)) != 0) {
         angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
         angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
         angleOffsets[count++] = direction + DEGtoANG(45);
@@ -831,20 +830,20 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
         angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
-          SET_POSITION(&position, object->x.fixed, object->y.fixed,
-                       object->z.fixed);
+          SET_POSITION(&position, actor->x.fixed, actor->y.fixed,
+                       actor->z.fixed);
           Vector_AddPolarOffset(toFIXED(8), direction, &position);
-          SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
-                       object->z.fixed);
+          SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,
+                       actor->z.fixed);
           Vector_AddPolarOffset(toFIXED(8), direction + DEGtoANG(30),
                                 &leftPosition);
-          SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
-                       object->z.fixed);
+          SET_POSITION(&rightPosition, actor->x.fixed, actor->y.fixed,
+                       actor->z.fixed);
           Vector_AddPolarOffset(toFIXED(8), direction - DEGtoANG(30),
                                 &rightPosition);
-          if ((WorldMap_IsWalkable(object, &position) |
-               WorldMap_IsWalkable(object, &leftPosition) |
-               WorldMap_IsWalkable(object, &rightPosition)) != 0)
+          if ((WorldMap_IsWalkable(actor, &position) |
+               WorldMap_IsWalkable(actor, &leftPosition) |
+               WorldMap_IsWalkable(actor, &rightPosition)) != 0)
             continue;
           angle = (s16)direction;
           goto update_object;
@@ -863,35 +862,35 @@ update_object:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
 
   if (collision != 0) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    object->velocityX = 0;
-    object->velocityZ = 0;
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
-      difference = (s16)(direction - object->facing);
+      difference = (s16)(direction - actor->facing);
       if (difference > FIELD_BLOCKED_TURN_MAX)
         difference = FIELD_BLOCKED_TURN_MAX;
       if (difference < -FIELD_BLOCKED_TURN_MAX)
         difference = -FIELD_BLOCKED_TURN_MAX;
-      object->facing += difference;
+      actor->facing += difference;
     }
-    timer = (u8 *)object + 98;
+    timer = (u8 *)actor + 98;
     *timer = 0;
-    object->userValue = 2;
+    actor->userValue = 2;
   } else {
-    Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    speed = Math_SqrtFX(Iwram_MulFX(object->velocityX, object->velocityX) +
-                        Iwram_MulFX(object->velocityZ, object->velocityZ));
-    object->velocityX = collision;
-    object->velocityZ = collision;
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+    speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
+                        Iwram_MulFX(actor->velocityZ, actor->velocityZ));
+    actor->velocityX = collision;
+    actor->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)angle,
-                          (struct FieldPosition *)&object->velocityX);
-    timer = (u8 *)object + 98;
+                          (struct FieldPosition *)&actor->velocityX);
+    timer = (u8 *)actor + 98;
     if (*timer != 0)
       (*timer)--;
   }
@@ -907,20 +906,20 @@ update_object:
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  if (object->spriteStorageKind == 1) {
-    playerSprite = object->sprite;
+  if (actor->spriteStorageKind == 1) {
+    playerSprite = actor->sprite;
     terrainCollision =
-        WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
+        WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
     if (terrainCollision == 9)
       playerSprite->secondLayer->priority = 1;
     else
       playerSprite->secondLayer->priority = 9;
   }
   if (*timer == 0 && collision == 0) {
-    ripple = Actor_Create(WORLD_MAP_SPRITE_WAKE, object->x.fixed,
-                          object->y.fixed, object->z.fixed - toFIXED(2));
+    ripple = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed, actor->y.fixed,
+                          actor->z.fixed - toFIXED(2));
     if (ripple != 0) {
-      ripple->groundHeight = object->groundHeight;
+      ripple->groundHeight = actor->groundHeight;
       rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gActor_WakeScript);
       ripple->priorityFlags = 8;
@@ -935,7 +934,7 @@ update_object:
       *timer = 5;
     }
   }
-  Sand_CheckEndKeys(object);
-  object->scriptCursor++;
+  Sand_CheckEndKeys(actor);
+  actor->scriptCursor++;
   return 1;
 }

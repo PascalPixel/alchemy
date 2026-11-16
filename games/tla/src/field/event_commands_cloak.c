@@ -81,11 +81,11 @@ void FieldPsynergy_StartCloak(void) {
 
 /// Per-frame update of a falling mote: once it reaches its floor it starts the
 /// shared particle script and stops updating.
-void BattleEffect_LandFallingObject(struct Actor *object) {
-  if (object->y.fixed <= object->groundHeight) {
-    object->wait = 2;
-    Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
-    object->update = 0;
+void BattleEffect_LandFallingObject(struct Actor *actor) {
+  if (actor->y.fixed <= actor->groundHeight) {
+    actor->wait = 2;
+    Actor_StartScriptFar(actor, (u32)gBattleEffect_SharedParticleScript);
+    actor->update = 0;
   }
 }
 
@@ -296,16 +296,16 @@ void FieldEffect_SpawnFallingParticles(void) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
-void FieldEffect_SpawnRadialParticleRing(struct Actor *object);
+void FieldEffect_SpawnRadialParticleRing(struct Actor *actor);
 
 /// The collision at position for the actor standing 16 pixels higher.
-static __inline__ s32 Actor_ProbeRaised(struct Actor *object,
+static __inline__ s32 Actor_ProbeRaised(struct Actor *actor,
                                         struct Vector3 *position) {
   s32 hit;
 
-  object->groundHeight += toFIXED(16);
-  hit = MapGrid_CheckCollisionFar(object, position);
-  object->groundHeight -= toFIXED(16);
+  actor->groundHeight += toFIXED(16);
+  hit = MapGrid_CheckCollisionFar(actor, position);
+  actor->groundHeight -= toFIXED(16);
   return hit;
 }
 
@@ -319,7 +319,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct Actor *shards[20];
   struct Vector3 position;
   struct Actor *anchors[2];
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *right;
   s32 i;
   s32 angle;
@@ -334,9 +334,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   source->watchedActor = target;
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
   SET_POSITION(&position, work->x, work->y + toFIXED(16), work->z);
-  object = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
-                                      position.z, DEGtoANG(180));
-  anchors[0] = object;
+  actor = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
+                                     position.z, DEGtoANG(180));
+  anchors[0] = actor;
   right = FieldEffect_SpawnCarryHand(position.x - toFIXED(32), position.y,
                                      position.z, 0);
   anchors[1] = right;
@@ -347,14 +347,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  Actor_SetMoveTargetFar(object, position.x + toFIXED(16), position.y,
+  Actor_SetMoveTargetFar(actor, position.x + toFIXED(16), position.y,
                          position.z);
   Actor_SetMoveTargetFar(right, position.x - toFIXED(16), position.y,
                          position.z);
-  Actor_WaitForMoveFar(object);
+  Actor_WaitForMoveFar(actor);
   Actor_WaitForMoveFar(right);
-  object->x.fixed = position.x + toFIXED(16);
-  object->velocityX = 0;
+  actor->x.fixed = position.x + toFIXED(16);
+  actor->velocityX = 0;
   right->x.fixed = position.x - toFIXED(16);
   right->velocityX = 0;
   target->update = Actor_CycleSpriteColors;
@@ -364,7 +364,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= toFIXED(24)) {
-      object->y.fixed += toFIXED(3) / 8;
+      actor->y.fixed += toFIXED(3) / 8;
       right->y.fixed += toFIXED(3) / 8;
       target->y.fixed += toFIXED(3) / 8;
       wait(1);
@@ -462,16 +462,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   for (i = 0; i < 20; i++) {
-    object = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+    actor = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
     // DEAD: nothing reads the shards back; the ROM keeps the stores.
-    shards[i] = object;
-    if (object != NULL) {
-      Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
-      object->speedLimit = Random16() + toFIXED(2);
-      object->acceleration = toFIXED(2);
-      object->motionFlags = 0;
+    shards[i] = actor;
+    if (actor != NULL) {
+      Actor_StartScriptFar(actor, (u32)gFieldEffect_FragmentScript);
+      actor->speedLimit = Random16() + toFIXED(2);
+      actor->acceleration = toFIXED(2);
+      actor->motionFlags = 0;
       magnitude = Random16() * 24 + toFIXED(8);
-      Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(actor, magnitude, Random16());
     }
   }
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);

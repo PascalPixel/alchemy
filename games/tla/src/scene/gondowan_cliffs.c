@@ -106,26 +106,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 // clang-format on
 
 #include "../field/actor_set_sprite_priority.c"
@@ -138,7 +119,7 @@ u32 gFieldEffect_LongScript[] = {
 
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
-// its column of water (Geysers_Update, Geysers_Draw).
+// its column of water (Geyser_Update, Geyser_Draw).
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -185,7 +166,7 @@ struct GeyserWork {
   s16 entry;        ///< the VRAM cache entry holding the column's tiles
   s16 firstTerrain; ///< the terrain id and collision slot of the first entry
   struct Geyser entries[16];
-  /// The OAM words Geysers_Draw queues: at most 80 sprites of three words.
+  /// The OAM words Geyser_Draw queues: at most 80 sprites of three words.
   void *block;
 };
 
@@ -198,24 +179,24 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 void Rope_Initialize(void);
-void Geysers_Start(s32 unused, s32 firstTerrain);
+void Geyser_Start(s32 unused, s32 firstTerrain);
 void Tightrope_Initialize(void);
 
 /// The leaping stump's update: its sprite turns a 32nd of a turn a frame.
-void GondowanCliffs_SpinStump(struct Actor *object) {
-  struct FieldSprite *sprite = object->sprite;
+void GondowanCliffs_SpinStump(struct Actor *actor) {
+  struct FieldSprite *sprite = actor->sprite;
 
   sprite->rotation -= TRIG_TURN / 32;
 }
 
 /// Waits until the actor has come down to height (16.16), a second at most.
-void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
+void GondowanCliffs_WaitToLand(struct Actor *actor, s32 height) {
   s32 count = 60;
 
   while (count != 0) {
     System_Wait(1);
     count--;
-    if (object->y.fixed <= height)
+    if (actor->y.fixed <= height)
       break;
   }
 }
@@ -282,10 +263,10 @@ void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
 /// Frost on the first puddle: its ice pillar stands still and its cell can be
 /// climbed, for this visit.
 void GondowanCliffs_FreezeFirstPuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_FIRST_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PUDDLE);
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
+  actor->priorityFlags = 0;
+  actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
 }
@@ -293,12 +274,12 @@ void GondowanCliffs_FreezeFirstPuddle(void) {
 /// Frost on the second puddle: its ice pillar stands 32 pixels tall and its
 /// cell can be climbed, for this visit.
 void GondowanCliffs_FreezeSecondPuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_SECOND_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_SECOND_PUDDLE);
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  object->groundHeight = toFIXED(32);
-  object->y.fixed = toFIXED(32);
+  actor->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->groundHeight = toFIXED(32);
+  actor->y.fixed = toFIXED(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -310,14 +291,14 @@ void GondowanCliffs_BlowAwayFoliage(void) {
 
 /// Scoop on the sand of cell behaviour 30 digs up the geyser for good.
 void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (cell == 30) {
-    object = Actor_Get(ACTOR_GEYSER);
+    actor = Actor_Get(ACTOR_GEYSER);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
     Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
-    object->groundHeight = object->y.fixed =
-        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
+    actor->groundHeight = actor->y.fixed =
+        Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
   }
 }
@@ -327,16 +308,16 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
 /// Talking to the dog barks at the leader, unless he faces the geyser's cell
 /// beside it, which opens the field menu instead.
 void GondowanCliffs_TalkToDog(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct {
     s32 x, y, z;
   } position;
   s32 *out = (s32 *)&position;
 
-  out[0] = object->x.fixed;
-  out[1] = object->y.fixed;
-  out[2] = object->z.fixed;
-  FieldVector_AddPolarOffset(16, object->facing, out);
+  out[0] = actor->x.fixed;
+  out[1] = actor->y.fixed;
+  out[2] = actor->z.fixed;
+  FieldVector_AddPolarOffset(16, actor->facing, out);
   if (FIELD_CELL(position.x) == 119 && FIELD_CELL(position.z) == 45) {
     gFieldWork->fieldMenu = 1;
   } else {
@@ -497,7 +478,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
     if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
-    Geysers_Start(0, 240);
+    Geyser_Start(0, 240);
     Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
       actor = Actor_GetById(ACTOR_GEYSER);
@@ -539,7 +520,7 @@ s32 Scene_PrepareMap(void) {
 /// The swinging actors' callback, the same as Yampi Desert's platforms: for
 /// each of the 16 entries it moves the actor on its timer, writes its height to
 /// the collision and cell maps, and carries its rider with a bob.
-void Geysers_Update(void) {
+void Geyser_Update(void) {
   struct GeyserWork *work = GEYSER_WORK;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Geyser *entry = work->entries;
@@ -550,15 +531,15 @@ void Geysers_Update(void) {
   s32 *collision = (s32 *)Ram_MapCollision + firstTerrain;
 
   for (; i <= 15; collision++, entry++, i++) {
-    struct Actor *object;
+    struct Actor *actor;
     struct Actor *rider;
     struct MapCell *cell;
     s32 index;
 
     if (entry->id == 0)
       continue;
-    object = Actor_GetById(entry->id);
-    if (object->x.fixed == 0 && object->z.fixed == 0)
+    actor = Actor_GetById(entry->id);
+    if (actor->x.fixed == 0 && actor->z.fixed == 0)
       continue;
     if (entry->timer == entry->riseAt) {
       Sound_Play(SE_CURSE_FALL);
@@ -585,9 +566,9 @@ void Geysers_Update(void) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
-    index = FIELD_CELL(object->x.fixed) + FIELD_CELL(object->z.fixed) * 128;
+    index = FIELD_CELL(actor->x.fixed) + FIELD_CELL(actor->z.fixed) * 128;
     terrain[index] = (u8)work->firstTerrain + i;
-    *collision = ((PIXEL_PART(object->y.fixed) + entry->height) / 8) << 8;
+    *collision = ((PIXEL_PART(actor->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -601,16 +582,16 @@ void Geysers_Update(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y.fixed = object->y.fixed + -toFIXED(16);
+      rider->y.fixed = actor->y.fixed + -toFIXED(16);
     } else {
       FIXED wave;
 
       entry->phase += 0x1000;
       wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) + -toFIXED(14);
-      rider->y.fixed = object->y.fixed + toFIXED(entry->height) + wave;
+      rider->y.fixed = actor->y.fixed + toFIXED(entry->height) + wave;
     }
-    rider->x.fixed = object->x.fixed;
-    rider->z.fixed = object->z.fixed;
+    rider->x.fixed = actor->x.fixed;
+    rider->z.fixed = actor->z.fixed;
   }
 }
 
@@ -619,7 +600,7 @@ void Geysers_Update(void) {
 /// + 0x188 kept by Geyser_Add): for each raised actor, a rope segment every
 /// 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 /// queued by Oam_AddSpriteAtDepthClamped.
-void Geysers_Draw(void) {
+void Geyser_Draw(void) {
   struct GeyserWork *work = GEYSER_WORK;
   struct Geyser *swing = work->entries;
   s32 k;
@@ -696,8 +677,8 @@ void Geysers_Draw(void) {
 }
 
 /// Starts the geysers: clears their work unless the party keeps its place,
-/// loads the column's tiles and starts Geysers_Update and Geysers_Draw.
-void Geysers_Start(s32 unused, s32 firstTerrain) {
+/// loads the column's tiles and starts Geyser_Update and Geyser_Draw.
+void Geyser_Start(s32 unused, s32 firstTerrain) {
   struct GeyserWork *work = GEYSER_WORK;
   void *buffer;
 
@@ -710,8 +691,8 @@ void Geysers_Start(s32 unused, s32 firstTerrain) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(80 * 3 * sizeof(u32));
   work->firstTerrain = firstTerrain;
-  FieldTask_AddFrame((s32)Geysers_Update, TASK_PASS_VBLANK + 13);
-  FieldTask_AddFrame((s32)Geysers_Draw, TASK_PASS_VBLANK);
+  FieldTask_AddFrame((s32)Geyser_Update, TASK_PASS_VBLANK + 13);
+  FieldTask_AddFrame((s32)Geyser_Draw, TASK_PASS_VBLANK);
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }
@@ -721,11 +702,11 @@ void Geysers_Start(s32 unused, s32 firstTerrain) {
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
   struct GeyserWork *work = GEYSER_WORK;
   struct Geyser *entry = &work->entries[slot];
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct Actor *rider;
 
   Actor_Get(id);
-  Actor_SetSpriteFlags(object, 0);
+  Actor_SetSpriteFlags(actor, 0);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (high < low) {
       s32 swap = low;
@@ -742,15 +723,15 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->fallAt = 240;
     entry->min = low;
     entry->unreadSetToOne = 1;
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
+    actor->motionFlags = 0;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     entry->step = 0;
     entry->phase = 0;
     entry->unreadCleared = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  rider = (FieldActor_Create(ACTOR_CREATE_NO_SPRITE << 12, object->x.fixed,
-                             object->y.fixed, object->z.fixed));
+  rider = (FieldActor_Create(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
+                             actor->y.fixed, actor->z.fixed));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;

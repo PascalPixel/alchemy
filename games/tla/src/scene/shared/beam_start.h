@@ -12,7 +12,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
   s32 one;
   s32 flags;
   s32 height;
-  struct Actor *object;
+  struct Actor *actor;
   s32 alpha;
   s32 control;
 
@@ -21,13 +21,13 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
       flags = *targets;
       height = flags & 15;
       flags &= 0xf0;
-      object = Actor_Get(id);
+      actor = Actor_Get(id);
       targets++;
-      if (object != NULL) {
-        Actor_SetSpriteFlags(object, 0);
-        *(u8 *)&object->riseCounter = one = 1;
+      if (actor != NULL) {
+        Actor_SetSpriteFlags(actor, 0);
+        *(u8 *)&actor->riseCounter = one = 1;
         if ((flags & FLAME_SPARK) == 0)
-          object->collisionFlags = 0;
+          actor->collisionFlags = 0;
         entry->active = one;
         entry->flags = flags;
         entry->actor = Actor_Get(id);

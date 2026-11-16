@@ -394,10 +394,10 @@ void FieldPsynergy_Cyclone(void) {
 /// The actor leaves in a ring of light (sprite 280): for 128 frames it swings
 /// up and round inside the ring as the screen transition starts, then the
 /// ring vanishes with a whoosh and the camera follows the actor again.
-void Actor_DepartInRing(s32 actor) {
-  struct Actor *object = Actor_GetById(actor);
-  s32 angle = object->facing;
-  u8 motionFlags = object->motionFlags;
+void Actor_DepartInRing(s32 actorId) {
+  struct Actor *actor = Actor_GetById(actorId);
+  s32 angle = actor->facing;
+  u8 motionFlags = actor->motionFlags;
   struct Actor *ring;
   FIXED x, y, z;
   s32 spin;
@@ -405,16 +405,16 @@ void Actor_DepartInRing(s32 actor) {
   s32 i;
 
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  object->motionFlags = 0;
-  object->update = BattleEffect_SpinObject;
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
-                     object->z.fixed);
+  actor->motionFlags = 0;
+  actor->update = BattleEffect_SpinObject;
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = FIXED_ONE * 3 / 2;
   ring->scaleY = FIXED_ONE;
-  x = object->x.fixed;
-  y = object->y.fixed;
-  z = object->z.fixed;
+  x = actor->x.fixed;
+  y = actor->y.fixed;
+  z = actor->z.fixed;
   spin = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -424,22 +424,22 @@ void Actor_DepartInRing(s32 actor) {
     position[1] = y + Trig_Cos(i << 7) * 96;
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
-    SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
     spin += TRIG_TURN / 64;
-    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - toFIXED(6),
-                       object->z.fixed);
+    SET_ACTOR_POSITION(ring, actor->x.fixed, actor->y.fixed - toFIXED(6),
+                       actor->z.fixed);
     wait(1);
   }
-  Actor_SetPositionAndResetMotionFar(object, x, y, z);
+  Actor_SetPositionAndResetMotionFar(actor, x, y, z);
   Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
   Event_Wait(15);
   Actor_ReleaseFar(ring);
-  object->update = NULL;
-  object->facing = angle;
-  object->motionFlags = motionFlags;
+  actor->update = NULL;
+  actor->facing = angle;
+  actor->motionFlags = motionFlags;
   wait(1);
-  FieldCamera_FollowActor(actor, 1);
+  FieldCamera_FollowActor(actorId, 1);
 }
 
 /// An event command, the arrival counterpart of Actor_DepartInRing. The actor
@@ -448,21 +448,21 @@ void Actor_DepartInRing(s32 actor) {
 /// (cue 136, mode 6) while the actor widens back from half size over 16 frames
 /// and shows again. Object 280 is destroyed and the actor's update and facing
 /// are restored.
-void Actor_ArriveInRing(s32 actor) {
-  struct Actor *object = Actor_GetById(actor);
-  s32 angle = object->facing;
+void Actor_ArriveInRing(s32 actorId) {
+  struct Actor *actor = Actor_GetById(actorId);
+  s32 angle = actor->facing;
   struct Actor *ring;
   s32 i;
 
-  object->update = BattleEffect_SpinObject;
-  object->scaleX = 0;
+  actor->update = BattleEffect_SpinObject;
+  actor->scaleX = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpriteFlagsFar(Actor_GetById(actor), 0);
+  Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
-                     object->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = FIXED_ONE / 2;
   ring->scaleY = FIXED_ONE * 3 / 4;
@@ -475,16 +475,16 @@ void Actor_ArriveInRing(s32 actor) {
   ring->scaleY = FIXED_ONE;
   Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
-  object->scaleY = object->scaleX = FIXED_ONE / 2;
+  actor->scaleY = actor->scaleX = FIXED_ONE / 2;
   for (i = 0; i < 16; i++) {
-    object->scaleY = object->scaleX = object->scaleX + FIXED_ONE / 32;
+    actor->scaleY = actor->scaleX = actor->scaleX + FIXED_ONE / 32;
     wait(1);
   }
-  Actor_SetSpriteFlagsFar(Actor_GetById(actor), 1);
+  Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 1);
   Event_Wait(10);
   Actor_ReleaseFar(ring);
-  object->update = NULL;
-  object->facing = angle;
+  actor->update = NULL;
+  actor->facing = angle;
 }
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
@@ -628,7 +628,7 @@ void Blaze_UpdateSpray(void) {
     }
     if (work->hit != 0)
       break;
-    BattleEffect_IntegrateVector3(&particle->x, 64, work->gravity);
+    Field_AdvanceWithGravity3D(&particle->x, 64, work->gravity);
   }
 
   particle = work->puffMotion;

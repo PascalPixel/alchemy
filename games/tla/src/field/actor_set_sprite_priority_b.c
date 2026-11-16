@@ -6,14 +6,14 @@
 
 /// Gives the actor's sprite and its shadow drawing priority priority, and
 /// stops the camera choosing it from the map.
-void Actor_SetSpritePriorityB(struct Actor *object, s32 priority) {
+void Actor_SetSpritePriorityB(struct Actor *actor, s32 priority) {
   struct Sprite *sprite;
 
-  if (object == 0 || (object->spriteStorageKind & 15) == 0) {
+  if (actor == 0 || (actor->spriteStorageKind & 15) == 0) {
     return;
   }
-  sprite = object->sprite;
+  sprite = actor->sprite;
   sprite->image.priority = priority;
   sprite->shadow.priority = priority;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }

@@ -1929,8 +1929,8 @@ void Inventory_BreakFar(s32 owner, s32 slot);
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
-  struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
-  u32 item = work->selectedItems[0];
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
+  u32 item = menu->selectedItems[0];
   u32 mask;
 
   mask = INVENTORY_ITEM_ID_MASK;
@@ -1938,10 +1938,10 @@ void ItemMenu_TryBreak(void) {
   // One time in eight: 8192 of Random16's 65536 values.
   if (Item_GetDirectFar(mask)->useType == ITEM_USE_MAY_BREAK &&
       Random16() < 8192) {
-    Inventory_BreakFar(work->sideMember[0], work->selectedSlots[0]);
+    Inventory_BreakFar(menu->sideMember[0], menu->selectedSlots[0]);
     Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
-    WindowSprite_RedrawSavedRectFar(work->infoWindow);
+    WindowSprite_RedrawSavedRectFar(menu->infoWindow);
   }
 }
 
@@ -2420,14 +2420,14 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 // further left.
 #if LANGUAGE == LANGUAGE_JAPANESE
 // いくつ?, the message three before MsgShortcutHelp.
-#define MSG_HOW_MANY ((s32)MsgShortcutHelp - 3)
+#define HOW_MANY_MESSAGE ((s32)MsgShortcutHelp - 3)
 #define HOW_MANY_X 0
 #define HOW_MANY_Y 32
 // こ, the counter after a count: the message before MsgItemCommandUse.
-#define MSG_PIECE ((s32)MsgItemCommandUse - 1)
+#define PIECE_MESSAGE ((s32)MsgItemCommandUse - 1)
 #define CURSOR_X 88
 #else
-#define MSG_HOW_MANY ((s32)MsgHowMany)
+#define HOW_MANY_MESSAGE ((s32)MsgHowMany)
 #define HOW_MANY_X 32
 #define HOW_MANY_Y 0
 #define CURSOR_X 128
@@ -2477,7 +2477,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         changed = 0;
         value = (value + quantityRange) % quantityRange;
         WindowSprite_RedrawSavedRectFar(window);
-        Text_DrawMessageAsTilesFar(MSG_HOW_MANY, window, HOW_MANY_X,
+        Text_DrawMessageAsTilesFar(HOW_MANY_MESSAGE, window, HOW_MANY_X,
                                    HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
         QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
@@ -2492,13 +2492,13 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
             window, 16, 8);
         Text_DrawNumberInWindowFar(ownerCount - value - 1, 2, window, 16, 24);
 #if LANGUAGE == LANGUAGE_JAPANESE
-        Text_DrawMessageAsTilesFar(MSG_PIECE, window, 32, 24);
+        Text_DrawMessageAsTilesFar(PIECE_MESSAGE, window, 32, 24);
 #endif
         if (dropMode == 0) {
           Text_DrawNumberInWindowFar(targetCount + value + 1, 2, window, 80,
                                      24);
 #if LANGUAGE == LANGUAGE_JAPANESE
-          Text_DrawMessageAsTilesFar(MSG_PIECE, window, 96, 24);
+          Text_DrawMessageAsTilesFar(PIECE_MESSAGE, window, 96, 24);
 #endif
         }
         Text_DrawStringAtOffsetFar(Unit_Get(menu->sideMember[0]), window, 16,

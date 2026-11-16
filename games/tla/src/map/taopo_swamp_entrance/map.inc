@@ -39,7 +39,7 @@ Tileset_TaopoSwampEntrancePalette:
 	.global Tileset_TaopoSwampEntranceTilesA
 Tileset_TaopoSwampEntranceTilesA:
 	.incbin "games/tla/src/graphics/tileset/taopo_swamp_entrance/tiles_a.4bpp.mtf"
-	.byte 0x00, 0x1b, 0x22	@ PACKER: left in the buffer by Field_YallamInteriors+0x2091
+	.byte 0x00, 0x1b, 0x22	@ PACKER: left in the buffer by Field_YallamRooms+0x2091
 	.global Tileset_TaopoSwampEntranceTilesB
 Tileset_TaopoSwampEntranceTilesB:
 	.incbin "games/tla/src/graphics/tileset/taopo_swamp_entrance/tiles_b.4bpp.mtf"

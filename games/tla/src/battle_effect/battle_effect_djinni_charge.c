@@ -310,8 +310,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         size += 2;
         blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 debris.x / 2 - size / 2, debris.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(
-            &work->particles[i], 62, gDjinniCharge_DebrisGravity[i & 3]);
+        Particle_AdvanceWithGravity3D(&work->particles[i], 62,
+                                      gDjinniCharge_DebrisGravity[i & 3]);
         if (work->particles[i].y < 0) {
           work->particles[i].velocityY = -work->particles[i].velocityY / 2;
         }
@@ -333,7 +333,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                       picture * PICTURE_BYTES(FLASH_BURST),
                   debris.x / 2 - 16, debris.y - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector3(p, 62, -toFIXED(1) / 64);
+          Particle_AdvanceWithGravity3D(p, 62, -toFIXED(1) / 64);
           p->variant--;
         }
       }

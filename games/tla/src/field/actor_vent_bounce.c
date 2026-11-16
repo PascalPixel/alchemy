@@ -19,32 +19,32 @@ s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
 /// Moves the object by its velocities, slows it in x and z, grows and spins
 /// its sprite, and stops its fall in z when it lands on the leader or on one
 /// of the objects the vent work lists.
-void VENT_BOUNCE(struct Actor *object) {
+void VENT_BOUNCE(struct Actor *actor) {
   struct VentWork *work = VENT_WORK;
   struct Actor *other = Actor_GetById(gMainRoutineWork.leaderActorId);
-  FIXED dx = object->bounce;
+  FIXED dx = actor->bounce;
   FIXED dz;
   struct Sprite *sprite;
   s32 i;
 
-  object->x.fixed += dx;
-  object->y.fixed += object->gravity;
-  dz = object->riseBaseY;
-  object->z.fixed += dz;
-  object->bounce = dx - dx / 18;
-  object->riseBaseY = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  sprite = object->sprite;
+  actor->x.fixed += dx;
+  actor->y.fixed += actor->gravity;
+  dz = actor->riseBaseY;
+  actor->z.fixed += dz;
+  actor->bounce = dx - dx / 18;
+  actor->riseBaseY = dz - dz / 16;
+  actor->scaleX += actor->speedLimit;
+  sprite = actor->sprite;
   {
-    s32 acceleration = object->acceleration;
+    s32 acceleration = actor->acceleration;
 
-    object->scaleY += acceleration;
+    actor->scaleY += acceleration;
   }
-  sprite->rotation += object->timer;
-  if (other->y.fixed == other->groundHeight && VENT_TOUCHING(object, other)) {
-    object->z.fixed -= object->riseBaseY;
-    object->gravity += object->riseBaseY >> 2;
-    object->riseBaseY = 0;
+  sprite->rotation += actor->timer;
+  if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
+    actor->z.fixed -= actor->riseBaseY;
+    actor->gravity += actor->riseBaseY >> 2;
+    actor->riseBaseY = 0;
   }
   for (i = 0; i < 4; i++) {
     s32 id = work->ids[i];
@@ -52,10 +52,10 @@ void VENT_BOUNCE(struct Actor *object) {
     if (id == 0)
       break;
     other = Actor_GetById(id);
-    if (other->y.fixed == other->groundHeight && VENT_TOUCHING(object, other)) {
-      object->z.fixed -= object->riseBaseY;
-      object->gravity += object->riseBaseY >> 2;
-      object->riseBaseY = 0;
+    if (other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
+      actor->z.fixed -= actor->riseBaseY;
+      actor->gravity += actor->riseBaseY >> 2;
+      actor->riseBaseY = 0;
     }
   }
 }

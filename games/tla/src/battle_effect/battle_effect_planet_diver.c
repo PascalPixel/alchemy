@@ -406,7 +406,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
             pos.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * MOTE_CELL, pos.x - 10,
                     pos.y - 16, MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(mote, 62, 0);
+            Particle_AdvanceWithGravity3D(mote, 62, 0);
 
             // Thirty frames on, the mote is pulled toward the middle of its
             // target's body.

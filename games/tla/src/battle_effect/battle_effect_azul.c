@@ -249,7 +249,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                (FIXEDtoINT(p->x + (s << 4))) - AZUL_BEAM_DROP_WIDTH / 2,
                FIXED_INTEGER_PART(p->y) - AZUL_BEAM_DROP_HEIGHT / 2,
                AZUL_BEAM_DROP_WIDTH, AZUL_BEAM_DROP_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 4);
         }
         p->variant++;
       }
@@ -542,7 +542,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           break;
         }
         Render_TransformVertices(&verts[i * 4], vertices, 4);
-        BattleEffectKernels_IntegrateVector3(p, 62, 0);
+        Particle_AdvanceWithGravity3D(p, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
           p->velocityY += -toFIXED(1) / 2;
         }
@@ -717,7 +717,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           blit(canvas, work->sheet + AZUL_BEAM_DROP,
                FIXED_INTEGER_PART(p->x) - 6, FIXED_INTEGER_PART(p->y) - 12, 12,
                24);
-          BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1));
+          Particle_AdvanceWithGravity2D(p, 63, toFIXED(1));
           if (p->y > toFIXED(96)) {
             p->velocityY = -p->velocityY / 2;
             p->velocityX <<= 2;
@@ -760,9 +760,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Moves a particle one frame in three dimensions.
-void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
-                                   s32 gravity) {
+/// Moves a particle one frame in three dimensions: the C copy of
+/// Particle_AdvanceWithGravity3D, whose assembly in the kernel bank the effects
+/// call; nothing calls this one.
+void EffectPosition_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                         s32 gravity) {
   s32 vx = step->velocityX;
   s32 vy = step->velocityY;
   s32 vz = step->velocityZ;
@@ -775,9 +777,10 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                vz * damping / DAMPING_SCALE);
 }
 
-/// Moves a particle one frame on the screen.
-void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
-                                   s32 gravity) {
+/// Moves a particle one frame on the screen: the C copy of
+/// Particle_AdvanceWithGravity2D; nothing calls this one.
+void EffectPosition_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+                                         s32 gravity) {
   s32 x = step->x;
   s32 vx = step->velocityX;
   s32 vy = step->velocityY;

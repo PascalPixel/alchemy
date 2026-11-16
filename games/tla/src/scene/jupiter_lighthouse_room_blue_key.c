@@ -68,7 +68,7 @@ enum JupiterLighthouseLeftTowerActorId {
 };
 
 struct Actor;
-s32 CrackedTiles_Step(void);
+s32 CrackedTile_Step(void);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
 void Actor_DisableById(s32 id);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
@@ -79,7 +79,7 @@ s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
 /// after them.
-u16 gLighthousePalette13[2] BSS_DATA;
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
 u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
@@ -88,7 +88,6 @@ struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -117,7 +116,7 @@ void PushTarget_PushFill(struct PushTarget target);
 /// A cracked tile under the leader: as it gives way the party falls to the room
 /// below (exit 13).
 void JupiterLighthouse_StepOnCrackedTile(void) {
-  if (CrackedTiles_Step())
+  if (CrackedTile_Step())
     FieldEvent_SetExitRequest(13);
 }
 
@@ -135,26 +134,25 @@ void JupiterLighthouse_StartMovingBlock(void) {}
 /// The pillar pushed into the hole at cell (6, 14) drops in with a thud: once
 /// it has landed (at most 30 frames) it stays there, level with the floor.
 void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 i;
 
-  if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 14) {
+  if (FIELD_CELL(actor->x.fixed) == 6 && FIELD_CELL(actor->z.fixed) == 14) {
     Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
     i = 0;
-    if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+    if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y.fixed > object->groundHeight ||
-               object->velocityY != 0);
+      } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
     }
-    object->motionFlags = 0;
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    actor->motionFlags = 0;
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
 }
 
@@ -182,7 +180,7 @@ s32 Scene_Initialize(void) {
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 2);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 3);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 4);
-  CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
+  CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
   if (gMainRoutineWork.entrance == 13)
     CrackedTile_PlaceLanding(
         19, 0,
@@ -201,14 +199,14 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Event_ClearFlag(FLAG_PILLAR_DROPPED);
   if (Event_GetFlag(FLAG_PILLAR_DROPPED)) {
-    struct Actor *object = Actor_Get(ACTOR_PILLAR);
+    struct Actor *actor = Actor_Get(ACTOR_PILLAR);
 
-    object->motionFlags = 0;
-    object->groundHeight = -toFIXED(32);
-    object->y.fixed = -toFIXED(32);
+    actor->motionFlags = 0;
+    actor->groundHeight = -toFIXED(32);
+    actor->y.fixed = -toFIXED(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
   return 0;
 }
@@ -231,24 +229,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
-/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
-void JupiterLighthouse_LoadPalettes(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
-    Iwram_CopyWordsEntry(gLighthousePalette13, (void *)&BG_PLTT_COLOR(13, 0),
-                         32);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
-  } else {
-    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -259,7 +240,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -267,36 +248,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Raises a whirlwind eight pixels in front of an actor, moving along its
-/// facing (Whirlwind_Update), with a burst of light. Returns it.
-struct Actor *Whirlwind_Spawn(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *object;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Import_ActorSelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-  return object;
-}
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks.h"
 
@@ -310,8 +262,8 @@ extern s8 gPushFootprints[][4];
 /// its sprite. Returns 1, or 0 for a sprite that is not pushable.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
+  struct Actor *actor = Actor_Get(id);
+  s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
   s16 i = 0;
   u32 j;
   s32 width;
@@ -334,8 +286,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[j][0]));
-  z = FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[j][1]));
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
   mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
   mapZ = FIELD_CELL(map->layers[1].offsetY);
@@ -353,9 +305,9 @@ extern s32 gPushLeaderSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-static inline s32 PushTarget_CheckCollision(struct Actor *object,
+static inline s32 PushTarget_CheckCollision(struct Actor *actor,
                                             s32 *position) {
-  return MapGrid_CheckCollision(object, position);
+  return MapGrid_CheckCollision(actor, position);
 }
 
 /// Finds the object the leader is pushing and steps its footprint, one cell
@@ -369,7 +321,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 
 #include "shared/push_target_find_ahead.h"
 
-void PushTarget_UpdatePusher(struct Actor *object);
+void PushTarget_UpdatePusher(struct Actor *actor);
 
 /// The leader pushes an actor to its resting place: both walk there, then the
 /// cells it left are opened and those it covers made solid.
@@ -377,7 +329,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(target.id);
+  struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
   s32 footprint;
@@ -393,12 +345,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] =
-      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] =
-      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -418,12 +368,12 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = PushTarget_UpdatePusher;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Import_ActorSelectAnimation(object, 3);
+    Actor_SelectAnimation(actor, 3);
   else
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -437,12 +387,12 @@ void PushTarget_PushFill(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
@@ -466,16 +416,16 @@ void PushTarget_PushFill(struct PushTarget target) {
 
 /// The leader's update while it pushes: stops it against anything but a
 /// pushable actor, or a wall.
-void PushTarget_UpdatePusher(struct Actor *object) {
+void PushTarget_UpdatePusher(struct Actor *actor) {
   struct Vector3 position;
   struct Actor *hit;
   u32 i;
-  s32 angle = object->facing >> 12;
+  s32 angle = actor->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
   FieldVector_AddPolarOffset(16, angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
@@ -484,15 +434,15 @@ void PushTarget_UpdatePusher(struct Actor *object) {
           gPushKinds[i])
         return;
     }
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
   }
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
-  if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
+  if (MapGrid_CheckCollision(actor, &position) > 0)
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
 }
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
@@ -526,14 +476,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {                                                               
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+#include "shared/push_leader_steps.c"
 // clang-format on
 
 #include "../field/field_effect_move.c"
@@ -547,8 +490,7 @@ s32 gPushLeaderSteps[] = {
 struct Actor;
 struct CellTarget;
 struct FieldEffect;
-s32 CrackedTiles_Step(void);
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
+s32 CrackedTile_Step(void);
 void Leader_CenterInCell(void);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -556,23 +498,23 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -586,7 +528,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 struct CellTarget;
 struct CellTargetEntry;
-s32 CrackedTiles_Step(void);
+s32 CrackedTile_Step(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern u16 gPushKinds[];
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
@@ -595,7 +537,7 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
@@ -612,31 +554,11 @@ void JupiterLighthouse_StepOnCrackedTile(void);
 void JupiterLighthouse_StartMovingBlock(void);
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomBlueKey),

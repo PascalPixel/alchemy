@@ -64,7 +64,7 @@ void ShrineOfTheSeaGod_EndSand(void);
 
 extern u32 gFieldEffect_MediumScript[];
 
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *object, s32 base);
+void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *actor, s32 base);
 void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void);
 
 void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void);
@@ -75,7 +75,7 @@ void ShrineOfTheSeaGod_LayerCrossroadsProps(void);
 
 void ShrineOfTheSeaGod_KeepFlameOnTorch(void);
 
-void ShrineOfTheSeaGod_SetUpPuddle(s32 actor);
+void ShrineOfTheSeaGod_SetUpPuddle(s32 actorId);
 
 void ShrineOfTheSeaGod_InitializeRope(void);
 void ShrineOfTheSeaGod_InitializePlankBridge(void);

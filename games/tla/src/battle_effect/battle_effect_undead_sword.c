@@ -135,7 +135,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        BattleEffectKernels_IntegrateVector2(particle, 62, -toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(particle, 62, -toFIXED(1) / 8);
       }
       particle++;
     }
@@ -274,7 +274,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         if (size < 2)
           size = 2;
         step->variant--;
-        BattleEffectKernels_IntegrateVector2(step, 60, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(step, 60, toFIXED(1) / 8);
         draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 FIXED_INTEGER_PART(step->x) - size / 2,
                 FIXED_INTEGER_PART(step->y) - size, size, size * 2);
@@ -289,7 +289,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
       if (step->variant >= 0 && step->variant < 18) {
         s32 picture = step->variant / 3;
 
-        BattleEffectKernels_IntegrateVector2(step, 60, -toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(step, 60, -toFIXED(1) / 8);
         draw[0](canvas,
                 work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES +
                     picture * PICTURE_BYTES(FLASH_BURST),
@@ -688,7 +688,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
                   work->sheet + WATER_SHEET_SMOKE_PUFFS +
                       picture * PICTURE_BYTES(SMOKE_PUFF),
                   x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector3(step, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity3D(step, 62, -toFIXED(1) / 8);
         }
         if (++step->variant == 6) {
           step->variant = 0;
@@ -1176,8 +1176,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         height = heights[cell];
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
-        BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
-                                             toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
+                                      toFIXED(1) / 4);
         if (FIXED_INTEGER_PART(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }

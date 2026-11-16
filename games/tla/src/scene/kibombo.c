@@ -3,7 +3,7 @@
 /// rooms of this overlay: the village, its shops, inn and Sanctum
 /// (Kibombo_OpenWeaponShop, Kibombo_OpenInn), and the grounds before the
 /// statue. On the sacred night Akafubu offers the Black Orb to the Great
-/// Gabomba (Kibombo_CeremonyBegins to Kibombo_CeremonyEnds), where Piers, come
+/// Gabomba (Kibombo_CeremonyStarts to Kibombo_CeremonyEnds), where Piers, come
 /// to take his orb back, joins the party (Kibombo_PiersThanksParty); the way to
 /// the statue past the dead end is a vent Scoop uncovers
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
@@ -53,9 +53,9 @@
 
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
-void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
-void Actor_SetSpriteColor(struct Actor *object, s32 value);
+void Actor_SetSpriteColor(struct Actor *actor, s32 value);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 
@@ -72,8 +72,8 @@ void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
 void Sound_Play(s32 cue);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Actor_Release(struct Actor *object);
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_Release(struct Actor *actor);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void Actor_SetAnimationById(u32 actorId, s32 animation);
 void FieldPsynergy_RunHandler(s32 type);
 void FieldCamera_WaitForArrival(void);
@@ -86,28 +86,28 @@ void FieldEffect_StartBlankOverlay(s32 a);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void FlagBlock_PlaceAll(const void *script);
-void Actor_SetMoveTarget(struct Actor *object, FIXED x, FIXED y, FIXED z);
-void Actor_WaitForMove(struct Actor *object);
+void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
+void Actor_WaitForMove(struct Actor *actor);
 
 void FieldCamera_MoveWithinMapBounds(FIXED x, FIXED y, FIXED z, s32 mode);
 struct Actor *FieldCamera_GetActor(void);
 void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration);
-void Actor_SetSpeedParameters(s32 actor, FIXED speed, FIXED acceleration);
-void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_MoveToObject(s32 actor, s32 target);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-void FieldEffect_SetAttached(s32 actor, s32 emote);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetAnimationAndWait(s32 actor, s32 mode);
-void Actor_WaitForMoveById(s32 actor);
-void Event_AddPartyMember(s32 actor, s32 value);
+void Actor_SetSpeedParameters(s32 actorId, FIXED speed, FIXED acceleration);
+void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
+void Actor_MoveToObject(s32 actorId, s32 target);
+void Actor_SetMovementTypeById(s32 actorId, const void *callback);
+void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *callback);
+s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
+void FieldEffect_SetAttached(s32 actorId, s32 emote);
+void Actor_Jump(s32 actorId, s32 speed, s32 frames);
+void Actor_SetAnimationAndWait(s32 actorId, s32 mode);
+void Actor_WaitForMoveById(s32 actorId);
+void Event_AddPartyMember(s32 actorId, s32 value);
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
 
-void Actor_WalkToById(s32 actor, s32 x, s32 z);
+void Actor_WalkToById(s32 actorId, s32 x, s32 z);
 
 void PaletteFade_SetTarget(s32 a, s32 b);
 
@@ -121,7 +121,7 @@ static inline void Kibombo_TaskAdd(void (*func)(void), s32 priority) {
 
 void Kibombo_InitializeVillage(void);
 s32 Kibombo_ClampColor(s32 value);
-void Kibombo_FlashSprite(struct Actor *object);
+void Kibombo_FlashSprite(struct Actor *actor);
 void Kibombo_DigFirstMarking(void);
 void Kibombo_DigSecondMarking(void);
 void Kibombo_DigThirdMarking(void);
@@ -275,16 +275,16 @@ enum { ACTOR_HEALER_ON_THE_CEREMONY = 36 };
 struct Actor;
 
 /// An actor's update: turns its sprite a little each frame.
-s32 Kibombo_SpinSprite(struct Actor *object) {
-  ((struct FieldSprite *)object->sprite)->rotation += 0x600;
+s32 Kibombo_SpinSprite(struct Actor *actor) {
+  ((struct FieldSprite *)actor->sprite)->rotation += 0x600;
   return 0;
 }
 
 /// An actor's update: keeps its position as the centre Kibombo_ShakeInPlace
 /// shakes it about.
-s32 Kibombo_KeepShakeCentre(struct Actor *object) {
-  object->bounce = object->x.fixed;
-  object->gravity = object->y.fixed;
+s32 Kibombo_KeepShakeCentre(struct Actor *actor) {
+  actor->bounce = actor->x.fixed;
+  actor->gravity = actor->y.fixed;
   return 0;
 }
 
@@ -292,7 +292,7 @@ extern s16 gKibombo_HousesExitRegions[];
 
 /// An actor's update: every other frame, puts it up to a pixel either way of
 /// its kept centre.
-s32 Kibombo_ShakeInPlace(struct Actor *object) {
+s32 Kibombo_ShakeInPlace(struct Actor *actor) {
   if (gFrameCount & 1) {
     FIXED dx;
     FIXED dy;
@@ -302,27 +302,27 @@ s32 Kibombo_ShakeInPlace(struct Actor *object) {
     dx += toFIXED(Random_Below(3));
     dy += toFIXED(Random_Below(3));
 
-    Actor_SetPositionAndResetMotion(object, object->bounce + dx,
-                                    object->gravity + dy, object->z.fixed);
+    Actor_SetPositionAndResetMotion(actor, actor->bounce + dx,
+                                    actor->gravity + dy, actor->z.fixed);
   }
   return 1;
 }
 
 /// An actor's update: flashes its sprite's colour on and off every two frames.
-void Kibombo_FlashSprite(struct Actor *object) {
+void Kibombo_FlashSprite(struct Actor *actor) {
   if (gFrameCount & 2)
-    Actor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
   else
-    Actor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
 /// An actor's update: every ten to twenty frames, faces a random way.
-s32 Kibombo_TurnRandomly(struct Actor *object) {
-  if (object->riseCounter != 0) {
-    object->riseCounter--;
+s32 Kibombo_TurnRandomly(struct Actor *actor) {
+  if (actor->riseCounter != 0) {
+    actor->riseCounter--;
   } else {
-    object->riseCounter = (Random_Below(10)) + 10;
-    object->facing = Random16();
+    actor->riseCounter = (Random_Below(10)) + 10;
+    actor->facing = Random16();
   }
   return 1;
 }
@@ -599,19 +599,7 @@ void Kibombo_HideShades(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
-/// Shows (show 1) or hides count actors from first.
-void Actors_SetHidden(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
-    else
-      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
-  }
-}
+#include "shared/actors_set_hidden.c"
 
 /// Frost on the puddle freezes it into a pillar.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
@@ -684,19 +672,19 @@ void Kibombo_ScoopFourthMarking(s32 mode) {
 /// Move on the block Piers cannot reach: it drops into place with a thump, and
 /// Piers joins the party.
 void Kibombo_MoveBlockForPiers(void) {
-  struct Actor *object = Actor_GetById(ACTOR_GROUNDS_PILLAR);
+  struct Actor *actor = Actor_GetById(ACTOR_GROUNDS_PILLAR);
 
-  if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 18) {
+  if (FIELD_CELL(actor->x.fixed) == 6 && FIELD_CELL(actor->z.fixed) == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_GetById(ACTOR_GROUNDS_PILLAR)->motionFlags = 3;
-    object->motionFlags = 3;
+    actor->motionFlags = 3;
     do
       wait(1);
-    while (object->velocityY != 0);
+    while (actor->velocityY != 0);
     Sound_Play(SE_THUMP);
     wait(10);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     Actor_GetById(ACTOR_GROUNDS_PILLAR)->motionFlags = 0;
     MapGrid_CopyCellAttributes(5, 18, 1, 1, 6, 18);
     GameFlag_Set(FLAG_KIBOMBO_BLOCK_MOVED_FOR_PIERS);
@@ -1812,19 +1800,19 @@ void Kibombo_FlickerStatueFires(void) {
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
   s32 zero = 0;
-  struct Actor *object = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
-                                            toFIXED(36), toFIXED(344));
+  struct Actor *actor = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
+                                           toFIXED(36), toFIXED(344));
 
-  *slot = object;
-  if (object != 0) {
-    struct FieldSprite *sprite = object->sprite;
+  *slot = actor;
+  if (actor != 0) {
+    struct FieldSprite *sprite = actor->sprite;
     u8 *buffer;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
-    object->motionFlags = zero;
-    object->retainSpriteCache = 1;
+    actor->motionFlags = zero;
+    actor->retainSpriteCache = 1;
     sprite->flags = zero;
     sprite->countAndShadow[0] = zero;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -1851,11 +1839,11 @@ void Kibombo_SetRoofByLeaderHeight(void) {
 /// Keeps the Black Crystal above the one who holds it.
 void Kibombo_CarryBlackCrystal(void) {
   if (gKibombo_BlackCrystal != 0) {
-    struct Actor *object = Actor_GetById(ACTOR_CRYSTAL_CARRIER);
+    struct Actor *actor = Actor_GetById(ACTOR_CRYSTAL_CARRIER);
 
-    Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, object->x.fixed,
-                                    object->y.fixed + toFIXED(12),
-                                    object->z.fixed);
+    Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, actor->x.fixed,
+                                    actor->y.fixed + toFIXED(12),
+                                    actor->z.fixed);
   }
 }
 
@@ -1866,7 +1854,7 @@ void Kibombo_CarryBlackCrystal(void) {
 #undef EVENT_WORK
 #include "shared/tables.h"
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 extern u32 gKibombo_EmberScript[];
 
 /// Embers rise from the statue's fire every fourth frame.
@@ -1874,104 +1862,104 @@ void Kibombo_RaiseEmbers(void) {
   s32 phase = gFrameCount & 3;
 
   if (phase == 0) {
-    struct Actor *object = Import_ActorCreate(SPRITE_BLAZE_FLAME, toFIXED(264),
-                                              toFIXED(32), toFIXED(316));
+    struct Actor *actor = Import_ActorCreate(SPRITE_BLAZE_FLAME, toFIXED(264),
+                                             toFIXED(32), toFIXED(316));
     s32 value;
 
-    if (object != 0) {
-      object->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
-      object->gravity = toFIXED(1);
-      object->riseBaseY = 0x40000 - (u16)Random16();
+    if (actor != 0) {
+      actor->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
+      actor->gravity = toFIXED(1);
+      actor->riseBaseY = 0x40000 - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
-      object->timer = value;
-      object->motionFlags = 0;
-      Actor_SetSpriteFlags(object, 0);
-      Actor_SelectAnimation(object, 2);
-      Actor_StartScript(object, gKibombo_EmberScript);
-      ((struct FieldSprite *)object->sprite)->priority = 1;
-      object->timer = 0;
-      object->speedLimit = 0;
-      object->acceleration = 0;
-      object->update = (void (*)(void))FieldEffect_AdvanceMotion;
+      actor->timer = value;
+      actor->motionFlags = 0;
+      Actor_SetSpriteFlags(actor, 0);
+      Actor_SelectAnimation(actor, 2);
+      Actor_StartScript(actor, gKibombo_EmberScript);
+      ((struct FieldSprite *)actor->sprite)->priority = 1;
+      actor->timer = 0;
+      actor->speedLimit = 0;
+      actor->acceleration = 0;
+      actor->update = (void (*)(void))FieldEffect_AdvanceMotion;
     }
   }
 }
 
 /// A puff of smoke's update: drifts sideways and up, swelling, until its 60
 /// frames are out.
-void Kibombo_RiseSmoke(struct Actor *object) {
-  object->x.fixed += object->timer << 8;
+void Kibombo_RiseSmoke(struct Actor *actor) {
+  actor->x.fixed += actor->timer << 8;
 
-  object->y.fixed += toFIXED(1) / 2;
+  actor->y.fixed += toFIXED(1) / 2;
 
-  object->scaleX += FIXED_ONE / 50;
-  object->scaleY += FIXED_ONE / 50;
-  object->timer += 2;
-  if (--*(s32 *)&object->watchedActor == 0)
-    Actor_Release(object);
+  actor->scaleX += FIXED_ONE / 50;
+  actor->scaleY += FIXED_ONE / 50;
+  actor->timer += 2;
+  if (--*(s32 *)&actor->watchedActor == 0)
+    Actor_Release(actor);
 }
 
 /// Smoke puffs from the fire every 64 frames.
 void Kibombo_PuffSmoke(void) {
   if ((gFrameCount & 63) == 0) {
-    struct Actor *object = Import_ActorCreate(SPRITE_DUST_CLOUD, toFIXED(88),
-                                              toFIXED(16), toFIXED(314));
+    struct Actor *actor = Import_ActorCreate(SPRITE_DUST_CLOUD, toFIXED(88),
+                                             toFIXED(16), toFIXED(314));
     u8 *part;
     s32 mask;
 
-    if (object != 0) {
-      object->retainSpriteCache = 2;
-      object->motionFlags = 0;
-      object->timer = 0;
-      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    if (actor != 0) {
+      actor->retainSpriteCache = 2;
+      actor->motionFlags = 0;
+      actor->timer = 0;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       mask = 13;
-      part = (u8 *)object->sprite;
+      part = (u8 *)actor->sprite;
       part[9] = (part[9] & -mask) | 8;
-      Actor_SetSpriteFlags(object, 0);
-      object->scaleX = FIXED_ONE / 2;
-      object->scaleY = FIXED_ONE / 2;
-      *(s32 *)&object->watchedActor = 60;
-      object->update = (void (*)(void))Kibombo_RiseSmoke;
-      Actor_SelectAnimation(object, 5);
-      Actor_SetBlendMode(object, 1);
+      Actor_SetSpriteFlags(actor, 0);
+      actor->scaleX = FIXED_ONE / 2;
+      actor->scaleY = FIXED_ONE / 2;
+      *(s32 *)&actor->watchedActor = 60;
+      actor->update = (void (*)(void))Kibombo_RiseSmoke;
+      Actor_SelectAnimation(actor, 5);
+      Actor_SetBlendMode(actor, 1);
     }
   }
 }
 
 /// A flame's update: every ten to twenty frames it flips between wide and
 /// mirrored.
-void Kibombo_FlickerFlame(struct Actor *object) {
-  if (object->timer != 0) {
-    object->timer--;
+void Kibombo_FlickerFlame(struct Actor *actor) {
+  if (actor->timer != 0) {
+    actor->timer--;
   } else {
-    object->timer = (Random_Below(10)) + 10;
-    if (object->userValue != 0) {
-      object->scaleX = FIXED_ONE * 3 / 2;
-      object->userValue = 0;
+    actor->timer = (Random_Below(10)) + 10;
+    if (actor->userValue != 0) {
+      actor->scaleX = FIXED_ONE * 3 / 2;
+      actor->userValue = 0;
     } else {
-      object->scaleX = -FIXED_ONE * 3 / 2;
-      object->userValue = 1;
+      actor->scaleX = -FIXED_ONE * 3 / 2;
+      actor->userValue = 1;
     }
   }
 }
 
 /// A flame that flickers by its own timer.
 void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
-  struct Actor *object = Import_ActorCreate(SPRITE_FLAME_AND_SMOKE, x, y, z);
+  struct Actor *actor = Import_ActorCreate(SPRITE_FLAME_AND_SMOKE, x, y, z);
   struct FieldSprite *sprite;
 
-  if (object != 0) {
-    object->motionFlags = 0;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    object->scaleY = FIXED_ONE * 2;
-    object->timer = (Random_Below(10)) + 10;
-    object->userValue = 0;
-    object->update = (void (*)(void))Kibombo_FlickerFlame;
-    sprite = object->sprite;
+  if (actor != 0) {
+    actor->motionFlags = 0;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    actor->scaleY = FIXED_ONE * 2;
+    actor->timer = (Random_Below(10)) + 10;
+    actor->userValue = 0;
+    actor->update = (void (*)(void))Kibombo_FlickerFlame;
+    sprite = actor->sprite;
     sprite->priority = 1;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SelectAnimation(object, 5);
-    Actor_SetBlendMode(object, 1);
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SelectAnimation(actor, 5);
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
@@ -2010,11 +1998,11 @@ void Kibombo_HideGroundsPair(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + ACTOR_GROUNDS_SHADE_A;
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
 
     Actor_Hide(id);
     zero = 0;
-    object->motionFlags = zero;
+    actor->motionFlags = zero;
   }
   Actor_GetById(ACTOR_GROUNDS_SHADE_A)->y.fixed = toFIXED(32);
   Actor_GetById(ACTOR_GROUNDS_SHADE_B)->y.fixed = zero;
@@ -2028,10 +2016,10 @@ void Kibombo_HideHousesPair(void) {
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + 26;
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
 
     Actor_Hide(id);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
   }
   Scene_RunUnlessFlag();
 }
@@ -2531,7 +2519,7 @@ void Kibombo_StatueFlashes(void) {
 
 /// The sacred night begins: Akafubu calls on the village to pray for his
 /// success, and the party hurries to watch.
-void Kibombo_CeremonyBegins(void) {
+void Kibombo_CeremonyStarts(void) {
   struct Actor *leader;
 
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2679,7 +2667,7 @@ void Kibombo_PresentOrbToGabomba(void) {
 /// The Great Gabomba stays silent, and Akafubu asks whether it is still not
 /// pleased.
 void Kibombo_GabombaNotPleased(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
@@ -2710,14 +2698,14 @@ void Kibombo_GabombaNotPleased(void) {
   Event_SetMessageId((s32)MsgYouAreStill);
   // "You are still not pleased?"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  object = gKibombo_BlackCrystal;
-  if (object != 0) {
-    object->motionFlags = 0;
-    while (object->y.fixed > toFIXED(36)) {
+  actor = gKibombo_BlackCrystal;
+  if (actor != 0) {
+    actor->motionFlags = 0;
+    while (actor->y.fixed > toFIXED(36)) {
       Actor_FaceDirection(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
       gKibombo_BlackCrystal->y.fixed -= toFIXED(1) / 4;
       wait(1);
-      object = gKibombo_BlackCrystal;
+      actor = gKibombo_BlackCrystal;
     }
   }
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_SHAKE_HEAD);
@@ -2861,7 +2849,7 @@ void Kibombo_CrowdCheers(void) {
 /// Still nothing from the statue: the warriors call for more drums.
 void Kibombo_GabombaStillNotPleased(void) {
   struct Actor **slot;
-  struct Actor *object;
+  struct Actor *actor;
 
   Kibombo_OpenCeremonyScene();
   Sound_Play(SE_RATTLE);
@@ -2870,16 +2858,16 @@ void Kibombo_GabombaStillNotPleased(void) {
   Event_SetMessageId((s32)MsgYouAreStillNot);
   // "You are still not pleased?"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  object = gKibombo_BlackCrystal;
-  if (object != 0) {
-    // Lowers the object 0x4000 a frame down to y 0x240000.
-    object->motionFlags = 0;
-    if (object->y.fixed > 144 << 14) {
+  actor = gKibombo_BlackCrystal;
+  if (actor != 0) {
+    // Lowers the actor 0x4000 a frame down to y 0x240000.
+    actor->motionFlags = 0;
+    if (actor->y.fixed > 144 << 14) {
       do {
         Actor_FaceDirectionById(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
         slot = &gKibombo_BlackCrystal;
-        object = *slot;
-        object->y.fixed += 0xffffc000;
+        actor = *slot;
+        actor->y.fixed += 0xffffc000;
         wait(1);
       } while ((*slot)->y.fixed > toFIXED(36));
     }
@@ -2953,10 +2941,10 @@ void Kibombo_GabombaResponds(void) {
 /// The Great Gabomba responds to the gift: its tongue reaches for it and its
 /// mouth opens and shuts.
 void Kibombo_GabombaRespondsToGift(void) {
-  struct Actor *object;
+  struct Actor *actor;
   u32 i;
 
-  object = Actor_GetById(ACTOR_STATUE_TONGUE);
+  actor = Actor_GetById(ACTOR_STATUE_TONGUE);
   Kibombo_OpenCeremonyScene();
   Actor_SetSpritePriority(ACTOR_AKAFUBU, 1);
   Event_PlaySound(SE_STATUE_STIRS);
@@ -2974,14 +2962,14 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
-  object->scaleY = FIXED_ONE / 10;
+  actor->scaleY = FIXED_ONE / 10;
   Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE),
                                   toFIXED(264), toFIXED(24), toFIXED(308));
   wait(1);
   Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 3);
   for (i = 0; i < 64; i++) {
-    object->scaleY += FIXED_ONE / 64;
-    object->y.fixed += toFIXED(1) / 8;
+    actor->scaleY += FIXED_ONE / 64;
+    actor->y.fixed += toFIXED(1) / 8;
     wait(1);
   }
   Sound_Play(SE_STOP_EXIT_SE);
@@ -3002,15 +2990,15 @@ void Kibombo_GabombaRespondsToGift(void) {
     i = 0;
     do {
       gKibombo_BlackCrystal->y.fixed += toFIXED(6);
-      object->scaleY -= FIXED_ONE / 8;
-      object->y.fixed -= toFIXED(1) / 2;
+      actor->scaleY -= FIXED_ONE / 8;
+      actor->y.fixed -= toFIXED(1) / 2;
       wait(1);
       i++;
     } while (i < 4);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     for (i = 0; i < 4; i++) {
-      object->scaleY -= FIXED_ONE / 8;
-      object->y.fixed -= toFIXED(1) / 2;
+      actor->scaleY -= FIXED_ONE / 8;
+      actor->y.fixed -= toFIXED(1) / 2;
       wait(1);
     }
   }
@@ -3028,8 +3016,8 @@ void Kibombo_GabombaRespondsToGift(void) {
                                   toFIXED(264), toFIXED(24), toFIXED(308));
   wait(1);
   for (i = 0; i < 8; i++) {
-    object->scaleY += FIXED_ONE / 8;
-    object->y.fixed += toFIXED(1) / 2;
+    actor->scaleY += FIXED_ONE / 8;
+    actor->y.fixed += toFIXED(1) / 2;
     wait(1);
   }
   FieldEffect_SetAttached(ACTOR_AKAFUBU,
@@ -3418,7 +3406,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
     if (!GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP))
       Kibombo_CrowdBows();
   } else if (gMainRoutineWork.entrance == 5) {
-    Kibombo_CeremonyBegins();
+    Kibombo_CeremonyStarts();
   }
   Event_End();
   if (gMainRoutineWork.entrance == 99) {
@@ -3475,7 +3463,7 @@ void Actor_FallOverById(s32 actor, s32 angle);
 /// The houses: Akafubu at home after the ceremony, or the ceremony's end
 /// played, and the man with the aching back lying where he fell.
 void Kibombo_InitializeHouses(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -3500,18 +3488,18 @@ void Kibombo_InitializeHouses(void) {
   }
 #if TLA_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    object = Actor_GetById(ACTOR_MAN_WITH_ACHING_BACK);
-    object->x.fixed -= toFIXED(14);
-    object->z.fixed -= toFIXED(8);
+    actor = Actor_GetById(ACTOR_MAN_WITH_ACHING_BACK);
+    actor->x.fixed -= toFIXED(14);
+    actor->z.fixed -= toFIXED(8);
   }
 #endif
   Actor_FallOverById(ACTOR_MAN_WITH_ACHING_BACK, 0);
-  object = Actor_GetById(ACTOR_MAN_WITH_ACHING_BACK);
-  ((struct FieldSprite *)object->sprite)->rotation = 0;
-  object->scaleX = FIXED_ONE;
-  object->scaleY = FIXED_ONE;
-  object->x.fixed += toFIXED(14);
-  object->z.fixed += toFIXED(8);
+  actor = Actor_GetById(ACTOR_MAN_WITH_ACHING_BACK);
+  ((struct FieldSprite *)actor->sprite)->rotation = 0;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
+  actor->x.fixed += toFIXED(14);
+  actor->z.fixed += toFIXED(8);
   Actor_SetAnimationById(ACTOR_MAN_WITH_ACHING_BACK, 6);
   if (gMainRoutineWork.entrance == 14)
     GameFlag_Set(0x8ee);
@@ -3810,10 +3798,7 @@ s16 gKibombo_FrozenPuddle[] = {
     8, 513, -1, 0,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 s16 gKibombo_HousesExitRegions[] = {
     400, 40, 368, 416, 56, 384, -1, 14,

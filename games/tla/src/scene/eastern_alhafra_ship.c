@@ -107,9 +107,9 @@ void EasternAlhafraShip_StartMovingCrate(void) {}
 /// Once crate id stops: on cell (24, 40) it is out of the way, back on
 /// (23, 40) it is not.
 void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(id);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   if (x == 24 && z == 40)
     GameFlag_Set(FLAG_CRATE_MOVED);
@@ -147,7 +147,7 @@ void EasternAlhafraShip_TakeTheBread(s32 id) {
 /// Talking to Eoleo: the baby lifts the vase of flowers with Psynergy and
 /// drops it; the first time, his mother remarks on it.
 void EasternAlhafraShip_EoleoLifts(s32 id) {
-  struct Actor *object = Actor_GetById(ACTOR_VASE);
+  struct Actor *actor = Actor_GetById(ACTOR_VASE);
   u8 *flags;
   s32 i;
 
@@ -161,10 +161,10 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(30);
-  flags = &object->motionFlags;
+  flags = &actor->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    object->y.fixed += toFIXED(1) / 5;
+    actor->y.fixed += toFIXED(1) / 5;
     Event_Wait(1);
   }
   Event_Wait(70);
@@ -173,7 +173,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
   *flags = 3;
-  object->gravity = toFIXED(1) / 2;
+  actor->gravity = toFIXED(1) / 2;
   Event_Wait(5);
   Sound_Play(SE_WATER);
   if (Event_GetFlag(FLAG_EOLEO_LIFTED) == 0) {
@@ -192,7 +192,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
@@ -226,10 +226,10 @@ s32 Scene_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_GetById(ACTOR_STACKED_CRATES)->priorityFlags |=
           ACTOR_PRIORITY_PLATFORM;
-      object = Actor_GetById(ACTOR_LARGE_BREAD);
-      object->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-      object->y.fixed += toFIXED(16);
-      object->groundHeight += toFIXED(16);
+      actor = Actor_GetById(ACTOR_LARGE_BREAD);
+      actor->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+      actor->y.fixed += toFIXED(16);
+      actor->groundHeight += toFIXED(16);
     }
   } else {
     Actor_SetPosition(ACTOR_STACKED_CRATES, 136, 475);
@@ -267,25 +267,25 @@ s32 timer;
 }
 
 void Actor_EmitNotes(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  EasternAlhafraShip_SpawnNote(object->x.fixed + toFIXED(8),
-                               object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafraShip_SpawnNote(actor->x.fixed + toFIXED(8),
+                               actor->y.fixed + toFIXED(28), actor->z.fixed,
                                TRIG_TURN / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote(object->x.fixed - toFIXED(8),
-                               object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafraShip_SpawnNote(actor->x.fixed - toFIXED(8),
+                               actor->y.fixed + toFIXED(28), actor->z.fixed,
                                TRIG_TURN * 15 / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote(object->x.fixed + toFIXED(8),
-                               object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafraShip_SpawnNote(actor->x.fixed + toFIXED(8),
+                               actor->y.fixed + toFIXED(28), actor->z.fixed,
                                TRIG_TURN / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote(object->x.fixed - toFIXED(8),
-                               object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafraShip_SpawnNote(actor->x.fixed - toFIXED(8),
+                               actor->y.fixed + toFIXED(28), actor->z.fixed,
                                TRIG_TURN * 15 / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);

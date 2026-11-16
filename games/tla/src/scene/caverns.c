@@ -44,13 +44,13 @@ extern struct Trigger gCaverns_AngaraTriggers[];
 void Caverns_PlaceAngaraBlocks(const s16 *data);
 void Caverns_PrepareOsenia(void);
 void Caverns_PrepareAtteka(void);
-s32 MapGrid_CheckCollision(struct Actor *object,
+s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldCoordinate *position);
 void Caverns_InitializeIndra(void);
 void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
 /// Jumps the leader across to the position given when nothing is in the way.
-s32 Caverns_JumpAcross(struct Actor *object, struct FieldCoordinate *position);
+s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position);
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -136,25 +136,25 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Caverns_PlaceAngaraBlocks(const s16 *data) {
   const u16 *ids = (const u16 *)data;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
   s32 cell;
 
   while (*ids != 0xffff) {
-    object = Actor_GetById(*ids);
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    object->bounce = 0;
-    Actor_SetSpriteFlags((struct Actor *)object, 0);
+    actor = Actor_GetById(*ids);
+    actor->motionFlags = 0;
+    actor->collisionFlags = 0;
+    actor->bounce = 0;
+    Actor_SetSpriteFlags((struct Actor *)actor, 0);
     height =
-        (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-    cell = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
-                                 FIELD_CELL(object->z.fixed));
-    object->riseBaseY = cell;
-    MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
-                          FIELD_CELL(object->z.fixed), cell | 0x80);
+        (Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) >> 19) + 2;
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
+    cell = MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed));
+    actor->riseBaseY = cell;
+    MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
+                          FIELD_CELL(actor->z.fixed), cell | 0x80);
     ids++;
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -219,14 +219,14 @@ void Caverns_StartMovingAngaraBlock(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *current = Ram_HeapSlots->fieldEffectWork;
   const u16 *ids = (const u16 *)gCaverns_AngaraBlocks;
-  struct Actor *object = NULL;
+  struct Actor *actor = NULL;
   struct Actor *leader;
   s32 height;
   s32 angle;
 
   work->movedBlock = NULL;
   if (current != NULL && work->psynergy != 0) {
-    object = work->movedBlock = current->child;
+    actor = work->movedBlock = current->child;
     if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(1);
   } else {
@@ -237,45 +237,44 @@ void Caverns_StartMovingAngaraBlock(void) {
     position[2] = leader->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), angle, position);
     while (*ids != 0xffff) {
-      object = Actor_GetById(*ids);
-      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-          position[1] / toFIXED(1) == object->y.fixed / toFIXED(1) &&
-          position[2] >> 20 == FIELD_CELL(object->z.fixed))
+      actor = Actor_GetById(*ids);
+      if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
+          position[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
+          position[2] >> 20 == FIELD_CELL(actor->z.fixed))
         break;
       ids++;
-      object = NULL;
+      actor = NULL;
     }
-    if (object == NULL)
+    if (actor == NULL)
       return;
-    work->movedBlock = object;
+    work->movedBlock = actor;
     Caverns_ShiftAngaraCellHeights(1);
   }
-  height =
-      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) - 2;
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
-                        FIELD_CELL(object->z.fixed), object->riseBaseY);
+  height = (Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) >> 19) - 2;
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
+  MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
+                        FIELD_CELL(actor->z.fixed), actor->riseBaseY);
 }
 
 /// A dust puff's step: drifts, slows, grows and turns.
-void Caverns_DriftDust(struct Actor *object) {
-  object->x.fixed += object->bounce;
-  object->y.fixed += object->gravity;
-  object->z.fixed += object->riseBaseY;
-  object->bounce -= object->bounce / 12;
-  object->riseBaseY -= object->riseBaseY / 10;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct FieldSprite *)object->sprite)->rotation += object->timer;
+void Caverns_DriftDust(struct Actor *actor) {
+  actor->x.fixed += actor->bounce;
+  actor->y.fixed += actor->gravity;
+  actor->z.fixed += actor->riseBaseY;
+  actor->bounce -= actor->bounce / 12;
+  actor->riseBaseY -= actor->riseBaseY / 10;
+  actor->scaleX += actor->speedLimit;
+  actor->scaleY += actor->acceleration;
+  ((struct FieldSprite *)actor->sprite)->rotation += actor->timer;
 }
 
 /// The stacked block's update: draws the leader in front of it while he is
 /// south of it.
-void Caverns_LayerLeaderByStack(struct Actor *object) {
+void Caverns_LayerLeaderByStack(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   FIXED leaderZ = leader->z.fixed;
-  FIXED z = object->z.fixed;
+  FIXED z = actor->z.fixed;
   u8 *flags = &leader->priorityFlags;
 
   if (leaderZ > z) {
@@ -296,7 +295,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
   struct EffectOptions options;
   struct FieldWork *work;
   struct FieldEffectWork *current;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *other;
   s32 kind;
   s32 height;
@@ -309,39 +308,38 @@ void Caverns_FinishMovingAngaraBlock(void) {
 
   work = Ram_HeapSlots->fieldWork;
   current = Ram_HeapSlots->fieldEffectWork;
-  object = work->movedBlock;
+  actor = work->movedBlock;
   if (current != NULL && work->psynergy != 0) {
     if (current->action != ABILITY_CARRY)
       Caverns_ShiftAngaraCellHeights(-1);
   } else {
     Caverns_ShiftAngaraCellHeights(-1);
   }
-  if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) !=
-      object->y.fixed) {
-    object->layer = 2;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    object->bounce = 0;
+  if (Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) !=
+      actor->y.fixed) {
+    actor->layer = 2;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->bounce = 0;
     wait(1);
-    kind = MapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
+    kind = MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed);
     if (kind != 0) {
-      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = BLEND_ALPHA(0, 16);
       blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       sum = kind + 2;
-      spawned = OverlayObject_PrepareObject(object->x.fixed, 0,
-                                            object->z.fixed + (sum << 20),
-                                            SPRITE_YELLOW_BLOCK);
+      spawned = OverlayObject_PrepareObject(
+          actor->x.fixed, 0, actor->z.fixed + (sum << 20), SPRITE_YELLOW_BLOCK);
       Sound_Play(SE_DUST_PUFF);
-      OverlayObject_WaitUntilIdle(object);
-      OverlayObject_WaitUntilIdle(object);
-      object->x.fixed = object->y.fixed = object->z.fixed = 0;
+      OverlayObject_WaitUntilIdle(actor);
+      OverlayObject_WaitUntilIdle(actor);
+      actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
       Actor_Release(spawned);
       wait(1);
       *blendControl = 0;
     } else {
-      OverlayObject_WaitUntilIdle(object);
-      OverlayObject_WaitUntilIdle(object);
+      OverlayObject_WaitUntilIdle(actor);
+      OverlayObject_WaitUntilIdle(actor);
       Sound_Play(SE_THUMP);
       options.palette = 7;
       options.priority = 2;
@@ -359,7 +357,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (toFIXED(3) / 16);
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
-        FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
+        FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                           velocity[0], velocity[1], velocity[2],
                           sum = EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                                 EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
@@ -367,31 +365,30 @@ void Caverns_FinishMovingAngaraBlock(void) {
         i++;
       } while (i <= 16);
     }
-    object->motionFlags = 0;
-    object->layer = 0;
-    // The velocity array is reused for the position under the object.
+    actor->motionFlags = 0;
+    actor->layer = 0;
+    // The velocity array is reused for the position under the actor.
     {
-      velocity[0] = object->x.fixed;
-      velocity[1] = object->y.fixed - toFIXED(16);
-      velocity[2] = object->z.fixed;
+      velocity[0] = actor->x.fixed;
+      velocity[1] = actor->y.fixed - toFIXED(16);
+      velocity[2] = actor->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
-        object->update = (void (*)(void))Caverns_LayerLeaderByStack;
-        object->riseCounter = 1;
+        actor->update = (void (*)(void))Caverns_LayerLeaderByStack;
+        actor->riseCounter = 1;
         other->riseCounter = 1;
         GameFlag_Set(FLAG_ANGARA_BLOCKS_STACKED);
       }
     }
   }
-  height =
-      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  value = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
-                                FIELD_CELL(object->z.fixed));
-  object->riseBaseY = value;
-  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
-                        FIELD_CELL(object->z.fixed), value | 0x80);
+  height = (Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) >> 19) + 2;
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 2, height);
+  value = MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
+                                FIELD_CELL(actor->z.fixed));
+  actor->riseBaseY = value;
+  MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
+                        FIELD_CELL(actor->z.fixed), value | 0x80);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -438,46 +435,46 @@ enum CavernsIndraActorId {
 /// Indra Cavern on entry: strings the rope between its posts (tied once
 /// FLAG_INDRA_ROPE_TIED is set), stills the pillar and marks its cell.
 void Caverns_InitializeIndra(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 arg;
 
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Rope_Initialize();
   Rope_Place(0, FLAG_INDRA_ROPE_TIED, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
-  object = Actor_GetById(ACTOR_PILLAR);
-  object->motionFlags = 0;
+  actor = Actor_GetById(ACTOR_PILLAR);
+  actor->motionFlags = 0;
 
   arg = 10;
-  Map_CopyCellAttributeRect(16, arg, 1, 1, FIELD_CELL(object->x.fixed), arg);
+  Map_CopyCellAttributeRect(16, arg, 1, 1, FIELD_CELL(actor->x.fixed), arg);
 }
 
 /// Move on Indra Cavern's pillar: stills it and copies the cells of its new
 /// place into the floor.
 void Caverns_MoveIndraPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   Map_CopyCellAttributeRect(13, 12, 2, 1, 13, 10);
-  Map_CopyCellAttributeRect(16, 10, 1, 1, FIELD_CELL(object->x.fixed), 10);
+  Map_CopyCellAttributeRect(16, 10, 1, 1, FIELD_CELL(actor->x.fixed), 10);
 }
 
-s32 Caverns_JumpAcross(struct Actor *object, struct FieldCoordinate *position) {
-  u8 *flags = &object->motionFlags;
+s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
+  u8 *flags = &actor->motionFlags;
   s32 saved = *flags;
-  s32 blocked = MapGrid_CheckCollision(object, position);
+  s32 blocked = MapGrid_CheckCollision(actor, position);
 
   if (blocked == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SelectAnimation(object, ANIM_LEADER_SPRING);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(object, ANIM_LEADER_LEAP);
-    object->speedLimit = toFIXED(3);
-    object->acceleration = toFIXED(2);
-    object->velocityY = toFIXED(4);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
+    actor->speedLimit = toFIXED(3);
+    actor->acceleration = toFIXED(2);
+    actor->velocityY = toFIXED(4);
     *flags &= 0x7e;
-    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteFlags(actor, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
       s32 x = position[0].part[0].integer;
@@ -486,8 +483,8 @@ s32 Caverns_JumpAcross(struct Actor *object, struct FieldCoordinate *position) {
 
       Actor_MoveToAndWaitById(owner, x, z);
     }
-    Actor_SelectAnimation(object, ANIM_LEADER_SPRING);
-    Actor_SetSpriteFlags(object, 1);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
+    Actor_SetSpriteFlags(actor, 1);
     *flags = saved;
     Event_End();
     return 1;
@@ -669,35 +666,7 @@ void Caverns_OpenAngaraDoor(void) {
 }
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The grey blocks of Angara Cavern, by actor id, ended by -1.
 s16 gCaverns_AngaraBlocks[] = {

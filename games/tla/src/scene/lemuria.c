@@ -136,7 +136,7 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   return result;
 }
 
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 /// An update for the two walking children: each stops while it faces the other
 /// child or the leader close by, or while Mind Read shows its thoughts, and
@@ -275,10 +275,10 @@ void Lemuria_EnterDoor(s32 exit) {
 /// the child's facing is restored after.
 void Lemuria_TalkToSpoiledChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_SPOILED_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_SPOILED_CHILD);
+  s16 angle = actor->facing;
 
-  object->timer = 1;
+  actor->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
@@ -291,18 +291,18 @@ void Lemuria_TalkToSpoiledChild(void) {
   // "Everyone spoils me so much... I don't ever want to grow up! But in..."
   FieldEvent_ShowMessageThenWait(ACTOR_SPOILED_CHILD, 0, 10);
   Event_End();
-  object->timer = 0;
-  object->facing = angle;
+  actor->timer = 0;
+  actor->facing = angle;
   System_Wait(1);
 }
 
 /// The same for actor 19.
 void Lemuria_TalkToLonelyChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_LONELY_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_LONELY_CHILD);
+  s16 angle = actor->facing;
 
-  object->timer = 1;
+  actor->timer = 1;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
@@ -315,8 +315,8 @@ void Lemuria_TalkToLonelyChild(void) {
   // "Are there other children in the lands beyond the Sea of Time? Are..."
   FieldEvent_ShowMessageThenWait(ACTOR_LONELY_CHILD, 0, 10);
   Event_End();
-  object->timer = 0;
-  object->facing = angle;
+  actor->timer = 0;
+  actor->facing = angle;
   System_Wait(1);
 }
 
@@ -437,7 +437,7 @@ void Rope_Coil();
 /// in another way.
 /// "The door doesn't want to open."
 void Lemuria_KnockAtBrokenDoor(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(96) ||
       Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
@@ -456,8 +456,8 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgLemuriaAreYouKidsPierssTraveling);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 872, 880);
-  object = Actor_Get(ACTOR_KRADEN_STAND_IN);
-  Actor_SetFirstSpriteAnimation(object, SPRITE_LUNPA);
+  actor = Actor_Get(ACTOR_KRADEN_STAND_IN);
+  Actor_SetFirstSpriteAnimation(actor, SPRITE_LUNPA);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 3);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
   // "Are you kids Piers's traveling companions?"
@@ -623,7 +623,7 @@ void Lemuria_StartRippleDma(void) {
 
 /// A task: fills the back buffer of line scrolls with the water's ripple, a
 /// sine of the line and the frame, and swaps the buffers.
-void Lemuria_ComputeRipple(void) {
+void Lemuria_CalculateRipple(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   FIXED v[2];
@@ -644,7 +644,7 @@ void Lemuria_StartRipple(void) {
   s32 priority;
 
   priority = TASK_PASS_VBLANK;
-  Task_AddFrame(Lemuria_ComputeRipple, priority);
+  Task_AddFrame(Lemuria_CalculateRipple, priority);
   priority = TASK_PASS_FRAME;
   Task_AddFrame(Lemuria_StartRippleDma, priority);
 }
@@ -1195,14 +1195,14 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Lemuria),
-    SCENE_EXIT_UNLESS(1, LemuriaInteriors, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, LemuriaInteriors, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemuriaInteriors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, LemuriaRooms, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LemuriaRooms, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LemuriaRooms, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AncientLemuria, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, LemuriaSpring, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, LemuriaInteriors, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, LemuriaInteriors, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, LemuriaInteriors, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, LemuriaRooms, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, LemuriaRooms, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, LemuriaRooms, 16, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, LemuriaPalace, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, LemuriaPalace, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(17, LemuriaPalace, 17, EXIT_FLAG_NONE),

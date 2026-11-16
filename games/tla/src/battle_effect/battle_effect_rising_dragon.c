@@ -158,7 +158,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(mote->x) - size / 2,
                   FIXED_INTEGER_PART(mote->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(mote, 60, toFIXED(1) / 16);
+          Particle_AdvanceWithGravity2D(mote, 60, toFIXED(1) / 16);
           mote->variant--;
         }
       }
@@ -396,7 +396,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
     }
     if (frame < 32)
-      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, 0);
+      Particle_AdvanceWithGravity2D(&work->particles[0], 60, 0);
 
     // In over 32 frames, out over the last 16, rising away.
     if (frame <= 32) {
@@ -408,8 +408,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((16 - level / 2) << 8) | level;
-      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60,
-                                           -toFIXED(1) / 2);
+      Particle_AdvanceWithGravity2D(&work->particles[0], 60, -toFIXED(1) / 2);
     }
 
     // The sway, and the canvas moved with the figure.

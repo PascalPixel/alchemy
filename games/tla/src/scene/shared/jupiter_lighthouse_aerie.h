@@ -16,7 +16,7 @@ struct EffectOptions;
 
 extern u8 gDecodeFillByte;
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 void MapGrid_CenterOnFollowedPoint(void);
 void Import_HangingVinePlace(s32 id, s32 a);

@@ -138,7 +138,6 @@ struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
 void MapGrid_SetAttributeBAt();
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -164,17 +163,17 @@ void Actor_RaiseFromCell(s32 id);
 /// activated and it sits in its gap at cell (13, 34), rises 32 pixels and
 /// hovers for good; any other block is set on its cells.
 void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   if (id == ACTOR_MOVED_GREY_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
-        FIELD_CELL(object->x.fixed) != 13 || FIELD_CELL(object->z.fixed) != 34)
+        FIELD_CELL(actor->x.fixed) != 13 || FIELD_CELL(actor->z.fixed) != 34)
       return;
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y.fixed += toFIXED(2);
+      actor->y.fixed += toFIXED(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -190,11 +189,11 @@ void Actor_SetSpriteColorMode();
 
 /// An actor's update while the lighthouse wakes: every other frame its sprite
 /// steps through six colour modes.
-void JupiterLighthouse_ShimmerColors(struct Actor *object) {
+void JupiterLighthouse_ShimmerColors(struct Actor *actor) {
   u32 frameCount = gFrameCount;
 
   if (frameCount & 1)
-    Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
+    Actor_SetSpriteColorMode(actor, (frameCount >> 1) % 6);
 }
 
 /// A rising mote's update: it circles the beam of light.
@@ -216,12 +215,12 @@ void Orb_Update(struct Actor *self) {
   self->timer += -0x800;
 }
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
-void Orbs_SpawnRising(void) {
+void Orb_SpawnRising(void) {
   struct Actor *center;
   struct Actor *effect;
   struct FieldSprite *sprite;
@@ -283,15 +282,15 @@ void JupiterLighthouse_EndSparkRing(void);
 /// Shows one half of the beam of light, drawn underfoot at priority 2 in colour
 /// 7, flat and upside down at first, and starts the script that brings it in.
 static __inline__ void JupiterLighthouse_BringInBeam(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Actor_SetSpritePriority(id, 2);
   Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
-  object = Actor_GetById(id);
-  object->motionFlags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  object->scaleY = -FIXED_ONE;
-  object->scaleX = FIXED_ONE / 10;
+  actor = Actor_GetById(id);
+  actor->motionFlags = 0;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->scaleY = -FIXED_ONE;
+  actor->scaleX = FIXED_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }
 
@@ -351,7 +350,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldEvent_Wait(40);
   JupiterLighthouse_BringInBeam(ACTOR_LOWER_BEAM);
   JupiterLighthouse_BringInBeam(ACTOR_UPPER_BEAM);
-  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
+  Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -492,27 +491,27 @@ void JupiterLighthouse_AlexAppears(void) {
 
 /// The healer raises arcs of light over the target, which spins and flashes
 /// for two seconds to the revival jingle and then stands facing north.
-void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
+void JupiterLighthouse_HealWithArc(s32 actorId, s32 target) {
   s32 i;
 
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 2);
   Event_PlaySound(SE_ASCEND);
   System_Wait(50);
   Event_PlaySound(MUS_REVIVE);
   for (i = 0; i < 120; i++) {
     {
-      struct Actor *object = Actor_Get(target);
-      u32 facing = object->facing;
+      struct Actor *actor = Actor_Get(target);
+      u32 facing = actor->facing;
 
-      object->facing = facing + 0x1000;
+      actor->facing = facing + 0x1000;
     }
     FieldActor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
     System_Wait(1);
   }
   Actor_Get(target)->facing = FACING_NORTH;
   FieldActor_SetSpriteColor(Actor_Get(target), SPRITE_COLOR_NORMAL);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Actor_SetAnimation(target, 1);
@@ -606,7 +605,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Sets up the hall: Alex while he waits for the party, the beam of light
 /// hidden until the lighthouse is activated, then shown with its motes.
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 angle;
 
   gFieldWork->transition =
@@ -620,20 +619,20 @@ s32 Scene_Initialize(void) {
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
   Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);
-  object = Actor_Get(ACTOR_LOWER_BEAM);
-  object->scaleX = 0;
-  object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, toFIXED(680), toFIXED(32), toFIXED(580));
+  actor = Actor_Get(ACTOR_LOWER_BEAM);
+  actor->scaleX = 0;
+  actor->motionFlags = 0;
+  SET_ACTOR_POSITION(actor, toFIXED(680), toFIXED(32), toFIXED(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
-  object = Actor_Get(ACTOR_UPPER_BEAM);
-  object->scaleX = 0;
-  object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, toFIXED(680), toFIXED(64), toFIXED(580));
+  actor = Actor_Get(ACTOR_UPPER_BEAM);
+  actor->scaleX = 0;
+  actor->motionFlags = 0;
+  SET_ACTOR_POSITION(actor, toFIXED(680), toFIXED(64), toFIXED(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-    Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
+    Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
   }
   return 0;
 }
@@ -697,35 +696,35 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_PlaySound(SE_WHIRLWIND);
   position.x =
       source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
   position.z =
       source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Import_ActorSelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
+  actor = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                            position.z);
+  Actor_SelectAnimation(actor, 2);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->motionFlags = 0;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->facing = source->facing;
+  actor->timer = 0;
+  actor->riseCounter = 0;
+  actor->riseEnabled = 0;
+  actor->update = Whirlwind_Update;
+  actor->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
                     0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
-  return object;
+  return actor;
 }
 
 /// Unused: every eighth frame, sends a spark up from a random spot about the
 /// actor.
-UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
+UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
   struct EffectOptions options;
   s32 phase;
   FIXED x, y, speed;
@@ -736,10 +735,10 @@ UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
     options.startScaleX = FIXED_ONE * 7 / 10;
     options.startScaleY = FIXED_ONE * 7 / 10;
     options.palette = 14;
-    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    x = actor->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = actor->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, phase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
                       &options);
@@ -919,92 +918,32 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef EVENT_WORK
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-  FIXED target;
-  s32 count;
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect = ((struct FieldEffect *)Import_ActorCreate(EFFECT_DEFAULT_TYPE, x,
-                                                       y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    count = script[EFFECT_SCRIPT_REPEAT_COUNT];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
-                           script[EFFECT_SCRIPT_REPEAT_COUNT];
-    } else {
-      effect->scaleRateX = (target - EFFECT_SCALE_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - EFFECT_SCALE_ONE) /
-                           script[EFFECT_SCRIPT_REPEAT_COUNT];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
-
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -1021,7 +960,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
@@ -1031,26 +970,7 @@ void JupiterLighthouse_LiftPushedBlock(void);
 void JupiterLighthouse_ActivateTheLighthouse(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 u32 gJupiterLighthouse_BringInScript[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -1070,10 +990,7 @@ s16 gJupiterLighthouse_Room5Blocks[] = {
     17, 18, 19, -1,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseRoomRedKey),         SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_RED_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY),    SCENE_EXIT(2, JupiterLighthouseRoomRedKey, 3), 

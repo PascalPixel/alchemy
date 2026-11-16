@@ -199,32 +199,32 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 void FieldPsynergy_StartCast(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *object = work->mainActor;
+  struct Actor *actor = work->mainActor;
   s32 ability = work->action;
 
-  Actor_SelectAnimationFar(object, 20);
-  object->targetX = object->x.fixed;
-  object->velocityX = 0;
-  object->targetY = object->y.fixed;
-  object->velocityY = 0;
-  object->targetZ = object->z.fixed;
-  object->velocityZ = 0;
+  Actor_SelectAnimationFar(actor, 20);
+  actor->targetX = actor->x.fixed;
+  actor->velocityX = 0;
+  actor->targetY = actor->y.fixed;
+  actor->velocityY = 0;
+  actor->targetZ = actor->z.fixed;
+  actor->velocityZ = 0;
   if (work->visible != 0) {
     Sound_PlayFar(SE_POWER_UP);
-    BattleEffect_SetObjectUpdateMode(object, 1);
+    BattleEffect_SetObjectUpdateMode(actor, 1);
   }
   if (work->active != 0) {
     work->messageShown = 1;
-    Actor_SetOthersPaused(object, 1, 0);
+    Actor_SetOthersPaused(actor, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgCastAbilityName, work->messageMode);
-    Actor_SetOthersPaused(object, 0, 16);
+    Actor_SetOthersPaused(actor, 0, 16);
     work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (work->visible != 0)
-      BattleEffect_SetObjectUpdateMode(object, 2);
-    Actor_SelectAnimationFar(object, 21);
+      BattleEffect_SetObjectUpdateMode(actor, 2);
+    Actor_SelectAnimationFar(actor, 21);
   } else {
     BattleEffect_StopMainActor();
   }

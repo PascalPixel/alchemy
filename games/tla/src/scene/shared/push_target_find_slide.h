@@ -8,7 +8,7 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 /// Finds how far the object ahead slides before something blocks it; 1 when it
 /// moves.
 s32 PushTarget_FindSlide(struct PushTarget *target) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 direction;
   FIXED position[3];
   s32 footprint;
@@ -21,8 +21,8 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
   s32 col;
   u8 *layer;
 
-  object = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
-  if (object != 0) {
+  actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
+  if (actor != 0) {
     footprint = target->footprint;
     width = (ABS(gPushFootprints[footprint][0]) +
              ABS(gPushFootprints[footprint][2])) >>
@@ -34,17 +34,17 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     dz = gPushLeaderSteps[direction] << 16;
     target->callback = 0;
     count = 0;
-    layer = &object->layer;
+    layer = &actor->layer;
     *layer = 2;
-    target->x = object->x.fixed + dx;
-    target->z = object->z.fixed + dz;
-    position[1] = object->y.fixed;
+    target->x = actor->x.fixed + dx;
+    target->z = actor->z.fixed + dz;
+    position[1] = actor->y.fixed;
     for (;;) {
       position[2] = target->z + (gPushFootprints[footprint][1] << 16);
       for (row = 0; row < height; row++) {
         position[0] = target->x + (gPushFootprints[footprint][0] << 16);
         for (col = 0; col < width; col++) {
-          if (FieldActor_CheckMovementCollision(object, position) == 2)
+          if (FieldActor_CheckMovementCollision(actor, position) == 2)
             goto blocked;
           position[0] += 0x100000;
         }
@@ -58,9 +58,9 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     *layer = 0;
     if (count == 0)
       return 0;
-    target->x = object->x.fixed + dx * count;
-    target->y = object->y.fixed;
-    target->z = object->z.fixed + dz * count;
+    target->x = actor->x.fixed + dx * count;
+    target->y = actor->y.fixed;
+    target->z = actor->z.fixed + dz * count;
     return 1;
   }
   return 0;

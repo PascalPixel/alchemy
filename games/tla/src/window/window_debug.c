@@ -260,7 +260,7 @@ void DebugWarp_Arafura2(void) {
 
     party->secondShortcut = ABILITY_MIND_READ;
   }
-  Event_SetDestinationFar(SCENE_ALHAFRA, ALHAFRA_FROM_ALHAFRA_INTERIORS_NORTH);
+  Event_SetDestinationFar(SCENE_ALHAFRA, ALHAFRA_FROM_ALHAFRA_ROOMS_NORTH);
 }
 
 /// Preset 2, "Energy Sample": does nothing.

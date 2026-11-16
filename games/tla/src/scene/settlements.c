@@ -188,8 +188,8 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 void Settlements_ClimbDownLadder(void);
-void Settlements_DriftSmoke(struct Actor *object);
-void Actor_Release(struct Actor *object);
+void Settlements_DriftSmoke(struct Actor *actor);
+void Actor_Release(struct Actor *actor);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
@@ -338,8 +338,8 @@ void Settlements_MeetLostJupiterDjinni(void) {
 }
 
 /// A script call: draws the actor without its sprite flags.
-s32 Settlements_ClearSpriteFlags(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+s32 Settlements_ClearSpriteFlags(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -434,9 +434,9 @@ void Settlements_CutLeftBush(void) {
 /// Cyclone clears the bush on the stairs of Gondowan Settlement: the leader
 /// standing on it hops off, and the stairs open.
 void Settlements_CutStairsBush(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   if (x == 5 && z == 17) {
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 2, 0);
@@ -536,39 +536,39 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Drifts a chimney's puff sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
-void Settlements_DriftSmoke(struct Actor *object) {
+void Settlements_DriftSmoke(struct Actor *actor) {
   s32 step;
 
-  object->x.fixed += object->timer << 8;
+  actor->x.fixed += actor->timer << 8;
 
-  object->y.fixed += toFIXED(1) / 2;
+  actor->y.fixed += toFIXED(1) / 2;
 
   step = FIXED_ONE / 50;
-  object->scaleX += step;
-  object->scaleY += step;
-  object->timer += 2;
-  if (--*(s32 *)&object->watchedActor == 0)
-    Actor_Release(object);
+  actor->scaleX += step;
+  actor->scaleY += step;
+  actor->timer += 2;
+  if (--*(s32 *)&actor->watchedActor == 0)
+    Actor_Release(actor);
 }
 
 /// Adds one puff of chimney smoke, as Prox's roofs do.
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
+  struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
-  if (object != NULL) {
-    object->retainSpriteCache = 2;
-    object->motionFlags = 0;
-    object->timer = 0;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
-    ((struct FieldSprite *)object->sprite)->priority = 1;
-    Actor_SetSpriteFlags(object, 0);
-    object->scaleX = FIXED_ONE / 2;
-    object->scaleY = FIXED_ONE / 2;
-    *(s32 *)&object->watchedActor = 60;
-    object->update = (void (*)(void))Settlements_DriftSmoke;
-    Actor_SelectAnimation(object, 5);
-    Actor_SetBlendMode(object, 1);
+  if (actor != NULL) {
+    actor->retainSpriteCache = 2;
+    actor->motionFlags = 0;
+    actor->timer = 0;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
+    Actor_SetSpriteFlags(actor, 0);
+    actor->scaleX = FIXED_ONE / 2;
+    actor->scaleY = FIXED_ONE / 2;
+    *(s32 *)&actor->watchedActor = 60;
+    actor->update = (void (*)(void))Settlements_DriftSmoke;
+    Actor_SelectAnimation(actor, 5);
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
@@ -597,11 +597,7 @@ s32 Settlements_FloatApple(struct OrbitObject *apple) {
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-/// Rope_Place, from an event.
-static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
-                                   s32 otherPost) {
-  Rope_Place(index, flag, post, otherPost);
-}
+#include "shared/field_rope_place.c"
 
 /// Sets up Kalt Island: the blend, the chimney smoke, the rope between its
 /// posts, and the apple floating, its icon drawn, until it is taken.
@@ -743,10 +739,10 @@ void Settlements_EnterCave(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct Actor *object = Actor_Get(i);
+    struct Actor *actor = Actor_Get(i);
 
-    if (object != 0)
-      object->motionFlags = 0;
+    if (actor != 0)
+      actor->motionFlags = 0;
   }
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
@@ -868,15 +864,15 @@ void Settlements_SplashCrate(s32 id);
 /// A pillar pushed into the river at (11, 12) sinks, and river stone K takes
 /// its place in the stream.
 void Settlements_SinkPillar(void) {
-  struct Actor *object = Actor_GetById(ACTOR_PILLAR);
-  s32 column = FIELD_CELL(object->x.fixed);
-  s32 row = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(ACTOR_PILLAR);
+  s32 column = FIELD_CELL(actor->x.fixed);
+  s32 row = FIELD_CELL(actor->z.fixed);
   s32 i;
 
   if (!Event_GetFlag(FLAG_PILLAR_SUNK) && column == 11 && row == 12) {
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     for (i = 10; i > 0; i--) {
-      object->y.fixed -= toFIXED(2);
+      actor->y.fixed -= toFIXED(2);
       Event_Wait(1);
     }
     Settlements_SplashCrate(ACTOR_PILLAR);
@@ -894,7 +890,7 @@ void Settlements_SinkPillar(void) {
   i = (frames);                                                                \
   do {                                                                         \
     FieldEvent_Wait(1);                                                        \
-    object->y.fixed -= toFIXED(2);                                             \
+    actor->y.fixed -= toFIXED(2);                                              \
     i--;                                                                       \
   } while (i > 0)
 
@@ -902,14 +898,14 @@ void Settlements_SinkPillar(void) {
 /// lost, or once the pillar has sunk comes to rest below; at (16, 12) it bobs a
 /// moment.
 void Settlements_SlideCrateDownFalls(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FALLS_CRATE);
-  s32 column = FIELD_CELL(object->x.fixed);
-  s32 row = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(ACTOR_FALLS_CRATE);
+  s32 column = FIELD_CELL(actor->x.fixed);
+  s32 row = FIELD_CELL(actor->z.fixed);
   s32 i;
   u8 *flags;
 
   if (column == 11 && row == 9) {
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     SINK(8);
     Settlements_SplashCrate(ACTOR_FALLS_CRATE);
     FieldEvent_Wait(20);
@@ -948,7 +944,7 @@ void Settlements_SlideCrateDownFalls(void) {
   } else if (!Event_GetFlag(FLAG_FALLS_CRATE_BOBBED) && column == 16 &&
              row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
-    flags = &object->motionFlags;
+    flags = &actor->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
@@ -1015,9 +1011,9 @@ void Settlements_StepOffWall(void) {
 
 /// Pushing Hesperia Settlement's crate: its cells open by where it stands.
 void Settlements_UnblockCrate(void) {
-  struct Actor *object = Actor_Get(ACTOR_WALL_CRATE);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_Get(ACTOR_WALL_CRATE);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   Settlements_SaveWallCells();
   Actor_LiftTargetBlock(gSettlements_WallCrate);
@@ -1041,7 +1037,7 @@ extern s32 gSettlements_CrateDropScript[];
 /// into the water, and at (19, 15), while Tinder is not yet met, it runs the
 /// crate's drop script.
 void Settlements_DropCrate(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 column;
   s32 row;
   s32 i;
@@ -1049,19 +1045,19 @@ void Settlements_DropCrate(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   EventCamera_FollowActor(ACTOR_WALL_CRATE, 1);
-  object = Actor_Get(ACTOR_WALL_CRATE);
-  column = FIELD_CELL(object->x.fixed);
-  row = FIELD_CELL(object->z.fixed);
+  actor = Actor_Get(ACTOR_WALL_CRATE);
+  column = FIELD_CELL(actor->x.fixed);
+  row = FIELD_CELL(actor->z.fixed);
   // XXX: the two sinkings with flags of their own, at (16, 15) and (13, 15)
   // (FLAG_SCENE_TEMP_05 and 04), are named once the map shows what lies there.
   if (column == 12 && row == 15) {
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     SINK(32);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
   } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_05);
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(48);
@@ -1069,7 +1065,7 @@ void Settlements_DropCrate(void) {
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(32);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
@@ -1082,7 +1078,7 @@ void Settlements_DropCrate(void) {
   } else if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 13 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     SINK(16);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
@@ -1110,7 +1106,7 @@ void Settlements_SplashCrate(s32 id) {
    * touches: of the 68 bytes it reserves. */
   UNUSED struct SettlementsVector velocity;
   struct EffectOptions spawn;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   spawn.type = SPRITE_WATER_SPRAY;
   spawn.startScaleX = FIXED_ONE * 4 / 5;
@@ -1119,7 +1115,7 @@ void Settlements_SplashCrate(s32 id) {
   spawn.targetScaleY = FIXED_ONE;
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
+  FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,
                     &spawn);
@@ -1139,7 +1135,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// A ring of nine splashes thrown out around an actor.
 void Settlements_SpawnSplashRing(s32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Vector3 vec;
   struct EffectOptions params;
   u32 angleStep;
@@ -1147,7 +1143,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
   s32 x;
   FIXED z;
 
-  object = Actor_Get(objectId);
+  actor = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
@@ -1158,8 +1154,8 @@ void Settlements_SpawnSplashRing(s32 objectId) {
     vec.z = z;
     x += x / 3;
     vec.x = x;
-    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x, vec.y,
+                      z, EFFECT_USE_UPDATE | 1, &params);
   }
 }
 
@@ -1180,10 +1176,10 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
 extern s16 gSlideOnIce_AnglesByKey[];
-void Actor_SteerByPad(struct Actor *object);
+void Actor_SteerByPad(struct Actor *actor);
 void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Actor_HasArrived(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *actor);
 s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/slide_on_ice_from_edge.c"
@@ -1203,35 +1199,7 @@ void Settlements_PushIntoFalls(void);
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 s16 gSettlements_FallsObjects[] = {
     9, 10, -1,
@@ -1241,18 +1209,7 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-s16 gSlideOnIce_SteerAngles[] = {                                                               
-      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
-      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
-      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
-      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
-  };
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
-    0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
-    0,
-};
+#include "shared/slide_on_ice_angles.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

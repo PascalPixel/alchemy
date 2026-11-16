@@ -116,11 +116,10 @@ void PsynergyTest2_StepIntoBattle(void) {
 /// Talking to ACTOR_STAKE: twenty rocks burst out around it and fall for 20
 /// frames.
 void PsynergyTest2_ScatterRocks(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   PsynergyTest2_StartRocks();
-  PsynergyTest2_SpawnRocks(object->x.fixed, object->y.fixed, object->z.fixed,
-                           20);
+  PsynergyTest2_SpawnRocks(actor->x.fixed, actor->y.fixed, actor->z.fixed, 20);
   System_Wait(20);
   PsynergyTest2_EndRocks();
 }
@@ -299,38 +298,38 @@ UNUSED void PsynergyTest2_DigCells(s32 mode, s32 sourceX, s32 sourceY,
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
 UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 scale;
 
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   if (mode == 1) {
     Actor_SetPosition(id, x, z);
-    object->scaleX = 0;
-    object->scaleY = 0;
+    actor->scaleX = 0;
+    actor->scaleY = 0;
   }
   if (mode == 2) {
-    while (object->scaleX < FIXED_ONE) {
+    while (actor->scaleX < FIXED_ONE) {
       System_Wait(1);
-      scale = object->scaleX;
+      scale = actor->scaleX;
       scale += 0x51e;
-      object->scaleX = scale;
-      object->scaleY = scale;
+      actor->scaleX = scale;
+      actor->scaleY = scale;
     }
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DropActor again.
 UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   if (mode == 2) {
     Actor_SetPosition(id, x, z);
-    object->y.fixed = toFIXED(32);
-    object->motionFlags = 3;
-    object->gravity = 0x170a;
+    actor->y.fixed = toFIXED(32);
+    actor->motionFlags = 3;
+    actor->gravity = 0x170a;
     System_Wait(50);
   }
 }
@@ -339,35 +338,35 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 /// rest), copied here with nothing calling them.
 UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
                                        s32 column) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (mode == 1) {
-    object = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
-    if (object != NULL) {
-      Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags = 2;
+    actor = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
+    if (actor != NULL) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object =
+    actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
-    if (object != NULL) {
+    if (actor != NULL) {
       s32 scale;
 
-      Actor_SetSpriteFlags(object, 0);
-      object->velocityY = toFIXED(6);
-      object->scaleX = FIXED_ONE * 2 / 5;
-      object->scaleY = FIXED_ONE * 2 / 5;
-      while (object->scaleX < FIXED_ONE) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->velocityY = toFIXED(6);
+      actor->scaleX = FIXED_ONE * 2 / 5;
+      actor->scaleY = FIXED_ONE * 2 / 5;
+      while (actor->scaleX < FIXED_ONE) {
         System_Wait(1);
-        scale = object->scaleX + 0x51e;
-        object->facing += FACING_STEP;
-        object->scaleX = scale;
-        object->scaleY = scale;
+        scale = actor->scaleX + 0x51e;
+        actor->facing += FACING_STEP;
+        actor->scaleX = scale;
+        actor->scaleY = scale;
       }
-      object->scaleX = FIXED_ONE;
-      object->scaleY = FIXED_ONE;
-      object->facing =
+      actor->scaleX = FIXED_ONE;
+      actor->scaleY = FIXED_ONE;
+      actor->facing =
           Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(row, column);
     }

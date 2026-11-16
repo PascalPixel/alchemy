@@ -682,9 +682,9 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
 void IncreaseItemAndLevel_EnableEffectChildMode(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  effectWork->childMode = 1;
+  work->childMode = 1;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }

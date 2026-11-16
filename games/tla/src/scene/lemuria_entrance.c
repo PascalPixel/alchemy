@@ -72,8 +72,8 @@ void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
 
 /// Starts an actor's animation from its first frame.
-s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *object) {
-  ((struct FieldSprite *)object->sprite)->flags = 0;
+s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *actor) {
+  ((struct FieldSprite *)actor->sprite)->flags = 0;
   return 1;
 }
 

@@ -12,10 +12,13 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Io_Write16(0xf1f, &REG_WINOUT);
-  REG_DISPCNT |= 0x8000;
+  Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
+                 WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
+                 WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3,
+             &REG_WINOUT);
+  REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   table->shown = 1;
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   x = 0;
   do {

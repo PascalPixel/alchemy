@@ -104,8 +104,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                FIXED_INTEGER_PART(shard->y) -
                    ((height = gSpire_ShardHeights[cel]) >> 1),
                width, height);
-          BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;

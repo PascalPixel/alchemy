@@ -27,7 +27,7 @@ Field_LemurianShipCabins:
 	.incbin "games/tla/src/map/lemurian_ship_cabins/animation.script.lz"
 	.balign 4, 0
 .LField_LemurianShipCabins_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
+	.incbin "games/tla/src/map/daila_rooms_houses/blend.script.lz"
 	.balign 4, 0
 .LField_LemurianShipCabins_SCENE:
 	.incbin "games/tla/src/map/lemurian_ship_cabins/scene.scene.lz"

@@ -812,7 +812,17 @@ struct SpriteAnimation;
 struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
-struct MeshTriangle;
+
+/// A mesh triangle: its three vertex numbers and the texture coordinates of
+/// each corner. A strip quad is two of them; a triangle whose three vertices
+/// are 0 ends a list.
+struct MeshTriangle {
+  u8 vertex[3];
+  u8 unusedA; ///< nothing reads or writes it
+  u8 uv[3][2];
+  u8 unusedB[2]; ///< nothing reads or writes them
+};
+
 struct PoolEntry;
 struct SpriteScale;
 struct SpriteScale;
@@ -885,10 +895,10 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 
 // projectiles.c
-void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
-                                          s32 gravity);
-void BattleEffectKernels_IntegrateVector2(struct Particle *step, s32 damping,
-                                          s32 gravity);
+void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                   s32 gravity);
+void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+                                   s32 gravity);
 // BattleEffect_BuildBlitter itself.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);

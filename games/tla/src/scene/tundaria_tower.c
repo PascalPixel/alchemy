@@ -134,7 +134,7 @@ void TundariaTower_UpdateFallingRocks(void);
 void TundariaTower_StartFallingRocks(void);
 void TundariaTower_EndFallingRocks(void);
 void TundariaTower_UpdateLedgeCell(void);
-void TundariaTower_SparkleCenterProng(struct Actor *object);
+void TundariaTower_SparkleCenterProng(struct Actor *actor);
 extern s16 gTundariaTowerLiftPillarsPillars[];
 extern s16 gTundariaTowerBurstBroochPillar[];
 extern struct Trigger gTundariaTowerEntranceTriggers[];
@@ -184,30 +184,29 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 /// set and the sprite goes to priority 2. MapGrid_SetCellHeight then gets the
 /// cell, the object's terrain and the terrain height in half cells, 4 lower or
 /// higher.
-void TundariaTower_SetColumnCell(struct Actor *object) {
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+void TundariaTower_SetColumnCell(struct Actor *actor) {
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 attr0 = MapCell_GetAttributes(0, x, z);
   s32 attr2 = MapCell_GetAttributes(2, x, z);
   s32 height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
-      19;
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
 
-  if (GameFlag_Get(object->timer)) {
+  if (GameFlag_Get(actor->timer)) {
     attr2 &= ~(CELL_BEHAVIOR_WALL << 8);
     attr0 &= ~128;
-    if ((object->groundHeight >> 19) != height)
+    if ((actor->groundHeight >> 19) != height)
       height -= 4;
-    Scene_SetActorSpritePriority(object, 3);
+    Scene_SetActorSpritePriority(actor, 3);
   } else {
     attr2 = (attr2 & 0xff) | CELL_BEHAVIOR_WALL << 8;
     attr0 |= 128;
     height += 4;
-    Scene_SetActorSpritePriority(object, 2);
+    Scene_SetActorSpritePriority(actor, 2);
   }
   MapCell_SetAttributes(0, x, z, attr0);
   MapCell_SetAttributes(2, x, z, attr2);
-  MapGrid_SetCellHeight(x << 20, z << 20, object->layer, height);
+  MapGrid_SetCellHeight(x << 20, z << 20, actor->layer, height);
 }
 
 /// Sets each listed ice column, by its row of (actor, animation, flag),
@@ -405,7 +404,7 @@ void TundariaTower_BurstCrystal(s32 step) {
 }
 
 /// The fallen Center Prong's update: a sparkle near it every eighth frame.
-void TundariaTower_SparkleCenterProng(struct Actor *object) {
+void TundariaTower_SparkleCenterProng(struct Actor *actor) {
   struct EffectOptions params;
   u32 phase = gFrameCount & 7;
   s32 dx;
@@ -420,23 +419,23 @@ void TundariaTower_SparkleCenterProng(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(object->x.fixed + (INTtoFIXED(dx - 8)),
-                      object->y.fixed + (INTtoFIXED(dy - 8)), object->z.fixed,
-                      0, toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
+    FieldEffect_Spawn(actor->x.fixed + (INTtoFIXED(dx - 8)),
+                      actor->y.fixed + (INTtoFIXED(dy - 8)), actor->z.fixed, 0,
+                      toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
   }
 }
 
 /// The crystal breaks and the Center Prong drops to the floor, glinting.
 void TundariaTower_FreeCenterProng(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
+  struct Actor *actor = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(FLAG_CRYSTAL_BROKEN);
   MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
-  object->gravity = toFIXED(1) / 2;
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  OverlayObject_WaitUntilIdle(object);
+  actor->gravity = toFIXED(1) / 2;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  OverlayObject_WaitUntilIdle(actor);
   Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
   Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
   Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
@@ -465,7 +464,7 @@ extern u32 gTundariaTower_RefluxHops[];
 /// Reflux appears in a flash and a splash, hops down before the party and
 /// waits.
 void TundariaTower_RefluxAppears(void) {
-  struct Actor *object = Actor_GetById(ACTOR_REFLUX);
+  struct Actor *actor = Actor_GetById(ACTOR_REFLUX);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -478,10 +477,10 @@ void TundariaTower_RefluxAppears(void) {
   Event_Wait(2);
   PaletteFade_SetTarget(FIXED_ONE, 0);
   PaletteFade_StartInterpolation(2);
-  object->steeringFlags = 0;
-  object->update = 0;
+  actor->steeringFlags = 0;
+  actor->update = 0;
   Actor_SetDestination(ACTOR_REFLUX, 424, 536);
-  TundariaTower_StartEffectScript(object, gTundariaTower_RefluxHops);
+  TundariaTower_StartEffectScript(actor, gTundariaTower_RefluxHops);
   Actor_WaitForMoveById(ACTOR_REFLUX);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
   Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
@@ -497,7 +496,7 @@ void TundariaTower_RefluxAppears(void) {
 void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   struct EffectOptions options;
   s16 *effectWork = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object = Actor_GetById(effectWork[13]);
+  struct Actor *actor = Actor_GetById(effectWork[13]);
   s32 velocityX;
 
   if (step < 8) {
@@ -509,24 +508,24 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
     options.targetScaleX = FIXED_ONE / 2;
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
-    FieldEffect_Spawn(object->x.fixed,
-                      object->y.fixed - INTtoFIXED(step * 3) + toFIXED(16),
-                      object->z.fixed, velocityX, 0, 0,
+    FieldEffect_Spawn(actor->x.fixed,
+                      actor->y.fixed - INTtoFIXED(step * 3) + toFIXED(16),
+                      actor->z.fixed, velocityX, 0, 0,
                       EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                       &options);
-    object->scaleY -= FIXED_ONE * 31 / 256;
+    actor->scaleY -= FIXED_ONE * 31 / 256;
   }
   if (phase == 1) {
-    object->scaleY = FIXED_ONE;
-    GameFlag_Set(object->timer);
+    actor->scaleY = FIXED_ONE;
+    GameFlag_Set(actor->timer);
     TundariaTower_SetColumnCell(Actor_GetById(effectWork[13]));
     MapGrid_CopyCellPictureIndicesRect(67, 23,
-                                       (FIELD_CELL(object->x.fixed)) + 64,
-                                       FIELD_CELL(object->z.fixed), 1, 1);
-    object->z.fixed = 0;
-    object->y.fixed = 0;
-    object->x.fixed = 0;
+                                       (FIELD_CELL(actor->x.fixed)) + 64,
+                                       FIELD_CELL(actor->z.fixed), 1, 1);
+    actor->z.fixed = 0;
+    actor->y.fixed = 0;
+    actor->x.fixed = 0;
   }
 }
 
@@ -569,12 +568,12 @@ void TundariaTower_LiftPillar(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->next == SCENE_TUNDARIA_TOWER_LIFT_PILLARS) {
-    struct Actor *object;
+    struct Actor *actor;
 
     Actor_LiftTargetBlock(gTundariaTowerLiftPillarsPillars);
-    object = work->movedBlock;
-    object->timer = ((FIELD_CELL(object->x.fixed)) << 8) |
-                    ((FIELD_CELL(object->z.fixed)) & 0xff);
+    actor = work->movedBlock;
+    actor->timer = ((FIELD_CELL(actor->x.fixed)) << 8) |
+                   ((FIELD_CELL(actor->z.fixed)) & 0xff);
   } else if (party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
     Actor_LiftTargetBlock(gTundariaTowerBurstBroochPillar);
   }
@@ -584,32 +583,32 @@ void TundariaTower_LiftPillar(void) {
 /// that is not ice stops it.
 void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
-  u16 actor;
+  struct Actor *actor;
+  u16 actorId;
   s32 dx;
   s32 dz;
 
-  actor = actorArg;
-  object = work->movedBlock;
+  actorId = actorArg;
+  actor = work->movedBlock;
   Event_Start();
   Event_ResolvePendingActions(0);
-  dx = (FIELD_CELL(object->x.fixed)) - (object->timer >> 8);
-  dz = (FIELD_CELL(object->z.fixed)) - (object->timer & 0xff);
-  object->speedLimit = toFIXED(1) / 2;
-  while ((MapCell_GetAttributes(1, (FIELD_CELL(object->x.fixed)) + dx,
-                                (FIELD_CELL(object->z.fixed)) + dz) >>
+  dx = (FIELD_CELL(actor->x.fixed)) - (actor->timer >> 8);
+  dz = (FIELD_CELL(actor->z.fixed)) - (actor->timer & 0xff);
+  actor->speedLimit = toFIXED(1) / 2;
+  while ((MapCell_GetAttributes(1, (FIELD_CELL(actor->x.fixed)) + dx,
+                                (FIELD_CELL(actor->z.fixed)) + dz) >>
           8) == CELL_BEHAVIOR_TUNDARIA_TOWER_ICE &&
-         (MapCell_GetAttributes(2, (FIELD_CELL(object->x.fixed)) + dx,
-                                (FIELD_CELL(object->z.fixed)) + dz) >>
+         (MapCell_GetAttributes(2, (FIELD_CELL(actor->x.fixed)) + dx,
+                                (FIELD_CELL(actor->z.fixed)) + dz) >>
           8) != CELL_BEHAVIOR_WALL) {
-    Actor_SetMoveTarget(object, INTtoFIXED(dx * 16) + object->x.fixed,
-                        object->y.fixed, INTtoFIXED(dz * 16) + object->z.fixed);
-    FieldCamera_FollowActor(actor, 1);
-    Actor_WaitForMove(object);
+    Actor_SetMoveTarget(actor, INTtoFIXED(dx * 16) + actor->x.fixed,
+                        actor->y.fixed, INTtoFIXED(dz * 16) + actor->z.fixed);
+    FieldCamera_FollowActor(actorId, 1);
+    Actor_WaitForMove(actor);
     wait(1);
   }
-  object->x.fixed = ((object->x.fixed >> 19) | 1) << 19;
-  object->z.fixed = ((object->z.fixed >> 19) | 1) << 19;
+  actor->x.fixed = ((actor->x.fixed >> 19) | 1) << 19;
+  actor->z.fixed = ((actor->z.fixed >> 19) | 1) << 19;
   Actor_PlaceMovedBlock();
   Event_End();
 }
@@ -618,28 +617,27 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
 /// room of pillars the two set against the ledge open its climb.
 void TundariaTower_SetDownPillar(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = event->movedBlock;
+  actor = event->movedBlock;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
-      object->y.fixed) {
-    object->layer = 2;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    OverlayObject_WaitUntilIdle(object);
+  if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
+      actor->y.fixed) {
+    actor->layer = 2;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    OverlayObject_WaitUntilIdle(actor);
     Sound_Play(SE_THUMP);
-    OverlayObject_WaitUntilIdle(object);
-    object->motionFlags = 0;
-    object->layer = 0;
+    OverlayObject_WaitUntilIdle(actor);
+    actor->motionFlags = 0;
+    actor->layer = 0;
   }
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_LIFT_PILLARS) {
-    if (object->x.fixed >> 19 == 27)
+    if (actor->x.fixed >> 19 == 27)
       GameFlag_Set(FLAG_FIRST_LEDGE_PILLAR_SET);
-    if (object->x.fixed >> 19 == 25 &&
-        GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
+    if (actor->x.fixed >> 19 == 25 && GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
       GameFlag_Set(FLAG_SECOND_LEDGE_PILLAR_SET);
   }
   Event_End();
@@ -728,9 +726,9 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
     GameFlag_Set(FLAG_ICY_WALL_BURST);
   }
   if (mode == 2)
-    Rocks_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
+    Rock_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
   if (mode == 3)
-    Rocks_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
+    Rock_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
   if (cue == 999)
     TundariaTower_EndFallingRocks();
 }
@@ -754,31 +752,30 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// The leader's reflection in the ice, mirrored across the room's line.
-void TundariaTower_ReflectLeader(struct Actor *object) {
+void TundariaTower_ReflectLeader(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Sprite *leaderSprite = leader->sprite;
-  struct Sprite *reflection = object->sprite;
+  struct Sprite *reflection = actor->sprite;
 
-  if (leader->z.fixed <= object->riseBaseY) {
-    object->z.fixed = 0;
-    object->x.fixed = 0;
+  if (leader->z.fixed <= actor->riseBaseY) {
+    actor->z.fixed = 0;
+    actor->x.fixed = 0;
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 1;
   } else {
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 2;
     if (GameFlag_Get(FLAG_ICY_WALL_REVEALED)) {
-      object->z.fixed = 0;
-      object->x.fixed = 0;
+      actor->z.fixed = 0;
+      actor->x.fixed = 0;
     } else {
       struct SpriteAnimation *animation = reflection->entries[0];
       struct SpriteAnimation *source;
 
-      object->x.fixed = leader->x.fixed;
-      object->y.fixed = leader->y.fixed;
-      object->z.fixed =
-          object->riseBaseY - (leader->z.fixed - object->riseBaseY);
-      object->facing = ~leader->facing;
+      actor->x.fixed = leader->x.fixed;
+      actor->y.fixed = leader->y.fixed;
+      actor->z.fixed = actor->riseBaseY - (leader->z.fixed - actor->riseBaseY);
+      actor->facing = ~leader->facing;
       source = leaderSprite->entries[0];
       animation->script = source->script;
       animation->timer = source->timer;
@@ -913,7 +910,7 @@ extern s16 gTundariaTowerLiftPillarsColumns[];
 void Actor_PlaceBlocks(const s16 *data);
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 scene;
   s32 flag;
 
@@ -934,13 +931,13 @@ s32 Scene_Initialize(void) {
     case 11:
       flag = GameFlag_Get(FLAG_CENTER_PRONG_TAKEN);
       if (flag == 0) {
-        object = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
+        actor = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_FROZEN_CENTER_PRONG), 0);
-        object->collisionFlags = 0;
-        object->motionFlags = 0;
-        object->groundHeight = toFIXED(8);
-        object->y.fixed = toFIXED(8);
-        Actor_SetItemIcon(object, ITEM_CENTER_PRONG);
+        actor->collisionFlags = 0;
+        actor->motionFlags = 0;
+        actor->groundHeight = toFIXED(8);
+        actor->y.fixed = toFIXED(8);
+        Actor_SetItemIcon(actor, ITEM_CENTER_PRONG);
         if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
@@ -981,13 +978,13 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TUNDARIA_TOWER_LIFT_PILLARS) {
     switch (gMainRoutineWork.entrance) {
     case 3:
-      object = FieldActor_Create(SPRITE_CRATE, toFIXED(472), 0, toFIXED(200));
-      if (object != NULL) {
-        Scene_SetActorSpritePriority((s32)object, 1);
-        object->motionFlags = 0;
-        Actor_SetSpriteFlags(object, 0);
-        Actor_SetSpriteColor(object, SPRITE_COLOR_BLACK);
-        Actor_SetBlendMode(object, 1);
+      actor = FieldActor_Create(SPRITE_CRATE, toFIXED(472), 0, toFIXED(200));
+      if (actor != NULL) {
+        Scene_SetActorSpritePriority((s32)actor, 1);
+        actor->motionFlags = 0;
+        Actor_SetSpriteFlags(actor, 0);
+        Actor_SetSpriteColor(actor, SPRITE_COLOR_BLACK);
+        Actor_SetBlendMode(actor, 1);
       }
       break;
     case 1:
@@ -1057,9 +1054,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "shared/leader_slide_on_ice.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
-void Actor_SteerByPad(struct Actor *object);
+void Actor_SteerByPad(struct Actor *actor);
 void Leader_StopIfPending(void);
-s32 Actor_HasArrived(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 
@@ -1071,7 +1068,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 UNUSED void TundariaTower_PlaceStakes(u16 *table) {
   u16 *row;
   s32 id;
-  struct Actor *object;
+  struct Actor *actor;
   s16 x, z;
 
   if (table[0] == 0xffff)
@@ -1079,13 +1076,13 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
   row = table;
   do {
     id = row[0];
-    object = Actor_GetById(id);
+    actor = Actor_GetById(id);
     x = row[1];
     z = row[2];
 
-    object->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)x, (u16)z, object->layer);
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)x, (u16)z, actor->layer);
     row += 3;
   } while (row[0] != 0xffff);
 }
@@ -1099,7 +1096,7 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
 /// leader onto the ground under it.
 UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object;
+  struct Actor *actor;
   s32 id;
   s32 flag;
   s32 nextFlag;
@@ -1113,10 +1110,10 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   if (*table != 0xffff) {
     do {
       id = table[0];
-      object = Actor_GetById(id);
+      actor = Actor_GetById(id);
       flag = table[1];
       nextFlag = flag + 1;
-      cells = map->layers[object->layer].cells;
+      cells = map->layers[actor->layer].cells;
       shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
       if (GameFlag_Get(nextFlag)) {
         Actor_SetPosition(id, 0, 0);
@@ -1125,19 +1122,19 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
         u8 *slot;
         s32 height;
 
-        index = Actor_GetCellIndex(object);
+        index = Actor_GetCellIndex(actor);
         cell = &cells[index];
         slot = shapes + index;
-        shape = MapGrid_GetTerrainKind(object->layer, object->x.fixed,
-                                       object->z.fixed);
-        height = Map_GetTerrainHeight(object->layer, object->x.fixed,
-                                      object->z.fixed);
+        shape = MapGrid_GetTerrainKind(actor->layer, actor->x.fixed,
+                                       actor->z.fixed);
+        height =
+            Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = 128;
         *slot =
-            MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
+            MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
         if (GameFlag_Get(flag))
-          Actor_SelectAnimation(object, 0);
+          Actor_SelectAnimation(actor, 0);
       }
       table += 2;
     } while (*table != 0xffff);
@@ -1229,7 +1226,7 @@ test:
 /// Unused: Magma Rock's crumbling pillar: the listed pillar shakes, crumbles
 /// and falls away.
 UNUSED void TundariaTower_CrumblePillar(u16 *row, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 flag;
   s32 nextFlag;
 
@@ -1248,13 +1245,13 @@ loop:
     MapGrid_SetShake(1, 4, 1);
     TundariaTower_SpawnRubble(0);
     wait(8);
-    Actor_SelectAnimation(object, 2);
-    Actor_SetCellShape(-4, object->layer, id);
+    Actor_SelectAnimation(actor, 2);
+    Actor_SetCellShape(-4, actor->layer, id);
     TundariaTower_SpawnRubble(1);
     wait(16);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     wait(8);
-    Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+    Actor_SetPositionAndResetMotion(actor, 0, 0, 0);
     wait(2);
     Sound_Play(SE_THUMP);
     TundariaTower_SpawnDustRing();
@@ -1281,7 +1278,7 @@ void TundariaTower_FreezePillar(s32 id) {
 /// it copy actor 9's visual attributes.
 UNUSED void TundariaTower_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object;
+  struct Actor *actor;
   s32 id;
   s32 flag;
   s32 nextFlag;
@@ -1307,12 +1304,12 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   if (*list != 0xffff) {
     do {
       id = list[0];
-      object = Actor_GetById(id);
+      actor = Actor_GetById(id);
       flag = list[1];
       nextFlag = flag + 1;
-      cells = map->layers[object->layer].cells;
+      cells = map->layers[actor->layer].cells;
       shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-      object->retainSpriteCache = 3;
+      actor->retainSpriteCache = 3;
       if (GameFlag_Get(nextFlag)) {
         Actor_SetPosition(id, 0, 0);
       } else {
@@ -1320,17 +1317,17 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
         u8 *slot;
         s32 height;
 
-        index = Actor_GetCellIndex(object);
+        index = Actor_GetCellIndex(actor);
         cell = &cells[index];
         slot = shapes + index;
-        shape = MapGrid_GetTerrainKind(object->layer, object->x.fixed,
-                                       object->z.fixed);
-        height = Map_GetTerrainHeight(object->layer, object->x.fixed,
-                                      object->z.fixed);
+        shape = MapGrid_GetTerrainKind(actor->layer, actor->x.fixed,
+                                       actor->z.fixed);
+        height =
+            Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
         Actor_DisableById(id);
         cell->attributeB = 128;
         *slot =
-            MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
+            MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
         if (GameFlag_Get(flag))
           Actor_CopyGraphics(id, 9);
       }
@@ -1341,8 +1338,8 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
 }
 
 /// Moves the actor to the target's place and the target out of sight.
-void TundariaTower_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+void TundariaTower_TakePlaceOf(struct Actor *actor, struct Actor *target) {
+  Actor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
                                   target->z.fixed);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
@@ -1568,7 +1565,7 @@ struct RockWork {
 
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
-#include "shared/rocks_spawn.h"
+#include "shared/rock_spawn.h"
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.
@@ -1622,35 +1619,7 @@ void TundariaTower_JumpDownSlide(void);
 void TundariaTower_LiftPillar(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 s16 gTundariaTowerLiftPillarsPillars[] = {
     11, 12, 13, 14, -1,
@@ -1660,18 +1629,7 @@ s16 gTundariaTowerBurstBroochPillar[] = {
     8, -1,
 };
 
-s16 gSlideOnIce_SteerAngles[] = {                                                               
-      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
-      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
-      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
-      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
-  };
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
-    0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
-    0,
-};
+#include "shared/slide_on_ice_angles.c"
 
 u32 gTundariaTower_RubbleScript[] = {
     SC_WAIT(33),
@@ -1710,10 +1668,7 @@ u32 gTundariaTower_RefluxHops[] = {
     23, 3, 0x1000, 13, 0xffff, 0x80010000,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gTundariaTowerLiftPillarsExitRegions[] = {
     0x500330, 0x3400210, 0x2200060, 0x6ffff, 0xffff, 0,

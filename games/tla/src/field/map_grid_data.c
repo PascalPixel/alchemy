@@ -382,8 +382,8 @@ const struct MapResources gMaps[] = {
     {37, 38, {39, 40, 41}, 42}, // idejima
     {43, 44, {45, 46, 47}, 48}, // daila_flooded
     {49, 44, {45, 46, 47}, 48}, // daila
-    {50, 51, {52, 53, 54}, 55}, // daila_interiors_houses
-    {56, 57, {58, 59, 60}, 61}, // daila_interiors_sanctum
+    {50, 51, {52, 53, 54}, 55}, // daila_rooms_houses
+    {56, 57, {58, 59, 60}, 61}, // daila_rooms_sanctum
     {62, 63, {64, 65, 66}, 67}, // kandorean_temple_mimic
     {68, 63, {64, 65, 66}, 67}, // kandorean_temple_lifts
     {69, 63, {64, 65, 66}, 67}, // kandorean_temple_chestbeaters
@@ -412,8 +412,8 @@ const struct MapResources gMaps[] = {
     {137, 138, {139, 140, 141}, 142}, // dehkan_plateau_cannon
     {143, 144, {145, 146, 147}, 148}, // gondowan_cliffs_hideout
     {149, 150, {151, 152, 153}, 154}, // madra
-    {155, 156, {157, 158, 159}, 160}, // madra_interiors
-    {161, 162, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
+    {155, 156, {157, 158, 159}, 160}, // madra_rooms
+    {161, 162, {163, 164, 165}, 166}, // madra_rooms_cavern_homes
     {167, 168, {169, 170, 171}, 172}, // madra_catacombs_entrance
     {173, 174, {175, 176, 177}, 178}, // madra_catacombs_ladders
     {179, 180, {181, 182, 183}, 184}, // madra_catacombs_champa_tunnel
@@ -424,16 +424,16 @@ const struct MapResources gMaps[] = {
     {201, 202, {203, 204, 205}, 206}, // osenia_cliffs
     {207, 208, {197, 209, 210}, 200}, // mikasalla
     {211, 212, {213, 214, 215}, 216}, // mikasalla_north
-    {217, 218, {219, 220, 221}, 222}, // mikasalla_interiors
-    {223, 224, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
+    {217, 218, {219, 220, 221}, 222}, // mikasalla_rooms
+    {223, 224, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {229, 230, {197, 209, 210}, 200}, // garoh
     {231, 232, {197, 209, 210}, 200}, // garoh_hypnos_sword_chest
     {233, 232, {197, 209, 210}, 200}, // garoh_blocks
     {234, 235, {79, 80, 81}, 82}, // garoh_tunnels
     {236, 237, {79, 80, 81}, 82}, // garoh_werewolf_cave
-    {223, 238, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
-    {239, 240, {219, 220, 221}, 222}, // garoh_interiors
-    {161, 241, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
+    {223, 238, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
+    {239, 240, {219, 220, 221}, 222}, // garoh_rooms
+    {161, 241, {163, 164, 165}, 166}, // madra_rooms_cavern_homes
     {242, 243, {244, 245, 246}, 247}, // yampi_desert_guardian_ring_chest
     {248, 243, {244, 245, 246}, 247}, // yampi_desert_oasis
     {249, 243, {244, 245, 246}, 247}, // yampi_desert_blitz
@@ -463,14 +463,14 @@ const struct MapResources gMaps[] = {
     {289, 277, {278, 279, 280}, 281}, // airs_rock_inside_coins_chest
     {290, 291, {292, 293, 294}, 295}, // airs_rock_inside_psynergy_stone
     {296, 297, {151, 152, 153}, 154}, // alhafra
-    {298, 299, {157, 158, 159}, 300}, // alhafra_interiors
+    {298, 299, {157, 158, 159}, 300}, // alhafra_rooms
     {301, 299, {157, 158, 159}, 300}, // alhafra_manor
     {302, 303, {304, 305, 306}, 307}, // eastern_alhafra
     {308, 309, {310, 311, 312}, 313}, // eastern_alhafra_ship
     {314, 315, {316, 317, 318}, 319}, // alhafran_cave
     {320, 321, {316, 317, 318}, 319}, // alhafra_jail
     {322, 323, {324, 325, 326}, 327}, // naribwe
-    {328, 329, {330, 331, 332}, 333}, // naribwe_interiors
+    {328, 329, {330, 331, 332}, 333}, // naribwe_rooms
     {334, 335, {336, 337, 338}, 339}, // gondowan_cliffs
     {340, 335, {336, 337, 338}, 339}, // gondowan_cliffs_pass
     {341, 342, {343, 344, 345}, 346}, // kibombo_mountains_waft
@@ -505,8 +505,8 @@ const struct MapResources gMaps[] = {
     {446, 447, {45, 46, 47}, 48}, // islets_cow
     {448, 449, {450, 451, 452}, 453}, // islets_turtle
     {454, 455, {197, 198, 199}, 200}, // yallam
-    {456, 457, {458, 459, 460}, 461}, // yallam_interiors
-    {462, 463, {163, 164, 165}, 166}, // yallam_interiors_shops
+    {456, 457, {458, 459, 460}, 461}, // yallam_rooms
+    {462, 463, {163, 164, 165}, 166}, // yallam_rooms_shops
     {211, 464, {213, 214, 215}, 216}, // mikasalla_north
     {465, 466, {467, 468, 469}, 470}, // taopo_swamp_entrance
     {471, 472, {473, 474, 475}, 476}, // taopo_swamp_mud
@@ -536,7 +536,7 @@ const struct MapResources gMaps[] = {
     {536, 524, {525, 526, 527}, 528}, // aqua_rock_inside_tear_stone
     {537, 538, {278, 279, 280}, 281}, // aqua_rock_inside_parch_tablet
     {539, 540, {541, 542, 543}, 544}, // izumo
-    {545, 546, {547, 548, 549}, 550}, // izumo_interiors
+    {545, 546, {547, 548, 549}, 550}, // izumo_rooms
     {551, 552, {79, 80, 81}, 553}, // izumo_ruins_first_room
     {554, 555, {79, 80, 81}, 556}, // izumo_ruins_second_room
     {557, 558, {270, 271, 272}, 273}, // gaia_rock_susa
@@ -548,7 +548,7 @@ const struct MapResources gMaps[] = {
     {574, 568, {569, 570, 571}, 572}, // gaia_rock_inside_platforms
     {575, 568, {569, 570, 571}, 572}, // gaia_rock_inside_altar
     {576, 577, {541, 542, 543}, 544}, // champa
-    {578, 579, {547, 548, 549}, 550}, // champa_interiors
+    {578, 579, {547, 548, 549}, 550}, // champa_rooms
     {580, 581, {582, 583, 584}, 585}, // champa_cliff_caves_briggs
     {586, 581, {582, 583, 584}, 585}, // champa_cliff_caves_houses
     {587, 581, {582, 583, 584}, 585}, // champa_cliff_caves_obaba
@@ -570,7 +570,7 @@ const struct MapResources gMaps[] = {
     {620, 621, {622, 623, 624}, 625}, // lemuria
     {626, 627, {622, 623, 624}, 625}, // ancient_lemuria
     {628, 629, {630, 631, 632}, 633}, // lemuria_palace
-    {634, 635, {636, 637, 638}, 639}, // lemuria_interiors
+    {634, 635, {636, 637, 638}, 639}, // lemuria_rooms
     {640, 641, {642, 643, 644}, 645}, // lemuria_spring
     {646, 647, {97, 98, 99}, 100}, // tundaria_tower_center_prong
     {648, 649, {97, 98, 99}, 100}, // tundaria_tower_ice_slide
@@ -607,7 +607,7 @@ const struct MapResources gMaps[] = {
     {740, 741, {736, 737, 738}, 739}, // shaman_village_aroma
     {742, 743, {744, 745, 746}, 747}, // shaman_village_inn
     {742, 748, {744, 745, 746}, 747}, // shaman_village_inn
-    {223, 749, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
+    {223, 749, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {750, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_dragon_skin_chest
     {753, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_elevator
     {754, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_switches
@@ -633,14 +633,14 @@ const struct MapResources gMaps[] = {
     {800, 801, {779, 780, 781}, 782}, // jupiter_lighthouse_room_m
     {802, 803, {779, 780, 781}, 782}, // jupiter_lighthouse_aerie
     {804, 805, {806, 807, 808}, 809}, // loho
-    {810, 811, {812, 813, 814}, 815}, // loho_interiors
+    {810, 811, {812, 813, 814}, 815}, // loho_rooms
     {816, 817, {599, 600, 601}, 602}, // northern_reaches
     {818, 819, {820, 821, 822}, 823}, // prox_south_gate
     {824, 825, {820, 821, 822}, 823}, // prox
     {826, 827, {820, 821, 822}, 823}, // prox_mold
     {828, 688, {689, 690, 691}, 692}, // prox_houses
-    {161, 829, {163, 164, 165}, 166}, // madra_interiors_cavern_homes
-    {223, 830, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
+    {161, 829, {163, 164, 165}, 166}, // madra_rooms_cavern_homes
+    {223, 830, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {831, 832, {779, 780, 781}, 833}, // mars_lighthouse_outside
     {834, 835, {836, 837, 838}, 839}, // mars_lighthouse_mars_tower
     {840, 835, {836, 837, 838}, 839}, // mars_lighthouse_mercury_tower

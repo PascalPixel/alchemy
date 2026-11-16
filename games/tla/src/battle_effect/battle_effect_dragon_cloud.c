@@ -46,7 +46,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   s32 x;
   s32 y;
   u8 *graphics;
-  struct Actor *object;
+  struct Actor *actor;
   struct Particle *step;
   s32 i;
   s32 j;
@@ -90,10 +90,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
   // The 56 embers wait at the target: sparks first, then flashes, which rise
   // more slowly.
-  object = BattleObject_GetFar(args->targets[0])->object;
+  actor = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
     step = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
-    SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
+    SET_POSITION(step, actor->x.fixed, 0, actor->z.fixed);
     if (i >= gDragonCloud_SparkCounts[args->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
@@ -111,7 +111,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     SPARKS[i].variant = -1;
   for (i = 0; i != DRAGON_CLOUD_SPARK_BATCH; i++) {
     step = &SPARKS[i];
-    SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
+    SET_POSITION(step, actor->x.fixed, 0, actor->z.fixed);
     step->velocityX = ((Random16() & 63) - 32) << 14;
     step->velocityY = (Random16() & 63) << 12;
     step->velocityZ = ((Random16() & 63) - 32) << 14;
@@ -206,7 +206,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(step->x) - size / 2,
                       FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(step, 62, toFIXED(1) / 4);
           if (step->y > INTtoFIXED((i & 3) + 108))
             step->velocityY = -step->velocityY / 2;
           step->variant--;
@@ -331,13 +331,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                                   position.x - 16, position.y - 40,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               step->variant++;
-              BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
+              Particle_AdvanceWithGravity3D(step, 62, toFIXED(1) / 8);
             }
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE,
-                                                 -toFIXED(1) / 8);
+            Particle_AdvanceWithGravity3D(step, PARTICLE_DAMPING_NONE,
+                                          -toFIXED(1) / 8);
           }
         }
       }
@@ -357,7 +357,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
+            Particle_AdvanceWithGravity3D(step, 62, toFIXED(1) / 8);
             step->variant--;
           }
         }
@@ -375,7 +375,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(spark->x) - size / 2,
                       FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 4);
           spark->variant--;
         }
       }

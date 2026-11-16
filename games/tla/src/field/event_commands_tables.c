@@ -83,7 +83,7 @@ const s16 gFieldEffect_GroundParticleFrames[80] = {
 
 /// {x, y} screen offsets of a falling raindrop in pixels by the frames it has
 /// left (Weather_UpdateRain); The Broken Seal has no such table.
-const s16 gGroundParticle_Offsets[22] = {
+const s16 gGroundParticles_Offsets[22] = {
     -32, -16,
     -48, -23,
     -64, -34,

@@ -159,7 +159,7 @@ struct PushTarget {
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
-void Rocks_Spawn(s32, s32, s32, s32);
+void Rock_Spawn(s32, s32, s32, s32);
 
 void EasternAlhafra_StartFallingRocks(void);
 void EasternAlhafra_EndFallingRocks(void);
@@ -193,7 +193,7 @@ extern s16 gEasternAlhafra_CabinDoorFrames[];
 void EasternAlhafra_InitializeRockSprite(struct EffectSprite *sprite, s32 width,
                                          s32 height, u32 attributes, s32 tile);
 
-void Particles_UpdateFalling(void);
+void Particle_UpdateFalling(void);
 
 extern u16 gPushKinds[];
 
@@ -201,13 +201,13 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
-void Actor_StopAtPushTarget(struct Actor *object);
+void Actor_StopAtPushTarget(struct Actor *actor);
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-s32 Actor_GetCellIndex(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *actor);
 
 s32 Tightrope_Place();
 s32 Tightrope_Release();
@@ -248,9 +248,9 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
     EasternAlhafra_PlaceClearedDebris();
   }
   if (mode == 2)
-    Rocks_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
+    Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
   if (mode == 3)
-    Rocks_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
+    Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
   if (id == 0x3e7)
     EasternAlhafra_EndFallingRocks();
 }
@@ -298,18 +298,18 @@ void EasternAlhafra_PoundCone(s32 mode, s32 arg) {
 /// walls the cell ahead of it, so that it is not pushed off the mast's end.
 void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
   struct Actor *leader;
-  struct Actor *object;
+  struct Actor *actor;
   s32 leaderX;
   s32 x;
   s32 z;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  object = Actor_Get(id);
-  object->motionFlags = 0;
+  actor = Actor_Get(id);
+  actor->motionFlags = 0;
   if (id == ACTOR_FIRST_CRATE) {
     leaderX = FIELD_CELL(leader->x.fixed);
-    x = FIELD_CELL(object->x.fixed);
-    z = FIELD_CELL(object->z.fixed);
+    x = FIELD_CELL(actor->x.fixed);
+    z = FIELD_CELL(actor->z.fixed);
     if (x == 34 && z == 32 && leaderX == 33)
       FieldMapGrid_SetCellBehavior(toFIXED(528), toFIXED(512), 2,
                                    CELL_BEHAVIOR_WALL);
@@ -330,7 +330,7 @@ void Event_End();
 /// Once crate or rock id stops: in the water at its spot it sinks with three
 /// splashes and its flag is set.
 void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *sparks[4];
   struct Actor *spark;
   s32 x;
@@ -338,10 +338,10 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   s32 hit;
   s32 i;
 
-  object = Actor_Get(id);
-  x = FIELD_CELL(object->x.fixed);
+  actor = Actor_Get(id);
+  x = FIELD_CELL(actor->x.fixed);
   hit = 0;
-  z = FIELD_CELL(object->z.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   if (id == ACTOR_FIRST_CRATE) {
     FieldMapGrid_SetCellBehavior(toFIXED(528), toFIXED(512), 2, 0);
     FieldMapGrid_SetCellBehavior(toFIXED(512), toFIXED(512), 2, 0);
@@ -365,22 +365,22 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   if (hit) {
     if (id != ACTOR_FIRST_CRATE)
       Event_PlaySound(SE_FALL);
-    object->gravity = toFIXED(9) / 100;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->gravity = toFIXED(9) / 100;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
-    for (i = 0; i < 60 && object->y.fixed > 0; i++)
+    for (i = 0; i < 60 && actor->y.fixed > 0; i++)
       System_Wait(1);
     Event_PlaySound(SE_STOP_EXIT_SE);
     System_Wait(1);
     Event_PlaySound(SE_LOG_FALL);
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SelectAnimation(object, 4);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SelectAnimation(actor, 4);
     i = 0;
     do {
-      spark = (FieldActor_Create(SPRITE_SPLASH, object->x.fixed,
-                                 object->y.fixed, object->z.fixed));
+      spark = (FieldActor_Create(SPRITE_SPLASH, actor->x.fixed, actor->y.fixed,
+                                 actor->z.fixed));
       sparks[i] = spark;
       spark->scaleX = FIXED_ONE * 13 / 20;
       Actor_SelectAnimation(spark, 1);
@@ -423,14 +423,14 @@ void EasternAlhafra_StartPushingLastRock(s32 unused, s32 id) {
 /// Once the last rock stops: undoes its walls, and in the water at its spot the
 /// camera watches it sink.
 void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 z;
   s32 open;
 
-  object = Actor_Get(id);
-  x = FIELD_CELL(object->x.fixed);
-  z = FIELD_CELL(object->z.fixed);
+  actor = Actor_Get(id);
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   open = 0;
   if (x == 21 && z == 33)
     open = 1;
@@ -713,10 +713,10 @@ void EasternAlhafra_StartWave(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
-void Pillars_Place();
+void Pillar_Place();
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 flag;
 
   ((struct FieldWork *)EVENT_WORK)->transition =
@@ -806,25 +806,25 @@ s32 Scene_Initialize(void) {
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_START), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_END), 0);
-  Pillars_Place(gEasternAlhafra_PoundCone);
+  Pillar_Place(gEasternAlhafra_PoundCone);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_CONE), 0);
   flag = Event_GetFlag(FLAG_CONE_POUNDED);
   if (flag == 0) {
-    object = Actor_Get(ACTOR_FIRST_CONE_ROPE_START);
+    actor = Actor_Get(ACTOR_FIRST_CONE_ROPE_START);
     /* FAKEMATCH(dead): the solid bit set in a once-only block. */
     do {
-      object->collisionFlags |= ACTOR_NOT_TARGETED;
+      actor->collisionFlags |= ACTOR_NOT_TARGETED;
     } while (0);
-    object = Actor_Get(ACTOR_FIRST_CONE_ROPE_END);
-    object->motionFlags = flag;
-    object->y.fixed = toFIXED(16);
+    actor = Actor_Get(ACTOR_FIRST_CONE_ROPE_END);
+    actor->motionFlags = flag;
+    actor->y.fixed = toFIXED(16);
     Tightrope_Place(1, ACTOR_FIRST_CONE_ROPE_START, ACTOR_FIRST_CONE_ROPE_END);
     Tightrope_Settle(1);
-    object = Actor_Get(ACTOR_SECOND_CONE_ROPE_START);
-    object->collisionFlags |= ACTOR_NOT_TARGETED;
-    object = Actor_Get(ACTOR_SECOND_CONE_ROPE_END);
-    object->motionFlags = flag;
-    object->y.fixed = toFIXED(16);
+    actor = Actor_Get(ACTOR_SECOND_CONE_ROPE_START);
+    actor->collisionFlags |= ACTOR_NOT_TARGETED;
+    actor = Actor_Get(ACTOR_SECOND_CONE_ROPE_END);
+    actor->motionFlags = flag;
+    actor->y.fixed = toFIXED(16);
     Tightrope_Place(2, ACTOR_SECOND_CONE_ROPE_START,
                     ACTOR_SECOND_CONE_ROPE_END);
   }
@@ -847,17 +847,17 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Puts the log, rocks and crates where the party has sunk them, and the
 /// cleared mast's cells once it is clear.
 void EasternAlhafra_PlaceClearedDebris(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Event_GetFlag(FLAG_LOG_ROLLED)) {
-    object = Actor_Get(ACTOR_LOG);
+    actor = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 336, 536);
     Actor_SetAnimation(ACTOR_LOG, 4);
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->motionFlags = ACTOR_FALLS;
-    object->velocityY = 0;
-    object->y.fixed = -toFIXED(4);
-    object->groundHeight = -toFIXED(4);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->velocityY = 0;
+    actor->y.fixed = -toFIXED(4);
+    actor->groundHeight = -toFIXED(4);
     FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(528), 2, 0);
     FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(528), 0, 0);
     FieldMapGrid_SetCellBehavior(toFIXED(352), toFIXED(528), 0, 0);
@@ -869,22 +869,22 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     Actor_SetPosition(ACTOR_FIRST_ROCK, 0, 0);
   }
   if (Event_GetFlag(FLAG_FIRST_CRATE_SUNK)) {
-    object = Actor_Get(ACTOR_FIRST_CRATE);
+    actor = Actor_Get(ACTOR_FIRST_CRATE);
     Actor_SetPosition(ACTOR_FIRST_CRATE, 504, 520);
     Actor_SetAnimation(ACTOR_FIRST_CRATE, 2);
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
   if (Event_GetFlag(FLAG_SECOND_CRATE_SUNK)) {
-    object = Actor_Get(ACTOR_SECOND_CRATE);
+    actor = Actor_Get(ACTOR_SECOND_CRATE);
     Actor_SetPosition(ACTOR_SECOND_CRATE, 408, 536);
     Actor_SetAnimation(ACTOR_SECOND_CRATE, 2);
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
@@ -1286,25 +1286,25 @@ s32 timer;
 #undef OBJECT
 
 void EasternAlhafra_PuffFrom(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  EasternAlhafra_SpawnPuff(object->x.fixed + toFIXED(8),
-                           object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafra_SpawnPuff(actor->x.fixed + toFIXED(8),
+                           actor->y.fixed + toFIXED(28), actor->z.fixed,
                            TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(object->x.fixed - toFIXED(8),
-                           object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafra_SpawnPuff(actor->x.fixed - toFIXED(8),
+                           actor->y.fixed + toFIXED(28), actor->z.fixed,
                            TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(object->x.fixed + toFIXED(8),
-                           object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafra_SpawnPuff(actor->x.fixed + toFIXED(8),
+                           actor->y.fixed + toFIXED(28), actor->z.fixed,
                            TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(object->x.fixed - toFIXED(8),
-                           object->y.fixed + toFIXED(28), object->z.fixed,
+  EasternAlhafra_SpawnPuff(actor->x.fixed - toFIXED(8),
+                           actor->y.fixed + toFIXED(28), actor->z.fixed,
                            TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
@@ -2371,7 +2371,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping, s32 step);
 
-#include "shared/particles_update_falling.h"
+#include "shared/particle_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2386,7 +2386,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-#include "shared/rocks_spawn.h"
+#include "shared/rock_spawn.h"
 
 /// Loads the falling rocks' tiles and sprites into the menu heap slot and
 /// starts their update.
@@ -2419,14 +2419,14 @@ void EasternAlhafra_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 /// Stops the falling rocks and frees their tiles and work.
 void EasternAlhafra_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  FieldTask_Remove(Particles_UpdateFalling);
+  FieldTask_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
@@ -2507,7 +2507,7 @@ FieldActor_CheckMovementCollision(struct Actor *actor,
 /// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
 /// least one free step it records the end position in the push state and
 /// returns 1, else 0. The actor stays on layer 2 while it is measured.
-s32 PushTarget_FindSlide(struct PushTarget *push) {
+s32 PushTarget_FindSlide(struct PushTarget *target) {
   struct Actor *actor;
   struct FieldPosition cell;
   s32 direction, kind, width, height, dx;
@@ -2515,9 +2515,9 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
   s32 steps, i, j, offset;
   u8 *layer;
 
-  actor = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
+  actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
   if (actor != 0) {
-    kind = push->footprint;
+    kind = target->footprint;
     width =
         (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
     height =
@@ -2525,17 +2525,17 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
     offset = gPushLeaderSteps[direction];
     dx = offset & FIELD_PIXEL_MASK;
     dz = toFIXED(offset);
-    push->callback = 0;
+    target->callback = 0;
     steps = 0;
     layer = &actor->layer;
     *layer = 2;
-    push->x = actor->x.fixed + dx;
-    push->z = actor->z.fixed + dz;
+    target->x = actor->x.fixed + dx;
+    target->z = actor->z.fixed + dz;
     cell.y = actor->y.fixed;
     for (;;) {
-      cell.z = push->z + toFIXED(gPushFootprints[kind][1]);
+      cell.z = target->z + toFIXED(gPushFootprints[kind][1]);
       for (j = 0; j < height; j++) {
-        cell.x = push->x + toFIXED(gPushFootprints[kind][0]);
+        cell.x = target->x + toFIXED(gPushFootprints[kind][0]);
         for (i = 0; i < width; i++) {
           if (FieldActor_CheckMovementCollision(actor, &cell) == 2)
             goto blocked;
@@ -2543,9 +2543,9 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
         }
         cell.z += toFIXED(16);
       }
-      push->x += dx;
+      target->x += dx;
       steps++;
-      push->z += dz;
+      target->z += dz;
     }
   blocked:
     *layer = 0;
@@ -2554,10 +2554,10 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
     {
       s32 move = dx * steps;
 
-      push->x = actor->x.fixed + move;
+      target->x = actor->x.fixed + move;
     }
-    push->y = actor->y.fixed;
-    push->z = actor->z.fixed + dz * steps;
+    target->y = actor->y.fixed;
+    target->z = actor->z.fixed + dz * steps;
     return 1;
   }
   return 0;
@@ -2573,7 +2573,7 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
 void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(target.id);
+  struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
   s32 footprint;
@@ -2589,12 +2589,10 @@ void PushTarget_Push(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] =
-      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] =
-      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2614,12 +2612,12 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Actor_SelectAnimation(object, 3);
+    Actor_SelectAnimation(actor, 3);
   else
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -2633,12 +2631,12 @@ void PushTarget_Push(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
@@ -2662,10 +2660,10 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 
-void Pillars_Place(const u16 *list) {
+void Pillar_Place(const u16 *list) {
   const u16 *spec;
   u16 id;
-  struct Actor *object;
+  struct Actor *actor;
   s16 mode;
   s16 flag;
   s32 limit;
@@ -2678,12 +2676,12 @@ void Pillars_Place(const u16 *list) {
   spec = list;
   do {
     id = spec[0];
-    object = Actor_Get(id);
+    actor = Actor_Get(id);
     mode = spec[1];
     flag = spec[2];
-    object->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, actor->layer);
     limit = 0xff;
     spec += 3;
     first = spec[0];

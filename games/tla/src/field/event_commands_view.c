@@ -93,22 +93,22 @@ void Event_WaitForZoomTransition(void) {
 
 /// Per-frame update: keeps the actor on the actor it watches, raised by the
 /// height of that actor's sprite and 8 pixels more.
-s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
+s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *link;
 
-  link = object->watchedActor;
+  link = actor->watchedActor;
   if (link != NULL) {
-    object->motionFlags = 0;
-    object->x.fixed = link->x.fixed;
-    object->y.fixed =
+    actor->motionFlags = 0;
+    actor->x.fixed = link->x.fixed;
+    actor->y.fixed =
         link->y.fixed +
         ((s8)Resource_GetMetadataRecordFarFar(
-             *(s16 *)Scene_FindActorPlacement((s16)object->userValue))
+             *(s16 *)Scene_FindActorPlacement((s16)actor->userValue))
              ->boxX
          << 16) +
         toFIXED(8);
-    object->groundHeight = link->groundHeight;
-    object->z.fixed = link->z.fixed;
+    actor->groundHeight = link->groundHeight;
+    actor->z.fixed = link->z.fixed;
   }
   return 0;
 }
@@ -175,12 +175,12 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
 
 /// Returns 0 while the actor's sprite is an attached effect
 /// (SPRITE_ATTACHED_EFFECT), else 1.
-s32 Actor_IsNotAttachedEffect(struct Actor *object) {
+s32 Actor_IsNotAttachedEffect(struct Actor *actor) {
   struct Sprite *sprite;
   s32 value;
 
-  if (object == 0 || object->spriteStorageKind != ACTOR_SPRITE_ONE ||
-      (sprite = object->sprite) == 0 || sprite->entries[0] == 0)
+  if (actor == 0 || actor->spriteStorageKind != ACTOR_SPRITE_ONE ||
+      (sprite = actor->sprite) == 0 || sprite->entries[0] == 0)
     return 1;
   value = sprite->entries[0]->animationId;
   value ^= SPRITE_ATTACHED_EFFECT;

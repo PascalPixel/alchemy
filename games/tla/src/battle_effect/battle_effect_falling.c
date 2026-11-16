@@ -410,7 +410,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[size - 1],
                 ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
                 size * 2, size * 2);
-        BattleEffectKernels_IntegrateVector2(splash, 60, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(splash, 60, toFIXED(1) / 8);
         splash->variant--;
       }
     }

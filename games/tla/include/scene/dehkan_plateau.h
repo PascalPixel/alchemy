@@ -14,7 +14,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show);
 
-void Actor_DropAndWait(struct Actor *object);
+void Actor_DropAndWait(struct Actor *actor);
 void DehkanPlateau_SetTightropesSecondPillarInPlace(void);
 
 void DehkanPlateau_PoundLeaderThrough(void);
@@ -99,7 +99,7 @@ void DehkanPlateau_InitializeMintChest(void);
 void DehkanPlateau_InitializePoundCube(void);
 void DehkanPlateau_InitializeCannon(void);
 
-void CrumblingPillars_Place(u16 *list);
+void CrumblingPillar_Place(u16 *list);
 
 void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void);
 void DehkanPlateau_HideThemisAxeChestActors(void);

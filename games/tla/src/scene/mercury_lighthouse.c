@@ -38,18 +38,18 @@ void FieldPsynergy_StopMindReadWave(void);
 
 /// A mote's script call: it flickers between colours 15 and 7 every other
 /// frame.
-s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
+s32 MercuryLighthouse_FlickerMote(struct Actor *actor) {
   if ((gMercuryLighthouse_MoteFrames >> 1) & 1)
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   else
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   return 0;
 }
 
 /// An Imil villager's update while the voices talk: every 40 to 120 frames
 /// it turns between two headings, as if looking around for them.
-void MercuryLighthouse_LookAround(struct Actor *object) {
-  u8 *timer = &object->riseCounter;
+void MercuryLighthouse_LookAround(struct Actor *actor) {
+  u8 *timer = &actor->riseCounter;
   u8 *state;
 
   if (*timer != 0) {
@@ -57,22 +57,22 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
     return;
   }
   *timer = (Random_Below(80)) + 40;
-  state = &object->riseEnabled;
+  state = &actor->riseEnabled;
   switch (*state) {
   case 0:
-    object->facing = FACING_WEST;
+    actor->facing = FACING_WEST;
     *state = 1;
     break;
   case 1:
-    object->facing = FACING_NORTH_NORTHWEST;
+    actor->facing = FACING_NORTH_NORTHWEST;
     *state = 0;
     break;
   case 2:
-    object->facing = 0;
+    actor->facing = 0;
     *state = 3;
     break;
   case 3:
-    object->facing = FACING_NORTH_NORTHEAST;
+    actor->facing = FACING_NORTH_NORTHEAST;
     *state = 2;
     break;
   }
@@ -107,13 +107,13 @@ enum {
   ACTOR_VOICES_TARGET
 };
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// The task MercuryLighthouse_HearVoices starts: every 16 frames it starts a
 /// flickering mote (SPRITE_GLINT) at a random spot in front of the
 /// lighthouse, and it counts the frames in gMercuryLighthouse_MoteFrames.
 void MercuryLighthouse_SpawnMotes(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
   s32 phase;
   FIXED x;
@@ -124,22 +124,22 @@ void MercuryLighthouse_SpawnMotes(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
-    object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
-    if (object != NULL) {
-      sprite = object->sprite;
+    actor = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
+    if (actor != NULL) {
+      sprite = actor->sprite;
       x = Random16() * 40 + toFIXED(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored; stored straight, 12 of 76 instructions differ in tla-en. */
       z = toFIXED(696);
-      object->motionFlags = phase;
-      object->x.fixed = x;
-      object->y.fixed = toFIXED(160);
-      object->z.fixed = z;
-      Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+      actor->motionFlags = phase;
+      actor->x.fixed = x;
+      actor->y.fixed = toFIXED(160);
+      actor->z.fixed = z;
+      Actor_SetSpriteFlags(actor, 0);
+      actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       sprite->priority = 2;
-      Actor_StartScript(object, gMercuryLighthouse_MoteScript);
-      Actor_SelectAnimation(object, 1);
+      Actor_StartScript(actor, gMercuryLighthouse_MoteScript);
+      Actor_SelectAnimation(actor, 1);
     }
   }
   gMercuryLighthouse_MoteFrames++;
@@ -303,10 +303,7 @@ s32 gMercuryLighthouse_MoteScript[] = {
     SC_RELEASE,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MercuryLighthouse),

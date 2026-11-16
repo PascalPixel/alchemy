@@ -128,8 +128,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(step->x) - half,
                   FIXED_INTEGER_PART(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
-                                                   0);
+              Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
             }
           }
           step->variant++;
@@ -179,8 +178,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(step->x) - half,
                   FIXED_INTEGER_PART(step->y) - size, size, twice);
-              BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
-                                                   0);
+              Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
             }
           }
           step->variant++;
@@ -349,13 +347,13 @@ void BattleEffect_RunShred(struct BattleEffectParams *args) {
 ///
 /// Abilities: Mine Ball.
 void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 7 / 4);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 7 / 4);
   BattleEffect_RunCanvasBurst(args, 3);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 #define ball (&work->particles[63])
@@ -631,7 +629,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           s32 x = FIXED_INTEGER_PART(flame->x);
           s32 y = FIXED_INTEGER_PART(flame->y);
 
-          BattleEffectKernels_IntegrateVector2(flame, 60, 0);
+          Particle_AdvanceWithGravity2D(flame, 60, 0);
           if ((u32)flame->variant <= 17)
             draw[0](canvas,
                     work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
@@ -655,7 +653,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(spark->x) - size / 2,
                   FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, 0);
+          Particle_AdvanceWithGravity2D(spark, 60, 0);
           spark->variant--;
         }
       }

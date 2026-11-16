@@ -204,7 +204,7 @@ struct MapBits {
   u8 wading : 2; ///< the kind of wading; rooms with a second level set 1
 };
 
-/// One id of a list ended by 0xffff, as Pillars_Raise reads it.
+/// One id of a list ended by 0xffff, as Pillar_Raise reads it.
 struct ListedActor {
   u16 id;
 };

@@ -1407,7 +1407,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           routine[0](canvas, buffer, x,
                      (FIXEDtoINT(p->y)) - FLASH_BURST_HEIGHT / 2,
                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 8);
         }
         p->variant++;
       }
@@ -1422,7 +1422,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
                        size, size * 2);
-            BattleEffectKernels_IntegrateVector2(p, 63, 0);
+            Particle_AdvanceWithGravity2D(p, 63, 0);
             if (p->y > toFIXED(112)) {
               p->velocityY = -p->velocityY;
             }
@@ -1623,7 +1623,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
                        size, size * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, 0);
+            Particle_AdvanceWithGravity2D(p, 60, 0);
             p->variant--;
           }
         }
@@ -1678,19 +1678,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Two triangles of a strip: three vertex indices and a texture coordinate
-/// pair for each corner.
-struct StripTriangle {
-  u8 vertex[3];
-  u8 pad;
-  u8 uv[3][2];
-  u8 endPad[2];
-};
-
 /// One quad of a vertex strip: its upper and lower triangles.
 struct StripQuad {
-  struct StripTriangle upper;
-  struct StripTriangle lower;
+  struct MeshTriangle upper;
+  struct MeshTriangle lower;
 };
 
 /// Builds count quads of a vertex strip two vertices apart, each width texels

@@ -26,7 +26,7 @@ extern u8 gInventorySnapshot[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Import_FieldTryJumpForward(void);

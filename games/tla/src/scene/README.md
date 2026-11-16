@@ -108,7 +108,7 @@ and what runs.
 
 ```c
 {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
- EVENT(GarohInteriors_TalkToWeaponMerchant)},
+ EVENT(GarohRooms_TalkToWeaponMerchant)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
 ```
@@ -208,9 +208,9 @@ scenes too.
 
 Only one overlay is ever loaded, so one cannot call another. Code that
 several scenes need is written once, in `shared/`, and compiled into each
-overlay that includes it. Each routine is a header of its own, as in The
-Broken Seal, which a scene includes where its copy sits. Daila's pillars of
-ice raise their actor with one:
+overlay that includes it. Each routine is a header of its own, which a
+scene includes where its copy sits (The Broken Seal writes its shared code
+as `.c` files). Daila's pillars of ice raise their actor with one:
 
 ```c
 #include "shared/scene_raise_held_actor.h"
@@ -220,10 +220,22 @@ A family of routines that works on one kind of thing keeps one set of
 names in every scene that has it: the cracked floors of the Jupiter
 Lighthouse rooms (`cracked_tile_fall.h` and its neighbours, over each
 room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
-(`pillars_place.h`, `pound_sink_target.h`), the rubble (`rubble.h`), the
+(`pillar_place.h`, `pound_sink_target.h`), the rubble (`rubble.h`), the
 slide over ice (`leader_slide_on_ice.h`) and the Mars Lighthouse flame
-throwers (`beam_*.h` and `ride_*.h`, over one `FlameHitWork` in
+throwers (`beam_*.h` and the `ride_*` files, over one `FlameHitWork` in
 [`ride.h`](../../include/scene/ride.h)).
+
+Tables the cartridge keeps in many overlays are shared files too: the
+field effects' three duration scripts
+([`field_effect_duration_scripts.c`](shared/field_effect_duration_scripts.c)),
+the entrance table that holds only the default entrance
+([`scene_entrances_default.c`](shared/scene_entrances_default.c)), the
+leader's push steps and the ice slides' pad headings. An overlay that
+places such a table after its pictures defines the file's `..._SECTION`
+macro as `LATE_DATA` before including it. Larger sets of routines are `.c`
+files, as The Broken Seal writes all of its shared code: the Mars
+Lighthouse flame throwers' puffs, its Teleport shimmer and the World
+Map's Psynergy gauge.
 
 Where a scene's copy differs in a number from the others, the scene writes
 its copy out.
@@ -239,7 +251,7 @@ of its own: rooms sit side by side on one map, a
 [sheet of rooms](../../glossary.md#sheet-of-rooms), and the entrance picks
 the room. Champa's houses are one scene, and the same scene entered from
 the islets at entrance 8 or 9 is a house out on an islet. So a file like
-`champa_interiors.c` can hold a room that isn't in Champa at all.
+`champa_rooms.c` can hold a room that isn't in Champa at all.
 
 And the scene table gives each scene its overlay, its area, its kind and
 its map separately, with one more number The Broken Seal leaves zero,

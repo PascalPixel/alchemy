@@ -220,7 +220,7 @@ u8 *Sprite_AddAnimationFar(void *resource, s32 id);
 void Actor_ResetForLeader(s32 table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *camera;
   struct MapCell *cell;
   struct MapCell *above;
@@ -245,17 +245,17 @@ void Actor_ResetForLeader(s32 table) {
     FIXED y = gMainRoutineWork.y;
 
     if (y != 0) {
-      object = work->actors[leader];
-      object->y.fixed = y;
-      object->groundHeight = y;
+      actor = work->actors[leader];
+      actor->y.fixed = y;
+      actor->groundHeight = y;
     }
   }
   Event_SpawnObjectTable((struct ActorPlacement *)table, 8);
 
-  object = work->actors[leader];
-  object->layer = gMainRoutineWork.layer;
-  object->timer = 0;
-  object->userValue = 0;
+  actor = work->actors[leader];
+  actor->layer = gMainRoutineWork.layer;
+  actor->timer = 0;
+  actor->userValue = 0;
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gMainRoutineWork.ownerOverride != 0)
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
@@ -267,43 +267,42 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
-    cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
-           ((object->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
-            ((object->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
+    cell = Ram_HeapSlots->mapGrid->layers[actor->layer].cells +
+           ((actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
+            ((actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
     above = cell - MAPGRID_SIZE;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & MAP_CELL_CLIMBABLE) &&
         (above->attributeB & MAP_CELL_CLIMBABLE)) {
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
-      height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                           object->z.fixed - toFIXED(16)) -
+      height = MapGrid_GetTerrainHeightFar(0, actor->x.fixed,
+                                           actor->z.fixed - toFIXED(16)) -
                toFIXED(32);
-      object->y.fixed += height;
-      object->groundHeight = object->y.fixed;
-      object->motionFlags = 0;
-      Actor_SetSpriteFlagsFar(object, 0);
-      Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
+      actor->y.fixed += height;
+      actor->groundHeight = actor->y.fixed;
+      actor->motionFlags = 0;
+      Actor_SetSpriteFlagsFar(actor, 0);
+      Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
     }
   }
 
   if (gMainRoutineWork.ownerOverride != 0) {
     struct Actor *stand = work->actors[8];
 
-    SET_ACTOR_POSITION(stand, object->x.fixed, object->y.fixed,
-                       object->z.fixed);
-    stand->groundHeight = object->groundHeight;
-    stand->facing = object->facing;
-    object->x.fixed = 0;
-    object->z.fixed = 0;
-    object = stand;
+    SET_ACTOR_POSITION(stand, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    stand->groundHeight = actor->groundHeight;
+    stand->facing = actor->facing;
+    actor->x.fixed = 0;
+    actor->z.fixed = 0;
+    actor = stand;
   }
 
-  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, object->x.fixed,
-                           object->y.fixed, object->z.fixed);
-  camera->groundHeight = object->groundHeight;
-  Actor_StartCameraFar(camera, object);
+  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
+                           actor->y.fixed, actor->z.fixed);
+  camera->groundHeight = actor->groundHeight;
+  Actor_StartCameraFar(camera, actor);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *meta =
-        (struct SpriteAnimation *)Sprite_AddAnimationFar(object->sprite,
+        (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
                                                          SPRITE_BLANK_32);
 
     meta->colorMode = SPRITE_COLOR_HIDDEN;
@@ -387,7 +386,7 @@ void ObjectTable_Snapshot(void) {
   u8 *nextFrames = frames + ACTOR_SNAPSHOT_CAPACITY;
   u8 *priorities = frames + 2 * ACTOR_SNAPSHOT_CAPACITY;
   u32 count = 0;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
   s32 i;
   u32 frame;
@@ -396,13 +395,13 @@ void ObjectTable_Snapshot(void) {
   s32 limit = FIELD_ACTOR_COUNT;
 
   for (i = 0; i < limit; i++) {
-    object = Actor_Lookup(i);
-    if (object == NULL)
+    actor = Actor_Lookup(i);
+    if (actor == NULL)
       continue;
     *indices++ = i;
-    Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
-    if (object->spriteStorageKind == ACTOR_SPRITE_ONE) {
-      sprite = object->sprite;
+    Dma_Set(actor, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
+    if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+      sprite = actor->sprite;
       frame = sprite->lastNo;
       next = sprite->flags;
       priority = sprite->image.priority;
@@ -432,7 +431,7 @@ void Actor_Restore(void) {
   u8 *nextFrames = frames + ACTOR_SNAPSHOT_CAPACITY;
   u8 *priorities = frames + 2 * ACTOR_SNAPSHOT_CAPACITY;
   s32 count;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
   s32 *view;
   struct Actor *camera;
@@ -443,26 +442,26 @@ void Actor_Restore(void) {
   count = 0;
   index = *indices++;
   while (index != ACTOR_SNAPSHOT_EMPTY) {
-    object = Actor_Lookup(index);
-    if (object != NULL) {
-      sprite = object->sprite;
-      Dma_Set(copy, object, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
-      object->sprite = sprite;
-      Actor_SelectAnimationFar(object, *frames);
-      Actor_SetSpriteFlagsFar(object, *nextFrames);
+    actor = Actor_Lookup(index);
+    if (actor != NULL) {
+      sprite = actor->sprite;
+      Dma_Set(copy, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
+      actor->sprite = sprite;
+      Actor_SelectAnimationFar(actor, *frames);
+      Actor_SetSpriteFlagsFar(actor, *nextFrames);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
         view = Ram_HeapSlots->mapGrid->origin;
-        y = object->y.fixed;
-        camera->x.fixed = object->x.fixed;
+        y = actor->y.fixed;
+        camera->x.fixed = actor->x.fixed;
         camera->groundHeight = y;
         camera->y.fixed = y;
-        camera->z.fixed = object->z.fixed;
+        camera->z.fixed = actor->z.fixed;
         view[1] = y;
-        Actor_StartIdleFar(object);
+        Actor_StartIdleFar(actor);
       }
     }
     copy++;

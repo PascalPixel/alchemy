@@ -1,14 +1,14 @@
 /// Stops an actor and starts its scripted puff.
-void Actor_StartScripted(struct Actor *object, s32 priority) {
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  ((struct FieldSprite *)object->sprite)->priority = priority;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object, 2);
-  Actor_StartScript(object, gTaopoSwamp_PuffRises);
-  FieldActor_SetSpriteColor(object, 10);
-  object->timer = 0;
-  object->speedLimit = 0;
-  object->acceleration = 0;
+void Actor_StartScripted(struct Actor *actor, s32 priority) {
+  actor->motionFlags = 0;
+  actor->collisionFlags = 0;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  ((struct FieldSprite *)actor->sprite)->priority = priority;
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_SelectAnimation(actor, 2);
+  Actor_StartScript(actor, gTaopoSwamp_PuffRises);
+  FieldActor_SetSpriteColor(actor, 10);
+  actor->timer = 0;
+  actor->speedLimit = 0;
+  actor->acceleration = 0;
 }

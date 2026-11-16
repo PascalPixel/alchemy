@@ -35,11 +35,7 @@ void Rope_Tie(s32 a, s32 b, s32 c);
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-/// Rope_Place, from an event.
-static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
-                                   s32 otherPost) {
-  Rope_Place(index, flag, post, otherPost);
-}
+#include "shared/field_rope_place.c"
 
 void OseniaCliffs_CyclePalette(void);
 
@@ -132,10 +128,7 @@ u32 gOseniaCliffs_PaletteCycleStep[] = {
     0,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(OseniaCliffs),

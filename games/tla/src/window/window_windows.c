@@ -467,7 +467,8 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
     VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
-      WINDOW_WORK->resourceIds[entry->sprite.oam.palette - PORTRAIT_PALETTE] =
+      WINDOW_WORK
+          ->portraitPictures[entry->sprite.oam.palette - PORTRAIT_PALETTE] =
           PORTRAIT_SLOT_EMPTY;
     }
   }

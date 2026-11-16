@@ -154,7 +154,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the parties are reunited (FLAG_SHIP_FLIES, FLAG_SET_OUT_WITH_WINGS); a no is
 /// counted and he walks back to the leader.
 void AttekaInlet_AskPiersToSetSail(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -179,10 +179,10 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
-                               object->z.part[0].integer);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (actor != NULL)
+      Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
+                               actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -337,7 +337,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 /// Kraden comes to the party leader and asks whether to set out, as in
 /// AttekaInlet_AskPiersToSetSail; after a no the leader steps back.
 void AttekaInlet_PiersAsksToSetSail(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -368,10 +368,10 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
-                               object->z.part[0].integer);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (actor != NULL)
+      Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
+                               actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -392,16 +392,16 @@ void AttekaInlet_CheckForHammetsMessenger(void) {
 /// Cyclone on the shore's bush by Geode: the bush is cleared and, unless the
 /// party has him, Geode hops out, the leader stepping aside if he stood there.
 void AttekaInlet_CycloneUncoversGeode(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 moved;
 
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
     Event_Start();
     Event_ResolvePendingActions(0);
     moved = 0;
-    if (FIELD_CELL(object->x.fixed) == 7 && FIELD_CELL(object->z.fixed) == 23) {
+    if (FIELD_CELL(actor->x.fixed) == 7 && FIELD_CELL(actor->z.fixed) == 23) {
       Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;

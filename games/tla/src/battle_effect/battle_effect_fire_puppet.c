@@ -344,9 +344,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(spark->x) - size / 2,
                   FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           if (i & 1)
-            BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 8);
+            Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 8);
           else
-            BattleEffectKernels_IntegrateVector2(spark, 60, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
           spark->variant--;
         }
       }

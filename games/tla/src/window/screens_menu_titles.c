@@ -10,14 +10,14 @@
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
-/// Decompresses picture `picture` of gRenderResource_PairSourceTable, a 64x16
+/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
 void MenuTitle_Load(s32 picture, s32 slot) {
   void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-  s32 resource = gRenderResource_PairSourceTable[picture];
+  s32 resource = gMenuTitlePictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)resource, stagingBuffer);
@@ -26,7 +26,7 @@ void MenuTitle_Load(s32 picture, s32 slot) {
   }
 }
 
-/// Shows heading `picture` of gRenderResource_PairSourceTable as two 32x16
+/// Shows heading `picture` of gMenuTitlePictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and returns
 /// the left one (the right one follows it in the window's list).
 struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
@@ -57,14 +57,14 @@ extern volatile u32 gVBlankCount;
 #endif
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
-/// by gWindow_PairBobOffsets, one step every four VBlanks.
+/// by gMenuTitleBobOffsets, one step every four VBlanks.
 void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
   obj->sprite.oam.y = value;
   obj = obj->next;
-  value = (u8)obj->y + gWindow_PairBobOffsets[(gVBlankCount >> 2) & 7];
+  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
   obj->sprite.oam.y = value;
 }
 

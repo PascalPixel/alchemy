@@ -2,7 +2,7 @@
 /// the direction the pad holds, or else from its edge toward the centre, then
 /// cell by cell until a wall, a raised cell or another actor stops them.
 void Leader_SlideOnIceFromEdge(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 startCell;
   FIXED targetX;
   FIXED targetZ;
@@ -23,26 +23,26 @@ void Leader_SlideOnIceFromEdge(void) {
 
   // gSlideOnIce_Stopped is volatile: a task of the VBlank pass sets it while
   // the slide waits (Leader_SetSlideStopped), and each test reads it again.
-  object = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   gSlideOnIce_Stopped = 0;
 retry:
   Leader_StopIfPending();
-  object->speedLimit = toFIXED(1);
-  object->acceleration = toFIXED(1) / 2;
-  object->targetX = TARGET_UNSET;
-  object->targetZ = TARGET_UNSET;
-  object->velocityX = 0;
-  object->velocityZ = 0;
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
+  actor->targetX = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
   p = position;
-  p[0] = x = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  p[1] = object->y.fixed;
-  p[2] = z = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  p[0] = x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  p[1] = actor->y.fixed;
+  p[2] = z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   targetZ = z;
   targetX = x;
-  layer = &object->layer;
+  layer = &actor->layer;
   startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z.fixed;
-  dx = targetX - object->x.fixed;
+  dz = targetZ - actor->z.fixed;
+  dx = targetX - actor->x.fixed;
   if (Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz) < 0x40000) {
     angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
@@ -53,41 +53,41 @@ retry:
       goto end;
 #endif
   } else {
-    angle = Trig_Atan(targetZ - object->z.fixed, targetX - object->x.fixed);
+    angle = Trig_Atan(targetZ - actor->z.fixed, targetX - actor->x.fixed);
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y.fixed > toFIXED(8)) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x.fixed = x;
-    object->z.fixed = z;
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - actor->y.fixed > toFIXED(8)) {
+    actor->facing = angle;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->x.fixed = x;
+    actor->z.fixed = z;
     goto end;
   }
   p[0] = x;
   p[2] = z;
-  object->speedLimit = toFIXED(2);
-  object->acceleration = toFIXED(1) / 10;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y.fixed, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1) / 10;
+  actor->timer = 0;
+  Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
+  Actor_SelectAnimation(actor, 2);
+  Actor_SetAnimationSpeed(actor, 48);
 #if !TLA_PATCH_1
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
 #else
-  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
+  for (i = 0; i <= 179 && Actor_HasArrived(actor) == 0; i++) {
     if (gSlideOnIce_Stopped != 0)
       goto end;
     System_Wait(1);
   }
 #endif
-  object->update = (void (*)(void))Actor_SteerByPad;
+  actor->update = (void (*)(void))Actor_SteerByPad;
   goto walk;
 walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y.fixed > toFIXED(8))
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - actor->y.fixed > toFIXED(8))
     goto blocked;
   if (gSlideOnIce_Stopped != 0)
 #if !TLA_PATCH_1
@@ -95,12 +95,12 @@ walkNext:
 #else
     goto end;
 #endif
-  radius = object->radius - 2;
+  radius = actor->radius - 2;
   entry = Ram_HeapSlots->actors;
   j = 0;
   flags = &entry->collisionFlags;
 overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
+  if (entry->script != NULL && (1 & *flags) && entry != actor) {
     if (Event_CheckSpheresOverlap(&entry->x.fixed, radius, position,
                                   entry->radius - 2) >= 0)
       goto blocked;
@@ -112,16 +112,16 @@ overlap:
     goto overlap;
   targetX = q[0];
   targetZ = q[2];
-  object->speedLimit = toFIXED(2);
-  object->acceleration = toFIXED(1) / 10;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1) / 10;
+  Actor_SetMoveTarget(actor, q[0], q[1], q[2]);
   i = 0;
   goto test;
 next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gSlideOnIce_Stopped == 0)
+  if (i <= 179 && Actor_HasArrived(actor) == 0 && gSlideOnIce_Stopped == 0)
     goto next;
   if (gSlideOnIce_Stopped != 0)
     goto end;
@@ -137,17 +137,17 @@ walk:
   if (cell != 255)
     goto walkNext;
 blocked:
-  object->speedLimit = toFIXED(2);
-  object->acceleration = toFIXED(1);
-  Actor_SetMoveTarget(object, targetX, object->y.fixed, targetZ);
-  FieldActor_WaitForMove(object);
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1);
+  Actor_SetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
+  FieldActor_WaitForMove(actor);
   System_Wait(2);
   goto retry;
 changed:
   System_Wait(10);
 end:
-  object->update = NULL;
-  object->steeringFlags |= ACTOR_FACES_MOTION;
-  object->acceleration = toFIXED(1) / 4;
-  Actor_SelectAnimation(object, 1);
+  actor->update = NULL;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
+  actor->acceleration = toFIXED(1) / 4;
+  Actor_SelectAnimation(actor, 1);
 }

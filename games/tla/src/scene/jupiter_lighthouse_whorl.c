@@ -150,10 +150,10 @@ void JupiterLighthouse_CloseDoor(void) {
 
 /// Opens the door for good once the pillar stands on its button, cell (8, 37).
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_BUTTON_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_BUTTON_PILLAR);
 
   if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) &&
-      FIELD_CELL(object->x.fixed) == 8 && FIELD_CELL(object->z.fixed) == 37) {
+      FIELD_CELL(actor->x.fixed) == 8 && FIELD_CELL(actor->z.fixed) == 37) {
     Event_SetFlag(FLAG_BUTTON_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -319,7 +319,7 @@ s32 JupiterLighthouse_IsOnWestPath(struct Actor *actor) {
 /// block lies in its gap or not, raising the blocks on it (gradually for
 /// mode 1).
 void JupiterLighthouse_LightWestPath(s32 mode) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i, frame;
 
   if (!Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
@@ -332,10 +332,10 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       do {
         i = 0;
         do {
-          object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-          if (JupiterLighthouse_IsOnWestPath(object)) {
-            object->motionFlags = 0;
-            object->y.fixed -= toFIXED(2);
+          actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+          if (JupiterLighthouse_IsOnWestPath(actor)) {
+            actor->motionFlags = 0;
+            actor->y.fixed -= toFIXED(2);
           }
         } while (++i <= 5);
         System_Wait(1);
@@ -344,10 +344,10 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     }
     i = 0;
     do {
-      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-      object->motionFlags = 3;
+      actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+      actor->motionFlags = 3;
       i++;
-      object->y.fixed = object->groundHeight;
+      actor->y.fixed = actor->groundHeight;
     } while (i <= 5);
   } else {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
@@ -361,10 +361,10 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       do {
         i = 0;
         do {
-          object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-          if (JupiterLighthouse_IsOnWestPath(object)) {
-            object->motionFlags = 0;
-            object->y.fixed += toFIXED(2);
+          actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+          if (JupiterLighthouse_IsOnWestPath(actor)) {
+            actor->motionFlags = 0;
+            actor->y.fixed += toFIXED(2);
           }
         } while (++i <= 5);
         System_Wait(1);
@@ -373,10 +373,10 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     }
     i = 0;
     do {
-      object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-      if (JupiterLighthouse_IsOnWestPath(object)) {
-        object->motionFlags = 4;
-        object->y.fixed = toFIXED(65) / 2;
+      actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
+      if (JupiterLighthouse_IsOnWestPath(actor)) {
+        actor->motionFlags = 4;
+        actor->y.fixed = toFIXED(65) / 2;
       }
     } while (++i <= 5);
   }
@@ -385,11 +385,11 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
 /// As Move lifts a block: under the third path block, the cell's height is set
 /// to 6 and its attribute bit 0x80 cleared.
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   if (id == ACTOR_THIRD_PATH_BLOCK) {
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
-    MapGrid_ClearAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 6);
+    MapGrid_ClearAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
   }
 }
 
@@ -401,26 +401,25 @@ void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 /// gaps the cone-shaped pillar rises; the third, in its gap by the west wall,
 /// lights the path of grey blocks and raises the second cone.
 void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 spot;
   s32 i;
 
-  if (object->groundHeight !=
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed)) {
-    object->motionFlags = 3;
+  if (actor->groundHeight !=
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
+    actor->motionFlags = 3;
     wait(2);
     i = 0;
-    if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+    if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
       do {
         wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y.fixed > object->groundHeight ||
-               object->velocityY != 0);
+      } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
     }
     Event_PlaySound(SE_THUMP);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
   }
   if ((u32)(id - ACTOR_FIRST_PATH_BLOCK) <= 1) {
     spot = JupiterLighthouse_FindBlockGap();
@@ -442,7 +441,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
         !Event_GetFlag(FLAG_FIRST_CONE_SUNK))
       return;
-    object = Actor_GetById(ACTOR_FIRST_CONE);
+    actor = Actor_GetById(ACTOR_FIRST_CONE);
     Event_ClearFlag(FLAG_FIRST_CONE_SUNK);
     Event_Wait(10);
     Event_Start();
@@ -451,10 +450,10 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Event_PlaySound(SE_LIGHT_APPEAR);
-    Actor_SelectAnimation(object, 3);
-    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed,
-                                 object->layer, CELL_BEHAVIOR_WALL);
+    Actor_SelectAnimation(actor, 3);
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, actor->layer,
+                                 CELL_BEHAVIOR_WALL);
     Event_Wait(30);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
@@ -463,7 +462,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
   if (id != ACTOR_THIRD_PATH_BLOCK)
     return;
-  if (FIELD_CELL(object->x.fixed) == 8 && FIELD_CELL(object->z.fixed) == 12) {
+  if (FIELD_CELL(actor->x.fixed) == 8 && FIELD_CELL(actor->z.fixed) == 12) {
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_PATH_BLOCK), 0);
     Event_Wait(30);
@@ -471,17 +470,17 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     JupiterLighthouse_LightWestPath(1);
     if (!Event_GetFlag(FLAG_SECOND_CONE_SUNK))
       return;
-    object = Actor_GetById(ACTOR_SECOND_CONE);
+    actor = Actor_GetById(ACTOR_SECOND_CONE);
     Event_ClearFlag(FLAG_SECOND_CONE_SUNK);
     Event_Wait(20);
     Event_PlaySound(SE_LIGHT_APPEAR);
-    Actor_SelectAnimation(object, 3);
-    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed,
-                                 object->layer, CELL_BEHAVIOR_WALL);
+    Actor_SelectAnimation(actor, 3);
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, actor->layer,
+                                 CELL_BEHAVIOR_WALL);
   } else {
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 8);
-    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 8);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
   }
 }
 
@@ -495,13 +494,13 @@ void JupiterLighthouse_SinkPoundTarget(s32 mode, s32 frame) {
 
 /// Throws a block up out of its gap at cell (x, z) to land beside it.
 void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   Actor_SetPositionFX(id, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(z));
-  object->motionFlags = 3;
-  object->groundHeight = toFIXED(-16);
-  object->y.fixed = toFIXED(-16);
-  object->velocityY = toFIXED(8);
+  actor->motionFlags = 3;
+  actor->groundHeight = toFIXED(-16);
+  actor->y.fixed = toFIXED(-16);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(SE_WHIRLWIND);
@@ -510,7 +509,7 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
 /// The cone-shaped pillar Pounded down throws the two blocks back out of their
 /// gaps, the camera watching.
 void JupiterLighthouse_RaiseBlocksFromGaps(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
   if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) +
@@ -544,28 +543,28 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
   JupiterLighthouse_DrawBlocksInGaps();
   System_Wait(2);
-  object = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
+  actor = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   i = 0;
-  if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+  if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y.fixed > object->groundHeight || object->velocityY != 0);
+    } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
   }
-  object->motionFlags = 0;
-  object = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
+  actor->motionFlags = 0;
+  actor = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
   i = 0;
-  if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+  if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y.fixed > object->groundHeight || object->velocityY != 0);
+    } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
   }
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   FieldEvent_Wait(30);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -573,7 +572,7 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
 
 /// The second cone Pounded down throws the third block back out of its gap.
 void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
   if (Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP))
@@ -581,13 +580,13 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   Event_ClearFlag(FLAG_THIRD_BLOCK_IN_GAP);
   JupiterLighthouse_LightWestPath(1);
   System_Wait(2);
-  object = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
+  actor = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
   for (i = 0; i < 30; i++) {
-    if (object->y.fixed <= object->groundHeight && object->velocityY == 0)
+    if (actor->y.fixed <= actor->groundHeight && actor->velocityY == 0)
       break;
     System_Wait(1);
   }
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
 }
 
 void Leader_PushObjectAhead(void);
@@ -696,7 +695,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 
 s32 Scene_PrepareMap(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 value;
 
   Scene_SetArrivalFlags(0);
@@ -731,10 +730,10 @@ s32 Scene_PrepareMap(void) {
   Actor_Get(ACTOR_THIRD_PATH_BLOCK)->motionFlags = 0;
   JupiterLighthouse_DrawBlocksInGaps();
   if (!Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
-    object = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
-    value = MapGrid_GetCellHeight(object->x.fixed, object->z.fixed, 0);
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, value + 2);
-    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
+    actor = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
+    value = MapGrid_GetCellHeight(actor->x.fixed, actor->z.fixed, 0);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, value + 2);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -767,7 +766,7 @@ extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 FIXED Trig_Cos(s32 angle);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -800,7 +799,7 @@ extern u32 gFieldEffect_LongScript[];
 
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
-s32 Actor_GetCellIndex(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *actor);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -810,7 +809,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void Whirlwind_Update(struct Actor *self);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -854,7 +853,7 @@ void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -863,18 +862,18 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// The cells CrackedTile_Step watches, and the cell it copies over the one the
 // leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -893,7 +892,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
@@ -909,35 +908,15 @@ void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_JumpForward(void);
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
 LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
     ACTOR_FIRST_CONE, 1, FLAG_FIRST_CONE_SUNK, ACTOR_SECOND_CONE, 1, FLAG_SECOND_CONE_SUNK, -1, 0,
 };
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {                                                        
       SCENE_EXITS(JupiterLighthouseWhorl),         SCENE_EXIT(JUPITER_LIGHTHOUSE_WHORL_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST, JupiterLighthouseRoomPhaetonsBladeChest, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_WHORL),   SCENE_EXIT(2, JupiterLighthouseWhorl, 3),   

@@ -14,11 +14,11 @@
 /// The summon tablet's update while its runes fly: on the actor's timer, its
 /// sprite flashes white and outlined, then outlined, white again, and plain,
 /// redrawn each frame; the fourth step leaves the outline as it was.
-void SummonTablet_CyclePictures(struct Actor *object) {
-  struct Sprite *sprite = object->sprite;
+void SummonTablet_CyclePictures(struct Actor *actor) {
+  struct Sprite *sprite = actor->sprite;
   struct SpriteAnimation *layer = sprite->entries[0];
 
-  switch (object->timer & 3) {
+  switch (actor->timer & 3) {
   case 0:
     layer->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
@@ -38,7 +38,7 @@ void SummonTablet_CyclePictures(struct Actor *object) {
     sprite->dirty = 1;
     break;
   }
-  object->timer++;
+  actor->timer++;
 }
 
 /// A point on the screen chasing its target, 16.16 pixels, as
@@ -84,7 +84,7 @@ struct ChasingMote {
       FIXED unusedAfterTargetZ; ///< no code names it
     };
     /// A spark: a position in the world and its velocity
-    /// (BattleEffect_IntegrateVector3's vector).
+    /// (Field_AdvanceWithGravity3D's vector).
     struct {
       FIXED position[3];
       FIXED velocity[3];
@@ -185,8 +185,7 @@ void SummonTablet_UpdateMotes(void) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, mote->spark.position);
-      BattleEffect_IntegrateVector3(mote->spark.position, 63,
-                                    -(toFIXED(1) / 2));
+      Field_AdvanceWithGravity3D(mote->spark.position, 63, -(toFIXED(1) / 2));
       mote->timer++;
     }
   }
@@ -470,20 +469,20 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   s32 height;
 
   for (; actors->actor != 0xffff; actors++) {
-    struct Actor *object = Actor_GetById(actors->actor);
+    struct Actor *actor = Actor_GetById(actors->actor);
     u16 flag = actors->flag;
-    s32 slot = Actor_GetCellIndex(object);
-    struct MapCell *cell = &map->layers[object->layer].cells[slot];
+    s32 slot = Actor_GetCellIndex(actor);
+    struct MapCell *cell = &map->layers[actor->layer].cells[slot];
 
-    object->motionFlags = 0;
-    object->collisionFlags &= ~1;
-    Actor_SetSpriteFlagsFar(object, 0);
+    actor->motionFlags = 0;
+    actor->collisionFlags &= ~1;
+    Actor_SetSpriteFlagsFar(actor, 0);
     cell->collisionCode = 0xff;
     if (GameFlag_Get(flag)) {
-      Actor_SelectAnimationFar(object, 0);
+      Actor_SelectAnimationFar(actor, 0);
       GameFlag_Clear(flag);
     } else {
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(actor, 1);
     }
   }
   FlagBlock_ApplyFlags(list);

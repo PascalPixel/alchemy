@@ -280,7 +280,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   s32 zero;
   s32 highlightFrame;
   s16 itemId;
-  struct ItemDefinition *definition;
+  struct ItemDefinition *item;
   struct WindowSprite *icon;
 
   shop = Ram_HeapSlots->menuWork;
@@ -313,7 +313,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
            (u32)pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIndex < (u32)itemCount;
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
-        definition = Item_GetDirectFar(itemId);
+        item = Item_GetDirectFar(itemId);
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->depth = OAM_DEPTH_FRONT - 3;
@@ -323,8 +323,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
           icon->animationStep = highlightFrame;
           icon->depth = OAM_DEPTH_FRONT - 2;
         }
-        icon =
-            Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
+        icon = Shop_CreatePriceSprite((u16)item->price, window, priceX, 0);
         icon->depth = OAM_DEPTH_FRONT - 4;
       }
     }

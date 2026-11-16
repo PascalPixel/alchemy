@@ -473,7 +473,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         s32 py;
 
         p->variant--;
-        BattleEffectKernels_IntegrateVector2(p, 60, 0);
+        Particle_AdvanceWithGravity2D(p, 60, 0);
         size = p->variant / 16 + 3;
         px = FIXED_INTEGER_PART(p->x);
         py = FIXED_INTEGER_PART(p->y);
@@ -490,7 +490,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         s32 py;
 
         p->variant--;
-        BattleEffectKernels_IntegrateVector2(p, 60, 0);
+        Particle_AdvanceWithGravity2D(p, 60, 0);
         size = p->variant / 16 + 1;
         px = FIXED_INTEGER_PART(p->x);
         py = FIXED_INTEGER_PART(p->y);
@@ -508,7 +508,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         s32 px;
         s32 py;
 
-        BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
         cell = (frame - 36) / 7;
         px = FIXED_INTEGER_PART(shard->x);
         py = FIXED_INTEGER_PART(shard->y);
@@ -1152,8 +1152,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                   (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
              point.x - size / 2, point.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(ember, PARTICLE_DAMPING_NONE,
-                                             -toFIXED(1) / 8);
+        Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE,
+                                      -toFIXED(1) / 8);
         if (ember->y <= toFIXED(20)) {
           ember->x = 0;
           ember->z = 0;
@@ -1208,7 +1208,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           flash->velocityZ = 0;
           flash->variant = 0;
         } else {
-          BattleEffectKernels_IntegrateVector3(flash, PARTICLE_DAMPING_NONE, 1);
+          Particle_AdvanceWithGravity3D(flash, PARTICLE_DAMPING_NONE, 1);
         }
       }
     }

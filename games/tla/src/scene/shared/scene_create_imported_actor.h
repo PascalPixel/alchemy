@@ -1,16 +1,16 @@
 /// Scene_CreateActor through the imported creator, with extra priority flags.
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = Import_ActorCreate(type, x, y, z);
+  struct Actor *actor = Import_ActorCreate(type, x, y, z);
 
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 1);
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, 15);
-    object->priorityFlags |=
+  if (actor != NULL) {
+    Scene_SetActorSpritePriority(actor, 1);
+    actor->motionFlags = 0;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+    actor->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
-    return object;
+    return actor;
   }
   return NULL;
 }

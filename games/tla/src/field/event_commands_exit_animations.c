@@ -14,7 +14,7 @@
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
 /// the object does not exist.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
-  struct Actor *object = Actor_Lookup(actorId);
+  struct Actor *actor = Actor_Lookup(actorId);
 #ifdef UBFIX
   struct MapWork *map;
 #else
@@ -25,7 +25,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   FIXED x;
   FIXED z;
 
-  if (object == 0)
+  if (actor == 0)
     return -1;
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
@@ -37,13 +37,13 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   cameraX = camera[0] & FIELD_PIXEL_MASK;
   cameraZ = camera[1] & FIELD_PIXEL_MASK;
 #endif
-  x = object->x.fixed - cameraX;
-  z = object->z.fixed - cameraZ - object->y.fixed;
+  x = actor->x.fixed - cameraX;
+  z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / FIXED_ONE;
   *position = z / FIXED_ONE;
-  if ((object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     *position -= (s8)Resource_GetMetadataRecordFarFar(
-                     ((struct Sprite *)object->sprite)->entries[0]->animationId)
+                     ((struct Sprite *)actor->sprite)->entries[0]->animationId)
                      ->boxX;
   return 0;
 }
@@ -220,19 +220,19 @@ s32 Entrance_PlayArrival(void) {
       flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_Get(flag) != 0) {
         s32 id;
-        struct Actor *object;
+        struct Actor *actor;
 
         GameFlag_Clear(flag);
         id = gMainRoutineWork.leaderActorId;
-        object = Actor_Lookup(id);
-        object->y.fixed += toFIXED(160);
+        actor = Actor_Lookup(id);
+        actor->y.fixed += toFIXED(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-        while (object->y.fixed + object->velocityY > object->groundHeight) {
+        while (actor->y.fixed + actor->velocityY > actor->groundHeight) {
           wait(1);
         }
         Sound_PlayFar(SE_DOOR_CLOSE);
-        object->y.fixed = object->groundHeight;
-        Actor_SelectAnimationFar(object, ANIM_LEADER_LEAN_BACK);
+        actor->y.fixed = actor->groundHeight;
+        Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);
         result = 3;
@@ -245,8 +245,8 @@ s32 Entrance_PlayArrival(void) {
 /// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
 /// drawn transparent (SPRITE_COLOR_HIDDEN).
 void Exit_AddHiddenLeaderLayer(void) {
-  struct Actor *object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct SpriteAnimation *layer = Sprite_AddAnimationFar(object->sprite, 268);
+  struct Actor *actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct SpriteAnimation *layer = Sprite_AddAnimationFar(actor->sprite, 268);
 
   layer->colorMode = SPRITE_COLOR_HIDDEN;
 }

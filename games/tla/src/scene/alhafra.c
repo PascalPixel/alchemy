@@ -1261,18 +1261,15 @@ u32 gAlhafra_LookAroundScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Alhafra),
-    SCENE_EXIT_UNLESS(1, AlhafraInteriors, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AlhafraInteriors, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AlhafraInteriors, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AlhafraInteriors, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AlhafraInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, AlhafraRooms, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AlhafraRooms, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AlhafraRooms, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AlhafraRooms, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AlhafraRooms, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, AlhafraJail, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 20, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, EasternAlhafra, 1, EXIT_FLAG_NONE),

@@ -60,7 +60,7 @@ u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
 /// after them.
 u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
-u16 gLighthouseUnlitColors[14] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
 u32 gLightSpriteActors[16] BSS_DATA;
@@ -71,7 +71,6 @@ struct CellTarget gCrackedTiles BSS_DATA;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_CycloneSecondPatch(void);
 void JupiterLighthouse_CycloneFourthPatch(void);
 void JupiterLighthouse_CycloneFifthPatch(void);
@@ -185,24 +184,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 void MapGrid_SetCellHeight();
 
-/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
-/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
-void JupiterLighthouse_LoadPalettes(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
-    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
-  } else {
-    Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -213,44 +196,15 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-/// Raises a whirlwind eight pixels in front of an actor, moving along its
-/// facing (Whirlwind_Update), with a burst of light. Returns it.
-struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *object;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Import_ActorSelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-  return object;
-}
+#include "shared/whirlwind_spawn_upper.h"
 
 /// An actor's update: every eighth frame, a mote rising from a random point of
 /// it.
-s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
+s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
   FIXED x, y, speed;
@@ -261,10 +215,10 @@ s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    x = actor->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = actor->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, phase,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
                       &params);
@@ -297,31 +251,9 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/actor_set_sprite_priority.c"
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseEntrance),
@@ -377,11 +309,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
@@ -389,7 +319,7 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find_lower.h"
+#include "shared/cracked_tile_find_lower.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -397,7 +327,7 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -431,6 +361,6 @@ extern u32 gFieldEffect_LongScript[];
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

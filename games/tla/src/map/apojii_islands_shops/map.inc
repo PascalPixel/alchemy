@@ -24,10 +24,10 @@ Field_ApojiiIslandsShops:
 	.incbin "games/tla/src/map/apojii_islands_shops/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ApojiiIslandsShops_ANIMATION:
-	.incbin "games/tla/src/map/yallam_interiors/animation.script.lz"
+	.incbin "games/tla/src/map/yallam_rooms/animation.script.lz"
 	.balign 4, 0
 .LField_ApojiiIslandsShops_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
+	.incbin "games/tla/src/map/daila_rooms_houses/blend.script.lz"
 	.balign 4, 0
 .LField_ApojiiIslandsShops_SCENE:
 	.incbin "games/tla/src/map/apojii_islands_shops/scene.scene.lz"

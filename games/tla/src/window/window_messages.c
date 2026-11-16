@@ -113,7 +113,7 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 /// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
   struct WindowWork *state;
-  struct UiChannelSlot *slot;
+  struct UiChannelSlot *channel;
   struct Window *direct;
   u32 done;
   struct Window *work;
@@ -121,27 +121,27 @@ void Window_CloseAll(void) {
   s32 index;
 
   state = WINDOW_WORK;
-  slot = state->channels;
+  channel = state->channels;
   direct = state->windows;
   index = 0;
   do {
-    work = slot->work;
+    work = channel->work;
     if (work != 0 && work->flags != 0)
       Window_Close(work, 0);
     index++;
-    slot++;
+    channel++;
   } while (index != 3);
 
   for (;;) {
     done = 1;
-    slot = state->channels;
+    channel = state->channels;
     index = 0;
     do {
-      pollWork = slot->work;
+      pollWork = channel->work;
       if (pollWork != 0) {
         if ((*(s32 *)&pollWork->zoomStage) == 0) {
           if (pollWork->flags == 0)
-            slot->work = NULL;
+            channel->work = NULL;
           else
             done = 0;
         } else {
@@ -149,7 +149,7 @@ void Window_CloseAll(void) {
         }
       }
       index++;
-      slot++;
+      channel++;
     } while (index != 3);
     index = 0;
     if (done)
@@ -706,7 +706,7 @@ void Portrait_ClearSlots(void) {
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = PORTRAIT_SLOT_EMPTY;
+    work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }
@@ -824,15 +824,15 @@ void Portrait_CloseWindow(s32 id) {
   if (id == -1)
     return;
 
-  if (state->resourceIds[1] == id) {
+  if (state->portraitPictures[1] == id) {
     index = 1;
-  } else if (state->resourceIds[0] == id) {
+  } else if (state->portraitPictures[0] == id) {
     index = 0;
   } else {
     return;
   }
 
-  id = state->outputIds[index];
+  id = state->portraitSprites[index];
 
   for (i = 0; i != WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;

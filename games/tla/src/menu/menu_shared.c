@@ -536,33 +536,33 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
 struct Window *MenuCursor_Create(void *source) {
-  struct PsynergyMenuWork *work = source;
+  struct PsynergyMenuWork *menu = source;
   struct Window *window;
   struct WindowSprite *icon;
   s32 zero = 0;
   s32 sentinel;
   s32 slot;
 
-  work->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate((s32 *)&work->auxiliaryWindow, 0, 0, 13, 5, 2);
-  window = work->auxiliaryWindow;
+  menu->auxiliaryWindow = NULL;
+  Window_UpdateOrCreate((s32 *)&menu->auxiliaryWindow, 0, 0, 13, 5, 2);
+  window = menu->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
   icon->motion = ICON_HIDDEN;
-  work->tabIndex[0] = 255;
-  work->sideIcon[0] = icon;
+  menu->tabIndex[0] = 255;
+  menu->sideIcon[0] = icon;
   sentinel = OAM_DEPTH_FRONT - 1;
   icon->depth = sentinel;
   sentinel -= 255;
-  work->tabIndex[1] = zero;
-  work->sideIcon[1]->depth = sentinel;
+  menu->tabIndex[1] = zero;
+  menu->sideIcon[1]->depth = sentinel;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
                               RESOURCE_SHOP_UP_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
-    work->pageArrows[0] = icon;
+    menu->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
@@ -570,7 +570,7 @@ struct Window *MenuCursor_Create(void *source) {
                               RESOURCE_SHOP_DOWN_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
-    work->pageArrows[1] = icon;
+    menu->pageArrows[1] = icon;
   }
   return window;
 }

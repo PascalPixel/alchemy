@@ -22,7 +22,7 @@ void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 /// Clears the current entry once the leader has left its cell; while the
 /// leader stays on it and the sprite is shown, draws the sprite over the cell
 /// at the height of the ground there, unless it is off screen.
-void CrackedTiles_Update(void) {
+void CrackedTile_Update(void) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry;
   struct Actor *leader;

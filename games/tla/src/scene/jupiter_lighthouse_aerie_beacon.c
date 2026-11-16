@@ -173,15 +173,15 @@ s32 gJupiterLighthouse_WhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
 /// after them.
-u16 gLighthousePalette13[2] BSS_DATA;
-u16 gLighthouseUnlitColors[14] BSS_DATA;
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
 struct Actor *gLightSpriteActors[16] BSS_DATA;
 struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
 
@@ -227,7 +227,7 @@ s32 MapGrid_GetCellBehavior();
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// Runs one frame of the beacon's light rising, counted by
 /// gJupiterLighthouse_BeaconStage: the tower shakes and flashes, the light
@@ -411,13 +411,13 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
 /// ones; beyond it, calls Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
-  struct Actor *object = Actor_Get(ACTOR_BEACON_ORB);
+  struct Actor *actor = Actor_Get(ACTOR_BEACON_ORB);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   Random16();
 #if TLA_PATCH_1
-  // From patch 1; the Japanese release goes on when object 36 is missing.
-  if (object == NULL)
+  // From patch 1; the Japanese release goes on when actor 36 is missing.
+  if (actor == NULL)
     return;
 #endif
   if (FIXEDtoINT(map->viewZ) <= 177) {
@@ -2026,11 +2026,11 @@ void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
 
   z = 64 - FIELD_CELL(z);
   for (slot = 0; slot <= 63; slot++) {
-    struct Actor *object = work->actors[slot];
+    struct Actor *actor = work->actors[slot];
 
-    if (object != NULL) {
-      s32 column = FIELD_CELL(object->x.fixed);
-      s32 row = FIELD_CELL(object->z.fixed);
+    if (actor != NULL) {
+      s32 column = FIELD_CELL(actor->x.fixed);
+      s32 row = FIELD_CELL(actor->z.fixed);
 
       if (column >= 4 && column <= 8 && z + 8 <= row && row < z + 11)
         *out++ = slot;
@@ -2274,42 +2274,23 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
-/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
-void JupiterLighthouse_LoadPalettes(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
-    Iwram_CopyWordsEntry(gLighthousePalette13, (void *)&BG_PLTT_COLOR(13, 0),
-                         32);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
-  } else {
-    Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 /// Lifts an actor 32 pixels over its ground as a platform others may stand on,
 /// and raises the map cell under it six height steps to match.
 void Actor_RaiseFromCell(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
-                        (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + toFIXED(32);
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }
 
 /// The leader rides the whirlwind it stepped onto, spinning, until it stops
@@ -2457,7 +2438,7 @@ void Whirlwind_Update(struct WhirlwindActor *object) {
   gJupiterLighthouse_WhirlwindRiding = 0;
 }
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -2466,7 +2447,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// Places the lid and the angels over the well, raising each angel and tilting
 /// the lid toward it for each angel whose archer has been energized, and
@@ -2557,15 +2538,15 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-void CrackedTiles_Update(void);
+void CrackedTile_Update(void);
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -2581,7 +2562,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
@@ -2597,28 +2578,12 @@ s32 gJupiterLighthouse_FourthBeamObjects[] = {BEAM_OBJECTS_END};
 s32 gJupiterLighthouse_BeamRiders[] = {BEAM_OBJECTS_END};
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
+/// Unused: turns its actor's facing back and forth, 0x1200 at a time, and
+/// ends. Nothing starts it.
+LATE_DATA s32 gJupiterLighthouse_RockScript[] = {
     SC_WAIT(5),
     SC_ADD(SW_FACING, 0x1200),
     SC_WAIT(5),
@@ -2790,10 +2755,8 @@ LATE_DATA s32 gJupiterLighthouse_BeaconSparkScript[] = {
     SC_RELEASE,
 };
 
-LATE_DATA struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseAerieBeacon),

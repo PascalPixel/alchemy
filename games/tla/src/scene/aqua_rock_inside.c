@@ -32,7 +32,7 @@
 #include "window/item_icon.h"
 #include "graphics/palette_buffers.h"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
 
@@ -128,12 +128,12 @@ struct VentRow {
 
 #define VENT_ROW(index) ((struct VentRow *)((u8 *)VENT_WORK + (index) * 20))
 
-void Actor_StartScript(struct Actor *object, const void *data);
+void Actor_StartScript(struct Actor *actor, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
 void Field_TryJumpForward(void);
-void AquaRockInside_SpawnSplash(struct Actor *object);
-s32 Actor_EmitMist(struct Actor *object);
+void AquaRockInside_SpawnSplash(struct Actor *actor);
+s32 Actor_EmitMist(struct Actor *actor);
 
 void AquaRockInside_LowerSpring(void);
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value);
@@ -146,12 +146,12 @@ void AquaRockInside_DrawSplashes(void);
 void AquaRockInside_StartSplashes(void);
 s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind);
 s32 AquaRockInside_AdvanceStreams(s32 a, s32 b);
-void Vent_Bounce(struct Actor *object);
-void Actor_StartScripted(struct Actor *object, s32 priority);
+void Vent_Bounce(struct Actor *actor);
+void Actor_StartScripted(struct Actor *actor, s32 priority);
 void Vent_Puff(s32 *position, s32 base);
 s32 AquaRockInside_SetVentActive(s32 index, s32 value);
 s32 AquaRockInside_GetVentCounter(void);
-s32 Vents_AdvanceCounter(s32 limit);
+s32 Vent_AdvanceCounter(s32 limit);
 
 extern s32 gAquaRockInside_SpringLevel;
 struct PillarWork gAquaRockInside_Pillars BSS_DATA;
@@ -247,7 +247,7 @@ struct WaterWork {
   u16 levels[4];
 };
 
-void AquaRockInside_WaitToLand(struct Actor *object);
+void AquaRockInside_WaitToLand(struct Actor *actor);
 
 void Leader_RiseFromWater(void);
 void AquaRockInside_FinishPushingRock(s32 a, s32 b);
@@ -470,29 +470,29 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// row 12, the east one at column 51. It stops there a pixel up and covers the
 /// vent for good; the west one also redraws the two cells it blocks.
 void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   if (id == ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR) {
-    s32 row = FIELD_CELL(object->z.fixed);
+    s32 row = FIELD_CELL(actor->z.fixed);
 
     if (row == 12) {
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       {
         s32 step = -toFIXED(1);
 
-        object->y.fixed += step;
+        actor->y.fixed += step;
       }
       Event_SetFlag(FLAG_AQUA_ROCK_WEST_VENT_COVERED);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, row);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, row);
     }
   } else if (id == ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR) {
-    if (FIELD_CELL(object->x.fixed) == 51) {
-      object->motionFlags = 0;
+    if (FIELD_CELL(actor->x.fixed) == 51) {
+      actor->motionFlags = 0;
       {
         FIXED step = -toFIXED(1);
 
-        object->y.fixed += step;
+        actor->y.fixed += step;
       }
       Event_SetFlag(FLAG_AQUA_ROCK_EAST_VENT_COVERED);
     }
@@ -571,35 +571,35 @@ void AquaRockInside_FreezePuddle(void) {
 
 #if TLA_PATCH_1
 /// From patch 1: lets the actor fall and waits until it lands with a thump.
-void AquaRockInside_WaitToLand(struct Actor *object) {
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+void AquaRockInside_WaitToLand(struct Actor *actor) {
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   do {
     System_Wait(1);
-  } while (object->velocityY != 0);
+  } while (actor->velocityY != 0);
   Event_PlaySound(SE_THUMP);
   System_Wait(10);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
 }
 #endif
 
 /// Move on Steam's room's pillar to column 39: it drops before the Moai.
 void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 x;
 
   if (id == ACTOR_STEAM_ROOM_PILLAR) {
-    x = FIELD_CELL(object->x.fixed);
+    x = FIELD_CELL(actor->x.fixed);
     if (x == 39) {
 #if !TLA_PATCH_1
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(15);
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      AquaRockInside_WaitToLand(object);
+      AquaRockInside_WaitToLand(actor);
       Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
       Event_End();
@@ -799,12 +799,12 @@ void AquaRockInside_ParchPool(void) {
 /// turns there.
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (object != 0) {
+  if (actor != 0) {
     struct MapCell *cells = map->layers[0].cells;
     struct MapCell *cell =
-        &cells[FIELD_CELL(object->x.fixed) + FIELD_CELL(object->z.fixed) * 128];
+        &cells[FIELD_CELL(actor->x.fixed) + FIELD_CELL(actor->z.fixed) * 128];
 
     cell->collisionCode = value;
     cell->attributeB |= 0x80;
@@ -814,27 +814,27 @@ s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
 /// The cell under the Rusty Sword chest's room's first water pillar, at its
 /// lowest.
 void AquaRockInside_SetPillarCellLow(void) {
-  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
+  struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
-  MapGrid_CopyCellAttributes(64, 43, 1, 1, FIELD_CELL(object->x.fixed),
-                             FIELD_CELL(object->z.fixed));
+  MapGrid_CopyCellAttributes(64, 43, 1, 1, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed));
 }
 
 /// The cell under the Rusty Sword chest's room's first water pillar, halfway.
 void AquaRockInside_SetPillarCellMiddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
+  struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
-  MapGrid_CopyCellAttributes(64, 42, 1, 1, FIELD_CELL(object->x.fixed),
-                             FIELD_CELL(object->z.fixed));
+  MapGrid_CopyCellAttributes(64, 42, 1, 1, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed));
 }
 
 /// The cell under the Rusty Sword chest's room's first water pillar, at its
 /// highest.
 void AquaRockInside_SetPillarCellHigh(void) {
-  struct Actor *object = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
+  struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
-  MapGrid_CopyCellAttributes(64, 41, 1, 1, FIELD_CELL(object->x.fixed),
-                             FIELD_CELL(object->z.fixed));
+  MapGrid_CopyCellAttributes(64, 41, 1, 1, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed));
 }
 
 /// Douse on the Rusty Sword chest's room's Water Stone, once the water has
@@ -892,7 +892,7 @@ void AquaRockInside_JumpDownLedge() {
 /// leader south to the ledge, and over it.
 void AquaRockInside_StepIntoRapids(s32 trigger) {
   s32 clear = 1;
-  struct Actor *object;
+  struct Actor *actor;
   struct Vector3 target;
   s32 result;
 
@@ -915,18 +915,18 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   }
   if (clear == 0)
     return;
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (;;) {
-    target.x = object->x.fixed;
-    target.y = object->y.fixed;
-    target.z = object->z.fixed + toFIXED(8);
-    result = MapGrid_CheckCollision(object, &target);
+    target.x = actor->x.fixed;
+    target.y = actor->y.fixed;
+    target.z = actor->z.fixed + toFIXED(8);
+    result = MapGrid_CheckCollision(actor, &target);
     if (result > 0)
       break;
     if (result < 0) {
-      object->facing = FACING_SOUTH;
+      actor->facing = FACING_SOUTH;
       AquaRockInside_JumpDownLedge(trigger);
       return;
     }
@@ -934,8 +934,8 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
       s32 offset;
       FIXED x;
 
-      object->z.fixed += toFIXED(2);
-      x = object->x.fixed;
+      actor->z.fixed += toFIXED(2);
+      x = actor->x.fixed;
       offset = (x & 0xfffff) - toFIXED(8);
       {
         s32 limit = 0x10001;
@@ -946,9 +946,9 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
         if (offset <= limit)
           offset = -toFIXED(1);
       }
-      object->x.fixed = x - offset;
+      actor->x.fixed = x - offset;
     }
-    object->facing += 0x1000;
+    actor->facing += 0x1000;
     System_Wait(1);
   }
 }
@@ -969,7 +969,7 @@ void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
 
 /// The leader spins down the falls and leaves by `value`.
 void AquaRockInside_RideFalls(s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED speed;
   s32 i;
   u8 *flags;
@@ -977,21 +977,21 @@ void AquaRockInside_RideFalls(s32 value) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  flags = &object->motionFlags;
+  flags = &actor->motionFlags;
   speed = 0;
   *flags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_SelectAnimation(object, 18);
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_SelectAnimation(actor, 18);
   Event_PlaySound(SE_SPLASH_SMALL);
   System_Wait(13);
-  Actor_SetSpriteColorMode(object, 9);
-  Actor_SelectAnimation(object, 28);
+  Actor_SetSpriteColorMode(actor, 9);
+  Actor_SelectAnimation(actor, 28);
   Event_PlaySound(SE_SPIRAL);
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
     speed += toFIXED(1) / 4;
-    object->y.fixed += speed;
+    actor->y.fixed += speed;
     if ((i & 7) == 0)
       AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
@@ -1003,9 +1003,9 @@ void AquaRockInside_RideFalls(s32 value) {
 /// Move on the Vial chest's room's pillar to column 49: the Moai fills, the
 /// water falls 32 pixels and the puddles show.
 void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (FIELD_CELL(object->x.fixed) == 49) {
+  if (FIELD_CELL(actor->x.fixed) == 49) {
     struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
     s32 i;
 
@@ -1021,12 +1021,12 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     }
     i = ACTOR_VIAL_CHEST_PUDDLE_A;
     do {
-      object = Actor_GetById(i);
-      object->x.fixed = object->timer << 16;
-      object->z.fixed = toFIXED(object->userValue);
-      object->motionFlags = 0;
-      object->groundHeight = -toFIXED(32);
-      object->y.fixed = -toFIXED(32);
+      actor = Actor_GetById(i);
+      actor->x.fixed = actor->timer << 16;
+      actor->z.fixed = toFIXED(actor->userValue);
+      actor->motionFlags = 0;
+      actor->groundHeight = -toFIXED(32);
+      actor->y.fixed = -toFIXED(32);
       FieldActor_SetSpritePriority(i, 3);
       i++;
     } while (i <= ACTOR_VIAL_CHEST_PUDDLE_C);
@@ -1050,12 +1050,12 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
 /// step.
 void AquaRockInside_FreezeRoomPuddle(s32 unused, s32 id) {
   if ((u32)(id - ACTOR_VIAL_CHEST_PUDDLE_A) <= 2) {
-    struct Actor *object = Actor_Get(id);
+    struct Actor *actor = Actor_Get(id);
 
-    MapGrid_CopyCellAttributes(47, 45, 1, 1, FIELD_CELL(object->x.fixed),
-                               FIELD_CELL(object->z.fixed));
+    MapGrid_CopyCellAttributes(47, 45, 1, 1, FIELD_CELL(actor->x.fixed),
+                               FIELD_CELL(actor->z.fixed));
     Event_SetFlag(FLAG_SCENE_TEMP_51 - ACTOR_VIAL_CHEST_PUDDLE_A + id);
-    object->priorityFlags = 0;
+    actor->priorityFlags = 0;
   }
 }
 
@@ -1068,32 +1068,32 @@ void AquaRockInside_StartPushingRock(void) {
 /// redraws row 33 at each one's column, so the rapids flow around them.
 void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
   if ((u32)(id - ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A) <= 1) {
-    struct Actor *object = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
+    struct Actor *actor = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
 
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     {
       s32 row = 33;
 
-      MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(object->x.fixed), 34);
+      MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(actor->x.fixed), 34);
     }
-    object = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B);
-    object->motionFlags = 0;
+    actor = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B);
+    actor->motionFlags = 0;
     {
       s32 row = 33;
 
-      MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(object->x.fixed), 34);
+      MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(actor->x.fixed), 34);
     }
   }
 }
 
 /// Waits, for 60 frames at most, until the actor stops moving up or down.
-void AquaRockInside_WaitToRise(struct Actor *object) {
+void AquaRockInside_WaitToRise(struct Actor *actor) {
   s32 frames = 60;
 
   while (frames != 0) {
     System_Wait(1);
     frames--;
-    if (object->velocityY == 0)
+    if (actor->velocityY == 0)
       break;
   }
 }
@@ -1113,10 +1113,10 @@ void AquaRockInside_CheckPsynergyStone(void) {
 
 /// Move on the Tear Stone's room's pillar: its cells follow it.
 void AquaRockInside_MovePuzzlePillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   MapGrid_CopyCellAttributes(17, 39, 2, 1, 20, 39);
-  MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(object->x.fixed), 39);
+  MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(actor->x.fixed), 39);
 }
 
 /// Douse on the Tear Stone's room's Water Stone, once the water has risen:
@@ -1207,9 +1207,9 @@ void AquaRockInside_ParchLastPool(void) {
 }
 
 /// A small glowing spark at the actor, running gAquaRockInside_SparkScript.
-void AquaRockInside_SpawnSpark(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate_(SPRITE_PARTICLE, object->x.fixed,
-                                            object->y.fixed, object->z.fixed);
+void AquaRockInside_SpawnSpark(struct Actor *actor) {
+  struct Actor *child = Import_ActorCreate_(SPRITE_PARTICLE, actor->x.fixed,
+                                            actor->y.fixed, actor->z.fixed);
 
   child->scaleY = FIXED_ONE * 2 / 5;
   child->scaleX = FIXED_ONE * 2 / 5;
@@ -1276,7 +1276,7 @@ extern s32 gAquaRockInside_PiersSettleScript[];
 void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *spark;
   struct Actor *riser;
   s32 i;
@@ -1308,20 +1308,20 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
-    object = ((void *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
-                                         first->y.fixed, first->z.fixed));
+    actor = ((void *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
+                                        first->y.fixed, first->z.fixed));
     Sound_Play(SE_GLITTER);
-    object->x.fixed += ((Random16() & 31) - 16) << 16;
-    object->y.fixed += ((Random16() & 15) - 8) << 16;
-    object->speedLimit = toFIXED(8);
-    object->acceleration = toFIXED(1) / 5;
-    object->motionFlags = 0;
-    Actor_SetSpriteColor(object, 2);
-    Scene_SetActorSpritePriority(object, 1);
-    Actor_SelectAnimation(object, 7);
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetBlendMode(object, 1);
-    Actor_StartScript(object, gAquaRockInside_TabletGlowScript);
+    actor->x.fixed += ((Random16() & 31) - 16) << 16;
+    actor->y.fixed += ((Random16() & 15) - 8) << 16;
+    actor->speedLimit = toFIXED(8);
+    actor->acceleration = toFIXED(1) / 5;
+    actor->motionFlags = 0;
+    Actor_SetSpriteColor(actor, 2);
+    Scene_SetActorSpritePriority(actor, 1);
+    Actor_SelectAnimation(actor, 7);
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetBlendMode(actor, 1);
+    Actor_StartScript(actor, gAquaRockInside_TabletGlowScript);
     REG_BLDALPHA = BLEND_ALPHA(4, 16);
     wait(2);
     REG_BLDALPHA = BLEND_ALPHA(10, 16);
@@ -1409,7 +1409,7 @@ void Actor_MoveToObject();
 /// Reading the Parch tablet: Piers reads it and learns Parch, the water drains,
 /// and he leaves the party's side; afterwards only its text.
 void AquaRockInside_ReadParchTablet(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1476,10 +1476,10 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (object != 0) {
-    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_PIERS, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -1567,24 +1567,24 @@ const u8 *Scene_GetTriggers(void) {
 /// Gives a Moai its face: the face animation added to its sprite, then
 /// animation 2 started.
 void AquaRockInside_SetMoaiFace(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (object != 0) {
-    u8 *meta = Sprite_AddAnimation(object->sprite, 0x17d);
+  if (actor != 0) {
+    u8 *meta = Sprite_AddAnimation(actor->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   }
 }
 
 /// Every sixteenth frame, a splash under the actor.
-void AquaRockInside_SplashBeneath(struct Actor *object) {
+void AquaRockInside_SplashBeneath(struct Actor *actor) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
-    struct Actor *child = Import_ActorCreate_(0x10d, object->x.fixed,
-                                              object->y.fixed, object->z.fixed);
+    struct Actor *child = Import_ActorCreate_(0x10d, actor->x.fixed,
+                                              actor->y.fixed, actor->z.fixed);
 
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
@@ -1604,8 +1604,8 @@ void AquaRockInside_SplashBeneath(struct Actor *object) {
 
 /// Arriving through the water from above: the leader drops through and lands.
 void AquaRockInside_FallThroughWater(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  u8 *flags = &object->motionFlags;
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  u8 *flags = &actor->motionFlags;
   s32 saved = *flags;
   FIXED speed;
   s32 i;
@@ -1613,24 +1613,24 @@ void AquaRockInside_FallThroughWater(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  Actor_SetSpriteColorMode(object, 9);
+  Actor_SetSpriteColorMode(actor, 9);
   *flags = 0;
-  object->y.fixed = toFIXED(80);
+  actor->y.fixed = toFIXED(80);
   speed = toFIXED(3);
   i = 31;
   do {
-    object->y.fixed -= speed;
-    object->facing += 0x2000;
+    actor->y.fixed -= speed;
+    actor->facing += 0x2000;
     speed += -(toFIXED(1) / 20);
-    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteFlags(actor, 0);
     System_Wait(1);
     i--;
   } while (i >= 0);
-  AquaRockInside_SpawnSplash(object);
-  Actor_SetSpriteColorMode(object, 0);
+  AquaRockInside_SpawnSplash(actor);
+  Actor_SetSpriteColorMode(actor, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   *flags = saved;
-  object->velocityY = toFIXED(8);
+  actor->velocityY = toFIXED(8);
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 168, 200);
   Event_End();
@@ -1653,7 +1653,7 @@ void AquaRockInside_UpdateVents(void) {
     Scene_QueueMusic(-1);
     break;
   }
-  Vents_AdvanceCounter(60 * 60 * 60);
+  Vent_AdvanceCounter(60 * 60 * 60);
 }
 
 extern u16 gAquaRockInside_FirstOutletSpots[];
@@ -1667,7 +1667,7 @@ extern u32 gAquaRockInside_SecondOutletLevels[];
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
-  struct Actor *object;
+  struct Actor *actor;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
@@ -1694,13 +1694,13 @@ s32 Scene_Initialize(void) {
       AquaRockInside_SetMoaiFace(ACTOR_STEAM_ROOM_MOAI);
       Actor_SetAnimation(ACTOR_STEAM_ROOM_MOAI, 3);
     }
-    object = Actor_GetById(ACTOR_STEAM_ROOM_PILLAR);
-    object->motionFlags = 0;
+    actor = Actor_GetById(ACTOR_STEAM_ROOM_PILLAR);
+    actor->motionFlags = 0;
     if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI)) {
       Actor_SetPosition(ACTOR_STEAM_ROOM_PILLAR, 632, 152);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, 39, 9);
-      object->y.fixed = 0;
-      object->groundHeight = 0;
+      actor->y.fixed = 0;
+      actor->groundHeight = 0;
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
     if (entrance == 7)
@@ -1724,11 +1724,11 @@ s32 Scene_Initialize(void) {
     }
     Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->riseCounter = 1;
     Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->riseCounter = 1;
-    object = Actor_GetById(ACTOR_RUSTY_SWORD_CHEST);
-    if (object != 0) {
-      object->motionFlags = 0;
-      object->groundHeight = -toFIXED(32);
-      object->y.fixed = -toFIXED(32);
+    actor = Actor_GetById(ACTOR_RUSTY_SWORD_CHEST);
+    if (actor != 0) {
+      actor->motionFlags = 0;
+      actor->groundHeight = -toFIXED(32);
+      actor->y.fixed = -toFIXED(32);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     if ((u32)(entrance - 5) <= 1) {
@@ -1751,11 +1751,11 @@ s32 Scene_Initialize(void) {
       AquaRockInside_SetMoaiFace(ACTOR_VIAL_CHEST_MOAI);
       Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 3);
     }
-    object = Actor_GetById(ACTOR_VIAL_CHEST_SPLASH);
-    Actor_SetSpriteFlags(object, 0);
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->update = (void (*)(void))AquaRockInside_SplashBeneath;
+    actor = Actor_GetById(ACTOR_VIAL_CHEST_SPLASH);
+    Actor_SetSpriteFlags(actor, 0);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->update = (void (*)(void))AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       AquaRockInside_FallThroughWater();
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
@@ -2083,16 +2083,16 @@ s32 Scene_PrepareMap(void) {
 }
 
 /// A splash at the actor's feet, on its sprite's priority.
-void AquaRockInside_SpawnSplash(struct Actor *object) {
+void AquaRockInside_SpawnSplash(struct Actor *actor) {
   struct Actor *child =
-      FieldActor_Create(14, object->x.fixed, object->y.fixed + toFIXED(4),
-                        object->z.fixed + toFIXED(4));
-  struct FieldSprite *source = object->sprite;
+      FieldActor_Create(14, actor->x.fixed, actor->y.fixed + toFIXED(4),
+                        actor->z.fixed + toFIXED(4));
+  struct FieldSprite *source = actor->sprite;
 
   if (child != 0) {
     struct FieldSprite *sprite = child->sprite;
 
-    child->groundHeight = object->groundHeight;
+    child->groundHeight = actor->groundHeight;
     Actor_StartScript(child, gAquaRockInside_StreamSplashScript);
     child->motionFlags = 0;
     if (sprite != 0) {
@@ -2370,18 +2370,18 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
 
 /// Adds a water pillar on actor `id`, of `kind`, risen to `height` steps.
 void AquaRockInside_AddPillar(s32 id, s32 kind, s32 height) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct PillarWork *work = &gAquaRockInside_Pillars;
   struct PillarEntry *entry = &work->entries[work->count];
 
-  if (object != 0) {
+  if (actor != 0) {
     entry->x = 0;
     entry->z = 0;
     entry->base = height << 19;
     entry->height = height << 19;
     entry->state = 2;
     entry->kind = kind;
-    entry->position = &object->x.fixed;
+    entry->position = &actor->x.fixed;
     work->count++;
   }
 }
@@ -2604,24 +2604,24 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
 
 /// A puff of mist from a vent at the position, rising from `base`.
 void Vent_Puff(s32 *position, s32 base) {
-  struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
-                                             position[2] - toFIXED(2));
+  struct Actor *actor = Import_ActorCreate_(0x11d, position[0], position[1],
+                                            position[2] - toFIXED(2));
   s32 angle;
 
-  if (object != 0) {
-    object->bounce = Trig_Cos(((u32)(Random16() * (FIXED_ONE * 3 / 16)) >> 16) +
-                              (FIXED_ONE * 3 / 16));
-    object->gravity = (u16)Random16();
-    object->riseBaseY = (u16)(Random16() << 1) + base;
+  if (actor != 0) {
+    actor->bounce = Trig_Cos(((u32)(Random16() * (FIXED_ONE * 3 / 16)) >> 16) +
+                             (FIXED_ONE * 3 / 16));
+    actor->gravity = (u16)Random16();
+    actor->riseBaseY = (u16)(Random16() << 1) + base;
     angle = (u16)Random16() - 0x8000;
-    object->timer = angle;
-    Actor_StartScripted(object, 3);
-    object->update = (void (*)(void))Vent_Bounce;
-    Actor_SetBlendMode(object, 1);
+    actor->timer = angle;
+    Actor_StartScripted(actor, 3);
+    actor->update = (void (*)(void))Vent_Bounce;
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
-#include "shared/vents_update.h"
+#include "shared/vent_update.h"
 
 /// Sets up the vents from the spots and levels given, unless the party's place
 /// is kept, and starts the vents' task with `handler`.
@@ -2677,7 +2677,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(Vent_Update, TASK_PASS_VBLANK);
 }
 
 /// Whether vent `index` blows.
@@ -2697,7 +2697,7 @@ s32 AquaRockInside_SetVentActive(s32 index, s32 value) {
 /// The vents' frame counter.
 s32 AquaRockInside_GetVentCounter(void) { return VENT_WORK->counter; }
 
-#include "shared/vents_advance_counter.h"
+#include "shared/vent_advance_counter.h"
 
 /// Sets vent `index`'s value.
 void AquaRockInside_SetVentValue(s32 index, s32 value) {
@@ -2706,38 +2706,10 @@ void AquaRockInside_SetVentValue(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-#include "shared/vents_set_id.h"
+#include "shared/vent_set_id.h"
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The cell blocks the spring's levels copy, x then z.
 u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};

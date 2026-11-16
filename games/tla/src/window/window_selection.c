@@ -1350,25 +1350,24 @@ void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 /// Resource_ResetPendingTransfer.
 void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
-  struct SelectionNode *selection = SelectionMenu_GetCursorNode(state);
+  struct SelectionNode *node = SelectionMenu_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;
   void *resource;
   s32 no;
 
-  if (selection->kind != ICON_KIND_COMMAND &&
-      selection->kind != ICON_KIND_YES_NO)
+  if (node->kind != ICON_KIND_COMMAND && node->kind != ICON_KIND_YES_NO)
     return;
 
   buffer = (GlyphTransfer *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER,
                                            sizeof(GlyphTransfer));
   transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
-  no = selection->base;
+  no = node->base;
   table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **destination = &buffer->encoded;
-    resource = table + ((u16 *)table)[selection->base];
+    resource = table + ((u16 *)table)[node->base];
     *destination = resource;
   }
   Decompress_ByteLz(resource, buffer);

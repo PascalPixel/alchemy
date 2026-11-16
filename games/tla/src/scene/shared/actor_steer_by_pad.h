@@ -1,28 +1,28 @@
 /// Turns an actor toward the direction pad, at most a sixteenth of a turn a
 /// frame.
-void Actor_SteerByPad(struct Actor *object) {
+void Actor_SteerByPad(struct Actor *actor) {
   s32 angle;
   s32 turn;
 
-  if (object->timer != 0) {
-    object->timer--;
+  if (actor->timer != 0) {
+    actor->timer--;
     return;
   }
-  object->steeringFlags = 0;
+  actor->steeringFlags = 0;
   if (Event_GetFlag(FLAG_MENU_OPEN))
     angle = -1;
   else
     angle = gSlideOnIce_SteerAngles[(gInput.held >> 4) & 15];
   if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
+    Actor_SelectAnimation(actor, 9);
     return;
   }
-  turn = (s16)(angle - object->facing);
+  turn = (s16)(angle - actor->facing);
   if (turn > 0x1000)
     turn = 0x1000;
   if (turn < -0x1000)
     turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
+  actor->facing += turn;
+  Actor_SelectAnimation(actor, 2);
+  Actor_SetAnimationSpeed(actor, 48);
 }

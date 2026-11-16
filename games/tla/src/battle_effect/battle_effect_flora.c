@@ -807,7 +807,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
                 work->sheet + FLORA_STORM_PETALS +
                     (p->variant / 4 % FLORA_BLOOM_TILES << 8),
                 FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y), 16, 16);
-        BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -toFIXED(1) / 16;
         p->variant++;
       }
@@ -978,10 +978,10 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
-        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity3D(dagger, PARTICLE_DAMPING_NONE, 0);
       else
-        BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE,
-                                             -toFIXED(1) / 16);
+        Particle_AdvanceWithGravity3D(dagger, PARTICLE_DAMPING_NONE,
+                                      -toFIXED(1) / 16);
     }
     Heap_Release(quad);
     Heap_Release(vertices);
@@ -1089,7 +1089,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(puff->x) - 12,
                   FIXED_INTEGER_PART(puff->y) - 24, SMOKE_PUFF_WIDTH,
                   SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(puff, 48, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(puff, 48, -toFIXED(1) / 8);
           puff->variant++;
         }
       }
@@ -1148,7 +1148,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
                   work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
                   FIXED_INTEGER_PART(star->x) - 8,
                   FIXED_INTEGER_PART(star->y) - 8, 16, 16);
-          BattleEffectKernels_IntegrateVector2(star, 56, 0);
+          Particle_AdvanceWithGravity2D(star, 56, 0);
           star->variant--;
         }
       }

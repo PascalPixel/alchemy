@@ -142,14 +142,14 @@ void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
 /// After Move: once the bridge block sits on its cell over the gap, it rises
 /// 32 pixels and hovers there for good.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
-  object = Actor_Get(id);
-  if (FIELD_CELL(object->x.fixed) == 10 && FIELD_CELL(object->z.fixed) == 32) {
-    object->motionFlags = 0;
+  actor = Actor_Get(id);
+  if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 32) {
+    actor->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y.fixed += toFIXED(2);
+      actor->y.fixed += toFIXED(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -215,47 +215,47 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// down, taking mode 7 at phase 1 and mode 2 at phase 38 and starting over once
 /// above the ground; drawn in front while the sine is negative and behind
 /// otherwise.
-void JupiterLighthouse_CircleTheMote(struct Actor *object) {
-  s16 angle = object->timer;
-  s16 height = object->userValue;
+void JupiterLighthouse_CircleTheMote(struct Actor *actor) {
+  s16 angle = actor->timer;
+  s16 height = actor->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulFX(Trig_Cos(angle), object->speedLimit) + toFIXED(232),
+      actor, Iwram_MulFX(Trig_Cos(angle), actor->speedLimit) + toFIXED(232),
       (height * toFIXED(3)) - toFIXED(120), toFIXED(520));
-  if ((s16)object->userValue == 1)
-    Actor_SelectAnimation(object, 7);
-  if ((s16)object->userValue == 38)
-    Actor_SelectAnimation(object, 2);
-  if (object->y.fixed > 0)
-    object->userValue = -1;
+  if ((s16)actor->userValue == 1)
+    Actor_SelectAnimation(actor, 7);
+  if ((s16)actor->userValue == 38)
+    Actor_SelectAnimation(actor, 2);
+  if (actor->y.fixed > 0)
+    actor->userValue = -1;
   if (Math_Sin(angle) < 0)
-    ((struct FieldSprite *)object->sprite)->priority = 1;
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
   else
-    ((struct FieldSprite *)object->sprite)->priority = 3;
-  object->timer += object->acceleration;
-  object->userValue++;
+    ((struct FieldSprite *)actor->sprite)->priority = 3;
+  actor->timer += actor->acceleration;
+  actor->userValue++;
 }
 
 /// Sends up seven motes of light, each at its own radius, speed and angle and
 /// five steps of rise apart, to circle the room's middle.
 void JupiterLighthouse_SpawnCirclingMotes(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
   s32 phase;
 
   i = 0;
   for (phase = 0; i != 7; i++) {
-    object = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
-    object->motionFlags = 0;
-    object->priorityFlags = 0;
-    object->speedLimit = (Random16() << 2) + 0x60000;
-    object->acceleration = ((Random16() << 11) >> 16) + 0x800;
-    object->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
-    object->timer = Random16();
-    object->userValue = phase;
-    Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
-    ((struct FieldSprite *)object->sprite)->priority = 1;
+    actor = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
+    actor->motionFlags = 0;
+    actor->priorityFlags = 0;
+    actor->speedLimit = (Random16() << 2) + 0x60000;
+    actor->acceleration = ((Random16() << 11) >> 16) + 0x800;
+    actor->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
+    actor->timer = Random16();
+    actor->userValue = phase;
+    Actor_SetSpriteFlags(actor, 0);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
     phase += 5;
   }
 }
@@ -370,7 +370,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -382,7 +382,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// Unused: every eighth frame, sends a spark up from a random spot about the
 /// actor.
-UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
+UNUSED s32 Actor_EmitRisingSparks(struct Actor *actor) {
   struct EffectOptions options;
   FIXED x;
   FIXED y;
@@ -393,10 +393,10 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
     options.startScaleX = FIXED_ONE * 7 / 10;
     options.startScaleY = FIXED_ONE * 7 / 10;
     options.palette = 14;
-    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
-    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
+    x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
     velocityY = (s32)((toFIXED(Random_Below(5)) + 0x50000)) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
                       &options);
@@ -404,7 +404,7 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
   return 0;
 }
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// The aerie beacon's actors, which the unused copy below of its
 /// JupiterLighthouse_EnergizeAngels places (jupiter_lighthouse_aerie_beacon.c).
@@ -562,31 +562,9 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoomLockedDoors),
@@ -687,18 +665,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -726,10 +704,10 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// Watches the leader's steps over the cracked tiles: the first step on one
 /// cracks it, a second step after leaving it drops the party through, saving
 /// the cell in the flag bytes for the floor below. Returns 1 on a fall.
-s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+s32 CrackedTile_Step(void) {
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   struct CellTarget *puzzle = &gCrackedTiles;
   struct CellTargetEntry *tile = puzzle->entries;
   s32 i;
@@ -757,7 +735,7 @@ s32 CrackedTiles_Step(void) {
 /// On landing below a cracked tile, puts the leader on the cell the flag bytes
 /// saved, offset by (dx, dz), and starts the screen transition.
 void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
@@ -768,11 +746,11 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = FIELD_CELL_CENTER(x + dx);
-    object->z.fixed = FIELD_CELL_CENTER(z + dz);
+    actor->x.fixed = FIELD_CELL_CENTER(x + dx);
+    actor->z.fixed = FIELD_CELL_CENTER(z + dz);
     camera = event->camera;
-    camera->x.fixed = object->x.fixed;
-    camera->z.fixed = object->z.fixed;
+    camera->x.fixed = actor->x.fixed;
+    camera->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = transition;

@@ -161,11 +161,7 @@ void KibomboMountains_StepBeforeLowerGuard(void);
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
-/// Rope_Place, from an event.
-static inline void FieldRope_Place(s32 index, s32 flag, s32 post,
-                                   s32 otherPost) {
-  Rope_Place(index, flag, post, otherPost);
-}
+#include "shared/field_rope_place.c"
 
 void Field_TryJumpForward(void);
 
@@ -198,10 +194,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Frost freezes the puddle into a pillar to climb.
 void KibomboMountains_FreezePuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_PUDDLE);
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
+  actor->priorityFlags = 0;
+  actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
   Event_SetFlag(FLAG_PUDDLE_FROZEN);
 }
@@ -223,8 +219,8 @@ void KibomboMountains_StartPushingCrate(s32 unused, s32 id) {
 
 extern s32 gKibomboMountains_BobScript[];
 
-void Actor_StartScript(struct Actor *object, const u8 *script);
-void Actor_StartIdle(struct Actor *object);
+void Actor_StartScript(struct Actor *actor, const u8 *script);
+void Actor_StartIdle(struct Actor *actor);
 
 /// A crate pushed off the ledge: dropped by the dog it shuts the dog in on one
 /// side; dropped on the lower guard it knocks him out, and missing him only
@@ -339,20 +335,20 @@ void KibomboMountains_JumpForward(void) { Field_TryJumpForward(); }
 
 /// Frost freezes the chest room's first puddle into a pillar.
 void KibomboMountains_FreezeFirstPuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_FIRST_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PUDDLE);
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
+  actor->priorityFlags = 0;
+  actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
   Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
 }
 
 /// Frost freezes the chest room's second puddle into a pillar.
 void KibomboMountains_FreezeSecondPuddle(void) {
-  struct Actor *object = Actor_Get(ACTOR_SECOND_PUDDLE);
+  struct Actor *actor = Actor_Get(ACTOR_SECOND_PUDDLE);
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
+  actor->priorityFlags = 0;
+  actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -369,9 +365,9 @@ void KibomboMountains_StartPushingChestRoomCrate(s32 unused, s32 id) {
 /// Copies the cell at (sourceX, sourceY) of the map grid to the cell actor `id`
 /// stands on.
 void KibomboMountains_SetCrateCell(s32 id, s32 sourceX, s32 sourceY) {
-  struct Actor *object = Actor_Get(id);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_Get(id);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   MapGrid_CopyCellAttributes(sourceX, sourceY, 1, 1, x, z);
 }
@@ -380,10 +376,10 @@ void KibomboMountains_SetCrateCell(s32 id, s32 sourceX, s32 sourceY) {
 /// lands for good, and a pair of crates leaves its cells solid.
 void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 id) {
   if (id == ACTOR_FIRST_DROPPED_PILLAR) {
-    struct Actor *object = Actor_Get(ACTOR_FIRST_DROPPED_PILLAR);
+    struct Actor *actor = Actor_Get(ACTOR_FIRST_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
-      s32 x = FIELD_CELL(object->x.fixed);
+      s32 x = FIELD_CELL(actor->x.fixed);
 
       if (x == 4) {
         Actor_WaitToLand(ACTOR_FIRST_DROPPED_PILLAR);
@@ -393,13 +389,13 @@ void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 id) {
     }
   }
   if (id == ACTOR_SECOND_DROPPED_PILLAR) {
-    struct Actor *object = Actor_Get(ACTOR_SECOND_DROPPED_PILLAR);
+    struct Actor *actor = Actor_Get(ACTOR_SECOND_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_SECOND_PILLAR_DROPPED)) {
-      s32 x = FIELD_CELL(object->x.fixed);
+      s32 x = FIELD_CELL(actor->x.fixed);
 
       if (x == 28) {
-        s32 z = FIELD_CELL(object->z.fixed);
+        s32 z = FIELD_CELL(actor->z.fixed);
 
         if (z == 30) {
           Actor_WaitToLand(ACTOR_SECOND_DROPPED_PILLAR);
@@ -446,7 +442,7 @@ void Rope_Initialize(void);
 #endif
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s16 scene;
   s32 flag;
   s32 height;
@@ -505,21 +501,21 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
     if (GameFlag_Get(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
-      object = Actor_GetById(ACTOR_FIRST_DROPPED_PILLAR);
+      actor = Actor_GetById(ACTOR_FIRST_DROPPED_PILLAR);
       Actor_SetPosition(ACTOR_FIRST_DROPPED_PILLAR, 72, 456);
-      object->motionFlags = 0;
-      height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
-      object->groundHeight = height;
-      object->y.fixed = height;
+      actor->motionFlags = 0;
+      height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+      actor->groundHeight = height;
+      actor->y.fixed = height;
       MapGrid_CopyCellAttributes(3, 28, 1, 1, 4, 28);
     }
     if (GameFlag_Get(FLAG_KIBOMBO_SECOND_PILLAR_DROPPED)) {
-      object = Actor_GetById(ACTOR_SECOND_DROPPED_PILLAR);
+      actor = Actor_GetById(ACTOR_SECOND_DROPPED_PILLAR);
       Actor_SetPosition(ACTOR_SECOND_DROPPED_PILLAR, 456, 488);
-      object->motionFlags = 0;
-      height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
-      object->groundHeight = height;
-      object->y.fixed = height;
+      actor->motionFlags = 0;
+      height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+      actor->groundHeight = height;
+      actor->y.fixed = height;
       MapGrid_CopyCellAttributes(32, 30, 1, 2, 28, 30);
     }
     MapGrid_CopyCellAttributes(8, 15, 16, 4, 112, 15);
@@ -595,11 +591,11 @@ void KibomboMountains_GuardsReport(void) {
 
 /// Sets an actor walking slowly, at half a pixel a frame.
 void KibomboMountains_WalkSlowly(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  Actor_SelectAnimation(object, 1);
-  object->acceleration = toFIXED(1) / 4;
-  object->speedLimit = toFIXED(1) / 2;
+  Actor_SelectAnimation(actor, 1);
+  actor->acceleration = toFIXED(1) / 4;
+  actor->speedLimit = toFIXED(1) / 2;
 }
 
 /// Caught: "Here! The intruder is here!" The warriors march the party back down
@@ -849,10 +845,7 @@ s32 gKibomboMountains_RaisedPillarScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(KibomboMountainsWaft),

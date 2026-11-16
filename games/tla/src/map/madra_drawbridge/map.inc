@@ -36,7 +36,7 @@ Tileset_MadraDrawbridgePalette:
 	.global Tileset_MadraDrawbridgeTilesA
 Tileset_MadraDrawbridgeTilesA:
 	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_a.4bpp.mtf"
-	.byte 0x3e	@ PACKER: left in the buffer by Field_MadraInteriors+0x2e4f
+	.byte 0x3e	@ PACKER: left in the buffer by Field_MadraRooms+0x2e4f
 	.global Tileset_MadraDrawbridgeTilesB
 Tileset_MadraDrawbridgeTilesB:
 	.incbin "games/tla/src/graphics/tileset/madra_drawbridge/tiles_b.4bpp.mtf"

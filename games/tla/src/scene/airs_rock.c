@@ -167,41 +167,7 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 actorId) {
 
 void Actor_PlaceMovedBlock(void);
 
-/// For each id of a list ended by 0xffff: clears the actor's mark and, on a
-/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-/// the mark.
-void Blocks_MarkCells(u16 *ids) {
-  struct Actor *object;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  while (*ids != 0xffff) {
-    object = Actor_Get(*ids);
-    blocked = &object->riseEnabled;
-    *blocked = 0;
-    if (MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
-                              FIELD_CELL(object->z.fixed)) &
-        0x40) {
-      map = Ram_HeapSlots->mapGrid;
-      if (map == NULL)
-        return;
-      cells = &map->layers[2].cells;
-      z = FIELD_CELL(object->z.fixed - object->y.fixed);
-      x = FIELD_CELL(object->x.fixed);
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      *blocked = 1;
-    }
-    ids++;
-  }
-}
+#include "shared/blocks_mark_cells.c"
 
 /// Frees the cells ahead of and behind a block that Blocks_MarkCells blocked,
 /// and clears its mark.
@@ -285,12 +251,12 @@ void AirsRock_EnterTheRock(void) {
 /// Move on the first pillar: on column 31 it sets FLAG_AREA_TEMP_10, elsewhere
 /// clears it.
 void AirsRock_MoveFirstPillar(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_FIRST_PILLAR);
+  actor = Actor_Get(ACTOR_FIRST_PILLAR);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FIELD_CELL(object->x.fixed) == 31) {
+  if (FIELD_CELL(actor->x.fixed) == 31) {
     Event_SetFlag(FLAG_AREA_TEMP_10);
   } else {
     Event_ClearFlag(FLAG_AREA_TEMP_10);
@@ -303,15 +269,15 @@ void AirsRock_MoveFirstPillar(void) {
 /// elsewhere the flag clears and their high byte is 0xff. With the leader 208
 /// to 215 pixels up the cell's attributes are copied over as well.
 void AirsRock_MoveSecondPillar(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *leader;
   s32 value;
 
-  object = Actor_Get(ACTOR_SECOND_PILLAR);
+  actor = Actor_Get(ACTOR_SECOND_PILLAR);
   value = MapCell_GetAttributes(3, 70, 67);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FIELD_CELL(object->x.fixed) == 32) {
+  if (FIELD_CELL(actor->x.fixed) == 32) {
     Event_SetFlag(FLAG_AREA_TEMP_11);
     value &= 0xff;
     MapCell_SetAttributes(4, 70, 67, value);
@@ -330,12 +296,12 @@ void AirsRock_MoveSecondPillar(void) {
 
 /// Move on the third pillar: set down at x 184 to 191 it stays moved.
 void AirsRock_MoveThirdPillar(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_THIRD_PILLAR);
+  actor = Actor_Get(ACTOR_THIRD_PILLAR);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((object->x.fixed >> 19) == 23) {
+  if ((actor->x.fixed >> 19) == 23) {
     Event_SetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
   }
   Event_End();
@@ -398,47 +364,47 @@ void AirsRock_TakeOverWhirlwind(void) {
 
 /// A gust's spark: circles the centre kept in bounce and riseBaseY, a lap every
 /// 32 frames, its radius growing as it rises.
-void AirsRock_SpiralGust(struct Actor *object) {
-  s32 radius = object->y.fixed;
-  s32 step = object->speedLimit;
+void AirsRock_SpiralGust(struct Actor *actor) {
+  s32 radius = actor->y.fixed;
+  s32 step = actor->speedLimit;
 
   radius >>= 1;
   radius += toFIXED(16);
-  object->x.fixed =
-      object->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius);
-  object->z.fixed =
-      object->riseBaseY +
-      Iwram_MulFX(Math_Sin((object->speedLimit & 255) << 11), radius) / 3;
-  object->y.fixed += object->gravity;
-  object->speedLimit++;
+  actor->x.fixed =
+      actor->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius);
+  actor->z.fixed =
+      actor->riseBaseY +
+      Iwram_MulFX(Math_Sin((actor->speedLimit & 255) << 11), radius) / 3;
+  actor->y.fixed += actor->gravity;
+  actor->speedLimit++;
 }
 
 /// The same circle on a smaller radius, twice as wide, blinking the part
 /// attribute every other frame.
-void AirsRock_SpiralSpark(struct Actor *object) {
-  s32 radius = object->y.fixed;
-  s32 step = object->speedLimit;
+void AirsRock_SpiralSpark(struct Actor *actor) {
+  s32 radius = actor->y.fixed;
+  s32 step = actor->speedLimit;
 
   radius >>= 2;
   radius += toFIXED(12);
-  object->x.fixed =
-      object->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
-  object->z.fixed =
-      object->riseBaseY +
-      Iwram_MulFX(Math_Sin((object->speedLimit & 255) << 11), radius);
-  object->y.fixed += object->gravity;
-  object->speedLimit++;
-  FieldActor_SetSpriteColor(object,
+  actor->x.fixed =
+      actor->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
+  actor->z.fixed =
+      actor->riseBaseY +
+      Iwram_MulFX(Math_Sin((actor->speedLimit & 255) << 11), radius);
+  actor->y.fixed += actor->gravity;
+  actor->speedLimit++;
+  FieldActor_SetSpriteColor(actor,
                             ((gFrameCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /// A Whirlwind target's update while the gust gathers: it flickers to the
 /// colour mode in riseCounter (a SpriteColorMode), at the rate riseEnabled
 /// sets.
-void AirsRock_FlickerTarget(struct Actor *object) {
-  u32 on = ((gFrameCount & 3) >> object->riseEnabled) & 1;
+void AirsRock_FlickerTarget(struct Actor *actor) {
+  u32 on = ((gFrameCount & 3) >> actor->riseEnabled) & 1;
 
-  FieldActor_SetSpriteColor(object, (u8)(on * object->riseCounter));
+  FieldActor_SetSpriteColor(actor, (u8)(on * actor->riseCounter));
 }
 
 // The Whirlwind gust in Air's Rock.
@@ -642,26 +608,26 @@ s16 gAirsRock_WaveLines[160 * 3] BSS_DATA ALIGNED(16);
 /// Moves the object: left of x 320 it speeds up rightward and grows, past it
 /// it speeds up leftward and shrinks; its priority follows its direction and
 /// its sprite spins.
-void AirsRock_SwirlLeaf(struct Actor *object) {
+void AirsRock_SwirlLeaf(struct Actor *actor) {
   FIXED scale;
 
-  object->y.fixed += object->gravity;
-  object->x.fixed += object->bounce;
-  object->z.fixed += object->riseBaseY;
-  if ((object->x.fixed >> 19) <= 39) {
-    object->bounce += FIXED_ONE * 3 / 2;
-    scale = object->scaleX + (FIXED_ONE / 20);
+  actor->y.fixed += actor->gravity;
+  actor->x.fixed += actor->bounce;
+  actor->z.fixed += actor->riseBaseY;
+  if ((actor->x.fixed >> 19) <= 39) {
+    actor->bounce += FIXED_ONE * 3 / 2;
+    scale = actor->scaleX + (FIXED_ONE / 20);
   } else {
-    object->bounce -= FIXED_ONE * 3 / 2;
-    scale = object->scaleX - (FIXED_ONE / 50);
+    actor->bounce -= FIXED_ONE * 3 / 2;
+    scale = actor->scaleX - (FIXED_ONE / 50);
   }
-  object->scaleX = scale;
-  object->scaleY = scale;
-  if (object->bounce > 0)
-    Scene_SetActorSpritePriority(object, 1);
+  actor->scaleX = scale;
+  actor->scaleY = scale;
+  if (actor->bounce > 0)
+    Scene_SetActorSpritePriority(actor, 1);
   else
-    Scene_SetActorSpritePriority(object, 2);
-  ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
+    Scene_SetActorSpritePriority(actor, 2);
+  ((struct FieldSprite *)actor->sprite)->rotation += 0x1800;
 }
 
 /// Whirlwind on the twister rock of the first slope: the mud is blown from the
@@ -1069,7 +1035,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
 /// time: while none of the event work's four busy counters is set it counts
 /// frames in its action parameter, and at 240 launches a shot 8 pixels ahead
 /// along its angle with a dust effect below it.
-void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
+void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
@@ -1078,19 +1044,19 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0)
     return;
-  if (object->timer == 240) {
+  if (actor->timer == 240) {
     if (!Event_GetFlag(FLAG_RIDING_WHIRLWIND))
-      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == FACING_NORTH) {
-      position.x = object->x.fixed;
-      position.z = object->z.fixed;
+      Actor_PlaySoundInView(actor, SE_FLAME_FLARE);
+    if (actor->facing == FACING_NORTH) {
+      position.x = actor->x.fixed;
+      position.z = actor->z.fixed;
     } else {
       position.x =
-          object->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(object->facing));
+          actor->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(actor->facing));
       position.z =
-          object->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(object->facing));
+          actor->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(actor->facing));
     }
-    shot = FieldActor_Create(SPRITE_WHIRLWIND, position.x, object->y.fixed,
+    shot = FieldActor_Create(SPRITE_WHIRLWIND, position.x, actor->y.fixed,
                              position.z);
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
@@ -1098,16 +1064,16 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
     shot->motionFlags = 0;
     shot->riseCounter = 0;
     shot->riseEnabled = 0;
-    shot->facing = object->facing;
+    shot->facing = actor->facing;
     shot->update = AirsRock_MoveWhirlwind;
-    shot->watchedActor = object;
-    object->timer = 0;
+    shot->watchedActor = actor;
+    actor->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y.fixed, position.z - toFIXED(6), 0,
-                      0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, actor->y.fixed, position.z - toFIXED(6), 0, 0,
+                      0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
-  object->timer++;
+  actor->timer++;
 }
 
 /// Before a push or Move on a pillar: lifts it and frees the cells beside it.
@@ -1121,25 +1087,25 @@ void AirsRock_LiftPillar(void) {
 /// After it: a pillar left over a gap drops into it with a thump, closing the
 /// gap, and sets its flag.
 void AirsRock_PlacePillar(void) {
-  struct Actor *object = gFieldWork->movedBlock;
+  struct Actor *actor = gFieldWork->movedBlock;
   s32 x, z;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
   Blocks_MarkCells(((u8 *)gAirsRock_EntrancePillars));
-  if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
-      object->y.fixed) {
-    object->layer = 2;
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    OverlayObject_WaitUntilIdle(object);
-    OverlayObject_WaitUntilIdle(object);
+  if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
+      actor->y.fixed) {
+    actor->layer = 2;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    OverlayObject_WaitUntilIdle(actor);
+    OverlayObject_WaitUntilIdle(actor);
     Event_PlaySound(SE_THUMP);
-    object->motionFlags = 0;
-    object->layer = 0;
+    actor->motionFlags = 0;
+    actor->layer = 0;
   }
-  x = FIELD_CELL(object->x.fixed);
-  z = FIELD_CELL(object->z.fixed);
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   if (x == 16 && z == 43)
     Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST);
   else if (x == 45 && z == 45)
@@ -1942,35 +1908,7 @@ s32 Scene_PrepareMap(void) {
 void AirsRock_MoveSecondPillar(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 s16 gAirsRock_EntrancePillars[] = {
     ACTOR_FIRST_LEDGE_PILLAR,  ACTOR_SECOND_LEDGE_PILLAR, ACTOR_THIRD_LEDGE_PILLAR,
@@ -2018,10 +1956,7 @@ s16 gAirsRock_FrozenPuddle[] = {
     ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 struct SceneRegion gAirsRock_StormBrandChestRegions[] = {
     {256, 96, 144, 272, 112, 160, CONDITION_ALWAYS, 2},

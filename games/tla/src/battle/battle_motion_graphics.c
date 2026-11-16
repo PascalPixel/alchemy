@@ -503,7 +503,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetOrFadeIndex;
   s32 inventoryEntry;
   struct Unit *unit;
-  struct ItemDefinition *itemDefinition;
+  struct ItemDefinition *item;
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   s32 targetYaw;
 
@@ -580,8 +580,8 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
   unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
-  itemDefinition = Item_GetDirectFar(inventoryEntry);
-  if (itemDefinition->useType == ITEM_USE_CONSUMED) {
+  item = Item_GetDirectFar(inventoryEntry);
+  if (item->useType == ITEM_USE_CONSUMED) {
     s32 result = Inventory_RemoveFar(selection->unitId, selection->parameter);
     s32 index = selection->parameter;
     if (result == INVENTORY_REMOVE_LAST) {
@@ -598,7 +598,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
         }
       }
     }
-  } else if (itemDefinition->useType == ITEM_USE_MAY_BREAK) {
+  } else if (item->useType == ITEM_USE_MAY_BREAK) {
     if ((Battle_RandomFar() & 7) == 0) {
       BattlePlayback_Push(PLAYBACK_ITEM_NAME,
                           unit->inventory[selection->parameter]);
@@ -606,7 +606,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattlePlayback_RunAll();
     }
-  } else if (itemDefinition->useType == ITEM_USE_EMPTIES) {
+  } else if (item->useType == ITEM_USE_EMPTIES) {
     if ((inventoryEntry & INVENTORY_ITEM_ID_MASK) == ITEM_HERMES_WATER)
       inventoryEntry = ITEM_EMPTY_BOTTLE;
     unit->inventory[selection->parameter] = inventoryEntry;

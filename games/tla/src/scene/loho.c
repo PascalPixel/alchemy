@@ -66,8 +66,8 @@ enum LohoActorId {
   ACTOR_BOULDER     ///< raised by Lift
 };
 
-/// Loho's houses, by the rows of gLoho_InteriorsPlacements.
-enum LohoInteriorsActorId {
+/// Loho's houses, by the rows of gLoho_RoomsPlacements.
+enum LohoRoomsActorId {
   ACTOR_VILLAGER_ON_COMMERCE = ACTOR_FIRST_PLACED, ///< Loho_TalkAboutCommerce
   ACTOR_INNKEEPER,
   ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
@@ -84,7 +84,7 @@ extern s32 gLoho_VillagerReturns[];
 void Loho_ClimbDownLadder(void);
 extern u32 gLoho_Regions[];
 extern struct ActorPlacement gLoho_TownPlacements[];
-extern struct ActorPlacement gLoho_InteriorsPlacements[];
+extern struct ActorPlacement gLoho_RoomsPlacements[];
 extern s32 gLoho_FirstMinerGoesToWall[];
 extern s32 gLoho_SecondMinerStepsUp[];
 
@@ -96,7 +96,7 @@ extern s32 gLoho_FirstMinerReturns[];
 extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
-extern struct Trigger gLoho_InteriorsTriggers[];
+extern struct Trigger gLoho_RoomsTriggers[];
 extern struct MapGridCellAnimation gLoho_HouseDoor;
 extern s32 gLoho_VillagerPaces[];
 
@@ -137,7 +137,7 @@ void Loho_MeetLull(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const u32 *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
+  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
     return gLoho_Regions;
   return 0;
 }
@@ -145,8 +145,8 @@ const u32 *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
-    return gLoho_InteriorsPlacements;
+  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
+    return gLoho_RoomsPlacements;
   return gLoho_TownPlacements;
 }
 
@@ -642,8 +642,8 @@ void Loho_LiftRock(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_LOHO)
     return gLoho_TownTriggers;
-  if (gMainRoutineWork.next == SCENE_LOHO_INTERIORS)
-    return gLoho_InteriorsTriggers;
+  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
+    return gLoho_RoomsTriggers;
   return gLoho_Triggers;
 }
 
@@ -832,7 +832,7 @@ void Loho_SetUpTown(void) {
 
 /// The houses open with the window transition; the innkeeper, behind his
 /// counter, casts no shadow.
-void Loho_SetUpInteriors(void) {
+void Loho_SetUpRooms(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INNKEEPER), 0);
 }
@@ -855,7 +855,7 @@ s32 Scene_Initialize(void) {
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, 1);
     Loho_SetUpTown();
   } else {
-    Loho_SetUpInteriors();
+    Loho_SetUpRooms();
   }
   if (Event_GetFlag(FLAG_LOHO_WALL_BREACHED)) {
     Actor_SetPosition(ACTOR_CANNON, 0, 0);
@@ -1042,10 +1042,7 @@ s32 gLoho_VillagerMovesNorth[] = {
       SC_END,                                                                  
   };
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 /// The houses' exit regions.
 u32 gLoho_Regions[] = {
@@ -1055,26 +1052,26 @@ u32 gLoho_Regions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Loho),
-    SCENE_EXIT_UNLESS(1, LohoInteriors, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, LohoInteriors, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LohoInteriors, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LohoInteriors, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, LohoInteriors, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, LohoInteriors, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LohoInteriors, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LohoInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, LohoRooms, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, LohoRooms, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, LohoRooms, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, LohoRooms, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, LohoRooms, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, LohoRooms, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, LohoRooms, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, LohoRooms, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, WorldMap, 59, EXIT_FLAG_NONE),
-    SCENE_EXITS(LohoInteriors),
+    SCENE_EXITS(LohoRooms),
     SCENE_EXIT_UNLESS(1, Loho, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Loho, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Loho, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Loho, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Loho, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Loho, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, LohoInteriors, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LohoInteriors, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LohoInteriors, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, LohoInteriors, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, LohoRooms, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, LohoRooms, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, LohoRooms, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, LohoRooms, 9, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1098,8 +1095,8 @@ struct ActorPlacement gLoho_TownPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The houses' actors, by enum LohoInteriorsActorId.
-struct ActorPlacement gLoho_InteriorsPlacements[] = {
+/// The houses' actors, by enum LohoRoomsActorId.
+struct ActorPlacement gLoho_RoomsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1178,7 +1175,7 @@ struct Trigger gLoho_TownTriggers[] = {
 };
 
 /// The houses' triggers.
-struct Trigger gLoho_InteriorsTriggers[] = {
+struct Trigger gLoho_RoomsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

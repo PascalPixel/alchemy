@@ -118,7 +118,7 @@ struct HeapSlots {
   void *unusedAfterCanvasSprite; ///< no code allocates or reads this slot
   void *arcEffect;               ///< a field Psynergy's arc work
   /// The Djinn the Naribwe fortune teller may hint at, 320 bytes, while she
-  /// picks one (naribwe_interiors.c).
+  /// picks one (naribwe_rooms.c).
   s32 *djinniHints;
 };
 

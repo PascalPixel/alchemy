@@ -1,0 +1,131 @@
+/// @file
+/// The Mars Lighthouse flame throwers' puffs, which four of its rooms keep a
+/// copy of, with the views of the ride work and heap slots the routine reads
+/// them through.
+
+/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
+typedef struct Entry {
+  s16 active;
+  s16 timer; ///< frames to its next puff
+  u16 flags; ///< enum FlameThrowerFlags: which flame, or none
+  /// Puffs even off screen, and its flames keep their sprites.
+  s16 offScreen;
+  struct Actor *actor;
+  FIXED reach; ///< 16.16 pixels, from the flags' low four bits
+} Entry;
+
+/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
+/// sets stopped, which calls back once.
+typedef struct State {
+  u8 unusedBeforeStopped[6];
+  s16 stopped;
+  s16 wasStopped;
+  u8 unusedAfterWasStopped[4];
+  s16 runsDuringPsynergy; ///< Ride_SetMode: not paused by Psynergy
+  void (*onStopped)();
+  Entry entries[4];
+} State;
+
+/// The heap slots as FlameThrowers_Puff reads them: the field work through a
+/// union, which keeps its read after the stores before it.
+typedef struct HeapSlotsView {
+  u8 unusedBeforeMapGrid[32];
+  struct MapWork *mapGrid;
+  u8 unusedBeforeFieldWork[108 - 36];
+  union {
+    s32 word;
+    void *pointer;
+  } fieldWork;
+} HeapSlotsView;
+
+/// Each frame, every flame thrower in view sends its flame: forward, landing
+/// forward or back, back, or a spark, by its flags, every ninth frame. They
+/// pause while a menu is open, or a Psynergy is used unless the ride work runs
+/// them through it; reaching a stop calls the stop's callback once.
+void FlameThrowers_Puff(void) {
+  s32 saved[2];
+  State *state;
+  Entry *entry;
+  struct MapWork *map;
+  s32 *view;
+  s32 cameraX, cameraZ;
+  s32 v;
+  s32 i;
+
+  state = (State *)RIDE_WORK;
+  map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
+  entry = state->entries;
+  view = &map->viewX;
+  cameraX = view[0];
+  cameraX &= FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
+  saved[1] = map->origin[1];
+  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
+  if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
+    state->onStopped();
+  v = (u16)state->stopped;
+  state->wasStopped = v;
+  state->stopped = 0;
+  for (i = 3; i >= 0; i--, entry++) {
+    struct Actor *actor;
+    s32 flag, x, y, offScreen, value;
+    FIXED dx, dz;
+    u8 *mark;
+
+    if (entry->active == 0)
+      continue;
+    actor = entry->actor;
+    if (actor == 0)
+      continue;
+    flag = GameFlag_Get(FLAG_MENU_OPEN);
+    if (((struct FieldWork *)saved[0])->psynergy != 0)
+      flag |= 1;
+    mark = &actor->paused;
+    *mark = flag;
+    if (state->runsDuringPsynergy != 0)
+      *mark = GameFlag_Get(FLAG_MENU_OPEN);
+    dz = actor->z.fixed;
+    dx = actor->x.fixed - cameraX;
+    y = actor->y.fixed;
+    dz -= cameraZ;
+    y = dz - y;
+    offScreen = entry->offScreen;
+    x = dx >> 16;
+    y = (y >> 16) - 8;
+    if (offScreen == 0) {
+      if ((u32)(x + 7) > 334)
+        continue;
+      if (y <= -48)
+        continue;
+      if (y > 239)
+        continue;
+    }
+    y = (u16)entry->timer;
+    if (entry->timer <= 0) {
+      y = entry->flags & 0xf0;
+      switch (y) {
+      case FLAME_SPARK:
+        Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);
+        break;
+      case FLAME_BACKWARD:
+        Ride_SpawnBackward(&entry->actor->x.fixed, entry->reach, offScreen);
+        break;
+      case FLAME_LANDING_BACKWARD:
+        Ride_SpawnLandingBackward(&entry->actor->x.fixed, entry->reach,
+                                  offScreen);
+        break;
+      case FLAME_LANDING_FORWARD:
+        Ride_SpawnLandingForward(&entry->actor->x.fixed, entry->reach,
+                                 offScreen);
+        break;
+      case FLAME_FORWARD:
+        Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
+        break;
+      }
+      value = 8;
+    } else {
+      value = y - 1;
+    }
+    entry->timer = value;
+  }
+}

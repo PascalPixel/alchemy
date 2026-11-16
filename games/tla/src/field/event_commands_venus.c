@@ -68,7 +68,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = FIXED_ONE / 2;
     effect->scaleY = Random16() + FIXED_ONE * 3 / 2;
     remaining--;
@@ -165,10 +165,10 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     effect->x = position.x;
     effect->z = position.z - toFIXED(100);
     effect->acceleration = toFIXED(3);
-    effect->maxSpeed = Random16() * 3 + toFIXED(3);
+    effect->speedMax = Random16() * 3 + toFIXED(3);
     effect->scaleX = FIXED_ONE;
     effect->scaleY = FIXED_ONE;
-    effect->limitTurnStep = state;
+    effect->turnStepLimited = state;
     effect->stopAtTarget = 1;
     effect->state++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
@@ -182,7 +182,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->stopAtTarget = 0;
       effect->speed = FIXED_ONE;
       effect->acceleration = 0;
-      effect->maxSpeed = Random16() + toFIXED(11) / 5;
+      effect->speedMax = Random16() + toFIXED(11) / 5;
       effect->scaleX = FIXED_ONE / 2;
       effect->scaleY = FIXED_ONE / 2;
       Sound_PlayFar(SE_CRACK);

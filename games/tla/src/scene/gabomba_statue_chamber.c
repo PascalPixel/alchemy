@@ -168,7 +168,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void);
 /// The Great Gabomba names Akafubu witch doctor, gives the party the Black
 /// Crystal and sends it back to Kibombo, the message carried.
 void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
-  struct Actor *object, *leader;
+  struct Actor *actor, *leader;
   u32 i;
 
   Event_Start();
@@ -227,8 +227,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationById(ACTOR_STATUE, 3);
   Actor_FaceDirectionById(ACTOR_CHAMBER_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
-  object = Actor_Get(ACTOR_WITCH_DOCTOR);
-  object->facing = Actor_Get(ACTOR_CHAMBER_AKAFUBU)->facing;
+  actor = Actor_Get(ACTOR_WITCH_DOCTOR);
+  actor->facing = Actor_Get(ACTOR_CHAMBER_AKAFUBU)->facing;
   wait(1);
   Actor_MoveToObject(ACTOR_WITCH_DOCTOR, ACTOR_CHAMBER_AKAFUBU);
   Actor_SetPosition(ACTOR_CHAMBER_AKAFUBU, 0, 0);
@@ -381,9 +381,9 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
                          ANIM_LEADER_ARMS_RAISED);
   if (gGabombaStatueChamber_ShownItem != 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    object = gGabombaStatueChamber_ShownItem;
-    object->motionFlags = 0;
-    Actor_SetMoveTarget((s32)object, leader->x.fixed,
+    actor = gGabombaStatueChamber_ShownItem;
+    actor->motionFlags = 0;
+    Actor_SetMoveTarget((s32)actor, leader->x.fixed,
                         leader->y.fixed + toFIXED(36), leader->z.fixed);
     Actor_WaitForMove((s32)gGabombaStatueChamber_ShownItem);
   }
@@ -458,11 +458,11 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
 /// takes the exit of the step trigger he stands on.
 void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
@@ -470,8 +470,8 @@ void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
                          ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
-  FieldActor_SetMoveTarget(object, x, -12, z);
-  Actor_WaitForMove(object);
+  FieldActor_SetMoveTarget(actor, x, -12, z);
+  Actor_WaitForMove(actor);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -634,8 +634,8 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
 }
 
 /// Each frame, keeps the shown item over the seated idol.
-void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
-  object->x.fixed = Actor_GetById(ACTOR_STATUE)->x.fixed;
+void GabombaStatueChamber_KeepItemWithStatue(struct Actor *actor) {
+  actor->x.fixed = Actor_GetById(ACTOR_STATUE)->x.fixed;
 }
 
 /// Shows the Dragon's Eye over the seated idol, as its item icon.

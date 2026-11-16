@@ -140,7 +140,7 @@ s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
   struct MapWork *work;
   struct MapHeader *sceneHeader;
-  struct MapLayer *mapLayer;
+  struct MapLayer *layer;
   struct MapHeaderLayer *layerSource;
   s32 *viewX;
   s32 *viewY;
@@ -197,7 +197,7 @@ s32 MapGrid_LoadMap(s32 index) {
     work->maxX = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
   if (work->maxZ == 0)
     work->maxZ = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
-  mapLayer = work->layers;
+  layer = work->layers;
   layerSource = sceneHeader->layers;
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     u32 x = layerSource->x;
@@ -207,31 +207,31 @@ s32 MapGrid_LoadMap(s32 index) {
     u8 *shapeGrid;
     u32 maskY;
 
-    mapLayer->offsetX = toFIXED(x * 8);
-    mapLayer->offsetY = toFIXED(y * 8);
-    mapLayer->scaleY = layerSource->scrollY * 4096;
-    mapLayer->speedX = layerSource->speedX * 4096;
-    mapLayer->speedY = layerSource->speedY * 4096;
-    mapLayer->maskX = layerSource->periodX & 127;
+    layer->offsetX = toFIXED(x * 8);
+    layer->offsetY = toFIXED(y * 8);
+    layer->scaleY = layerSource->scrollY * 4096;
+    layer->speedX = layerSource->speedX * 4096;
+    layer->speedY = layerSource->speedY * 4096;
+    layer->maskX = layerSource->periodX & 127;
     // Read before the phase stores, which the original makes after it.
     maskY = layerSource->periodY & 127;
-    mapLayer->phaseX = 0;
-    mapLayer->phaseY = 0;
-    mapLayer->maskY = maskY << 7;
+    layer->phaseX = 0;
+    layer->phaseY = 0;
+    layer->maskY = maskY << 7;
     x >>= 1;
     y = (y >> 1) * 128;
-    mapLayer->originY = y;
+    layer->originY = y;
     scaleX = layerSource->scrollX * 4096;
     cell = y + x;
     shapeGrid = gMapShapeGrid;
-    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
-    mapLayer->scaleX = scaleX;
-    mapLayer->originX = x;
-    mapLayer->terrainIds = shapeGrid + cell;
-    mapLayer->x = Iwram_MulFX(*viewX, scaleX) + mapLayer->offsetX;
-    mapLayer->y = Iwram_MulFX(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
+    layer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
+    layer->scaleX = scaleX;
+    layer->originX = x;
+    layer->terrainIds = shapeGrid + cell;
+    layer->x = Iwram_MulFX(*viewX, scaleX) + layer->offsetX;
+    layer->y = Iwram_MulFX(*viewY, layer->scaleY) + layer->offsetY;
     layerSource++;
-    mapLayer++;
+    layer++;
   }
   work->dispcnt = DISPCNT_OBJ_ON;
   if (work->enabled[0] != 0)

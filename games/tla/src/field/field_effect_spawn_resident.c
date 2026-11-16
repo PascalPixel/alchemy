@@ -26,7 +26,7 @@ struct LayeredSprite {
 extern const s32 *gFieldEffect_DurationScripts[];
 
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 
 /// Creates a field effect actor at (x, y, z) moving at the given velocity: of
 /// sprite 285, or of options' type when flags ask for it, set up by options.

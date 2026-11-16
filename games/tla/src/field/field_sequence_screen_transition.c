@@ -569,7 +569,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     // One zero for both branches' stores; a literal 0 at each store differs.
     s32 zero = 0;
 
-    ((u8 *)state)[0x53f] = 1;
+    state->centreLine = 1;
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);

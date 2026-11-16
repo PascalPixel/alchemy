@@ -70,21 +70,21 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
-    struct BattleWork *work;
+    struct BattleWork *battle;
     u16 *palette;
 
-    work = Ram_HeapSlots->battleWork;
-    palette = work->palette;
+    battle = Ram_HeapSlots->battleWork;
+    palette = battle->palette;
     Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
             DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
-    struct BattleWork *work;
+    struct BattleWork *battle;
     u16 *source;
     u16 *destination;
     s32 i;
 
-    work = Ram_HeapSlots->battleWork;
-    source = work->palette;
+    battle = Ram_HeapSlots->battleWork;
+    source = battle->palette;
     destination = BATTLE_BG_PALETTE;
 
     for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
@@ -637,8 +637,8 @@ struct Spark {
 struct Ring {
   s32 x;
   s32 y;
-  s32 velX;
-  s32 velY;
+  s32 velocityX;
+  s32 velocityY;
   s32 age;
 };
 
@@ -762,8 +762,8 @@ void ElementGlow_UpdateStarField(void) {
   }
   draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
   for (ring = work->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
-    ring->x += ring->velX;
-    ring->y += ring->velY;
+    ring->x += ring->velocityX;
+    ring->y += ring->velocityY;
     ringX = ring->x >> 10;
     ringY = ring->y >> 10;
     phase = 3 - ring->age / 8;
@@ -853,8 +853,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     angle = i * (DEGtoANG(120));
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
-    ring->velX = PolarX(angle, 0x200);
-    ring->velY = PolarY(angle, 0x200);
+    ring->velocityX = PolarX(angle, 0x200);
+    ring->velocityY = PolarY(angle, 0x200);
     ring->age = 0;
   }
   work->frames = 0;

@@ -243,7 +243,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             s32 dropY = FIXED_INTEGER_PART(p->y);
             s32 tier = index >> 1;
 
-            BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
+            Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
             Canvas_BlitAtFoot((u8 *)(circles[tier] + cells), dropX, dropY,
                               drop);
           }
@@ -391,7 +391,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(drawn->x) - 16,
                   FIXED_INTEGER_PART(drawn->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(drawn, 62, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(drawn, 62, -toFIXED(1) / 4);
         }
         drawn->variant++;
       }
@@ -410,7 +410,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                 FIXED_INTEGER_PART(drawn->x) - spark / 2,
                 FIXED_INTEGER_PART(drawn->y) - spark, spark, spark * 2);
         drawn->variant--;
-        BattleEffectKernels_IntegrateVector2(drawn, 56, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(drawn, 56, toFIXED(1) / 8);
       }
     }
 
@@ -784,7 +784,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 256; i++) {
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 56, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(spark, 56, toFIXED(1) / 8);
         if (spark->y > toFIXED(112)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((u32)spark->x < toFIXED(127) && spark->y >= 0) {
@@ -842,19 +842,19 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
         s32 top = row * cellHeight;
         s32 bottom = top + cellHeight - 1;
 
-        triangle[0].texCoord[0][0] = right;
-        triangle[0].texCoord[0][1] = top;
-        triangle[0].texCoord[1][0] = left;
-        triangle[0].texCoord[1][1] = bottom;
-        triangle[0].texCoord[2][0] = right;
-        triangle[0].texCoord[2][1] = bottom;
+        triangle[0].uv[0][0] = right;
+        triangle[0].uv[0][1] = top;
+        triangle[0].uv[1][0] = left;
+        triangle[0].uv[1][1] = bottom;
+        triangle[0].uv[2][0] = right;
+        triangle[0].uv[2][1] = bottom;
         second = triangle + 1;
-        second->texCoord[0][0] = left;
-        second->texCoord[0][1] = top;
-        second->texCoord[1][0] = left;
-        second->texCoord[1][1] = bottom;
-        second->texCoord[2][0] = right;
-        second->texCoord[2][1] = top;
+        second->uv[0][0] = left;
+        second->uv[0][1] = top;
+        second->uv[1][0] = left;
+        second->uv[1][1] = bottom;
+        second->uv[2][0] = right;
+        second->uv[2][1] = top;
         triangle->vertex[0] = (column + 1) % columns + row * columns;
         triangle->vertex[1] = column % columns + columns + row * columns;
         triangle->vertex[2] = (column + 1) % columns + columns + row * columns;

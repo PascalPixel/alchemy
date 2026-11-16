@@ -129,7 +129,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct BattleCamera *camera;
   s32 shift;
   u8 *graphics;
-  struct MotionObject *motion;
+  struct MotionObject *object;
   s32 memberFrame;
   struct Particle *point;
   s32 size;
@@ -202,14 +202,14 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       work->transferValue += CANVAS_FILL_WORD(1);
 
     for (member = 0; member != 1; member++) {
-      motion = BattleObject_GetFar(args->targets[member])->object;
+      object = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Matrix_Initialize();
         Matrix_SetLookAt(camera->eye, camera->focus);
-        vector[0] = motion->x;
-        vector[1] = motion->y;
-        vector[2] = motion->z;
+        vector[0] = object->x;
+        vector[1] = object->y;
+        vector[2] = object->z;
         EffectPosition_ProjectPoint(vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;

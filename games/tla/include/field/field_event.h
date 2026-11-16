@@ -26,7 +26,7 @@ void Sound_PlayFar(s32 cue);
 
 void Import_EventSetExitRequest(s32 countdown);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Import_ActorSetMode(struct Actor *object, s32 mode);
-void Import_ActorStartScript(struct Actor *object, const void *script);
+void Import_ActorSetMode(struct Actor *actor, s32 mode);
+void Import_ActorStartScript(struct Actor *actor, const void *script);
 
 #endif

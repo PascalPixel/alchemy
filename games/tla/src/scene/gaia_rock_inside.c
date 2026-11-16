@@ -254,7 +254,7 @@ extern s32 gGaiaRockInside_CaskEmptiesScript[];
 void GaiaRockInside_SaveSusa(void);
 void GaiaRockInside_RestoreSusa(void);
 
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 s32 Scene_TalkToActor();
 
@@ -437,10 +437,10 @@ s32 GaiaRockInside_CaskRests(void) {
 
 /// The cask tips a step toward the Serpent's mouth.
 s32 GaiaRockInside_CaskTips(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_CASK);
-  ((struct FieldSprite *)object->sprite)->rotation += 0x300;
+  actor = Actor_Get(ACTOR_CASK);
+  ((struct FieldSprite *)actor->sprite)->rotation += 0x300;
   return 0;
 }
 
@@ -455,46 +455,46 @@ s32 GaiaRockInside_CaskRights(void) {
 }
 
 /// Each frame the pour's size varies at random, never below an eighth.
-void GaiaRockInside_FlickerPour(struct Actor *object) {
+void GaiaRockInside_FlickerPour(struct Actor *actor) {
   u32 random = Random16();
-  s32 scale = object->scaleX;
+  s32 scale = actor->scaleX;
   s32 bias;
   s32 limit;
 
   bias = -0x800;
   scale += FIXEDtoINT(random << 12);
   scale += bias;
-  object->scaleX = scale;
-  object->scaleY = object->scaleY + ((Random16() << 12) >> 16) + bias;
+  actor->scaleX = scale;
+  actor->scaleY = actor->scaleY + ((Random16() << 12) >> 16) + bias;
   limit = 240;
-  scale = object->scaleX;
+  scale = actor->scaleX;
   limit <<= 4;
   limit += 255;
   if (scale <= limit)
-    object->scaleX = FIXED_ONE / 8;
-  if (object->scaleY <= limit)
-    object->scaleY = FIXED_ONE / 8;
+    actor->scaleX = FIXED_ONE / 8;
+  if (actor->scaleY <= limit)
+    actor->scaleY = FIXED_ONE / 8;
 }
 
 /// The cask pours: a spray of Dragonsbane that flickers in size
 /// (GaiaRockInside_FlickerPour).
 s32 GaiaRockInside_CaskPours(void) {
   struct Actor *source = Actor_Get(ACTOR_CASK);
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
 
-  object = (FieldActor_Create(14, source->x.fixed + toFIXED(8),
-                              source->y.fixed - toFIXED(2), source->z.fixed));
-  object->motionFlags = 0;
-  Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gGaiaRockInside_PourScript);
-  object->scaleX = FIXED_ONE * 2 / 5;
-  object->scaleY = FIXED_ONE * 2 / 5;
-  sprite = object->sprite;
+  actor = (FieldActor_Create(14, source->x.fixed + toFIXED(8),
+                             source->y.fixed - toFIXED(2), source->z.fixed));
+  actor->motionFlags = 0;
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_StartScript(actor, gGaiaRockInside_PourScript);
+  actor->scaleX = FIXED_ONE * 2 / 5;
+  actor->scaleY = FIXED_ONE * 2 / 5;
+  sprite = actor->sprite;
   sprite->priority = 1;
-  object->bounce = 0;
-  object->riseBaseY = 0;
-  object->update = (void (*)(void))GaiaRockInside_FlickerPour;
+  actor->bounce = 0;
+  actor->riseBaseY = 0;
+  actor->update = (void (*)(void))GaiaRockInside_FlickerPour;
   return 0;
 }
 
@@ -520,12 +520,12 @@ s32 GaiaRockInside_SusaPushesCask(void) {
 
 /// Susa throws the cask up to the Serpent's mouth.
 s32 GaiaRockInside_SusaThrowsCask(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_CASK);
-  Actor_StartScript(object, (s32)gGaiaRockInside_CaskThrownScript);
-  object->x.fixed = toFIXED(472);
-  Actor_SetAnimationSpeed(object, 16);
+  actor = Actor_Get(ACTOR_CASK);
+  Actor_StartScript(actor, (s32)gGaiaRockInside_CaskThrownScript);
+  actor->x.fixed = toFIXED(472);
+  Actor_SetAnimationSpeed(actor, 16);
   Actor_SetAttachedEffect(ACTOR_SUSA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -582,30 +582,30 @@ s32 GaiaRockInside_CaskBursts(void) {
 
 /// The empty cask is tossed aside, away from where the leader stands.
 s32 GaiaRockInside_TossCask(void) {
-  struct Actor *object = Actor_Get(ACTOR_CASK);
+  struct Actor *actor = Actor_Get(ACTOR_CASK);
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (leader->z.fixed >> 19 <= 45 && leader->x.fixed >> 19 <= 57)
-    Actor_StartScript(object, gGaiaRockInside_CaskTossedRightScript);
+    Actor_StartScript(actor, gGaiaRockInside_CaskTossedRightScript);
   else
-    Actor_StartScript(object, gGaiaRockInside_CaskTossedLeftScript);
+    Actor_StartScript(actor, gGaiaRockInside_CaskTossedLeftScript);
   return 0;
 }
 
 /// Susa's hook while he works: when he or the cask has been stopped by the
 /// party for 30 frames, the trigger GaiaRockInside_SusaSaysMoveAside is raised;
 /// while one is blocked the other waits.
-void GaiaRockInside_CheckBlocked(struct Actor *object) {
+void GaiaRockInside_CheckBlocked(struct Actor *actor) {
   struct Actor *other = Actor_Get(ACTOR_CASK);
 
-  if (object->refused == 30 || other->refused == 30) {
+  if (actor->refused == 30 || other->refused == 30) {
     gFieldWork->raisedTrigger = RAISED_SUSA_BLOCKED;
-    if (object->refused == 30)
-      object->refused = 31;
+    if (actor->refused == 30)
+      actor->refused = 31;
     if (other->refused == 30)
       other->refused = 31;
   }
-  if (object->refused > 2) {
+  if (actor->refused > 2) {
     other->paused = 1;
     Event_SetFlag(FLAG_SCENE_TEMP_06);
   }
@@ -615,19 +615,19 @@ void GaiaRockInside_CheckBlocked(struct Actor *object) {
     if (*otherCount > 2 && !Event_GetFlag(FLAG_SCENE_TEMP_06) &&
         other->script != gGaiaRockInside_CaskTossedLeftScript &&
         other->script != gGaiaRockInside_CaskTossedRightScript) {
-      object->paused = 1;
+      actor->paused = 1;
       Event_SetFlag(FLAG_SCENE_TEMP_05);
     }
-    if (object->refused == 0) {
+    if (actor->refused == 0) {
       other->paused = 0;
       Event_ClearFlag(FLAG_SCENE_TEMP_06);
     }
     if (*otherCount == 0) {
-      object->paused = 0;
+      actor->paused = 0;
       Event_ClearFlag(FLAG_SCENE_TEMP_05);
     }
-    if (object->refused > 35)
-      object->refused = 35;
+    if (actor->refused > 35)
+      actor->refused = 35;
     if (*otherCount > 35)
       *otherCount = 35;
   }
@@ -656,30 +656,30 @@ const void *Scene_GetActorPlacements(void) {
 /// The update of a maze plant Growth has turned into an arrow: it flickers, and
 /// every 32 frames stretches along its arrow, sideways here and up and down in
 /// GaiaRockInside_PulseUpDownArrow.
-void GaiaRockInside_PulseSidewaysArrow(struct Actor *object) {
+void GaiaRockInside_PulseSidewaysArrow(struct Actor *actor) {
   s32 value = 0;
 
   if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
     value = 7;
-  Actor_SetSpriteColorMode(object, value & 7);
+  Actor_SetSpriteColorMode(actor, value & 7);
   if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
-    object->scaleX = FIXED_ONE;
-    Actor_StartScript(object, gGaiaRockInside_SquashXScript);
+    actor->scaleX = FIXED_ONE;
+    Actor_StartScript(actor, gGaiaRockInside_SquashXScript);
     Event_PlaySound(SE_DRIP);
   }
   gGaiaRockInside_ArrowFrame++;
 }
 
 /// As GaiaRockInside_PulseSidewaysArrow, for an arrow pointing up or down.
-void GaiaRockInside_PulseUpDownArrow(struct Actor *object) {
+void GaiaRockInside_PulseUpDownArrow(struct Actor *actor) {
   s32 value = 0;
 
   if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
     value = 7;
-  Actor_SetSpriteColorMode(object, value & 7);
+  Actor_SetSpriteColorMode(actor, value & 7);
   if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
-    object->scaleY = FIXED_ONE;
-    Actor_StartScript(object, gGaiaRockInside_SquashYScript);
+    actor->scaleY = FIXED_ONE;
+    Actor_StartScript(actor, gGaiaRockInside_SquashYScript);
     Event_PlaySound(SE_DRIP);
   }
   gGaiaRockInside_ArrowFrame++;
@@ -688,19 +688,19 @@ void GaiaRockInside_PulseUpDownArrow(struct Actor *object) {
 /// Growth on the plant of a maze step: it grows into an arrow pointing the way
 /// on, and stays one for this visit.
 void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   u32 direction;
   s32 *state;
 
   direction = GaiaRockInside_GetMazeWayOn();
   state = &gPath->current;
-  object->collisionFlags = 0;
-  Actor_SelectAnimation(object, ((direction & 0xc000) >> 14) + 2);
+  actor->collisionFlags = 0;
+  Actor_SelectAnimation(actor, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)
-    object->update = (void (*)(void))GaiaRockInside_PulseUpDownArrow;
+    actor->update = (void (*)(void))GaiaRockInside_PulseUpDownArrow;
   else
-    object->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
-  object->collisionFlags = 1;
+    actor->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+  actor->collisionFlags = 1;
   Event_SetFlag(FLAG_MAZE_PLANT_POINTED(*state));
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   System_Wait(20);
@@ -863,32 +863,31 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
 /// place and animation to be given back after a talk.
 void GaiaRockInside_SaveSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
-  struct Actor *object = Actor_Get(ACTOR_SUSA);
-  struct FieldSprite *sprite = object->sprite;
+  struct Actor *actor = Actor_Get(ACTOR_SUSA);
+  struct FieldSprite *sprite = actor->sprite;
   u8 *record = sprite->record;
 
-  Iwram_CopyWordsEntry(&gGaiaRockInside_SavedSusa, object,
-                       sizeof(struct Actor));
+  Iwram_CopyWordsEntry(&gGaiaRockInside_SavedSusa, actor, sizeof(struct Actor));
   gGaiaRockInside_SavedSusaAnimation = record[21];
   gGaiaRockInside_SavedSusaFrame = sprite->lastNo;
   {
-    FIXED x = object->x.fixed;
+    FIXED x = actor->x.fixed;
     FIXED z;
 
     gGaiaRockInside_SavedSusaX = x;
-    z = object->z.fixed;
-    object->update = 0;
+    z = actor->z.fixed;
+    actor->update = 0;
     gGaiaRockInside_SavedSusaZ = z;
-    object->velocityZ = 0;
-    object->velocityY = 0;
-    object->velocityX = 0;
-    object->targetX = x;
-    object->targetY = object->y.fixed;
-    object->targetZ = z;
+    actor->velocityZ = 0;
+    actor->velocityY = 0;
+    actor->velocityX = 0;
+    actor->targetX = x;
+    actor->targetY = actor->y.fixed;
+    actor->targetZ = z;
   }
   Actor_ResetTargetsAndVelocity(ACTOR_SUSA);
-  Actor_SetAnimationSpeed(object, 10);
-  object->speedLimit = toFIXED(1);
+  Actor_SetAnimationSpeed(actor, 10);
+  actor->speedLimit = toFIXED(1);
   if (walker->script == gGaiaRockInside_CaskThrownScript ||
       walker->script == gGaiaRockInside_CaskPushedScript) {
     walker->paused = 1;
@@ -900,10 +899,10 @@ void GaiaRockInside_SaveSusa(void) {
 /// takes up his animation, and the cask goes on.
 void GaiaRockInside_RestoreSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
-  struct Actor *object = Actor_Get(ACTOR_SUSA);
+  struct Actor *actor = Actor_Get(ACTOR_SUSA);
 
-  if (gGaiaRockInside_SavedSusaX != object->x.fixed ||
-      gGaiaRockInside_SavedSusaZ != object->z.fixed) {
+  if (gGaiaRockInside_SavedSusaX != actor->x.fixed ||
+      gGaiaRockInside_SavedSusaZ != actor->z.fixed) {
     s16 *savedZ = (s16 *)&gGaiaRockInside_SavedSusaZ;
 
     Actor_WalkTo(ACTOR_SUSA, FIXEDtoINT(gGaiaRockInside_SavedSusaX), savedZ[1]);
@@ -914,10 +913,9 @@ void GaiaRockInside_RestoreSusa(void) {
     walker->paused = 0;
     Actor_SetAnimationSpeed(walker, ANIMATION_STEP_NORMAL);
   }
-  Iwram_CopyWordsEntry(object, &gGaiaRockInside_SavedSusa,
-                       sizeof(struct Actor));
+  Iwram_CopyWordsEntry(actor, &gGaiaRockInside_SavedSusa, sizeof(struct Actor));
   Actor_SetAnimation(ACTOR_SUSA, gGaiaRockInside_SavedSusaFrame);
-  Actor_SetAnimationSpeed(object, gGaiaRockInside_SavedSusaAnimation);
+  Actor_SetAnimationSpeed(actor, gGaiaRockInside_SavedSusaAnimation);
 }
 
 /// Stepping near Susa the first time: he turns on the party ("Who are you? How
@@ -925,14 +923,14 @@ void GaiaRockInside_RestoreSusa(void) {
 /// Serpent, and goes back to his place; if he was walking back while a cask
 /// was tossed, his saved place is where he was going.
 void GaiaRockInside_MeetSusa(void) {
-  struct Actor *object = Actor_Get(ACTOR_CASK);
+  struct Actor *actor = Actor_Get(ACTOR_CASK);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoAreYouHowDid);
   EventCamera_FollowActor(ACTOR_SUSA, 1);
-  if (object->script == gGaiaRockInside_CaskEmptiesScript ||
-      object->script == gGaiaRockInside_CaskPushedScript)
+  if (actor->script == gGaiaRockInside_CaskEmptiesScript ||
+      actor->script == gGaiaRockInside_CaskPushedScript)
     FieldActor_WaitForScriptEndById(ACTOR_CASK);
   GaiaRockInside_SaveSusa();
   Actor_SetAnimation(ACTOR_SUSA, ANIM_STAND);
@@ -966,8 +964,8 @@ void GaiaRockInside_MeetSusa(void) {
   Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_SetFlag(FLAG_MET_SUSA);
-  if (object->script == gGaiaRockInside_CaskTossedLeftScript ||
-      object->script == gGaiaRockInside_CaskTossedRightScript) {
+  if (actor->script == gGaiaRockInside_CaskTossedLeftScript ||
+      actor->script == gGaiaRockInside_CaskTossedRightScript) {
     gGaiaRockInside_SavedSusa.x.fixed = gGaiaRockInside_SavedSusaX =
         gGaiaRockInside_SavedSusa.targetX;
     gGaiaRockInside_SavedSusa.z.fixed = gGaiaRockInside_SavedSusaZ =
@@ -1014,7 +1012,7 @@ void GaiaRockInside_TalkToSusa(void) {
 /// Mind Read on Susa: what he thinks of the party once they hold the Dancing
 /// Idol, or otherwise of the Serpent and his casks.
 void GaiaRockInside_ReadSusasMind(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 holder;
 
   Event_Start();
@@ -1025,8 +1023,8 @@ void GaiaRockInside_ReadSusasMind(void) {
     // "Who do they think they are? I'm the only one who can save Kushinada."
     Event_ShowMessage(ACTOR_SUSA, 0);
   } else {
-    object = Actor_Get(ACTOR_CASK);
-    if (object->script == (s32)gGaiaRockInside_CaskEmptiesScript) {
+    actor = Actor_Get(ACTOR_CASK);
+    if (actor->script == (s32)gGaiaRockInside_CaskEmptiesScript) {
       FieldActor_WaitForScriptEndById(ACTOR_CASK);
     }
     GaiaRockInside_SaveSusa();
@@ -1385,7 +1383,7 @@ void GaiaRockInside_RingOfDust(void) {
 /// slate rises from the floor a pixel every 2 frames, in two rings of dust.
 void GaiaRockInside_RaiseSandTablet(void) {
   struct Actor *person;
-  struct Actor *object;
+  struct Actor *actor;
   u16 level;
   s32 i;
 
@@ -1406,8 +1404,8 @@ void GaiaRockInside_RaiseSandTablet(void) {
   }
   REG_DISPCNT &= ~DISPCNT_BG1_ON;
   FieldEvent_Wait(30);
-  object = OverlayObject_PrepareObject(toFIXED(464), -FIXED_ONE * 32,
-                                       toFIXED(348), SPRITE_SLATE);
+  actor = OverlayObject_PrepareObject(toFIXED(464), -FIXED_ONE * 32,
+                                      toFIXED(348), SPRITE_SLATE);
   Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
   GaiaRockInside_RingOfDust();
   for (i = 0; i <= 19; i++) {
@@ -1418,10 +1416,10 @@ void GaiaRockInside_RaiseSandTablet(void) {
   }
   Event_SetFlag(FLAG_SAND_TABLET_RAISED);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  object->x.fixed = 0;
-  object->z.fixed = 0;
+  actor->x.fixed = 0;
+  actor->z.fixed = 0;
   FieldEvent_Wait(1);
-  Actor_Release(object);
+  Actor_Release(actor);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   REG_DISPCNT |=
@@ -1484,13 +1482,13 @@ void GaiaRockInside_EndSand(void) {
 /// The Cloud Brand's treasure spot is raised to where the party can reach it,
 /// and its chest is opened without the message of checking it.
 void GaiaRockInside_FindCloudBrand(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(FIELD_TREASURE_ACTOR + 2);
-  object->x.fixed = toFIXED(552);
-  object->z.fixed = toFIXED(296);
-  object->y.fixed = toFIXED(-30);
-  object->groundHeight = toFIXED(-32);
+  actor = Actor_Get(FIELD_TREASURE_ACTOR + 2);
+  actor->x.fixed = toFIXED(552);
+  actor->z.fixed = toFIXED(296);
+  actor->y.fixed = toFIXED(-30);
+  actor->groundHeight = toFIXED(-32);
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
   Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | (FIELD_TREASURE_ACTOR + 2));
 }
@@ -1604,12 +1602,12 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
 /// Dragonsbane; the doll hops back to the leader. Before the Serpent is slain
 /// the party is taken to the lair to see the stream pour (entrance 20).
 void GaiaRockInside_PlaceDollOnWestAltar(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *partner;
   struct Actor *leader;
   s32 i;
 
-  object = Actor_GetById(ACTOR_WEST_FACE);
+  actor = Actor_GetById(ACTOR_WEST_FACE);
   partner = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1633,7 +1631,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_WEST_FACE, 0.25, 0.05);
@@ -1641,17 +1639,17 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
     i = 0;
-    if (object->arrivalAxis != 0) {
+    if (actor->arrivalAxis != 0) {
       do {
-        object->velocityY = Random16();
+        actor->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->arrivalAxis != 0);
+      } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1676,7 +1674,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1697,12 +1695,12 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
 /// The doll placed on the east altar, as on the west one
 /// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnEastAltar(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *partner;
   struct Actor *leader;
   s32 i;
 
-  object = Actor_GetById(ACTOR_EAST_FACE);
+  actor = Actor_GetById(ACTOR_EAST_FACE);
   partner = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1726,7 +1724,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_EAST_FACE, 0.25, 0.05);
@@ -1734,17 +1732,17 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     MapGrid_CopyCellAttributes(35, 23, 1, 1, 36, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 37, 22);
     i = 0;
-    if (object->arrivalAxis != 0) {
+    if (actor->arrivalAxis != 0) {
       do {
-        object->velocityY = Random16();
+        actor->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->arrivalAxis != 0);
+      } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1769,7 +1767,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1790,12 +1788,12 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
 /// The doll placed on the altar room's altar, as on the west one
 /// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnAltarAltar(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *partner;
   struct Actor *leader;
   s32 i;
 
-  object = Actor_GetById(ACTOR_ALTAR_FACE);
+  actor = Actor_GetById(ACTOR_ALTAR_FACE);
   partner = Actor_GetById(ACTOR_ALTAR_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1819,7 +1817,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
     for (i = 19; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_ALTAR_FACE, 0.25, 0.05);
@@ -1827,17 +1825,17 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     Map_CopyCellAttributeRect(27, 15, 2, 1, 23, 23);
     Map_CopyCellAttributeRect(25, 25, 1, 1, 25, 23);
     i = 0;
-    if (object->arrivalAxis != 0) {
+    if (actor->arrivalAxis != 0) {
       do {
-        object->velocityY = Random16();
+        actor->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->arrivalAxis != 0);
+      } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
     for (i = 9; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1861,7 +1859,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     }
   } else {
     for (i = 119; i >= 0; i--) {
-      object->velocityY = Random16();
+      actor->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1968,15 +1966,15 @@ void GaiaRockInside_TurnFaceToAltar(s32 faceId, s32 altarId) {
 /// Readies a platform: one others stand on, 16 pixels up, its home its place
 /// now, on animation mode.
 void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  object->motionFlags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  object->acceleration = toFIXED(1) / 16;
-  object->speedLimit = toFIXED(1);
-  object->y.fixed = toFIXED(16);
-  object->timer = FIXEDtoINT(object->x.fixed);
-  object->userValue = FIXEDtoINT(object->z.fixed);
+  actor->motionFlags = 0;
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  actor->acceleration = toFIXED(1) / 16;
+  actor->speedLimit = toFIXED(1);
+  actor->y.fixed = toFIXED(16);
+  actor->timer = FIXEDtoINT(actor->x.fixed);
+  actor->userValue = FIXEDtoINT(actor->z.fixed);
   Actor_SetAnimation(id, mode);
 }
 
@@ -2273,7 +2271,7 @@ s32 Scene_Initialize(void) {
         s32 dx;
         s32 dz;
         s32 movement;
-        struct Actor *object;
+        struct Actor *actor;
         struct Actor *shards[4];
 
         flag = Test(FLAG_SUSA_ATTACKED_SERPENT);
@@ -2377,36 +2375,36 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimationSpeed(serpent, 0);
         Event_Wait(15);
         Sound_Play(SE_SPLASH_SMALL);
-        object = FieldActor_Create(SPRITE_DUST_CLOUD, toFIXED(488),
-                                   -toFIXED(16), toFIXED(345));
-        Actor_SetSpriteFlags(object, 0);
-        Actor_StartScript(object, gGaiaRockInside_SerpentSmokeScript);
-        Actor_SelectAnimation(object, 1);
-        Actor_SetSpriteColorMode(object, 6);
+        actor = FieldActor_Create(SPRITE_DUST_CLOUD, toFIXED(488), -toFIXED(16),
+                                  toFIXED(345));
+        Actor_SetSpriteFlags(actor, 0);
+        Actor_StartScript(actor, gGaiaRockInside_SerpentSmokeScript);
+        Actor_SelectAnimation(actor, 1);
+        Actor_SetSpriteColorMode(actor, 6);
         Actor_Jump(ACTOR_SUSA, 2, 0);
         Event_Wait(5);
         Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
         Event_Wait(55);
         Event_Wait(5);
         Sound_Play(SE_WHOOSH);
-        object = FieldActor_Create(SPRITE_FIREBALL, toFIXED(488), -toFIXED(16),
-                                   toFIXED(345));
-        Actor_SetSpriteFlags(object, 0);
-        Actor_StartScript(object, gGaiaRockInside_SerpentGlowScript);
-        ((struct FieldSprite *)object->sprite)->rotation = DEGtoANG(45);
-        object->speedLimit = toFIXED(3) / 2;
-        *(u8 *)&object->motionFlags = 0;
-        object->targetX = toFIXED(456);
-        object->targetY = -toFIXED(32);
-        object->targetZ = toFIXED(358);
-        object->scaleX = FIXED_ONE * 3 / 8;
-        object->scaleY = FIXED_ONE * 3 / 8;
+        actor = FieldActor_Create(SPRITE_FIREBALL, toFIXED(488), -toFIXED(16),
+                                  toFIXED(345));
+        Actor_SetSpriteFlags(actor, 0);
+        Actor_StartScript(actor, gGaiaRockInside_SerpentGlowScript);
+        ((struct FieldSprite *)actor->sprite)->rotation = DEGtoANG(45);
+        actor->speedLimit = toFIXED(3) / 2;
+        *(u8 *)&actor->motionFlags = 0;
+        actor->targetX = toFIXED(456);
+        actor->targetY = -toFIXED(32);
+        actor->targetZ = toFIXED(358);
+        actor->scaleX = FIXED_ONE * 3 / 8;
+        actor->scaleY = FIXED_ONE * 3 / 8;
         Event_Wait(10);
         Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
         Event_Wait(10);
         Sound_Play(SE_IMPACT);
-        object->x.fixed = 0;
-        object->z.fixed = 0;
+        actor->x.fixed = 0;
+        actor->z.fixed = 0;
         MapGrid_SetScreenShake(fast, fast, 0x10000);
         for (i = 0; i < 4; i++) {
           dx = -8;
@@ -2460,7 +2458,7 @@ s32 Scene_Initialize(void) {
       s32 slow;
       s32 *owner;
       struct Actor *other;
-      struct Actor *object;
+      struct Actor *actor;
       volatile u16 alpha;
       s32 i;
 
@@ -2608,8 +2606,8 @@ s32 Scene_Initialize(void) {
       }
       REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
       Event_Wait(30);
-      object = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
-                                           toFIXED(348), SPRITE_SLATE);
+      actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
+                                          toFIXED(348), SPRITE_SLATE);
       Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
       for (i = 0; i < 20; i++) {
         if (i % 5 == 0)
@@ -2619,10 +2617,10 @@ s32 Scene_Initialize(void) {
       }
       GameFlag_Set(FLAG_SAND_TABLET_RAISED);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
-      object->x.fixed = 0;
-      object->z.fixed = 0;
+      actor->x.fixed = 0;
+      actor->z.fixed = 0;
       Event_Wait(1);
-      Actor_Release(object);
+      Actor_Release(actor);
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       Event_Wait(30);
       REG_DISPCNT |=
@@ -2684,13 +2682,13 @@ s32 Scene_Initialize(void) {
     s32 mask = 32;
     s32 low;
     s32 high;
-    struct Actor *object = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
+    struct Actor *actor = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
 
-    object->priorityFlags |= mask;
-    Actor_SetSpritePriorityDirect(object, 3);
-    object = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
-    object->priorityFlags |= mask;
-    Actor_SetSpritePriorityDirect(object, 3);
+    actor->priorityFlags |= mask;
+    Actor_SetSpritePriorityDirect(actor, 3);
+    actor = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
+    actor->priorityFlags |= mask;
+    Actor_SetSpritePriorityDirect(actor, 3);
     GaiaRockInside_TurnFaceToAltar(ACTOR_FIRST_ALTAR_WEST_FACE,
                                    ACTOR_FIRST_ALTAR);
     GaiaRockInside_TurnFaceToAltar(ACTOR_FIRST_ALTAR_EAST_FACE,
@@ -2718,11 +2716,11 @@ s32 Scene_Initialize(void) {
     if (Test(FLAG_PLATFORMS_SWAYING))
       GaiaRockInside_StartPlatforms(1);
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS) {
-    struct Actor *object;
+    struct Actor *actor;
     struct Actor *other;
 
-    object = Actor_GetById(ACTOR_WEST_ALTAR);
-    Actor_SetSpritePriorityDirect(object, 3);
+    actor = Actor_GetById(ACTOR_WEST_ALTAR);
+    Actor_SetSpritePriorityDirect(actor, 3);
     GaiaRockInside_TurnFaceToAltar(ACTOR_WEST_FACE, ACTOR_WEST_ALTAR);
     GaiaRockInside_TurnFaceToAltar(ACTOR_EAST_FACE, ACTOR_EAST_ALTAR);
     if (!Test(FLAG_ALTAR_ROOM_STREAM_OPEN))
@@ -2765,9 +2763,9 @@ s32 Scene_Initialize(void) {
       Event_Wait(15);
       Actor_SetPosition(ACTOR_EAST_ALTAR, 672, 384);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_ALTAR), 0);
-      object = Actor_GetById(ACTOR_EAST_ALTAR);
-      other = FieldActor_Create(SPRITE_LIGHT, object->x.fixed, object->y.fixed,
-                                object->z.fixed);
+      actor = Actor_GetById(ACTOR_EAST_ALTAR);
+      other = FieldActor_Create(SPRITE_LIGHT, actor->x.fixed, actor->y.fixed,
+                                actor->z.fixed);
       if (other != NULL) {
         Actor_SetSpriteFlags(other, 0);
         Actor_StartScript(other, gGaiaRockInside_KushinadaScript);
@@ -2777,10 +2775,10 @@ s32 Scene_Initialize(void) {
         other->scaleX = FIXED_ONE * 6 / 5;
         other->scaleY = FIXED_ONE * 6 / 5;
       }
-      object->y.fixed += toFIXED(128);
+      actor->y.fixed += toFIXED(128);
       for (; frames != 0; frames--) {
         wait(1);
-        if (object->velocityY > -1)
+        if (actor->velocityY > -1)
           break;
       }
       Sound_Play(SE_THUMP);
@@ -3278,39 +3276,23 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
   }
 }
 
-/// Each frame while the leader is moved by the keys alone: the collision code
-/// of the wall cell he stands before, 1 to 230, is his step trigger.
-void GaiaRockInside_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-    struct FieldWork *event = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
-    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / toFIXED(16);
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / toFIXED(16);
-    struct MapCell *cells = map->layers[2].cells;
-    struct MapCell *cell = &cells[x + (z << 7)];
-    s32 code = cell->collisionCode;
-
-    if (code >= 1 && code <= 230)
-      event->stepTrigger = code;
-  }
-}
+#include "shared/gaia_rock_trigger_wall_cell.c"
 
 /// Stands a statue on the cell at (x, y, z), its wall cell blocked.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
   s32 column = x / toFIXED(16);
   s32 row = (z - y + 0x7fff) / toFIXED(16);
 
   cell += column + (row << 7);
   cell->collisionCode = 255;
-  object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
-  object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  object->y.fixed = object->z.fixed - FIELD_CELL_ORIGIN(row);
-  object->motionFlags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpriteFlags(object, 0);
+  actor->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
+  actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
+  actor->y.fixed = actor->z.fixed - FIELD_CELL_ORIGIN(row);
+  actor->motionFlags = 0;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_SetSpriteFlags(actor, 0);
 }
 
 extern s32 gGaiaRockInside_StatueRiseScript[];
@@ -3393,9 +3375,9 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Event_SetFlag(flag);
 }
 
-/// Starts GaiaRockInside_TriggerWallCell each frame.
+/// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRockInside_StartWallTriggers(void) {
-  Task_AddFrame((s32)GaiaRockInside_TriggerWallCell, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
 }
 
 #include "text/msg_ids.h"
@@ -3407,26 +3389,7 @@ extern u32 gGaiaRockInside_IdleScript[];
 extern u32 gGaiaRockInside_RockScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 u32 gGaiaRockInside_PourScript[] = {
     SC_WAIT(230),

@@ -80,53 +80,53 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
-  struct Actor *object = Actor_CreateFar(sprite, toFIXED(x), 0, toFIXED(z));
+  struct Actor *actor = Actor_CreateFar(sprite, toFIXED(x), 0, toFIXED(z));
   FIXED from[3];
   FIXED to[3];
   s32 i;
   s32 steps;
 
-  if (object == NULL)
+  if (actor == NULL)
     return;
-  Actor_SetSpriteFlagsFar(object, 0);
-  object->gravity = toFIXED(7) / 20;
-  object->velocityY = toFIXED(5);
-  object->scaleY = object->scaleX = FIXED_ONE * 2 / 5;
+  Actor_SetSpriteFlagsFar(actor, 0);
+  actor->gravity = toFIXED(7) / 20;
+  actor->velocityY = toFIXED(5);
+  actor->scaleY = actor->scaleX = FIXED_ONE * 2 / 5;
   do {
     wait(1);
-    object->scaleY = object->scaleX = object->scaleX + FIXED_ONE * 3 / 200;
-    object->facing += FACING_STEP;
-  } while (object->scaleX < FIXED_ONE);
-  object->scaleY = object->scaleX = FIXED_ONE;
+    actor->scaleY = actor->scaleX = actor->scaleX + FIXED_ONE * 3 / 200;
+    actor->facing += FACING_STEP;
+  } while (actor->scaleX < FIXED_ONE);
+  actor->scaleY = actor->scaleX = FIXED_ONE;
   Actor_SelectAnimationFar(owner, 1);
-  Actor_TurnPairToFaceEachOther(object, owner);
+  Actor_TurnPairToFaceEachOther(actor, owner);
   owner->timer = owner->facing;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);
   FieldEffect_SetAttached(ownerId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(32);
-  object->gravity = toFIXED(1);
-  object->velocityY = toFIXED(6);
+  actor->gravity = toFIXED(1);
+  actor->velocityY = toFIXED(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(15);
-  object->velocityY = toFIXED(6);
+  actor->velocityY = toFIXED(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(23);
   Sound_PlayFar(SE_ENEMY_CRY);
 
-  from[0] = object->x.fixed;
-  from[1] = object->y.fixed;
-  from[2] = object->z.fixed;
+  from[0] = actor->x.fixed;
+  from[1] = actor->y.fixed;
+  from[2] = actor->z.fixed;
   to[0] = owner->x.fixed;
   to[1] = owner->y.fixed;
   to[2] = owner->z.fixed;
   steps = 20;
   for (i = 0; i < steps; i++) {
-    object->x.fixed = from[0] + i * (to[0] - from[0]) / 20;
-    object->y.fixed =
+    actor->x.fixed = from[0] + i * (to[0] - from[0]) / 20;
+    actor->y.fixed =
         from[1] + i * (to[1] - from[1]) / 20 + Trig_Sin((i << 15) / 20) * 40;
-    object->z.fixed = from[2] + i * (to[2] - from[2]) / 20;
+    actor->z.fixed = from[2] + i * (to[2] - from[2]) / 20;
     wait(1);
   }
 }

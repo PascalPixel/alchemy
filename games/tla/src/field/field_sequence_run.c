@@ -435,7 +435,7 @@ s32 FieldSequence_Run(void) {
             // free, sprite drawing stays suspended while the menu runs, and a
             // frame passes so that the field's sprites give their VRAM back
             // before it opens.
-            struct ActorSystemWork *actorSystem = Ram_HeapSlots->actorSystem;
+            struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
             s32 n = 512;
@@ -445,11 +445,11 @@ s32 FieldSequence_Run(void) {
                 freeBlocks++;
             } while (--n != 0);
             if (freeBlocks - 136 < 0) {
-              actorSystem->suspended = 1;
+              system->suspended = 1;
               wait(1);
             }
             PauseMenu_RunFar(0);
-            actorSystem->suspended = 0;
+            system->suspended = 0;
           } else {
             FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable,
                                  FIELD_MESSAGE_ZOOM);

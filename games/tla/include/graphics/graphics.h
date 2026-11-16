@@ -112,7 +112,7 @@ extern u16 gDisplayScroll_Position;
 extern u8 gNumberTextBuffer[];
 /// The file menu's 64x16 headings by number, each drawn as two 32x16 sprites
 /// (MenuTitle_Load; graphics/ui/menu_titles.s).
-extern s32 gRenderResource_PairSourceTable[];
+extern s32 gMenuTitlePictures[];
 /// The tagged LZ decoder in ARM, run by Decompress_TaggedLz from a heap copy.
 extern const u8 Decompress_TaggedLzArmCode[];
 /// The size of Decompress_TaggedLzArmCode, which Decompress_TaggedLz copies to

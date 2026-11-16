@@ -27,7 +27,7 @@ Field_LemurianShipAquaHydra:
 	.incbin "games/tla/src/map/lemurian_ship_aqua_hydra/animation.script.lz"
 	.balign 4, 0
 .LField_LemurianShipAquaHydra_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
+	.incbin "games/tla/src/map/daila_rooms_houses/blend.script.lz"
 	.balign 4, 0
 .LField_LemurianShipAquaHydra_SCENE:
 	.incbin "games/tla/src/map/lemurian_ship_aqua_hydra/scene.scene.lz"

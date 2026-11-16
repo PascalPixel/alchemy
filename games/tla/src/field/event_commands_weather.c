@@ -60,7 +60,7 @@ void GroundParticles_Update(void) {
 /// The Broken Seal's routine with fixed sprites, and
 /// GroundParticles_Update's sibling for the same 64 ground particles: each
 /// counts down its frame (held while FLAG_WEATHER_HELD is set), is drawn at its
-/// picture's offset (gGroundParticle_Offsets, pairs) with the work's tile,
+/// picture's offset (gGroundParticles_Offsets, pairs) with the work's tile,
 /// shape 1 and size 2 when on screen, and when its count runs out is placed
 /// again at a random point (x within -64 to +192, z within -128 to +128 pixels
 /// of the map's focus), on the ground, for 12 frames.
@@ -82,7 +82,7 @@ void Weather_UpdateRain(void) {
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
-    frame = &gGroundParticle_Offsets[2 * particle->timer];
+    frame = &gGroundParticles_Offsets[2 * particle->timer];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
     if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {

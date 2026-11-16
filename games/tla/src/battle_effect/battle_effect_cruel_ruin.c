@@ -290,8 +290,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                 FIXED_INTEGER_PART(piece->x), FIXED_INTEGER_PART(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          BattleEffectKernels_IntegrateVector2(piece, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(piece, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1) / 4);
       }
     }
 
@@ -345,7 +345,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(piece->x) - 16,
                   FIXED_INTEGER_PART(piece->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(piece, 60, -toFIXED(1) / 16);
+          Particle_AdvanceWithGravity2D(piece, 60, -toFIXED(1) / 16);
           piece->variant++;
         }
       }

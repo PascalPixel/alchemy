@@ -2,7 +2,7 @@
 void Actors_SetCellsOpen(const u16 *list) {
   const u16 *spec;
   u16 id;
-  struct Actor *object;
+  struct Actor *actor;
   s16 mode;
   s16 flag;
   s32 limit;
@@ -15,12 +15,12 @@ void Actors_SetCellsOpen(const u16 *list) {
   spec = list;
   do {
     id = spec[0];
-    object = Actor_Get(id);
+    actor = Actor_Get(id);
     mode = spec[1];
     flag = spec[2];
-    object->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, actor->layer);
     limit = 0xff;
     spec += 3;
     first = spec[0];

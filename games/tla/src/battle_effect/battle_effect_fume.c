@@ -120,8 +120,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
         }
-        BattleEffectKernels_IntegrateVector2(
-            particle, 60, -gFume_Levels[args->variant][FUME_LIFT]);
+        Particle_AdvanceWithGravity2D(particle, 60,
+                                      -gFume_Levels[args->variant][FUME_LIFT]);
       }
       particle->variant++;
     }

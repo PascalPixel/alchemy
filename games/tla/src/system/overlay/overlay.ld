@@ -127,7 +127,7 @@ SCENE(idejima)
 #elif OVERLAY == 0x651
 SCENE(daila)
 #elif OVERLAY == 0x652
-SCENE(daila_interiors)
+SCENE(daila_rooms)
 #elif OVERLAY == 0x653
 SCENE(kandorean_temple)
 #elif OVERLAY == 0x654
@@ -141,7 +141,7 @@ SCENE(lemurian_ship_deck)
 #elif OVERLAY == 0x658
 SCENE(madra)
 #elif OVERLAY == 0x659
-SCENE(madra_interiors)
+SCENE(madra_rooms)
 #elif OVERLAY == 0x65a
 SCENE(madra_catacombs)
 #elif OVERLAY == 0x65b
@@ -151,11 +151,11 @@ SCENE(osenia_cliffs)
 #elif OVERLAY == 0x65d
 SCENE(mikasalla)
 #elif OVERLAY == 0x65e
-SCENE(mikasalla_interiors)
+SCENE(mikasalla_rooms)
 #elif OVERLAY == 0x65f
 SCENE(garoh)
 #elif OVERLAY == 0x660
-SCENE(garoh_interiors)
+SCENE(garoh_rooms)
 #elif OVERLAY == 0x661
 SECTIONS
 {
@@ -178,7 +178,7 @@ SCENE(airs_rock_inside)
 #elif OVERLAY == 0x665
 SCENE(alhafra)
 #elif OVERLAY == 0x666
-SCENE(alhafra_interiors)
+SCENE(alhafra_rooms)
 #elif OVERLAY == 0x667
 SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
@@ -209,7 +209,7 @@ SCENE(gondowan_cliffs_hideout)
 #elif OVERLAY == 0x66d
 SCENE(naribwe)
 #elif OVERLAY == 0x66e
-SCENE(naribwe_interiors)
+SCENE(naribwe_rooms)
 #elif OVERLAY == 0x66f
 SCENE(kibombo_mountains)
 #elif OVERLAY == 0x670
@@ -242,7 +242,7 @@ SCENE(islet_cave)
 #elif OVERLAY == 0x676
 SCENE(yallam)
 #elif OVERLAY == 0x677
-SCENE(yallam_interiors)
+SCENE(yallam_rooms)
 #elif OVERLAY == 0x678
 SCENE(taopo_swamp)
 #elif OVERLAY == 0x679
@@ -299,7 +299,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x67d
-SCENE(izumo_interiors)
+SCENE(izumo_rooms)
 #elif OVERLAY == 0x67e
 SCENE(izumo)
 #elif OVERLAY == 0x67f
@@ -311,7 +311,7 @@ SCENE(gaia_rock_inside)
 #elif OVERLAY == 0x682
 SCENE(champa)
 #elif OVERLAY == 0x683
-SCENE(champa_interiors)
+SCENE(champa_rooms)
 #elif OVERLAY == 0x684
 SCENE(champa_sanctum)
 #elif OVERLAY == 0x685
@@ -340,7 +340,7 @@ SCENE(ancient_lemuria)
 #elif OVERLAY == 0x68b
 SCENE(lemuria)
 #elif OVERLAY == 0x68c
-SCENE(lemuria_interiors)
+SCENE(lemuria_rooms)
 #elif OVERLAY == 0x68d
 SECTIONS
 {

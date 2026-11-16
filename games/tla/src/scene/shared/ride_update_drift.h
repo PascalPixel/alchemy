@@ -3,7 +3,7 @@ void Ride_UpdateDrift(struct Actor *object) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED dx = object->bounce;
   FIXED dz;
-  struct SpriteParts *parts;
+  struct FieldSprite *sprite;
   s32 rate;
   s32 scale;
 
@@ -15,10 +15,10 @@ void Ride_UpdateDrift(struct Actor *object) {
   object->riseBaseY = dz - dz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
-  parts = object->sprite;
+  sprite = object->sprite;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
-  parts->unk12 += object->timer;
+  sprite->rotation += object->timer;
   if (leader->y.fixed == leader->groundHeight &&
       Actor_IsAbove(object, leader)) {
     object->z.fixed -= object->riseBaseY;

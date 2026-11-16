@@ -338,10 +338,10 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
 
 s32 WorldMap_SetIslandTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
-  struct TileSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = object->sprite;
 
-  sprite->tile = *tile;
-  sprite->frame = 0;
+  sprite->rotation = *tile;
+  sprite->nextFrame = 0;
   return 1;
 }
 
@@ -1153,9 +1153,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     Event_Wait(40);
-    Event_SetDestination(
-        ((struct SavedDestination *)&gMainRoutineWork)->scene,
-        ((struct SavedDestination *)&gMainRoutineWork)->entrance);
+    Event_SetDestination((s16)gMainRoutineWork.restartScene,
+                         (s16)gMainRoutineWork.restartEntrance);
     gFieldWork->transition = 0;
   } else {
     Event_ClearFlag(0xa76);
@@ -2279,10 +2278,10 @@ void WorldMap_CarryPartyToAquaRock(void) {
 
 s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
-  struct TileSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = object->sprite;
 
-  sprite->tile = *tile;
-  sprite->frame = 0;
+  sprite->rotation = *tile;
+  sprite->nextFrame = 0;
   return 1;
 }
 
@@ -2577,7 +2576,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;
-        ((struct LinkedDetail *)sprite->record)->field16 = 0;
+        ((struct SpriteAnimation *)sprite->record)->picture = 0;
       }
     }
   }

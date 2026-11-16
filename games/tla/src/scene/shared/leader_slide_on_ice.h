@@ -25,14 +25,14 @@ top:
   Leader_StopIfPending();
   actor->speedLimit = toFIXED(1);
   actor->acceleration = toFIXED(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
+  actor->targetX = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x.fixed & 0xfff00000) + toFIXED(8);
+  position->x = startX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position->y = actor->y.fixed;
-  position->z = startZ = (actor->z.fixed & 0xfff00000) + toFIXED(8);
+  position->z = startZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   x = startX;
   z = startZ;
   layer = &actor->layer;

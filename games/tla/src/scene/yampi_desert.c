@@ -1362,9 +1362,9 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
       s32 keep = 33;
 
       keep = -keep;
-      visual->flags05 &= keep;
+      visual->attr0High &= keep;
     }
-    mask = visual->flags09 & 0x0f;
+    mask = visual->attr2High & 0x0f;
     {
       s32 clear = 13;
 
@@ -1372,14 +1372,14 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
       mask &= clear;
     }
     mask |= 4;
-    visual->flags09 = mask;
+    visual->attr2High = mask;
     object->motionFlags = 0;
     object->retainSpriteCache = 1;
-    visual->value1a = 0;
-    visual->value1b = 0;
+    visual->nextFrame = 0;
+    visual->layerCount = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_SCOOP_GEM);
-    VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
+    VramCache_Load(visual->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   return object;
@@ -2662,8 +2662,7 @@ void YampiDesert_DrawRisingSand(void) {
 
 /// Starts the scorpion pit's rising sand.
 void YampiDesert_StartRisingSand(s32 unused, s32 value) {
-  struct YampiDesertRideWork *work =
-      (struct YampiDesertRideWork *)(gInventorySnapshot + 0x188);
+  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   void *buffer;
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))

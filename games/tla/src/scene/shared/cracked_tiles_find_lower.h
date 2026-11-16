@@ -2,10 +2,10 @@
 s32 CrackedTiles_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry = table->entries;
-  struct CellMapWork *map;
-  struct CellMapLayer *layer;
-  struct CellMapCell *rows;
-  struct CellMapCell *cell;
+  struct MapWork *map;
+  struct MapLayer *layer;
+  struct MapCell *rows;
+  struct MapCell *cell;
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
   u32 event, last;
@@ -19,11 +19,11 @@ s32 CrackedTiles_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->z = z;
   table->current = -1;
   table->count = 0;
-  map = (struct CellMapWork *)Ram_HeapSlots->mapGrid;
+  map = Ram_HeapSlots->mapGrid;
   layer = &map->layers[0];
   rows = layer->cells;
-  x0 = (layer->originX + map->minX) >> 20;
-  z0 = (layer->originZ + map->minZ) >> 20;
+  x0 = (layer->offsetX + map->minX) >> 20;
+  z0 = (layer->offsetY + map->minZ) >> 20;
   width = (map->maxX - map->minX) >> 20;
   height = (map->maxZ - map->minZ) >> 20;
   rows += ((map->minZ >> 20) << 7) + (map->minX >> 20);
@@ -37,7 +37,7 @@ s32 CrackedTiles_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     i = 0;
     if (i < width) {
     column:
-      event = cell->event;
+      event = cell->collisionCode;
       if (event != 0 && event >= kind) {
         last = kind + 1;
         if (event <= last) {

@@ -2280,10 +2280,10 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct EffectSprite sprites[64];
   s16 next;
   u16 tileBase;
-  u16 resource;
+  s16 resource;
 };
 
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
@@ -2334,7 +2334,7 @@ void MagmaRock_StartFallingRocks(void) {
   s32 tile;
   s32 i;
   struct Rock *rock;
-  struct RockSprite *sprite;
+  struct EffectSprite *sprite;
 
   Import_DecompressTaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
@@ -2346,10 +2346,10 @@ void MagmaRock_StartFallingRocks(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05_5 = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
+    sprite->oam.fullColor = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
     rock->timer = -1;
   }
   {
@@ -2361,7 +2361,7 @@ void MagmaRock_StartFallingRocks(void) {
 }
 
 void MagmaRock_EndFallingRocks(void) {
-  struct MagmaRockSparkWork *work = Ram_HeapSlots->menuWork;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);

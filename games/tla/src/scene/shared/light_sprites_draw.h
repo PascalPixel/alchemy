@@ -5,8 +5,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOams;

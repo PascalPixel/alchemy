@@ -97,7 +97,7 @@ extern s32 gLoho_ForemanComes[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
 extern struct Trigger gLoho_InteriorsTriggers[];
-extern struct LohoPicture gLoho_HouseDoor;
+extern struct MapGridCellAnimation gLoho_HouseDoor;
 extern s32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
@@ -738,7 +738,8 @@ loop:
     goto loop;
   trigger = &work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
-  Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
+  Loho_AnimateCells(gLoho_HouseDoor.steps, gLoho_HouseDoor.x,
+                    gLoho_HouseDoor.y);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
@@ -1173,4 +1174,4 @@ s16 gLoho_DoorOpening[] = {
 };
 // clang-format on
 
-struct LohoPicture gLoho_HouseDoor = {gLoho_DoorOpening, 79, 15};
+struct MapGridCellAnimation gLoho_HouseDoor = {gLoho_DoorOpening, 79, 15};

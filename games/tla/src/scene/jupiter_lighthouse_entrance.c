@@ -203,35 +203,37 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
+struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct GustObject *object;
+  struct Actor *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulFX(toFIXED(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
-                                                   source->y, position.z));
+  position.x =
+      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
+  position.z =
+      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
+  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                             position.z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
+  object->facing = source->facing;
+  object->timer = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = Whirlwind_Update;
   object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
-                    toFIXED(3), &options);
+  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
+                    0, toFIXED(3), &options);
   return object;
 }
 
-s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
-  struct SceneEffectParams params;
+s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
+  struct EffectOptions params;
   s32 phase;
   FIXED x, y, speed;
 
@@ -241,10 +243,13 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = object->y + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, toFIXED(11), &params);
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE,
+                      &params);
   }
   return 0;
 }

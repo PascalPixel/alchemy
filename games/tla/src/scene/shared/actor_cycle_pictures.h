@@ -1,27 +1,28 @@
-/// Steps an actor's pictures through a four-frame cycle.
+/// Flashes an actor's sprite on its timer: white three frames in four, its
+/// own colours on the fourth, redrawn each frame.
 void Actor_CyclePictures(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpritePictures *pictures = sprite->pictures;
+  struct SpriteAnimation *animation = sprite->animation;
 
   switch (object->timer & 3) {
   case 0:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 2;
+    animation->colorMode = SPRITE_COLOR_WHITE;
+    sprite->dirty = 1;
+    sprite->nextFrame = 2;
     break;
   case 1:
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
+    sprite->dirty = 1;
+    sprite->nextFrame = 0;
     break;
   case 2:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
+    animation->colorMode = SPRITE_COLOR_WHITE;
+    sprite->dirty = 1;
+    sprite->nextFrame = 0;
     break;
   case 3:
-    pictures->picture = 0;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
+    animation->colorMode = SPRITE_COLOR_NORMAL;
+    sprite->dirty = 1;
+    sprite->nextFrame = 0;
     break;
   }
   object->timer++;

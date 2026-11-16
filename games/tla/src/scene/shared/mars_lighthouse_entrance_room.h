@@ -11,19 +11,7 @@
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 #define ABS(value) ((value) < 0 ? -(value) : (value))
-
-struct SpriteParts {
-  u8 unk00[9];
-  u8 unk09Low : 2;
-  u8 part : 2;
-  u8 unk0a[6];
-  u8 unk10;
-  u8 unk11;
-  u16 unk12;
-};
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);

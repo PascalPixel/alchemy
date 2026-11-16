@@ -202,7 +202,7 @@ extern struct ActorPlacement gAlhafra_ActorPlacements[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceBriggsIsCaught[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheShipIsStolen[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[];
-extern struct DoorStep gAlhafra_Doors[];
+extern struct MapGridCellAnimation gAlhafra_Doors[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
@@ -217,12 +217,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
-void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
+void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
                               s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(step->script, step->x, step->z);
+  MapGrid_PlayMapEdit(step->steps, step->x, step->y);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -235,7 +235,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
 }
 
 void Alhafra_EnterDoor(s32 index) {
-  struct DoorStep *table = gAlhafra_Doors;
+  struct MapGridCellAnimation *table = gAlhafra_Doors;
 
   Alhafra_OpenDoorAndEnter(&table[index], index, 0);
 }
@@ -1349,22 +1349,22 @@ s16 gAlhafra_LeftDoorEdit[] = {
     62, 2, 1, 2, 6, -1, 0,
 };
 
-struct DoorStep gAlhafra_Doors[] = {
-    {0, 0, 0},
-    {(s32)gAlhafra_DoorEdit, 27, 37},
-    {(s32)gAlhafra_DoorEdit, 27, 43},
-    {0, 0, 0},
-    {0, 0, 0},
-    {(s32)gAlhafra_DoorEdit, 21, 36},
-    {(s32)gAlhafra_DoorEdit, 38, 46},
-    {(s32)gAlhafra_NoDoorEdit, 0, 0},
-    {(s32)gAlhafra_LeftDoorEdit, 11, 33},
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0},
-    {(s32)gAlhafra_LeftDoorEdit, 5, 9},
-    {0, 0, 0},
-    {(s32)gAlhafra_DoorEdit, 16, 9},
+struct MapGridCellAnimation gAlhafra_Doors[] = {
+    {NULL, 0, 0},
+    {gAlhafra_DoorEdit, 27, 37},
+    {gAlhafra_DoorEdit, 27, 43},
+    {NULL, 0, 0},
+    {NULL, 0, 0},
+    {gAlhafra_DoorEdit, 21, 36},
+    {gAlhafra_DoorEdit, 38, 46},
+    {gAlhafra_NoDoorEdit, 0, 0},
+    {gAlhafra_LeftDoorEdit, 11, 33},
+    {NULL, 0, 0},
+    {NULL, 0, 0},
+    {NULL, 0, 0},
+    {gAlhafra_LeftDoorEdit, 5, 9},
+    {NULL, 0, 0},
+    {gAlhafra_DoorEdit, 16, 9},
 };
 
 struct Trigger gAlhafra_Triggers[] = {

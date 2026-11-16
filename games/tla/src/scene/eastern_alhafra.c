@@ -141,7 +141,7 @@ enum EasternAlhafraAfterBriggsActorId {
 };
 
 struct Actor;
-struct RockSprite;
+struct EffectSprite;
 struct Vector3;
 
 /// A push: where the pushed actor ends up, which footprint it has and which
@@ -190,7 +190,7 @@ void EasternAlhafra_BriggsStealsShip(void);
 
 extern s16 gEasternAlhafra_CabinDoorFrames[];
 
-void EasternAlhafra_InitializeRockSprite(struct RockSprite *sprite, s32 width,
+void EasternAlhafra_InitializeRockSprite(struct EffectSprite *sprite, s32 width,
                                          s32 height, u32 attributes, s32 tile);
 
 void Particles_UpdateFalling(void);
@@ -572,12 +572,12 @@ void EasternAlhafra_StepOntoMast(void) {
 
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
-void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
-                                     s32 unused) {
+void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
+                                     s32 countdown, s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(step->script, step->x, step->z);
+  MapGrid_AnimateCells(step->steps, step->x, step->y);
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -2335,7 +2335,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct EffectSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -2352,7 +2352,7 @@ void EasternAlhafra_StartFallingRocks(void) {
   s32 tile;
   s32 i;
   struct Rock *rock;
-  struct RockSprite *sprite;
+  struct EffectSprite *sprite;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
                       work);
@@ -2364,10 +2364,10 @@ void EasternAlhafra_StartFallingRocks(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     EasternAlhafra_InitializeRockSprite(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05_5 = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
+    sprite->oam.fullColor = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
     rock->timer = -1;
   }
   {

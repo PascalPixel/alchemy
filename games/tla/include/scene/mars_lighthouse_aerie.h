@@ -4,54 +4,82 @@
 /// @file
 /// What games/tla/src/scene/ declares for the files that use it, written once.
 
+#include "fixed_math.h"
 #include "types.h"
 
 struct Actor;
 
-/// A halfword whose store may alias any read after it.
-union StoredHalfword {
-  u16 value;
-  s32 word;
+/// A field sprite (struct FieldSprite) read a byte at a time, as the aerie's
+/// rising rings set their colours and priority and load their tiles.
+struct OverlaySprite {
+  u8 link[4];
+  u8 y; ///< attribute 0's y
+  /// Attribute 0's high byte.
+  ///@{
+  u8 affineModeMosaic : 5;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  ///@}
+  u8 attr1[2];
+  u8 tileLow; ///< attribute 2's low byte
+  /// Attribute 2's high byte.
+  ///@{
+  u8 tileHigh : 2; ///< tile number bits 9..8
+  u8 priority : 2;
+  u8 palette : 4;
+  ///@}
+  u8 attr3[2];
+  u8 scale[4];
+  u8 vramBlock; ///< VRAM cache entry holding its tiles
+  u8 cacheFlags;
+  u8 rotation[2];
+  u8 size[4]; ///< width, height and the x and y offsets
+  u8 frame;
+  u8 dirty;
+  u8 nextFrame;
+  u8 layerCount;
 };
 
+/// struct Actor with its update hook a word, so that a store to it is ordered
+/// as a word's (MarsLighthouseAerie_WatchGoldenSunRise).
 struct OverlayActor {
-  u8 unk0[8];
-  s32 x, y, z, terrainHeight, scaleX, scaleY;
-  u8 unk20[3];
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
+  FIXED x, y, z, groundHeight, scaleX, scaleY;
+  u16 radius;
+  u8 layer;
   u8 priorityFlags;
-  u8 unk24[12];
-  s32 speedLimit, acceleration;
-  u8 unk38[16];
-  s32 gravity;
-  s32 unk4c;
-  s32 animation;
-  u8 unk54;
+  FIXED velocityX, velocityY, velocityZ, speedLimit, acceleration;
+  FIXED targetX, targetY, targetZ, bounce, gravity;
+  s32 riseBaseY;
+  void *sprite;
+  u8 spriteStorageKind;
   u8 motionFlags;
-  u8 unk56[6];
-  u8 unk5c;
-  u8 unk5d[15];
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 timer;
+  s16 userValue;
+  struct Actor *watchedActor;
   s32 update;
 };
 
-struct OverlaySprite {
-  u8 unk0[5];
-  u8 unk5_0 : 5;
-  u8 unk5_5 : 1;
-  u8 unk5_6 : 2;
-  u8 unk6[3];
-  u8 unk9_0 : 2;
-  u8 unk9_2 : 2;
-  u8 unk9_4 : 4;
-  u8 unkA[6];
-  u8 vramBlock;
-  u8 unk11[10];
-  u8 unk1b;
-};
-
-/// The heap slots read as words.
+/// The heap slots read as words, so that a read of the field work is ordered as
+/// a word's after the stores before it.
 struct HeapWords {
-  u8 unk00[108];
-  s32 eventWord;
+  u32 beforeFieldWork[27];
+  s32 fieldWork;
 };
 
 void MarsLighthouseAerie_TalkToKyle(void);

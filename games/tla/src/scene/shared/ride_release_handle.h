@@ -1,7 +1,6 @@
 /// Releases the ride's handle.
 void Ride_ReleaseHandle(void) {
-  struct FlameHitWork *work =
-      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = RIDE_WORK;
 
   Actor_Release(work->handle);
   work->handle = NULL;

@@ -158,7 +158,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMadra_Placements;
 }
 
-extern struct MadraPlacement gMadra_Doors[];
+extern struct MapGridCellAnimation gMadra_Doors[];
 
 /// The party leader walks into one of Madra's doors. Everyone stops, the door
 /// opens with its cell animation (gMadra_Doors), and the leader walks in and
@@ -189,7 +189,7 @@ next:
     s32 x = gMadra_Doors[index].x;
     s32 y = gMadra_Doors[index].y;
 
-    MapGrid_AnimateCells(gMadra_Doors[index].data, x, y);
+    MapGrid_AnimateCells(gMadra_Doors[index].steps, x, y);
   }
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -1222,7 +1222,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(20);
-  MapGrid_AnimateCells(gMadra_Doors[6].data, gMadra_Doors[6].x,
+  MapGrid_AnimateCells(gMadra_Doors[6].steps, gMadra_Doors[6].x,
                        gMadra_Doors[6].y);
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
@@ -1906,7 +1906,7 @@ s16 gMadra_CavernHomeDoorOpening[] = {
 // clang-format on
 
 /// The town's doors that open with a cell animation as the party walks through.
-struct MadraPlacement gMadra_Doors[] = {
+struct MapGridCellAnimation gMadra_Doors[] = {
     {gMadra_CavernHomeDoorOpening, 20, 3},
     {gMadra_DoorOpening, 13, 23},
     {gMadra_DoorOpening, 17, 17},

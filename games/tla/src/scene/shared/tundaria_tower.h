@@ -16,17 +16,6 @@
 
 #include "field/scene_tables.h"
 
-struct TundariaTowerSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
-struct TundariaTowerPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
@@ -39,8 +28,6 @@ void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Import_LeaderStopMoving(void);
 void Import_EventResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 a);
-
-extern u8 MsgThereSSomething[];
 
 void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);
 

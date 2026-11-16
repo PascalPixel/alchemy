@@ -255,7 +255,7 @@ void NaribweInteriors_ReadShiningItem(void);
 /// itself on their own, then takes his 20 coins.
 void NaribweInteriors_ReadFortune(void) {
   s32 slot, unit;
-  struct UnitData *unitData;
+  struct Unit *unitData;
   const u8 *message, *refuse, *info;
 #if !TLA_PATCH_1
   s32 item;
@@ -290,11 +290,11 @@ ask:
     return;
   }
   unitData = Unit_Get(unit);
-  Item_GetDirect(unitData->items[slot]);
-  Actor_SetItemIcon(Actor_Get(ACTOR_FORTUNE_MARKER), unitData->items[slot]);
+  Item_GetDirect(unitData->inventory[slot]);
+  Actor_SetItemIcon(Actor_Get(ACTOR_FORTUNE_MARKER), unitData->inventory[slot]);
   Actor_SetPosition(ACTOR_FORTUNE_MARKER, 672, 104);
   FieldEvent_Wait(60);
-  MessageArgument_Push(unitData->items[slot], MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
   Message_ShowCentered(MsgPlacedOnThe, 1);
   message = MsgNaribweInteriorsAreYouPrepared;
   FieldEvent_SetMessageId(message);
@@ -303,7 +303,7 @@ ask:
       1)
     goto read;
   Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
-  MessageArgument_Push(unitData->items[slot], MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
   Message_ShowCentered(message + 1, 1);
   FieldEvent_SetMessageId(message + 2);
   Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -359,11 +359,11 @@ read:
   Actor_ShowEmote(ACTOR_FORTUNE_TELLER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   unitData = Unit_Get(unit);
-  info = Item_GetDirect(unitData->items[slot]);
+  info = Item_GetDirect(unitData->inventory[slot]);
 #if !TLA_PATCH_1
-  item = unitData->items[slot];
+  item = unitData->inventory[slot];
 #else
-  item = unitData->items[slot] & INVENTORY_ITEM_ID_MASK;
+  item = unitData->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 #endif
   if ((u16)(item - ITEM_RIGHT_PRONG) <= ITEM_CENTER_PRONG - ITEM_RIGHT_PRONG) {
     NaribweInteriors_ReadProng();

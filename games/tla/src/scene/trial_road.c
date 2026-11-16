@@ -169,12 +169,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 
 /// A piece the party cannot push: a pillar a bush holds down, or a log.
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
-#define PUSH_BLOCKED(object)                                                   \
-  OBJECT_BYTE(object, offsetof(struct Actor, riseCounter))
+#define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
 /// pillar: 16 standing, -16 lowered.
-#define PILLAR_TOP_HEIGHT(top)                                                 \
-  OBJECT_BYTE(top, offsetof(struct Actor, riseEnabled))
+#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
 
 /// A map cell's collision code for a wall: nothing steps onto it.
 #define CELL_WALL 0xff
@@ -695,12 +693,11 @@ void TrialRoad_ExamineChest(s32 id) {
 void TrialRoad_StepPastChests(void) {}
 
 void TrialRoad_BlockCellUnder(s32 id) {
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    u8 *cells = map->layers[0].cells;
+    u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
         (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
@@ -712,12 +709,11 @@ void TrialRoad_BlockCellUnder(s32 id) {
 }
 
 void TrialRoad_UnblockCellUnder(s32 id) {
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    u8 *cells = map->layers[0].cells;
+    u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
         (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
@@ -1087,7 +1083,7 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
 /// code 255): the column above and below it in mode 0, the row beside it
 /// otherwise.
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
   s32 index;
   struct MapCell *low;
@@ -1096,8 +1092,8 @@ void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   if (object == 0)
     return;
   index = (FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7);
-  low = (struct MapCell *)map->layers[0].cells + index;
-  high = (struct MapCell *)map->layers[2].cells + index;
+  low = map->layers[0].cells + index;
+  high = map->layers[2].cells + index;
   if (mode == 0) {
     low[-MAPGRID_SIZE].collisionCode = CELL_WALL;
     low->collisionCode = CELL_WALL;
@@ -1129,15 +1125,14 @@ void TrialRoad_BlockLogs(void) {
 
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *object = Actor_GetById(ACTOR_PILLAR_A);
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cells;
   u8 *cell;
   s32 value;
 
   if (FIELD_CELL(object->x.fixed) == x && FIELD_CELL(object->z.fixed) == z)
     return 1;
-  cells = map->layers[0].cells;
+  cells = (u8 *)map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
   value = cell[2];
   return IsZero(value ^ 0xff);
@@ -2832,10 +2827,10 @@ void TrialRoad_ShowTraps(void) {
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *mover = work->fountains;
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 shape = work->shape;
-  u8 *shapes = *(u8 **)((u8 *)map + 316);
-  u8 *cells = map->layers[0].cells;
+  u8 *shapes = map->layers[0].terrainIds;
+  u8 *cells = (u8 *)map->layers[0].cells;
   s32 *collision;
   struct Actor *actor;
   struct Actor *marker;
@@ -3101,7 +3096,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
-        TrialRoad_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
+        TrialRoad_SetActorCellShape(-4, *(u8 *)&object->layer, id);
         MagmaRockInside_SpawnRubble(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

@@ -9,14 +9,11 @@
 struct Actor;
 struct ResourceEntry;
 
+/// A crumbling pillar of Magma Rock (MagmaRock_CrumblePillar): its actor and
+/// its flag.
 struct MagmaRockCrumblingPillar {
   u16 id;
   u16 flag;
-};
-
-struct MagmaRockSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
 };
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
@@ -59,7 +56,6 @@ extern s16 gMagmaRock_CrumblingPillars[];
 void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 
 void MagmaRock_PlaceTightrope();
-s32 Func_02003c04(struct Actor *object);
 s32 Field_TryJumpForward(void);
 
 void MagmaRock_SpawnRubble(s32 spread);
@@ -84,9 +80,6 @@ void MagmaRock_ClearLedgeBehavior(void);
 void MagmaRock_AmplifyBurst(void);
 void MagmaRock_PushPillarEast(void);
 void MagmaRock_PushPillarWest(void);
-void MagmaRock_GrowVine1(void);
-void MagmaRock_GrowVine2(void);
-void MagmaRock_GrowVine3(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];

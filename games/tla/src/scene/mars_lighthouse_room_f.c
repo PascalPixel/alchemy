@@ -234,7 +234,7 @@ struct WarpWork {
   s16 current;
   s16 busy;
   u8 unk10[0x10];
-  struct WarpEntry entries[1];
+  struct CellTargetEntry entries[1];
 };
 
 extern s16 gMarsLighthouseRoomF_JumpAnglesByKey[];
@@ -1413,30 +1413,32 @@ extern s32 gWhirlwindEndScript[];
 #include "shared/whirlwind_update.h"
 
 /// Unused here: a whirlwind starts from a gust.
-UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
+UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct GustObject *object;
+  struct Actor *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulFX(toFIXED(8), Math_Sin(source->angle));
-  object = (struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
-                                                  source->y, position.z);
+  position.x =
+      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
+  position.z =
+      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
+  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                             position.z);
   Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
+  object->facing = source->facing;
+  object->timer = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = Whirlwind_Update;
   object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
-                    toFIXED(3), &options);
+  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
+                    0, toFIXED(3), &options);
   return object;
 }
 
@@ -1454,10 +1456,10 @@ enum {
 
 /// Unused here: the Jupiter Lighthouse's angels where their flags leave them.
 UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
-  struct PositionedActor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
-  struct PositionedActor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
-  struct PositionedActor *lid = Actor_GetById(ACTOR_LID);
-  struct FieldSprite *sprite = lid->animation;
+  struct Actor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
+  struct Actor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
+  struct Actor *lid = Actor_GetById(ACTOR_LID);
+  struct FieldSprite *sprite = lid->sprite;
 
   Actor_SetPosition(24, 512, 248);
   Actor_SetPosition(ACTOR_LID, 512, 248);
@@ -1465,11 +1467,11 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_GetById(24)->scaleX = 0;
   lid->motionFlags = 0;
-  lid->y.fixed = lid->terrainHeight;
+  lid->y.fixed = lid->groundHeight;
   leftAngel->motionFlags = 0;
-  leftAngel->y.fixed = leftAngel->terrainHeight;
+  leftAngel->y.fixed = leftAngel->groundHeight;
   rightAngel->motionFlags = 0;
-  rightAngel->y.fixed = rightAngel->terrainHeight;
+  rightAngel->y.fixed = rightAngel->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     leftAngel->y.fixed += 0x66640;
     {
@@ -1756,8 +1758,7 @@ struct RideAnimation {
 };
 
 void Ride_Create(void) {
-  struct MarsLighthouseRoomFRideWork *work =
-      (struct MarsLighthouseRoomFRideWork *)RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1768,7 +1769,7 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->vramBlock;
+  work->flameVramBlock = animation->vramBlock;
   animation->keepEntry = 1;
 }
 
@@ -1788,7 +1789,7 @@ void Ride_ReleaseHandle(void) {
   work->handle = NULL;
 }
 
-UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 
@@ -2468,7 +2469,7 @@ s32 CrackedTiles_Step(void) {
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);
   struct WarpWork *work = &gCrackedTiles;
-  struct WarpEntry *entry = work->entries;
+  struct CellTargetEntry *entry = work->entries;
   s32 index;
 
   index = 0;

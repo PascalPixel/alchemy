@@ -31,13 +31,6 @@
 void Rope_Initialize(void);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
-struct SwingWork {
-  u32 unk00;
-  s32 arg;
-  struct SwingPoint points[16];
-  u16 values[4];
-};
-
 /// The mud room's actors (SceneId_TaopoSwampMud).
 enum TaopoSwampMudActorId {
   /// The five ivy bushes Whirlwind blows away (SPRITE_IVY), each kept gone by
@@ -320,7 +313,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   sprite = actor->sprite;
   i = 0;
   do {
-    ((struct Charge *)sprite)->level = i;
+    ((struct Sprite *)sprite)->sunkRows = i;
     sprite->nextFrame |= 8;
     sprite->nextFrame &= ~1;
     k = i;
@@ -1700,28 +1693,27 @@ extern u8 gMapGridCellBuffer[];
 
 /// Points the map's followed point at cell (x, z), and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  struct MapFocus *focus;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer;
   s32 index, fx = x << 19;
 
-  focus = (struct MapFocus *)(map + 0x178);
-  focus->x = fx;
-  focus->z = z << 19;
-  focus->unk28 = 127;
-  focus->unk2a = 0x3f80;
-  focus->row = z << 7;
-  focus->cellX = x;
-  focus->unk18[0] = 0;
-  focus->unk18[1] = 0;
-  focus->unk18[2] = 0;
-  focus->unk18[3] = 0;
+  layer = &map->layers[2];
+  layer->offsetX = fx;
+  layer->offsetY = z << 19;
+  layer->maskX = 127;
+  layer->maskY = 0x3f80;
+  layer->originY = z << 7;
+  layer->originX = x;
+  layer->speedX = 0;
+  layer->speedY = 0;
+  layer->phaseX = 0;
+  layer->phaseY = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->scaleZ = focus->scaleX = FIXED_ONE;
-  focus->cell = gMapGridCellBuffer + index * 4;
-  focus->shape = gMapShapeGrid + index;
-  focus->scrolledX = Iwram_MulFX(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
-  focus->scrolledZ =
-      Iwram_MulFX(*(s32 *)(map + 0xe8), focus->scaleZ) + focus->z;
+  layer->scaleY = layer->scaleX = FIXED_ONE;
+  layer->cells = (struct MapCell *)(gMapGridCellBuffer + index * 4);
+  layer->terrainIds = gMapShapeGrid + index;
+  layer->x = Iwram_MulFX(map->viewX, FIXED_ONE) + layer->offsetX;
+  layer->y = Iwram_MulFX(map->viewZ, layer->scaleY) + layer->offsetY;
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
 }
@@ -1903,8 +1895,8 @@ void Vent_Puff(s32 *position, s32 base) {
 
 /// Places a room's vents from its tables and starts their cycle.
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
-  struct SwingWork *work = (struct SwingWork *)(gInventorySnapshot + 0x188);
-  struct SwingPoint *point = work->points;
+  struct VentWork *work = VENT_WORK;
+  struct VentEntry *point = work->entries;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 x;
@@ -1917,12 +1909,12 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       s32 z = points[0];
       s32 w = points[1];
 
-      point->unk00 = 0;
+      point->active = 0;
       point->x = toFIXED(x);
       point->z = toFIXED(z);
       point->y = Map_GetTerrainHeight(0, toFIXED(x), toFIXED(z) + toFIXED(16));
-      point->w = toFIXED(w);
-      point->index = i++;
+      point->value = toFIXED(w);
+      point->timer = i++;
       points += 2;
       point++;
       if (i > 15)
@@ -1934,7 +1926,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       i = 0;
       if (x > 0) {
       next_value:
-        work->values[i++] = x;
+        work->ids[i++] = x;
         if (i > 3)
           goto values_done;
         x = *values++;
@@ -1944,7 +1936,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
     }
   values_done:;
   }
-  work->arg = arg;
+  work->hook = (s32 (*)(void))arg;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = BLEND_ALPHA(8, 12);

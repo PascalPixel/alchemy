@@ -187,11 +187,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source);
+struct Actor *Whirlwind_SpawnUpper(struct Actor *source);
 
 void JupiterLighthouse_RideUpperWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
-    Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(ACTOR_WEST_UPPER_GUST));
+    Whirlwind_SpawnUpper(Actor_Get(ACTOR_WEST_UPPER_GUST));
     gWhirlwindRiding = 1;
   }
 }
@@ -206,8 +206,7 @@ void JupiterLighthouse_RideWhirlwind(void) {
       party->movementMode = LEADER_MOVEMENT_NONE;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
-      Whirlwind_SpawnUpper(
-          (struct GustObject *)Actor_Get(ACTOR_EAST_UPPER_GUST));
+      Whirlwind_SpawnUpper(Actor_Get(ACTOR_EAST_UPPER_GUST));
       gWhirlwindRiding = 1;
     }
   }
@@ -1686,30 +1685,32 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
+struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct GustObject *object;
+  struct Actor *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
-  position.z = source->z + Iwram_MulFX(toFIXED(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
-                                                   source->y, position.z));
+  position.x =
+      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
+  position.z =
+      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
+  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                             position.z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
+  object->facing = source->facing;
+  object->timer = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = Whirlwind_Update;
   object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
-                    toFIXED(3), &options);
+  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
+                    0, toFIXED(3), &options);
   return object;
 }
 

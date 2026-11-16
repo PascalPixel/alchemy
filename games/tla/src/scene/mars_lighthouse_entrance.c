@@ -350,8 +350,8 @@ loop:
 /// restores its size, sets its flag, hands it to
 /// MarsLighthouseEntrance_SetIceConeCells and clears its position.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
-  struct EffectHolder *holder = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object = Actor_Get(holder->objectId);
+  struct FieldEffectWork *holder = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *object = Actor_Get(holder->secondActorId);
 
   if (index <= 7) {
     struct EffectOptions options;
@@ -372,7 +372,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   if (mode == 1) {
     object->scaleY = FIXED_ONE;
     Event_SetFlag(object->timer);
-    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->objectId));
+    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->secondActorId));
     object->x.fixed = object->y.fixed = object->z.fixed = 0;
   }
 }
@@ -591,7 +591,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
     if (FIELD_CELL(object->x.fixed) == 20) {
       FieldEvent_Wait(5);
       object->z.fixed += toFIXED(1);
-      BYTE_AT(object, 98) = 1;
+      *(u8 *)&object->riseCounter = 1;
       Flag_Set(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
     }
   }
@@ -1567,8 +1567,7 @@ struct RideAnimation {
 };
 
 void Ride_Create(void) {
-  struct MarsLighthouseEntranceRideHead *work =
-      (struct MarsLighthouseEntranceRideHead *)RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1579,7 +1578,7 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->vramBlock;
+  work->flameVramBlock = animation->vramBlock;
   animation->keepEntry = 1;
 }
 
@@ -1590,7 +1589,7 @@ UNUSED void Ride_Release(void) {
   work->handle = NULL;
 }
 
-void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 void FlameThrowers_Puff(void);
 
@@ -2015,7 +2014,7 @@ s32 Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->watchedActor = source;
   object->timer = 0;
   object->userValue = a3;
-  BYTE_AT(object, 98) = kind;
+  *(u8 *)&object->riseCounter = kind;
   object->update = (void (*)(void))Actor_HoldDuringEvent;
   // UB: no value is returned, though the callers take one.
 #ifdef UBFIX
@@ -2455,11 +2454,11 @@ void Teleport_ArriveWhirling(void) {
 
 /// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   while (*list != 0xffff) {
     s32 entry = *list;
-    s32 id = work->objectId;
+    s32 id = work->secondActorId;
 
     if (id == entry) {
       struct Actor *object = Actor_GetById(id);

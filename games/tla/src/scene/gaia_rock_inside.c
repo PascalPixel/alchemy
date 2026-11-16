@@ -1025,7 +1025,8 @@ static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->radius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle,
+                               &orbiter->x);
 }
 
 /// Steps an orbiting object around its anchor: turns it by half its speed, puts
@@ -1038,13 +1039,13 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   Orbiter_Step(orbiter, anchor);
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == toFIXED(2))
+  if (orbiter->orbitRadius == toFIXED(2))
     return 1;
   GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   Orbiter_Step(orbiter, anchor);
   GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= toFIXED(4);
+  orbiter->orbitRadius -= toFIXED(4);
   return 1;
 }
 

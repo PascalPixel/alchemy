@@ -91,7 +91,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 s32 CrackedTiles_Step();
-struct GustObject *Whirlwind_SpawnUpper();
+struct Actor *Whirlwind_SpawnUpper();
 
 void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.movementMode == 10)
@@ -123,7 +123,7 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
 
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *object;
-  struct GustObject *motion;
+  struct Actor *motion;
 
   if (gWhirlwindRiding == 0 &&
       Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {

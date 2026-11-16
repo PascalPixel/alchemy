@@ -53,7 +53,6 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/cycle_pictures.h"
-#include "scene/orbit.h"
 
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.
@@ -212,14 +211,14 @@ void Orb_Update(struct Actor *self) {
   self->timer += -0x800;
 }
 
-void Actor_StartScript(struct OrbitEffect *object, const void *script);
+void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
 void Orbs_SpawnRising(void) {
   struct Actor *center;
-  struct OrbitEffect *effect;
+  struct Actor *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
@@ -230,18 +229,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - toFIXED(28),
-        center->z.fixed);
+    effect = FieldActor_Create(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - toFIXED(28),
+                               center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -249,10 +248,10 @@ void Orbs_SpawnRising(void) {
     FieldActor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
-    effect->angle = angle;
-    effect->unk66 = 0;
-    effect->update = (void (*)(struct OrbitEffect *))Orb_Update;
-    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->timer = angle;
+    effect->userValue = 0;
+    effect->update = (void (*)(void))Orb_Update;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 1;
   }
@@ -434,9 +433,9 @@ void JupiterLighthouse_LeaveTheCenter(void) {
 
 /// Alex appears out of a shower of rising sparks.
 void JupiterLighthouse_AlexAppears(void) {
-  struct EffectParams params;
-  struct EffectParams *p;
-  struct SparkActor *actor;
+  struct EffectOptions params;
+  struct EffectOptions *p;
+  struct Actor *actor;
   u32 i;
   FIXED x;
   s32 y;
@@ -444,15 +443,15 @@ void JupiterLighthouse_AlexAppears(void) {
   u32 randomY;
   u32 scaled;
 
-  actor = ((struct SparkActor *)Actor_Get(ACTOR_ALEX));
+  actor = Actor_Get(ACTOR_ALEX);
   Event_PlaySound(SE_WARP);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   p = &params;
-  p->count = 1;
-  p->kind = 5;
-  p->tile = 0x2a0;
-  p->spread = 0x6666;
-  p->rise = toFIXED(3);
+  p->priority = 1;
+  p->palette = 5;
+  p->type = SPRITE_PARTICLE;
+  p->startScaleX = FIXED_ONE * 2 / 5;
+  p->startScaleY = FIXED_ONE * 3;
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -461,19 +460,22 @@ void JupiterLighthouse_AlexAppears(void) {
       // loads between the multiply's add and its last shift.
       scaled = random << 1;
       scaled += random;
-      x = actor->x;
+      x = actor->x.fixed;
       x += (((scaled << 3) >> 16) << 16);
       x += -toFIXED(12);
       randomY = Random16();
-      y = actor->y;
+      y = actor->y.fixed;
       FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + toFIXED(32),
-                        actor->z, 0, -toFIXED(4), 0, toFIXED(27), p);
+                        actor->z.fixed, 0, -toFIXED(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
   }
   Actor_SetSpriteColorById(ACTOR_ALEX, 0);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 1);
 }
 
 void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
@@ -672,30 +674,32 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_update.h"
 
-struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
+struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct GustObject *object;
+  struct Actor *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
-                                                   source->y, position.z));
+  position.x =
+      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
+  position.z =
+      source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
+  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                             position.z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
+  object->facing = source->facing;
+  object->timer = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = Whirlwind_Update;
   object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
-                    toFIXED(3), &options);
+  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
+                    0, toFIXED(3), &options);
   return object;
 }
 

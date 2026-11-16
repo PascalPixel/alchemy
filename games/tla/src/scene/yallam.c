@@ -14,6 +14,7 @@
 #include "field/actor_script.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_sprite.h"
 #include "field/field_sequence_event.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
@@ -103,9 +104,9 @@ void TileCopies_CopyTouchedCells(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5,
                                  s32 a6);
 
 s32 Yallam_ClearSpriteTile(struct Actor *object) {
-  struct TileSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = object->sprite;
 
-  sprite->tile = 0x8000;
+  sprite->rotation = 0x8000;
   return 0;
 }
 
@@ -1812,7 +1813,7 @@ void Yallam_ForcePillarDown(void) {
   s32 step;
   s32 i;
   struct Actor *object = Actor_Get(ACTOR_FALLING_LOG);
-  struct TileSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = object->sprite;
 
   Event_SetFlag(FLAG_AREA_TEMP_00);
   object->acceleration = toFIXED(3) / 2;
@@ -1821,14 +1822,14 @@ void Yallam_ForcePillarDown(void) {
   FieldActor_SetMoveTarget(object, 176, 40, 184);
   step = 0;
   for (i = 15; i >= 0; i--) {
-    sprite->tile -= step;
+    sprite->rotation -= step;
     System_Wait(1);
     step += 40;
   }
   FieldActor_SetMoveTarget(object, 168, 16, 184);
   step = 400;
   for (i = 25; i >= 0; i--) {
-    sprite->tile -= step;
+    sprite->rotation -= step;
     System_Wait(1);
     step += 40;
   }
@@ -1836,7 +1837,7 @@ void Yallam_ForcePillarDown(void) {
   FieldEvent_Wait(2);
   Event_PlaySound(SE_LOG_FALL);
   i = 0;
-  sprite->tile = i;
+  sprite->rotation = i;
   object->x.fixed = toFIXED(168);
   object->z.fixed = toFIXED(192);
   object->y.fixed = i;

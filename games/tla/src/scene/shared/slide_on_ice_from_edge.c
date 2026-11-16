@@ -29,14 +29,14 @@ retry:
   Leader_StopIfPending();
   object->speedLimit = toFIXED(1);
   object->acceleration = toFIXED(1) / 2;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
   p = position;
-  p[0] = x = (object->x.fixed & 0xfff00000) + toFIXED(8);
+  p[0] = x = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   p[1] = object->y.fixed;
-  p[2] = z = (object->z.fixed & 0xfff00000) + toFIXED(8);
+  p[2] = z = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   targetZ = z;
   targetX = x;
   layer = &object->layer;

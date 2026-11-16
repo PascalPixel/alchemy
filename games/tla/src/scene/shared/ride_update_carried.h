@@ -1,8 +1,7 @@
 /// A ridden object's update: it drifts and slows, and lands the leader where it
 /// touches down.
 void Flame_UpdateForward(struct Actor *object) {
-  struct FlameHitWork *work =
-      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   FIXED dx = object->bounce;
@@ -19,7 +18,7 @@ void Flame_UpdateForward(struct Actor *object) {
   object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
+  ((struct FieldSprite *)object->sprite)->rotation += object->timer;
   if (actor->y.fixed == actor->groundHeight &&
       Actor_IsTouching(object, actor) && gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {
@@ -45,7 +44,7 @@ void Flame_UpdateForward(struct Actor *object) {
       object->gravity += speed >> 2;
     }
     work->active = 1;
-    event->stepTrigger = work->value0a;
+    event->stepTrigger = work->hitTrigger;
   }
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);

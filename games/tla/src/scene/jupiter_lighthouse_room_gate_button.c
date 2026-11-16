@@ -91,8 +91,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Cyclone on the teleporter: takes the party back down to the basement.
 void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(6); }
 
+/// Opens the gates, with their thud and a frame between when animate is 1.
 void JupiterLighthouse_OpenDoor(s32 animate) {
   if (animate == 1) {
     Event_PlaySound(SE_IMPACT);
@@ -106,6 +108,7 @@ void JupiterLighthouse_OpenDoor(s32 animate) {
   MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 39);
 }
 
+/// Closes the gates with a heavy thud.
 void JupiterLighthouse_CloseDoor(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
@@ -117,6 +120,8 @@ void JupiterLighthouse_CloseDoor(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
+/// Opens the gates for good once the pillar stands on the button, cell (17,
+/// 33).
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_GATES_PILLAR);
 
@@ -127,6 +132,8 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   }
 }
 
+/// The leader steps onto the button: the gates open and FLAG_GATES_BUTTON_HELD
+/// says the button holds them.
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_GATES_BUTTON_HELD)) {
     Event_SetFlag(FLAG_GATES_BUTTON_HELD);
@@ -134,6 +141,8 @@ void JupiterLighthouse_StepOnButton(void) {
   }
 }
 
+/// The leader steps off the button: gates the button held open close, unless
+/// the pillar now stands on it.
 void JupiterLighthouse_StepOffButton(void) {
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD) == 1) {
     Event_ClearFlag(FLAG_GATES_BUTTON_HELD);
@@ -142,6 +151,7 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
+/// After Move: once the pillar settles, checks whether it stands on the button.
 void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);
   JupiterLighthouse_CheckBlockOnCell();
@@ -149,8 +159,12 @@ void JupiterLighthouse_FinishMovingBlock(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Sets up the floor: a leader arriving by the teleporter comes up in its ring
+/// of light, and the gates stand open while the pillar or the leader holds the
+/// button.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.entrance == 6)
     Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
@@ -189,13 +203,15 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
 
+/// Loads the room's two palettes and starts their cycle once the lighthouse is
+/// lit; mode 1 starts it anyway, and mode 2 leaves the palettes as they are.
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
   if (mode != 2) {
     Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
+                         PALETTE_COLORS * 2);
     Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), 32);
+                         (void *)&BG_PLTT_COLOR(13, 0), PALETTE_COLORS * 2);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     PaletteCycle_SetFrame(0);
@@ -291,9 +307,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 744, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 744, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 536, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 744, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 744, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 536, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

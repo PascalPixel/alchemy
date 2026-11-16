@@ -60,6 +60,8 @@ void Leader_CenterInCell(void);
 /// The grey block pushed over the opened floor has dropped through, a
 /// shortcut to the rooms below.
 #define FLAG_GREY_BLOCK_DROPPED 0xa0d
+/// For this visit: Lash has tied the rope between the two tightrope posts.
+#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_00
 #include "macros.h"
 
 /// Plays an actor's animation and lets frames pass before the event goes on.
@@ -146,6 +148,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "text/msg_ids.h"
 
+/// An action script's call: clears the actor's sprite flags.
 s32 JupiterLighthouse_ClearScriptedActorSpriteFlags(s32 object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
@@ -165,6 +168,9 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77 };
 enum {
   /// The post the lightning strikes (JupiterLighthouse_FlashSky).
   ACTOR_STRUCK_PILLAR = 20,
+  /// The two tightrope posts Lash ties the rope between.
+  ACTOR_ROPE_POST_A = 21,
+  ACTOR_ROPE_POST_B = 22,
   /// The grey block pushed over the floor that opens by the aerie
   /// (JupiterLighthouse_OpenFloor).
   ACTOR_GREY_BLOCK = 23,
@@ -185,10 +191,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 struct Actor *Whirlwind_SpawnUpper(struct Actor *source);
 
+/// A step on the west ledge's event: unless a whirlwind already carries the
+/// party, one rises from the west upper point and carries it.
 void JupiterLighthouse_RideUpperWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
     Whirlwind_SpawnUpper(Actor_Get(ACTOR_WEST_UPPER_GUST));
@@ -196,16 +202,19 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
   }
 }
 
+/// A step on the east event while the party hovers: unless a whirlwind already
+/// carries it, Hover ends there and a whirlwind from the east upper point
+/// carries the party.
 void JupiterLighthouse_RideWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->movementMode == 10) {
+    if (party->movementMode == LEADER_MOVEMENT_HOVER) {
       struct Actor *object = Actor_Get(party->leaderActorId);
 
       party->movementMode = LEADER_MOVEMENT_NONE;
-      WORD_AT(object, 48) = 0;
-      WORD_AT(object, 52) = 0;
+      object->speedLimit = 0;
+      object->acceleration = 0;
       Whirlwind_SpawnUpper(Actor_Get(ACTOR_EAST_UPPER_GUST));
       gWhirlwindRiding = 1;
     }
@@ -214,8 +223,10 @@ void JupiterLighthouse_RideWhirlwind(void) {
 
 s32 Actor_EmitRisingSparks(struct Actor *object);
 
+/// Lightning strikes the post: the bolt is drawn on BG0 over a white flash, the
+/// map shakes, Felix jumps back, sparks rise from the post, and the gap beside
+/// it becomes a floor Hover holds the party over.
 void JupiterLighthouse_FlashSky(void) {
-
   u16 *buffer;
   u16 *p;
   u32 i;
@@ -270,7 +281,8 @@ void JupiterLighthouse_FlashSky(void) {
   }
   MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
   MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-  FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2, 236);
+  FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2,
+                               CELL_BEHAVIOR_HOVER);
   PaletteFade_ApplySource(PALETTE_TINT_WARM, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(60);
@@ -290,17 +302,23 @@ void JupiterLighthouse_FlashSky(void) {
 
 extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
+/// As Move takes the energy block: the height of the cell under it is set to
+/// -8.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Call4(MapGrid_SetCellHeight, object->x.fixed, object->z.fixed, 0, -8);
 }
 
+/// MapGrid_SetCellHeight, as the block's landing calls it.
 static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 a,
                                                        s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
+/// As Move sets the energy block down: in the gap by the post at cell (63, 15)
+/// it drops in, the leader steps back to look about, lightning strikes the
+/// post and the puzzle's jingle plays.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_GetById(id);
@@ -487,6 +505,8 @@ void JupiterLighthouse_OpenFloor(void) {
   Event_End();
 }
 
+/// Stepping off the button: until the lid is lifted, the floor by the aerie
+/// closes again with a thud.
 void JupiterLighthouse_CloseFloor(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED) != 0)
     return;
@@ -514,13 +534,13 @@ void JupiterLighthouse_TalkToReunitedParty(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   switch (actor) {
-  case 0:
+  case ACTOR_ISAAC:
     Actor_RunRepeatedMotion(ACTOR_ISAAC, 2);
     FieldEvent_SetMessageId(MsgNoWhyAre);
     // "Felix... No! Why are you helping them?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
     break;
-  case 2:
+  case ACTOR_IVAN:
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     FieldEvent_SetMessageId(MsgDonTWorry);
     // "Don't worry about us... Help Garet and Mia first."
@@ -531,12 +551,12 @@ void JupiterLighthouse_TalkToReunitedParty(s32 actor) {
     // "We have to help Garet. He can't hold on for much longer."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     break;
-  case 5:
+  case ACTOR_JENNA:
     FieldEvent_SetMessageId(MsgIDonT);
     // "Isaac! I don't know how you survived that attack, but I'm so glad..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     break;
-  case 6:
+  case ACTOR_SHEBA:
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(33);
     FieldEvent_SetMessageId(MsgYouVeBeen);
@@ -547,6 +567,8 @@ void JupiterLighthouse_TalkToReunitedParty(s32 actor) {
   Event_End();
 }
 
+/// A frame task while Garet hangs from the ledge: his sprite swings on a sine,
+/// and every 128 frames his grip strains.
 s32 JupiterLighthouse_SwayGaret(void) {
   struct Actor *object = Actor_Get(ACTOR_GARET);
 
@@ -557,14 +579,16 @@ s32 JupiterLighthouse_SwayGaret(void) {
       Actor_SetAttachedEffect(ACTOR_GARETS_GRIP,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     if (sprite != NULL) {
-      *(sprite->box + 3) = 30;
-      *(sprite->box + 2) = 252;
+      sprite->box[3] = 30;
+      sprite->box[2] = -4;
       sprite->rotation = Math_Sin(gFrameCount * 728) / 128 - 0x800;
     }
   }
   return 1;
 }
 
+/// An action script's call during the fight: the sound of one of five blows,
+/// at random.
 s32 JupiterLighthouse_PlayRandomBlowSound(void) {
   switch (Random16() & 7) {
   case 0:
@@ -590,8 +614,9 @@ s32 JupiterLighthouse_PlayRandomBlowSound(void) {
   return 0;
 }
 
-s32 JupiterLighthouse_ClearActionBit(u8 *object) {
-  object[90] &= 0xfe;
+/// An action script's call: stops the actor turning to face where it moves.
+s32 JupiterLighthouse_StopFacingMotion(struct Actor *object) {
+  object->steeringFlags &= ~ACTOR_FACES_MOTION;
   return 0;
 }
 
@@ -613,8 +638,8 @@ void JupiterLighthouse_StartTheFight(void) {
   Actor_SetSpeed(ACTOR_KARST, 3);
   Actor_SetSpeed(ACTOR_ISAAC, 3);
   Actor_SetSpeed(ACTOR_IVAN, 3);
-  PLACE(0, 776, 202, FACING_WEST);
-  PLACE(2, 731, 232, FACING_NORTH);
+  PLACE(ACTOR_ISAAC, 776, 202, FACING_WEST);
+  PLACE(ACTOR_IVAN, 731, 232, FACING_NORTH);
   PLACE(ACTOR_KARST, 731, 213, FACING_SOUTH);
   PLACE(ACTOR_AGATIO, 737, 202, FACING_EAST);
   Actor_SetScript(ACTOR_ISAAC, gJupiterLighthouse_IsaacFightsScript);
@@ -624,11 +649,13 @@ void JupiterLighthouse_StartTheFight(void) {
   Actor_SetScript(ACTOR_MIA, gJupiterLighthouse_MiaScript);
 }
 
+/// Places Isaac, Ivan and Mia where the fight is, and Garet hanging from the
+/// ledge by his grip, swaying.
 void JupiterLighthouse_PlaceForTheFight(void) {
-  PLACE(2, 757, 216, FACING_SOUTHEAST);
-  PLACE(0, 761, 219, FACING_SOUTHEAST);
-  PLACE(3, 816, 285, FACING_SOUTHEAST);
-  PLACE(1, 824, 302, FACING_NORTH);
+  PLACE(ACTOR_IVAN, 757, 216, FACING_SOUTHEAST);
+  PLACE(ACTOR_ISAAC, 761, 219, FACING_SOUTHEAST);
+  PLACE(ACTOR_MIA, 816, 285, FACING_SOUTHEAST);
+  PLACE(ACTOR_GARET, 824, 302, FACING_NORTH);
   PLACE(ACTOR_GARETS_GRIP, 821, 302, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetScript(ACTOR_GARET, gJupiterLighthouse_GaretHangsScript);
@@ -825,7 +852,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Actor_FaceEachOther(ACTOR_ISAAC, ACTOR_IVAN, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_AnimateThenWait(ACTOR_IVAN, ANIM_NOD, 20);
   FieldEvent_Wait(10);
@@ -834,38 +861,38 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(641), toFIXED(128), angle);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(720, 0, 210, 1);
-  Actor_SetSpeedFX(ACTOR_AGATIO, 0x4000, angle);
-  Actor_SetSpeedFX(ACTOR_KARST, 0x4000, angle);
+  Actor_SetSpeedFX(ACTOR_AGATIO, toFIXED(1) / 4, angle);
+  Actor_SetSpeedFX(ACTOR_KARST, toFIXED(1) / 4, angle);
   Actor_WalkTo(ACTOR_AGATIO, 714, 193);
   Actor_WalkTo(ACTOR_KARST, 698, 209);
   Actor_SetScript(ACTOR_AGATIO, gJupiterLighthouse_AgatioStepsUpScript);
   Actor_SetScript(ACTOR_KARST, gJupiterLighthouse_KarstStepsUpScript);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Event_PlaySound(MUS_KARST_AND_AGATIO);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceEachOther(ACTOR_ISAAC, ACTOR_IVAN, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
@@ -883,7 +910,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 5);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   FieldEvent_Wait(5);
@@ -891,7 +918,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, angle);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
@@ -907,7 +934,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Actor_SetAnimation(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
@@ -938,7 +965,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
@@ -1025,7 +1052,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
@@ -1085,8 +1112,8 @@ static inline s32 FieldUnit_AddPp(s32 owner, s32 delta) {
 void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  PLACE(0, 776, 202, FACING_WEST);
-  PLACE(2, 731, 232, FACING_NORTHWEST);
+  PLACE(ACTOR_ISAAC, 776, 202, FACING_WEST);
+  PLACE(ACTOR_IVAN, 731, 232, FACING_NORTHWEST);
   PLACE(ACTOR_KARST, 731, 213, FACING_SOUTH);
   PLACE(ACTOR_AGATIO, 737, 202, FACING_EAST);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_STAND);
@@ -1118,36 +1145,38 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
                                        ENTRANCE_AFTER_THE_FIGHT);
   Event_SetDefeatDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M,
                              ENTRANCE_AFTER_THE_FIGHT);
-  Party_RemoveMember(4);
-  Party_RemoveMember(7);
-  Party_RemoveMember(5);
-  Party_RemoveMember(6);
-  Party_RemoveMember(2);
-  Party_RemoveMember(0);
-  Party_AddMember(2);
-  Party_AddMember(0);
-  Party_RemoveMember(3);
-  Party_RemoveMember(1);
-  FieldUnit_AddHp(2, -10000);
-  FieldUnit_AddHp(0, -10000);
-  Unit_Calculate(0);
-  Unit_Calculate(2);
-  FieldUnit_AddHp(0, 173);
-  FieldUnit_AddPp(2, -10000);
-  Unit_AddPp(0, -10000);
-  gMainRoutineWork.leaderActorId = 0;
+  Party_RemoveMember(FELIX);
+  Party_RemoveMember(PIERS);
+  Party_RemoveMember(JENNA);
+  Party_RemoveMember(SHEBA);
+  Party_RemoveMember(IVAN);
+  Party_RemoveMember(ISAAC);
+  Party_AddMember(IVAN);
+  Party_AddMember(ISAAC);
+  Party_RemoveMember(MIA);
+  Party_RemoveMember(GARET);
+  FieldUnit_AddHp(IVAN, -10000);
+  FieldUnit_AddHp(ISAAC, -10000);
+  Unit_Calculate(ISAAC);
+  Unit_Calculate(IVAN);
+  FieldUnit_AddHp(ISAAC, 173);
+  FieldUnit_AddPp(IVAN, -10000);
+  Unit_AddPp(ISAAC, -10000);
+  gMainRoutineWork.leaderActorId = ACTOR_ISAAC;
   Field_RequestBattleFromEncounterTable(102, 4);
 }
 
+/// Places Isaac and Ivan lying hurt after the fight, with Jenna, Sheba and
+/// Kraden beside them.
 void JupiterLighthouse_PlaceTheHurt(void) {
-  PLACE(0, 761, 219, FACING_NORTHWEST);
-  PLACE(2, 741, 232, FACING_NORTHWEST);
+  PLACE(ACTOR_ISAAC, 761, 219, FACING_NORTHWEST);
+  PLACE(ACTOR_IVAN, 741, 232, FACING_NORTHWEST);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ISAAC), 0);
   Actor_SetAnimation(ACTOR_ISAAC, 39);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetAnimation(ACTOR_IVAN, 32);
-  PLACE(5, 761, 203, FACING_SOUTH);
-  PLACE(6, 725, 232, FACING_EAST);
+  PLACE(ACTOR_JENNA, 761, 203, FACING_SOUTH);
+  PLACE(ACTOR_SHEBA, 725, 232, FACING_EAST);
   PLACE(ACTOR_KRADEN, 729, 203, FACING_SOUTHEAST);
   Actor_SetScript(ACTOR_MIA, gJupiterLighthouse_MiaScript);
 }
@@ -1156,23 +1185,26 @@ void JupiterLighthouse_PlaceTheHurt(void) {
 
 s32 Inventory_Equip();
 
+/// After the battle with Karst and Agatio: the two stand over the fallen Isaac
+/// and Ivan until Felix and the others step in, Felix promises to light the
+/// beacon, and the Mythril Bag holding the Jupiter Star is swapped for a
+/// plain one (ITEM_MYTHRIL_BAG_B) that Felix equips.
 void JupiterLighthouse_IsaacAndIvanFall(void) {
   s32 index;
-  s32 offset;
   s32 answer;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(737, 0, 209, 0);
-  gMainRoutineWork.leaderActorId = 4;
-  Party_RemoveMember(0);
-  Party_RemoveMember(2);
-  Party_RemoveMember(5);
-  Party_RemoveMember(6);
-  Party_RemoveMember(7);
-  Party_RemoveMember(3);
-  Party_RemoveMember(1);
-  Party_AddMember(4);
+  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
+  Party_RemoveMember(ISAAC);
+  Party_RemoveMember(IVAN);
+  Party_RemoveMember(JENNA);
+  Party_RemoveMember(SHEBA);
+  Party_RemoveMember(PIERS);
+  Party_RemoveMember(MIA);
+  Party_RemoveMember(GARET);
+  Party_AddMember(FELIX);
   Actor_SetSpeed(ACTOR_FELIX, 1);
   {
     s32 angle = FACING_SOUTH;
@@ -1254,7 +1286,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_SetScript(ACTOR_KRADEN, (s32)gJupiterLighthouse_KradenWaitsScript);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KARST, FACING_WEST, 0);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "They're going to kill Isaac!"
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
   Actor_AnimateThenWait(ACTOR_JENNA, ANIM_SHAKE_HEAD, 33);
@@ -1380,10 +1412,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   FieldActor_WaitForScriptEndById(ACTOR_KRADEN);
-  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_FaceActor(ACTOR_FELIX, ACTOR_AGATIO, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_AGATIO, 0);
@@ -1428,10 +1460,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -1485,9 +1517,8 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   PartyInventory_Add(ITEM_MYTHRIL_BAG_B);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   index = 0;
-  offset = 0xd8;
-  for (index = 0; index <= 14; offset += 2, index++) {
-    if ((*(u16 *)((u8 *)Unit_Get(FELIX) + offset) & 0x1ff) ==
+  for (index = 0; index <= INVENTORY_SLOTS - 1; index++) {
+    if ((Unit_Get(FELIX)->inventory[index] & INVENTORY_ITEM_ID_MASK) ==
         ITEM_MYTHRIL_BAG_B) {
       Inventory_Equip(FELIX, index);
       break;
@@ -1546,7 +1577,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_SetSpeed(ACTOR_PIERS, 1);
   Actor_SetScript(ACTOR_PIERS, (s32)gJupiterLighthouse_WalkToAerieScript);
   FieldActor_WaitForScriptEndById(ACTOR_PIERS);
-  Party_AddMember(7);
+  Party_AddMember(PIERS);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   FieldEvent_Wait(20);
@@ -1564,7 +1595,8 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   HangingVine_Place(8, 1);
   HangingVine_Place(9, 1);
   HangingVine_Place(10, 1);
@@ -1574,7 +1606,7 @@ s32 Scene_Initialize(void) {
   HangingVine_Place(14, 1);
   HangingVine_Place(15, 1);
   Rope_Initialize();
-  Rope_Place(0, 512, 21, 22);
+  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   gWhirlwindRiding = 0;
   object = Actor_Get(ACTOR_WEST_UPPER_GUST);
   object->motionFlags = 0;
@@ -1598,15 +1630,18 @@ s32 Scene_Initialize(void) {
         JupiterLighthouse_PlaceTheHurt();
       }
     } else if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED)) {
-      if (gMainRoutineWork.entrance == 3) {
+      if (gMainRoutineWork.entrance ==
+          JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST) {
         JupiterLighthouse_PlaceForTheFight();
         Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);
-        JupiterLighthouse_PartyArrivesAtTheFight(gMainRoutineWork.entrance ==
-                                                 3);
+        JupiterLighthouse_PartyArrivesAtTheFight(
+            gMainRoutineWork.entrance ==
+            JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST);
       }
     } else {
       JupiterLighthouse_PlaceForTheFight();
-      if (gMainRoutineWork.entrance == 5) {
+      if (gMainRoutineWork.entrance ==
+          JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST) {
         JupiterLighthouse_IsaacAndIvanAreHurt();
       } else if (gMainRoutineWork.entrance == ENTRANCE_AFTER_THE_FIGHT) {
         JupiterLighthouse_IsaacAndIvanFall();
@@ -1635,13 +1670,14 @@ s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(1);
   LightSprites_InitC();
-  LightSprites_Add(20, 0);
+  LightSprites_Add(ACTOR_STRUCK_PILLAR, 0);
   object = Actor_Get(ACTOR_STRUCK_PILLAR);
   if (Event_GetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
     Actor_SetPosition(ACTOR_STRUCK_PILLAR, 1016, 248);
     MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
     MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-    FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2, 236);
+    FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2,
+                                 CELL_BEHAVIOR_HOVER);
   }
   object->motionFlags = 0;
   Call4(MapGrid_SetCellHeight, object->x.fixed, object->z.fixed, 0, -6);
@@ -1698,7 +1734,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;
@@ -1708,7 +1744,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
   return object;
 }
 
@@ -1912,24 +1948,24 @@ LATE_DATA u32 gSceneExits[] = {
   };
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1464, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1608, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 648, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 680, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 936, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 952, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(428, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 968, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 888, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1464, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1608, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 648, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 680, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 936, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 952, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_BLOCK, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 968, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1144, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1064, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 200, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 200, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1016, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 200, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1016, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1938,10 +1974,10 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1972,7 +2008,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 21, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_TABLE_END},
 };
@@ -1998,7 +2034,7 @@ LATE_DATA u32 gJupiterLighthouse_MiaScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_IsaacFightsScript[] = {
     SC_ANIMATION(2),
-    SC_CALL(JupiterLighthouse_ClearActionBit),
+    SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(60),
@@ -2012,7 +2048,7 @@ LATE_DATA u32 gJupiterLighthouse_IsaacFightsScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_AgatioFightsScript[] = {
     SC_ANIMATION(2),
-    SC_CALL(JupiterLighthouse_ClearActionBit),
+    SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_SYNC,
     SC_ANIMATION(9),
     SC_WAIT(60),
@@ -2024,7 +2060,7 @@ LATE_DATA u32 gJupiterLighthouse_AgatioFightsScript[] = {
 };
 
 LATE_DATA u32 gJupiterLighthouse_IvanFightsScript[] = {
-    SC_CALL(JupiterLighthouse_ClearActionBit),
+    SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_MOVE_XZ(731, 213),
     SC_ANIMATION(2),
     SC_WAIT(4),
@@ -2038,7 +2074,7 @@ LATE_DATA u32 gJupiterLighthouse_IvanFightsScript[] = {
 
 LATE_DATA u32 gJupiterLighthouse_KarstFightsScript[] = {
     SC_ANIMATION(2),
-    SC_CALL(JupiterLighthouse_ClearActionBit),
+    SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_MOVE_XZ(731, 232),
     SC_WAIT(4),
     SC_MOVE_XZ(731, 213),

@@ -45,6 +45,12 @@ enum MapGridLayerIndex {
 /// A cell's collision code that blocks whatever the heights, as The Broken
 /// Seal's CELL_BEHAVIOR_WALL.
 #define CELL_BEHAVIOR_WALL 255
+/// A cell the leader jumps across and keeps jumping from
+/// (Field_TryJumpForward), as The Broken Seal's CELL_BEHAVIOR_JUMP_FORWARD.
+#define CELL_BEHAVIOR_JUMP_FORWARD 254
+/// A cell of the overhead layer Hover holds the party up over
+/// (MapGrid_IsHoverCell).
+#define CELL_BEHAVIOR_HOVER 236
 
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.

@@ -927,6 +927,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
   s32 choice;
   s32 shown;
+  s32 ok;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -962,29 +963,24 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     wait(1);
   }
   Window_Close(window, 1);
-  {
-    s32 ok;
-    s32 message;
-
-    if (choice >= 0) {
-      ok = DebugParameterSet_Load(choice);
-    } else {
-      message = (s32)MsgLobbyWhatIsThisJustTease;
-      goto show;
-    }
-    // The refusal jumps into the unknown-preset branch, so the two share one
-    // message call.
-    if (ok != 0) {
-      message = (s32)MsgLobbyTheresNoSuchParameterAsk;
-    show:
-      Event_SetMessageId(message);
-      // "There's no such parameter. Ask Mr. Sugimoto."
-      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
-    } else {
-      Event_SetMessageId((s32)MsgLobbySettingsAreMadeRest);
-      // "The settings are made. The rest is up to you."
-      Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
-    }
+  if (choice >= 0) {
+    ok = DebugParameterSet_Load(choice);
+  } else {
+    Event_SetMessageId((s32)MsgLobbyWhatIsThisJustTease);
+    // "What is this, just a tease?"
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
+    wait(10);
+    Event_End();
+    return;
+  }
+  if (ok != 0) {
+    Event_SetMessageId((s32)MsgLobbyTheresNoSuchParameterAsk);
+    // "There's no such parameter. Ask Mr. Sugimoto."
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
+  } else {
+    Event_SetMessageId((s32)MsgLobbySettingsAreMadeRest);
+    // "The settings are made. The rest is up to you."
+    Event_ShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   }
   wait(10);
   Event_End();

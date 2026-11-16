@@ -15,6 +15,6 @@ const s32 gActor_IdleScript[] = {
 // The Broken Seal's gField_DefaultPlacements.
 const struct ActorPlacement gField_DefaultPlacements[] = {
     {0, CONDITION_ALWAYS, (s32)gActor_IdleScript, toFIXED(300), 0, toFIXED(300),
-     0x5bb0, 0, 0},
+     23472, 0, 0},
     {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };

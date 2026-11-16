@@ -79,9 +79,9 @@ const u16 gSpriteViewer_BackdropColors[8] = {
 
 /// Stops for a number from 0 to 715 that steps by one or skips: a skip
 /// forward goes to the next stop above it, back to the last stop below.
-/// 0xffff ends the list.
+/// (u16)-1 ends the list.
 const u16 gSpriteViewer_SkipStops[10] = {
-    0, 16, 243, 247, 250, 490, 526, 642, 671, 0xffff,
+    0, 16, 243, 247, 250, 490, 526, 642, 671, (u16)-1,
 };
 // clang-format on
 
@@ -93,8 +93,8 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
 
 /// Two 1.0s (16.16).
 const u32 gWorldMap_UnitScale[2] = {
-    0x10000,
-    0x10000,
+    FIXED_ONE,
+    FIXED_ONE,
 };
 
 /// The sprite viewer's scale for its ring of copies: full size.

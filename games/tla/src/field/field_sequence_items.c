@@ -85,7 +85,9 @@ const struct Trigger *Field_FindItemTrigger(s32 source) {
 
     if ((trigger->control & TRIGGER_KIND_MASK) == TRIGGER_ITEM &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
-        (hasFacing == 0 || (u16)(highValue - facing + 0x17ff) <= 0x2ffe)) {
+        (hasFacing == 0 ||
+         (u16)(highValue - facing + (TRIG_TURN * 3 / 32 - 1)) <=
+             TRIG_TURN * 3 / 16 - 2)) {
       s32 item = (u16)((s32)trigger->control / 256);
 
       if (source == 0 || Item_MatchesFilter(item, source)) {
@@ -269,7 +271,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 
         if (distance < 0)
           distance = -distance;
-        if (distance > 0x17ff)
+        if (distance > TRIG_TURN * 3 / 32 - 1)
           goto next;
       }
       if (event->control & TRIGGER_PSYNERGY_ANYWHERE) {
@@ -335,7 +337,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
 
         if (distance < 0)
           distance = -distance;
-        if (distance > 0x17ff)
+        if (distance > TRIG_TURN * 3 / 32 - 1)
           goto next;
       }
       if (filter != PSYNERGY_TRIGGER_ANY &&

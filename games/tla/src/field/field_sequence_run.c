@@ -149,14 +149,14 @@ s32 FieldSequence_Run(void) {
     value = work->transitionActive;
     if (value == 0) {
       if (gMainRoutineWork.teleportState == 1) {
-        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
+        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (gMainRoutineWork.teleportState == 1) {
-        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x19b8);
+        HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }

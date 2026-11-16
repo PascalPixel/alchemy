@@ -6,11 +6,11 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
-/// cell's shape is tagged 32 pixels above the ground, so the party can stand
-/// on it, its cell is marked raised (the old mark kept in the actor) and layer
-/// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
-/// as they start, for the blocks Move pushes.
+/// Makes each listed actor (ids, ended by ACTOR_LIST_END) a block in the map:
+/// its cell's shape is tagged 32 pixels above the ground, so the party can
+/// stand on it, its cell is marked raised (the old mark kept in the actor) and
+/// layer 2 blocks it. A leader below the new ground is lifted onto it. Scenes
+/// call it as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *blocks = map->layers[2].cells;
@@ -18,7 +18,7 @@ void Actor_PlaceBlocks(u16 *actors) {
   struct Actor *leader;
   s32 height;
 
-  for (; *actors != 0xffff; actors++) {
+  for (; *actors != ACTOR_LIST_END; actors++) {
     struct Actor *actor = Actor_GetById(*actors);
     u32 key =
         MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed, actor->z.fixed);
@@ -47,7 +47,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     *shapes = tag;
     // Reused for the block in layer 2's table.
     cell = &blocks[slot];
-    cell->collisionCode = 0xff;
+    cell->collisionCode = CELL_BEHAVIOR_WALL;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
@@ -73,7 +73,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
     target = Leader_FindActorAhead();
   event->movedBlock = NULL;
 
-  for (; *actors != 0xffff; actors++) {
+  for (; *actors != ACTOR_LIST_END; actors++) {
     if (target == Actor_GetById(*actors)) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
       s32 zero = 0;
@@ -141,7 +141,7 @@ void Actor_PlaceMovedBlock(void) {
     target->riseBaseY = flags;
     cells->attributeB = flags | 0x80;
     blocks += slot;
-    blocks->collisionCode = 0xff;
+    blocks->collisionCode = CELL_BEHAVIOR_WALL;
   }
 }
 
@@ -280,12 +280,12 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
       left = sprite->pivotX - (sprite->width >> 1) + width / 2;
       top = sprite->pivotY - (sprite->height >> 1) + height / 2;
     } else {
-      left =
-          ((scaleX * (sprite->pivotX - (sprite->width >> 1)) + 0xffff) >> 16) +
-          width / 2;
-      top =
-          ((scaleY * (sprite->pivotY - (sprite->height >> 1)) + 0xffff) >> 16) +
-          height / 2;
+      left = FIXEDtoINT(scaleX * (sprite->pivotX - (sprite->width >> 1)) +
+                        (FIXED_ONE - 1)) +
+             width / 2;
+      top = FIXEDtoINT(scaleY * (sprite->pivotY - (sprite->height >> 1)) +
+                       (FIXED_ONE - 1)) +
+            height / 2;
     }
   } else {
     FIXED sin = Trig_Sin(sprite->angle);

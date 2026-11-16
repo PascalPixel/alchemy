@@ -514,9 +514,9 @@ void SuperLuckyDice_Run(void) {
   s32 otherIndex;
   s32 digits;
 
-  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
-  dice = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
-  sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 0x614);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 512);
+  dice = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 1556);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, 76);
   Resource_ReservedNoOp(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   SuperLuckyDice_ResetViewDefaults();
@@ -540,7 +540,7 @@ void SuperLuckyDice_Run(void) {
   resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_DOME_PICTURE);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
   Dma_Set(resourceAddress, bgPalette, DMA_COPY_WORDS(112), REG_DMA3);
-  resourceAddress += 0x1c0;
+  resourceAddress += 448;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
   resourceAddress = Resource_GetTableEntry(RESOURCE_DICE_FACES);
@@ -1557,8 +1557,8 @@ void SuperLuckyDice_Run(void) {
       if (screen[2] > DICE_FARTHEST_DEPTH)
         screen[2] = DICE_FARTHEST_DEPTH;
       spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
-      x = screen[0] - 0xc00 / (spriteDepth[drawOrder[index]] / 4 + 64);
-      y = screen[1] - 0x800 / (spriteDepth[drawOrder[index]] / 4 + 64);
+      x = screen[0] - 3072 / (spriteDepth[drawOrder[index]] / 4 + 64);
+      y = screen[1] - 2048 / (spriteDepth[drawOrder[index]] / 4 + 64);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
             (OBJ_AFFINE_MATRIX(drawOrder[index]) | OBJ_X((x + 632) & 0x1ff) |
@@ -1592,8 +1592,8 @@ void SuperLuckyDice_Run(void) {
         spriteDepth[4 + index] = screen[2] - DICE_NEAREST_DEPTH;
         spriteDepth[4 + index] += (s16)FIXEDtoINT(die->y);
         half = spriteDepth[4 + index] / 2 + 128;
-        x = screen[0] - 0x1800 / half;
-        y = screen[1] - 0xc00 / half;
+        x = screen[0] - 6144 / half;
+        y = screen[1] - 3072 / half;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
               (OBJ_AFFINE_MATRIX(index + 4) | OBJ_X((x + 632) & 0x1ff)) |
@@ -1638,9 +1638,9 @@ void SuperLuckyDice_Run(void) {
 
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
     SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
-                                     0x10000 - (index << 12), 256);
+                                     FIXED_ONE - (index << 12), 256);
     SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
-                                     0x10000 - (index << 12), 256);
+                                     FIXED_ONE - (index << 12), 256);
     wait(1);
   }
   HeapSlot_Release(HEAP_SLOT_CAMERA);

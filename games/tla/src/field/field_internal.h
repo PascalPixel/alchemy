@@ -118,8 +118,8 @@ struct MapHeaderLayer {
 
 /// Where a layout's tileset animation and blend scripts are decoded, in the
 /// map collision buffer after the collision, as The Broken Seal's.
-#define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 0x1000)
-#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 0x1e00)
+#define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 4096)
+#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed

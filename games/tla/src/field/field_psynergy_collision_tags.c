@@ -12,7 +12,7 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   struct ActorFlag *first = list;
   struct Actor *owner;
 
-  for (; list->actor != 0xffff; list++) {
+  for (; list->actor != ACTOR_LIST_END; list++) {
     struct Actor *actor = Actor_GetById(list->actor);
     u16 flag = list->flag;
     s32 slot = Actor_GetCellIndex(actor);
@@ -21,7 +21,7 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     actor->motionFlags = 0;
     actor->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(actor, 0);
-    cell->collisionCode = 0xff;
+    cell->collisionCode = CELL_BEHAVIOR_WALL;
     MapGrid_MarkRaisedIfOpen(actor->x.fixed + toFIXED(16), actor->z.fixed,
                              actor->layer, actor->groundHeight);
     MapGrid_MarkRaisedIfOpen(actor->x.fixed - toFIXED(16), actor->z.fixed,
@@ -53,7 +53,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
   u8 *grid = gMapShapeGrid;
 
   event->movedBlock = NULL;
-  for (; list->actor != 0xffff; list++) {
+  for (; list->actor != ACTOR_LIST_END; list++) {
     s32 change = 0;
     struct Actor *actor = Actor_GetById(list->actor);
     u8 frame = ((struct Sprite *)actor->sprite)->lastNo;
@@ -102,7 +102,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
           bits = cells->attributeB | 0x80;
           cells->attributeB = bits;
         } else {
-          cells->collisionCode = 0xff;
+          cells->collisionCode = CELL_BEHAVIOR_WALL;
           cells->attributeB &= 0x7f;
         }
       }
@@ -116,7 +116,7 @@ s32 Actor_GetCellIndex(struct Actor *actor) {
 }
 
 /// Finds the tag (key, value) in the 4-byte entries at gMapGridShapes, or adds
-/// it at the first free entry (key 0xff), and returns its index.
+/// it at the first free entry (key COLLISION_TAG_FREE), and returns its index.
 /// Actor_PlaceBlocks gives a raised cell's shape this index.
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {
   u8 *entry = Ram_MapCollision;
@@ -129,7 +129,7 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {
       if (*(s8 *)++entry == tagValue)
         return i;
       entry--;
-    } else if (entry[0] == 0xff) {
+    } else if (entry[0] == COLLISION_TAG_FREE) {
       entry[0] = key;
       entry[1] = tagValue;
       return i;

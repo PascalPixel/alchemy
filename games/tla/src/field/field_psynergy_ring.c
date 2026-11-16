@@ -32,7 +32,7 @@
 /// picture, the 64 sparkles that rise round the caster as the ring is drawn,
 /// the motes that circle it after, and what the per-frame task shows.
 struct RingWork {
-  u8 tiles[0x1000]; ///< the decoded sparkle picture, then the mote picture
+  u8 tiles[4096]; ///< the decoded sparkle picture, then the mote picture
   struct EffectSprite sparkSprites[RING_SPARK_COUNT];
   struct FieldPsynergyParticle sparks[RING_SPARK_COUNT];
   /// The motes: on screen as they gather, then 16 round the caster.
@@ -88,7 +88,7 @@ void FieldPsynergy_UpdateRing(void) {
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
 
-      blue = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
+      blue = Trig_Sin((((*phase >> 2) + i) << 11) + TRIG_TURN * 9 / 32) * 10;
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
@@ -348,10 +348,10 @@ struct BurstMote {
 /// The work of the sparkle burst the Ring ends with (heap slot
 /// battleEffect): the sparkle picture, 64 sparkles and their motes.
 struct SparkleBurstWork {
-  u8 unused[0x1000]; ///< no code names it
+  u8 unused[4096]; ///< no code names it
   struct EffectSprite sprites[RING_SPARK_COUNT];
   struct BurstMote motes[RING_SPARK_COUNT];
-  u8 unusedAfterMotes[0x880]; ///< no code names it
+  u8 unusedAfterMotes[2176]; ///< no code names it
   s16 resource;
 };
 
@@ -381,7 +381,7 @@ void FieldPsynergy_EndRing(void) {
   Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
   Sound_PlayFar(SE_MAP_TRANSITION);
-  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 1280, 0xf000f000);
   Window_LoadGraphics();
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   gBgScroll[0].x = 0;

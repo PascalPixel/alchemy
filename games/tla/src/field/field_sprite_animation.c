@@ -109,7 +109,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     for (; text < end; text++) {
       u32 c = *text;
 
-      if (c <= 0xdf) {
+      if (c <= 223) {
         c = table[c];
         *text = c;
       }
@@ -176,7 +176,7 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
 #endif
       object->scripts = animation;
       object->mode = metadata->pictureCodec;
-      object->picture = 0xff;
+      object->picture = SPRITE_PICTURE_NONE;
       object->script = 0;
       object->scriptOffset = 0;
     } while (++index < state->count);
@@ -205,7 +205,7 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
       work->scripts = (u8 **)animation;
       work->scriptOffset = 0;
       work->mode = info->pictureCodec;
-      work->picture = 0xff;
+      work->picture = SPRITE_PICTURE_NONE;
     }
   }
 }
@@ -488,7 +488,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
       object->scripts = animation;
       object->pictures = pictures;
       object->mode = metadata->pictureCodec;
-      object->picture = 0xff;
+      object->picture = SPRITE_PICTURE_NONE;
       object->script = animation[0];
       object->scriptOffset = 0;
       object->kind = metadata->drawKind;
@@ -553,34 +553,34 @@ struct ResourceObject *Sprite_Create(s32 id) {
 
   // Derive OBJ shape and size bits (attributes 0 and 1) from pixel dimensions.
   switch ((u32)((metadata->width << 8) + metadata->height)) {
-  case 0x0808:
+  case (8 << 8) + 8:
     shape = OBJ_SIZE_8X8;
     break;
-  case 0x0810:
+  case (8 << 8) + 16:
     shape = OBJ_SIZE_8X16;
     break;
-  case 0x1008:
+  case (16 << 8) + 8:
     shape = OBJ_SIZE_16X8;
     break;
-  case 0x1010:
+  case (16 << 8) + 16:
     shape = OBJ_SIZE_16X16;
     break;
-  case 0x1020:
+  case (16 << 8) + 32:
     shape = OBJ_SIZE_16X32;
     break;
-  case 0x2010:
+  case (32 << 8) + 16:
     shape = OBJ_SIZE_32X16;
     break;
-  case 0x2020:
+  case (32 << 8) + 32:
     shape = OBJ_SIZE_32X32;
     break;
-  case 0x2040:
+  case (32 << 8) + 64:
     shape = OBJ_SIZE_32X64;
     break;
-  case 0x4020:
+  case (64 << 8) + 32:
     shape = OBJ_SIZE_64X32;
     break;
-  case 0x4040:
+  case (64 << 8) + 64:
     shape = OBJ_SIZE_64X64;
     break;
   default:

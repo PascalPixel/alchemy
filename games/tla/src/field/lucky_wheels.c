@@ -37,7 +37,7 @@ void LuckyWheels_Run(void);
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
 /// its tile 212, where the third row of its map begins.
 #define LUCKY_WHEELS_CANVAS_SIZE (256 * 128)
-#define LUCKY_WHEELS_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
+#define LUCKY_WHEELS_CANVAS_TILES (BG_CHAR_BLOCK(0) + 212 * TILE_SIZE_8BPP)
 /// The machine's five wheels; the cursor's next place, past the last wheel,
 /// is the lever.
 #define LUCKY_WHEELS_REEL_COUNT 5
@@ -1250,9 +1250,9 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x8000);
-  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
   state =
       HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapCellBuffer;
@@ -1289,13 +1289,13 @@ void LuckyWheels_Run(void) {
     for (i = 0; i != DISPLAY_TILE_WIDTH; i++) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
         Dma_Set(tiles + (k * DISPLAY_TILE_WIDTH + i) * TILE_SIZE_4BPP,
-                (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_COPY_WORDS(8),
-                REG_DMA3);
+                (void *)(BG_CHAR_BLOCK(2) + 424 * TILE_SIZE_4BPP + j),
+                DMA_COPY_WORDS(8), REG_DMA3);
         j += TILE_SIZE_4BPP;
       }
     }
   }
-  Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 768);
+  Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 1280, 768);
   j = 0;
   for (k = 0; k != DISPLAY_TILE_HEIGHT; k++) {
     for (i = 0; i != BG_SCREEN_WIDTH; i++, j += 2) {
@@ -1485,10 +1485,10 @@ void LuckyWheels_Run(void) {
 
             spark->variant--;
             x = spark->x;
-            if (x >= 0 && x <= 0xffffff) {
+            if (x >= 0 && x <= toFIXED(256) - 1) {
               s32 y = spark->y;
 
-              if (y <= 0x7fffff) {
+              if (y <= toFIXED(128) - 1) {
                 if (y >= 0) {
                   s32 px = FIXEDtoINT(x);
                   s32 py = FIXEDtoINT(y);

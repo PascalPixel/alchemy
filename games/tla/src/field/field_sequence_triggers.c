@@ -117,15 +117,17 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
       case TRIGGER_FLAG_FACING:
         if (*mode != LEADER_MOVEMENT_KEYS) {
           // Bits 15 to 12 are a facing in sixteenths of a turn; the leader's
-          // facing must be within 0x1fff (an eighth of a turn) of it.
+          // facing must be within an eighth of a turn of it.
           flags &= TRIGGER_FACING_MASK;
-          matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+          matches = (u16)((flags - facing) + (TRIG_TURN / 8 - 1)) <=
+                    TRIG_TURN / 4 - 2;
         }
         break;
       case STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING:
         if (work->blockedSteps > minimumPushFrames) {
           flags &= TRIGGER_FACING_MASK;
-          matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+          matches = (u16)((flags - facing) + (TRIG_TURN / 8 - 1)) <=
+                    TRIG_TURN / 4 - 2;
         }
         break;
       }
@@ -212,15 +214,17 @@ s32 Scene_TalkToActor(s32 id) {
       if (row != NULL) {
         u8 *end = (u8 *)row + id * 8;
         s16 *p;
-        p = (s16 *)(end - 0x200);
+        // Actor id's ContainerRow, 8 bytes a row from FIELD_TREASURE_ACTOR:
+        // its type, point, flag and contents.
+        p = (s16 *)(end - 512);
         type = *p;
         index = id;
         found = 1;
-        p = (s16 *)(end - 0x1fe);
+        p = (s16 *)(end - 510);
         point = *p;
-        p = (s16 *)(end - 0x1fc);
+        p = (s16 *)(end - 508);
         flag = *p;
-        p = (s16 *)(end - 0x1fa);
+        p = (s16 *)(end - 506);
         contents = *p;
       }
     } else {

@@ -36,7 +36,7 @@
 
 // What the ground check (FieldEffect_CheckCloakTile) requests when the caster
 // does not stand on a tile it can hide on.
-#define CLOAK_END 0x2092
+#define CLOAK_END (ABILITY_CLOAK | ACT_PACKED)
 
 /// Cloak the caster: flicker it ten times, leave it half transparent, then
 /// check the ground under it every frame. When it cannot hide where it

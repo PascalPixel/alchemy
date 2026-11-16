@@ -31,25 +31,25 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   u32 kind;
 
   if (x < 0)
-    x += 0x1fffff;
+    x += toFIXED(32) - 1;
   tileX = (x >> 21) & 31;
   y = position->y;
   if (y < 0)
-    y += 0x1fffff;
+    y += toFIXED(32) - 1;
 
   index = tileX + (((y >> 21) & 31) << 5);
   tile = gCellPictures + index;
   if (((u8 *)tile)[3] & 0x80)
-    flag = 0x10;
+    flag = 16;
 
   kind = (*tile << 2) >> 26;
   *terrainKind = kind;
   if (kind > 40)
-    flag = 0x20;
+    flag = 32;
   if (kind == 36)
-    flag = 0x40;
+    flag = 64;
   if (kind == 12 || kind == 15)
-    flag = 0x30;
+    flag = 48;
 
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
@@ -100,7 +100,7 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *tiles = gDecodeBuffer;
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
-  routine(lines, pixels, WORLD_MAP_TILE_SET(2), tiles + 0x1000);
+  routine(lines, pixels, WORLD_MAP_TILE_SET(2), tiles + 4096);
   Heap_Release(routine);
 }
 

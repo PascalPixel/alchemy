@@ -38,7 +38,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
 
   actor->acceleration = toFIXED(1) / 4;
   animation = ANIM_LEADER_CLING;
-  half = 0x8000;
+  half = toFIXED(1) / 2;
   actor->speedLimit = half;
   if (gDebugMode)
     keys = gInput.held;
@@ -172,7 +172,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
         s32 distance =
             Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-        if (distance <= 0x400 && bestDistance > distance) {
+        if (distance <= 1024 && bestDistance > distance) {
           bestDistance = distance;
           best = node;
         }
@@ -293,7 +293,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
           s32 distance =
               Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-          if (distance <= 0x400 && bestDistance > distance) {
+          if (distance <= 1024 && bestDistance > distance) {
             bestDistance = distance;
             best = point;
           }
@@ -546,8 +546,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
           Sound_PlayFar(SE_SAND_MOVE);
         effect->gravity = toFIXED(1) / 25;
         effect->velocityY = 0;
-        effect->scaleX = 0x4ccc;
-        effect->scaleY = 0x4ccc;
+        effect->scaleX = toFIXED(0.3);
+        effect->scaleY = toFIXED(0.3);
         if (sprite != NULL) {
           Sprite_StartAnimation(sprite, 2);
           sprite->flags = 0;

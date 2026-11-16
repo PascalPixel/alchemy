@@ -70,7 +70,7 @@ void Event_Start(void) {
   state->choiceSelection = 0;
   state->transitionFrames = MAP_TRANSITION_FRAMES;
   state->fastForward = 0;
-  state->unusedAfterMessage = 0xffff;
+  state->unusedAfterMessage = -1;
   state->unusedBeforeCamera[0] = -1;
   state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);

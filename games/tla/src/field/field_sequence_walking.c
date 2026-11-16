@@ -261,7 +261,7 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
       step /= 2;
     distance = work->walkingDistance + step;
     work->walkingDistance = distance;
-    if (distance > 0xffff) {
+    if (distance > FIXED_ONE - 1) {
       amount = distance / FIXED_ONE;
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);

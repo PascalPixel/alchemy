@@ -100,11 +100,11 @@ void TileMap_ConvertBuffer(void) {
   ConvertFn routine;
   u32 size;
 
-  size = 0x8000;
+  size = 32768;
   saved = Heap_AllocEwram(size);
   Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
-  routine(((u8 *)gMapGridCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+  routine(((u8 *)gMapGridCellBuffer + 32768), Ram_MapCellBuffer, saved);
   Heap_Release(routine);
   Heap_Release(saved);
 }
@@ -161,7 +161,7 @@ s32 MapGrid_LoadMap(s32 index) {
   encodedData = (u8 *)sceneHeader + sceneHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
       Decompress_TaggedLz(encodedData, Ram_MapCellBuffer + 1));
-  Dma_Fill32(-1, Ram_MapCollision, 0x2000);
+  Dma_Fill32(-1, Ram_MapCollision, 8192);
   encodedData = (u8 *)sceneHeader + sceneHeader->collision;
   Decompress_TaggedLz(encodedData, Ram_MapCollision);
   encodedData = (u8 *)sceneHeader + sceneHeader->cells;
@@ -180,7 +180,7 @@ s32 MapGrid_LoadMap(s32 index) {
     BlendScript_Start((u16 *)MAPGRID_BLEND_SCRIPT);
   }
   encodedData = (u8 *)sceneHeader + sceneHeader->script;
-  Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x2000);
+  Decompress_TaggedLz(encodedData, Ram_MapCollision + 8192);
   work->minX = toFIXED(sceneHeader->cameraBounds[0] * 8);
   work->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
   work->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
@@ -1092,11 +1092,11 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   if (tileOffsets[tile] != 0)
     Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
   else
-    Iwram_ClearWordsEntry(decodedTile, 0x400);
+    Iwram_ClearWordsEntry(decodedTile, 1024);
 
   sourceTiles = decodedTile;
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);

@@ -72,7 +72,7 @@ struct MotionObject {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 unusedAfterFrozen[0x0a]; ///< no code names it
+  u8 unusedAfterFrozen[10]; ///< no code names it
   void (*update)(struct MotionObject *object);
   s32 moved[3];
   struct MotionObject *standingOn;

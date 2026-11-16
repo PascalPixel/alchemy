@@ -600,9 +600,9 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   sprite = owner->sprite;
   if (sprite == 0)
     return;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
   Icon_DrawItemFar(id);
-  tile = VramCache_Load(sprite->slot, 128, buffer + 0x400);
+  tile = VramCache_Load(sprite->slot, 128, buffer + 1024);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   sprite->count = 0;
   sprite->dirty = 0;

@@ -608,10 +608,6 @@ void Islets_TradeWithBird(void) {
 void Islets_TradeWithCow(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
-  /* FAKEMATCH(temporary): zero wrapped in a struct of one u16. */
-  struct {
-    u16 v;
-  } zero;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -678,7 +674,6 @@ void Islets_TradeWithCow(void) {
         Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
-        zero.v = 0;
         item->retainSpriteCache = 1;
       }
       STEP(gMainRoutineWork.leaderActorId, 120, 190);
@@ -714,7 +709,7 @@ void Islets_TradeWithCow(void) {
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(noticed + 4);
         Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_COW, 0);
-        HAND_BACK(item, item, zero.v)
+        HAND_BACK(item, item, 0)
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(ACTOR_COW, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1037,7 +1032,7 @@ void Islets_GiveTurtle(void) {
         Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
         leader->update = (void (*)(void))a;
         STEP(gMainRoutineWork.leaderActorId, 302, 424);
-        SPAWN(a, b, answer)
+        SPAWN(a, b, 0)
         STEP(gMainRoutineWork.leaderActorId, 318, 424);
         leader->update = 0;
         Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,

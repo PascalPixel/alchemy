@@ -376,7 +376,7 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 1) = RGB_WHITE;
   BG_PLTT_COLOR(15, 3) = RGB(0, 0, 0);
   BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);

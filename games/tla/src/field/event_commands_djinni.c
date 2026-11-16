@@ -424,7 +424,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   position.x = particle->originX;
   position.z = particle->originZ;
   Vector_AddPolarOffset(INTtoFIXED(particle->orbitRadius),
-                        particle->orbitAngle << 11, &position);
+                        particle->orbitAngle * (TRIG_TURN / 32), &position);
   particle->x = position.x;
   particle->z = position.z;
 }

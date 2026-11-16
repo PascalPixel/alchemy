@@ -185,15 +185,16 @@ u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
   return flags;
 }
 
-/// Returns 1 when two upright cylinders overlap: their centres closer on the
-/// ground than the sum of radius_a and radius_b, and their heights within it;
-/// else -1.
+/// Returns 1 when two upright cylinders overlap, their centres closer on the
+/// ground than the sum of radius_a and radius_b; else -1.
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a++ - *b++) >> 16;
-  s32 dz = (*a - *b) >> 16;
+  s32 dx = FIXEDtoINT(*a++ - *b++);
+  s32 dy = FIXEDtoINT(*a++ - *b++);
+  s32 dz = FIXEDtoINT(*a - *b);
   s32 radius = radius_a + radius_b;
 
+  // The box and height bounds are 16.16 against whole-pixel differences, so
+  // on a map they never reject a pair and the ground circle alone decides.
   if (dx > toFIXED(64) || dz > toFIXED(64))
     return -1;
   if (dy > INTtoFIXED(radius))

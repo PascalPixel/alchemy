@@ -158,7 +158,8 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   position.x = leader->x.fixed;
   position.z = leader->z.fixed;
   Vector_AddPolarOffset(frames * (toFIXED(2) / 5),
-                        (frames << 11) + mote->orbitAngle, &position);
+                        frames * (TRIG_TURN / 32) + mote->orbitAngle,
+                        &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
   y = mote->y.fixed - toFIXED(1);

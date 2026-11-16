@@ -1504,13 +1504,13 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
-      // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
+      // The angle is 1/32 turn further round for each frame left.
       pos.x = effectWork->x;
       pos.y = effectWork->y + toFIXED(10);
       pos.z = effectWork->z;
-      Vector_AddPolarOffset(INTtoFIXED(remainingFrames),
-                            (s16)particle->userValue + (remainingFrames << 11),
-                            &pos);
+      Vector_AddPolarOffset(
+          INTtoFIXED(remainingFrames),
+          (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
       particle->x.fixed = pos.x;
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;

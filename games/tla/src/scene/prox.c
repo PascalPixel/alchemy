@@ -747,9 +747,12 @@ void Prox_SearchForParents(void) {
     Event_SetFlag(FLAG_DOOR_LEFT_OPEN);
     FieldEvent_Wait(10);
     {
-      s32 y = 0xc0;
+      /* FAKEMATCH(temporary): the facing built from a smaller number in a
+       * block local; passed as FACING_SOUTH_SOUTHEAST, 4 of 178 instructions
+       * differ in tla-en. */
+      s32 facing = FACING_SOUTH_SOUTHEAST >> 6;
       Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
-                                 toFIXED(360), y << 6);
+                                 toFIXED(360), facing << 6);
     }
     FieldCamera_GetActor()->motionFlags = lit;
     FieldCamera_SetSpeed(1.6);
@@ -990,7 +993,7 @@ void Prox_MeetPuelle(void) {
   Actor_WalkToAndWait(ACTOR_ISAAC, 160, 140);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_ISAAC)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetAnimationAndWait(ACTOR_ISAAC, 0x15);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, 21);
   Actor_FaceDirection(ACTOR_CLANSMAN_GUARDING_THE_ROAD, FACING_NORTH_NORTHWEST,
                       0);
   Actor_FaceDirection(ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS,
@@ -1231,9 +1234,12 @@ void Prox_ScoopUpMold(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
     {
-      s32 y = 0x80;
+      /* FAKEMATCH(temporary): the facing built from a smaller number in a
+       * block local; passed as FACING_SOUTH, 2 of 46 instructions differ in
+       * tla-en. */
+      s32 facing = FACING_SOUTH >> 7;
       Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
-                                 y << 7);
+                                 facing << 7);
     }
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
@@ -1738,7 +1744,7 @@ void Prox_GiveThanksForBeacon(void) {
     struct FieldWork *work = EVENT_WORK;
 
     work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    work->transitionFrames = 0x10;
+    work->transitionFrames = 16;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(FLAG_THANKED_FOR_BEACON);
@@ -2349,8 +2355,8 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 9);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 0x21);
-    Actor_SetAnimation(ACTOR_ISAAC, 0x28);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 33);
+    Actor_SetAnimation(ACTOR_ISAAC, 40);
     TilesetAnim_Pause(2);
     TilesetAnim_Pause(3);
     TilesetAnim_Pause(4);

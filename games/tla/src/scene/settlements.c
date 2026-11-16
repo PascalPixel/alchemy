@@ -807,8 +807,8 @@ void Settlements_CycleWaterColors(void) {
 
       *entry++ = (u32)gSettlements_WaterColorsSaved;
       q->count = count + 1;
-      *entry++ = 0x5000060;
-      *entry = 0x84000008;
+      *entry++ = (u32)&BG_PLTT_COLOR(3, 0);
+      *entry = DMA_COPY_WORDS(8);
     }
     IRQ_UNLOCK(saved);
   }

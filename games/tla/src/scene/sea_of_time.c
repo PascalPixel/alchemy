@@ -1349,10 +1349,11 @@ s32 Scene_Initialize(void) {
       gSeaOfTime_WaveStartFrame = *state++;
       gSeaOfTime_WaveState = *state++;
       gFrameCount = *state;
+      // BG palette 3's colours 1 to 13, by their byte offsets.
       i = 1;
-      offset = 98;
+      offset = (3 * PALETTE_COLORS + 1) * sizeof(u16);
       do {
-        *(volatile u16 *)(offset + 0x05000000) = RGB(11, 6, 23);
+        *(volatile u16 *)((u32)BG_PLTT + offset) = RGB(11, 6, 23);
         i++;
         offset += 2;
       } while (i != 14);

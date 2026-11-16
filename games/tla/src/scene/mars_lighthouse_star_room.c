@@ -772,7 +772,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *object;
   struct FieldSprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *glyph;
   u16 *screen;
   s32 zero;
 
@@ -798,9 +798,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->retainSpriteCache = 1;
     sprite->countAndShadow[0] = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(sprite->slot, 128, buffer + 0x400);
+    Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
@@ -896,7 +896,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot, **placedStarSlot;
   struct Actor *object, *placedStar;
   struct FieldSprite *sprite, *placedStarSprite;
-  u8 *buffer, *placedStarGlyphs;
+  GlyphTransfer *glyph, *placedStarGlyph;
   u16 *screen;
 
   flag = Event_GetFlag(FLAG_MARS_STAR_SET);
@@ -923,9 +923,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       object->retainSpriteCache = 1;
       sprite->countAndShadow[0] = 0;
       object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+      glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Item_LoadIcon(ITEM_MARS_STAR);
-      Vram_Load(sprite->slot, 128, buffer + 0x400);
+      Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     }
     FieldEvent_Wait(20);
@@ -988,9 +988,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStar->motionFlags = 0;
     placedStar->retainSpriteCache = 1;
     placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    placedStarGlyph =
+        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(placedStarSprite->slot, 128, placedStarGlyphs + 0x400);
+    Vram_Load(placedStarSprite->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
@@ -1138,8 +1139,8 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
   z += toFIXED(460);
   object = MarsLighthouseStarRoom_CreateActor(SPARK_SPRITE, x, toFIXED(32), z);
   if (object != NULL) {
-    /* FAKEMATCH(barrier): the form kept; as without the asm, 1 of 91
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): an empty asm that clobbers r0 once the spark is
+     * created; without it 7 of 91 instructions differ in tla-en. */
     asm("" : : : "r0");
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
@@ -1506,7 +1507,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
   beam->hitTrigger = hitTrigger;
   if (REG_BLDCNT == 0) {
     {
-      s32 alpha = 0xc08;
+      s32 alpha = BLEND_ALPHA(8, 12);
       REG_BLDALPHA = alpha;
     }
     {
@@ -1718,7 +1719,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       radius = Random16();
       sum = Random16();
       sum += Random16();
-      scale = (sum >> 2) + 0x8000;
+      scale = (sum >> 2) + FIXED_ONE / 2;
       Actor_StartScript(object, gMarsLighthouseStarRoom_CrumbScript);
       Actor_SetSpriteFlags(object, 0);
       object->velocityY = angle * 4 + toFIXED(2);
@@ -2018,8 +2019,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

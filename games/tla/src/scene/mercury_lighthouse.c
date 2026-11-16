@@ -129,7 +129,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       sprite = object->sprite;
       x = Random16() * 40 + toFIXED(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored. */
+       * stored; stored straight, 12 of 76 instructions differ in tla-en. */
       z = toFIXED(696);
       object->motionFlags = phase;
       object->x.fixed = x;

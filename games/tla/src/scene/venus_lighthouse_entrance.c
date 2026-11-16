@@ -347,8 +347,6 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
 void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   struct Actor *workman;
   struct Actor *actor;
-  s32 zero;
-  void (*trailDust)(struct Actor *);
 
   Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN);
   Event_Start();
@@ -767,30 +765,16 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetSpeed(ACTOR_EAGER_WORKMAN, 1.8);
   Actor_SetSpeed(ACTOR_INDIGNANT_WORKMAN, 1.8);
   Actor_SetSpeed(ACTOR_SCOLDING_WORKMAN, 1.8);
-  zero = 0;
   workman = Actor_GetById(ACTOR_WORKMAN_BOSS);
-  trailDust = VenusLighthouseEntrance_TrailDust;
-  workman->timer = zero;
-  {
-    s32 next = ACTOR_EAGER_WORKMAN;
-
-    workman->update = trailDust;
-    workman = Actor_GetById(next);
-  }
-  workman->timer = zero;
-  {
-    s32 next = ACTOR_INDIGNANT_WORKMAN;
-
-    workman->update = trailDust;
-    workman = Actor_GetById(next);
-  }
-  workman->timer = zero;
-  {
-    s32 next = ACTOR_WORKMAN_BOSS;
-
-    workman->update = trailDust;
-    Actor_SetAnimation(next, 10);
-  }
+  workman->timer = 0;
+  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman = Actor_GetById(ACTOR_EAGER_WORKMAN);
+  workman->timer = 0;
+  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman = Actor_GetById(ACTOR_INDIGNANT_WORKMAN);
+  workman->timer = 0;
+  workman->update = VenusLighthouseEntrance_TrailDust;
+  Actor_SetAnimation(ACTOR_WORKMAN_BOSS, 10);
   Actor_SetAnimation(ACTOR_EAGER_WORKMAN, 10);
   Actor_SetAnimation(ACTOR_INDIGNANT_WORKMAN, 10);
   Actor_SetDestinationOffset(ACTOR_WORKMAN_BOSS, -24, 24);
@@ -801,22 +785,18 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetDestination(ACTOR_EAGER_WORKMAN, 224, 480);
   Actor_MoveToAndWait(ACTOR_INDIGNANT_WORKMAN, 224, 480);
   workman = Actor_GetById(ACTOR_WORKMAN_BOSS);
-  workman->update = zero;
+  workman->update = NULL;
   workman = Actor_GetById(ACTOR_EAGER_WORKMAN);
-  workman->update = zero;
+  workman->update = NULL;
   workman = Actor_GetById(ACTOR_INDIGNANT_WORKMAN);
-  workman->update = zero;
+  workman->update = NULL;
   FieldEvent_Wait(1);
   FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 15);
   FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 25);
   workman = Actor_GetById(ACTOR_SCOLDING_WORKMAN);
-  workman->timer = zero;
-  {
-    s32 next = ACTOR_SCOLDING_WORKMAN;
-
-    workman->update = trailDust;
-    Actor_SetAnimation(next, 10);
-  }
+  workman->timer = 0;
+  workman->update = VenusLighthouseEntrance_TrailDust;
+  Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
   Actor_SetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
   FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
   FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 4, 0);
@@ -825,29 +805,15 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, ANIM_STAND);
   Event_PlaySound(SE_IMPACT);
   workman->x.fixed += toFIXED(8);
-  workman->update = zero;
+  workman->update = NULL;
   workman->z.fixed += -toFIXED(8);
-  {
-    s32 shown = FACING_NORTH;
-
-    workman->facing = shown;
-  }
-  {
-    struct FieldSprite *sprite = workman->sprite;
-    s32 shown = TRIG_TURN * 5 / 8;
-
-    sprite->rotation = shown;
-  }
+  workman->facing = FACING_NORTH;
+  ((struct FieldSprite *)workman->sprite)->rotation = TRIG_TURN * 5 / 8;
   FieldEvent_Wait(55);
   workman->x.fixed += -toFIXED(4);
   workman->z.fixed += toFIXED(4);
-  {
-    s32 shown = FACING_SOUTH;
-    struct FieldSprite *sprite = workman->sprite;
-
-    sprite->rotation = zero;
-    workman->facing = shown;
-  }
+  workman->facing = FACING_SOUTH;
+  ((struct FieldSprite *)workman->sprite)->rotation = 0;
   FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 40);
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 11);
   Event_PlaySound(SE_CLICK);
@@ -859,16 +825,12 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
   FieldEvent_Wait(20);
-  workman->timer = zero;
-  {
-    s32 next = ACTOR_SCOLDING_WORKMAN;
-
-    workman->update = trailDust;
-    Actor_SetAnimation(next, 10);
-  }
+  workman->timer = 0;
+  workman->update = VenusLighthouseEntrance_TrailDust;
+  Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
   Actor_MoveToAndWait(ACTOR_SCOLDING_WORKMAN, 224, 472);
   FieldEvent_Wait(30);
-  workman->update = zero;
+  workman->update = NULL;
   Actor_SetPosition(ACTOR_WORKMAN_BOSS, 0, 0);
   Actor_SetPosition(ACTOR_EAGER_WORKMAN, 0, 0);
   Actor_SetPosition(ACTOR_INDIGNANT_WORKMAN, 0, 0);
@@ -883,15 +845,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
-  {
-    s32 a0 = ACTOR_JENNA;
-
-    /* FAKEMATCH(dead): an empty once-only block before the angle's load; as
-     * the plain call, 2 of 2142 instructions differ in tla-en. */
-    do {
-    } while (0);
-    Actor_FaceDirection(a0, FACING_SOUTH, 0);
-  }
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(15);
   // "Jenna, now is your chance. Go to Idejima and wait for me."
@@ -905,11 +859,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1.5);
   Actor_WalkByAndWait(ACTOR_DOUBTING_SOLDIER, -32, 0);
   actor = Actor_GetById(ACTOR_ALEX);
-  {
-    s32 shown = FACING_SOUTHEAST;
-
-    actor->facing = shown;
-  }
+  actor->facing = FACING_SOUTHEAST;
   // "I'm not finished with you yet."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
   Actor_SetSpeed(ACTOR_ALEX, 1.5);
@@ -923,10 +873,6 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
-  /* FAKEMATCH(dead): an empty once-only block ends CSE's block; as no
-   * block, 78 of 2142 instructions differ in tla-en. */
-  do {
-  } while (0);
   Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
@@ -1028,13 +974,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
   FieldEvent_Wait(10);
-  {
-    s32 emote = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
-    s32 frames = 40;
-    s32 actorId = ACTOR_KRADEN;
-
-    Actor_ShowEmote(actorId, emote, frames);
-  }
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "Ah... You're worried about hurting any innocents?" Yes: "Well, just try
   // to hold back when you're fighting." No: "Oh. You must be concerned
   // about Felix."

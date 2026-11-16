@@ -385,7 +385,6 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   s32 acceleration = leader->acceleration;
   s32 cell[3];
   FIXED from[3];
-  s32 j;
   FIXED offset;
   s32 ax, az, bx, bz;
 
@@ -412,15 +411,13 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  Actor_SelectAnimation(actor, 2);
+  if ((u32)(i - 6) <= 7)
+    Actor_SelectAnimation(actor, 3);
+  else
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(slide.slot, 0.5, 0.1);
   Actor_SetMoveTarget(actor, slide.x, slide.y, slide.z);
-  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
-  for (j = 0; j < 1; j++) {
-    if (j != 0 && j != 5)
-      w = 1;
-  }
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);

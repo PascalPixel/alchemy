@@ -45,6 +45,7 @@
 #include "version.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/heap_release.h"
 #include "graphics/palette_snapshots.h"
 #include "scene/scene.h"
@@ -1276,22 +1277,14 @@ s32 gIslets_FirstCrateX BSS_DATA;
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Islets_StartWaveDma(void) {
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex];
-  s32 first = lines[0];
-  volatile u16 *scroll;
   volatile u16 *dma;
 
-  /* FAKEMATCH(barrier): an asm reading the first line keeps its load before the
-   * register address is built. */
-  __asm__("" : : "r"(first));
-  scroll = &REG_BG1HOFS;
-  *scroll = first;
+  Io_Write16(lines[0], &REG_BG1HOFS);
   dma = REG_DMA0;
-
   dma[5] &= ~(DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT);
   dma[5] &= ~DMA_ENABLE;
-  lines++;
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(lines + 1, (void *)&REG_BG1HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }
 

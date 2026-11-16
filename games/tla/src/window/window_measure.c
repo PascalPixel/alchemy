@@ -148,7 +148,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-    if (code > 31 && code != 176) {
+    if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
       if (code == TEXT_SPACE) {
         lineWidth += 5;
         count++;
@@ -350,7 +350,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-    if (code >= 32 && code != 176) {
+    if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
       if (code == TEXT_SPACE) {
         width += 5;
         count++;

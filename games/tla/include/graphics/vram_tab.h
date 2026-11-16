@@ -13,6 +13,10 @@ enum VramBlockLimits {
   VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
+/// The window sprites' glyph tiles (WindowWork.glyphTiles), a cache entry
+/// kept for this one use, as ☀️'s.
+#define VRAM_CACHE_ENTRY_GLYPH_SHEET 95
+
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 

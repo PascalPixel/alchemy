@@ -532,7 +532,7 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   x = (CRAWL_CANVAS_WIDTH - width) / 2;
   code = *text++;
   while (code != 0) {
-    if (code <= 30) {
+    if (code < TEXT_COMMANDS) {
       switch (code) {
       case TEXT_COLOR:
         work->colour = *text;

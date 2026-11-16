@@ -41,43 +41,46 @@ void Window_StepSwellEffect(struct UiChannelSlot *window);
 /// its window animation or types more text, and on the text's end marks the
 /// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
-  u8 *channel = (u8 *)Ram_HeapSlots->windowWork + 0x6b8;
+  struct UiChannelSlot *channel =
+      ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   s32 channelNo = 0;
   s32 one = 1;
 
   do {
-    u8 *current = *(u8 **)channel;
+    struct Window *current = channel->work;
 
-    if (current != 0 && *(s32 *)(current + 0x18) == 0) {
-      u16 flags = *(u16 *)(current + 0x16);
+    // A zooming window is left alone until its zoom ends.
+    if (current != NULL && *(s32 *)&current->zoomStage == 0) {
+      u16 flags = current->flags;
 
+      // Flags 0 with no zoom left: the window has closed.
       if (flags == 0) {
-        *(u8 **)channel = (u8 *)0;
+        channel->work = NULL;
       } else {
-        s32 pending = *(u16 *)(current + 0x12);
-        s32 kind;
+        s32 pending = current->animation;
+        s32 step;
 
         if (pending != 0) {
           Window_StepSwellEffect(channel);
         } else {
-          kind = Message_Type(channel);
-          switch (kind) {
+          step = Message_Type(channel);
+          switch (step) {
           case CHANNEL_STEP_ENDED:
-            *(u16 *)(*(u8 **)channel + 0x14) = one;
+            channel->work->state = one;
             break;
           case CHANNEL_STEP_CLOSE: {
-            u8 *entity = *(u8 **)channel;
+            struct Window *window = channel->work;
 
-            Window_Close((struct Window *)entity,
-                         (u16)(*(u16 *)(entity + 0x16) & 2));
-            *(u16 *)(channel + 0x04) = pending;
-            *(u16 *)(channel + 0x06) = pending;
-            *(u16 *)(channel + 0x12) = pending;
-            *(u16 *)(channel + 0x14) = pending;
-            *(u16 *)(channel + 0x16) = pending;
-            *(u16 *)(channel + 0x18) = pending;
-            *(u16 *)(channel + 0x1a) = pending;
-            *(u16 *)(*(u8 **)channel + 0x14) = one;
+            Window_Close(window, (u16)(window->flags & WINDOW_FLAG_INSTANT));
+            // pending is 0 here: it clears the channel.
+            channel->x = pending;
+            channel->y = pending;
+            channel->entry = pending;
+            channel->countdown = pending;
+            channel->colour = pending;
+            channel->outline = pending;
+            channel->lineSpacing = pending;
+            channel->work->state = one;
             break;
           }
           }
@@ -85,7 +88,7 @@ void Message_UpdateAll(void) {
       }
     }
     channelNo++;
-    channel += 0x28;
+    channel++;
   } while (channelNo != 3);
 }
 
@@ -107,8 +110,8 @@ void WindowSprite_PrepareForRedraw(struct Window *window);
 /// line, new page, pauses, colours) and draws characters, playing the speaker's
 /// voice blips. Returns a CHANNEL_STEP_ result. The share is the message
 /// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
-/// or a control code also ends it; in battle it is 8 glyphs, or 13 after a
-/// frame that took two VBlanks or more.
+/// or a control code also ends it; in battle it is 8 glyphs, 13 after a frame
+/// that took two VBlanks and 18 after one that took three or more.
 s32 Message_Type(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   // DEAD: the held keys are read here and never used; the ROM keeps the load.
@@ -134,13 +137,12 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
   (void)keys;
 
+  // In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
+  // last frame took (gLastFrameVBlanks, 1 for a frame on time), counting at
+  // most three. The count is read as the interrupt may change it.
   if (work->battleMode != WINDOW_FIELD) {
-    // The VBlank count read through a volatile view, a load apart from the
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
-    if (frameVBlanks < 0)
-      frameVBlanks = 0;
-    if (frameVBlanks > 3)
-      frameVBlanks = 3;
+    CLAMP(frameVBlanks, 0, 3);
     glyphsLeft = frameVBlanks * 5 + 3;
   }
 
@@ -160,9 +162,9 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       code = work->textBuffer[channel->entry];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-    if (code <= 30 || code == 176) {
+    if (code < TEXT_COMMANDS || code == TEXT_EM_DASH) {
 #else
-    if (code <= 30) {
+    if (code < TEXT_COMMANDS) {
 #endif
       switch (code) {
       case TEXT_NEWLINE:
@@ -386,7 +388,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #if LANGUAGE == LANGUAGE_JAPANESE
       glyphAdvance += channel->spacing[channel->line];
 #elif LANGUAGE != LANGUAGE_GERMAN
-      if (code == 32)
+      if (code == TEXT_SPACE)
         glyphAdvance += channel->spacing[channel->line];
 #endif
       channel->x += glyphAdvance;

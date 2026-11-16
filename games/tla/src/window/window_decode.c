@@ -406,7 +406,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         afterItem = 0;
       }
 #endif
-      if (code > 255)
+      if (code > TEXT_LAST_FONT_CODE)
         code = '@';
 
       if (overflow != 0) {

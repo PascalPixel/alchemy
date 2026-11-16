@@ -149,7 +149,10 @@ enum {
   TEXT_JAPANESE_FULL_STOP = 161,        ///< 。
   TEXT_JAPANESE_COMMA = 164,            ///< 、
   TEXT_JAPANESE_MIDDLE_DOT = 165,       ///< ・
-  TEXT_INVERTED_QUESTION_MARK = 191     ///< ¿, outside Japanese
+  /// °, outside Japanese the em dash's message code (MESSAGE_EM_DASH) where
+  /// it is left in the text: drawing and measuring skip it.
+  TEXT_EM_DASH = 176,
+  TEXT_INVERTED_QUESTION_MARK = 191 ///< ¿, outside Japanese
 };
 
 // The window object's functions its parts call before their definitions, or

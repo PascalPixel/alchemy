@@ -431,7 +431,7 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     break;
   }
 
-  // Both entries are stored at a byte offset from map, which keeps each store's
+  // Both entries are stored at the entry's byte offset from map.
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;

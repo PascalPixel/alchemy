@@ -287,7 +287,7 @@ void WindowSystem_Update(void);
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -306,7 +306,8 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   if (initialize != 0)
-    state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+    state->glyphTiles =
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -485,13 +486,6 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   return window;
 }
 
-// Text-workspace tail: the Japanese edition's table is 0x200 bytes shorter.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-#define TEXT_WORK_TAIL 0x1184
-#else
-#define TEXT_WORK_TAIL 0x1384
-#endif
-
 s32 Party_GetLeaderActorFar(void);
 s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
@@ -499,7 +493,7 @@ s32 Message_AllTyped(void);
 /// Shows a message in a window centred on the screen, waits until it is typed
 /// out and closes it, as its flags say.
 void FieldMessage_Show(s32 no, s32 flags) {
-  u8 *base = Ram_HeapSlots->windowWork;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 release;
   s32 pos[2] = {0, 0};
   s32 height;
@@ -515,7 +509,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   release = flags & FIELD_MESSAGE_ZOOM;
 
   if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
-    *(u8 *)(base + TEXT_WORK_TAIL + 5) = 1;
+    state->waitingForSound = 1;
   }
 
   Text_GetMessageSize(no, &x, &y, (u32 *)&width, (u32 *)&height);
@@ -549,7 +543,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
     }
 
     if (flags & FIELD_MESSAGE_HOLD_UPLOAD) {
-      Ram_HeapSlots->windowWork[6] = 1;
+      UI_WORK->holdTilemapUpload = 1;
     }
 
     if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
@@ -561,9 +555,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   }
 
   zero = 0;
-  *(u8 *)(base + TEXT_WORK_TAIL + 5) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
+  state->waitingForSound = zero;
+  state->speakerVoiceSound = zero;
+  state->speakerVoiceCountdown = zero;
   wait(3);
 }
 
@@ -586,4 +580,3 @@ void WindowSystem_UpdateBattle(void) {
 }
 
 #undef UI_WORK
-#undef TEXT_WORK_TAIL

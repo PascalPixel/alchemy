@@ -167,7 +167,7 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 actorId) {
 
 void Actor_PlaceMovedBlock(void);
 
-/// For each id of a list ended by 0xffff: clears the object's mark and, on a
+/// For each id of a list ended by 0xffff: clears the actor's mark and, on a
 /// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 /// the mark.
 void Blocks_MarkCells(u16 *ids) {
@@ -428,11 +428,13 @@ void AirsRock_SpiralSpark(struct Actor *object) {
       Iwram_MulFX(Math_Sin((object->speedLimit & 255) << 11), radius);
   object->y.fixed += object->gravity;
   object->speedLimit++;
-  FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
+  FieldActor_SetSpriteColor(object,
+                            ((gFrameCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /// A Whirlwind target's update while the gust gathers: it flickers to the
-/// palette in riseCounter, at the rate riseEnabled sets.
+/// colour mode in riseCounter (a SpriteColorMode), at the rate riseEnabled
+/// sets.
 void AirsRock_FlickerTarget(struct Actor *object) {
   u32 on = ((gFrameCount & 3) >> object->riseEnabled) & 1;
 
@@ -494,19 +496,19 @@ void AirsRock_BlowGust(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      Actor_SetSpriteColor(spark, 2);
+      Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRock_SpiralGust;
     }
     if (gFrameCount & 1) {
       gust->scaleX += FIXED_ONE / 100;
       gust->scaleY += FIXED_ONE / 100;
-      Actor_SetSpriteColor(effect->child, 15);
+      Actor_SetSpriteColor(effect->child, SPRITE_COLOR_HIDDEN);
     } else {
-      Actor_SetSpriteColor(effect->child, 4);
+      Actor_SetSpriteColor(effect->child, SPRITE_COLOR_GBR);
     }
     Event_Wait(1);
   }
-  Actor_SetSpriteColor(effect->child, 0);
+  Actor_SetSpriteColor(effect->child, SPRITE_COLOR_NORMAL);
   Sound_Play(SE_WHOOSH);
   cell.x = FIELD_CELL(effect->child->x.fixed);
   cell.z = FIELD_CELL(effect->child->z.fixed);
@@ -726,7 +728,7 @@ void AirsRock_WhirlwindClearsWall(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      FieldActor_SetSpriteColor(spark, 2);
+      FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRock_SpiralSpark;
     }
     FieldEvent_Wait(1);
@@ -797,7 +799,8 @@ void AirsRock_WhirlwindClearsWall(void) {
     Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = zero;
     System_Wait(30);
     Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
+                              SPRITE_COLOR_GREY);
     FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
@@ -1268,7 +1271,7 @@ void AirsRock_WhirlwindOpensTheTop(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      FieldActor_SetSpriteColor(spark, 2);
+      FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRock_SpiralSpark;
     }
     FieldEvent_Wait(1);
@@ -1282,7 +1285,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   FieldCamera_MoveTo(536, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = 0;
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP), 6);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP),
+                            SPRITE_COLOR_GREY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = -120;
@@ -1495,7 +1499,7 @@ void AirsRock_WhirlwindClearsFog(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      FieldActor_SetSpriteColor(spark, 2);
+      FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRock_SpiralSpark;
     }
     FieldEvent_Wait(1);
@@ -1554,7 +1558,8 @@ void AirsRock_WhirlwindClearsFog(void) {
     Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = zero;
     System_Wait(30);
     Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
+                              SPRITE_COLOR_GREY);
     FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
@@ -1683,7 +1688,8 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_BY_THE_WALL), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_BY_THE_WALL),
+                           SPRITE_COLOR_GREY);
     }
   }
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_ENTRANCE) {
@@ -1857,7 +1863,8 @@ s32 Scene_Initialize(void) {
         REG_BLDALPHA = BLEND_ALPHA(0, 16);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_DISPCNT &= ~DISPCNT_BG1_ON;
-        Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_IN_THE_FOG), 6);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_IN_THE_FOG),
+                             SPRITE_COLOR_GREY);
       }
       break;
     case 12:
@@ -1882,7 +1889,8 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(52, 2, 9, 9, 29, 9);
         MapGrid_CopyCellsTo(52, 66, 29, 73, 9, 9);
       } else {
-        Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_AT_THE_TOP), 6);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK_AT_THE_TOP),
+                             SPRITE_COLOR_GREY);
       }
       Actor_SetSpritePriority(ACTOR_TWISTER_ROCK_AT_THE_TOP, 1);
       MapGrid_CenterOnFollowedPoint();

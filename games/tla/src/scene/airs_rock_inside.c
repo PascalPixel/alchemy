@@ -1059,7 +1059,7 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
 
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
-  Actor_SetSpriteColor(object, 6);
+  Actor_SetSpriteColor(object, SPRITE_COLOR_GREY);
   Actor_SetBlendMode(object, 1);
   object->timer = 27;
   object->motionFlags = 0;
@@ -1130,13 +1130,13 @@ void AirsRockInside_PuffVents(void) {
   }
 }
 
-/// An object a gust carries: it rides 8 pixels above the gust, its draw order
+/// An actor a gust carries: it rides 8 pixels above the gust, its draw order
 /// flickering.
 void AirsRockInside_FollowGust(struct Actor *object) {
   struct Actor *target = object->watchedActor;
 
   object->priorityFlags ^= 2 << (gFrameCount & 1);
-  SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed + (128 << 12),
+  SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed + toFIXED(8),
                      target->z.fixed);
 }
 
@@ -1216,19 +1216,19 @@ void AirsRockInside_BlowGust(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      Actor_SetSpriteColor(spark, 2);
+      Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRockInside_SpiralGust;
     }
     if (gFrameCount & 1) {
       gust->scaleX += FIXED_ONE / 100;
       gust->scaleY += FIXED_ONE / 100;
-      Actor_SetSpriteColor(TARGET(effect), 15);
+      Actor_SetSpriteColor(TARGET(effect), SPRITE_COLOR_HIDDEN);
     } else {
-      Actor_SetSpriteColor(TARGET(effect), 4);
+      Actor_SetSpriteColor(TARGET(effect), SPRITE_COLOR_GBR);
     }
     FieldEvent_Wait(1);
   }
-  Actor_SetSpriteColor(TARGET(effect), 0);
+  Actor_SetSpriteColor(TARGET(effect), SPRITE_COLOR_NORMAL);
   Sound_Play(SE_WHOOSH);
   cell.x = FIELD_CELL(TARGET(effect)->x.fixed);
   cell.z = FIELD_CELL(TARGET(effect)->z.fixed);
@@ -1757,7 +1757,8 @@ void AirsRockInside_SpiralGust(struct Actor *object) {
 
 /// A spark: circles the centre kept in bounce and riseBaseY on an ellipse twice
 /// as wide as deep, the radius growing with its height; it rises by its gravity
-/// each frame and switches its palette between 0 and 9 every two frames.
+/// each frame and turns blue (SPRITE_COLOR_BLUE_TINT) and back every two
+/// frames.
 void AirsRockInside_SpiralSpark(struct Actor *object) {
   FIXED y = object->y.fixed;
   s32 phase;
@@ -1772,11 +1773,13 @@ void AirsRockInside_SpiralSpark(struct Actor *object) {
       Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius);
   object->y.fixed += object->gravity;
   object->speedLimit++;
-  Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
+  Actor_SetSpriteColor(object,
+                       ((gFrameCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /// A Whirlwind target's update while the gust gathers: it flickers to the
-/// palette in riseCounter, at the rate riseEnabled sets.
+/// colour mode in riseCounter (a SpriteColorMode), at the rate riseEnabled
+/// sets.
 void AirsRockInside_FlickerTarget(struct Actor *object) {
   s32 bit = ((gFrameCount & 3) >> object->riseEnabled) & 1;
 
@@ -1836,7 +1839,7 @@ void AirsRockInside_WakeHallStatue(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      Actor_SetSpriteColor(spark, 2);
+      Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRockInside_SpiralSpark;
     }
     FieldEvent_Wait(1);
@@ -1850,7 +1853,8 @@ void AirsRockInside_WakeHallStatue(void) {
   FieldCamera_MoveToFX(toFIXED(312), -1, toFIXED(680), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->update = 0;
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_ROCK), 6);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_ROCK),
+                       SPRITE_COLOR_GREY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = -104;
@@ -1883,16 +1887,20 @@ void AirsRockInside_WakeHallStatue(void) {
   FieldCamera_MoveToActorById(ACTOR_HALL_TWISTER_STATUE, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
-  Actor_SetSpriteColorById(ACTOR_HALL_TWISTER_STATUE, 0x100);
+  Actor_SetSpriteColorById(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_BLINK);
   AirsRockInside_ScatterSparks(
       Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->x.fixed,
       Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->z.fixed);
-  Actor_ConfigureSpriteColor(ACTOR_HALL_TWISTER_STATUE, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 7);
+  Actor_ConfigureSpriteColor(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE),
+                       SPRITE_COLOR_WHITE);
   wait(3);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_WEST_STATUE), 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_EAST_STATUE), 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_WEST_STATUE),
+                       SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_EAST_STATUE),
+                       SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE),
+                       SPRITE_COLOR_NORMAL);
   wait(40);
   AirsRockInside_WakeStatue(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 8, 0);
   Window_LoadGraphics();
@@ -1946,7 +1954,7 @@ void AirsRockInside_StepOntoLedge(void) {
 
 /// Move lifts a pillar: each room frees the cells its pillars block; the paired
 /// statues room also clears two cells' shapes and the coins chest room stops
-/// object 10's timer.
+/// its statue's timer.
 void AirsRockInside_StartPushingPillar(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2123,7 +2131,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
-      Actor_SetSpriteColor(spark, 2);
+      Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
       spark->update = AirsRockInside_SpiralSpark;
     }
     FieldEvent_Wait(1);
@@ -2137,7 +2145,8 @@ void AirsRockInside_WakeVialChestStatue(void) {
   FieldCamera_MoveToFX(toFIXED(216), -1, toFIXED(224), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update = 0;
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK), 6);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK),
+                       SPRITE_COLOR_GREY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = -104;
@@ -2170,14 +2179,16 @@ void AirsRockInside_WakeVialChestStatue(void) {
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
-  Actor_SetSpriteColorById(ACTOR_VIAL_CHEST_STATUE, 0x100);
+  Actor_SetSpriteColorById(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_BLINK);
   AirsRockInside_ScatterSparks(Actor_GetById(ACTOR_VIAL_CHEST_STATUE)->x.fixed,
                                Actor_GetById(ACTOR_VIAL_CHEST_STATUE)->z.fixed +
                                    toFIXED(32));
-  Actor_ConfigureSpriteColor(ACTOR_VIAL_CHEST_STATUE, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 7);
+  Actor_ConfigureSpriteColor(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE),
+                       SPRITE_COLOR_WHITE);
   wait(3);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE),
+                       SPRITE_COLOR_NORMAL);
   wait(40);
   AirsRockInside_WakeStatue(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 8, 0);
   Window_LoadGraphics();
@@ -2344,7 +2355,7 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   object->scaleY = FIXED_ONE * 2 / 5;
   object->scaleX = FIXED_ONE * 2 / 5;
   object->motionFlags = 0;
-  Actor_SetSpriteColor(object, 2);
+  Actor_SetSpriteColor(object, SPRITE_COLOR_RBG);
   Scene_SetActorSpritePriority(object, 1);
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
@@ -2441,7 +2452,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   FieldEvent_Wait(45);
-  Actor_ConfigureSpriteColor(idA, 0x100);
+  Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
@@ -2453,7 +2464,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     spark->speedLimit = toFIXED(8);
     spark->acceleration = toFIXED(1) / 5;
     spark->motionFlags = 0;
-    Actor_SetSpriteColor(spark, 2);
+    Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
@@ -2481,7 +2492,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = b;
     spark->riseCounter = (16 - i) * 8 + 15;
-    Actor_SetSpriteColor(spark, 2);
+    Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
@@ -2490,7 +2501,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
                                  (s32)&spark->x.fixed);
     Actor_StartScript(spark, gAirsRockInside_OrbitingSparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(idB, 0x100);
+      Actor_SetSpriteColorById(idB, SPRITE_COLOR_BLINK);
       b->motionFlags = 0;
       b->acceleration = toFIXED(1) / 5;
       b->speedLimit = toFIXED(1) / 5;
@@ -2514,7 +2525,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     spark->watchedActor = b;
     spark->motionFlags = 0;
     spark->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-    Actor_SetSpriteColor(spark, 2);
+    Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
@@ -2526,8 +2537,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_ConfigureSpriteColor(idA, 0);
-  Actor_ConfigureSpriteColor(idB, 0);
+  Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_NORMAL);
+  Actor_ConfigureSpriteColor(idB, SPRITE_COLOR_NORMAL);
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
@@ -2941,7 +2952,7 @@ void AirsRockInside_SpawnMotes(void) {
     object->acceleration = object->speedLimit = (i << 12) + (toFIXED(1) / 2);
     object->update = AirsRockInside_DriftMote;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, 2);
+    Actor_SetSpriteColor(object, SPRITE_COLOR_RBG);
     if (i & 1) {
       object->timer = 212;
       object->userValue = 0;
@@ -3109,16 +3120,21 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_HALL_TWISTER_STATUE, 3);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_HALL_STATUE_WOKEN)) {
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE),
+                           SPRITE_COLOR_GREY);
     } else {
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 8, 0);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_ROCK), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_ROCK),
+                           SPRITE_COLOR_GREY);
       MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
     }
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_WEST_STATUE), 6);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_EAST_STATUE), 6);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_POOL_STATUE), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_WEST_STATUE),
+                           SPRITE_COLOR_GREY);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_EAST_STATUE),
+                           SPRITE_COLOR_GREY);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_POOL_STATUE),
+                           SPRITE_COLOR_GREY);
     } else {
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_HALL_WEST_STATUE), 180, 0);
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_HALL_EAST_STATUE), 60, 0);
@@ -3143,10 +3159,12 @@ s32 Scene_Initialize(void) {
                           toFIXED(392));
     Actor_PlaceBlocks(gAirsRockInside_VialChestPillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE),
+                           SPRITE_COLOR_GREY);
     } else {
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 60, 0);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK),
+                           SPRITE_COLOR_GREY);
       MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 0);
@@ -3172,11 +3190,11 @@ s32 Scene_Initialize(void) {
     Actor_PlaceBlocks(gAirsRockInside_ClarityCircletChestPillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A),
-                           6);
+                           SPRITE_COLOR_GREY);
       Actor_SetSpriteColor(Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B),
-                           6);
+                           SPRITE_COLOR_GREY);
       Actor_SetSpriteColor(Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C),
-                           6);
+                           SPRITE_COLOR_GREY);
     } else {
       AirsRockInside_WakeStatue(
           Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A), 60, 0);
@@ -3319,7 +3337,8 @@ s32 Scene_Initialize(void) {
         2, FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->z.fixed), 0);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_FACE_WARP_STATUE), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_FACE_WARP_STATUE),
+                           SPRITE_COLOR_GREY);
     else
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_FACE_WARP_STATUE), 8, 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FACE_WARP_STATUE), 0);
@@ -3333,7 +3352,8 @@ s32 Scene_Initialize(void) {
         FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->z.fixed), 0);
     Actor_GetById(ACTOR_COINS_CHEST_STATUE)->steeringFlags = 0;
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_COINS_CHEST_STATUE), 6);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_COINS_CHEST_STATUE),
+                           SPRITE_COLOR_GREY);
     else
       AirsRockInside_WakeStatue(Actor_GetById(ACTOR_COINS_CHEST_STATUE), 60, 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_COINS_CHEST_STATUE), 0);

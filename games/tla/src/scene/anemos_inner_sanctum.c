@@ -469,7 +469,7 @@ s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
   return 1;
 }
 
-/// Puffs sparks of the object's palette where it is, and copies the cell
+/// Puffs sparks of the actor's palette where it is, and copies the cell
 /// picture under its centre.
 s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
   struct EffectOptions options;
@@ -960,7 +960,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
                         0, (FIELD_CELL(leader->z.fixed) << 20) + toFIXED(8));
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, 4);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_GBR);
   object->scaleY = FIXED_ONE * 11 / 8;
   object->scaleX = FIXED_ONE * 11 / 8;
   Scene_SetActorSpritePriority(object, 2);

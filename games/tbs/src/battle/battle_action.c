@@ -47,7 +47,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
     enemySide = DJINN_RECOVERY_OPPONENT;
   list = &Djinn_GetRecoveryTableFar(enemySide)->list;
   if (counts != 0)
-    for (i = ELEMENT_COUNT - 1; i >= 0; i--)
+    for (i = 0; i < ELEMENT_COUNT; i++)
       counts[i] = 0;
   for (recoveryIndex = 0; recoveryIndex != list->count; recoveryIndex++) {
     if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {

@@ -483,7 +483,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
     struct FieldParticle *effectSlot = shop->effects;
-    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
+    for (effectIndex = 0; effectIndex < 24; effectIndex++) {
       s32 flag = *flagEntry;
 
       flag <<= 24;

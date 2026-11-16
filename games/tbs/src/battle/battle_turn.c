@@ -212,7 +212,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     return 0;
   }
 
-  for (i = 31; i >= 0; i--) {
+  for (i = 0; i < 32; i++) {
     u32 first = Random16_Below(unitCount);
     u32 second = Random16_Below(unitCount);
     s32 swap = unitIds[first];

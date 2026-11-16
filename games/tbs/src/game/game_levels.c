@@ -271,7 +271,7 @@ void Party_InitializeCharacters(void) {
       unit->id = *startingUnitId;
       character = Character_GetDefinition(unit->id);
 
-      for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
+      for (i = 0; i < INVENTORY_SLOTS; i++)
         unit->inventory[i] = 0;
 
       for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);

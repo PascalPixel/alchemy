@@ -167,7 +167,7 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
     s32 element;
 
     // The four element levels, cleared from the last.
-    for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+    for (element = 0; element < ELEMENT_COUNT; element++)
       unit->summonBoost[element] = 0;
 
     unit->attackTurns = 0;

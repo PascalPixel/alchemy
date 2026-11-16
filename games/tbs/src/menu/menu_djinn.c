@@ -884,7 +884,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   // Each column's DJINN_COLUMN_ flags.
   selectedRow = -1;
   status = columnFlags;
-  for (i = 7; i >= 0; i--)
+  for (i = 0; i < 8; i++)
     status[i] = 0;
   if (mode == DJINN_SELECT_DJINNI) {
     DjinnMenu_DrawElementList(&backdrop->list);

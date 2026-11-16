@@ -178,7 +178,7 @@ u32 Save_BuildFileSummary(void) {
   leader = Unit_GetFar(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = leader->name;
-  for (i = 11; i >= 0; i--)
+  for (i = 0; i < 12; i++)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gMainRoutineWork.playTime;

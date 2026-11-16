@@ -146,7 +146,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   {
     u8 mode = 4;
 
-    for (tileIndex = 2; tileIndex >= 0; tileIndex--)
+    for (tileIndex = 0; tileIndex < 3; tileIndex++)
       work->textTileState[tileIndex] = mode;
   }
 }

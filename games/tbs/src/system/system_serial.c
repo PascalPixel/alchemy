@@ -670,11 +670,9 @@ restart:
     if (gKeysHeld & KEY_B)
       Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
     if (gKeysHeld & KEY_START) {
-      delay = 9999;
-      do {
-        delay--;
+      for (delay = 0; delay < 10000; delay++) {
         SerialTest_Delay();
-      } while (delay >= 0);
+      }
     }
     if (gSerialReceiveDestination == 0) {
       Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 128 * TILE_SIZE_4BPP,

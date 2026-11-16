@@ -102,7 +102,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     s32 noSlot = 255;
 
     battle = gBattleWork;
-    for (i = 7; i >= 0; i--)
+    for (i = 0; i < 8; i++)
       battle->opponentSlots[i] = noSlot;
 
     // The party members, each marked as the opponent's.

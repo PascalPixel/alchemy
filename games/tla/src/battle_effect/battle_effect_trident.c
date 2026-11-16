@@ -837,24 +837,24 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((row * columns + column) * 24 +
                                     (u32)triangles);
-        s32 u0 = column * cellWidth;
-        s32 u1 = u0 + cellWidth - 1;
-        s32 v0 = row * cellHeight;
-        s32 v1 = v0 + cellHeight - 1;
+        s32 left = column * cellWidth;
+        s32 right = left + cellWidth - 1;
+        s32 top = row * cellHeight;
+        s32 bottom = top + cellHeight - 1;
 
-        triangle[0].texCoord[0][0] = u1;
-        triangle[0].texCoord[0][1] = v0;
-        triangle[0].texCoord[1][0] = u0;
-        triangle[0].texCoord[1][1] = v1;
-        triangle[0].texCoord[2][0] = u1;
-        triangle[0].texCoord[2][1] = v1;
+        triangle[0].texCoord[0][0] = right;
+        triangle[0].texCoord[0][1] = top;
+        triangle[0].texCoord[1][0] = left;
+        triangle[0].texCoord[1][1] = bottom;
+        triangle[0].texCoord[2][0] = right;
+        triangle[0].texCoord[2][1] = bottom;
         second = triangle + 1;
-        second->texCoord[0][0] = u0;
-        second->texCoord[0][1] = v0;
-        second->texCoord[1][0] = u0;
-        second->texCoord[1][1] = v1;
-        second->texCoord[2][0] = u1;
-        second->texCoord[2][1] = v0;
+        second->texCoord[0][0] = left;
+        second->texCoord[0][1] = top;
+        second->texCoord[1][0] = left;
+        second->texCoord[1][1] = bottom;
+        second->texCoord[2][0] = right;
+        second->texCoord[2][1] = top;
         triangle->vertex[0] = (column + 1) % columns + row * columns;
         triangle->vertex[1] = column % columns + columns + row * columns;
         triangle->vertex[2] = (column + 1) % columns + columns + row * columns;

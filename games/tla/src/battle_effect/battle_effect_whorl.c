@@ -35,7 +35,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct BattleCamera *camera;
   u8 *sprites;
   s32 frames;
-  u8 *unit;
+  struct Unit *unit;
   struct MotionObject *target;
   struct RenderModel *model;
   struct ModelTexture texture;
@@ -584,7 +584,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     } while (frame != frames);
   }
 
-  if (unit[0x129] && mode == WATER_COLUMN_WHORL &&
+  if (unit->classId != CLASS_NONE && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
     target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
     target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;

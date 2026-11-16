@@ -378,15 +378,13 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != MEGAERA_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 10) {
-      if (frame > 107) {
-        goto skipped;
+      if (frame <= 107) {
+        frame = 107;
       }
-      frame = 107;
     }
     if (frame == 107) {
       Sound_PlayFar(SE_POWER_UP);
     }
-  skipped:
     if (frame == 148) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

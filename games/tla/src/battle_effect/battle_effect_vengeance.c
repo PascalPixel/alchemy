@@ -77,36 +77,31 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       s32 tile;
       s16 entry;
 
-      if (args->side == EFFECT_SIDE_ENEMIES) {
-        if (column > 7) {
-          goto body;
-        }
+      // The arms take the left half on the enemies' side and the right half on
+      // the party's; the body takes the other half.
+      if (args->side == EFFECT_SIDE_ENEMIES && column <= 7) {
         if ((u32)(row - 3) > 3) {
-          goto blank;
-        }
-        tileX = column;
-        tileY = row + 9;
-      } else {
-        if (column <= 7) {
-        body:
-          if (row > 11) {
-            goto blank;
-          }
-          tileX = column & mask;
-          tileY = row;
+          tileX = 0;
+          tileY = 0;
         } else {
-          if ((u32)(row - 3) > 3) {
-            goto blank;
-          }
-          tileX = column & mask;
+          tileX = column;
           tileY = row + 9;
         }
+      } else if (args->side == EFFECT_SIDE_ENEMIES || column <= 7) {
+        if (row > 11) {
+          tileX = 0;
+          tileY = 0;
+        } else {
+          tileX = column & mask;
+          tileY = row;
+        }
+      } else if ((u32)(row - 3) <= 3) {
+        tileX = column & mask;
+        tileY = row + 9;
+      } else {
+        tileX = 0;
+        tileY = 0;
       }
-      goto store;
-    blank:
-      tileX = 0;
-      tileY = 0;
-    store:
       tile = (tileY * 8 + tileX) * 2;
       entry = ((tile + 1) << 8) | tile;
       *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;

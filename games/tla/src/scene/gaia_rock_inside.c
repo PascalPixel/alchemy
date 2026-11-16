@@ -15,6 +15,7 @@
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
+#include "battle/battle_unit.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
@@ -2841,7 +2842,7 @@ void GaiaRockInside_ClearMazeLayer(s32 keep) {
 struct Unit *Unit_Get(u32 unitId);
 void BlendScript_Start(u16 *script);
 
-/// Prepares the map: in the maze, lays the path from the leader's stats and
+/// Prepares the map: in the maze, lays the path from the leader's name and
 /// draws the step the party stands on, or readies the lair's blend; in the
 /// altar rooms, clears the overhead layer of all but the entrance's part.
 s32 Scene_PrepareMap(void) {
@@ -2849,7 +2850,7 @@ s32 Scene_PrepareMap(void) {
     u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
 
     if (gMainRoutineWork.entrance <= 4) {
-      u8 *unit;
+      struct Unit *unit;
       s32 total;
       s32 *stage;
       s32 i;
@@ -2858,11 +2859,11 @@ s32 Scene_PrepareMap(void) {
       unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
       for (i = 0; i <= 13; i++)
-        total += unit[i];
+        total += unit->name[i];
       GaiaRockInside_LayMaze(total);
       Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
-      map[261] = 1;
+      ((struct MapWork *)map)->enabled[1] = 1;
       {
         volatile u16 control = REG_BG2CNT & ~3;
         // Once-only block: keeps the sky cell window's store after its read.

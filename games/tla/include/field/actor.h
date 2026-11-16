@@ -193,6 +193,12 @@ struct Actor {
       u8 unusedBeforeFlameLevel[2]; ///< refused and frozen
       u8 flameLevel; ///< its height in the column, 16 pixels a level
     };
+    /// A spark circling in to its centre, at Magma Rock's Blaze tablet
+    /// (MagmaRockInside_OrbitParent).
+    struct {
+      u8 unusedBeforeStepsLeft[2]; ///< refused and frozen
+      u8 stepsLeft;                ///< its steps left before it is released
+    };
     /// An actor that blinks, as Magma Rock's statues and blasted wall do
     /// (MagmaRock_FlashStatue).
     struct {

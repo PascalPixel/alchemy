@@ -593,7 +593,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
       object->layer = 2;
       object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
-      if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
+      if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED)) {
         struct Actor *copy;
 
         object->gravity = toFIXED(1) / 16;
@@ -743,16 +743,13 @@ s32 MagmaRockInside_FindStatue(u16 *table) {
   s32 cell = MapCell_Get(0, FIELD_CELL(watch->x), FIELD_CELL(watch->z)) >> 8;
   u32 id;
 
-  goto test;
-again:
-  result = *table++;
-test:
-  if (*table != 0xffff) {
+  for (; *table != 0xffff; result = *table++) {
     id = *table++;
-    if (cell != *table++)
-      goto again;
-    watch->child = Actor_Get(id);
-    result = *table;
+    if (cell == *table++) {
+      watch->child = Actor_Get(id);
+      result = *table;
+      break;
+    }
   }
   return result;
 }
@@ -845,34 +842,30 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   position[0] = flame->x.fixed;
   position[1] = flame->y.fixed;
   position[2] = flame->z.fixed;
-next:
-  position[0] += step;
-  cell = MapCell_Get(2, FIELD_CELL(position[0]),
-                     FIELD_CELL(position[2] - position[1])) >>
-         8;
-  if (cell == 212 || cell == 222)
-    goto end;
-  id = ACTOR_FIRST_PLACED;
-inner:
-  other = gFieldWork->actors[id];
-  if (other->script == 0)
-    goto skip;
-  if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
-      FIELD_CELL(source->y.fixed) == FIELD_CELL(other->y.fixed) &&
-      FIELD_CELL(source->z.fixed) == FIELD_CELL(other->z.fixed))
-    goto skip;
-  if (Position_FlatDistance(&other->x.fixed, position) > 8)
-    goto skip;
-  if (FIELD_CELL(other->y.fixed) != FIELD_CELL(position[1]))
-    goto skip;
-  if (*(s16 *)(*(u8 **)((u8 *)other->sprite + 40)) == 272)
-    goto end;
-  goto hit;
-skip:
-  id++;
-  if (id == FIELD_TREASURE_ACTOR)
-    goto next;
-  goto inner;
+  for (;;) {
+    position[0] += step;
+    cell = MapCell_Get(2, FIELD_CELL(position[0]),
+                       FIELD_CELL(position[2] - position[1])) >>
+           8;
+    if (cell == 212 || cell == 222)
+      goto end;
+    for (id = ACTOR_FIRST_PLACED; id != FIELD_TREASURE_ACTOR; id++) {
+      other = gFieldWork->actors[id];
+      if (other->script == 0)
+        continue;
+      if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
+          FIELD_CELL(source->y.fixed) == FIELD_CELL(other->y.fixed) &&
+          FIELD_CELL(source->z.fixed) == FIELD_CELL(other->z.fixed))
+        continue;
+      if (Position_FlatDistance(&other->x.fixed, position) > 8)
+        continue;
+      if (FIELD_CELL(other->y.fixed) != FIELD_CELL(position[1]))
+        continue;
+      if (((struct Sprite *)other->sprite)->entries[0]->animationId == 272)
+        goto end;
+      goto hit;
+    }
+  }
 end:
   flame->acceleration = toFIXED(2);
   flame->speedLimit = toFIXED(2);
@@ -883,27 +876,24 @@ end:
   FieldActor_WaitForMove(flame);
   flame->update = NULL;
   Actor_Release(flame);
-  id = 0;
-spark:
-  bit = gFrameCount;
-  bit &= 1;
-  if (bit == 0) {
-    options.type = SPRITE_FLAME_PUFF;
-    options.priority = 1;
-    options.update =
-        (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
-    options.script = gMagmaRockInside_EmberScript;
-    FieldEffect_Spawn(position[0], position[1], position[2],
-                      ((Random16() & 31) - 16) << 13,
-                      ((Random16() & 31) - 16) << 13, bit,
-                      EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                          EFFECT_USE_PRIORITY,
-                      &options);
+  for (id = 0; id != 16; id++) {
+    bit = gFrameCount;
+    bit &= 1;
+    if (bit == 0) {
+      options.type = SPRITE_FLAME_PUFF;
+      options.priority = 1;
+      options.update =
+          (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
+      options.script = gMagmaRockInside_EmberScript;
+      FieldEffect_Spawn(position[0], position[1], position[2],
+                        ((Random16() & 31) - 16) << 13,
+                        ((Random16() & 31) - 16) << 13, bit,
+                        EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT |
+                            EFFECT_USE_TYPE | EFFECT_USE_PRIORITY,
+                        &options);
+    }
+    System_Wait(1);
   }
-  System_Wait(1);
-  id++;
-  if (id != 16)
-    goto spark;
   System_Wait(24);
   if (cell == 222) {
     MagmaRockInside_RaiseLava();
@@ -1042,7 +1032,7 @@ void MagmaRockInside_RaiseLava(void) {
   s32 *burstPosition;
   s32 *sparkPosition;
   s32 *roomPosition;
-  u32 t;
+  u32 frame;
   s32 scene;
   s32 closing;
   typeof(gMainRoutineWork) *work;
@@ -1054,8 +1044,9 @@ void MagmaRockInside_RaiseLava(void) {
 
   srcX = 0;
   srcZ = 0;
-  // t holds 212 for a set flag, then the frame count.
-  t = 0;
+  // frame holds 212 when the room is already flooded, then counts the
+  // frames the lava takes to rise.
+  frame = 0;
   effectOptions = &options;
   effectOptions->type = SPRITE_FLAME_PUFF;
   effectOptions->priority = 1;
@@ -1070,46 +1061,45 @@ void MagmaRockInside_RaiseLava(void) {
     roomPosition[2] = toFIXED(200);
     srcX = 20;
     srcZ = 69;
-    if (Event_GetFlag(FLAG_AREA_TEMP_00))
-      t = 212;
+    if (Event_GetFlag(FLAG_ENTRANCE_FLOODED))
+      frame = 212;
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_FURY) {
     baseX = toFIXED(232);
     roomPosition[1] = toFIXED(32);
     roomPosition[2] = toFIXED(248);
     srcX = 14;
     srcZ = 72;
-    if (Event_GetFlag(FLAG_AREA_TEMP_01))
-      t = 212;
+    if (Event_GetFlag(FLAG_FURY_FLOODED))
+      frame = 212;
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
     baseX = toFIXED(392);
     roomPosition[1] = toFIXED(32);
     roomPosition[2] = toFIXED(536);
     srcX = 24;
     srcZ = 90;
-    if (Event_GetFlag(FLAG_AREA_TEMP_02))
-      t = 212;
+    if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED))
+      frame = 212;
   }
   i = 0;
-burst:
-  burstRandom = Random16();
-  mask = 31;
-  /* FAKEMATCH(barrier): the form kept; as no asm, 66 of 537 instructions
-   * differ in tla-en. */
-  asm("" : : : SFP_CLOBBER);
-  burstPosition = position;
-  burstPosition[0] = baseX + ((burstRandom & mask) << 16);
-  Event_PlaySound(SE_CRASH);
-  FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
-                    (Random16() & mask) << 12, 0,
-                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
-                    effectOptions);
-  MapGrid_SetShake(5, 5, 1);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  i++;
-  Event_Wait(8);
-  if (i != 16)
-    goto burst;
+  do {
+    burstRandom = Random16();
+    mask = 31;
+    /* FAKEMATCH(barrier): the form kept; as no asm, 66 of 537 instructions
+     * differ in tla-en. */
+    asm("" : : : SFP_CLOBBER);
+    burstPosition = position;
+    burstPosition[0] = baseX + ((burstRandom & mask) << 16);
+    Event_PlaySound(SE_CRASH);
+    FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
+                      (Random16() & mask) << 12, 0,
+                      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
+                      effectOptions);
+    MapGrid_SetShake(5, 5, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+    i++;
+    Event_Wait(8);
+  } while (i != 16);
   Event_PlaySound(SE_BOSS_ROAR);
   effectOptions->priority = 1;
   effectOptions->startScaleX = FIXED_ONE * 2;
@@ -1119,17 +1109,16 @@ burst:
   baseX -= toFIXED(8);
   i = 0;
   riseX = baseX;
-rise:
-  burstPosition[0] = riseX;
-  FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0, 0,
-                    (Random16() & 31) << 10,
-                    EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
-                        EFFECT_USE_PRIORITY | 1,
-                    effectOptions);
-  i++;
-  riseX += toFIXED(6);
-  if (i != 8)
-    goto rise;
+  do {
+    burstPosition[0] = riseX;
+    FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
+                      0, (Random16() & 31) << 10,
+                      EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
+                          EFFECT_USE_PRIORITY | 1,
+                      effectOptions);
+    i++;
+    riseX += toFIXED(6);
+  } while (i != 8);
   MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1139,7 +1128,7 @@ rise:
   effectOptions->priority = 1;
   effectOptions->palette = SPRITE_COLOR_RED_TINT;
   effectOptions->script = gMagmaRockInside_EmberScript;
-  if (t != 0) {
+  if (frame != 0) {
     MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
     Event_Wait(30);
     burstPosition[2] -= toFIXED(40);
@@ -1147,63 +1136,59 @@ rise:
     MapGrid_SetShake(2, 1, 1);
     Event_PlaySound(SE_TREMOR);
     row = 0;
-  row:
-    i = 0;
-  column:
-    burstPosition[0] = baseX + ((Random16() % 48) << 16);
-    FieldEffect_Spawn(burstPosition[0], burstPosition[1],
-                      burstPosition[2] + (row << 18) + toFIXED(8), 0,
-                      toFIXED(1), 0,
-                      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                      effectOptions);
-    i++;
-    if (i != 6)
-      goto column;
-    wait(3);
-    MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
-    row++;
-    if (row != 12)
-      goto row;
-    MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, 8);
-    t = 0;
-  frame:
-    if ((t & 3) == 0) {
+    do {
       i = 0;
-    spark:
-      sparkRandom = Random16();
-      sparkPosition = position;
-      sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
-      FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                        sparkPosition[2] + toFIXED(48), 0, toFIXED(1), 0,
-                        EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
-      i++;
-      if (i != 4)
-        goto spark;
-    }
-    if (t == 0) {
-      layer->offsetY -= toFIXED(32);
-      MapGrid_CenterOnFollowedPoint();
-      Event_Wait(1);
-    } else if (t <= 63) {
-      REG_BLDALPHA = ((16 - (t >> 2)) << 8) | (t >> 2);
-      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-    } else if (t == 64) {
-      REG_BLDCNT = 0;
-    } else if (t <= 127) {
-      layer->offsetY += toFIXED(1) / 2;
-      roomPosition = position;
-      roomPosition[2] -= toFIXED(1) / 2;
-      MapGrid_CopyCellsTo(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
-    } else if (t == 128) {
-      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    }
-    t++;
-    wait(1);
-    if (t != 160)
-      goto frame;
+      do {
+        burstPosition[0] = baseX + ((Random16() % 48) << 16);
+        FieldEffect_Spawn(burstPosition[0], burstPosition[1],
+                          burstPosition[2] + (row << 18) + toFIXED(8), 0,
+                          toFIXED(1), 0,
+                          EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                              EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                          effectOptions);
+        i++;
+      } while (i != 6);
+      wait(3);
+      MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+      row++;
+    } while (row != 12);
+    MapGrid_CopyCellsTo(74, 70, srcX, srcZ, 3, 8);
+    frame = 0;
+    do {
+      if ((frame & 3) == 0) {
+        i = 0;
+        do {
+          sparkRandom = Random16();
+          sparkPosition = position;
+          sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
+          FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
+                            sparkPosition[2] + toFIXED(48), 0, toFIXED(1), 0,
+                            EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                                EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                            effectOptions);
+          i++;
+        } while (i != 4);
+      }
+      if (frame == 0) {
+        layer->offsetY -= toFIXED(32);
+        MapGrid_CenterOnFollowedPoint();
+        Event_Wait(1);
+      } else if (frame <= 63) {
+        REG_BLDALPHA = ((16 - (frame >> 2)) << 8) | (frame >> 2);
+        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      } else if (frame == 64) {
+        REG_BLDCNT = 0;
+      } else if (frame <= 127) {
+        layer->offsetY += toFIXED(1) / 2;
+        roomPosition = position;
+        roomPosition[2] -= toFIXED(1) / 2;
+        MapGrid_CopyCellsTo(71, 76, srcX, srcZ - ((frame - 47) >> 5) + 8, 3, 1);
+      } else if (frame == 128) {
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+      }
+      frame++;
+      wait(1);
+    } while (frame != 160);
     FieldMapGrid_WaitForShakeToSettle();
   }
   Event_PlaySound(SE_STOP_ACTION_SE);
@@ -1212,19 +1197,18 @@ rise:
   lastOptions->startScaleY = FIXED_ONE * 9 / 5;
   lastOptions->startScaleX = FIXED_ONE * 9 / 5;
   i = 0;
-last:
-  sparkRandom = Random16();
-  sparkPosition = position;
-  sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
-  i++;
-  FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
-                    sparkPosition[2] + toFIXED(48), 0, 0, 0,
-                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_PALETTE,
-                    lastOptions);
-  if (i != 6)
-    goto last;
+  do {
+    sparkRandom = Random16();
+    sparkPosition = position;
+    sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
+    i++;
+    FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
+                      sparkPosition[2] + toFIXED(48), 0, 0, 0,
+                      EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE,
+                      lastOptions);
+  } while (i != 6);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_CopyCellsTo(68, 64, srcX, srcZ, 3, 6);
@@ -1897,8 +1881,8 @@ struct SparkOrbiter {
   u8 beforeRadius[0x38];
   s32 radius;
   u8 beforeTimer[0x12];
-  u8 timer;
-  u8 afterTimer;
+  u8 stepsLeft;
+  u8 afterStepsLeft;
   u16 angle;
   u16 speed;
   struct SparkOrbiter *parent;
@@ -1917,7 +1901,7 @@ s32 MagmaRockInside_OrbitParent(struct SparkOrbiter *object) {
   object->z = parent->z;
   heading = *angle;
   FieldVector_AddPolarOffsetFX(object->radius, heading, position = &object->x);
-  if (--object->timer == 0)
+  if (--object->stepsLeft == 0)
     return 0;
   if (object->radius == toFIXED(2))
     return 1;
@@ -1938,19 +1922,19 @@ s32 MagmaRockInside_OrbitParent(struct SparkOrbiter *object) {
 
 #include "shared/actor_aim_at_watched.h"
 
-s32 MagmaRockInside_DriftForSteps(struct Actor *object) {
+s32 MagmaRockInside_DriftForSteps(struct Orbit *object) {
   u8 *steps;
-  s32 v;
-  u8 n;
+  s32 left;
+  u8 stepsLeft;
 
-  object->x.fixed += object->bounce;
-  object->y.fixed += object->riseBaseY;
-  object->z.fixed += object->gravity;
-  steps = (u8 *)object + 98;
-  v = *steps + 255;
-  *steps = v;
-  n = v;
-  return n != 0;
+  object->x += object->centreX;
+  object->y += object->orbitRadius;
+  object->z += object->centreZ;
+  steps = &object->phase;
+  left = *steps + 255;
+  *steps = left;
+  stepsLeft = left;
+  return stepsLeft != 0;
 }
 
 void MagmaRockInside_TrailSparks(struct Actor *object) {
@@ -1971,15 +1955,6 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
                     EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &options);
 }
-
-union ActorView {
-  struct Actor actor;
-  struct {
-    u8 unk00[0x62];
-    u8 unk62;
-    u8 unk63;
-  } bytes;
-};
 
 extern s32 gMagmaRockInside_BlazeCasterScript[];
 extern s32 gMagmaRockInside_TorchScript[];
@@ -2063,7 +2038,7 @@ burst:
     spark->motionFlags = noMotion;
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = second;
-    ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+    spark->stepsLeft = ((16 - i) << 3) + 15;
     FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RED_TINT);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -2090,8 +2065,8 @@ column:
                             second->z.fixed);
   riser->timer = Random16();
   riser->userValue = 0x800;
-  ((union ActorView *)riser)->bytes.unk62 = i;
-  ((union ActorView *)riser)->bytes.unk63 = 1;
+  ((struct Orbit *)riser)->phase = i;
+  ((struct Orbit *)riser)->growth = 1;
   riser->bounce = riser->x.fixed;
   riser->riseBaseY = 0;
   riser->gravity = riser->z.fixed;
@@ -3196,7 +3171,7 @@ s32 gMagmaRockInside_SparkScript[] = {
     SC_END,
 };
 
-s32 MagmaRockInside_DriftForSteps(struct Actor *object);
+s32 MagmaRockInside_DriftForSteps(struct Orbit *object);
 
 s32 gMagmaRockInside_OrbitScript[] = {                                                               
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         

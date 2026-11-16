@@ -225,9 +225,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->oam.index = tile;
 }
 
-#include <system/affine.h>
-
-#define FIXED_ONE 0x10000
+#include "system/affine.h"
 
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a

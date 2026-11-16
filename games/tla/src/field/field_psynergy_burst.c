@@ -11,16 +11,27 @@
 #include "system/main_routine_work.h"
 #include "system/io_reg.h"
 
+/// The sparks that fly into Burst's glow, and its explosions round the target.
+#define BURST_SPARK_COUNT 32
+#define BURST_EXPLOSION_COUNT 32
+/// The tiles of one of an explosion's eight pictures, which follow each
+/// other from BurstWork.burstTile.
+#define BURST_EXPLOSION_PICTURE_TILES 4
+/// The OBJ palette the explosions are drawn in.
+#define BURST_EXPLOSION_PALETTE 15
+/// How much of a screen shake is kept each frame.
+#define BURST_SHAKE_DECAY (FIXED_ONE * 9 / 10)
+
 /// Burst's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc that swells
 /// in front of the caster on the canvas sprite, the 32 sparks that fly into it,
 /// the 32 explosions round the target, and the stage of the cast.
 struct BurstWork {
-  u8 tiles[0x400];
-  struct FieldPsynergyParticle sparks[32];
-  struct EffectSprite sparkSprites[32];
-  struct EffectSprite burstSprites[32];
-  struct FieldPsynergyParticle bursts[32];
-  s16 phase; ///< the stage of the cast; 999 once it ends
+  u8 tiles[1024];
+  struct FieldPsynergyParticle sparks[BURST_SPARK_COUNT];
+  struct EffectSprite sparkSprites[BURST_SPARK_COUNT];
+  struct EffectSprite burstSprites[BURST_EXPLOSION_COUNT];
+  struct FieldPsynergyParticle bursts[BURST_EXPLOSION_COUNT];
+  s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer; ///< frames into the stage
   /// Passed to the target's event each frame: 2 for a small explosion, 3 for
   /// the great one, 1 as it dies down, 0 otherwise.
@@ -28,7 +39,7 @@ struct BurstWork {
   u16 burstTile; ///< the explosion's first tile
   s16 nextBurst; ///< the explosion slot used next
   s16 newBursts; ///< explosions to start this frame
-  /// 1 cycles OBJ palette 14's greens each frame, 2 loads the explosion's
+  /// 1 cycles CANVAS_PALETTE's greens each frame, 2 loads the explosion's
   /// palette once.
   s8 paletteMode;
 };
@@ -53,7 +64,7 @@ void FieldPsynergy_UpdateBurst(void) {
 
   work->shake = 0;
   if (work->paletteMode == 1) {
-    palette = (volatile u16 *)&OBJ_PLTT_COLOR(14, 0);
+    palette = (volatile u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
     i = 0;
     frames = &canvas->drawnFrames;
     red = RGB_LEVEL_MAX;
@@ -68,7 +79,8 @@ void FieldPsynergy_UpdateBurst(void) {
       Io_Write16(green | blue | red, palette++);
     }
   } else if (work->paletteMode == 2) {
-    Dma_Set(gBurst_SparkPalette, (void *)&OBJ_PLTT_COLOR(15, 0),
+    Dma_Set(gBurst_SparkPalette,
+            (void *)&OBJ_PLTT_COLOR(BURST_EXPLOSION_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
     work->paletteMode = 0;
   }
@@ -81,7 +93,7 @@ void FieldPsynergy_UpdateBurst(void) {
 
   if (scene->enabled == 0) {
     particle = work->sparks;
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < BURST_SPARK_COUNT; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
         sprite->x = particle->x + toFIXED(canvas->x);
@@ -98,36 +110,36 @@ void FieldPsynergy_UpdateBurst(void) {
       SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(Random16() * 12 + toFIXED(4), Random16(),
                             &particle->x);
-      work->nextBurst = ++work->nextBurst % 32;
+      work->nextBurst = ++work->nextBurst % BURST_EXPLOSION_COUNT;
     }
     work->newBursts = 0;
     i = 0;
     particle = work->bursts;
-    for (; i <= 31; i++, particle++) {
+    for (; i < BURST_EXPLOSION_COUNT; i++, particle++) {
       if ((u32)particle->timer > 71)
         continue;
       sprite = &work->burstSprites[i];
       switch (particle->timer) {
       case 6:
-        sprite->oam.index = work->burstTile + 4;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES;
         break;
       case 12:
-        sprite->oam.index = work->burstTile + 8;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 2;
         break;
       case 22:
-        sprite->oam.index = work->burstTile + 12;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 3;
         break;
       case 32:
-        sprite->oam.index = work->burstTile + 16;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 4;
         break;
       case 42:
-        sprite->oam.index = work->burstTile + 20;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 5;
         break;
       case 52:
-        sprite->oam.index = work->burstTile + 24;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 6;
         break;
       case 62:
-        sprite->oam.index = work->burstTile + 28;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 7;
         break;
       }
       EffectSprite_DrawAtWorldPosition(sprite, particle);
@@ -141,7 +153,7 @@ void FieldPsynergy_UpdateBurst(void) {
         BURST_NEXT_PHASE(work);
       break;
     case 1:
-      canvas->scaleX += 0x300;
+      canvas->scaleX += FIXED_ONE * 3 / 256;
       canvas->scaleY = canvas->scaleX;
       if (canvas->scaleX >= FIXED_ONE / 2) {
         work->phase++;
@@ -158,7 +170,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -170,7 +182,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if ((work->timer & 15) == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -187,7 +199,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        MapGrid_SetScreenShakeFar(toFIXED(12), toFIXED(12), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(12), toFIXED(12), BURST_SHAKE_DECAY);
         Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
           work->shake = 3;
@@ -217,36 +229,36 @@ void FieldPsynergy_UpdateBurst(void) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
-      work->nextBurst = ++work->nextBurst % 32;
+      work->nextBurst = ++work->nextBurst % BURST_EXPLOSION_COUNT;
     }
     work->newBursts = 0;
     i = 0;
     particle = work->bursts;
-    for (; i <= 31; i++, particle++) {
+    for (; i < BURST_EXPLOSION_COUNT; i++, particle++) {
       if ((u32)particle->timer > 47)
         continue;
       sprite = &work->burstSprites[i];
       switch (particle->timer) {
       case 4:
-        sprite->oam.index = work->burstTile + 4;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES;
         break;
       case 8:
-        sprite->oam.index = work->burstTile + 8;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 2;
         break;
       case 14:
-        sprite->oam.index = work->burstTile + 12;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 3;
         break;
       case 22:
-        sprite->oam.index = work->burstTile + 16;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 4;
         break;
       case 28:
-        sprite->oam.index = work->burstTile + 20;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 5;
         break;
       case 35:
-        sprite->oam.index = work->burstTile + 24;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 6;
         break;
       case 41:
-        sprite->oam.index = work->burstTile + 28;
+        sprite->oam.index = work->burstTile + BURST_EXPLOSION_PICTURE_TILES * 7;
         break;
       }
       EffectSprite_DrawAtWorldPosition(sprite, particle);
@@ -260,7 +272,7 @@ void FieldPsynergy_UpdateBurst(void) {
         BURST_NEXT_PHASE(work);
       break;
     case 1:
-      canvas->scaleX += 0x500;
+      canvas->scaleX += FIXED_ONE * 5 / 256;
       canvas->scaleY = canvas->scaleX;
       if (canvas->scaleX > 0x4ccb) {
         work->phase++;
@@ -275,7 +287,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
+          MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
           work->newBursts = 1;
           Sound_PlayFar(SE_CLATTER);
         }
@@ -354,7 +366,7 @@ void FieldPsynergy_Burst(void) {
   sparkTile = VramCache_Load(sparkEntry, 64, gBurst_GlowTiles);
   for (i = 0, particle = work->sparks, mul = Iwram_MulFX,
       sprite = work->sparkSprites;
-       i < 32;) {
+       i < BURST_SPARK_COUNT;) {
     EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -378,16 +390,16 @@ void FieldPsynergy_Burst(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       work);
   burstEntry = VramCache_FindFreeEntry();
-  tile = VramCache_Load(burstEntry, 0x400, work);
+  tile = VramCache_Load(burstEntry, 1024, work);
   work->burstTile = tile;
   particle = work->bursts;
   burstSprite = work->burstSprites;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < BURST_EXPLOSION_COUNT; i++) {
     EffectSprite_Init(burstSprite, 8, 8, OBJ_SIZE_16X16, tile);
     burstSprite->depth = canvas->depth + 1;
     burstSprite->oam.priority = canvas->priority;
     burstSprite->oam.fullColor = 0;
-    burstSprite->oam.palette = 15;
+    burstSprite->oam.palette = BURST_EXPLOSION_PALETTE;
     particle->timer = -1;
     burstSprite++;
     particle++;
@@ -409,8 +421,8 @@ void FieldPsynergy_Burst(void) {
   frame = 0;
   while (work->phase != FIELD_PSYNERGY_FINISHED) {
     wait(1);
-    if (work->phase == 999)
-      frame = 999;
+    if (work->phase == FIELD_PSYNERGY_FINISHED)
+      frame = FIELD_PSYNERGY_FINISHED;
     Field_RunPsynergyEvent(pending, work->shake, frame);
     frame++;
   }

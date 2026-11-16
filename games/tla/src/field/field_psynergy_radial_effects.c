@@ -94,7 +94,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    Actor_StartScriptFar(effect, (u32)gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(effect, gBattleEffect_SharedParticleScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,

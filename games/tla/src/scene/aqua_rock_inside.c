@@ -1800,12 +1800,16 @@ s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   volatile u16 control;
-  // i1, i3, i4, i6, i7, i12, i14, i17 and b each hold one constant for their
-  // whole life, i2 holds a flag test and the others each count one loop.
-  s32 i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16,
-      i17;
+  // zero, waterRow, ventRow, stoneColumn, rustySwordRow, vialPoolCorner,
+  // tearStoneRow, parchPoolRow and stoneRow each hold one constant for their
+  // whole life, the two Moai locals a flag test, and the others each count one
+  // loop.
+  s32 zero, eastMoaiFilled, waterRow, ventRow, streamStep, stoneColumn,
+      rustySwordRow, rustySwordStep, rustySwordPillar, crystalPowderStep,
+      hiddenPuddle, vialPoolCorner, vialPuddle, tearStoneRow, tearStoneStep,
+      tearStonePillar, parchPoolRow;
   struct Actor *actor;
-  s32 a, b;
+  s32 westMoaiFilled, stoneRow;
   struct MapWork *map;
 
   Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
@@ -1815,21 +1819,21 @@ s32 Scene_PrepareMap(void) {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
       actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR);
-      i1 = 0;
-      actor->motionFlags = i1;
-      actor->groundHeight = i1;
-      actor->y.fixed = i1;
+      zero = 0;
+      actor->motionFlags = zero;
+      actor->groundHeight = zero;
+      actor->y.fixed = zero;
       Actor_SelectAnimation((s32)actor, 0);
       actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_PUDDLE);
-      actor->motionFlags = i1;
-      actor->groundHeight = i1;
-      actor->y.fixed = i1;
-      i2 = GameFlag_Get(FLAG_SCENE_TEMP_30);
-      if (i2 == 0) {
+      actor->motionFlags = zero;
+      actor->groundHeight = zero;
+      actor->y.fixed = zero;
+      eastMoaiFilled = GameFlag_Get(FLAG_SCENE_TEMP_30);
+      if (eastMoaiFilled == 0) {
         MapGrid_CopyCellsLayered(104, 80, 16, 10, 104, 40);
         MapGrid_CopyCellsLayered(110, 116, 18, 12, 39, 105);
-        // i2 is the flag test's 0.
-        MapGrid_CopyCellAttributes(64, 32, 64, 32, i2, 32);
+        // eastMoaiFilled is 0 here.
+        MapGrid_CopyCellAttributes(64, 32, 64, 32, eastMoaiFilled, 32);
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, 0);
       } else {
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 4, 0);
@@ -1840,13 +1844,13 @@ s32 Scene_PrepareMap(void) {
         MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
       }
     } else if ((u32)(entrance - 9) <= 1) {
-      a = GameFlag_Get(FLAG_SCENE_TEMP_31);
-      if (a == 0) {
-        i3 = 32;
-        MapGrid_CopyCellsLayered(77, 80, 23, 20, 77, i3);
+      westMoaiFilled = GameFlag_Get(FLAG_SCENE_TEMP_31);
+      if (westMoaiFilled == 0) {
+        waterRow = 32;
+        MapGrid_CopyCellsLayered(77, 80, 23, 20, 77, waterRow);
         MapGrid_CopyCellsLayered(112, 96, 16, 20, 12, 98);
-        // a is the flag test's 0.
-        MapGrid_CopyCellAttributes(64, 32, 64, 32, a, i3);
+        // westMoaiFilled is 0 here.
+        MapGrid_CopyCellAttributes(64, 32, 64, 32, westMoaiFilled, waterRow);
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, 0);
       } else {
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 4, 0);
@@ -1854,9 +1858,9 @@ s32 Scene_PrepareMap(void) {
     }
     if (GameFlag_Get(FLAG_AQUA_ROCK_WEST_VENT_COVERED)) {
       Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR, 184, 200);
-      i4 = 12;
-      MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, i4);
-      MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, i4);
+      ventRow = 12;
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, ventRow);
+      MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, ventRow);
     }
     if (GameFlag_Get(FLAG_AQUA_ROCK_EAST_VENT_COVERED)) {
       Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR, 824, 216);
@@ -1879,17 +1883,17 @@ s32 Scene_PrepareMap(void) {
       AquaRockInside_StartSplashes();
       AquaRockInside_AddSplash(16, 4, 16, 2);
       AquaRockInside_AddSplash(22, 4, 16, 0);
-      for (i5 = 0; i5 < 6; i5++)
+      for (streamStep = 0; streamStep < 6; streamStep++)
         AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                       COLLISION_STREAM_GOAL);
     }
     if (GameFlag_Get(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET)) {
       MapGrid_CopyCellsLayered(75, 96, 7, 13, 80, 27);
-      i6 = 16;
-      b = 31;
-      MapGrid_CopyCellsLayered(91, 96, 7, 10, i6, b);
-      MapGrid_CopyCellsLayered(99, 96, 7, 14, i6, 91);
-      MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, b);
+      stoneColumn = 16;
+      stoneRow = 31;
+      MapGrid_CopyCellsLayered(91, 96, 7, 10, stoneColumn, stoneRow);
+      MapGrid_CopyCellsLayered(99, 96, 7, 14, stoneColumn, 91);
+      MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, stoneRow);
       AquaRockInside_ShowAquariusStone();
     } else {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
@@ -1909,9 +1913,9 @@ s32 Scene_PrepareMap(void) {
       if (!GameFlag_Get(FLAG_SCENE_TEMP_49) &&
           !Event_GetFlag(FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED)) {
         map = Ram_HeapSlots->mapGrid;
-        i7 = 39;
-        MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
-        MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, i7);
+        rustySwordRow = 39;
+        MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, rustySwordRow);
+        MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, rustySwordRow);
         AquaRockInside_SetPillarCellMiddle();
         map->enabled[2] = 1;
         SET_BG1CNT_PRIORITY(1);
@@ -1925,19 +1929,19 @@ s32 Scene_PrepareMap(void) {
                                       COLLISION_STREAM_BEND + 5);
         AquaRockInside_StartSplashes();
         AquaRockInside_AddSplash(12, 2, 45, 1);
-        for (i8 = 0; i8 < 8; i8++)
+        for (rustySwordStep = 0; rustySwordStep < 8; rustySwordStep++)
           AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                         COLLISION_STREAM_GOAL);
         Event_SetFlag(FLAG_SCENE_TEMP_49);
       }
-      i9 = ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A;
+      rustySwordPillar = ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A;
       do {
-        actor = Actor_GetById(i9);
+        actor = Actor_GetById(rustySwordPillar);
         actor->motionFlags = 0;
         actor->groundHeight = 0;
         actor->y.fixed = 0;
-        i9++;
-      } while (i9 <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C);
+        rustySwordPillar++;
+      } while (rustySwordPillar <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C);
     } else {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -4);
     }
@@ -1952,7 +1956,7 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Get(FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED)) {
       AquaRockInside_StartSplashes();
       AquaRockInside_AddSplash(44, 0, 34, 2);
-      for (i10 = 0; i10 <= 4; i10++)
+      for (crystalPowderStep = 0; crystalPowderStep <= 4; crystalPowderStep++)
         AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                       COLLISION_STREAM_GOAL);
     }
@@ -1964,25 +1968,26 @@ s32 Scene_PrepareMap(void) {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -2);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
-      i11 = ACTOR_VIAL_CHEST_PUDDLE_A;
+      hiddenPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
       do {
-        actor = Actor_GetById(i11);
+        actor = Actor_GetById(hiddenPuddle);
         actor->motionFlags = 0;
         actor->x.fixed = 0;
         actor->z.fixed = 0;
-        i11++;
-      } while (i11 <= ACTOR_VIAL_CHEST_PUDDLE_C);
+        hiddenPuddle++;
+      } while (hiddenPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C);
       return 0;
     } else {
       MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
-      i12 = 41;
-      MapGrid_CopyCellAttributes(105, 41, 12, 13, i12, i12);
-      MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, i12);
-      for (i13 = ACTOR_VIAL_CHEST_PUDDLE_A; i13 <= ACTOR_VIAL_CHEST_PUDDLE_C;
-           i13++) {
-        actor = Actor_GetById(i13);
+      vialPoolCorner = 41;
+      MapGrid_CopyCellAttributes(105, 41, 12, 13, vialPoolCorner,
+                                 vialPoolCorner);
+      MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, vialPoolCorner);
+      for (vialPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
+           vialPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C; vialPuddle++) {
+        actor = Actor_GetById(vialPuddle);
         if (GameFlag_Get(FLAG_SCENE_TEMP_51 - ACTOR_VIAL_CHEST_PUDDLE_A +
-                         i13)) {
+                         vialPuddle)) {
           MapGrid_CopyCellAttributes(47, 45, 1, 1, FIELD_CELL(actor->x.fixed),
                                      FIELD_CELL(actor->z.fixed));
         }
@@ -2021,10 +2026,10 @@ s32 Scene_PrepareMap(void) {
       if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) &&
           !Event_GetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED)) {
         map = Ram_HeapSlots->mapGrid;
-        i14 = 13;
-        MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, i14);
+        tearStoneRow = 13;
+        MapGrid_CopyCellsLayered(64, 64, 19, 17, 100, tearStoneRow);
         MapGrid_CopyCellsLayered(35, 105, 23, 24, 35, 73);
-        MapGrid_CopyCellAttributes(100, 13, 19, 19, 36, i14);
+        MapGrid_CopyCellAttributes(100, 13, 19, 19, 36, tearStoneRow);
         map->enabled[2] = 1;
         SET_BG1CNT_PRIORITY(1);
       } else if (Event_GetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED) ||
@@ -2042,20 +2047,20 @@ s32 Scene_PrepareMap(void) {
                                       COLLISION_STREAM_BEND + 4);
         AquaRockInside_StartSplashes();
         AquaRockInside_AddSplash(38, 2, 19, 1);
-        for (i15 = 0; i15 < 8; i15++)
+        for (tearStoneStep = 0; tearStoneStep < 8; tearStoneStep++)
           AquaRockInside_AdvanceStreams(COLLISION_STREAM_BEND,
                                         COLLISION_STREAM_GOAL);
         Event_SetFlag(FLAG_SCENE_TEMP_4B);
       }
     }
-    i16 = ACTOR_TEAR_STONE_WATER_PILLAR_A;
+    tearStonePillar = ACTOR_TEAR_STONE_WATER_PILLAR_A;
     do {
-      actor = Actor_GetById(i16);
+      actor = Actor_GetById(tearStonePillar);
       actor->motionFlags = 0;
       actor->groundHeight = 0;
       actor->y.fixed = 0;
-      i16++;
-    } while (i16 <= ACTOR_TEAR_STONE_PILLAR_B);
+      tearStonePillar++;
+    } while (tearStonePillar <= ACTOR_TEAR_STONE_PILLAR_B);
     actor = Actor_GetById(ACTOR_TEAR_STONE_PILLAR_A);
     MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(actor->x.fixed), 39);
     if ((u32)(entrance - 1) <= 1) {
@@ -2068,9 +2073,9 @@ s32 Scene_PrepareMap(void) {
     if (GameFlag_Get(FLAG_AREA_TEMP_49)) {
       MapGrid_CopyCellAttributes(38, 9, 7, 6, 13, 9);
     } else {
-      i17 = 8;
-      MapGrid_CopyCellsLayered(77, 8, 7, 6, 50, i17);
-      MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, i17);
+      parchPoolRow = 8;
+      MapGrid_CopyCellsLayered(77, 8, 7, 6, 50, parchPoolRow);
+      MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, parchPoolRow);
       MapGrid_CopyCellAttributes(38, 17, 7, 6, 13, 9);
     }
   }

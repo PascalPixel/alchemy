@@ -333,15 +333,15 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   // sleep, seal or curse, tested in that order.
   goto check_restore;
 check_restore_others:
-  if (unit->stun == 0 && unit->sleep == 0 &&
-      *(u8 *)&unit->psySeal == 0 && unit->grimReaper == 0) {
+  if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
+      unit->grimReaper == 0) {
     return 0;
   }
   goto restore_checked;
 check_restore:
   if (effectId == ABILITY_EFFECT_RESTORE) {
-    if (unit->delusion == 0 &&
-        *(u8 *)&unit->confusion == 0 && unit->charm == 0) {
+    if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
+        unit->charm == 0) {
       goto check_restore_others;
     }
   }
@@ -355,8 +355,7 @@ restore_checked:
   sleep = &unit->sleep;
   if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
       *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
-      unit->psySeal == 0 && unit->grimReaper == 0 &&
-      *(u8 *)&unit->haunt == 0) {
+      unit->psySeal == 0 && unit->grimReaper == 0 && *(u8 *)&unit->haunt == 0) {
     return 0;
   }
 

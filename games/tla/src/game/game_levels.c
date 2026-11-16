@@ -154,8 +154,8 @@ s32 Owner_UpdateClassActions(s32 owner) {
   return 0;
 }
 
-/// Teaches character `owner` ability `ability` for good (or makes a class action
-/// permanent by clearing its marks), then rebuilds its list. Returns the
+/// Teaches character `owner` ability `ability` for good (or makes a class
+/// action permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 owner, s32 ability) {
   struct Unit *unit = Unit_Get(owner);

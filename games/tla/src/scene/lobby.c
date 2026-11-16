@@ -133,6 +133,10 @@ enum LobbyRaisedTrigger {
 /// Frames without a link before the lobby gives the partner up.
 #define LOBBY_PEER_WAIT_FRAMES 25
 
+/// The first of eight flags, one per character from Isaac, each set while that
+/// character is in the battle party (LinkLobby_Initialize).
+#define FLAG_LINK_LOBBY_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
+
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
 /// when it does not or there is no link.
 s32 LinkLobby_PeerSlotMatches(s32 slot) {
@@ -1140,15 +1144,15 @@ void FieldMessage_Show(s32 no, s32 flags);
 /// last linked battle.
 s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgLobbyItsOurTurnLetsGo;
-  s32 lead = LinkLobby_PartyContains(4);
+  s32 lead = LinkLobby_PartyContains(ACTOR_FELIX);
   s32 own = LinkLobby_PartyContains(actor);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
-    Event_GetFlag(FLAG_SCENE_TEMP_F4);
-    base = Event_GetFlag(actor + 0x2f0);
+    Event_GetFlag(FLAG_LINK_LOBBY_IN_PARTY_FIRST + ACTOR_FELIX);
+    base = Event_GetFlag(actor + FLAG_LINK_LOBBY_IN_PARTY_FIRST);
     if (Event_GetFlag(FLAG_AREA_TEMP_05)) {
       if (base)
         base = (s32)MsgLobbyEverybodyDeservesLittleCredit;
@@ -1362,7 +1366,7 @@ s32 LinkLobby_Initialize(void) {
     name[7] = 'K';
   }
   for (i = 0; i < 8; i++) {
-    s32 flag = 0x2f0 + i;
+    s32 flag = FLAG_LINK_LOBBY_IN_PARTY_FIRST + i;
 
     Event_ClearFlag(flag);
     if (LinkLobby_PartyContains(i))
